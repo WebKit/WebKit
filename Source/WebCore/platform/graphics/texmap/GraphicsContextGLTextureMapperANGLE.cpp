@@ -107,20 +107,14 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             bool result = EGL_DestroySync(m_displayObj, sync);
             ASSERT_UNUSED(result, !!result);
         }
-#if PLATFORM(WIN)
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#endif
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
 
-#if !PLATFORM(WIN)
+    // On GTK and WPE ports, we need to destroy the ANGLE sharingContext as it's not a singleton. We don't need
+    // an ifdef for the Windows port here because m_angleSharingContextObj is always nullptr for that port.
     if (m_angleSharingContextObj)
         EGL_DestroyContext(m_displayObj, m_angleSharingContextObj);
-
-    // Ideally this should go before the m_contextObj destruction, but there are platforms where it breaks
-    // the destruction m_contextObj. Putting it here works for all the platforms that I've tested.
-    EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-#endif
 
     if (m_surfaceObj)
         EGL_DestroySurface(m_displayObj, m_surfaceObj);
@@ -316,8 +310,11 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     eglContextAttributes.append(EGL_NONE);
 
 #if PLATFORM(WIN)
+    // On the Windows port, the ANGLE sharingContext is a singleton.
     m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharedDisplay.angleSharingGLContext(), eglContextAttributes.span().data());
 #else
+    // On GTK and WPE ports, the ANGLE sharingContext is not a singleton, so we need to check whether it's properly
+    // created and keep a reference to it for destruction.
     m_angleSharingContextObj = sharedDisplay.angleSharingGLContext();
     if (m_angleSharingContextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "ANGLE sharing EGLContext Initialization failed.");
