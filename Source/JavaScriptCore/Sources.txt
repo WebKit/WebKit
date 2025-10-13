@@ -1136,7 +1136,6 @@ tools/SourceProfiler.cpp
 tools/VMInspector.cpp
 
 wasm/WasmOMGIRGenerator.cpp
-wasm/WasmOMGIRGenerator32_64.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify
 wasm/WasmBBQJIT32_64.cpp @no-unify
