@@ -12,6 +12,8 @@ function runTest() {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
+    if (window !== window.parent)
+        window.parent.postMessage("InTest", "*");
 
     const worker = new Worker("./resources/webgl-worker.js");
     worker.addEventListener("message", (e) => {
