@@ -565,8 +565,7 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
 #endif
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    parameters.shouldEnableIPCSignposts = IPC::Connection::signpostsEnabled();
-    parameters.shouldEnableStreamingIPCSignposts = IPC::StreamClientConnection::signpostsEnabled();
+    parameters.shouldEnableIPCSignposts = IPC::signpostsEnabled();
 #endif
 
     return parameters;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,24 +22,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#pragma once
-
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebKit {
-
-// Parameters that are sent to the process object as the first message after process has started.
-struct AuxiliaryProcessCreationParameters {
-    String wtfLoggingChannels;
-    String webCoreLoggingChannels;
-    String webKitLoggingChannels;
-    std::unique_ptr<HashSet<String>> classNamesExemptFromSecureCodingCrash;
+#include "config.h"
+#include "IPCSystemTracingSupport.h"
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    bool shouldEnableIPCSignposts { false };
-#endif
-};
 
-} // namespace WebKit
+namespace IPC {
+
+namespace Detail {
+std::atomic<bool> signpostsState;
+}
+
+void setSignpostsEnabled(bool isEnabled)
+{
+    Detail::signpostsState = isEnabled;
+}
+
+uintptr_t generateSignpostIdentifier()
+{
+    static std::atomic<uintptr_t> identifier;
+    return ++identifier;
+}
+
+}
+
+#endif

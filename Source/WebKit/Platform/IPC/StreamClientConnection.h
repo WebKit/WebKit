@@ -39,6 +39,11 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+#include "IPCSystemTracingSupport.h"
+#endif
+
+
 namespace WebKit {
 namespace IPCTestingAPI {
 class JSIPCStreamClientConnection;
@@ -112,11 +117,6 @@ public:
     // used in conjunction with the connection.
     Seconds defaultTimeoutDuration() const { return m_defaultTimeoutDuration; }
 
-#if ENABLE(CORE_IPC_SIGNPOSTS)
-    static bool signpostsEnabled();
-    static void forceEnableSignposts();
-#endif
-
 private:
     StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&, Seconds defaultTimeoutDuration);
 
@@ -131,8 +131,13 @@ private:
     void wakeUpServer(WakeUpServer);
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    static uintptr_t generateSignpostIdentifier();
-    void emitSendSignpost(MessageName);
+    void emitSignpost(MessageName);
+    enum class IntervalSignpostOperation {
+        SendWithAsyncReply,
+        SendSync
+    };
+    // Non-zero return values should be issued to WTFEndSignpost(..., IPCStreamMessage).
+    uintptr_t beginSignpost(IntervalSignpostOperation, MessageName);
 #endif
 
     const Ref<Connection> m_connection;
@@ -167,7 +172,8 @@ template<typename T, typename U, typename V, typename W>
 Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    emitSendSignpost(message.name());
+    if (signpostsEnabled())
+        emitSignpost(message.name());
 #endif
 
     static_assert(!T::isSync, "Message is sync!");
@@ -192,10 +198,8 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     uintptr_t signpostIdentifier = 0;
-    if (signpostsEnabled()) [[unlikely]] {
-        signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, StreamClientConnection, "sendWithAsyncReply: %" PUBLIC_LOG_STRING, description(message.name()).characters());
-    }
+    if (signpostsEnabled()) [[unlikely]]
+        signpostIdentifier = beginSignpost(IntervalSignpostOperation::SendWithAsyncReply, message.name());
 #endif
 
     static_assert(!T::isSync, "Message is sync!");
@@ -214,7 +218,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostIdentifier) [[unlikely]] {
         handler.completionHandler = CompletionHandler<void(Connection*, Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Connection* connection, Decoder* decoder) mutable {
-            WTFEndSignpost(signpostIdentifier, StreamClientConnection);
+            WTFEndSignpost(signpostIdentifier, IPCStreamMessage);
             handler(connection, decoder);
         });
     }
@@ -266,13 +270,11 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     uintptr_t signpostIdentifier = 0;
-    if (signpostsEnabled()) [[unlikely]] {
-        signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, StreamClientConnection, "sendSync: %" PUBLIC_LOG_STRING, description(message.name()).characters());
-    }
+    if (signpostsEnabled()) [[unlikely]]
+        signpostIdentifier = beginSignpost(IntervalSignpostOperation::SendSync, message.name());
     auto endSignpost = makeScopeExit([signpostIdentifier] {
         if (signpostIdentifier) [[unlikely]]
-            WTFEndSignpost(signpostIdentifier, StreamClientConnection);
+            WTFEndSignpost(signpostIdentifier, IPCStreamMessage);
     });
 #endif
 

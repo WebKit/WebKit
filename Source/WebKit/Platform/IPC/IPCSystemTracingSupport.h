@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,26 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebKit {
-
-// Parameters that are sent to the process object as the first message after process has started.
-struct AuxiliaryProcessCreationParameters {
-    String wtfLoggingChannels;
-    String webCoreLoggingChannels;
-    String webKitLoggingChannels;
-    std::unique_ptr<HashSet<String>> classNamesExemptFromSecureCodingCrash;
-
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    bool shouldEnableIPCSignposts { false };
-#endif
-};
 
-} // namespace WebKit
+#include <wtf/SystemTracing.h>
+
+namespace IPC {
+
+namespace Detail {
+
+extern std::atomic<bool> signpostsState;
+
+}
+
+inline bool signpostsEnabled()
+{
+    return Detail::signpostsState.load(std::memory_order_relaxed);
+}
+
+void setSignpostsEnabled(bool);
+
+uintptr_t generateSignpostIdentifier();
+
+}
+#endif
