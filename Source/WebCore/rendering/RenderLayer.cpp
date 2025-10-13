@@ -4165,10 +4165,6 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
                 // Intersect the fragment with our ancestor's background clip so that e.g., columns in an overflow:hidden block are
                 // properly clipped by the overflow.
                 fragment.intersect(ancestorFragment.paginationClip);
-                
-                // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
-                // clip, so the column clip ends up being all we apply.
-                fragment.intersect(fragment.paginationClip);
 
                 if (applyRootOffsetToFragments == ApplyRootOffsetToFragments)
                     fragment.paginationOffset = fragment.paginationOffset + offsetWithinParentPaginatedLayer;
@@ -4208,10 +4204,6 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         // Intersect the fragment with our ancestor's background clip so that e.g., columns in an overflow:hidden block are
         // properly clipped by the overflow.
         fragment.intersect(ancestorClipRect);
-
-        // Now intersect with our pagination clip. This will typically mean we're just intersecting the dirty rect with the column
-        // clip, so the column clip ends up being all we apply.
-        fragment.intersect(fragment.paginationClip);
 
         if (applyRootOffsetToFragments == ApplyRootOffsetToFragments)
             fragment.paginationOffset = fragment.paginationOffset + offsetOfPaginationLayerFromRoot;

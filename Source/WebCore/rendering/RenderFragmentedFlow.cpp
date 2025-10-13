@@ -768,7 +768,6 @@ LayoutRect RenderFragmentedFlow::fragmentsBoundingBox(const LayoutRect& layerBou
         fragment.collectLayerFragments(fragments, layerBoundingBox, LayoutRect::infiniteRect());
         for (const auto& fragment : fragments) {
             LayoutRect fragmentRect(layerBoundingBox);
-            fragmentRect.intersect(fragment.paginationClip);
             fragmentRect.move(fragment.paginationOffset);
             result.unite(fragmentRect);
         }
