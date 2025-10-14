@@ -78,7 +78,7 @@ function dragVolumeSlider(fromVolume, toVolume)
     eventSender.mouseMoveTo(centerX, dragStartY);
     eventSender.mouseDown();
     for (let i = 1; i <= iterations; ++i)
-        eventSender.mouseMoveTo(dragVolumeSlider, dragStartY + i * Math.sign(delta));
+        eventSender.mouseMoveTo(centerX, dragStartY + i * Math.sign(delta));
     eventSender.mouseUp();
 }
 
