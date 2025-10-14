@@ -1917,8 +1917,7 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-bbq-no-consts", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
-        if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
+        if $runJITlessWasm
           run("wasm-no-jit", "--useJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-jit".to_sym)
           run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
@@ -1951,8 +1950,7 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmIPInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-bbq-no-consts", "--useWasmIPInt=false", "--disableBBQConsts=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
-        if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
+        if $runJITlessWasm
           run("wasm-no-jit", "--useJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-jit".to_sym)
           run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
@@ -2031,8 +2029,7 @@ def runWebAssemblyEmscripten(mode)
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         run("wasm-bbq", "--useWasmIPInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
-        # FIXME: this is a hacky way to check if we use SIMD rdar://138436830
-        if $runJITlessWasm and not $testSpecificRequiredOptions.include? "--useWasmSIMD=1"
+        if $runJITlessWasm
           run("wasm-no-jit", "--useJIT=false" *FTL_OPTIONS) unless $skipModes.include?("wasm-no-jit".to_sym)
           run("wasm-no-wasm-jit", "--useBBQJIT=false", "--useOMGJIT=false" *FTL_OPTIONS) unless $skipModes.include?("wasm-no-wasm-jit".to_sym)
         end
