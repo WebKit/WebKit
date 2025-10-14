@@ -402,110 +402,113 @@ testCookies("");
 shouldNotHaveDOMCookie("__Host-test15.8");
 
 setDOMCookie("__Host-test15.9", "foobar", { "Secure": undefined, "Path": "/" });
-testCookies("__Host-test15.9");
+testCookies("__Host-test15.9=foobar");
 shouldHaveDOMCookieWithValue("__Host-test15.9", "foobar");
 
 // Requires SameSite=None / Default
 setDOMCookie("__Host-test15.10", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
-testCookies("__Host-test15.9");
+testCookies("__Host-test15.9=foobar");
 shouldNotHaveDOMCookie("__Host-test15.10");
 
 // Requires SameSite=None / Default
 setDOMCookie("__Host-test15.11", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("__Host-test15.9");
+testCookies("__Host-test15.9=foobar");
 shouldNotHaveDOMCookie("__Host-test15.11");
 
 setDOMCookie("__Host-test15.12", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("__Host-test15.9; __Host-test15.12");
-shouldHaveDOMCookieWithValue("__Host-test15.12", "foobar");
+testCookies("__Host-test15.9=foobar");
+shouldNotHaveDOMCookie("__Host-test15.12");
 
 setDOMCookie("__Host-test15.13", "foobar", { "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
-shouldHaveDOMCookieWithValue("__Host-test15.13", "foobar");
+testCookies("__Host-test15.9=foobar");
+shouldNotHaveDOMCookie("__Host-test15.13");
 
 // Requires Secure
 setDOMCookie("__Host-test15.14", "foobar", { "Partitioned": undefined, "Path": "/" });
-testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
+testCookies("__Host-test15.9=foobar");
 shouldNotHaveDOMCookie("__Host-test15.14");
 
 // Can't set HttpOnly
 setDOMCookie("__Host-test15.15", "foobar", { "HttpOnly": undefined, "Secure": undefined, "Path": "/", "Partitioned": undefined, "Path": "/" });
-testCookies("__Host-test15.9; __Host-test15.12; __Host-test15.13");
+testCookies("__Host-test15.9=foobar");
 shouldNotHaveDOMCookie("__Host-test15.15");
 
 clearCookiesFromSubTests();
+setDOMCookie("__Host-test15.9", "foobar", { "Secure": undefined, "Path": "/", "Max-Age": "-1" });
 
 debug("Tests 16: Set partitioned and unpartitioned cookies with multiple partitioned attributes; different order, Path after Secure; from JavaScript.");
 // Requires SameSite=None / Default
 setDOMCookie("test16.1", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
 testCookies("");
-shouldNotHaveDOMCookie("test16.1");
+shouldNotHaveDOMCookie("");
 
 setDOMCookie("test16.2", "foobar", { "Secure": undefined });
-testCookies("test16.2");
+testCookies("test16.2=foobar");
 shouldHaveDOMCookieWithValue("test16.2", "foobar");
 
 // Requires SameSite=None / Default
 setDOMCookie("test16.3", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
-testCookies("test16.2");
+testCookies("test16.2=foobar");
 shouldNotHaveDOMCookie("test16.3");
 
 // Requires SameSite=None / Default
 setDOMCookie("test16.4", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
-testCookies("test16.2");
+testCookies("test16.2=foobar");
 shouldNotHaveDOMCookie("test16.4");
 
 setDOMCookie("test16.5", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, " Partitioned": undefined });
-testCookies("test16.2; test16.5");
-shouldHaveDOMCookieWithValue("test16.5", "foobar");
+testCookies("test16.2=foobar");
+shouldNotHaveDOMCookie("test16.5");
 
 setDOMCookie("test16.6", "foobar", { "Secure": undefined, "Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6");
-shouldHaveDOMCookieWithValue("test16.6", "foobar");
+testCookies("test16.2=foobar");
+shouldNotHaveDOMCookie("test16.6");
 
 // Requires Secure
 setDOMCookie("test16.7", "foobar", { "Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6");
+testCookies("test16.2=foobar");
 shouldNotHaveDOMCookie("test16.7");
 
 // Requires SameSite=None / Default
 setDOMCookie("test16.8", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6");
+testCookies("test16.2=foobar");
 shouldNotHaveDOMCookie("test16.8");
 
 setDOMCookie("test16.9", "foobar", { "Secure": undefined, "Path": "/" });
-testCookies("test16.2; test16.5; test16.6; test16.9");
+testCookies("test16.2=foobar; test16.9=foobar");
 shouldHaveDOMCookieWithValue("test16.9", "foobar");
 
 // Requires SameSite=None / Default
 setDOMCookie("test16.10", "foobar", { "SameSite": "Lax", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6; test16.9");
+testCookies("test16.2=foobar; test16.9=foobar");
 shouldNotHaveDOMCookie("test16.10");
 
 // Requires SameSite=None / Default
 setDOMCookie("test16.11", "foobar", { "SameSite": "Strict", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6; test16.9");
+testCookies("test16.2=foobar; test16.9=foobar");
 shouldNotHaveDOMCookie("test16.11");
 
 setDOMCookie("test16.12", "foobar", { "SameSite": "None", "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6; test16.9; test16.12");
-shouldHaveDOMCookieWithValue("test16.12", "foobar");
+testCookies("test16.2=foobar; test16.9=foobar");
+shouldNotHaveDOMCookie("test16.12");
 
 setDOMCookie("test16.13", "foobar", { "Partitioned": undefined, "Secure": undefined, "Path": "/", " Path": "/", " Partitioned": undefined });
-testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
-shouldHaveDOMCookieWithValue("test16.13", "foobar");
+testCookies("test16.2=foobar; test16.9=foobar");
+shouldNotHaveDOMCookie("test16.13");
 
 // Requires Secure
 setDOMCookie("test16.14", "foobar", { "Partitioned": undefined, "Path": "/" });
-testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
+testCookies("test16.2=foobar; test16.9=foobar");
 shouldNotHaveDOMCookie("test16.14");
 
 // Can't set HttpOnly
 setDOMCookie("test16.15", "foobar", { "HttpOnly": undefined, "Secure": undefined, "Path": "/", "Partitioned": undefined, "Path": "/" });
-testCookies("test16.2; test16.5; test16.6; test16.9; test16.12; test16.13");
+testCookies("test16.2=foobar; test16.9=foobar");
 shouldNotHaveDOMCookie("test16.15");
 
 clearCookiesFromSubTests();
+setDOMCookie("test16.2", "foobar", { "Secure": undefined, "Max-Age": "-1" });
+setDOMCookie("test16.9", "foobar", { "Secure": undefined, "Path": "/", "Max-Age": "-1" });
 
 if (window === window.top)
     testRunner?.notifyDone();

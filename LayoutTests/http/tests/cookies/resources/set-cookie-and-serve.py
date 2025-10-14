@@ -8,12 +8,17 @@ query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 cookie_name = query.get('cookie-name', [''])[0]
 cookie_value = query.get('cookie-value', [''])[0]
 destination = query.get('destination', [''])[0]
-cookie_count = query.get('cookie-count', [1])[0]
+cookie_count = int(query.get('cookie-count', [0])[0])
+
+if cookie_count == 0:
+    set_cookies = f"Set-Cookie: {cookie_name}={cookie_value}; path=/\r\n"
+else:
+    set_cookies = [f"Set-Cookie: {cookie_name}_{i}={cookie_value}; path=/\r\n" for i in range(cookie_count)]
 
 sys.stdout.buffer.write(
     'Content-Type: text/html\r\n'
     'Cache-Control: no-store\r\n'
-    'Set-Cookie: {}={}; path=/\r\n'.format(cookie_name, cookie_value).encode()
+    '{}'.format(''.join(set_cookies)).encode()
 )
 
 content = '<script>for (let i = 0; i < {}; i++) document.cookie=`{}_js_${{i}}={}`;</script>'.format(cookie_count, cookie_name, cookie_value).encode()
