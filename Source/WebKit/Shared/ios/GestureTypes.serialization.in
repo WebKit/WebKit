@@ -64,4 +64,14 @@ enum class WebKit::TextInteractionSource : uint8_t {
     Mouse,
 };
 
+enum class WebKit::SheetAction : uint8_t {
+    Copy,
+    SaveImage,
+    PauseAnimation,
+    PlayAnimation,
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    ViewSpatial
+#endif
+};
+
 #endif

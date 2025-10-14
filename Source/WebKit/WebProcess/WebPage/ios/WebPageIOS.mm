@@ -4051,7 +4051,7 @@ void WebPage::stopInteraction()
     m_interactionNode = nullptr;
 }
 
-static void handleAnimationActions(Element& element, uint32_t action)
+static void handleAnimationActions(Element& element, SheetAction action)
 {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
@@ -4064,8 +4064,53 @@ static void handleAnimationActions(Element& element, uint32_t action)
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
-void WebPage::performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
+void WebPage::peformSaveImageActionOnElement(CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>)>&& completionHandler)
 {
+    RefPtr element = dynamicDowncast<HTMLElement>(m_interactionNode);
+    if (!element || !element->renderer()) {
+        completionHandler({ });
+        return;
+    }
+
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(*element->renderer());
+    if (!renderImage) {
+        completionHandler({ });
+        return;
+    }
+
+    auto* cachedImage = renderImage->cachedImage();
+    if (!cachedImage) {
+        completionHandler({ });
+        return;
+    }
+
+    RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
+    if (!buffer) {
+        completionHandler({ });
+        return;
+    }
+
+    std::optional<SharedMemory::Handle> handle;
+    {
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+        if (!sharedMemoryBuffer) {
+            completionHandler({ });
+            return;
+        }
+        handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+    }
+
+    if (!handle) {
+        completionHandler({ });
+        return;
+    }
+
+    completionHandler(WTFMove(*handle));
+}
+
+void WebPage::performActionOnElement(SheetAction action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(action != SheetAction::SaveImage);
     CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
 
     RefPtr element = dynamicDowncast<HTMLElement>(m_interactionNode);
@@ -4092,26 +4137,6 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         else if (auto attachmentInfo = element->document().editor().promisedAttachmentInfo(*element))
             send(Messages::WebPageProxy::WritePromisedAttachmentToPasteboard(WTFMove(attachmentInfo), authorizationToken));
 #endif
-    } else if (static_cast<SheetAction>(action) == SheetAction::SaveImage) {
-        CheckedPtr renderImage = dynamicDowncast<RenderImage>(*element->renderer());
-        if (!renderImage)
-            return;
-        auto* cachedImage = renderImage->cachedImage();
-        if (!cachedImage)
-            return;
-        RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
-        if (!buffer)
-            return;
-        std::optional<SharedMemory::Handle> handle;
-        {
-            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-            if (!sharedMemoryBuffer)
-                return;
-            handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
-        }
-        if (!handle)
-            return;
-        send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(*handle), authorizationToken));
     }
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     else if (static_cast<SheetAction>(action) == SheetAction::ViewSpatial)
@@ -4121,7 +4146,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
     handleAnimationActions(*element, action);
 }
 
-void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
+void WebPage::performActionOnElements(SheetAction action, const Vector<WebCore::ElementContext>& elements)
 {
     for (const auto& elementContext : elements) {
         if (RefPtr element = elementForContext(elementContext))

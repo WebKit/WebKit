@@ -476,6 +476,9 @@ enum class FindDecorationStyle : uint8_t;
 enum class ImageOption : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
 enum class MediaPlaybackState : uint8_t;
+#if PLATFORM(IOS_FAMILY)
+enum class SheetAction : uint8_t;
+#endif
 enum class SnapshotOption : uint16_t;
 enum class SyntheticEditingCommandType : uint8_t;
 enum class TextInteractionSource : uint8_t;
@@ -1123,8 +1126,9 @@ public:
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext>&&, WebCore::IntPoint&&);
     void stopInteraction();
-    void performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&&);
-    void performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements);
+    void peformSaveImageActionOnElement(CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>)>&&);
+    void performActionOnElement(SheetAction, const String& authorizationToken, CompletionHandler<void()>&&);
+    void performActionOnElements(SheetAction, const Vector<WebCore::ElementContext>& elements);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
     void autofillLoginCredentials(const String&, const String&);
     void setFocusedElementValue(const WebCore::ElementContext&, const String&);
