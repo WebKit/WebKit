@@ -518,6 +518,17 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
         [listing setObject:WIRTypeWebPage forKey:WIRTypeKey];
         break;
+    case RemoteInspectionTarget::Type::WebAssembly:
+        [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
+        [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
+        [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];
+        [listing setObject:WIRTypeWebAssembly forKey:WIRTypeKey];
+        if (auto wcpPID = target.webContentProcessPID()) {
+            RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+            [userInfo setObject:@(*wcpPID) forKey:@"WebContentProcessPID"];
+            [listing setObject:userInfo.get() forKey:WIRUserInfoKey];
+        }
+        break;
     default:
         ASSERT_NOT_REACHED();
         break;

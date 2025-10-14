@@ -86,6 +86,7 @@
 #define WIRTypeServiceWorker                    @"WIRTypeServiceWorker"
 #define WIRTypeWeb                              @"WIRTypeWeb" // COMPATIBILITY (iOS 13): "Web" was split into "Page" (WebCore::Page) and "WebPage" (WebKit::WebPageProxy).
 #define WIRTypeWebPage                          @"WIRTypeWebPage"
+#define WIRTypeWebAssembly                      @"WIRTypeWebAssembly"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
 #define WIRMessageDataTypeChunkSupportedKey     @"WIRMessageDataTypeChunkSupportedKey"
 #define WIRPingMessage                          @"WIRPingMessage"

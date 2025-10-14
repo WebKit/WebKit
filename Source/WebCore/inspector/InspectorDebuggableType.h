@@ -33,6 +33,7 @@ enum class DebuggableType : uint8_t {
     Page,          // WebCore::Page
     ServiceWorker, // WebCore::ServiceWorkerThreadProxy
     WebPage,       // WebKit::WebPageProxy
+    WebAssembly,   // JSC::Wasm::Module
 };
 
 } // namespace Inspector

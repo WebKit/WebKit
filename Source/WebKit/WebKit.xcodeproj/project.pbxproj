@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2634,6 +2634,8 @@
 		FC7104542E0ED23800CC0B24 /* WebInspectorBackendProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = FC7104532E0ED23800CC0B24 /* WebInspectorBackendProxy.h */; };
 		FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */; };
 		FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */; };
+		FF0F70902E8242DB00D52BE1 /* WebAssemblyDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F708D2E8242DB00D52BE1 /* WebAssemblyDebuggable.h */; };
+		FFCC7DFE2E95876C00D4A715 /* WebAssemblyDebugDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC7DFB2E95876C00D4A715 /* WebAssemblyDebugDispatcher.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -8884,6 +8886,10 @@
 		FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcher.cpp; sourceTree = "<group>"; };
 		FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcher.h; sourceTree = "<group>"; };
 		FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorInterruptDispatcher.messages.in; sourceTree = "<group>"; };
+		FF0F708D2E8242DB00D52BE1 /* WebAssemblyDebuggable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAssemblyDebuggable.h; sourceTree = "<group>"; };
+		FF0F708E2E8242DB00D52BE1 /* WebAssemblyDebuggable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAssemblyDebuggable.cpp; sourceTree = "<group>"; };
+		FFCC7DFB2E95876C00D4A715 /* WebAssemblyDebugDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAssemblyDebugDispatcher.h; sourceTree = "<group>"; };
+		FFCC7DFC2E95876C00D4A715 /* WebAssemblyDebugDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAssemblyDebugDispatcher.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -14315,6 +14321,8 @@
 				A55BA81B1BA25B1E007CD33D /* RemoteWebInspectorUIProxy.cpp */,
 				A55BA8191BA25B1E007CD33D /* RemoteWebInspectorUIProxy.h */,
 				A55BA81A1BA25B1E007CD33D /* RemoteWebInspectorUIProxy.messages.in */,
+				FF0F708E2E8242DB00D52BE1 /* WebAssemblyDebuggable.cpp */,
+				FF0F708D2E8242DB00D52BE1 /* WebAssemblyDebuggable.h */,
 				F30EE4752E72227800935B60 /* WebFrameInspectorTargetProxy.cpp */,
 				F30EE4732E72226D00935B60 /* WebFrameInspectorTargetProxy.h */,
 				FC7104532E0ED23800CC0B24 /* WebInspectorBackendProxy.h */,
@@ -14385,6 +14393,8 @@
 				E3D0A93F2D62B1C90094538A /* ServiceWorkerDebuggableFrontendChannel.h */,
 				E3E6297D2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.cpp */,
 				E3E6297C2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.h */,
+				FFCC7DFC2E95876C00D4A715 /* WebAssemblyDebugDispatcher.cpp */,
+				FFCC7DFB2E95876C00D4A715 /* WebAssemblyDebugDispatcher.h */,
 				F30EE46F2E721EDB00935B60 /* WebFrameInspectorTarget.cpp */,
 				F30EE46D2E721ECE00935B60 /* WebFrameInspectorTarget.h */,
 				F34877AA2E723DC400D97E74 /* WebFrameInspectorTargetFrontendChannel.cpp */,
@@ -18145,6 +18155,8 @@
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				46C52F8A2B94366000D9890E /* VisitedLinkTableIdentifier.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
+				FFCC7DFE2E95876C00D4A715 /* WebAssemblyDebugDispatcher.h in Headers */,
+				FF0F70902E8242DB00D52BE1 /* WebAssemblyDebuggable.h in Headers */,
 				57C6244B234679A400383FE7 /* WebAuthenticationFlags.h in Headers */,
 				577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */,
 				57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */,
@@ -21785,7 +21797,9 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -21801,19 +21815,25 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

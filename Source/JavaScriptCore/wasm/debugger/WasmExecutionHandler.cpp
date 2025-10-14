@@ -467,24 +467,34 @@ void ExecutionHandler::sendStopReply(AbstractLocker& locker) WTF_REQUIRES_LOCK(m
         ";"_s);
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sending stop reply: ", stopReplyStr);
-    sendReply(locker, stopReplyStr);
+    sendReplyImpl(locker, stopReplyStr);
 }
 
 void ExecutionHandler::sendReply(StringView reply)
 {
     Locker locker { m_lock };
-    sendReply(locker, reply);
+    sendReplyImpl(locker, reply);
 }
 
-void ExecutionHandler::sendReply(AbstractLocker&, StringView reply) WTF_REQUIRES_LOCK(m_lock)
+void ExecutionHandler::sendReplyImpl(AbstractLocker&, StringView reply) WTF_REQUIRES_LOCK(m_lock)
 {
     uint8_t checksum = 0;
     for (auto character : reply.codeUnits())
         checksum += character;
 
     String packet = makeString('$', reply, '#', hex(checksum, 2, Lowercase));
-    CString packetData = packet.utf8();
 
+    if (m_debugServer.isRWIMode()) {
+        RELEASE_ASSERT(!!m_debugServer.m_rwiResponseHandler);
+        if (m_debugServer.m_rwiResponseHandler(packet)) {
+            m_debuggerState = ExecutionHandler::DebuggerState::Replied;
+            dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sent reply via RWI: ", packet);
+        } else
+            dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet via RWI: ", packet);
+        return;
+    }
+
+    CString packetData = packet.utf8();
     int sent = static_cast<int>(send(m_debugServer.m_clientSocket, packetData.data(), packetData.length(), 0));
     if (sent < 0)
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Failed to send packet: ", packetData.data(), " sent: ", sent);

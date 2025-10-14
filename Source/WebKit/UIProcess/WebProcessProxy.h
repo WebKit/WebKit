@@ -85,6 +85,10 @@
 #include "ServiceWorkerDebuggableProxy.h"
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#include "WebAssemblyDebuggable.h"
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -578,6 +582,17 @@ public:
     bool receivedLogsDuringLaunchForTesting() const { return m_didReceiveLogsDuringLaunchForTesting; }
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    void createWebAssemblyInspectorTarget();
+    void destroyWebAssemblyInspectorTarget();
+    void connectWebAssemblyInspectorTarget(bool isAutomaticConnection, bool immediatelyPause);
+    void disconnectWebAssemblyInspectorTarget();
+    void dispatchWebAssemblyInspectorMessage(const String& message);
+    void setWebAssemblyInspectorTargetIndicating(bool);
+
+    void sendWebAssemblyInspectorResponse(const String& response);
+#endif
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -889,6 +904,9 @@ private:
 #endif
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableProxy>> m_serviceWorkerDebuggableProxies;
+#endif
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    RefPtr<WebAssemblyDebuggable> m_webAssemblyDebuggable;
 #endif
 
     HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;

@@ -119,6 +119,8 @@ static std::optional<Inspector::DebuggableType> parseDebuggableTypeFromString(co
         return Inspector::DebuggableType::ServiceWorker;
     if (debuggableTypeString == "web-page"_s)
         return Inspector::DebuggableType::WebPage;
+    if (debuggableTypeString == "webassembly"_s)
+        return Inspector::DebuggableType::WebAssembly;
 
     return std::nullopt;
 }

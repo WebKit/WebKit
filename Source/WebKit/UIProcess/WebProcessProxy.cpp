@@ -84,6 +84,9 @@
 #include "WebProcessProxyMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#include "WebAssemblyDebugDispatcherMessages.h"
+#endif
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
@@ -698,6 +701,11 @@ void WebProcessProxy::shutDown()
     }
 
     shutDownProcess();
+
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    if (JSC::Options::enableWasmDebugger()) [[unlikely]]
+        destroyWebAssemblyInspectorTarget();
+#endif
 
     m_backgroundResponsivenessTimer.invalidate();
     m_audibleMediaActivity = std::nullopt;
@@ -1425,6 +1433,11 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     protectedProcessPool()->processDidFinishLaunching(*this);
     m_backgroundResponsivenessTimer.updateState();
+
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    if (JSC::Options::enableWasmDebugger()) [[unlikely]]
+        createWebAssemblyInspectorTarget();
+#endif
 
 #if ENABLE(IPC_TESTING_API)
     if (m_ignoreInvalidMessageForTesting)
@@ -3130,6 +3143,84 @@ void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pag
     didPostMessage(pageID, identifier, WTFMove(frameInfo), handlerID, WTFMove(message), WTFMove(completionHandler));
 }
 
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+
+void WebProcessProxy::createWebAssemblyInspectorTarget()
+{
+    ASSERT(!m_webAssemblyDebuggable);
+    m_webAssemblyDebuggable = WebAssemblyDebuggable::create(*this);
+    RefPtr debuggable = m_webAssemblyDebuggable;
+    debuggable->setInspectable(true);
+    debuggable->init();
+}
+
+void WebProcessProxy::destroyWebAssemblyInspectorTarget()
+{
+    if (RefPtr debuggable = m_webAssemblyDebuggable) {
+        debuggable->detachFromProcess();
+        m_webAssemblyDebuggable = nullptr;
+    }
+}
+
+void WebProcessProxy::connectWebAssemblyInspectorTarget(bool isAutomaticConnection, bool immediatelyPause)
+{
+    // Called by RWI framework when a frontend connects to this WebAssembly debug target.
+    //
+    // This is intentionally a no-op because the WasmDebugServer has process-lifetime semantics:
+    // - Server starts when WebContent process launches (if --wasm-debug flag is set)
+    // - Server is always "ready" to receive debug packets once started
+    // - No per-connection lifecycle management needed
+    //
+    // This differs from WebPageDebuggable which forwards to WebPageInspectorController
+    // because web page debugging has per-page state and connection lifecycle.
+    UNUSED_PARAM(isAutomaticConnection);
+    UNUSED_PARAM(immediatelyPause);
+}
+
+void WebProcessProxy::disconnectWebAssemblyInspectorTarget()
+{
+    // Called by RWI framework when a frontend disconnects from this WebAssembly debug target.
+    //
+    // This is intentionally a no-op because the WasmDebugServer continues running for
+    // the entire process lifetime. When the frontend disconnects, we simply stop receiving
+    // debug packets - no cleanup or state changes needed in the server.
+}
+
+void WebProcessProxy::dispatchWebAssemblyInspectorMessage(const String& message)
+{
+    RefPtr debuggable = m_webAssemblyDebuggable;
+    if (!debuggable) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Inspector, "dispatchWebAssemblyInspectorMessage: Cannot dispatch message - no WebAssembly debug target");
+        return;
+    }
+
+    if (canSendMessage())
+        send(Messages::WebAssemblyDebugDispatcher::DispatchWebAssemblyInspectorMessage(message), 0);
+}
+
+void WebProcessProxy::setWebAssemblyInspectorTargetIndicating(bool indicating)
+{
+    // Called by RWI framework to show/hide visual indication when debugging is active.
+    //
+    // This is intentionally a no-op because WebAssembly debugging has no visual indication.
+    // Unlike web page debugging (which shows a blue overlay when Web Inspector is attached),
+    // WASM debugging is purely backend/protocol-level with no UI indication needed.
+    UNUSED_PARAM(indicating);
+}
+
+void WebProcessProxy::sendWebAssemblyInspectorResponse(const String& response)
+{
+    RefPtr debuggable = m_webAssemblyDebuggable;
+    if (!debuggable) {
+        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Inspector, "sendWebAssemblyInspectorResponse: Cannot send response - no WebAssembly debug target");
+        return;
+    }
+
+    debuggable->sendResponseToFrontend(response);
+}
+
+#endif // ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
@@ -3137,4 +3228,3 @@ void WebProcessProxy::didPostLegacySynchronousMessage(WebPageProxyIdentifier pag
 #undef MESSAGE_CHECK_COMPLETION
 #undef WEBPROCESSPROXY_RELEASE_LOG
 #undef WEBPROCESSPROXY_RELEASE_LOG_ERROR
-

@@ -368,6 +368,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Geolocation/WebGeolocationManager
 
     WebProcess/Inspector/RemoteWebInspectorUI
+    WebProcess/Inspector/WebAssemblyDebugDispatcher
     WebProcess/Inspector/WebInspector
     WebProcess/Inspector/WebInspectorInterruptDispatcher
     WebProcess/Inspector/WebInspectorUI

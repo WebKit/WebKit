@@ -29,8 +29,8 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "WasmIPIntGenerator.h"
-#include "WasmOps.h"
+#include <JavaScriptCore/WasmIPIntGenerator.h>
+#include <JavaScriptCore/WasmOps.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RawPointer.h>

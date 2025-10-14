@@ -375,6 +375,8 @@ static String debuggableTypeToString(DebuggableType debuggableType)
         return "service-worker"_s;
     case DebuggableType::WebPage:
         return "web-page"_s;
+    case DebuggableType::WebAssembly:
+        return "webassembly"_s;
     }
 
     ASSERT_NOT_REACHED();

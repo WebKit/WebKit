@@ -2,6 +2,10 @@
 
 A comprehensive debugging solution that enables LLDB debugging of WebAssembly code running in JavaScriptCore's IPInt (In-Place Interpreter) tier through the GDB Remote Serial Protocol.
 
+> **Related Documentation:**
+> - **This document**: JSC debug server implementation (both Standalone and RWI modes)
+> - **[RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md)**: WebKit integration architecture (RWI mode details)
+
 ## What is this project?
 
 This project implements a **WebAssembly debugger server** that bridges the gap between LLDB (the LLVM debugger) and WebAssembly code execution in JavaScriptCore. It allows developers to:
@@ -56,9 +60,10 @@ The implementation follows the **GDB Remote Serial Protocol** standard with [was
 
 - **Location**: `WasmDebugServer.h/cpp`
 - **Purpose**: Central coordinator implementing GDB Remote Protocol
+- **Two Modes**:
+  - **Standalone Mode**: TCP socket server (default port 1234) for JSC shell debugging
+  - **RWI Mode**: IPC-based communication for WebKit/WebContent debugging (see [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md))
 - **Key Features**:
-  - TCP socket server (default port 1234)
-  - Single client connection handling
   - Protocol packet parsing and response generation
   - Contains all protocol handlers and helper classes
 
@@ -135,6 +140,8 @@ The `JSTests/wasm/debugger` includes a comprehensive test framework with auto-di
 
 ### Manual Testing
 
+**Standalone Mode (JSC Shell):**
+
 Terminal 1 - Start JSC with debugger:
 
 ```bash
@@ -148,22 +155,14 @@ Terminal 2 - Connect LLDB:
 lldb -o 'log enable gdb-remote packets' -o 'process connect --plugin wasm connect://localhost:1234'
 ```
 
+**RWI Mode (WebKit/WebContent):**
+
+See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions including:
+- Starting Safari/MiniBrowser with `--wasm-debug` flag
+- Using WebAssemblyRWIClient to relay LLDB commands
+- Debugging WebContent processes via Remote Web Inspector
+
 ## Known Issues and Future Improvements
-
-### External IDE Debugging Support (WebContent)
-
-- **Issue**: Current implementation only works with JSC shell, not WebContent processes
-- **Goal**: Enable debugging WASM using external IDEs (VS Code, etc.) via LLDB
-- **Architecture**:
-  ```txt
-  External IDE ←→ LLDB ←→ RWI Bridge App ←→ webinspectord ←→ WebContent
-  ```
-- **Key Components Needed**:
-  - Add WebAssembly debuggable type to RWI system
-  - Create WASM RWI target registration in WebContent process
-  - Implement RWI message protocol for WASM debugging
-  - Create external RWI bridge application (LLDB ↔ RWI translator)
-  - Integrate existing debug server with RWI bridge
 
 ### Multi-VM Debugging Support
 

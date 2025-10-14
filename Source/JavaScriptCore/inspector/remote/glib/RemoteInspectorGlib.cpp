@@ -161,6 +161,8 @@ static const char* targetDebuggableType(RemoteInspectionTarget::Type type)
         return "ServiceWorker";
     case RemoteInspectionTarget::Type::WebPage:
         return "WebPage";
+    case RemoteInspectionTarget::Type::WebAssembly:
+        return "WebAssembly";
     default:
         break;
     }

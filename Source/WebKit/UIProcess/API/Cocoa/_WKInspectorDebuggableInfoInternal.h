@@ -56,6 +56,8 @@ inline Inspector::DebuggableType fromWKInspectorDebuggableType(_WKInspectorDebug
         return Inspector::DebuggableType::ServiceWorker;
     case _WKInspectorDebuggableTypeWebPage:
         return Inspector::DebuggableType::WebPage;
+    case _WKInspectorDebuggableTypeWebAssembly:
+        return Inspector::DebuggableType::WebAssembly;
     }
 
     ASSERT_NOT_REACHED();
@@ -75,6 +77,8 @@ inline _WKInspectorDebuggableType toWKInspectorDebuggableType(Inspector::Debugga
         return _WKInspectorDebuggableTypeServiceWorker;
     case Inspector::DebuggableType::WebPage:
         return _WKInspectorDebuggableTypeWebPage;
+    case Inspector::DebuggableType::WebAssembly:
+        return _WKInspectorDebuggableTypeWebAssembly;
     }
 
     ASSERT_NOT_REACHED();

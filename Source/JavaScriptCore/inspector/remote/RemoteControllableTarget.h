@@ -62,6 +62,7 @@ public:
         JavaScript,
         Page,
         ServiceWorker,
+        WebAssembly,
         WebPage,
     };
     virtual Type type() const = 0;

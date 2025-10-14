@@ -46,6 +46,7 @@ enum class InspectorTargetType : uint8_t {
     Frame,
     DedicatedWorker,
     ServiceWorker,
+    WebAssembly,
 };
 
 class InspectorTarget : public CanMakeWeakPtr<InspectorTarget> {

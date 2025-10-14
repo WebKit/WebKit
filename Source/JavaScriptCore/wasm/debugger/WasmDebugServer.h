@@ -29,8 +29,8 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
+#include <JavaScriptCore/WasmDebugServerUtilities.h>
+#include <JavaScriptCore/WasmVirtualAddress.h>
 
 #include <atomic>
 #include <memory>
@@ -91,11 +91,30 @@ public:
     DebugServer();
     ~DebugServer() = default;
     VM* vm() const { return m_vm; }
-    uint64_t mutatorThreadId() const { return m_mutatorThreadId; }
-    uint64_t debugServerThreadId() const { return m_debugServerThreadId; }
+
+    uint64_t mutatorThreadId() const
+    {
+        // Dynamically get the owner thread from the VM instead of caching it
+        // since the VM's owner can change over time.
+        RELEASE_ASSERT(m_vm);
+        auto ownerThread = m_vm->ownerThread();
+        RELEASE_ASSERT(ownerThread && *ownerThread);
+        return (*ownerThread)->uid();
+    }
+    uint64_t debugServerThreadId() const
+    {
+        RELEASE_ASSERT(m_debugServerThreadId.has_value());
+        return *m_debugServerThreadId;
+    }
 
     JS_EXPORT_PRIVATE bool start(VM*);
+    JS_EXPORT_PRIVATE bool startRWI(VM*, Function<bool(const String&)>&& rwiResponseHandler);
     JS_EXPORT_PRIVATE void stop();
+
+    // DebugServer supports two modes:
+    // 1. Direct TCP socket mode (JSC shell debugging)
+    // 2. Remote Web Inspector integration mode (WebKit debugging)
+    bool isRWIMode() const { return !!m_rwiResponseHandler; }
 
     void trackInstance(JSWebAssemblyInstance*);
     void trackModule(Module&);
@@ -108,11 +127,15 @@ public:
     void setPort(uint64_t port) { m_port = port; }
     bool needToHandleBreakpoints() const;
 
-    bool isConnected() const { return isState(State::Running) && isSocketValid(m_clientSocket); }
+    JS_EXPORT_PRIVATE bool isConnected() const;
+
+    JS_EXPORT_PRIVATE void handleRawPacket(StringView rawPacket);
 
 private:
+    void reset();
+
     void setState(State);
-    bool isState(State) const;
+    JS_EXPORT_PRIVATE bool isState(State) const;
 
     bool createAndBindServerSocket();
     void startAcceptThread();
@@ -151,8 +174,7 @@ private:
     RefPtr<Thread> m_acceptThread;
 
     VM* m_vm { nullptr };
-    uint64_t m_mutatorThreadId { 0 };
-    uint64_t m_debugServerThreadId { 0 };
+    std::optional<uint64_t> m_debugServerThreadId;
 
     bool m_noAckMode { false };
     std::unique_ptr<QueryHandler> m_queryHandler;
@@ -161,6 +183,8 @@ private:
 
     std::unique_ptr<ModuleManager> m_instanceManager;
     std::unique_ptr<BreakpointManager> m_breakpointManager;
+
+    Function<bool(const String&)> m_rwiResponseHandler;
 };
 } // namespace JSC
 } // namespace Wasm

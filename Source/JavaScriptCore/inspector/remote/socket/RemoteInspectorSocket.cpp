@@ -137,6 +137,8 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
         targetListing->setString("type"_s, "javascript"_s);
     else if (target.type() == RemoteInspectionTarget::Type::ServiceWorker)
         targetListing->setString("type"_s, "service-worker"_s);
+    else if (target.type() == RemoteInspectionTarget::Type::WebAssembly)
+        targetListing->setString("type"_s, "webassembly"_s);
 
     return targetListing;
 }

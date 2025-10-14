@@ -108,6 +108,8 @@ static Protocol::Target::TargetInfo::Type targetTypeToProtocolType(InspectorTarg
         return Protocol::Target::TargetInfo::Type::Worker;
     case InspectorTargetType::ServiceWorker:
         return Protocol::Target::TargetInfo::Type::ServiceWorker;
+    case InspectorTargetType::WebAssembly:
+        return Protocol::Target::TargetInfo::Type::Webassembly;
     }
 
     ASSERT_NOT_REACHED();

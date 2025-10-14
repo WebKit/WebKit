@@ -110,6 +110,10 @@ messages -> WebProcessProxy WantsDispatchMessage {
     [EnabledBy=ServiceWorkersEnabled] SendMessageToInspector(WebCore::ServiceWorkerIdentifier identifier, String message)
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    SendWebAssemblyInspectorResponse(String response)
+#endif
+
     DidPostMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (Expected<WebKit::JavaScriptEvaluationResult, String> reply)
     DidPostLegacySynchronousMessage(WebKit::WebPageProxyIdentifier pageID, WebKit::UserContentControllerIdentifier identifier, struct WebKit::FrameInfoData frameInfoData, WebKit::ScriptMessageHandlerIdentifier messageHandlerID, WebKit::JavaScriptEvaluationResult message) -> (Expected<WebKit::JavaScriptEvaluationResult, String> reply) Synchronous
 }

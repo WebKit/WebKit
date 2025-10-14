@@ -626,6 +626,7 @@ UIProcess/Inspector/WebInspectorBackendProxy.cpp
 UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp
 UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/WebInspectorUtilities.cpp
+UIProcess/Inspector/WebAssemblyDebuggable.cpp
 UIProcess/Inspector/WebPageDebuggable.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
 UIProcess/Inspector/WebPageInspectorTargetProxy.cpp
@@ -734,6 +735,8 @@ WebProcess/Inspector/WebInspectorBackendClient.cpp
 WebProcess/Inspector/WebInspectorInternal.cpp
 WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp
 WebProcess/Inspector/WebInspectorUI.cpp
+
+WebProcess/Inspector/WebAssemblyDebugDispatcher.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
 WebProcess/Inspector/WebPageInspectorTarget.cpp
 WebProcess/Inspector/WebPageInspectorTargetController.cpp

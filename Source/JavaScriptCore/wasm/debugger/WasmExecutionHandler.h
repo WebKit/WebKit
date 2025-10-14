@@ -181,7 +181,7 @@ private:
     void sendStopReply(AbstractLocker&);
     void sendReplyOK();
     void sendReply(StringView reply);
-    void sendReply(AbstractLocker&, StringView reply);
+    void sendReplyImpl(AbstractLocker&, StringView reply);
     void sendErrorReply(ProtocolError);
     void handleClientDisconnectionLocked() WTF_REQUIRES_LOCK(m_lock);
 

@@ -97,6 +97,9 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <JavaScriptCore/WasmFaultSignalHandler.h>
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#include <JavaScriptCore/WasmDebugServer.h>
+#endif
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BackForwardCache.h>
@@ -313,6 +316,9 @@ WebProcess::WebProcess()
     , m_viewUpdateDispatcher(*this)
 #endif
     , m_webInspectorInterruptDispatcher(*this)
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    , m_webAssemblyDebugDispatcher(*this)
+#endif
     , m_webLoaderStrategy(makeUniqueRefWithoutRefCountedCheck<WebLoaderStrategy>(*this))
 #if PLATFORM(COCOA) && USE(LIBWEBRTC) && ENABLE(WEB_CODECS)
     , m_remoteVideoCodecFactory(*this)
@@ -427,6 +433,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif // PLATFORM(IOS_FAMILY)
 
     protectedWebInspectorInterruptDispatcher()->initializeConnection(*connection);
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    protectedWebAssemblyDebugDispatcher()->initializeConnection(*connection);
+#endif
 
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
@@ -703,6 +712,17 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     m_shouldInitializeAccessibility = parameters.shouldInitializeAccessibility;
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    if (JSC::Options::enableWasmDebugger()) [[unlikely]] {
+        if (JSC::VM* vm = WebCore::commonVMOrNull()) {
+            if (!JSC::Wasm::DebugServer::singleton().startRWI(vm, [](const String& response) {
+                return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWebAssemblyInspectorResponse(response), 0);
+            }))
+                WEBPROCESS_RELEASE_LOG_ERROR(Inspector, "Failed to start WasmDebugServer in RWI mode");
+        }
+    }
 #endif
 
     WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Presenting processPID=%d", legacyPresentingApplicationPID());

@@ -2260,13 +2260,13 @@
 		FFB951142C043CA800349750 /* OrderedHashTableHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB951132C043CA800349750 /* OrderedHashTableHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */; };
 		FFCC9A412BDD7C4700C75345 /* OrderedHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC9A402BDD7C4700C75345 /* OrderedHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFD49E6E2E276CA10083E383 /* WasmDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5A2E276CA10083E383 /* WasmDebugServer.h */; };
+		FFD49E6E2E276CA10083E383 /* WasmDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5A2E276CA10083E383 /* WasmDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E6F2E276CA10083E383 /* WasmQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E602E276CA10083E383 /* WasmQueryHandler.h */; };
 		FFD49E722E276CA10083E383 /* WasmExecutionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5C2E276CA10083E383 /* WasmExecutionHandler.h */; };
-		FFD49E732E276CA10083E383 /* WasmDebugServerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E642E276CA10083E383 /* WasmDebugServerUtilities.h */; };
+		FFD49E732E276CA10083E383 /* WasmDebugServerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E642E276CA10083E383 /* WasmDebugServerUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E742E276CA10083E383 /* WasmMemoryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5E2E276CA10083E383 /* WasmMemoryHandler.h */; };
 		FFE21FE52CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE21FE32CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h */; };
-		FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */; };
+		FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF3373F2BCDF1240070D04B /* JSCBytecodeCacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF4D5A32CE304CD006EA634 /* DeferredWorkTimerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */

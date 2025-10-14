@@ -36,6 +36,9 @@
 #include "TextCheckerState.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include "WebPageProxyIdentifier.h"
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#include "WebAssemblyDebugDispatcher.h"
+#endif
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardItemIdentifier.h>
@@ -275,6 +278,9 @@ public:
     EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
     Ref<EventDispatcher> protectedEventDispatcher() { return m_eventDispatcher; }
     Ref<WebInspectorInterruptDispatcher> protectedWebInspectorInterruptDispatcher() { return m_webInspectorInterruptDispatcher; }
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    Ref<WebAssemblyDebugDispatcher> protectedWebAssemblyDebugDispatcher() { return m_webAssemblyDebugDispatcher; }
+#endif
 
     NetworkProcessConnection& ensureNetworkProcessConnection();
     Ref<NetworkProcessConnection> ensureProtectedNetworkProcessConnection();
@@ -778,6 +784,9 @@ private:
     ViewUpdateDispatcher m_viewUpdateDispatcher;
 #endif
     WebInspectorInterruptDispatcher m_webInspectorInterruptDispatcher;
+#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+    WebAssemblyDebugDispatcher m_webAssemblyDebugDispatcher;
+#endif
 
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
