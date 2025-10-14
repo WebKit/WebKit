@@ -2234,6 +2234,7 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 
 void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite)
 {
+    WTFLogAlways("(Debug)WebProcessProxy::didStartUsingProcessForSiteIsolation process[%llu] site[%s]", static_cast<long long unsigned>(coreProcessIdentifier().toUInt64()), site ? site->toString().utf8().data() : "NULL");
     if (!site) {
         ASSERT(m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::SharedProcess);
         m_site = makeUnexpected(SiteState::SharedProcess);
