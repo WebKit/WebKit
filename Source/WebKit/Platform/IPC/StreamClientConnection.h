@@ -129,6 +129,7 @@ private:
     using WakeUpServer = StreamClientConnectionBuffer::WakeUpServer;
     void wakeUpServerBatched(WakeUpServer);
     void wakeUpServer(WakeUpServer);
+    WakeUpServer resolveWakeUpServer(WakeUpServer);
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static uintptr_t generateSignpostIdentifier();
@@ -327,9 +328,8 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             return std::nullopt;
 
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
-        wakeUpServer(wakeUpResult);
         if constexpr (T::isReplyStreamEncodable) {
-            auto replySpan = m_buffer.tryAcquireAll(timeout);
+            auto replySpan = m_buffer.tryAcquireAll(resolveWakeUpServer(wakeUpResult), timeout);
             if (!replySpan)
                 return makeUnexpected(Error::FailedToAcquireReplyBufferSpan);
 
@@ -338,8 +338,10 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply || decoder->messageName() == MessageName::CancelSyncMessageReply);
                 return decoder;
             }
-        } else
+        } else {
+            wakeUpServer(wakeUpResult);
             m_buffer.resetClientOffset();
+        }
 
         return m_connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
     }();
@@ -387,6 +389,11 @@ inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint
     auto result = m_buffer.release(encoder.size());
     UNUSED_VARIABLE(result);
     m_batchSize = 0;
+}
+
+inline StreamClientConnection::WakeUpServer StreamClientConnection::resolveWakeUpServer(WakeUpServer wakeUpServer)
+{
+    return (wakeUpServer == WakeUpServer::No && !m_batchSize) ? WakeUpServer::No : WakeUpServer::Yes;
 }
 
 }

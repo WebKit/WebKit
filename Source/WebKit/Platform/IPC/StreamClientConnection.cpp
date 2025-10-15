@@ -139,7 +139,7 @@ void StreamClientConnection::invalidate()
 
 void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)
 {
-    if (wakeUpResult == WakeUpServer::No && !m_batchSize)
+    if (resolveWakeUpServer(wakeUpResult) == WakeUpServer::No)
         return;
     m_buffer.wakeUpServer();
     m_batchSize = 0;
@@ -147,10 +147,12 @@ void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)
 
 void StreamClientConnection::wakeUpServerBatched(WakeUpServer wakeUpResult)
 {
-    if (wakeUpResult == WakeUpServer::Yes || m_batchSize) {
-        m_batchSize++;
-        if (m_batchSize >= m_maxBatchSize)
-            wakeUpServer(WakeUpServer::Yes);
+    if (resolveWakeUpServer(wakeUpResult) == WakeUpServer::No)
+        return;
+    m_batchSize++;
+    if (m_batchSize >= m_maxBatchSize) {
+        m_buffer.wakeUpServer();
+        m_batchSize = 0;
     }
 }
 

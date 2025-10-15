@@ -459,6 +459,7 @@
         MSC_mk_timer_destroy
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
+        MSC_semaphore_timedwait_signal_trap
         MSC_semaphore_wait_trap
         MSC_swtch_pri
         MSC_syscall_thread_switch
