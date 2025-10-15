@@ -15,15 +15,10 @@ bridge/objc/objc_utility.mm
 crypto/cocoa/SerializedCryptoKeyWrapMac.mm
 editing/SmartReplaceCF.cpp
 editing/cocoa/DataDetection.mm
-[ Mac ] editing/cocoa/DictionaryLookup.mm
 editing/cocoa/EditingHTMLConverter.mm
 editing/cocoa/FontAttributeChangesCocoa.mm
-editing/cocoa/FontAttributesCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm
 editing/cocoa/WebContentReaderCocoa.mm
-[ Mac ] editing/mac/EditorMac.mm
-[ Mac ] editing/mac/TextAlternativeWithRange.mm
-[ Mac ] editing/mac/TextUndoInsertionMarkupMac.mm
 inspector/agents/page/PageTimelineAgent.cpp
 page/cocoa/PageCocoa.mm
 page/cocoa/WebTextIndicatorLayer.mm
@@ -90,7 +85,6 @@ platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/coreimage/FilterImageCoreImage.mm
 platform/graphics/coreimage/SourceGraphicCoreImageApplier.mm
-[ Mac ] platform/graphics/mac/ColorMac.mm
 [ Mac ] platform/graphics/mac/PDFDocumentImageMac.mm
 [ Mac ] platform/graphics/mac/ScrollbarTrackCornerSystemImageMac.mm
 [ Mac ] platform/graphics/mac/controls/InnerSpinButtonMac.mm
