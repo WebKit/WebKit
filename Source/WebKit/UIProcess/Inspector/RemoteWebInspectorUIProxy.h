@@ -106,6 +106,7 @@ public:
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
+    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
     
 #if PLATFORM(MAC)
@@ -134,10 +135,6 @@ public:
 private:
     RemoteWebInspectorUIProxy();
     RefPtr<WebPageProxy> protectedInspectorPage();
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController();
-#endif
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

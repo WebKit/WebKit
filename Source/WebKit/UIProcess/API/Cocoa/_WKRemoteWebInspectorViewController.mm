@@ -69,17 +69,17 @@ public:
 
     void sendMessageToBackend(const String& message) override
     {
-        [m_controller sendMessageToBackend:message.createNSString().get()];
+        [m_controller.get() sendMessageToBackend:message.createNSString().get()];
     }
 
     void closeFromFrontend() override
     {
-        [m_controller closeFromFrontend];
+        [m_controller.get() closeFromFrontend];
     }
     
     Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy& inspector) override
     {
-        return downcast<API::InspectorConfiguration>([[m_controller configuration] _apiObject]);
+        return downcast<API::InspectorConfiguration>([[m_controller.get() configuration] _apiObject]);
     }
 
 private:
@@ -89,7 +89,7 @@ private:
 } // namespace WebKit
 
 @implementation _WKRemoteWebInspectorViewController {
-    std::unique_ptr<WebKit::_WKRemoteWebInspectorUIProxyClient> m_remoteInspectorClient;
+    const std::unique_ptr<WebKit::_WKRemoteWebInspectorUIProxyClient> m_remoteInspectorClient;
     _WKInspectorConfiguration *_configuration;
 }
 
@@ -100,8 +100,8 @@ private:
 
     _configuration = [configuration copy];
 
-    m_remoteInspectorProxy = WebKit::RemoteWebInspectorUIProxy::create();
-    m_remoteInspectorClient = makeUnique<WebKit::_WKRemoteWebInspectorUIProxyClient>(self);
+    lazyInitialize(m_remoteInspectorProxy, WebKit::RemoteWebInspectorUIProxy::create());
+    lazyInitialize(m_remoteInspectorClient, makeUnique<WebKit::_WKRemoteWebInspectorUIProxyClient>(self));
     m_remoteInspectorProxy->setClient(m_remoteInspectorClient.get());
 
     return self;
@@ -110,7 +110,7 @@ private:
 - (void)dealloc
 {
     m_remoteInspectorProxy->setClient(nullptr);
-    [_configuration release];
+    SUPPRESS_UNRETAINED_ARG [_configuration release];
     [super dealloc];
 }
 
@@ -148,14 +148,16 @@ private:
 
 - (void)sendMessageToBackend:(NSString *)message
 {
-    if (_delegate && [_delegate respondsToSelector:@selector(inspectorViewController:sendMessageToBackend:)])
-        [_delegate inspectorViewController:self sendMessageToBackend:message];
+    RetainPtr delegate = _delegate;
+    if (delegate && [delegate respondsToSelector:@selector(inspectorViewController:sendMessageToBackend:)])
+        [delegate inspectorViewController:self sendMessageToBackend:message];
 }
 
 - (void)closeFromFrontend
 {
-    if (_delegate && [_delegate respondsToSelector:@selector(inspectorViewControllerInspectorDidClose:)])
-        [_delegate inspectorViewControllerInspectorDidClose:self];
+    RetainPtr delegate = _delegate;
+    if (delegate && [delegate respondsToSelector:@selector(inspectorViewControllerInspectorDidClose:)])
+        [delegate inspectorViewControllerInspectorDidClose:self];
 }
 
 // MARK: _WKRemoteWebInspectorViewControllerPrivate methods
@@ -182,13 +184,13 @@ private:
         return;
     }
 
-    m_remoteInspectorProxy->extensionController()->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
+    m_remoteInspectorProxy->protectedExtensionController()->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<RefPtr<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
         }
 
-        capturedBlock(nil, wrapper(result.value()));
+        capturedBlock(nil, protectedWrapper(result.value()).get());
     });
 #else
     completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]).get(), nil);
@@ -203,7 +205,7 @@ private:
         completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get());
         return;
     }
-    m_remoteInspectorProxy->extensionController()->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
+    m_remoteInspectorProxy->protectedExtensionController()->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;
@@ -235,7 +237,7 @@ private:
         return;
     }
 
-    m_remoteInspectorProxy->extensionController()->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
+    m_remoteInspectorProxy->protectedExtensionController()->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;

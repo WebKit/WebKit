@@ -64,7 +64,7 @@ RefPtr<WebPageProxy> RemoteWebInspectorUIProxy::protectedInspectorPage()
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-RefPtr<WebInspectorUIExtensionControllerProxy> RemoteWebInspectorUIProxy::protectedExtensionController()
+RefPtr<WebInspectorUIExtensionControllerProxy> RemoteWebInspectorUIProxy::protectedExtensionController() const
 {
     return m_extensionController;
 }

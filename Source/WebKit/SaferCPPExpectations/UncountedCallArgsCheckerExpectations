@@ -73,7 +73,6 @@ WebProcess/cocoa/TextTrackRepresentationCocoa.mm
 WebProcess/cocoa/VideoPresentationManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
 [ Mac ] UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm
-[ Mac ] UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm
 [ Mac ] WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsInspectedWindowCocoa.mm
 [ Mac ] WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm
 [ Mac ] WebProcess/Inspector/WebInspectorUIExtensionController.cpp

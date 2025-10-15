@@ -36,7 +36,6 @@ WebProcess/cocoa/PlaybackSessionManager.mm
 WebProcess/cocoa/VideoPresentationManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
 [ Mac ] Platform/cocoa/_WKWebViewTextInputNotifications.mm
-[ Mac ] UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm
 [ Mac ] WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm
 [ Mac ] WebProcess/WebPage/MomentumEventDispatcher.cpp
 [ Mac ] WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
