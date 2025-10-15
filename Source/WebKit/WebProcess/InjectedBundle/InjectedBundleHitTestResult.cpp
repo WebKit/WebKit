@@ -52,12 +52,12 @@ Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const HitTe
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.innerNonSharedNode());
+    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.protectedInnerNonSharedNode().get());
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle() const
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.URLElement());
+    return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.protectedURLElement().get());
 }
 
 RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const
@@ -156,7 +156,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!coreFrame)
         return imageRect;
     
-    auto* view = coreFrame->view();
+    RefPtr view = coreFrame->view();
     if (!view)
         return imageRect;
     

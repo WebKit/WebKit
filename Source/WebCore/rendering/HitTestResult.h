@@ -62,11 +62,13 @@ public:
 
     void setInnerNonSharedNode(Node*);
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
+    RefPtr<Node> protectedInnerNonSharedNode() const { return m_innerNonSharedNode.get(); }
 
     WEBCORE_EXPORT Element* innerNonSharedElement() const;
 
     void setURLElement(Element*);
     Element* URLElement() const { return m_innerURLElement.get(); }
+    RefPtr<Element> protectedURLElement() const { return m_innerURLElement.get(); }
 
     void setScrollbar(RefPtr<Scrollbar>&&);
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
