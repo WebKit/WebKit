@@ -43,8 +43,11 @@ struct FontSizeAdjust {
         IcHeight
     };
 
-    std::optional<float> resolve(float computedSize, const FontMetrics& fontMetrics) const
+    std::optional<float> resolve(float size, const FontMetrics& fontMetrics) const
     {
+        if (!size)
+            return std::nullopt;
+
         std::optional<float> metricValue;
         switch (metric) {
         case FontSizeAdjust::Metric::CapHeight:
@@ -53,19 +56,23 @@ struct FontSizeAdjust {
         case FontSizeAdjust::Metric::ChWidth:
             metricValue = fontMetrics.zeroWidth();
             break;
-        // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
         case FontSizeAdjust::Metric::IcWidth:
-        case FontSizeAdjust::Metric::IcHeight:
             metricValue = fontMetrics.ideogramWidth();
+            break;
+        case FontSizeAdjust::Metric::IcHeight:
+            metricValue = fontMetrics.ideogramHeight();
             break;
         case FontSizeAdjust::Metric::ExHeight:
         default:
             metricValue = fontMetrics.xHeight();
         }
 
-        return metricValue.has_value() && computedSize
-            ? std::make_optional(*metricValue / computedSize)
-            : std::nullopt;
+        // We use the size as fallback values when required font metrics are missing.
+        // Thus, we return 1.0 (= size / size) in such cases.
+        // https://github.com/w3c/csswg-drafts/issues/6384
+        return metricValue.has_value()
+            ? std::make_optional(*metricValue / size)
+            : std::make_optional(1.0f);
     }
 
     bool isNone() const { return !value && type != ValueType::FromFont; }

@@ -194,6 +194,7 @@ public:
     };
 
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+    std::optional<float> heightForGlyph(Glyph) const;
 
     Path pathForGlyph(Glyph) const;
 
@@ -278,6 +279,7 @@ private:
 
     void platformInit();
     void platformGlyphInit();
+    void platformGlyphVerticalDataInit();
     void platformCharWidthInit();
     void platformDestroy();
 
@@ -348,6 +350,7 @@ private:
     mutable RefPtr<OpenTypeMathData> m_mathData;
 #endif
 #if ENABLE(OPENTYPE_VERTICAL)
+    std::once_flag m_verticalDataOnceFlag;
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
 
@@ -516,8 +519,8 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
         return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
 
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (m_verticalData)
-        width = m_verticalData->advanceHeight(this, glyph);
+    if (m_platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback())
+        width = heightForGlyph(glyph).value_or(platformWidthForGlyph(glyph));
     else
 #endif
         width = platformWidthForGlyph(glyph);
