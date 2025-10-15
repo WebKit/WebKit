@@ -84,6 +84,7 @@ private:
         GRefPtr<GstCaps> caps;
         GRefPtr<GstCaps> finalCaps;
         FloatSize presentationSize;
+        bool hasReceivedEos;
 
         // Needed by some formats. To simplify the code, parser/encoder can be a GstIdentity when not needed.
         GRefPtr<GstElement> parser;

@@ -785,6 +785,9 @@ void AppendPipeline::pushNewBuffer(GRefPtr<GstBuffer>&& buffer)
     // AppendPipeline, and within a stream (the portion of a pipeline covered by the same streaming thread, in this case
     // the whole pipeline) a buffer is guaranteed not to be processed by downstream until processing of the previous
     // buffer has completed.
+    //
+    // This additional buffer may not be processed if a pipeline element (e.g. the demux) generates EOS events, which
+    // is handled separately by hooking into the EOS signal on the sink.
 
     GstBuffer* endOfAppendBuffer = gst_buffer_new();
     gst_buffer_add_meta(endOfAppendBuffer, s_webKitEndOfAppendMetaInfo, nullptr);
@@ -1292,6 +1295,30 @@ void AppendPipeline::hookTrackEvents(Track& track)
         AppendPipeline& appendPipeline;
         Track& track;
     };
+
+    g_signal_connect_data(track.appsink.get(), "eos", G_CALLBACK(+[](GstElement*, Closure* closure) {
+        // Internal elements of the track's pipeline can generate an EOS (e.g. the demux). If all tracks internally hit
+        // an EOS condition, no more frames will be pulled from the source, and the endOfAppendBuffer will never be
+        // processed.
+        AppendPipeline& appendPipeline = closure->appendPipeline;
+        Track& track = closure->track;
+        GST_DEBUG_OBJECT(appendPipeline.pipeline(), "Appsink reached EOS, handling end of append");
+        track.hasReceivedEos = true;
+        for (std::unique_ptr<Track>& track : appendPipeline.m_tracks) {
+            if (!track->hasReceivedEos)
+                return;
+        }
+        appendPipeline.m_taskQueue.enqueueTask([&appendPipeline] {
+            // When the EOS event is fired, it might be because of an error, which will be detected next. So we delay
+            // once more to check if the EOS is due to error before triggering the end of append handling.
+            appendPipeline.m_taskQueue.enqueueTask([&appendPipeline] {
+                if (appendPipeline.m_errorReceived)
+                    return;
+                appendPipeline.handleEndOfAppend();
+            });
+        });
+    }), new Closure { *this, track }, Closure::destruct, static_cast<GConnectFlags>(0));
+
 
     g_signal_connect_data(track.appsinkPad.get(), "notify::caps", G_CALLBACK(+[]([[maybe_unused]] GObject* object, GParamSpec*, Closure* closure) {
         AppendPipeline& appendPipeline = closure->appendPipeline;
