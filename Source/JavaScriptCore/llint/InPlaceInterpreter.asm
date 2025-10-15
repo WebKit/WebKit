@@ -1063,9 +1063,19 @@ end
     cCall4(_operationWasmToJSExitMarshalArguments)
     btpnz r1, .oom
 
+if ASSERT_ENABLED
+    # Assert that upper bits of r0 are clean (bool should only use low byte)
+    # On X86_64, r0 is t0/RAX. We check that bits 8-31 are zero.
+    move r0, t2
+    rshifti 8, t2
+    bieq t2, 0, .upperBitsClean
+    break
+.upperBitsClean:
+end
+
     bineq r0, 0, .safe
-    move wasmInstance, r0
-    move (constexpr Wasm::ExceptionType::TypeErrorInvalidValueUse), r1
+    move wasmInstance, a0
+    move (constexpr Wasm::ExceptionType::TypeErrorInvalidValueUse), a1
     cCall2(_operationWasmToJSException)
     jumpToException()
     break

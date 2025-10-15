@@ -55,10 +55,15 @@ concept canMakeExceptionOperationResult =
 #if USE(JSVALUE64)
 
 template<typename T>
+concept shouldZeroExtendInExceptionResult = sizeof(T) < sizeof(UCPURegister) && std::is_integral_v<T>;
+
+template<typename T>
 struct ExceptionOperationResult {
     using ResultType = T;
     static_assert(assertNotOperationSignature<T>);
-    T value;
+    // Use UCPURegister for small integral types to ensure full register width is written,
+    // avoiding garbage in upper bits of return register. This matches the JSVALUE32_64 behavior.
+    std::conditional_t<shouldZeroExtendInExceptionResult<T>, UCPURegister, T> value;
     Exception* exception;
 };
 
@@ -99,7 +104,16 @@ struct ExceptionOperationImplicitResult {
     {
         // For whatever reason aggregate initialization doesn't seem to work here.
         ExceptionOperationResult<To> result;
-        result.value = value;
+        // For small integral types, explicitly zero-extend to match JSVALUE32_64 behavior.
+        // We cast to the corresponding unsigned type first to ensure zero-extension rather than sign-extension.
+        // Special case bool since std::make_unsigned_t doesn't work with bool.
+        if constexpr (shouldZeroExtendInExceptionResult<From>) {
+            if constexpr (std::is_same_v<From, bool>)
+                result.value = static_cast<UCPURegister>(value);
+            else
+                result.value = static_cast<std::make_unsigned_t<From>>(value);
+        } else
+            result.value = value;
         result.exception = exception;
         return result;
     }
