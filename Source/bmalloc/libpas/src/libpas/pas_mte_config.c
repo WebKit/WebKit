@@ -151,10 +151,7 @@ static void pas_mte_do_initialization(void)
             *enabled_byte = 1;
 #endif
             *hardened_byte = 0;
-            // FIXME: rdar://159974195
-            bmalloc_common_primitive_heap.is_non_compact_heap = false;
         }
-
 #ifndef NDEBUG
         if (is_env_true("MTE_disableForWebContent")) {
             PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
