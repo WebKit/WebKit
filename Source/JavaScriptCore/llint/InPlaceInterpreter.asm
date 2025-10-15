@@ -1063,7 +1063,6 @@ end
     cCall4(_operationWasmToJSExitMarshalArguments)
     btpnz r1, .oom
 
-if ASSERT_ENABLED
     # Assert that upper bits of r0 are clean (bool should only use low byte)
     # On X86_64, r0 is t0/RAX. We check that bits 8-31 are zero.
     move r0, t2
@@ -1071,7 +1070,6 @@ if ASSERT_ENABLED
     bieq t2, 0, .upperBitsClean
     break
 .upperBitsClean:
-end
 
     bineq r0, 0, .safe
     move wasmInstance, a0
