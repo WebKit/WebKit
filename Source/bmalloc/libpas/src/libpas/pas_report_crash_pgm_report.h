@@ -79,6 +79,7 @@ struct pas_report_crash_pgm_report {
     pas_backtrace_metadata* dealloc_backtrace;
     bool pgm_has_been_used;
 };
+
 #endif /* __APPLE__ */
 
 #ifdef __cplusplus

@@ -34,6 +34,7 @@ PAS_IGNORE_WARNINGS_BEGIN("missing-field-initializers")
 #include "bmalloc_heap_config.h"
 #include "bmalloc_heap_innards.h"
 #include "pas_deallocate.h"
+#include "pas_mar_registry.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
 #include "pas_try_allocate_intrinsic.h"
@@ -63,14 +64,27 @@ PAS_API void* bmalloc_try_allocate_auxiliary_with_alignment_casual(
 PAS_API void* bmalloc_allocate_auxiliary_with_alignment_casual(
     pas_primitive_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
 
+#if PAS_OS(DARWIN)
+#define PAS_MAR_SHOULD_LOG(allocation_mode, address) (pas_mar_enabled && allocation_mode == pas_non_compact_allocation_mode && pas_mar_is_address_in_qualifying_page(address))
+#define PAS_MAR_TRACK_ALLOCATION(address, size) pas_mar_did_allocate(&pas_mar_global_registry, address, size)
+#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(address, size) pas_mar_did_allocate_and_zero(&pas_mar_global_registry, address, size)
+#else
+#define PAS_MAR_SHOULD_LOG(allocation_mode, address) false
+#define PAS_MAR_TRACK_ALLOCATION(address, size) address
+#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size) ((void*) result.begin)
+#endif
+
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_inline(pas_primitive_heap_ref* heap_ref,
                                                                      size_t size,
                                                                      pas_allocation_mode allocation_mode)
 {
     pas_allocation_result result;
     result = bmalloc_try_allocate_auxiliary_impl_inline_only(heap_ref, size, 1, allocation_mode);
-    if (PAS_LIKELY(result.did_succeed))
+    if (PAS_LIKELY(result.did_succeed)) {
+        if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+            return PAS_MAR_TRACK_ALLOCATION((void*)result.begin, size);
         return (void*)result.begin;
+    }
     return bmalloc_try_allocate_auxiliary_with_alignment_casual(heap_ref, size, 1, allocation_mode);
 }
 
@@ -80,8 +94,11 @@ static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_inline(pas_primitive_h
 {
     pas_allocation_result result;
     result = bmalloc_allocate_auxiliary_impl_inline_only(heap_ref, size, 1, allocation_mode);
-    if (PAS_LIKELY(result.did_succeed))
+    if (PAS_LIKELY(result.did_succeed)) {
+        if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+            return PAS_MAR_TRACK_ALLOCATION((void*) result.begin, size);
         return (void*)result.begin;
+    }
     return bmalloc_allocate_auxiliary_with_alignment_casual(heap_ref, size, 1, allocation_mode);
 }
 
@@ -90,18 +107,22 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_zeroed_inline(
     size_t size,
     pas_allocation_mode allocation_mode)
 {
-    return (void*)pas_allocation_result_zero(
-        bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1, allocation_mode),
-        size).begin;
+    pas_allocation_result result;
+    result = bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1, allocation_mode);
+    if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
+    return (void*)pas_allocation_result_zero(result, size).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_zeroed_inline(pas_primitive_heap_ref* heap_ref,
                                                                         size_t size,
                                                                         pas_allocation_mode allocation_mode)
 {
-    return (void*)pas_allocation_result_zero(
-        bmalloc_allocate_auxiliary_impl(heap_ref, size, 1, allocation_mode),
-        size).begin;
+    pas_allocation_result result;
+    result = bmalloc_allocate_auxiliary_impl(heap_ref, size, 1, allocation_mode);
+    if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
+    return (void*)pas_allocation_result_zero(result, size).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -248,8 +269,11 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_inline(size_t size, pas_allo
         return (void*)bmalloc_try_allocate_auxiliary_inline(&bmalloc_compact_primitive_heap_ref, size, allocation_mode);
     pas_allocation_result result;
     result = bmalloc_try_allocate_impl_inline_only(size, 1, allocation_mode);
-    if (PAS_LIKELY(result.did_succeed))
+    if (PAS_LIKELY(result.did_succeed)) {
+        if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+            return PAS_MAR_TRACK_ALLOCATION((void*) result.begin, size);
         return (void*)result.begin;
+    }
     return bmalloc_try_allocate_casual(size, allocation_mode);
 }
 
@@ -273,18 +297,22 @@ bmalloc_try_allocate_zeroed_with_alignment_inline(size_t size, size_t alignment,
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_inline(size_t size, pas_allocation_mode allocation_mode)
 {
+    pas_allocation_result result;
     if (allocation_mode == pas_always_compact_allocation_mode && PAS_USE_COMPACT_ONLY_HEAP)
         return (void*)bmalloc_try_allocate_auxiliary_zeroed_inline(&bmalloc_compact_primitive_heap_ref, size, allocation_mode);
-    return (void*)pas_allocation_result_zero(
-        bmalloc_try_allocate_impl(size, 1, allocation_mode),
-        size).begin;
+
+    result = bmalloc_try_allocate_impl(size, 1, allocation_mode);
+    if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
+        return PAS_MAR_TRACK_ALLOCATION((void*)result.begin, size);
+    return (void*)pas_allocation_result_zero(result, size).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_inline(size_t size, pas_allocation_mode allocation_mode)
 {
+    pas_allocation_result result;
     if (allocation_mode == pas_always_compact_allocation_mode && PAS_USE_COMPACT_ONLY_HEAP)
         return (void*)bmalloc_allocate_auxiliary_inline(&bmalloc_compact_primitive_heap_ref, size, allocation_mode);
-    pas_allocation_result result;
+
     result = bmalloc_allocate_impl_inline_only(size, 1, allocation_mode);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;

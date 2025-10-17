@@ -148,6 +148,8 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.c
     libpas/src/libpas/pas_log.c
     libpas/src/libpas/pas_malloc_stack_logging.c
+    libpas/src/libpas/pas_mar_registry.c
+    libpas/src/libpas/pas_mar_report_crash.c
     libpas/src/libpas/pas_medium_megapage_cache.c
     libpas/src/libpas/pas_megapage_cache.c
     libpas/src/libpas/pas_monotonic_time.c
@@ -547,6 +549,9 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_lock.h
     libpas/src/libpas/pas_log.h
     libpas/src/libpas/pas_malloc_stack_logging.h
+    libpas/src/libpas/pas_mar_crash_reporter_report.h
+    libpas/src/libpas/pas_mar_registry.h
+    libpas/src/libpas/pas_mar_report_crash.h
     libpas/src/libpas/pas_medium_megapage_cache.h
     libpas/src/libpas/pas_megapage_cache.h
     libpas/src/libpas/pas_min_heap.h

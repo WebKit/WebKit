@@ -82,6 +82,11 @@ framework module JavaScriptCore_Private [system] {
         export *
     }
 
+    explicit module MARReportCrashPrivate {
+        header "MARReportCrashPrivate.h"
+        export *
+    }
+
     explicit module PASReportCrashPrivate {
         header "PASReportCrashPrivate.h"
         export *
@@ -114,6 +119,7 @@ framework module JavaScriptCore_Private [system] {
         exclude header "JSVirtualMachinePrivate.h"
         exclude header "JSWeakPrivate.h"
         exclude header "JSWeakObjectMapRefPrivate.h"
+        exclude header "MARReportCrashPrivate.h"
         exclude header "PASReportCrashPrivate.h"
 
         explicit module * {

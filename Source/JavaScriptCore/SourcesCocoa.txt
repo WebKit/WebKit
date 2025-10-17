@@ -34,5 +34,6 @@ API/JSVirtualMachine.mm @nonARC
 API/JSWrapperMap.mm @nonARC
 API/ObjCCallbackFunction.mm @nonARC
 API/PASReportCrashPrivate.cpp
+API/MARReportCrashPrivate.cpp
 
 // Use inspector/remote/SourcesCocoa.txt for Remote Inspector files

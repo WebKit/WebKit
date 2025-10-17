@@ -36,6 +36,7 @@
 #include "pas_heap_table.h"
 #include "pas_immortal_heap.h"
 #include "pas_log.h"
+#include "pas_mar_registry.h"
 #include "pas_monotonic_time.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
@@ -83,6 +84,11 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
     // PGM being enabled in the config does not guarantee it will be called during runtime.
     if (config->pgm_enabled)
         pas_probabilistic_guard_malloc_initialize_pgm();
+
+#if PAS_OS(DARWIN)
+    static pthread_once_t mar_control = PTHREAD_ONCE_INIT;
+    pthread_once(&mar_control, pas_mar_initialize);
+#endif /* PAS_OS(DARWIN) */
     
     pas_all_heaps_add_heap(heap);
     
