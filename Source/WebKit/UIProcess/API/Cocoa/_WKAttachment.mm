@@ -64,10 +64,15 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     return self;
 }
 
+- (Ref<const API::Attachment>)_protectedAttachment
+{
+    return *_attachment;
+}
+
 - (NSData *)data
 {
     NSData *result = nil;
-    _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+    self._protectedAttachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
         // FIXME: Handle attachments backed by NSFileWrappers that represent directories.
         result = fileWrapper.isRegularFile ? fileWrapper.regularFileContents : nil;
     });
@@ -77,7 +82,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 - (NSString *)name
 {
     NSString *result = nil;
-    _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+    self._protectedAttachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
         result = fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename;
     });
     return result;
@@ -95,7 +100,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     // thumbnailing. This should be replaced with a method that instead takes a callback, and
     // invokes with callback with a file wrapper in a way that guarantees thread safety.
     NSFileWrapper *result = nil;
-    _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+    self._protectedAttachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
         result = fileWrapper;
     });
     return result;
@@ -123,7 +128,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKAttachment.class, self))
         return;
 
-    _attachment->~Attachment();
+    SUPPRESS_UNCOUNTED_ARG _attachment->~Attachment();
 
     [super dealloc];
 }
@@ -156,9 +161,10 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
     // This file path member is only populated when the attachment is generated upon dropping files. When data is specified via NSFileWrapper
     // from the SPI client, the corresponding file path of the data is unknown, if it even exists at all.
-    _attachment->setFilePath({ });
-    _attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
-    _attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] {
+    Ref attachment = *_attachment;
+    attachment->setFilePath({ });
+    attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    attachment->updateAttributes([capturedBlock = makeBlockPtr(completionHandler)] {
         if (capturedBlock)
             capturedBlock(nil);
     });
