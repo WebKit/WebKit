@@ -31,8 +31,11 @@
 #import "WebKitVersionChecks.h"
 #import "WebView.h"
 #import <WebCore/FrameDestructionObserverInlines.h>
+#import <wtf/TZoneMallocInlines.h>
 
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDocumentLoaderMac);
 
 WebDocumentLoaderMac::WebDocumentLoaderMac(ResourceRequest&& request, SubstituteData&& substituteData)
     : DocumentLoader(WTFMove(request), WTFMove(substituteData))

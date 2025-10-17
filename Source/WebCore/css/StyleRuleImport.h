@@ -70,7 +70,9 @@ public:
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it
     // to avoid adding a vptr to StyleRuleImport.
-    class ImportedStyleSheetClient final : public CachedStyleSheetClient {
+    class ImportedStyleSheetClient final : public CachedStyleSheetClient, public CanMakeCheckedPtr<ImportedStyleSheetClient> {
+        WTF_MAKE_TZONE_ALLOCATED(ImportedStyleSheetClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImportedStyleSheetClient);
     public:
         ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
         virtual ~ImportedStyleSheetClient() = default;
@@ -78,6 +80,14 @@ private:
         {
             m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
+
+        // CachedStyleSheetClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
     private:
         StyleRuleImport* m_ownerRule;
     };

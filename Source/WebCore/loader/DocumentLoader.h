@@ -58,6 +58,7 @@
 #include <WebCore/StyleSheetContents.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/Timer.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
@@ -183,8 +184,10 @@ class DocumentLoader
 #if ENABLE(CONTENT_FILTERING)
     , public ContentFilterClient
 #endif
+    , public CanMakeCheckedPtr<DocumentLoader>
     , public CachedRawResourceClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentLoader);
     friend class ContentFilter;
 public:
 #if ENABLE(CONTENT_FILTERING)
@@ -198,6 +201,13 @@ public:
     }
 
     USING_CAN_MAKE_WEAKPTR(CachedRawResourceClient);
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 

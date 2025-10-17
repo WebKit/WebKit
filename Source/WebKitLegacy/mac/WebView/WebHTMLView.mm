@@ -829,10 +829,22 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = WebCore::PrintContext::max
 @implementation WebCoreScrollView
 @end
 
+class ConcreteCachedImageClient final : public WebCore::CachedImageClient, public CanMakeCheckedPtr<ConcreteCachedImageClient> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ConcreteCachedImageClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ConcreteCachedImageClient);
+public:
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+};
+
 // We need this to be able to safely reference the CachedImage for the promised drag data
-static WebCore::CachedImageClient& promisedDataClient()
+static ConcreteCachedImageClient& promisedDataClient()
 {
-    static NeverDestroyed<WebCore::CachedImageClient> staticCachedResourceClient;
+    static NeverDestroyed<ConcreteCachedImageClient> staticCachedResourceClient;
     return staticCachedResourceClient.get();
 }
 

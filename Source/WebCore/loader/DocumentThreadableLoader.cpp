@@ -442,7 +442,13 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
 void DocumentThreadableLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    didReceiveData(buffer);
+
+    // Run asynchronously since to avoid destroying `this` synchronously, in case
+    // there are CheckedPtrs on the stack.
+    callOnMainThread([weakThis = WeakPtr { *this }, buffer = Ref { buffer }]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceiveData(buffer);
+    });
 }
 
 void DocumentThreadableLoader::didReceiveData(const SharedBuffer& buffer)
@@ -475,10 +481,17 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
     ASSERT(m_client);
     ASSERT_UNUSED(resource, &resource == m_resource);
 
-    if (m_resource->errorOccurred())
-        didFail(m_resource->resourceLoaderIdentifier(), m_resource->resourceError());
-    else
-        didFinishLoading(m_resource->resourceLoaderIdentifier(), metrics);
+    // Run asynchronously since to avoid destroying `this` synchronously, in case
+    // there are CheckedPtrs on the stack.
+    callOnMainThread([weakThis = WeakPtr { *this }, metrics]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (protectedThis->m_resource->errorOccurred())
+            protectedThis->didFail(protectedThis->m_resource->resourceLoaderIdentifier(), protectedThis->m_resource->resourceError());
+        else
+            protectedThis->didFinishLoading(protectedThis->m_resource->resourceLoaderIdentifier(), metrics);
+    });
 }
 
 void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)

@@ -102,7 +102,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     String clientOrigin = m_document->securityOrigin().toString();
 
     bool isAppInitiated = true;
-    if (auto* documentLoader = m_document->loader())
+    if (RefPtr documentLoader = m_document->loader())
         isAppInitiated = documentLoader->lastNavigationWasAppInitiated();
 
     m_handshake = makeUnique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies, isAppInitiated);

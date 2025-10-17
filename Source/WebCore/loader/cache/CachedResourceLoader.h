@@ -176,6 +176,7 @@ public:
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
 
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
+    CheckedRef<KeepaliveRequestTracker> checkedKeepaliveRequestTracker() { return m_keepaliveRequestTracker; }
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 

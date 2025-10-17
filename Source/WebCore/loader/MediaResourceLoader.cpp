@@ -361,14 +361,20 @@ void MediaResource::notifyFinished(CachedResource& resource, const NetworkLoadMe
 
     ASSERT_UNUSED(resource, &resource == m_resource);
 
-    Ref protectedThis { *this };
-    if (RefPtr client = this->client()) {
-        if (m_resource->loadFailedOrCanceled())
-            client->loadFailed(*this, m_resource->resourceError());
-        else
-            client->loadFinished(*this, metrics);
-    }
-    ensureShutdown();
+    // Run asynchronously since to avoid destroying `this` synchronously, in case
+    // there are CheckedPtrs on the stack.
+    callOnMainThread([weakThis = WeakPtr { *this }, metrics]() mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (RefPtr client = protectedThis->client()) {
+            if (protectedThis->m_resource->loadFailedOrCanceled())
+                client->loadFailed(*protectedThis, protectedThis->m_resource->resourceError());
+            else
+                client->loadFinished(*protectedThis, metrics);
+        }
+        protectedThis->ensureShutdown();
+    });
 }
 
 void MediaResource::ensureShutdown()

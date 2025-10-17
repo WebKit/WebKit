@@ -38,7 +38,9 @@ namespace WebCore {
 class ResourceRequest;
 }
 
-class WebDocumentLoaderMac : public WebCore::DocumentLoader {
+class WebDocumentLoaderMac final : public WebCore::DocumentLoader {
+    WTF_MAKE_TZONE_ALLOCATED(WebDocumentLoaderMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebDocumentLoaderMac);
 public:
     static Ref<WebDocumentLoaderMac> create(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& data)
     {

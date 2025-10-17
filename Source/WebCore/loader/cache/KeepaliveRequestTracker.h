@@ -32,10 +32,19 @@
 
 namespace WebCore {
 
-class KeepaliveRequestTracker final : public CachedRawResourceClient {
+class KeepaliveRequestTracker final : public CachedRawResourceClient, public CanMakeCheckedPtr<KeepaliveRequestTracker> {
+    WTF_MAKE_TZONE_ALLOCATED(KeepaliveRequestTracker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(KeepaliveRequestTracker);
 public:
     ~KeepaliveRequestTracker();
     bool tryRegisterRequest(CachedResource&);
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     // CachedRawResourceClient.

@@ -37,15 +37,7 @@
 #include <WebCore/LinkLoaderClient.h>
 #include <WebCore/LinkRelAttribute.h>
 #include <WebCore/ReferrerPolicy.h>
-
-namespace WebCore {
-class LinkLoader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LinkLoader> : std::true_type { };
-}
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -66,10 +58,19 @@ struct LinkLoadParameters {
     RequestPriority fetchPriority { RequestPriority::Auto };
 };
 
-class LinkLoader : public CachedResourceClient {
+class LinkLoader final : public CachedResourceClient, public CanMakeCheckedPtr<LinkLoader> {
+    WTF_MAKE_TZONE_ALLOCATED(LinkLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkLoader);
 public:
     explicit LinkLoader(LinkLoaderClient&);
     virtual ~LinkLoader();
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void loadLink(const LinkLoadParameters&, Document&);
     enum class ShouldLog : bool { No, Yes };

@@ -29,6 +29,7 @@
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/CachedScriptFetcher.h>
 #include <WebCore/ModuleScriptLoader.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,11 +46,20 @@ class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
 
-class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedResourceClient {
+class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedResourceClient, public CanMakeCheckedPtr<CachedModuleScriptLoader> {
+    WTF_MAKE_TZONE_ALLOCATED(CachedModuleScriptLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedModuleScriptLoader);
 public:
     static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     virtual ~CachedModuleScriptLoader();
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>);
 

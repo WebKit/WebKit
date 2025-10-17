@@ -37,6 +37,7 @@
 #include "CachedScript.h"
 #include <WebCore/CachedStyleSheetClient.h>
 #include "CachedTextTrack.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -75,8 +76,9 @@ private:
     CachedResourceHandle<CachedResource> m_resource;
 };
 
-class LinkPreloadDefaultResourceClient : public LinkPreloadResourceClient, CachedResourceClient {
+class LinkPreloadDefaultResourceClient final : public LinkPreloadResourceClient, CachedResourceClient, public CanMakeCheckedPtr<LinkPreloadDefaultResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadDefaultResourceClient, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadDefaultResourceClient);
 public:
     LinkPreloadDefaultResourceClient(LinkLoader& loader, CachedResource& resource)
         : LinkPreloadResourceClient(loader, resource)
@@ -84,20 +86,35 @@ public:
         addResource(*this);
     }
 
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
 private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadStyleResourceClient : public LinkPreloadResourceClient, public CachedStyleSheetClient {
+class LinkPreloadStyleResourceClient final : public LinkPreloadResourceClient, public CachedStyleSheetClient, public CanMakeCheckedPtr<LinkPreloadStyleResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadStyleResourceClient, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadStyleResourceClient);
 public:
     LinkPreloadStyleResourceClient(LinkLoader& loader, CachedCSSStyleSheet& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
+
+    // CachedStyleSheetClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet* resource) final
@@ -111,7 +128,7 @@ private:
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient {
+class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient, public CanMakeCheckedPtr<LinkPreloadImageResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadImageResourceClient, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadImageResourceClient);
 public:
@@ -121,20 +138,35 @@ public:
         addResource(*this);
     }
 
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
 private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadFontResourceClient : public LinkPreloadResourceClient, public CachedFontClient {
+class LinkPreloadFontResourceClient final : public LinkPreloadResourceClient, public CachedFontClient, public CanMakeCheckedPtr<LinkPreloadFontResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadFontResourceClient, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadFontResourceClient);
 public:
     LinkPreloadFontResourceClient(LinkLoader& loader, CachedFont& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
+
+    // CachedFontClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     void fontLoaded(CachedFont& resource) final
@@ -147,14 +179,22 @@ private:
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient {
+class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient, public CanMakeCheckedPtr<LinkPreloadRawResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadRawResourceClient, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadRawResourceClient);
 public:
     LinkPreloadRawResourceClient(LinkLoader& loader, CachedRawResource& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }

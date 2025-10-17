@@ -34,6 +34,7 @@
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceRequest.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -42,12 +43,21 @@ class Document;
 class DocumentThreadableLoader;
 class ResourceError;
 
-class CrossOriginPreflightChecker final : private CachedRawResourceClient {
+class CrossOriginPreflightChecker final : private CachedRawResourceClient, public CanMakeCheckedPtr<CrossOriginPreflightChecker> {
+    WTF_MAKE_TZONE_ALLOCATED(CrossOriginPreflightChecker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CrossOriginPreflightChecker);
 public:
     static void doPreflight(DocumentThreadableLoader&, ResourceRequest&&);
 
     CrossOriginPreflightChecker(DocumentThreadableLoader&, ResourceRequest&&);
     ~CrossOriginPreflightChecker();
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void startPreflight();
 

@@ -71,7 +71,7 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
     if (!SVGURIReference::isExternalURIReference(m_url.resolved.string(), *cachedResourceLoader.protectedDocument()))
         return;
     m_cachedSVGDocumentReference = makeUnique<CachedSVGDocumentReference>(m_url);
-    m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
+    CheckedRef { *m_cachedSVGDocumentReference }->load(cachedResourceLoader, options);
 }
 
 } // Style

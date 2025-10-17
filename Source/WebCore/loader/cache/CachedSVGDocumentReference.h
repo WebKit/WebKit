@@ -30,6 +30,7 @@
 #include <WebCore/CachedSVGDocumentClient.h>
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/StyleURL.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -37,8 +38,9 @@ class CachedSVGDocument;
 class CachedResourceLoader;
 struct ResourceLoaderOptions;
 
-class CachedSVGDocumentReference final : public CachedSVGDocumentClient {
+class CachedSVGDocumentReference final : public CachedSVGDocumentClient, public CanMakeCheckedPtr<CachedSVGDocumentReference> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedSVGDocumentReference, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedSVGDocumentReference);
 public:
     CachedSVGDocumentReference(const Style::URL&);
 
@@ -48,6 +50,13 @@ public:
     bool loadRequested() const { return m_loadRequested; }
 
     CachedSVGDocument* document() { return m_document.get(); }
+
+    // CachedSVGDocumentClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     Style::URL m_location;

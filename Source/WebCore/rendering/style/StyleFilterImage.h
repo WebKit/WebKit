@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
+class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient, public CanMakeCheckedPtr<StyleFilterImage> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleFilterImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleFilterImage);
 public:
@@ -42,6 +42,13 @@ public:
         return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filter)));
     }
     virtual ~StyleFilterImage();
+
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     bool operator==(const StyleImage& other) const final;
     bool equals(const StyleFilterImage&) const;

@@ -34,12 +34,14 @@
 #include "CachedScriptFetcher.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/SourceProvider.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebAssemblyCachedScriptSourceProvider final : public JSC::BaseWebAssemblySourceProvider, public CachedResourceClient {
+class WebAssemblyCachedScriptSourceProvider final : public JSC::BaseWebAssemblySourceProvider, public CachedResourceClient, public CanMakeCheckedPtr<WebAssemblyCachedScriptSourceProvider> {
     WTF_MAKE_TZONE_ALLOCATED(WebAssemblyCachedScriptSourceProvider);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebAssemblyCachedScriptSourceProvider);
 public:
     static Ref<WebAssemblyCachedScriptSourceProvider> create(CachedScript* cachedScript, Ref<CachedScriptFetcher>&& scriptFetcher)
     {
@@ -50,6 +52,13 @@ public:
     {
         m_cachedScript->removeClient(*this);
     }
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     unsigned hash() const final { return m_cachedScript->scriptHash(); }
     StringView source() const final { return m_cachedScript->script(); }

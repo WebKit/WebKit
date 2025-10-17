@@ -49,7 +49,7 @@ unsigned short PerformanceNavigation::type() const
     if (!frame)
         return TYPE_NAVIGATE;
 
-    DocumentLoader* documentLoader = frame->loader().documentLoader();
+    RefPtr documentLoader = frame->loader().documentLoader();
     if (!documentLoader)
         return TYPE_NAVIGATE;
 

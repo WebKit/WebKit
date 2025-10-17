@@ -34,6 +34,7 @@
 #include "CachedSVGDocumentClient.h"
 #include "FilterRenderingMode.h"
 #include "RenderLayer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -44,11 +45,19 @@ class Element;
 class FilterOperations;
 class GraphicsContextSwitcher;
 
-class RenderLayerFilters final : private CachedSVGDocumentClient {
+class RenderLayerFilters final : private CachedSVGDocumentClient, public CanMakeCheckedPtr<RenderLayerFilters> {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayerFilters);
 public:
     explicit RenderLayerFilters(RenderLayer&);
     virtual ~RenderLayerFilters();
+
+    // CachedSVGDocumentClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }

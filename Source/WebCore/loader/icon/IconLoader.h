@@ -28,6 +28,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "LoaderMalloc.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
@@ -39,14 +40,23 @@ class CachedRawResource;
 class DocumentLoader;
 class LocalFrame;
 
-class IconLoader final : private CachedRawResourceClient {
-    WTF_MAKE_NONCOPYABLE(IconLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IconLoader, Loader);
+class IconLoader final : private CachedRawResourceClient, public CanMakeCheckedPtr<IconLoader> {
+    WTF_MAKE_NONCOPYABLE(IconLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(IconLoader, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IconLoader);
 public:
     IconLoader(DocumentLoader&, const URL&);
     virtual ~IconLoader();
 
     void startLoading();
     void stopLoading();
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;

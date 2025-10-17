@@ -38,11 +38,13 @@
 #include "ResourceRequest.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LoadableSpeculationRules);
 
 Ref<LoadableSpeculationRules> LoadableSpeculationRules::create(Document& document, const URL& url)
 {

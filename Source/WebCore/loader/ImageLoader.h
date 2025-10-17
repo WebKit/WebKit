@@ -47,11 +47,18 @@ using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
 enum class RelevantMutation : bool { No, Yes };
 enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
 
-class ImageLoader : public CachedImageClient {
+class ImageLoader : public CachedImageClient, public CanMakeCheckedPtr<ImageLoader> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageLoader, Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageLoader);
 public:
     virtual ~ImageLoader();
+
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     void ref() const;
     void deref() const;

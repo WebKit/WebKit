@@ -53,9 +53,9 @@ NavigatorBeacon::~NavigatorBeacon()
         beacon->removeClient(*this);
 }
 
-NavigatorBeacon* NavigatorBeacon::from(Navigator& navigator)
+CheckedPtr<NavigatorBeacon> NavigatorBeacon::from(Navigator& navigator)
 {
-    auto* supplement = static_cast<NavigatorBeacon*>(Supplement<Navigator>::from(&navigator, supplementName()));
+    CheckedPtr supplement = static_cast<NavigatorBeacon*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorBeacon>(navigator);
         supplement = newSupplement.get();

@@ -48,7 +48,7 @@ struct MediaImage;
 
 using MediaSessionMetadata = MediaMetadataInit;
 
-class ArtworkImageLoader final : public CachedImageClient {
+class ArtworkImageLoader final : public CachedImageClient, public CanMakeCheckedPtr<ArtworkImageLoader> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ArtworkImageLoader);
 public:
@@ -59,6 +59,13 @@ public:
     WEBCORE_EXPORT ~ArtworkImageLoader();
 
     WEBCORE_EXPORT void requestImageResource();
+
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
