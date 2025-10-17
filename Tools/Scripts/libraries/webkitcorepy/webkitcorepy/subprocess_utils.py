@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import math
+import os
 import subprocess
 import sys
 import time
@@ -35,7 +36,10 @@ CompletedProcess = subprocess.CompletedProcess
 # Allows native integration with the Timeout context
 def run(*popenargs, **kwargs):
     timeout = kwargs.pop('timeout', None)
+    check = kwargs.pop('check', False)
+    input = kwargs.pop('input', None)
     capture_output = kwargs.pop('capture_output', False)
+    capture_and_stream_output = kwargs.pop('capture_and_stream_output', False)
 
     with Timeout.DisableAlarm():
         current_time = time.time()
@@ -44,12 +48,41 @@ def run(*popenargs, **kwargs):
 
         if difference:
             timeout = min(timeout or sys.maxsize, int(math.ceil(difference)))
-        if capture_output:
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = subprocess.PIPE
+        if capture_output or capture_and_stream_output:
             if ('stdout' in kwargs) or ('stderr' in kwargs):
-                raise ValueError('stdout and stderr arguments may not be used with capture_output.')
+                raise ValueError('stdout and stderr arguments may not be used with capture_output and capture_and_stream_output.')
             kwargs['stdout'] = subprocess.PIPE
-            kwargs['stderr'] = subprocess.PIPE
-        return subprocess.run(*popenargs, timeout=timeout, **kwargs)
+            kwargs['stderr'] = subprocess.STDOUT if capture_and_stream_output else subprocess.PIPE
+
+        # Mimic subprocess.run
+        with subprocess.Popen(*popenargs, **kwargs) as process:
+            output = []
+            stdout = stderr = None
+            try:
+                if capture_and_stream_output:
+                    for line in process.stdout:
+                        sys.stdout.write(line)
+                        output.append(line)
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if os.name == 'nt':
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    process.wait()
+                raise
+            except:
+                process.kill()
+                raise
+            retcode = process.poll()
+            output_to_use = ''.join(output) or stdout
+            if check and retcode:
+                raise subprocess.CalledProcessError(retcode, process.args, output=output_to_use, stderr=stderr)
+        return CompletedProcess(process.args, retcode, output_to_use, stderr)
 
 
 class Thread(threading.Thread):
