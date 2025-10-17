@@ -18,6 +18,7 @@
                 connectionHandle: streamConnection
             });
             const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+            const didInitializeReply = streamConnection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
 
             const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
             const contextIdentifier = Math.floor(Math.random() * 0x1000000);
@@ -42,6 +43,7 @@
                     }
                 },
                 pixelFormat: 1,
+                bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
                 identifier: imageBufferIdentifier,
                 contextIdentifier: contextIdentifier
             });
@@ -51,7 +53,7 @@
                 remoteImageBuffer.FilteredNativeImage({
                     filter: {
                         subclasses: {
-                            variantType: 'WebCore::CSSFilter',
+                            variantType: 'WebCore::CSSFilterRenderer',
                             variant: {
                                 functions: [{
                                     subclasses: {

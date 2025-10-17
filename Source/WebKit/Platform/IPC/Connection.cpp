@@ -529,6 +529,11 @@ Error Connection::flushSentMessages(Timeout timeout)
 void Connection::invalidate()
 {
     m_isValid = false;
+
+#if ENABLE(IPC_TESTING_API)
+    m_errorString = nullptr;
+#endif
+
     if (!m_client)
         return;
     assertIsCurrent(dispatcher());
@@ -1276,7 +1281,16 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
             sendMessageImpl(WTFMove(replyEncoder), { });
         } else
             decoder.markInvalid();
-    } else
+    }
+#if ENABLE(IPC_TESTING_API)
+    else if (decoder.messageName() == MessageName::TakeConnectionErrorString) {
+        const char* errorCString = takeErrorString();
+        String errorString = errorCString ? String::fromUTF8(errorCString) : emptyString();
+        replyEncoder.get() << errorString;
+        sendMessageImpl(WTFMove(replyEncoder), { });
+    }
+#endif
+    else
         protectedClient()->didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // If the message was not handled, i.e. replyEncoder was not consumed, reply with cancel

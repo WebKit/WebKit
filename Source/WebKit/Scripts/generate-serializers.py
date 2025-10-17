@@ -966,8 +966,12 @@ def decode_type(type, serialized_types):
                 result.append('    if (!decoder.isValid()) [[unlikely]]')
                 result.append('        return std::nullopt;')
                 result.append('')
-                result.append(f'    if (!({validator}))')
+                result.append(f'    if (!({validator})) {{')
+                result.append('#if ENABLE(IPC_TESTING_API)')
+                result.append(f'        decoder.setErrorString("Validation failed: {validator}");')
+                result.append('#endif')
                 result.append('        return std::nullopt;')
+                result.append(f'    }}')
                 continue
             else:
                 match = re.search(r'Validator', attribute)

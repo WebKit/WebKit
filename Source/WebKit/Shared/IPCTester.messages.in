@@ -49,6 +49,7 @@ messages -> IPCTester {
 
     EmptyMessage()
     EmptyMessageWithReply() -> (uint64_t valueq)
+    CheckTestParameter(struct WebKit::TestParameter param)
 }
 
 #endif

@@ -113,6 +113,12 @@ public:
     void setImportanceAssertion(ImportanceAssertion&&);
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+    bool hasErrorString() const { return m_errorString != nullptr; }
+    void setErrorString(const char* error) { if (!hasErrorString()) m_errorString = error; }
+    const char* takeErrorString() { const char* res = m_errorString; m_errorString = nullptr; return res; }
+#endif
+
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
     std::span<const uint8_t> span() const { return m_buffer; }
@@ -205,6 +211,10 @@ private:
     Markable<SyncRequestID> m_syncRequestID;
 
     Vector<uint32_t> m_indicesOfObjectsFailingDecoding;
+
+#if ENABLE(IPC_TESTING_API)
+    const char* m_errorString { nullptr };
+#endif
 };
 
 template<>

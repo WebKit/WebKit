@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ConnectionHandle.h"
+#include "MessageNames.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
@@ -158,6 +159,7 @@ extern ASCIILiteral errorAsString(Error);
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::setConnectionErrorString(connection, "Message check failed: " #assertion " - " #message); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -170,6 +172,7 @@ extern ASCIILiteral errorAsString(Error);
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::setConnectionErrorString(connection, "Message check failed: " #assertion); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -179,6 +182,7 @@ extern ASCIILiteral errorAsString(Error);
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::setConnectionErrorString(connection, "Message check failed: " #assertion); \
         CRASH_IF_TESTING \
         { completion; } \
         return; \
@@ -189,6 +193,7 @@ extern ASCIILiteral errorAsString(Error);
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::setConnectionErrorString(connection, "Message check failed: " #assertion); \
         CRASH_IF_TESTING \
         { completion; } \
         co_return { }; \
@@ -199,6 +204,7 @@ extern ASCIILiteral errorAsString(Error);
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::setConnectionErrorString(connection, "Message check failed: " #assertion); \
         CRASH_IF_TESTING \
         return (returnValue); \
     } \
@@ -551,6 +557,12 @@ public:
     static bool shouldCrashOnMessageCheckFailure();
     static void setShouldCrashOnMessageCheckFailure(bool);
 
+#if ENABLE(IPC_TESTING_API)
+    bool hasErrorString() const { return m_errorString != nullptr; }
+    void setErrorString(const char* error) { if (!hasErrorString()) m_errorString = error; }
+    const char* takeErrorString() { const char* res = m_errorString; m_errorString = nullptr; return res; }
+#endif
+
 private:
     Connection(Identifier&&, bool isServer, Thread::QOS = Thread::QOS::Default);
     Connection();
@@ -803,6 +815,11 @@ private:
     EventListener m_writeListener;
     HANDLE m_connectionPipe { INVALID_HANDLE_VALUE };
 #endif
+
+#if ENABLE(IPC_TESTING_API)
+    const char* m_errorString { nullptr };
+#endif
+
     friend class StreamClientConnection;
 };
 
@@ -1106,5 +1123,42 @@ inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& co
         connection->markCurrentlyDispatchedMessageAsInvalid();
 }
 
+// template<typename T>
+// inline std::enable_if_t<std::is_same_v<T, Connection>> markCurrentlyDispatchedMessageAsInvalid(const Ref<T>& connection)
+// {
+//     connection->markCurrentlyDispatchedMessageAsInvalid();
+// }
+
+// inline void setConnectionErrorString(Connection& connection, const char* errorString)
+// {
+//     connection.setErrorString(errorString);
+// }
+
+// inline void setConnectionErrorString(const RefPtr<Connection>& connection, const char* errorString)
+// {
+//     if (connection)
+//         connection->setErrorString(errorString);
+// }
+
+// template<typename T>
+// inline std::enable_if_t<std::is_same_v<T, Connection>> setConnectionErrorString(const Ref<T>& connection, const char* errorString)
+// {
+//     connection->setErrorString(errorString);
+// }
+
+#if ENABLE(IPC_TESTING_API)
+template<typename C>
+void setConnectionErrorString(C&& connection, const char* errorString)
+{
+    // Only call setErrorString if the connection type is IPC::Connection
+    // StreamServerConnection doesn't have this method, so we make it a no-op
+    if constexpr (std::is_same_v<std::remove_cvref_t<C>, Connection>) {
+        connection.setErrorString(errorString);
+    } else if constexpr (std::is_same_v<std::remove_cvref_t<C>, RefPtr<Connection>>) {
+        if (connection)
+            connection->setErrorString(errorString);
+    }
+}
+#endif
 
 } // namespace IPC

@@ -9,7 +9,9 @@
             o10=CoreIPC.newStreamConnection();
             CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0,{renderingBackendIdentifier:393219,connectionHandle:o10});
             o12=o10.newInterface("RemoteRenderingBackend", 393219);
-            o12.CreateImageBuffer({logicalSize:{width:32,height:18},renderingMode:3,renderingPurpose:1,resolutionScale:489626271805,colorSpace:{serializableColorSpace:{alias:{m_cgColorSpace:{alias:{variantType:'WebCore::ColorSpace',variant:5}}}}},pixelFormat:1,identifier:393225,contextIdentifier:393226});
+            o10.connection.waitForMessage(393219, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+            o12.CreateImageBuffer({logicalSize:{width:32,height:18},renderingMode:3,renderingPurpose:1,resolutionScale:489626271805,colorSpace:{serializableColorSpace:{alias:{m_cgColorSpace:{alias:{variantType:'WebCore::ColorSpace',variant:5}}}}},pixelFormat:1,bufferFormat:{pixelFormat:1,useLosslessCompression:0},identifier:393225,contextIdentifier:393226});
+            o10.connection.waitForMessage(393225, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, 1);
             o31=o10.newInterface("RemoteGraphicsContext", 393226);
             o31.Restore({});
             o31.Restore({});

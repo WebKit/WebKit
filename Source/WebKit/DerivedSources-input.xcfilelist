@@ -323,6 +323,7 @@ $(PROJECT_DIR)/Shared/IPCConnectionTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTester.messages.in
 $(PROJECT_DIR)/Shared/IPCStreamTesterProxy.messages.in
 $(PROJECT_DIR)/Shared/IPCTester.messages.in
+$(PROJECT_DIR)/Shared/IPCTester.serialization.in
 $(PROJECT_DIR)/Shared/IPCTesterReceiver.messages.in
 $(PROJECT_DIR)/Shared/ImageOptions.serialization.in
 $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in

@@ -86,7 +86,9 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     useLargeFont: Number
     identifier: String
     detail: String
+#if !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
     dateComponentsRange: PKDateComponentsRange
+#endif
 }
 
 #if !HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)

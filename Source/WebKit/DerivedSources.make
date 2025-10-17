@@ -729,6 +729,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/GoToBackForwardItemParameters.serialization.in \
 	Shared/ImageOptions.serialization.in \
 	Shared/InspectorExtensionTypes.serialization.in \
+	Shared/IPCTester.serialization.in \
 	Shared/ios/CursorContext.serialization.in \
 	Shared/ios/DynamicViewportSizeUpdate.serialization.in \
 	Shared/ios/GestureTypes.serialization.in \

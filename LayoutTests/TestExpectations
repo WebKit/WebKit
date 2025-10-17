@@ -5986,12 +5986,11 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-009.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/motion/offset-path-url-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyFailure ]
 
-# IPC test failing in Debug mode due to assert.
-[ Debug ] ipc/send-invalid-message.html [ Skip ]
+[ Debug ] ipc/send-invalid-message.html [ Pass ]
 
-webkit.org/b/297616 [ Debug ] ipc/invalid-feConvolveMatrix-crash.html [ Crash ]
+[ Debug ] ipc/invalid-feConvolveMatrix-crash.html [ Pass ]
 
-webkit.org/b/297618 [ Debug ] ipc/restore-empty-stack-crash.html [ Crash ]
+[ Debug ] ipc/restore-empty-stack-crash.html [ Pass ]
 
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]

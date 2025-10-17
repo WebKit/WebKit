@@ -432,6 +432,7 @@ private:
     static JSValueRef createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef addTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef removeTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef getErrorString(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     static JSValueRef vmPageSize(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -1029,7 +1030,15 @@ void JSIPCStreamClientConnection::initialize(JSContextRef, JSObjectRef object)
 
 void JSIPCStreamClientConnection::finalize(JSObjectRef object)
 {
-    unwrap(object)->deref();
+    auto* wrapper = unwrap(object);
+
+    // The StreamClientConnection destructor asserts the connection is not valid
+    // when it runs, so we need to invalidate it here if it hasn't already been
+    // done explicitly in the test code.
+    if (wrapper->m_streamConnection)
+        wrapper->m_streamConnection->invalidate();
+
+    wrapper->deref();
 }
 
 const JSStaticFunction* JSIPCStreamClientConnection::staticFunctions()
@@ -1916,6 +1925,7 @@ const JSStaticFunction* JSIPC::staticFunctions()
         { "createSharedMemory", createSharedMemory, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "addTesterReceiver", addTesterReceiver, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "removeTesterReceiver", removeTesterReceiver, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "getErrorString", getErrorString, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
@@ -2739,6 +2749,47 @@ JSValueRef JSIPC::removeTesterReceiver(JSContextRef context, JSObjectRef, JSObje
     WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName());
     return JSValueMakeUndefined(context);
 }
+
+JSValueRef JSIPC::getErrorString(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto* jsIPC = toWrapped(context, thisObject);
+    if (!jsIPC) {
+        *exception = toRef(JSC::createTypeError(toJS(context), "Wrong type"_s));
+        return JSValueMakeUndefined(context);
+    }
+
+    if (argumentCount < 1) {
+        *exception = createTypeError(context, "Must specify target process as first argument"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    RefPtr connection = jsIPC->processTargetFromArgument(globalObject, arguments[0], exception);
+    if (!connection)
+        return JSValueMakeUndefined(context);
+
+    // Send TakeConnectionErrorString synchronous message
+    auto [encoder, syncRequestID] = connection->connection().createSyncMessageEncoder(IPC::MessageName::TakeConnectionErrorString, 0);
+    auto sendResult = connection->connection().sendSyncMessage(syncRequestID, WTFMove(encoder), 1_s, { });
+
+    if (!sendResult)
+        return JSValueMakeUndefined(context);
+
+    auto errorString = sendResult.value()->decode<String>();
+    if (!errorString)
+        return JSValueMakeUndefined(context);
+
+    if (errorString->isEmpty())
+        return JSValueMakeUndefined(context);
+
+    auto jsString = JSStringCreateWithUTF8CString(errorString->utf8().data());
+    auto result = JSValueMakeString(context, jsString);
+    JSStringRelease(jsString);
+    return result;
+}
+
 
 JSValueRef JSIPC::serializedTypeInfo(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {

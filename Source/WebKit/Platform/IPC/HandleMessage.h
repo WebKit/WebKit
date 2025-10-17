@@ -312,6 +312,21 @@ template<typename... T> struct AwaitableReturnTuple<Awaitable<T...>> {
     static constexpr bool hasParameters = true;
 };
 
+#if ENABLE(IPC_TESTING_API)
+template<typename C>
+void setConnectionErrorStringIfNeeded(C& connection, Decoder& decoder)
+{
+    if (!decoder.hasErrorString())
+        return;
+
+    // Only call setErrorString if the connection type is IPC::Connection
+    // StreamServerConnection doesn't have this method, so we make it a no-op
+    if constexpr (std::is_same_v<std::remove_cvref_t<C>, Connection>) {
+        connection.setErrorString(decoder.takeErrorString());
+    }
+}
+#endif
+
 // Main dispatch functions
 
 template<typename MessageType, typename C, typename T, typename U, typename MF>
@@ -321,8 +336,12 @@ void handleMessage(C& connection, Decoder& decoder, T* object, MF U::* function)
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (!arguments) [[unlikely]]
+    if (!arguments) [[unlikely]] {
+#if ENABLE(IPC_TESTING_API)
+        setConnectionErrorStringIfNeeded(connection, decoder);
+#endif
         return;
+    }
 
     logMessage(connection, MessageType::name(), object, *arguments);
     if constexpr (ValidationType::returnsAwaitableVoid) {
@@ -358,8 +377,12 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (!arguments) [[unlikely]]
+    if (!arguments) [[unlikely]] {
+#if ENABLE(IPC_TESTING_API)
+        setConnectionErrorStringIfNeeded(connection, decoder);
+#endif
         return;
+    }
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
@@ -406,8 +429,13 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (!arguments) [[unlikely]]
+    if (!arguments) [[unlikely]] {
+#if ENABLE(IPC_TESTING_API)
+        setConnectionErrorStringIfNeeded(connection, decoder);
+#endif
         return;
+    }
+
     auto replyID = decoder.decode<IPC::AsyncReplyID>();
     if (!replyID) [[unlikely]]
         return;

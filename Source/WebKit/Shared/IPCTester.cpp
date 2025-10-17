@@ -34,6 +34,8 @@
 #include "IPCTesterMessages.h"
 #include "IPCTesterReceiverMessages.h"
 #include "IPCUtilities.h"
+#include "Logging.h"
+#include "TestParameter.h"
 
 #include <WebCore/ExceptionData.h>
 #include <atomic>
@@ -245,6 +247,11 @@ void IPCTester::stopIfNeeded()
 void IPCTester::emptyMessageWithReply(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(0x1);
+}
+
+void IPCTester::checkTestParameter(IPC::Connection& connection, TestParameter param)
+{
+    MESSAGE_CHECK_WITH_MESSAGE_BASE(param.value < 100, connection, "Test parameter must be less than 100");
 }
 
 } // namespace WebKit
