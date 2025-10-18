@@ -35,6 +35,7 @@
 #include <WebCore/PlatformMediaResourceLoader.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/Atomics.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -89,8 +90,9 @@ private:
     HashMap<URL, ValidationInformation> m_validationLoadInformations WTF_GUARDED_BY_CAPABILITY(mainThread);
 };
 
-class MediaResource : public PlatformMediaResource, public CachedRawResourceClient {
+class MediaResource final : public PlatformMediaResource, public CachedRawResourceClient, public CanMakeCheckedPtr<MediaResource> {
     WTF_MAKE_TZONE_ALLOCATED(MediaResource);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaResource);
 public:
     static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     virtual ~MediaResource();
@@ -106,6 +108,11 @@ public:
     void dataSent(CachedResource&, unsigned long long, unsigned long long) override;
     void dataReceived(CachedResource&, const SharedBuffer&) override;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     CachedResourceHandle<CachedRawResource> protectedResource() const;

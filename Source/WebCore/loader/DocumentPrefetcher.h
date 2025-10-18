@@ -43,7 +43,9 @@ class ResourceRequest;
 
 enum class ReferrerPolicy : uint8_t;
 
-class DocumentPrefetcher : public RefCounted<DocumentPrefetcher>, public CachedRawResourceClient {
+class DocumentPrefetcher : public RefCounted<DocumentPrefetcher>, public CachedRawResourceClient, public CanMakeCheckedPtr<DocumentPrefetcher> {
+    WTF_MAKE_TZONE_ALLOCATED(DocumentPrefetcher);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentPrefetcher);
 public:
     struct PrefetchedResourceData {
         // The resource needs to be here in order to be kept alive.
@@ -62,6 +64,12 @@ public:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) override;
     CachedResourceClientType resourceClientType() const override { return RawResourceType; }
 
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     WeakRef<FrameLoader> m_frameLoader;

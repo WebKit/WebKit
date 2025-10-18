@@ -27,18 +27,27 @@
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
 #include "XSLStyleSheet.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class CachedXSLStyleSheet;
 
-class XSLImportRule : private CachedStyleSheetClient {
+class XSLImportRule final : private CachedStyleSheetClient, public CanMakeCheckedPtr<XSLImportRule> {
     WTF_MAKE_TZONE_ALLOCATED(XSLImportRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XSLImportRule);
 public:
     XSLImportRule(XSLStyleSheet& parentSheet, const String& href);
     virtual ~XSLImportRule();
-    
+
+    // CachedStyleSheetClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+
     const String& href() const { return m_strHref; }
     XSLStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 

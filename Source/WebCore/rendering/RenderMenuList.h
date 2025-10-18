@@ -48,7 +48,7 @@ public:
 
     HTMLSelectElement& selectElement() const;
 
-    // CheckedPtr interface.
+    // PopupMenuClient.
     uint32_t checkedPtrCount() const final { return RenderFlexibleBox::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderFlexibleBox::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { RenderFlexibleBox::incrementCheckedPtrCount(); }

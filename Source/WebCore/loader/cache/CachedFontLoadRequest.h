@@ -33,14 +33,16 @@
 #include <WebCore/FontLoadRequest.h>
 #include <WebCore/FontSelectionAlgorithm.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 class FontCreationContext;
 
-class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
+class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient, public CanMakeCheckedPtr<CachedFontLoadRequest> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedFontLoadRequest, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedFontLoadRequest);
 public:
     CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
         : m_font(&font)
@@ -53,6 +55,13 @@ public:
         if (m_fontLoadRequestClient)
             protectedCachedFont()->removeClient(*this);
     }
+
+    // CachedFontClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     CachedFont& cachedFont() const { return *m_font; }
     CachedResourceHandle<CachedFont> protectedCachedFont() const { return m_font; }

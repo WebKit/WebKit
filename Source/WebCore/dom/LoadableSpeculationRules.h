@@ -30,6 +30,7 @@
 #include <WebCore/FetchOptionsDestination.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -43,10 +44,19 @@ class NetworkLoadMetrics;
 class WeakPtrImplWithEventTargetData;
 enum class LoadWillContinueInAnotherProcess : bool;
 
-class LoadableSpeculationRules final : public RefCounted<LoadableSpeculationRules>, public CachedResourceClient {
+class LoadableSpeculationRules final : public RefCounted<LoadableSpeculationRules>, public CachedResourceClient, public CanMakeCheckedPtr<LoadableSpeculationRules> {
+    WTF_MAKE_TZONE_ALLOCATED(LoadableSpeculationRules);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoadableSpeculationRules);
 public:
     static Ref<LoadableSpeculationRules> create(Document&, const URL&);
     ~LoadableSpeculationRules();
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     bool load(Document&, const URL&);
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;

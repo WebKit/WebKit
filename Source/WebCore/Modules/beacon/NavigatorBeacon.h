@@ -41,8 +41,9 @@ class Navigator;
 class ResourceError;
 template<typename> class ExceptionOr;
 
-class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawResourceClient {
+class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawResourceClient, public CanMakeCheckedPtr<NavigatorBeacon> {
     WTF_MAKE_TZONE_ALLOCATED(NavigatorBeacon);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NavigatorBeacon);
 public:
     explicit NavigatorBeacon(Navigator&);
     ~NavigatorBeacon();
@@ -50,7 +51,14 @@ public:
 
     size_t inflightBeaconsCount() const { return m_inflightBeacons.size(); }
 
-    WEBCORE_EXPORT static NavigatorBeacon* from(Navigator&);
+    WEBCORE_EXPORT static CheckedPtr<NavigatorBeacon> from(Navigator&);
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     ExceptionOr<bool> sendBeacon(Document&, const String& url, std::optional<FetchBody::Init>&&);

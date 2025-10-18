@@ -101,7 +101,7 @@ public:
         loader->detachDataSource();
     }
 
-    Ref<WebDocumentLoaderMac> loader;
+    const Ref<WebDocumentLoaderMac> loader;
     RetainPtr<id<WebDocumentRepresentation> > representation;
     BOOL representationFinishedLoading;
     BOOL includedInWebKitStatistics;

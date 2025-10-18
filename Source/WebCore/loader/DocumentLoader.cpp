@@ -440,40 +440,48 @@ bool DocumentLoader::isLoading() const
 void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& fetchMetrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(isMainThread());
+
+    // Run asynchronously since to avoid destroying `this` synchronously, in case
+    // there are CheckedPtrs on the stack.
+    callOnMainThread([this, protectedThis = Ref { *this }, resource = CachedResourceHandle { resource }, fetchMetrics, loadWillContinueInAnotherProcess]() mutable {
+        if (m_mainResource != resource.get())
+            return;
+
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
-        return;
+        if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(*resource))
+            return;
 #endif
 
-    Box<NetworkLoadMetrics> metrics;
-    if (RefPtr frameLoader = this->frameLoader()) {
-        if (auto prefetchedMetrics = frameLoader->documentPrefetcher().takePrefetchedNetworkLoadMetrics(url()))
-            metrics = WTFMove(prefetchedMetrics);
-    }
-    if (!metrics)
-        metrics = Box<NetworkLoadMetrics>::create(fetchMetrics);
+        Box<NetworkLoadMetrics> metrics;
+        if (RefPtr frameLoader = this->frameLoader()) {
+            if (auto prefetchedMetrics = frameLoader->documentPrefetcher().takePrefetchedNetworkLoadMetrics(url()))
+                metrics = WTFMove(prefetchedMetrics);
+        }
+        if (!metrics)
+            metrics = Box<NetworkLoadMetrics>::create(fetchMetrics);
 
-    if (RefPtr document = this->document()) {
-        if (RefPtr window = document->window())
-            window->protectedPerformance()->documentLoadFinished(*metrics);
-    }
+        if (RefPtr document = this->document()) {
+            if (RefPtr window = document->window())
+                window->protectedPerformance()->documentLoadFinished(*metrics);
+        }
 
-    ASSERT_UNUSED(resource, m_mainResource == &resource);
-    ASSERT(m_mainResource);
-    if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
-        finishedLoading();
-        return;
-    }
+        ASSERT_UNUSED(resource, m_mainResource == resource.get());
+        ASSERT(m_mainResource);
+        if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
+            finishedLoading();
+            return;
+        }
 
-    if (m_request.cachePolicy() == ResourceRequestCachePolicy::ReturnCacheDataDontLoad && !m_mainResource->wasCanceled()) {
-        protectedFrameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
-        return;
-    }
+        if (m_request.cachePolicy() == ResourceRequestCachePolicy::ReturnCacheDataDontLoad && !m_mainResource->wasCanceled()) {
+            protectedFrameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
+            return;
+        }
 
-    if (!m_mainResource->resourceError().isNull())
-        DOCUMENTLOADER_RELEASE_LOG("notifyFinished: canceling load (type=%d, code=%d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
+        if (!m_mainResource->resourceError().isNull())
+            DOCUMENTLOADER_RELEASE_LOG("notifyFinished: canceling load (type=%d, code=%d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
 
-    mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess);
+        mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess);
+    });
 }
 
 void DocumentLoader::finishedLoading()

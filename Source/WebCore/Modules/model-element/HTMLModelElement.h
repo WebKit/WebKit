@@ -86,6 +86,13 @@ public:
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
 
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(HTMLElement);
+    uint32_t virtualCheckedPtrCount() const final { return HTMLElement::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return HTMLElement::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { HTMLElement::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { HTMLElement::decrementCheckedPtrCount(); }
+
     // VisibilityChangeClient.
     void visibilityStateChanged() final;
 

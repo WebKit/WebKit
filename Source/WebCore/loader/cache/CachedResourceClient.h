@@ -30,15 +30,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class CachedResourceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResourceClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CachedResource;
 class NetworkLoadMetrics;
@@ -54,6 +45,17 @@ public:
         SVGDocumentType,
         RawResourceType
     };
+
+    // CanMakeCheckedPtr.
+    uint32_t checkedPtrCount() const { return virtualCheckedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return virtualCheckedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { virtualIncrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { virtualDecrementCheckedPtrCount(); }
+
+    virtual uint32_t virtualCheckedPtrCount() const = 0;
+    virtual uint32_t virtualCheckedPtrCountWithoutThreadCheck() const = 0;
+    virtual void virtualIncrementCheckedPtrCount() const = 0;
+    virtual void virtualDecrementCheckedPtrCount() const = 0;
 
     virtual ~CachedResourceClient();
 

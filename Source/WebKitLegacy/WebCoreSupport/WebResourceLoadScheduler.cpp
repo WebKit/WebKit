@@ -145,7 +145,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
         return;
     }
 #else
-    if (resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
+    if (resourceLoader->protectedDocumentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
         resourceLoader->start();
         return;
     }

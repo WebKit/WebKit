@@ -40,8 +40,10 @@ namespace WebCore {
 class CachedApplicationManifest;
 class DocumentLoader;
 
-class ApplicationManifestLoader final : private CachedRawResourceClient {
-WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
+class ApplicationManifestLoader final : private CachedRawResourceClient, public CanMakeCheckedPtr<ApplicationManifestLoader> {
+    WTF_MAKE_NONCOPYABLE(ApplicationManifestLoader);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ApplicationManifestLoader, Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ApplicationManifestLoader);
 public:
     typedef Function<void (CachedResourceHandle<CachedApplicationManifest>)> CompletionHandlerType;
 
@@ -52,6 +54,13 @@ public:
     void stopLoading();
 
     std::optional<ApplicationManifest>& processManifest();
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess);

@@ -38,6 +38,13 @@ public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&);
     virtual ~SVGUseElement();
 
+    // CachedSVGDocumentClient.
+    USING_CAN_MAKE_CHECKEDPTR(SVGGraphicsElement);
+    uint32_t virtualCheckedPtrCount() const final { return SVGGraphicsElement::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return SVGGraphicsElement::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { SVGGraphicsElement::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { SVGGraphicsElement::decrementCheckedPtrCount(); }
+
     void invalidateShadowTree();
     void updateUserAgentShadowTree() final;
 

@@ -40,6 +40,7 @@
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -55,11 +56,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreAVFResourceLoader);
 
-class CachedResourceMediaLoader final : CachedRawResourceClient {
+class CachedResourceMediaLoader final : CachedRawResourceClient, public CanMakeCheckedPtr<CachedResourceMediaLoader> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedResourceMediaLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedResourceMediaLoader);
 public:
     static std::unique_ptr<CachedResourceMediaLoader> create(WebCoreAVFResourceLoader&, CachedResourceLoader&, ResourceRequest&&);
     ~CachedResourceMediaLoader() { stop(); }
+
+    // CachedRawResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     CachedResourceMediaLoader(WebCoreAVFResourceLoader&, CachedResourceHandle<CachedRawResource>&&);

@@ -37,11 +37,12 @@ public:
 
     virtual ~SVGFEImageElement();
 
-    // CheckedPtr interface
-    uint32_t checkedPtrCount() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::decrementCheckedPtrCount(); }
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(SVGFilterPrimitiveStandardAttributes);
+    uint32_t virtualCheckedPtrCount() const final { return SVGFilterPrimitiveStandardAttributes::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return SVGFilterPrimitiveStandardAttributes::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { SVGFilterPrimitiveStandardAttributes::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { SVGFilterPrimitiveStandardAttributes::decrementCheckedPtrCount(); }
 
     bool renderingTaintsOrigin() const;
 

@@ -35,6 +35,13 @@ public:
 
     virtual ~SVGFontFaceUriElement();
 
+    // CachedFontClient.
+    USING_CAN_MAKE_CHECKEDPTR(SVGElement);
+    uint32_t virtualCheckedPtrCount() const final { return SVGElement::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return SVGElement::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { SVGElement::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { SVGElement::decrementCheckedPtrCount(); }
+
     Ref<CSSFontFaceSrcResourceValue> createSrcValue() const;
 
 private:

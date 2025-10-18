@@ -36,11 +36,18 @@
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InspectorResourceUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject::InspectorAuditCachedResourceClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject::InspectorAuditCachedFontClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject::InspectorAuditCachedRawResourceClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject::InspectorAuditCachedSVGDocumentClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditResourcesObject::InspectorAuditCachedStyleSheetClient);
 
 using namespace Inspector;
 
@@ -56,7 +63,7 @@ InspectorAuditResourcesObject::InspectorAuditResourcesObject(InspectorAuditAgent
 InspectorAuditResourcesObject::~InspectorAuditResourcesObject()
 {
     for (auto* cachedResource : m_resources.values())
-        cachedResource->removeClient(clientForResource(*cachedResource));
+        cachedResource->removeClient(checkedClientForResource(*cachedResource).get());
 }
 
 ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResourcesObject::getResources(Document& document)
@@ -83,7 +90,7 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
             }
         }
         if (!exists) {
-            cachedResource->addClient(clientForResource(*cachedResource));
+            cachedResource->addClient(checkedClientForResource(*cachedResource).get());
 
             resource.id = String::number(m_resources.size() + 1);
             m_resources.add(resource.id, cachedResource);

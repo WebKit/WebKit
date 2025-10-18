@@ -54,6 +54,13 @@ public:
     static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
 
+    // CachedStyleSheetClient.
+    USING_CAN_MAKE_CHECKEDPTR(HTMLElement);
+    uint32_t virtualCheckedPtrCount() const final { return HTMLElement::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return HTMLElement::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { HTMLElement::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { HTMLElement::decrementCheckedPtrCount(); }
+
     URL href() const;
     WEBCORE_EXPORT const AtomString& rel() const;
 

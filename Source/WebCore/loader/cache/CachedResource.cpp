@@ -234,7 +234,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         m_fragmentIdentifierForRequest = String();
     }
 
-    if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
+    if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.checkedKeepaliveRequestTracker()->tryRegisterRequest(*this)) {
         setResourceError({ errorDomainWebKitInternal, 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_s, ResourceError::Type::AccessControl });
         failBeforeStarting();
         return;
@@ -316,7 +316,7 @@ void CachedResource::checkNotify(const NetworkLoadMetrics& metrics, LoadWillCont
         return;
 
     CachedResourceClientWalker<CachedResourceClient> walker(*this);
-    while (CachedResourceClient* client = walker.next())
+    while (CheckedPtr client = walker.next())
         client->notifyFinished(*this, metrics, loadWillContinueInAnotherProcess);
 }
 
@@ -782,10 +782,10 @@ void CachedResource::switchClientsToRevalidatedResource()
 
     Vector<SingleThreadWeakPtr<CachedResourceClient>> clientsToMove;
     for (auto entry : m_clients) {
-        auto& client = entry.key;
+        CheckedRef client = entry.key;
         unsigned count = entry.value;
         while (count) {
-            clientsToMove.append(client);
+            clientsToMove.append(client.get());
             --count;
         }
     }

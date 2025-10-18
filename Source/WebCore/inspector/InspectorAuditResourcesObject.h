@@ -32,6 +32,7 @@
 #include "CachedSVGDocumentClient.h"
 #include "CachedStyleSheetClient.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -70,28 +71,86 @@ private:
     explicit InspectorAuditResourcesObject(Inspector::InspectorAuditAgent&);
 
     CachedResourceClient& clientForResource(const CachedResource&);
+    CheckedRef<CachedResourceClient> checkedClientForResource(const CachedResource& resource) { return clientForResource(resource); }
 
     Inspector::InspectorAuditAgent& m_auditAgent;
 
-    class InspectorAuditCachedResourceClient : public CachedResourceClient { };
+    class InspectorAuditCachedResourceClient final : public CachedResourceClient, public CanMakeCheckedPtr<InspectorAuditCachedResourceClient> {
+        WTF_MAKE_TZONE_ALLOCATED(InspectorAuditCachedResourceClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedResourceClient);
+    public:
+        // CachedResourceClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    };
     InspectorAuditCachedResourceClient m_cachedResourceClient;
 
-    class InspectorAuditCachedFontClient : public CachedFontClient { };
+    class InspectorAuditCachedFontClient final : public CachedFontClient, public CanMakeCheckedPtr<InspectorAuditCachedResourceClient> {
+        WTF_MAKE_TZONE_ALLOCATED(InspectorAuditCachedFontClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedFontClient);
+    public:
+        // CachedFontClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    };
     InspectorAuditCachedFontClient m_cachedFontClient;
 
-    class InspectorAuditCachedImageClient final : public CachedImageClient {
+    class InspectorAuditCachedImageClient final : public CachedImageClient, public CanMakeCheckedPtr<InspectorAuditCachedImageClient> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InspectorAuditCachedImageClient);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedImageClient);
+    public:
+        // CachedImageClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     };
     InspectorAuditCachedImageClient m_cachedImageClient;
 
-    class InspectorAuditCachedRawResourceClient : public CachedRawResourceClient { };
+    class InspectorAuditCachedRawResourceClient final : public CachedRawResourceClient, public CanMakeCheckedPtr<InspectorAuditCachedRawResourceClient> {
+        WTF_MAKE_TZONE_ALLOCATED(InspectorAuditCachedRawResourceClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedRawResourceClient);
+    public:
+        // CachedRawResourceClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    };
     InspectorAuditCachedRawResourceClient m_cachedRawResourceClient;
 
-    class InspectorAuditCachedSVGDocumentClient : public CachedSVGDocumentClient { };
+    class InspectorAuditCachedSVGDocumentClient final : public CachedSVGDocumentClient, public CanMakeCheckedPtr<InspectorAuditCachedRawResourceClient> {
+        WTF_MAKE_TZONE_ALLOCATED(InspectorAuditCachedSVGDocumentClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedSVGDocumentClient);
+    public:
+        // CachedSVGDocumentClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    };
     InspectorAuditCachedSVGDocumentClient m_cachedSVGDocumentClient;
 
-    class InspectorAuditCachedStyleSheetClient : public CachedStyleSheetClient { };
+    class InspectorAuditCachedStyleSheetClient final : public CachedStyleSheetClient, public CanMakeCheckedPtr<InspectorAuditCachedRawResourceClient> {
+        WTF_MAKE_TZONE_ALLOCATED(InspectorAuditCachedStyleSheetClient);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedStyleSheetClient);
+    public:
+        // CachedStyleSheetClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    };
     InspectorAuditCachedStyleSheetClient m_cachedStyleSheetClient;
 
     MemoryCompactRobinHoodHashMap<String, CachedResource*> m_resources;

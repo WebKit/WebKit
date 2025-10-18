@@ -40,6 +40,13 @@ public:
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();
 
+    // CachedStyleSheetClient.
+    USING_CAN_MAKE_CHECKEDPTR(CharacterData);
+    uint32_t virtualCheckedPtrCount() const final { return CharacterData::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CharacterData::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CharacterData::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CharacterData::decrementCheckedPtrCount(); }
+
     const String& target() const { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }

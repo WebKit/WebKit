@@ -41,9 +41,18 @@ class WeakPtrImplWithEventTargetData;
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a client until this class is
 // destroyed in order to guarantee that the data buffer will not be purged.
-class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResourceClient {
+class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResourceClient, public CanMakeCheckedPtr<LoadableNonModuleScriptBase> {
+    WTF_MAKE_TZONE_ALLOCATED(LoadableNonModuleScriptBase);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoadableNonModuleScriptBase);
 public:
     virtual ~LoadableNonModuleScriptBase();
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     bool isLoaded() const final;
     bool hasError() const final;
@@ -75,6 +84,8 @@ protected:
 
 
 class LoadableClassicScript final : public LoadableNonModuleScriptBase {
+    WTF_MAKE_TZONE_ALLOCATED(LoadableClassicScript);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoadableClassicScript);
 public:
     static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 

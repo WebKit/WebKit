@@ -30,18 +30,27 @@
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include <JavaScriptCore/SourceProvider.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
-class CachedScriptSourceProvider final : public JSC::SourceProvider, public CachedResourceClient {
+class CachedScriptSourceProvider final : public JSC::SourceProvider, public CachedResourceClient, public CanMakeCheckedPtr<CachedScriptSourceProvider> {
     WTF_MAKE_TZONE_ALLOCATED(CachedScriptSourceProvider);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedScriptSourceProvider);
 public:
     static Ref<CachedScriptSourceProvider> create(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher) { return adoptRef(*new CachedScriptSourceProvider(cachedScript, sourceType, WTFMove(scriptFetcher))); }
 
-    virtual ~CachedScriptSourceProvider()
+    ~CachedScriptSourceProvider()
     {
         m_cachedScript->removeClient(*this);
     }
+
+    // CachedResourceClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
     unsigned hash() const override;
     StringView source() const override;

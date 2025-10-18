@@ -34,7 +34,7 @@ namespace WebCore {
 
 struct BlendingContext;
 
-class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
+class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient, public CanMakeCheckedPtr<StyleCrossfadeImage> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleCrossfadeImage);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleCrossfadeImage);
 public:
@@ -51,6 +51,13 @@ public:
     bool equalInputImages(const StyleCrossfadeImage&) const;
 
     static constexpr bool isFixedSize = true;
+
+    // CachedImageClient.
+    USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+    uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
 private:
     explicit StyleCrossfadeImage(RefPtr<StyleImage>&&, RefPtr<StyleImage>&&, double, bool);

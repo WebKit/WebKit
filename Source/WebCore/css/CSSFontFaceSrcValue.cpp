@@ -113,7 +113,7 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
     }
 
     auto request = context.fontLoadRequest(m_location.resolved.string(), isFormatSVG, isInitiatingElementInUserAgentShadowTree, m_location.modifiers.loadedFromOpaqueSource);
-    if (auto* cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
+    if (CheckedPtr cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
         m_cachedFont = &cachedRequest->cachedFont();
 
     return request;

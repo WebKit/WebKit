@@ -144,7 +144,7 @@ bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* resul
 
 void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame, const URL& url, String* result, bool* base64Encoded)
 {
-    DocumentLoader* loader = assertDocumentLoader(errorString, frame);
+    RefPtr loader = assertDocumentLoader(errorString, frame);
     if (!loader)
         return;
 
@@ -279,11 +279,11 @@ LocalFrame* findFrameWithSecurityOrigin(Page& page, const String& originRawStrin
 
 DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame)
 {
-    FrameLoader& frameLoader = frame->loader();
-    DocumentLoader* documentLoader = frameLoader.documentLoader();
-    if (!documentLoader)
-        errorString = "Missing document loader for given frame"_s;
-    return documentLoader;
+    if (auto* documentLoader = frame->loader().documentLoader())
+        return documentLoader;
+
+    errorString = "Missing document loader for given frame"_s;
+    return nullptr;
 }
 
 bool shouldTreatAsText(const String& mimeType)

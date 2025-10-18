@@ -39,6 +39,7 @@
 #include "SecurityOrigin.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -48,8 +49,9 @@ class CachedRawResource;
     class ThreadableLoaderClient;
     class WeakPtrImplWithEventTargetData;
 
-    class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, public CachedRawResourceClient {
+    class DocumentThreadableLoader final : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, public CachedRawResourceClient, public CanMakeCheckedPtr<DocumentThreadableLoader> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentThreadableLoader, Loader);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentThreadableLoader);
     public:
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&);
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
@@ -59,6 +61,13 @@ class CachedRawResource;
         static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String());
 
         virtual ~DocumentThreadableLoader();
+
+        // CachedRawResourceClient.
+        USING_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+        uint32_t virtualCheckedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t virtualCheckedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void virtualIncrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        void virtualDecrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
         void cancel() override;
         virtual void setDefersLoading(bool);

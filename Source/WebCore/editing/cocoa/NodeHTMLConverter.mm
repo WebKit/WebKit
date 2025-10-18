@@ -177,7 +177,7 @@ public:
 private:
     Position m_start;
     Position m_end;
-    DocumentLoader* m_dataSource { nullptr };
+    SingleThreadWeakPtr<DocumentLoader> m_dataSource;
 
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
     HashMap<RetainPtr<CFTypeRef>, RefPtr<Element>> m_textTableFooters;
@@ -1275,7 +1275,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
             fileWrapper = nil;
     }
     if (!fileWrapper && !notFound) {
-        fileWrapper = fileWrapperForURL(m_dataSource, url);
+        fileWrapper = fileWrapperForURL(RefPtr { m_dataSource.get() }.get(), url);
         if (usePlaceholder && fileWrapper && [[[[fileWrapper preferredFilename] pathExtension] lowercaseString] hasPrefix:@"htm"])
             notFound = YES;
         if (notFound)

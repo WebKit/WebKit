@@ -546,7 +546,7 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 
     if (!m_defaultArtworkAttempted && (!m_metadata || m_metadata->artwork().isEmpty())) {
         m_defaultArtworkAttempted = true;
-        if (auto images = fallbackArtwork(protectedDocument() ? protectedDocument()->loader() : nullptr); images.size())
+        if (auto images = fallbackArtwork(protectedDocument() ? protectedDocument()->protectedLoader().get() : nullptr); images.size())
             m_defaultMetadata = MediaMetadata::create(*this, WTFMove(images));
     }
 
