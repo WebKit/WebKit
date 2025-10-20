@@ -76,16 +76,18 @@ addEventListener("load", async () => {
     await shouldBecomeEqual("targetContainsCaretSelection()", "true");
 
     console.log("8. Dismissing keyboard");
-    document.body.blur();
+    document.getElementById("editor").blur();
     await UIHelper.waitForKeyboardToHide();
 
     finishJSTest();
 });
 </script>
 </head>
-<body contenteditable>
-    <div id="start"><br></div>
-    <p id="description"></p>
-    <div id="target"><br></div>
+<body>
+    <div id="editor" contenteditable>
+        <div id="start"><br></div>
+        <p id="description"></p>
+        <div id="target"><br></div>
+    </div>
 </body>
 </html>

@@ -566,6 +566,8 @@ struct ImageAnalysisContextMenuActionData {
 
     BOOL _keyboardDidRequestDismissal;
     BOOL _isKeyboardScrollingAnimationRunning;
+    BOOL _keyboardDismissedInCurrentPresentationUpdate;
+    BOOL _editingEndedByUser;
 
     BOOL _candidateViewNeedsUpdate;
     BOOL _seenHardwareKeyDownInNonEditableElement;
