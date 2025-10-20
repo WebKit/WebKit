@@ -1845,23 +1845,11 @@ void WebPageProxy::close()
     Ref processPool = m_configuration->processPool();
     processPool->backForwardCache().removeEntriesForPage(*this);
 
-    struct ProcessToClose {
-        const Ref<WebProcessProxy> process;
-        WebCore::PageIdentifier pageID;
-        WebProcessProxy::ShutdownPreventingScopeCounter::Token shutdownPreventingScope;
-    };
-    Vector<ProcessToClose> processesToClose;
-    forEachWebContentProcess([&](auto& process, auto pageID) {
-        processesToClose.append({
-            process,
-            pageID,
-            process.shutdownPreventingScope()
-        });
-    });
     // Delay sending close message to next runloop cycle to avoid white flash.
-    RunLoop::currentSingleton().dispatch([processesToClose = WTFMove(processesToClose)] {
-        for (auto [process, pageID, scope] : processesToClose)
+    RunLoop::currentSingleton().dispatch([protectedThis = Ref { *this }] {
+        protectedThis->forEachWebContentProcess([](auto& process, auto pageID) {
             Ref { process }->send(Messages::WebPage::Close(), pageID);
+        });
     });
 
     process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
