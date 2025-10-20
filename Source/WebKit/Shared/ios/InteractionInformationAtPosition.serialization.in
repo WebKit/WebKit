@@ -84,7 +84,7 @@ struct WebKit::InteractionInformationAtPosition {
     RefPtr<WebCore::TextIndicator> textIndicator;
 #if ENABLE(DATA_DETECTION)
     String dataDetectorIdentifier;
-    Vector<RetainPtr<DDScannerResult>> serializableDataDetectorResults();
+    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()], Validator='!arrayContainsAnythingBut<DDScannerResult>(*dataDetectorResults)'] RetainPtr<NSArray> dataDetectorResults;
     WebCore::IntRect dataDetectorBounds;
 #endif
 
