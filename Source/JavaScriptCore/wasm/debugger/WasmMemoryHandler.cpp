@@ -102,7 +102,12 @@ bool MemoryHandler::readModuleData(VirtualAddress address, size_t length, String
         return false;
 
     const auto& source = module->moduleInformation().debugInfo->source;
-    if (offset >= source.size() || offset + length > source.size()) {
+    if (!offset && source.size() < length) {
+        // FIXME: Workaround for tiny modules - clamp initial read at offset 0.
+        // Cannot clamp at non-zero offsets as it corrupts DWARF debug info in LLDB.
+        dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - clamping read from ", length, " to ", source.size(), " bytes (module size: ", source.size(), ")");
+        length = source.size();
+    } else if (offset >= source.size() || offset + length > source.size()) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - read beyond module boundary. Address: ", address, " offset: ", offset, " size: ", length, " module size: ", source.size());
         return false;
     }

@@ -74,7 +74,7 @@ public:
     virtual void work() = 0;
     virtual bool multiThreaded() const = 0;
 
-    void waitForCompletion();
+    JS_EXPORT_PRIVATE void waitForCompletion();
     // Returns true if it cancelled the plan.
     bool tryRemoveContextAndCancelIfLast(VM&);
 

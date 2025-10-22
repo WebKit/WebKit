@@ -560,7 +560,7 @@ public:
                     bool isControlFlowInstruction = Wasm::isControlFlowInstructionWithExtGC(currentOpcode, [this]() {
                         return m_parser->currentExtendedOpcode();
                     });
-                    if (!isControlFlowInstruction)
+                    if (!isControlFlowInstruction || currentOpcode == AnnotatedSelect)
                         RECORD_NEXT_INSTRUCTION(curPC(), nextPC());
                 }
             }
@@ -2154,7 +2154,7 @@ void IPIntGenerator::resolveEntryTarget(unsigned index, IPIntLocation loc)
         // write delta PC and delta MC
         IPInt::BlockMetadata md = { static_cast<int32_t>(loc.pc - src.pc), static_cast<int32_t>(loc.mc - src.mc) };
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
-        RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
+        RECORD_NEXT_INSTRUCTION(src.pc, loc.pc); // FIXME: coalescing sequential blocks - should update instead of adding
     }
     if (control.isLoop) {
         for (auto& src : control.m_awaitingBranchTarget) {

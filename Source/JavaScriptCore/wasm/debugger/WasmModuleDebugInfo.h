@@ -29,6 +29,7 @@
 
 #include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,11 +41,11 @@ struct ModuleInformation;
 class FunctionCodeIndex;
 
 struct FunctionDebugInfo {
-    Vector<uint32_t>* findNextInstructions(uint32_t offset);
+    JS_EXPORT_PRIVATE UncheckedKeyHashSet<uint32_t>* findNextInstructions(uint32_t offset);
     void addNextInstruction(uint32_t offset, uint32_t nextInstruction);
     void addLocalType(Type);
 
-    using OffsetToNextInstructions = UncheckedKeyHashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using OffsetToNextInstructions = UncheckedKeyHashMap<uint32_t, UncheckedKeyHashSet<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     OffsetToNextInstructions offsetToNextInstructions;
     Vector<Type> locals;
 };

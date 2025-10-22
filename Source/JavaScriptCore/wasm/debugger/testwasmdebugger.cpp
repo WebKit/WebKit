@@ -32,12 +32,11 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "InitializeThreading.h"
+#include "Options.h"
+#include "TestUtilities.h"
 #include "WasmVirtualAddress.h"
 #include <wtf/HexNumber.h>
-#include <wtf/Vector.h>
-#include <wtf/WTFProcess.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)
@@ -47,22 +46,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 using namespace JSC;
 using namespace JSC::Wasm;
 
-// Test counters
+// Test counters for VirtualAddress tests
 static int testsRun = 0;
 static int testsPassed = 0;
 static int testsFailed = 0;
-
-#define TEST_ASSERT(condition, message)                          \
-    do {                                                         \
-        testsRun++;                                              \
-        if (condition) {                                         \
-            testsPassed++;                                       \
-            dataLogLn("PASS: ", message);                        \
-        } else {                                                 \
-            testsFailed++;                                       \
-            dataLogLn("FAIL: ", message, " (", #condition, ")"); \
-        }                                                        \
-    } while (0)
 
 static void testWASMVirtualAddressConstants()
 {
@@ -302,9 +289,11 @@ static void testWASMVirtualAddressOperators()
 
 static void runAllTests()
 {
-    dataLogLn("Starting VirtualAddress Infrastructure Test Suite");
+    dataLogLn("Starting WASM Debugger Test Suite");
     dataLogLn("===============================================");
 
+    // VirtualAddress infrastructure tests
+    dataLogLn("\n--- VirtualAddress Infrastructure Tests ---");
     testWASMVirtualAddressConstants();
     testWASMVirtualAddressEncoding();
     testWASMVirtualAddressBoundaries();
@@ -313,19 +302,25 @@ static void runAllTests()
     testWASMVirtualAddressHashTraits();
     testWASMVirtualAddressOperators();
 
-    dataLogLn("===============================================");
-    dataLogLn("Test Results:");
-    dataLogLn("  Tests run: ", testsRun);
-    dataLogLn("  Passed: ", testsPassed);
-    dataLogLn("  Failed: ", testsFailed);
+    // WASM Debug Info Tests (in separate file)
+    dataLogLn("\n--- WASM Debug Info Tests ---");
+    int debugInfoTestsFailed = testWasmDebugInfo();
 
-    if (!testsFailed) {
+    // Summary combining both test suites
+    dataLogLn("===============================================");
+    dataLogLn("Combined Test Results:");
+    dataLogLn("  VirtualAddress Tests - Passed: ", testsPassed, " / ", testsRun);
+    dataLogLn("  WASM Debug Info Tests - See detailed results above");
+    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) = ", testsFailed + debugInfoTestsFailed);
+
+    int totalFailures = testsFailed + debugInfoTestsFailed;
+    if (!totalFailures) {
         dataLogLn("All tests PASSED!");
-        dataLogLn("VirtualAddress infrastructure is working correctly");
+        dataLogLn("WASM debugger infrastructure is working correctly");
         dataLogLn("allWasmDebuggerTestsPassed");
     } else {
         dataLogLn("Some tests FAILED!");
-        dataLogLn("VirtualAddress infrastructure needs attention");
+        dataLogLn("WASM debugger infrastructure needs attention");
     }
 }
 
@@ -344,6 +339,9 @@ int main(int argc, char** argv)
 #endif
 
     JSC::initialize();
+
+    JSC::Options::setOption("enableWasmDebugger=true");
+
     runAllTests();
     return (!testsFailed) ? 0 : 1;
 }

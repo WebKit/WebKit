@@ -2252,11 +2252,17 @@
 		FF0F568D2E33437C002A232A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		FF0F569A2E3348CA002A232A /* testwasmdebugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF0F56992E3348CA002A232A /* testwasmdebugger.cpp */; };
 		FF0F569C2E334C90002A232A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0F569B2E334C90002A232A /* Foundation.framework */; };
+		FF18EBC52EA5C73E00185CFA /* TestUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF18EBC42EA5C73E00185CFA /* TestUtilities.cpp */; };
 		FF1D8E872CE7C9BF00E211DD /* VerifierSlotVisitorScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FF1D8E862CE7C9BF00E211DD /* VerifierSlotVisitorScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF31EC8E2D947F0500D9CB81 /* DFGCloneHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF31EC8B2D947F0500D9CB81 /* DFGCloneHelper.h */; };
 		FF3394AA2CB4944E004AFF6A /* RegExpSubstringGlobalAtomCache.h in Headers */ = {isa = PBXBuildFile; fileRef = FF3394A92CB4941B004AFF6A /* RegExpSubstringGlobalAtomCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF6A4D7E2E663147001FB92C /* WasmModuleDebugInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFA2E02A2EA16F37006661A3 /* ControlFlowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */; };
+		FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */; };
+		FFA2E02D2EA16F37006661A3 /* BinaryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */; };
+		FFA2E02E2EA16F37006661A3 /* MemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */; };
+		FFA2E02F2EA16F37006661A3 /* UnaryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */; };
 		FFB951142C043CA800349750 /* OrderedHashTableHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB951132C043CA800349750 /* OrderedHashTableHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */; };
 		FFCC9A412BDD7C4700C75345 /* OrderedHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC9A402BDD7C4700C75345 /* OrderedHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6286,6 +6292,7 @@
 		FF0F56942E33437C002A232A /* testwasmdebugger */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testwasmdebugger; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF0F56992E3348CA002A232A /* testwasmdebugger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testwasmdebugger.cpp; sourceTree = "<group>"; };
 		FF0F569B2E334C90002A232A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FF18EBC42EA5C73E00185CFA /* TestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestUtilities.cpp; sourceTree = "<group>"; };
 		FF1D8E862CE7C9BF00E211DD /* VerifierSlotVisitorScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VerifierSlotVisitorScope.h; sourceTree = "<group>"; };
 		FF27D0E42BE2AEDB00397A8C /* OrderedHashTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrderedHashTable.cpp; sourceTree = "<group>"; };
 		FF31EC8B2D947F0500D9CB81 /* DFGCloneHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGCloneHelper.h; path = dfg/DFGCloneHelper.h; sourceTree = "<group>"; };
@@ -6294,6 +6301,12 @@
 		FF3394AB2CB4948E004AFF6A /* RegExpSubstringGlobalAtomCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpSubstringGlobalAtomCache.cpp; sourceTree = "<group>"; };
 		FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaiterListManager.h; sourceTree = "<group>"; };
 		FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmModuleDebugInfo.h; sourceTree = "<group>"; };
+		FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryTests.cpp; sourceTree = "<group>"; };
+		FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowTests.cpp; sourceTree = "<group>"; };
+		FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryTests.cpp; sourceTree = "<group>"; };
+		FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialTests.cpp; sourceTree = "<group>"; };
+		FFA2E0252EA16F37006661A3 /* TestUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
+		FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnaryTests.cpp; sourceTree = "<group>"; };
 		FFB77C2828FF561B00F3C55B /* WaiterListManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaiterListManager.cpp; sourceTree = "<group>"; };
 		FFB951132C043CA800349750 /* OrderedHashTableHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedHashTableHelper.h; sourceTree = "<group>"; };
 		FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmBreakpointManager.h; sourceTree = "<group>"; };
@@ -10481,9 +10494,24 @@
 			path = offlineasm;
 			sourceTree = "<group>";
 		};
+		FFA2E0292EA16F37006661A3 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */,
+				FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */,
+				FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */,
+				FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */,
+				FF18EBC42EA5C73E00185CFA /* TestUtilities.cpp */,
+				FFA2E0252EA16F37006661A3 /* TestUtilities.h */,
+				FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
 		FFD49E662E276CA10083E383 /* debugger */ = {
 			isa = PBXGroup;
 			children = (
+				FFA2E0292EA16F37006661A3 /* tests */,
 				FF0F56992E3348CA002A232A /* testwasmdebugger.cpp */,
 				FFB963902E38302B0069A70F /* WasmBreakpointManager.cpp */,
 				FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */,
@@ -13710,7 +13738,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFA2E02D2EA16F37006661A3 /* BinaryTests.cpp in Sources */,
+				FFA2E02A2EA16F37006661A3 /* ControlFlowTests.cpp in Sources */,
+				FFA2E02E2EA16F37006661A3 /* MemoryTests.cpp in Sources */,
+				FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */,
+				FF18EBC52EA5C73E00185CFA /* TestUtilities.cpp in Sources */,
 				FF0F569A2E3348CA002A232A /* testwasmdebugger.cpp in Sources */,
+				FFA2E02F2EA16F37006661A3 /* UnaryTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

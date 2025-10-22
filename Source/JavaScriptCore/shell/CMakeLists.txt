@@ -83,7 +83,15 @@ if (DEVELOPER_MODE)
     set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testdfg_FRAMEWORKS ${jsc_FRAMEWORKS})
 
-    set(testwasmdebugger_SOURCES ../wasm/debugger/testwasmdebugger.cpp)
+    set(testwasmdebugger_SOURCES
+        ../wasm/debugger/testwasmdebugger.cpp
+        ../wasm/debugger/tests/TestUtilities.cpp
+        ../wasm/debugger/tests/ControlFlowTests.cpp
+        ../wasm/debugger/tests/UnaryTests.cpp
+        ../wasm/debugger/tests/BinaryTests.cpp
+        ../wasm/debugger/tests/MemoryTests.cpp
+        ../wasm/debugger/tests/SpecialTests.cpp
+    )
     set(testwasmdebugger_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
     set(testwasmdebugger_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
     set(testwasmdebugger_FRAMEWORKS ${jsc_FRAMEWORKS})

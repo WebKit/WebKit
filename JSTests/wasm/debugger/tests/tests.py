@@ -482,3 +482,42 @@ class SwiftWasmTestCase(BaseTestCase):
             "mem reg 0x0000000000000000",
             patterns=["[0x0000000000000000-0x0000000000130000) rw- wasm_memory_0_0"],
         )
+
+class WasmTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise("resources/wasm/nop-drop-select-end.js")
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Breakpoint test failed: {e}")
+
+    def stepTest(self):
+
+        self.send_lldb_command_or_raise("dis", patterns=["->  0x4000000000000021: nop"])
+
+        patterns = [
+            ["->  0x4000000000000022: i32.const 42"],
+            ["->  0x4000000000000024: drop"],
+            ["->  0x4000000000000025: i32.const 1"],
+            ["->  0x4000000000000027: i32.const 2"],
+            ["->  0x4000000000000029: i32.const 1"],
+            ["->  0x400000000000002b: f32.select"],
+            ["->  0x400000000000002c: drop"],
+            ["->  0x400000000000002d: block"],
+            ["->  0x400000000000002f: i32.const 5"],
+            ["->  0x4000000000000031: drop"],
+            ["->  0x4000000000000032: end"],
+            ["->  0x4000000000000033: end"], 
+        ]
+
+        for pattern in patterns:
+            self.send_lldb_command_or_raise("si")
+            self.send_lldb_command_or_raise("dis", patterns=pattern)
+

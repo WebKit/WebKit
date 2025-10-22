@@ -285,21 +285,39 @@ void ExecutionHandler::step()
 
     bool needToWaitForStop = true;
     switch (m_stopReason.originalBytecode) {
+    case Nop:
+    case Drop:
+    case Select:
+        setStepTmpBreakpoint(currentPC + 1);
+        break;
+    case End:
+        if (currentPC != m_stopReason.callee->bytecodeEnd()) {
+            setStepTmpBreakpoint(currentPC + 1);
+            break;
+        }
+        [[fallthrough]];
     case Return:
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Handling return instruction - setting breakpoint at caller");
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Handling function end/return instruction - setting breakpoint at caller");
         needToWaitForStop = setStepTmpBreakpointAtCaller();
         break;
     case Call:
-    case TailCall:
         if (setStepIntoBreakpointForDirectCall())
             break;
         [[fallthrough]];
-    // FIXME: Need to set step into breakpoints for these calls
+    // FIXME: Need to set step-into breakpoints for indirect calls (requires runtime function resolution)
     case CallIndirect:
-    case TailCallIndirect:
     case CallRef:
-    case TailCallRef:
         [[fallthrough]];
+    case TailCall:
+    case TailCallIndirect:
+    case TailCallRef:
+        // Tail calls don't return to the current function, they return to the caller's caller
+        // So step-over should behave like Return - set breakpoint at caller
+        if (m_stopReason.originalBytecode == TailCall && setStepIntoBreakpointForDirectCall())
+            break;
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Handling tail call - setting breakpoint at caller");
+        needToWaitForStop = setStepTmpBreakpointAtCaller();
+        break;
     default: {
         const auto& moduleInfo = m_stopReason.instance->moduleInformation();
         auto functionIndex = m_stopReason.callee->functionIndex();
