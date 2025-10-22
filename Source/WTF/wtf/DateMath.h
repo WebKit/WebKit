@@ -145,6 +145,12 @@ private:
     int64_t m_value;
 };
 
+// https://tc39.es/ecma262/#sec-makefullyear
+constexpr double makeFullYear(double year)
+{
+    return (0 <= year && year <= 99) ? (1900 + year) : year;
+}
+
 inline double timeClip(double t)
 {
     if (std::abs(t) > maxECMAScriptTime)

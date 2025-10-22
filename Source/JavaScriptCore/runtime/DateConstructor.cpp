@@ -93,12 +93,9 @@ static double millisecondsFromComponents(JSGlobalObject* globalObject, const Arg
         doubleArguments[i] = toIntegerOrInfinity(doubleArguments[i]);
     }
 
-    if (0 <= doubleArguments[0] && doubleArguments[0] <= 99)
-        doubleArguments[0] += 1900;
+    doubleArguments[0] = WTF::makeFullYear(doubleArguments[0]);
 
     double time = makeDate(makeDay(doubleArguments[0], doubleArguments[1], doubleArguments[2]), makeTime(doubleArguments[3], doubleArguments[4], doubleArguments[5], doubleArguments[6]));
-    if (!std::isfinite(time))
-        return PNaN;
     return timeClip(vm.dateCache.localTimeToMS(time, timeType));
 }
 

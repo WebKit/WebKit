@@ -871,7 +871,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
 
     GregorianDateTime gregorianDateTime;
     if (std::isnan(milli))
-        // Based on ECMA 262 B.2.5 (setYear)
+        // Based on https://tc39.es/ecma262/#sec-date.prototype.setyear
         // the time must be reset to +0 if it is NaN.
         cache.msToGregorianDateTime(0, TimeType::UTCTime, gregorianDateTime);
     else {
@@ -888,7 +888,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncSetYear, (JSGlobalObject* globalObject, Ca
         return JSValue::encode(jsNaN());
     }
 
-    gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
+    gregorianDateTime.setYear(toInt32(WTF::makeFullYear(year)));
     double timeInMilliseconds = cache.gregorianDateTimeToMS(gregorianDateTime, ms, TimeType::LocalTime);
     double result = timeClip(timeInMilliseconds);
     thisDateObj->setInternalNumber(result);
