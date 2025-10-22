@@ -13,7 +13,6 @@ WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm
-WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
 WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm
 WebProcess/InjectedBundle/API/mac/WKDOMElement.mm
