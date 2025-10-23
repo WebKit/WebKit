@@ -134,7 +134,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
     // Needed for correct shrinking.
     newStyle->setLogicalMinWidth(0_css_px);
 
-    newStyle->setDisplay(DisplayType::Block);
+    newStyle->setDisplay(Style::Display::Block);
     newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
@@ -242,7 +242,7 @@ std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCust
 
     Ref controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
     CheckedRef styleStyle = *style.style;
-    styleStyle->setDisplay(controlElement->isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
+    styleStyle->setDisplay(controlElement->isPlaceholderVisible() ? Style::Display::Block : Style::Display::None);
 
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
         styleStyle->setTextOverflow(inputElement->shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
@@ -287,7 +287,7 @@ std::optional<Style::UnadjustedStyle> SearchFieldResultsButtonElement::resolveCu
 
     if (searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle)) {
         auto elementStyle = resolveStyle(resolutionContext);
-        elementStyle.style->setDisplay(DisplayType::None);
+        elementStyle.style->setDisplay(Style::Display::None);
         return elementStyle;
     }
 
@@ -359,10 +359,10 @@ std::optional<Style::UnadjustedStyle> SearchFieldCancelButtonElement::resolveCus
 {
     auto elementStyle = resolveStyle(resolutionContext);
     Ref inputElement = downcast<HTMLInputElement>(*shadowHost());
-    elementStyle.style->setVisibility(elementStyle.style->usedVisibility() == Visibility::Hidden || inputElement->value()->isEmpty() ? Visibility::Hidden : Visibility::Visible);
+    elementStyle.style->setVisibility(elementStyle.style->usedVisibility() == Style::Visibility::Hidden || inputElement->value()->isEmpty() ? Style::Visibility::Hidden : Style::Visibility::Visible);
 
     if (shadowHostStyle && searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle))
-        elementStyle.style->setDisplay(DisplayType::None);
+        elementStyle.style->setDisplay(Style::Display::None);
 
     return elementStyle;
 }

@@ -177,8 +177,8 @@ void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, RenderSt
 {
     auto adjustStyle = [&] (auto& styleToAdjust) {
         if (is<RenderBlock>(renderer)) {
-            if (styleToAdjust.display() == DisplayType::Inline)
-                styleToAdjust.setDisplay(DisplayType::InlineBlock);
+            if (styleToAdjust.display() == Style::Display::Inline)
+                styleToAdjust.setDisplay(Style::Display::InlineBlock);
             if (renderer.isAnonymousBlock()) {
                 auto& anonBlockParentStyle = renderer.parent()->style();
                 // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
@@ -206,20 +206,20 @@ void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, RenderSt
 
             auto isSupportedInlineDisplay = [&] {
                 auto display = styleToAdjust.display();
-                if (display == DisplayType::RubyBase || display == DisplayType::RubyAnnotation)
-                    return renderInline->parent()->style().display() == DisplayType::Ruby;
+                if (display == Style::Display::RubyBase || display == Style::Display::RubyAnnotation)
+                    return renderInline->parent()->style().display() == Style::Display::Ruby;
                 if (is<RenderSVGInline>(*renderInline))
-                    return display == DisplayType::Inline;
+                    return display == Style::Display::Inline;
                 return styleToAdjust.isDisplayInlineType();
             };
             if (!isSupportedInlineDisplay())
-                styleToAdjust.setDisplay(DisplayType::Inline);
+                styleToAdjust.setDisplay(Style::Display::Inline);
             return;
         }
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
             if (!styleToAdjust.hasOutOfFlowPosition()) {
                 // Force in-flow display value to inline (see webkit.org/b/223151).
-                styleToAdjust.setDisplay(DisplayType::Inline);
+                styleToAdjust.setDisplay(Style::Display::Inline);
             }
             styleToAdjust.setFloating(Float::None);
             // Clear property should only apply on block elements, however,
@@ -240,7 +240,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
     std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(renderer);
 
     if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
-        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer->style(), DisplayType::Inline);
+        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer->style(), Style::Display::Inline);
         auto isCombinedText = [&] {
             auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(*textRenderer);
             return combineTextRenderer && combineTextRenderer->isCombined();
@@ -394,7 +394,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
         if (auto* inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(*layoutBox)) {
             updateContentCharacteristic(*renderText, *inlineTextBox);
-            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderText->style(), DisplayType::Inline), firstLineStyleFor(*renderText));
+            inlineTextBox->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(renderText->style(), Style::Display::Inline), firstLineStyleFor(*renderText));
             return;
         }
         ASSERT_NOT_REACHED();

@@ -60,6 +60,7 @@ public:
     virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
     virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
     virtual bool requiresInterpolationForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
+    virtual bool requiresNormalizedProgress(const RenderStyle&, const RenderStyle&) const { return true; }
     virtual void interpolate(RenderStyle&, const RenderStyle&, const RenderStyle&, const Context&) const = 0;
 #if !LOG_DISABLED
     virtual void log(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;

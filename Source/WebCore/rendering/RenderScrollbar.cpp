@@ -226,9 +226,9 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType)
         return;
 
     std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(partType, pseudoForScrollbarPart(partType));
-    bool needRenderer = partStyle && partStyle->display() != DisplayType::None;
+    bool needRenderer = partStyle && partStyle->display() != Style::Display::None;
 
-    if (needRenderer && partStyle->display() != DisplayType::Block) {
+    if (needRenderer && partStyle->display() != Style::Display::Block) {
         // See if we are a button that should not be visible according to OS settings.
         ScrollbarButtonsPlacement buttonsPlacement = theme().buttonsPlacement();
         switch (partType) {
@@ -368,7 +368,7 @@ float RenderScrollbar::opacity() const
 bool RenderScrollbar::isHiddenByStyle() const
 {
     std::unique_ptr<RenderStyle> partStyle = getScrollbarPseudoStyle(ScrollbarBGPart, pseudoForScrollbarPart(ScrollbarBGPart));
-    return partStyle && partStyle->display() == DisplayType::None;
+    return partStyle && partStyle->display() == Style::Display::None;
 }
 
 }

@@ -1948,7 +1948,7 @@ bool Quirks::needsFacebookStoriesCreationFormQuirk(const Element& element, const
     if (m_facebookStoriesCreationFormContainer)
         return m_facebookStoriesCreationFormContainer.get() == &element;
 
-    if (computedStyle.display() != DisplayType::None)
+    if (computedStyle.display() != Style::Display::None)
         return false;
 
     if (accessibilityRole(element) != AccessibilityRole::LandmarkNavigation)
@@ -2031,7 +2031,7 @@ std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOver
     if (!needsQuirks())
         return { };
 
-    if (parentStyle.display() != DisplayType::Flex)
+    if (parentStyle.display() != Style::Display::Flex)
         return { };
 
     if (parentStyle.position() != PositionType::Fixed)

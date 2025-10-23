@@ -869,15 +869,6 @@ bool CSSProperty::animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyI
     }
 }
 
-bool CSSProperty::animationUsesNonNormalizedDiscreteInterpolation(CSSPropertyID id)
-{
-    switch (id) {
-        return true;
-    default:
-        return false;
-    }
-}
-
 bool CSSProperty::animationIsAccelerated(CSSPropertyID id, [[maybe_unused]] const Settings& settings)
 {
     switch (id) {

@@ -5086,12 +5086,16 @@
 		BC46307E2E9C197500EA911F /* ModelPlayerAccessibilityChildren.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46307D2E9C197000EA911F /* ModelPlayerAccessibilityChildren.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630BD2E9D5B7C00EA911F /* CSSPrimitiveNumericCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630BB2E9D5A5A00EA911F /* CSSPrimitiveNumericCategory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630BE2E9D5CAD00EA911F /* CSSCalcOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630B92E9D59D000EA911F /* CSSCalcOperator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC4630FB2EA1A00A00EA911F /* ModelPlayerGraphicsLayerConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630FA2EA19FD500EA911F /* ModelPlayerGraphicsLayerConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631102EA310B600EA911F /* StyleTextSpacingTrim.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46310E2EA30B5900EA911F /* StyleTextSpacingTrim.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46311F2EA42C0500EA911F /* StyleScrollbarWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46311C2EA4078B00EA911F /* StyleScrollbarWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631452EA6B6AF00EA911F /* StyleGridAutoFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631432EA6AD5900EA911F /* StyleGridAutoFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630FB2EA1A00A00EA911F /* ModelPlayerGraphicsLayerConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630FA2EA19FD500EA911F /* ModelPlayerGraphicsLayerConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631A32EAA911900EA911F /* StyleTextAutospace.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631A12EAA8A0F00EA911F /* StyleTextAutospace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4631762EA854B700EA911F /* StyleImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631742EA8539A00EA911F /* StyleImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC4631B62EAA9D6A00EA911F /* StyleVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631B42EAA9A3800EA911F /* StyleVisibility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC4631B92EAA9EB500EA911F /* StyleContentVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631B72EAA9EAE00EA911F /* StyleContentVisibility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC4631BC2EAAA44500EA911F /* StyleDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4631BA2EAAA10500EA911F /* StyleDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */; };
 		BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F50C0DDC8F0020CFC3 /* JSCSSImportRule.h */; };
 		BC46C2010C0DDC8F0020CFC3 /* JSCSSMediaRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F70C0DDC8F0020CFC3 /* JSCSSMediaRule.h */; };
@@ -18746,6 +18750,12 @@
 		BC4631A22EAA8A0F00EA911F /* StyleTextAutospace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextAutospace.cpp; sourceTree = "<group>"; };
 		BC4631742EA8539A00EA911F /* StyleImageOrientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageOrientation.h; sourceTree = "<group>"; };
 		BC4631752EA8539A00EA911F /* StyleImageOrientation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImageOrientation.cpp; sourceTree = "<group>"; };
+		BC4631B42EAA9A3800EA911F /* StyleVisibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleVisibility.h; sourceTree = "<group>"; };
+		BC4631B52EAA9A3800EA911F /* StyleVisibility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleVisibility.cpp; sourceTree = "<group>"; };
+		BC4631B72EAA9EAE00EA911F /* StyleContentVisibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleContentVisibility.h; sourceTree = "<group>"; };
+		BC4631B82EAA9EAE00EA911F /* StyleContentVisibility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleContentVisibility.cpp; sourceTree = "<group>"; };
+		BC4631BA2EAAA10500EA911F /* StyleDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleDisplay.h; sourceTree = "<group>"; };
+		BC4631BB2EAAA10500EA911F /* StyleDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleDisplay.cpp; sourceTree = "<group>"; };
 		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; };
 		BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceRule.cpp; sourceTree = "<group>"; };
 		BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSFontFaceRule.h; sourceTree = "<group>"; };
@@ -19118,7 +19128,6 @@
 		BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBoxModelObject.h; sourceTree = "<group>"; };
 		BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBoxModelObject.cpp; sourceTree = "<group>"; };
 		BC97703C2D6504B300B97766 /* StyleInterpolationWrappers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInterpolationWrappers.h; sourceTree = "<group>"; };
-		BC97703E2D65053C00B97766 /* StyleInterpolationFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInterpolationFunctions.h; sourceTree = "<group>"; };
 		BC9770402D65097600B97766 /* StyleInterpolationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInterpolationContext.h; sourceTree = "<group>"; };
 		BC9770422D650F5300B97766 /* StyleInterpolationWrapperMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInterpolationWrapperMap.h; sourceTree = "<group>"; };
 		BC9770432D650F5300B97766 /* StyleInterpolationWrapperMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleInterpolationWrapperMap.cpp; sourceTree = "<group>"; };
@@ -35945,6 +35954,8 @@
 			isa = PBXGroup;
 			children = (
 				BC2A0EEA2E11CFD5003CBA0E /* StyleContainerName.h */,
+				BC4631B82EAA9EAE00EA911F /* StyleContentVisibility.cpp */,
+				BC4631B72EAA9EAE00EA911F /* StyleContentVisibility.h */,
 			);
 			path = contain;
 			sourceTree = "<group>";
@@ -36110,7 +36121,11 @@
 		BC34D2F02E3D2708001EAD95 /* display */ = {
 			isa = PBXGroup;
 			children = (
+				BC4631BB2EAAA10500EA911F /* StyleDisplay.cpp */,
+				BC4631BA2EAAA10500EA911F /* StyleDisplay.h */,
 				BC34D2EE2E3D2662001EAD95 /* StyleOrder.h */,
+				BC4631B52EAA9A3800EA911F /* StyleVisibility.cpp */,
+				BC4631B42EAA9A3800EA911F /* StyleVisibility.h */,
 			);
 			path = display;
 			sourceTree = "<group>";
@@ -39238,7 +39253,6 @@
 				71F05F7E2512440C0071E693 /* StyleInterpolation.h */,
 				713171321FBE78C500F758DE /* StyleInterpolationClient.h */,
 				BC9770402D65097600B97766 /* StyleInterpolationContext.h */,
-				BC97703E2D65053C00B97766 /* StyleInterpolationFunctions.h */,
 				BC97704A2D65226900B97766 /* StyleInterpolationWrapperBase.h */,
 				BC97703C2D6504B300B97766 /* StyleInterpolationWrappers.h */,
 				E4A1822F1F13BE5800FEF698 /* StyleInvalidationFunctions.h */,
@@ -46512,6 +46526,7 @@
 				BCD9EFE92E18E58000D1C3DF /* StyleContainIntrinsicSize.h in Headers */,
 				BC5EB9810E82072500B25965 /* StyleContent.h in Headers */,
 				9DAC7C571AF2CB6400437C44 /* StyleContentAlignmentData.h in Headers */,
+				BC4631B92EAA9EB500EA911F /* StyleContentVisibility.h in Headers */,
 				BC7320222E7343E800A6584F /* StyleCoordinatedValueList.h in Headers */,
 				BC23BAB12D6E38870069A80B /* StyleCornerShapeValue.h in Headers */,
 				BC966B422E280AAB0028A7AF /* StyleCounterStyle.h in Headers */,
@@ -46521,6 +46536,7 @@
 				BC779E171BB227CA00CAA8BF /* StyleCustomPropertyData.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
+				BC4631BC2EAAA44500EA911F /* StyleDisplay.h in Headers */,
 				E440FD5325A4AFDF00F7C849 /* StyledMarkedText.h in Headers */,
 				BC5C89BE2D567E23000F45B7 /* StyleDynamicRangeLimit.h in Headers */,
 				BC5C89C02D567E31000F45B7 /* StyleDynamicRangeLimitMix.h in Headers */,
@@ -46762,6 +46778,7 @@
 				BC2A0F0E2E12FFD5003CBA0E /* StyleViewTimelines.h in Headers */,
 				BC2A0EFA2E121665003CBA0E /* StyleViewTransitionClass.h in Headers */,
 				A7CAEDA42CB740E200FE4677 /* StyleViewTransitionName.h in Headers */,
+				BC4631B62EAA9D6A00EA911F /* StyleVisibility.h in Headers */,
 				32DAE2382994A51500F0E767 /* StyleVisitedLinkColorData.h in Headers */,
 				BC22AABA2E371A4C009AC0C3 /* StyleWebKitBorderSpacing.h in Headers */,
 				BC731F292E68B37100A6584F /* StyleWebKitBoxFlex.h in Headers */,

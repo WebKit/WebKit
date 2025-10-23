@@ -688,10 +688,10 @@ bool LocalFrameViewLayoutContext::isSkippedContentRootForLayout(const RenderBox&
         return false;
 
     auto contentVisibility = renderBox.style().contentVisibility();
-    if (contentVisibility == ContentVisibility::Hidden && isVisiblityHiddenIgnored())
+    if (contentVisibility == Style::ContentVisibility::Hidden && isVisiblityHiddenIgnored())
         return false;
 
-    if (contentVisibility == ContentVisibility::Auto && isVisiblityAutoIgnored())
+    if (contentVisibility == Style::ContentVisibility::Auto && isVisiblityAutoIgnored())
         return false;
 
     if (renderBox.style().autoRevealsWhenFound() && isRevealedWhenFoundIgnored())

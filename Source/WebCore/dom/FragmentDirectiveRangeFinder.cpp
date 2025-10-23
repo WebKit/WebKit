@@ -62,7 +62,7 @@ enum class WordBounded : bool { No, Yes };
 // https://wicg.github.io/scroll-to-text-fragment/#search-invisible
 static bool isSearchInvisible(const Node& node)
 {
-    if (!node.renderStyle() || node.renderStyle()->display() == DisplayType::None)
+    if (!node.renderStyle() || node.renderStyle()->display() == Style::Display::None)
         return true;
     
     // FIXME: If the node serializes as void.
@@ -125,13 +125,13 @@ static bool indexIsAtWordBoundary(const String& string, unsigned index)
 static bool isVisibleTextNode(const Node& node)
 {
     if (CheckedPtr renderText = dynamicDowncast<RenderText>(node.renderer()))
-        return renderText->style().visibility() == Visibility::Visible;
+        return renderText->style().visibility() == Style::Visibility::Visible;
     return false;
 }
 
 static bool isVisibleTextNode(const Text& node)
 {
-    return node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
+    return node.renderer() && node.renderer()->style().visibility() == Style::Visibility::Visible;
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#find-a-range-from-a-node-list

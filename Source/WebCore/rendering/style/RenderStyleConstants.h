@@ -741,12 +741,6 @@ enum class ListStylePosition : bool {
     Inside
 };
 
-enum class Visibility : uint8_t {
-    Visible,
-    Hidden,
-    Collapse
-};
-
 enum class CursorType : uint8_t {
     // The following must match the order in CSSValueKeywords.in.
     Auto,
@@ -797,36 +791,6 @@ enum class CursorVisibility : bool {
     AutoHide,
 };
 #endif
-
-enum class DisplayType : uint8_t {
-    Inline,
-    Block,
-    ListItem,
-    InlineBlock,
-    Table,
-    InlineTable,
-    TableRowGroup,
-    TableHeaderGroup,
-    TableFooterGroup,
-    TableRow,
-    TableColumnGroup,
-    TableColumn,
-    TableCell,
-    TableCaption,
-    Box,
-    InlineBox,
-    Flex,
-    InlineFlex,
-    Contents,
-    Grid,
-    InlineGrid,
-    FlowRoot,
-    Ruby,
-    RubyBlock,
-    RubyBase,
-    RubyAnnotation,
-    None
-};
 
 enum class InsideLink : uint8_t {
     NotInside,
@@ -1139,12 +1103,6 @@ enum class ContainIntrinsicSizeType : uint8_t {
     AutoAndNone,
 };
 
-enum class ContentVisibility : uint8_t {
-    Visible,
-    Auto,
-    Hidden,
-};
-
 enum class BlockStepAlign : uint8_t {
     Auto,
     Center,
@@ -1311,12 +1269,10 @@ WTF::TextStream& operator<<(WTF::TextStream&, ColumnProgression);
 WTF::TextStream& operator<<(WTF::TextStream&, ColumnSpan);
 WTF::TextStream& operator<<(WTF::TextStream&, ContentDistribution);
 WTF::TextStream& operator<<(WTF::TextStream&, ContentPosition);
-WTF::TextStream& operator<<(WTF::TextStream&, ContentVisibility);
 WTF::TextStream& operator<<(WTF::TextStream&, CursorType);
 #if ENABLE(CURSOR_VISIBILITY)
 WTF::TextStream& operator<<(WTF::TextStream&, CursorVisibility);
 #endif
-WTF::TextStream& operator<<(WTF::TextStream&, DisplayType);
 WTF::TextStream& operator<<(WTF::TextStream&, Edge);
 WTF::TextStream& operator<<(WTF::TextStream&, EmptyCell);
 WTF::TextStream& operator<<(WTF::TextStream&, EventListenerRegionType);
@@ -1398,7 +1354,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, TransitionBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, UserDrag);
 WTF::TextStream& operator<<(WTF::TextStream&, UserModify);
 WTF::TextStream& operator<<(WTF::TextStream&, UserSelect);
-WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);

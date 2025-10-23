@@ -343,7 +343,7 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 
     auto isNodeRendered = [](auto& node) {
         auto* renderer = node.renderer();
-        return renderer && renderer->style().visibility() == Visibility::Visible;
+        return renderer && renderer->style().visibility() == Style::Visibility::Visible;
     };
 
     for (RefPtr node = holder->firstChild(); node; node = NodeTraversal::next(*node, holder)) {

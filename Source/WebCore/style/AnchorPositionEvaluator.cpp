@@ -1500,7 +1500,7 @@ bool AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxe
     if (!defaultAnchor)
         return false;
 
-    if (defaultAnchor->style().usedVisibility() == Visibility::Hidden)
+    if (defaultAnchor->style().usedVisibility() == Style::Visibility::Hidden)
         return true;
 
     CheckedPtr anchorBox = dynamicDowncast<RenderBox>(*defaultAnchor);

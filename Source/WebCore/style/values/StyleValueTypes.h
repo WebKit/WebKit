@@ -756,6 +756,7 @@ template<TupleLike StyleType, typename Result> requires (std::tuple_size_v<Style
 //        [optional default=(a==b)] bool equals(const StyleType&, const StyleType&);
 //        [optional default=true] bool canBlend(const StyleType&, const StyleType&);
 //        [optional default=false] bool requiresInterpolationForAccumulativeIteration(const StyleType&, const StyleType&);
+//        [optional default=true] bool requiresNormalizedProgress(const StyleType&, const StyleType&);
 //        StyleType blend(const StyleType&, const StyleType&, const [BlendingContext|Interpolation::Context]&);
 //    };
 //
@@ -765,6 +766,7 @@ template<TupleLike StyleType, typename Result> requires (std::tuple_size_v<Style
 //        [optional default=(a==b)] bool equals(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
 //        [optional default=true] bool canBlend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
 //        [optional default=false] bool requiresInterpolationForAccumulativeIteration(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
+//        [optional default=true] bool requiresNormalizedProgress(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&);
 //        StyleType blend(const StyleType&, const StyleType&, const RenderStyle&, const RenderStyle&, const [BlendingContext|Interpolation::Context]&);
 //    };
 
@@ -776,7 +778,6 @@ template<typename StyleType> concept HasEqualsForBlendingWithoutRenderStyle = re
 template<typename StyleType> concept HasEqualsForBlendingWithRenderStyle = requires {
     { Blending<StyleType>{}.equals(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
 };
-
 template<typename StyleType> concept HasCanBlendWithoutRenderStyleAndWithoutCompositeOperation = requires {
     { Blending<StyleType>{}.canBlend(std::declval<const StyleType&>(), std::declval<const StyleType&>()) } -> std::same_as<bool>;
 };
@@ -794,6 +795,12 @@ template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIter
 };
 template<typename StyleType> concept HasRequiresInterpolationForAccumulativeIterationWithRenderStyle = requires {
     { Blending<StyleType>{}.requiresInterpolationForAccumulativeIteration(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
+};
+template<typename StyleType> concept HasRequiresNormalizedProgressWithoutRenderStyle = requires {
+    { Blending<StyleType>{}.requiresNormalizedProgress(std::declval<const StyleType&>(), std::declval<const StyleType&>()) } -> std::same_as<bool>;
+};
+template<typename StyleType> concept HasRequiresNormalizedProgressWithRenderStyle = requires {
+    { Blending<StyleType>{}.requiresNormalizedProgress(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const RenderStyle&>(), std::declval<const RenderStyle&>()) } -> std::same_as<bool>;
 };
 template<typename StyleType> concept HasBlendWithoutRenderStyleAndWithInterpolationContext = requires {
     { Blending<StyleType>{}.blend(std::declval<const StyleType&>(), std::declval<const StyleType&>(), std::declval<const Interpolation::Context&>()) } -> std::same_as<StyleType>;
@@ -884,6 +891,25 @@ struct RequiresInterpolationForAccumulativeIterationInvoker {
     }
 };
 inline constexpr RequiresInterpolationForAccumulativeIterationInvoker requiresInterpolationForAccumulativeIteration{};
+
+struct RequiresNormalizedProgressInvoker {
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b) const -> bool
+    {
+        if constexpr (HasRequiresNormalizedProgressWithoutRenderStyle<StyleType>)
+            return Blending<StyleType>{}.requiresNormalizedProgress(a, b);
+        else
+            return true;
+    }
+
+    template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const RenderStyle& aStyle, const RenderStyle& bStyle) const -> bool
+    {
+        if constexpr (HasRequiresNormalizedProgressWithRenderStyle<StyleType>)
+            return Blending<StyleType>{}.requiresNormalizedProgress(a, b, aStyle, bStyle);
+        else
+            return this->operator()(a, b);
+    }
+};
+inline constexpr RequiresNormalizedProgressInvoker requiresNormalizedProgress{};
 
 struct BlendInvoker {
     template<typename StyleType> auto operator()(const StyleType& a, const StyleType& b, const Interpolation::Context& context) const -> StyleType

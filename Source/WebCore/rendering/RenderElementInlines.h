@@ -52,7 +52,7 @@ inline bool RenderElement::isBlockLevelBox() const
 inline bool RenderElement::isAnonymousBlock() const
 {
     return isAnonymous()
-        && (style().display() == DisplayType::Block || style().display() == DisplayType::Box)
+        && (style().display() == Style::Display::Block || style().display() == Style::Display::Box)
         && !style().pseudoElementType()
         && isRenderBlock()
 #if ENABLE(MATHML)
@@ -68,12 +68,12 @@ inline bool RenderElement::isAnonymousBlock() const
 inline bool RenderElement::isBlockContainer() const
 {
     auto display = style().display();
-    return (display == DisplayType::Block
-        || display == DisplayType::InlineBlock
-        || display == DisplayType::FlowRoot
-        || display == DisplayType::ListItem
-        || display == DisplayType::TableCell
-        || display == DisplayType::TableCaption) && !isRenderReplaced();
+    return (display == Style::Display::Block
+        || display == Style::Display::InlineBlock
+        || display == Style::Display::FlowRoot
+        || display == Style::Display::ListItem
+        || display == Style::Display::TableCell
+        || display == Style::Display::TableCaption) && !isRenderReplaced();
 }
 
 inline bool RenderElement::isBlockBox() const

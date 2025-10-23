@@ -127,7 +127,7 @@ int RenderFileUploadControl::maxFilenameLogicalWidth() const
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().usedVisibility() != Visibility::Visible)
+    if (style().usedVisibility() != Style::Visibility::Visible)
         return;
     
     if (!paintInfo.context().paintingDisabled())

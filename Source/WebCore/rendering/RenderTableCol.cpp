@@ -128,7 +128,7 @@ void RenderTableCol::willBeRemovedFromTree()
 bool RenderTableCol::isChildAllowed(const RenderObject& child, const RenderStyle& style) const
 {
     // We cannot use isTableColumn here as style() may return 0.
-    return style.display() == DisplayType::TableColumn && child.isRenderTableCol();
+    return style.display() == Style::Display::TableColumn && child.isRenderTableCol();
 }
 
 bool RenderTableCol::canHaveChildren() const

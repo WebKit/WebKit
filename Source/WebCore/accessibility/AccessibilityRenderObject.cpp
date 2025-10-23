@@ -1458,10 +1458,10 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         return false;
 
     switch (downcast<RenderElement>(*m_renderer).style().display()) {
-    case DisplayType::Ruby:
-    case DisplayType::RubyBlock:
-    case DisplayType::RubyAnnotation:
-    case DisplayType::RubyBase:
+    case Style::Display::Ruby:
+    case Style::Display::RubyBlock:
+    case Style::Display::RubyAnnotation:
+    case Style::Display::RubyBase:
         return false;
     default:
         break;
@@ -2462,12 +2462,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::SVGRoot;
 
     switch (downcast<RenderElement>(*m_renderer).style().display()) {
-    case DisplayType::Ruby:
+    case Style::Display::Ruby:
         return AccessibilityRole::RubyInline;
-    case DisplayType::RubyAnnotation:
+    case Style::Display::RubyAnnotation:
         return AccessibilityRole::RubyText;
-    case DisplayType::RubyBlock:
-    case DisplayType::RubyBase:
+    case Style::Display::RubyBlock:
+    case Style::Display::RubyBase:
         return AccessibilityRole::Group;
     default:
         break;

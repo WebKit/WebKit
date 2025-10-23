@@ -148,7 +148,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , effectivelyTransparent(false)
     , isInSubtreeWithBlendMode(false)
     , isForceHidden(false)
-    , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
+    , usedContentVisibility(static_cast<unsigned>(Style::ContentVisibility::Visible))
     , autoRevealsWhenFound(false)
     , insideDefaultButton(false)
     , insideSubmitButton(false)
@@ -518,7 +518,7 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
     LOG_IF_DIFFERENT_WITH_CAST(bool, isForceHidden);
     LOG_IF_DIFFERENT_WITH_CAST(bool, autoRevealsWhenFound);
 
-    LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, usedContentVisibility);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::ContentVisibility, usedContentVisibility);
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideSubmitButton);

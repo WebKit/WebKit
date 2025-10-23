@@ -220,24 +220,24 @@ bool Box::isFloatAvoider() const
 
 bool Box::isInlineBlockBox() const
 {
-    return m_style.display() == DisplayType::InlineBlock;
+    return m_style.display() == Style::Display::InlineBlock;
 }
 
 bool Box::isInlineTableBox() const
 {
-    return m_style.display() == DisplayType::InlineTable;
+    return m_style.display() == Style::Display::InlineTable;
 }
 
 bool Box::isBlockLevelBox() const
 {
     // Block level elements generate block level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Block
-        || display == DisplayType::ListItem
-        || display == DisplayType::Table
-        || display == DisplayType::Flex
-        || display == DisplayType::Grid
-        || display == DisplayType::FlowRoot;
+    return display == Style::Display::Block
+        || display == Style::Display::ListItem
+        || display == Style::Display::Table
+        || display == Style::Display::Flex
+        || display == Style::Display::Grid
+        || display == Style::Display::FlowRoot;
 }
 
 bool Box::isBlockBox() const
@@ -250,13 +250,13 @@ bool Box::isInlineLevelBox() const
 {
     // Inline level elements generate inline level boxes.
     auto display = m_style.display();
-    return display == DisplayType::Inline
-        || display == DisplayType::InlineBox
-        || display == DisplayType::InlineFlex
-        || display == DisplayType::InlineGrid
-        || display == DisplayType::Ruby
-        || display == DisplayType::RubyBase
-        || display == DisplayType::RubyAnnotation
+    return display == Style::Display::Inline
+        || display == Style::Display::InlineBox
+        || display == Style::Display::InlineFlex
+        || display == Style::Display::InlineGrid
+        || display == Style::Display::Ruby
+        || display == Style::Display::RubyBase
+        || display == Style::Display::RubyAnnotation
         || isInlineBlockBox()
         || isInlineTableBox();
 }
@@ -266,7 +266,7 @@ bool Box::isInlineBox() const
     // An inline box is one that is both inline-level and whose contents participate in its containing inline formatting context.
     // A non-replaced element with a 'display' value of 'inline' generates an inline box.
     auto display = m_style.display();
-    return (display == DisplayType::Inline || display == DisplayType::Ruby || display == DisplayType::RubyBase) && !isReplacedBox();
+    return (display == Style::Display::Inline || display == Style::Display::Ruby || display == Style::Display::RubyBase) && !isReplacedBox();
 }
 
 bool Box::isAtomicInlineBox() const
@@ -290,10 +290,10 @@ bool Box::isGridItem() const
 bool Box::isBlockContainer() const
 {
     auto display = m_style.display();
-    return display == DisplayType::Block
-        || display == DisplayType::FlowRoot
-        || display == DisplayType::ListItem
-        || display == DisplayType::RubyBlock
+    return display == Style::Display::Block
+        || display == Style::Display::FlowRoot
+        || display == Style::Display::ListItem
+        || display == Style::Display::RubyBlock
         || isInlineBlockBox()
         || isTableCell()
         || isTableCaption(); // TODO && !replaced element
@@ -318,7 +318,7 @@ bool Box::isLayoutContainmentBox() const
 
 bool Box::isRubyAnnotationBox() const
 {
-    return m_style.display() == DisplayType::RubyAnnotation;
+    return m_style.display() == Style::Display::RubyAnnotation;
 }
 
 bool Box::isInterlinearRubyAnnotationBox() const
@@ -328,7 +328,7 @@ bool Box::isInterlinearRubyAnnotationBox() const
 
 bool Box::isInternalRubyBox() const
 {
-    return m_style.display() == DisplayType::RubyBase || m_style.display() == DisplayType::RubyAnnotation;
+    return m_style.display() == Style::Display::RubyBase || m_style.display() == Style::Display::RubyAnnotation;
 }
 
 bool Box::isSizeContainmentBox() const
@@ -529,11 +529,11 @@ void Box::setShape(RefPtr<const LayoutShape> shape)
 
 const ElementBox* Box::associatedRubyAnnotationBox() const
 {
-    if (style().display() != DisplayType::RubyBase)
+    if (style().display() != Style::Display::RubyBase)
         return nullptr;
 
     auto* next = nextSibling();
-    if (!next || next->style().display() != DisplayType::RubyAnnotation)
+    if (!next || next->style().display() != Style::Display::RubyAnnotation)
         return nullptr;
 
     return dynamicDowncast<ElementBox>(next);

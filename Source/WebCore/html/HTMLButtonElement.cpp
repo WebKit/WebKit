@@ -36,6 +36,7 @@
 #include "KeyboardEvent.h"
 #include "RenderButton.h"
 #include "Settings.h"
+#include "StyleDisplay.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -75,8 +76,7 @@ Ref<HTMLButtonElement> HTMLButtonElement::create(Document& document)
 RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
     // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
-    DisplayType display = style.display();
-    if (display == DisplayType::InlineGrid || display == DisplayType::Grid || display == DisplayType::InlineFlex || display == DisplayType::Flex)
+    if (auto display = style.display(); display == Style::Display::InlineGrid || display == Style::Display::Grid || display == Style::Display::InlineFlex || display == Style::Display::Flex)
         return HTMLFormControlElement::createElementRenderer(WTFMove(style), position);
     return createRenderer<RenderButton>(*this, WTFMove(style));
 }

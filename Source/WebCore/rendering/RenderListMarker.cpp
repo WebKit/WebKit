@@ -152,7 +152,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Accessibility)
         return;
 
-    if (style().usedVisibility() != Visibility::Visible)
+    if (style().usedVisibility() != Style::Visibility::Visible)
         return;
 
     LayoutPoint boxOrigin(paintOffset + location());

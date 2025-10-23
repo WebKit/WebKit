@@ -1674,7 +1674,7 @@ bool RenderThemeCocoa::adjustColorWellSwatchOverlayStyleForVectorBasedControls(R
     if (!formControlRefreshEnabled(element))
         return false;
 
-    style.setDisplay(DisplayType::None);
+    style.setDisplay(Style::Display::None);
 
     return true;
 #endif
@@ -3130,7 +3130,7 @@ static bool hasVisibleSliderThumbDescendant(const RenderElement& box)
     CheckedRef style = renderBox->style();
     const auto usedAppearance = style->usedAppearance();
     const auto isSliderThumb = usedAppearance == StyleAppearance::SliderThumbHorizontal || usedAppearance == StyleAppearance::SliderThumbVertical;
-    if (isSliderThumb && style->usedVisibility() == Visibility::Visible)
+    if (isSliderThumb && style->usedVisibility() == Style::Visibility::Visible)
         return true;
 
     return false;

@@ -203,7 +203,7 @@ void RenderSearchField::updateCancelButtonVisibility() const
         return;
 
     const RenderStyle& curStyle = cancelButtonRenderer->style();
-    Visibility buttonVisibility = visibilityForCancelButton();
+    auto buttonVisibility = visibilityForCancelButton();
     if (curStyle.usedVisibility() == buttonVisibility)
         return;
 
@@ -212,9 +212,9 @@ void RenderSearchField::updateCancelButtonVisibility() const
     cancelButtonRenderer->setStyle(WTFMove(cancelButtonStyle));
 }
 
-Visibility RenderSearchField::visibilityForCancelButton() const
+Style::Visibility RenderSearchField::visibilityForCancelButton() const
 {
-    return (style().usedVisibility() == Visibility::Hidden || inputElement().value()->isEmpty()) ? Visibility::Hidden : Visibility::Visible;
+    return (style().usedVisibility() == Style::Visibility::Hidden || inputElement().value()->isEmpty()) ? Style::Visibility::Hidden : Style::Visibility::Visible;
 }
 
 const AtomString& RenderSearchField::autosaveName() const
@@ -292,8 +292,8 @@ PopupMenuStyle RenderSearchField::menuStyle() const
         style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
         style().fontCascade(),
         nullString(),
-        style().usedVisibility() == Visibility::Visible,
-        style().display() == DisplayType::None,
+        style().usedVisibility() == Style::Visibility::Visible,
+        style().display() == Style::Display::None,
         true,
         writingMode().bidiDirection(),
         isOverride(style().unicodeBidi()),

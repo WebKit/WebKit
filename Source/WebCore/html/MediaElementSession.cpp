@@ -541,7 +541,7 @@ bool MediaElementSession::autoplayPermitted() const
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element has no renderer");
         return false;
     }
-    if (renderer->style().visibility() != Visibility::Visible) {
+    if (renderer->style().visibility() != Style::Visibility::Visible) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is not visible");
         return false;
     }
@@ -1162,7 +1162,7 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
         // Elements which are hidden by style, or have been scrolled out of view, cannot be main content.
         // But elements which have audio & video and are already playing should not stop playing because
         // they are scrolled off the page.
-        if (renderer->style().visibility() != Visibility::Visible)
+        if (renderer->style().visibility() != Style::Visibility::Visible)
             return false;
         if (renderer->visibleInViewportState() != VisibleInViewportState::Yes && !element.isPlaying())
             return false;

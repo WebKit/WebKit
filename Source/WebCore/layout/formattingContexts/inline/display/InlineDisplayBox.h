@@ -28,6 +28,7 @@
 #include <WebCore/GlyphDisplayListCacheRemoval.h>
 #include <WebCore/InlineRect.h>
 #include <WebCore/LayoutBox.h>
+#include <WebCore/StyleVisibility.h>
 #include <WebCore/TextFlags.h>
 #include <unicode/ubidi.h>
 #include <wtf/OptionSet.h>
@@ -112,7 +113,7 @@ struct Box {
 
     bool hasContent() const { return m_hasContent; }
     inline bool isVisible() const;
-    bool isVisibleIgnoringUsedVisibility() const { return !isFullyTruncated() && style().visibility() == Visibility::Visible; }
+    bool isVisibleIgnoringUsedVisibility() const { return !isFullyTruncated() && style().visibility() == Style::Visibility::Visible; }
     bool isFullyTruncated() const { return m_isFullyTruncated; } 
 
     const FloatRect& visualRectIgnoringBlockDirection() const { return m_unflippedVisualRect; }

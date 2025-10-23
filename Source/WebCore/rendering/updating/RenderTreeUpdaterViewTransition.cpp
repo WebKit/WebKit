@@ -73,7 +73,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
     // Destroy pseudo element tree ::view-transition has display: none or no style.
     auto rootStyle = documentElementRenderer->getCachedPseudoStyle({ PseudoElementType::ViewTransition }, &documentElementRenderer->style());
-    if (!rootStyle || rootStyle->display() == DisplayType::None) {
+    if (!rootStyle || rootStyle->display() == Style::Display::None) {
         destroyPseudoElementTreeIfNeeded();
         return;
     }
@@ -85,7 +85,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
 
     WeakPtr viewTransitionContainingBlock = documentElementRenderer->view().viewTransitionContainingBlock();
     if (!viewTransitionContainingBlock) {
-        auto containingBlockStyle = RenderStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), DisplayType::Block);
+        auto containingBlockStyle = RenderStyle::createAnonymousStyleWithDisplay(documentElementRenderer->view().style(), Style::Display::Block);
         containingBlockStyle.setPosition(PositionType::Fixed);
         containingBlockStyle.setPointerEvents(PointerEvents::None);
 
@@ -124,7 +124,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement* d
         ASSERT(!currentGroup || currentGroup->style().pseudoElementType() == PseudoElementType::ViewTransitionGroup);
         if (currentGroup && name == currentGroup->style().pseudoElementNameArgument()) {
             auto style = documentElementRenderer->getCachedPseudoStyle({ PseudoElementType::ViewTransitionGroup, name }, &documentElementRenderer->style());
-            if (!style || style->display() == DisplayType::None) {
+            if (!style || style->display() == Style::Display::None) {
                 documentElementRenderer->view().removeViewTransitionGroup(name);
                 descendantsToDelete.append(currentGroup);
             } else
@@ -144,7 +144,7 @@ static RenderPtr<RenderBox> createRendererIfNeeded(RenderElement& documentElemen
 {
     auto& documentElementStyle = documentElementRenderer.style();
     auto style = documentElementRenderer.getCachedPseudoStyle({ pseudoElementType, name }, &documentElementStyle);
-    if (!style || style->display() == DisplayType::None)
+    if (!style || style->display() == Style::Display::None)
         return nullptr;
 
     Ref document = documentElementRenderer.document();
@@ -205,7 +205,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementGroup(const RenderSty
     enum class ShouldDeleteRenderer : bool { No, Yes };
     auto updateRenderer = [&](auto& renderer) -> ShouldDeleteRenderer {
         auto style = documentElementRenderer.getCachedPseudoStyle({ *renderer.style().pseudoElementType(), name }, &documentElementStyle);
-        if (!style || style->display() == DisplayType::None)
+        if (!style || style->display() == Style::Display::None)
             return ShouldDeleteRenderer::Yes;
 
         auto newStyle = RenderStyle::clone(*style);

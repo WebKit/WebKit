@@ -129,103 +129,103 @@ static void addIntrinsicMargins(RenderStyle& style)
 #endif
 
 // https://www.w3.org/TR/css-display-3/#transformations
-static DisplayType equivalentBlockDisplay(const RenderStyle& style)
+static Display equivalentBlockDisplay(const RenderStyle& style)
 {
     switch (auto display = style.display()) {
-    case DisplayType::Block:
-    case DisplayType::Table:
-    case DisplayType::Box:
-    case DisplayType::Flex:
-    case DisplayType::Grid:
-    case DisplayType::FlowRoot:
-    case DisplayType::ListItem:
-    case DisplayType::RubyBlock:
+    case Display::Block:
+    case Display::Table:
+    case Display::Box:
+    case Display::Flex:
+    case Display::Grid:
+    case Display::FlowRoot:
+    case Display::ListItem:
+    case Display::RubyBlock:
         return display;
-    case DisplayType::InlineTable:
-        return DisplayType::Table;
-    case DisplayType::InlineBox:
-        return DisplayType::Box;
-    case DisplayType::InlineFlex:
-        return DisplayType::Flex;
-    case DisplayType::InlineGrid:
-        return DisplayType::Grid;
-    case DisplayType::Ruby:
-        return DisplayType::RubyBlock;
+    case Display::InlineTable:
+        return Display::Table;
+    case Display::InlineBox:
+        return Display::Box;
+    case Display::InlineFlex:
+        return Display::Flex;
+    case Display::InlineGrid:
+        return Display::Grid;
+    case Display::Ruby:
+        return Display::RubyBlock;
 
-    case DisplayType::Inline:
-    case DisplayType::InlineBlock:
-    case DisplayType::TableRowGroup:
-    case DisplayType::TableHeaderGroup:
-    case DisplayType::TableFooterGroup:
-    case DisplayType::TableRow:
-    case DisplayType::TableColumnGroup:
-    case DisplayType::TableColumn:
-    case DisplayType::TableCell:
-    case DisplayType::TableCaption:
-    case DisplayType::RubyBase:
-    case DisplayType::RubyAnnotation:
-        return DisplayType::Block;
+    case Display::Inline:
+    case Display::InlineBlock:
+    case Display::TableRowGroup:
+    case Display::TableHeaderGroup:
+    case Display::TableFooterGroup:
+    case Display::TableRow:
+    case Display::TableColumnGroup:
+    case Display::TableColumn:
+    case Display::TableCell:
+    case Display::TableCaption:
+    case Display::RubyBase:
+    case Display::RubyAnnotation:
+        return Display::Block;
 
-    case DisplayType::Contents:
+    case Display::Contents:
         ASSERT_NOT_REACHED();
-        return DisplayType::Contents;
-    case DisplayType::None:
+        return Display::Contents;
+    case Display::None:
         ASSERT_NOT_REACHED();
-        return DisplayType::None;
+        return Display::None;
     }
     ASSERT_NOT_REACHED();
-    return DisplayType::Block;
+    return Display::Block;
 }
 
 // https://www.w3.org/TR/css-display-3/#transformations
-static DisplayType equivalentInlineDisplay(const RenderStyle& style)
+static Display equivalentInlineDisplay(const RenderStyle& style)
 {
     switch (auto display = style.display()) {
-    case DisplayType::Block:
-        return DisplayType::InlineBlock;
-    case DisplayType::Table:
-        return DisplayType::InlineTable;
-    case DisplayType::Box:
-        return DisplayType::InlineBox;
-    case DisplayType::Flex:
-        return DisplayType::InlineFlex;
-    case DisplayType::Grid:
-        return DisplayType::InlineGrid;
-    case DisplayType::RubyBlock:
-        return DisplayType::Ruby;
+    case Display::Block:
+        return Display::InlineBlock;
+    case Display::Table:
+        return Display::InlineTable;
+    case Display::Box:
+        return Display::InlineBox;
+    case Display::Flex:
+        return Display::InlineFlex;
+    case Display::Grid:
+        return Display::InlineGrid;
+    case Display::RubyBlock:
+        return Display::Ruby;
 
-    case DisplayType::Inline:
-    case DisplayType::InlineBlock:
-    case DisplayType::InlineTable:
-    case DisplayType::InlineBox:
-    case DisplayType::InlineFlex:
-    case DisplayType::InlineGrid:
-    case DisplayType::Ruby:
-    case DisplayType::RubyBase:
-    case DisplayType::RubyAnnotation:
+    case Display::Inline:
+    case Display::InlineBlock:
+    case Display::InlineTable:
+    case Display::InlineBox:
+    case Display::InlineFlex:
+    case Display::InlineGrid:
+    case Display::Ruby:
+    case Display::RubyBase:
+    case Display::RubyAnnotation:
         return display;
 
-    case DisplayType::FlowRoot:
-    case DisplayType::ListItem:
-    case DisplayType::TableRowGroup:
-    case DisplayType::TableHeaderGroup:
-    case DisplayType::TableFooterGroup:
-    case DisplayType::TableRow:
-    case DisplayType::TableColumnGroup:
-    case DisplayType::TableColumn:
-    case DisplayType::TableCell:
-    case DisplayType::TableCaption:
-        return DisplayType::Inline;
+    case Display::FlowRoot:
+    case Display::ListItem:
+    case Display::TableRowGroup:
+    case Display::TableHeaderGroup:
+    case Display::TableFooterGroup:
+    case Display::TableRow:
+    case Display::TableColumnGroup:
+    case Display::TableColumn:
+    case Display::TableCell:
+    case Display::TableCaption:
+        return Display::Inline;
 
-    case DisplayType::Contents:
+    case Display::Contents:
         ASSERT_NOT_REACHED();
-        return DisplayType::Contents;
-    case DisplayType::None:
+        return Display::Contents;
+    case Display::None:
         ASSERT_NOT_REACHED();
-        return DisplayType::None;
+        return Display::None;
     }
     ASSERT_NOT_REACHED();
-    return DisplayType::Inline;
+    return Display::Inline;
 }
 
 static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
@@ -255,11 +255,11 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
         return false;
 
     switch (style.display()) {
-    case DisplayType::InlineTable:
-    case DisplayType::InlineBlock:
-    case DisplayType::InlineGrid:
-    case DisplayType::InlineFlex:
-    case DisplayType::InlineBox:
+    case Display::InlineTable:
+    case Display::InlineBlock:
+    case Display::InlineGrid:
+    case Display::InlineFlex:
+    case Display::InlineBox:
         return false;
     default:
         break;
@@ -394,25 +394,25 @@ static bool isOverflowClipOrVisible(Overflow overflow)
 static bool shouldInlinifyForRuby(const RenderStyle& style, const RenderStyle& parentBoxStyle)
 {
     auto parentDisplay = parentBoxStyle.display();
-    auto hasRubyParent = parentDisplay == DisplayType::Ruby
-        || parentDisplay == DisplayType::RubyBlock
-        || parentDisplay == DisplayType::RubyAnnotation
-        || parentDisplay == DisplayType::RubyBase;
+    auto hasRubyParent = parentDisplay == Display::Ruby
+        || parentDisplay == Display::RubyBlock
+        || parentDisplay == Display::RubyAnnotation
+        || parentDisplay == Display::RubyBase;
 
     return hasRubyParent && !style.hasOutOfFlowPosition() && !style.isFloating();
 }
 
-static bool hasUnsupportedRubyDisplay(DisplayType display, const Element* element)
+static bool hasUnsupportedRubyDisplay(Display display, const Element* element)
 {
     // Only allow ruby elements to have ruby display types for now.
     switch (display) {
-    case DisplayType::Ruby:
-    case DisplayType::RubyBlock:
+    case Display::Ruby:
+    case Display::RubyBlock:
         // Test for localName so this also allows WebVTT ruby elements.
         return !element || !element->hasLocalName(rubyTag->localName());
-    case DisplayType::RubyAnnotation:
+    case Display::RubyAnnotation:
         return !element || !element->hasLocalName(rtTag->localName());
-    case DisplayType::RubyBase:
+    case Display::RubyBase:
         ASSERT_NOT_REACHED();
         return false;
     default:
@@ -483,22 +483,22 @@ void Adjuster::adjustFirstLetterStyle(RenderStyle& style)
         return;
 
     // Force inline display (except for floating first-letters).
-    style.setEffectiveDisplay(style.isFloating() ? DisplayType::Block : DisplayType::Inline);
+    style.setEffectiveDisplay(style.isFloating() ? Display::Block : Display::Inline);
 }
 
 void Adjuster::adjust(RenderStyle& style) const
 {
-    if (style.display() == DisplayType::Contents)
+    if (style.display() == Display::Contents)
         adjustDisplayContentsStyle(style);
 
     if (m_element && (m_element->hasTagName(frameTag) || m_element->hasTagName(framesetTag))) {
         // Framesets ignore display, position and float properties.
         style.setPosition(PositionType::Static);
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setEffectiveDisplay(Display::Block);
         style.setFloating(Float::None);
     }
 
-    if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
+    if (style.display() != Display::None && style.display() != Display::Contents) {
         if (RefPtr element = m_element) {
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
             if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
@@ -515,7 +515,7 @@ void Adjuster::adjust(RenderStyle& style) const
         }
 
         if (hasUnsupportedRubyDisplay(style.display(), m_element.get()))
-            style.setEffectiveDisplay(style.display() == DisplayType::RubyBlock ? DisplayType::Block : DisplayType::Inline);
+            style.setEffectiveDisplay(style.display() == Display::RubyBlock ? Display::Block : Display::Inline);
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
@@ -530,20 +530,20 @@ void Adjuster::adjust(RenderStyle& style) const
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style.display() == DisplayType::Inline && !style.pseudoElementType() && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
-            style.setEffectiveDisplay(DisplayType::InlineBlock);
+        if (style.display() == Display::Inline && !style.pseudoElementType() && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
+            style.setEffectiveDisplay(Display::InlineBlock);
 
         // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
         // table rows or cells. This has been established for position:relative in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
-        if ((style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRowGroup
-            || style.display() == DisplayType::TableFooterGroup || style.display() == DisplayType::TableRow)
+        if ((style.display() == Display::TableHeaderGroup || style.display() == Display::TableRowGroup
+            || style.display() == Display::TableFooterGroup || style.display() == Display::TableRow)
             && style.position() == PositionType::Relative)
             style.setPosition(PositionType::Static);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
-        if (style.display() == DisplayType::TableColumn || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableFooterGroup
-            || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup)
+        if (style.display() == Display::TableColumn || style.display() == Display::TableColumnGroup || style.display() == Display::TableFooterGroup
+            || style.display() == Display::TableHeaderGroup || style.display() == Display::TableRow || style.display() == Display::TableRowGroup)
             style.setWritingMode(m_parentStyle.writingMode().computedWritingMode());
 
         if (style.isDisplayDeprecatedFlexibleBox()) {
@@ -669,11 +669,11 @@ void Adjuster::adjust(RenderStyle& style) const
     if (shouldInheritTextDecorationsInEffect(style, m_element.get()))
         style.addToTextDecorationLineInEffect(style.textDecorationLine());
     else
-        style.setTextDecorationLineInEffect(Style::TextDecorationLine { style.textDecorationLine() });
+        style.setTextDecorationLineInEffect(TextDecorationLine { style.textDecorationLine() });
 
     bool overflowIsClipOrVisible = isOverflowClipOrVisible(style.overflowY()) && isOverflowClipOrVisible(style.overflowX());
 
-    if (!overflowIsClipOrVisible && (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)) {
+    if (!overflowIsClipOrVisible && (style.display() == Display::Table || style.display() == Display::InlineTable)) {
         // Tables only support overflow:hidden and overflow:visible and ignore anything else,
         // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
         // container box the rules for resolving conflicting x and y values in CSS Overflow Module
@@ -881,17 +881,17 @@ void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
     bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element.get());
     if (isInTopLayer || m_document->documentElement() == m_element.get()) {
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setEffectiveDisplay(Display::Block);
         return;
     }
 
     if (!m_element && style.pseudoElementType() != PseudoElementType::Before && style.pseudoElementType() != PseudoElementType::After) {
-        style.setEffectiveDisplay(DisplayType::None);
+        style.setEffectiveDisplay(Display::None);
         return;
     }
 
     if (m_element && hasEffectiveDisplayNoneForDisplayContents(*m_element))
-        style.setEffectiveDisplay(DisplayType::None);
+        style.setEffectiveDisplay(Display::None);
 }
 
 void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgElement)
@@ -940,7 +940,7 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     // While in theory any block level element would work (flex, grid etc), since we construct RenderBlockFlow for both foreign object and svg text,
     // in practice only block layout happens here.
     if ((svgElement.hasTagName(SVGNames::foreignObjectTag) || svgElement.hasTagName(SVGNames::textTag)) && generatesBox(style))
-        style.setEffectiveDisplay(DisplayType::Block);
+        style.setEffectiveDisplay(Display::Block);
 }
 
 void Adjuster::adjustAnimatedStyle(RenderStyle& style, OptionSet<AnimationImpact> impact) const
@@ -1039,19 +1039,19 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setUsedTouchActions({ TouchAction::Auto });
     }
     if (m_document->quirks().needsFacebookStoriesCreationFormQuirk(*m_element, style))
-        style.setEffectiveDisplay(DisplayType::Flex);
+        style.setEffectiveDisplay(Display::Flex);
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(VIDEO)
     if (m_document->quirks().needsFullscreenDisplayNoneQuirk()) {
-        if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
+        if (is<HTMLDivElement>(*m_element) && style.display() == Display::None) {
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
             if (m_element->hasClassName(instreamNativeVideoDivClass)) {
                 RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID));
                 if (video && video->isFullscreen())
-                    style.setEffectiveDisplay(DisplayType::Block);
+                    style.setEffectiveDisplay(Display::Block);
             }
         }
     }
@@ -1087,7 +1087,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (m_document->quirks().needsFacebookRemoveNotSupportedQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("xnw9j1v"_s);
         if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
-            style.setEffectiveDisplay(DisplayType::None);
+            style.setEffectiveDisplay(Display::None);
     }
 
 #if PLATFORM(IOS_FAMILY)

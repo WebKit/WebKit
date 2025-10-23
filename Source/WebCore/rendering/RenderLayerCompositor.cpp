@@ -3019,7 +3019,7 @@ auto RenderLayerCompositor::attachWidgetContentLayersIfNecessary(RenderWidget& r
     auto* backing = layer->backing();
     RefPtr hostingLayer = backing->parentForSublayers();
 
-    bool isVisible = renderer.style().usedVisibility() == Visibility::Visible;
+    bool isVisible = renderer.style().usedVisibility() == Style::Visibility::Visible;
 
     auto addContentsLayerChildIfNecessary = [&](GraphicsLayer& contentsLayer, bool isVisible) -> bool {
         if (isVisible && hostingLayer->children().size() == 1 && hostingLayer->children()[0].ptr() == &contentsLayer)
@@ -4011,7 +4011,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
         return false;
 
     auto& pluginRenderer = downcast<RenderWidget>(renderer);
-    if (pluginRenderer.style().usedVisibility() != Visibility::Visible)
+    if (pluginRenderer.style().usedVisibility() != Style::Visibility::Visible)
         return false;
 
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
@@ -4031,7 +4031,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& 
     if (!frameRenderer)
         return false;
 
-    if (frameRenderer->style().usedVisibility() != Visibility::Visible)
+    if (frameRenderer->style().usedVisibility() != Style::Visibility::Visible)
         return false;
 
     if (!frameRenderer->requiresAcceleratedCompositing())

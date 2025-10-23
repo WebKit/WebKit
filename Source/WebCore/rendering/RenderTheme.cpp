@@ -256,13 +256,13 @@ void RenderTheme::adjustStyle(RenderStyle& style, const RenderStyle& parentStyle
         return;
 
     // Force inline and table display styles to be inline-block (except for table- which is block)
-    if (style.display() == DisplayType::Inline || style.display() == DisplayType::InlineTable || style.display() == DisplayType::TableRowGroup
-        || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableFooterGroup
-        || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableColumn
-        || style.display() == DisplayType::TableCell || style.display() == DisplayType::TableCaption)
-        style.setEffectiveDisplay(DisplayType::InlineBlock);
-    else if (style.display() == DisplayType::ListItem || style.display() == DisplayType::Table)
-        style.setEffectiveDisplay(DisplayType::Block);
+    if (style.display() == Style::Display::Inline || style.display() == Style::Display::InlineTable || style.display() == Style::Display::TableRowGroup
+        || style.display() == Style::Display::TableHeaderGroup || style.display() == Style::Display::TableFooterGroup
+        || style.display() == Style::Display::TableRow || style.display() == Style::Display::TableColumnGroup || style.display() == Style::Display::TableColumn
+        || style.display() == Style::Display::TableCell || style.display() == Style::Display::TableCaption)
+        style.setEffectiveDisplay(Style::Display::InlineBlock);
+    else if (style.display() == Style::Display::ListItem || style.display() == Style::Display::Table)
+        style.setEffectiveDisplay(Style::Display::Block);
 
     bool widgetMayDevolve = devolvableWidgetsEnabledAndSupported(element);
     bool widgetHasNativeAppearanceDisabled = widgetMayDevolve && element->isDevolvableWidget() && style.nativeAppearanceDisabled() && !isAppearanceAllowedForAllElements(appearance);
@@ -1705,11 +1705,11 @@ void RenderTheme::adjustSwitchStyleDisplay(RenderStyle& style) const
 {
     // RenderTheme::adjustStyle() normalizes a bunch of display types to InlineBlock and Block.
     switch (style.display()) {
-    case DisplayType::InlineBlock:
-        style.setEffectiveDisplay(DisplayType::InlineGrid);
+    case Style::Display::InlineBlock:
+        style.setEffectiveDisplay(Style::Display::InlineGrid);
         break;
-    case DisplayType::Block:
-        style.setEffectiveDisplay(DisplayType::Grid);
+    case Style::Display::Block:
+        style.setEffectiveDisplay(Style::Display::Grid);
         break;
     default:
         break;

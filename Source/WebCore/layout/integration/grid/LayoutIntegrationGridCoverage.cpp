@@ -84,7 +84,7 @@ static std::optional<AvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid
     if (!renderGridStyle->height().isFixed())
         return AvoidanceReason::GridHasNonFixedHeight;
 
-    if (renderGridStyle->display() == DisplayType::InlineGrid)
+    if (renderGridStyle->display() == Style::Display::InlineGrid)
         return AvoidanceReason::GridNeedsBaseline;
 
     if (!renderGridStyle->writingMode().isHorizontal())
@@ -113,7 +113,7 @@ static std::optional<AvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid
 
     auto isInBFC = [&] {
         for (CheckedPtr containingBlock = renderGrid.containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
-            if (containingBlock->style().display() != DisplayType::Block)
+            if (containingBlock->style().display() != Style::Display::Block)
                 return false;
             if (containingBlock->createsNewFormattingContext())
                 return true;

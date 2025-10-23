@@ -207,7 +207,7 @@ void RenderTable::willInsertTableColumn(RenderTableCol&, RenderObject*)
 void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild)
 {
     switch (child.style().display()) {
-    case DisplayType::TableHeaderGroup:
+    case Style::Display::TableHeaderGroup:
         resetSectionPointerIfNotBefore(m_head, beforeChild);
         if (!m_head)
             m_head = child;
@@ -217,14 +217,14 @@ void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject
                 m_firstBody = child;
         }
         break;
-    case DisplayType::TableFooterGroup:
+    case Style::Display::TableFooterGroup:
         resetSectionPointerIfNotBefore(m_foot, beforeChild);
         if (!m_foot) {
             m_foot = child;
             break;
         }
         [[fallthrough]];
-    case DisplayType::TableRowGroup:
+    case Style::Display::TableRowGroup:
         resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
         if (!m_firstBody)
             m_firstBody = child;
@@ -774,7 +774,7 @@ void RenderTable::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     auto isSkippedContent = [&] {
-        if (style().usedContentVisibility() == ContentVisibility::Visible)
+        if (style().usedContentVisibility() == Style::ContentVisibility::Visible)
             return false;
         // FIXME: Tables can never be skipped content roots. If a table is _inside_ a skipped subtree, we should have bailed out at the skipped root ancestor.
         // However with continuation (see webkit.org/b/275459) used visibility values does not always get propagated properly and
@@ -807,7 +807,7 @@ void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
-    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && style().usedVisibility() == Visibility::Visible)
+    if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && hasVisibleBoxDecorations() && style().usedVisibility() == Style::Visibility::Visible)
         paintBoxDecorations(paintInfo, paintOffset);
 
     if (paintPhase == PaintPhase::Mask) {
@@ -837,7 +837,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         }
     }
     
-    if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && style().usedVisibility() == Visibility::Visible) {
+    if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && style().usedVisibility() == Style::Visibility::Visible) {
         recalcCollapsedBorders();
         // Using our cached sorted styles, we then do individual passes,
         // painting each style of border from lowest precedence to highest precedence.
@@ -854,7 +854,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // Paint outline.
-    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().usedVisibility() == Visibility::Visible)
+    if ((paintPhase == PaintPhase::Outline || paintPhase == PaintPhase::SelfOutline) && hasOutline() && style().usedVisibility() == Style::Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(paintOffset, size()));
 }
 
@@ -914,7 +914,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
 
 void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().usedVisibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
+    if (style().usedVisibility() != Style::Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
         return;
 
     LayoutRect rect(paintOffset, size());
@@ -1184,11 +1184,11 @@ void RenderTable::recalcSections() const
     // We need to get valid pointers to caption, head, foot and first body again
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         switch (child->style().display()) {
-        case DisplayType::TableColumn:
-        case DisplayType::TableColumnGroup:
+        case Style::Display::TableColumn:
+        case Style::Display::TableColumnGroup:
             m_hasColElements = true;
             break;
-        case DisplayType::TableHeaderGroup:
+        case Style::Display::TableHeaderGroup:
             if (CheckedPtr section = dynamicDowncast<RenderTableSection>(*child)) {
                 if (!m_head)
                     m_head = *section;
@@ -1197,7 +1197,7 @@ void RenderTable::recalcSections() const
                 section->recalcCellsIfNeeded();
             }
             break;
-        case DisplayType::TableFooterGroup:
+        case Style::Display::TableFooterGroup:
             if (CheckedPtr section = dynamicDowncast<RenderTableSection>(*child)) {
                 if (!m_foot)
                     m_foot = *section;
@@ -1206,7 +1206,7 @@ void RenderTable::recalcSections() const
                 section->recalcCellsIfNeeded();
             }
             break;
-        case DisplayType::TableRowGroup:
+        case Style::Display::TableRowGroup:
             if (CheckedPtr section = dynamicDowncast<RenderTableSection>(*child)) {
                 if (!m_firstBody)
                     m_firstBody = *section;

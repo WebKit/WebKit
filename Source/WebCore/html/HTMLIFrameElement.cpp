@@ -40,6 +40,7 @@
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include "StyleDisplay.h"
 #include "TrustedType.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -159,7 +160,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
 
 bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return style.display() != DisplayType::None && canLoad();
+    return style.display() != Style::Display::None && canLoad();
 }
 
 RenderPtr<RenderElement> HTMLIFrameElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

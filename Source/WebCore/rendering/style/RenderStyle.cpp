@@ -155,7 +155,7 @@ std::unique_ptr<RenderStyle> RenderStyle::clonePtr(const RenderStyle& style)
     return makeUnique<RenderStyle>(style, Clone);
 }
 
-RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, DisplayType display)
+RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, Style::Display display)
 {
     auto newStyle = create();
     newStyle.inheritFrom(parentStyle);
@@ -898,8 +898,8 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
         || first.usedContain().contains(Containment::Layout) != second.usedContain().contains(Containment::Layout))
         return true;
 
-    // content-visibiliy:hidden turns on contain:size which requires relayout.
-    if ((static_cast<ContentVisibility>(first.contentVisibility) == ContentVisibility::Hidden) != (static_cast<ContentVisibility>(second.contentVisibility) == ContentVisibility::Hidden))
+    // content-visibility:hidden turns on contain:size which requires relayout.
+    if ((static_cast<Style::ContentVisibility>(first.contentVisibility) == Style::ContentVisibility::Hidden) != (static_cast<Style::ContentVisibility>(second.contentVisibility) == Style::ContentVisibility::Hidden))
         return true;
 
     if (first.scrollPadding != second.scrollPadding)
@@ -1093,7 +1093,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay)
         return true;
 
-    if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) >= DisplayType::Table) {
+    if (static_cast<Style::Display>(m_nonInheritedFlags.effectiveDisplay) >= Style::Display::Table) {
         if (m_inheritedFlags.borderCollapse != other.m_inheritedFlags.borderCollapse
             || m_inheritedFlags.emptyCells != other.m_inheritedFlags.emptyCells
             || m_inheritedFlags.captionSide != other.m_inheritedFlags.captionSide
@@ -1114,7 +1114,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             return true;
     }
 
-    if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) == DisplayType::ListItem) {
+    if (static_cast<Style::Display>(m_nonInheritedFlags.effectiveDisplay) == Style::Display::ListItem) {
         if (m_inheritedFlags.listStylePosition != other.m_inheritedFlags.listStylePosition || m_rareInheritedData->listStyleType != other.m_rareInheritedData->listStyleType)
             return true;
     }
@@ -1136,7 +1136,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.overflowY != other.m_nonInheritedFlags.overflowY)
         return true;
 
-    if ((usedVisibility() == Visibility::Collapse) != (other.usedVisibility() == Visibility::Collapse))
+    if ((usedVisibility() == Style::Visibility::Collapse) != (other.usedVisibility() == Style::Visibility::Collapse))
         return true;
 
     bool hasFirstLineStyle = hasPseudoStyle(PseudoElementType::FirstLine);
@@ -1254,7 +1254,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet
 
 static bool requiresPainting(const RenderStyle& style)
 {
-    if (style.usedVisibility() == Visibility::Hidden)
+    if (style.usedVisibility() == Style::Visibility::Hidden)
         return false;
     if (style.opacity().isTransparent())
         return false;
@@ -3726,8 +3726,8 @@ void RenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonIn
     if (*this == other)
         return;
 
-    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, effectiveDisplay);
-    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, originalDisplay);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::Display, effectiveDisplay);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::Display, originalDisplay);
     LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowX);
     LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowY);
     LOG_IF_DIFFERENT_WITH_CAST(Clear, clear);
@@ -3769,7 +3769,7 @@ void RenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const Inherite
     LOG_IF_DIFFERENT_WITH_CAST(Style::TextDecorationLine, textDecorationLineInEffect);
 
     LOG_IF_DIFFERENT_WITH_CAST(PointerEvents, pointerEvents);
-    LOG_IF_DIFFERENT_WITH_CAST(Visibility, visibility);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::Visibility, visibility);
     LOG_IF_DIFFERENT_WITH_CAST(CursorType, cursorType);
 
 #if ENABLE(CURSOR_VISIBILITY)

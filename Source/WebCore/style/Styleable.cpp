@@ -380,7 +380,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
     auto& keyframeEffectStack = ensureKeyframeEffectStack();
 
     // In case this element is newly getting a "display: none" we need to cancel all of its animations and disregard new ones.
-    if ((!currentStyle || currentStyle->display() != DisplayType::None) && newStyle.display() == DisplayType::None) {
+    if ((!currentStyle || currentStyle->display() != Style::Display::None) && newStyle.display() == Style::Display::None) {
         for (auto& cssAnimation : animationsCreatedByMarkup())
             cssAnimation->cancelFromStyle();
         keyframeEffectStack.setCSSAnimationList(std::nullopt);
@@ -757,7 +757,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
 void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle, WeakStyleOriginatedAnimations& newStyleOriginatedAnimations) const
 {
     // In case this element previous had "display: none" we can stop considering transitions altogether.
-    if (currentStyle.display() == DisplayType::None)
+    if (currentStyle.display() == Style::Display::None)
         return;
 
     auto transitionsDisplay = [](const RenderStyle& style) {
@@ -795,7 +795,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
 
     // In case this element is newly getting a "display: none" we need to cancel all of its transitions and disregard new ones,
     // unless it will transition the "display" property itself.
-    if (currentStyle.hasTransitions() && currentStyle.display() != DisplayType::None && newStyle.display() == DisplayType::None && !transitionsDisplay(newStyle)) {
+    if (currentStyle.hasTransitions() && currentStyle.display() != Style::Display::None && newStyle.display() == Style::Display::None && !transitionsDisplay(newStyle)) {
         if (hasRunningTransitions()) {
             auto runningTransitions = ensureRunningTransitionsByProperty();
             for (const auto& cssTransitionsByAnimatableCSSPropertyMapItem : runningTransitions)

@@ -456,7 +456,7 @@ static bool isRendererAccessible(const RenderObject* renderer, TextIteratorBehav
     if (renderer->isSkippedContent()) {
         if (!behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser))
             return false;
-        return style.usedContentVisibility() == ContentVisibility::Auto || style.autoRevealsWhenFound();
+        return style.usedContentVisibility() == Style::ContentVisibility::Auto || style.autoRevealsWhenFound();
     }
 
     return true;
@@ -468,7 +468,7 @@ static bool isConsideredSkippedContent(const RenderBox* renderBox, TextIteratorB
         return false;
 
     if (behaviors.contains(TextIteratorBehavior::EntersSkippedContentRelevantToUser))
-        return renderBox->style().usedContentVisibility() == ContentVisibility::Hidden && !renderBox->style().autoRevealsWhenFound();
+        return renderBox->style().usedContentVisibility() == Style::ContentVisibility::Hidden && !renderBox->style().autoRevealsWhenFound();
 
     return true;
 }
@@ -587,11 +587,11 @@ void TextIterator::advance()
 
 static bool hasVisibleTextNode(RenderText& renderer)
 {
-    if (renderer.style().visibility() == Visibility::Visible)
+    if (renderer.style().visibility() == Style::Visibility::Visible)
         return true;
     if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer)) {
         if (auto firstLetter = renderTextFragment->firstLetter()) {
-            if (firstLetter->style().visibility() == Visibility::Visible)
+            if (firstLetter->style().visibility() == Style::Visibility::Visible)
                 return true;
         }
     }
@@ -626,7 +626,7 @@ bool TextIterator::handleTextNode()
                 return false;
             }
         }
-        if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
+        if (renderer->style().visibility() != Style::Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
         int rendererTextLength = rendererText.length();
         int end = (textNode.ptr() == m_endContainer) ? m_endOffset : INT_MAX;
@@ -644,7 +644,7 @@ bool TextIterator::handleTextNode()
     if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer.get()); renderTextFragment && !m_handledFirstLetter && !m_offset)
         handleTextNodeFirstLetter(*renderTextFragment);
     else if (!m_textRun && rendererText.length()) {
-        if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
+        if (renderer->style().visibility() != Style::Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space
         return true;
@@ -659,7 +659,7 @@ void TextIterator::handleTextRun()
     Ref textNode = downcast<Text>(protectedCurrentNode().releaseNonNull());
 
     CheckedRef renderer = m_firstLetterText ? *m_firstLetterText : *textNode->renderer();
-    if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility)) {
+    if (renderer->style().visibility() != Style::Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility)) {
         m_textRun = { };
         return;
     }
@@ -765,7 +765,7 @@ static inline RenderText* firstRenderTextInFirstLetter(RenderBoxModelObject* fir
 void TextIterator::handleTextNodeFirstLetter(RenderTextFragment& renderer)
 {
     if (CheckedPtr firstLetter = renderer.firstLetter()) {
-        if (firstLetter->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
+        if (firstLetter->style().visibility() != Style::Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return;
         if (CheckedPtr firstLetterText = firstRenderTextInFirstLetter(firstLetter.get())) {
             m_handledFirstLetter = true;
@@ -790,7 +790,7 @@ bool TextIterator::handleReplacedElement()
         return false;
     }
 
-    if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
+    if (renderer->style().visibility() != Style::Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
         return false;
 
     if (m_lastTextNodeEndedWithCollapsedSpace) {
@@ -1066,7 +1066,7 @@ bool TextIterator::shouldRepresentNodeOffsetZero()
     // If this node is unrendered or invisible the VisiblePosition checks below won't have much meaning.
     // Additionally, if the range we are iterating over contains huge sections of unrendered content, 
     // we would create VisiblePositions on every call to this function without this check.
-    if (!currentNode->renderer() || currentNode->renderer()->style().visibility() != Visibility::Visible)
+    if (!currentNode->renderer() || currentNode->renderer()->style().visibility() != Style::Visibility::Visible)
         return false;
 
     if (CheckedPtr renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*currentNode->renderer())) {
@@ -1316,10 +1316,10 @@ void SimplifiedBackwardsTextIterator::advance()
         if (!m_handledNode && !(m_node == m_endContainer && !m_endOffset)) {
             CheckedPtr renderer = m_node->renderer();
             if (auto* renderText = dynamicDowncast<RenderText>(renderer.get())) {
-                if (renderText->style().visibility() == Visibility::Visible && m_offset > 0)
+                if (renderText->style().visibility() == Style::Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
             } else if (isRendererReplacedElement(renderer.get(), m_behaviors)) {
-                if (downcast<RenderElement>(*renderer).style().visibility() == Visibility::Visible && m_offset > 0)
+                if (downcast<RenderElement>(*renderer).style().visibility() == Style::Visibility::Visible && m_offset > 0)
                     m_handledNode = handleReplacedElement();
             } else
                 m_handledNode = handleNonTextNode();

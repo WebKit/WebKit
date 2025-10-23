@@ -472,7 +472,7 @@ bool AXObjectCache::isNodeVisible(const Node* node) const
         return false;
 
     const auto& style = renderer->style();
-    if (style.display() == DisplayType::None)
+    if (style.display() == Style::Display::None)
         return false;
 
     auto* renderLayer = renderer->enclosingLayer();
@@ -1950,7 +1950,7 @@ void AXObjectCache::onRadioGroupMembershipChanged(HTMLElement& radio)
 
 static bool isContentVisibilityHidden(const RenderStyle& style)
 {
-    return style.usedContentVisibility() == ContentVisibility::Hidden;
+    return style.usedContentVisibility() == Style::ContentVisibility::Hidden;
 }
 
 void AXObjectCache::onStyleChange(Element& element, OptionSet<Style::Change> change, const RenderStyle* oldStyle, const RenderStyle* newStyle)
@@ -5253,14 +5253,14 @@ bool isNodeFocused(Node& node)
 
 bool isVisibilityHidden(const RenderStyle& style)
 {
-    return style.usedVisibility() != Visibility::Visible || isContentVisibilityHidden(style);
+    return style.usedVisibility() != Style::Visibility::Visible || isContentVisibilityHidden(style);
 }
 
 // DOM component of hidden definition.
 // https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool isRenderHidden(const RenderStyle& style)
 {
-    return style.display() == DisplayType::None || isVisibilityHidden(style);
+    return style.display() == Style::Display::None || isVisibilityHidden(style);
 }
 
 bool isRenderHidden(const RenderStyle* style)

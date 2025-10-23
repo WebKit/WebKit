@@ -465,7 +465,6 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("animation-wrapper-requires-additional-parameters", allowed_types=[list], default_value=[]),
         Schema.Entry("animation-wrapper-requires-getter", allowed_types=[str]),
         Schema.Entry("animation-wrapper-requires-non-additive-or-cumulative-interpolation", allowed_types=[bool], default_value=False),
-        Schema.Entry("animation-wrapper-requires-non-normalized-discrete-interpolation", allowed_types=[bool], default_value=False),
         Schema.Entry("animation-wrapper-requires-override-parameters", allowed_types=[list]),
         Schema.Entry("animation-wrapper-requires-setter", allowed_types=[str]),
         Schema.Entry("cascade-alias", allowed_types=[str]),
@@ -3241,12 +3240,6 @@ class GenerateCSSPropertyNames:
             to=to,
             signature="bool CSSProperty::animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyID id)",
             iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.animation_wrapper_requires_non_additive_or_cumulative_interpolation)
-        )
-
-        self.generation_context.generate_property_id_switch_function_bool(
-            to=to,
-            signature="bool CSSProperty::animationUsesNonNormalizedDiscreteInterpolation(CSSPropertyID id)",
-            iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.animation_wrapper_requires_non_normalized_discrete_interpolation)
         )
 
         self.generation_context.generate_property_id_switch_function(

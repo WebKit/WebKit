@@ -332,7 +332,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
     }
 
     for (size_t rowIndex = 0; rowIndex < totalRows; ++rowIndex) {
-        if (m_grid[rowIndex].rowRenderer && m_grid[rowIndex].rowRenderer->style().visibility() == Visibility::Collapse) {
+        if (m_grid[rowIndex].rowRenderer && m_grid[rowIndex].rowRenderer->style().visibility() == Style::Visibility::Collapse) {
             auto delta = m_rowPos[rowIndex + 1] - m_rowPos[rowIndex];
             if (delta > 0_lu) {
                 // Reduce height of collapsed row to 0 without affecting other rows
@@ -601,7 +601,7 @@ void RenderTableSection::layoutRows()
             // If the row is collapsed then it has 0 height. vspacing was implicitly
             // removed earlier, when m_rowPos[rowIndex+1] was set to m_rowPos[rowIndex].
             auto rowHasVisibilityCollapse = [&](auto row) {
-                return (m_grid[row].rowRenderer && m_grid[row].rowRenderer->style().visibility() == Visibility::Collapse) || style().visibility() == Visibility::Collapse;
+                return (m_grid[row].rowRenderer && m_grid[row].rowRenderer->style().visibility() == Style::Visibility::Collapse) || style().visibility() == Style::Visibility::Collapse;
             };
             if (!rowHasVisibilityCollapse(rowIndex))
                 rowLogicalHeight = m_rowPos[rowIndex + 1] - m_rowPos[rowIndex] - vspacing;
@@ -946,7 +946,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (pushedClip)
         popContentsClip(paintInfo, phase, adjustedPaintOffset);
 
-    if ((phase == PaintPhase::Outline || phase == PaintPhase::SelfOutline) && style().usedVisibility() == Visibility::Visible)
+    if ((phase == PaintPhase::Outline || phase == PaintPhase::SelfOutline) && style().usedVisibility() == Style::Visibility::Visible)
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 }
 

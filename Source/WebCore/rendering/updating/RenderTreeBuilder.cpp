@@ -184,7 +184,7 @@ bool RenderTreeBuilder::isRebuildRootForChildren(const RenderElement& renderer)
     // This can greatly simplify the code needed to maintain the correct structure.
 
     auto display = renderer.style().display();
-    if (display == DisplayType::Ruby || display == DisplayType::RubyBlock)
+    if (display == Style::Display::Ruby || display == Style::Display::RubyBlock)
         return true;
 
     return false;
@@ -289,7 +289,7 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (parent.style().display() == DisplayType::Ruby || parent.style().display() == DisplayType::RubyBlock) {
+    if (parent.style().display() == Style::Display::Ruby || parent.style().display() == Style::Display::RubyBlock) {
         auto& parentCandidate = rubyBuilder().findOrCreateParentForStyleBasedRubyChild(parent, *child, beforeChild);
         if (&parentCandidate == &parent) {
             rubyBuilder().attachForStyleBasedRuby(parentCandidate, WTFMove(child), beforeChild);
@@ -1090,7 +1090,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
     if (auto* textRenderer = dynamicDowncast<RenderText>(child)) {
         auto& style = parent.style();
         // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
-        if (style.usedVisibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts())
+        if (style.usedVisibility() == Style::Visibility::Visible && !style.fontCascade().isLoadingCustomFonts())
             m_view.frameView().incrementVisuallyNonEmptyCharacterCount(textRenderer->text());
         return;
     }

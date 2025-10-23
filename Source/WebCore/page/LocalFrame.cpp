@@ -488,7 +488,7 @@ String LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& 
         // search within the above cell we found for a match
         size_t lengthSearched = 0;
         for (RefPtr textNode = TextNodeTraversal::firstWithin(*aboveCell); textNode; textNode = TextNodeTraversal::next(*textNode, aboveCell.get())) {
-            if (!textNode->renderer() || textNode->renderer()->style().usedVisibility() != Visibility::Visible)
+            if (!textNode->renderer() || textNode->renderer()->style().usedVisibility() != Style::Visibility::Visible)
                 continue;
             // For each text chunk, run the regexp
             String nodeString = textNode->data();
@@ -548,7 +548,7 @@ String LocalFrame::searchForLabelsBeforeElement(const Vector<String>& labels, El
                 return result;
             }
             searchedCellAbove = true;
-        } else if (CheckedPtr renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == Visibility::Visible) {
+        } else if (CheckedPtr renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == Style::Visibility::Visible) {
             // For each text chunk, run the regexp
             String nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes

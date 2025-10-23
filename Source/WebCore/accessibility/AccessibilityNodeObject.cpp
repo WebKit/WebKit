@@ -3744,14 +3744,14 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text, boo
 }
 
 
-static bool displayTypeNeedsSpace(DisplayType type)
+static bool displayTypeNeedsSpace(Style::Display type)
 {
-    return type == DisplayType::Block
-        || type == DisplayType::InlineBlock
-        || type == DisplayType::InlineFlex
-        || type == DisplayType::InlineGrid
-        || type == DisplayType::InlineTable
-        || type == DisplayType::TableCell;
+    return type == Style::Display::Block
+        || type == Style::Display::InlineBlock
+        || type == Style::Display::InlineFlex
+        || type == Style::Display::InlineGrid
+        || type == Style::Display::InlineTable
+        || type == Style::Display::TableCell;
 }
 
 static bool needsSpaceFromDisplay(AccessibilityObject& axObject)
@@ -3797,7 +3797,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             // agents MUST include all nodes in the subtree as part of the accessible name or accessible
             // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
             mode.considerHiddenState = false;
-        } else if (style && style->display() == DisplayType::None) {
+        } else if (style && style->display() == Style::Display::None) {
             // Unlike visibility:visible + visiblity:visible where the latter can override the former in a subtree,
             // display:none guarantees nothing within will be rendered, so we can exit early.
             return { };

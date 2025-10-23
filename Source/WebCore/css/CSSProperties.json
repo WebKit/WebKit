@@ -518,8 +518,7 @@
                 }
             ],
             "codegen-properties": {
-                "animation-wrapper": "NonNormalizedDiscreteWrapper<DisplayType>",
-                "animation-wrapper-requires-non-normalized-discrete-interpolation": true,
+                "animation-wrapper": "StyleTypeWrapper",
                 "high-priority": true,
                 "parser-function": "consumeDisplay",
                 "parser-grammar-unused": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <-webkit-display>",
@@ -8198,14 +8197,15 @@
                 "collapse"
             ],
             "codegen-properties": {
-                "animation-wrapper": "VisibilityWrapper",
-                "animation-wrapper-requires-override-parameters": [],
+                "animation-wrapper": "StyleTypeWrapper",
                 "parser-grammar": "<<values>>",
                 "fast-path-inherited": true
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visufx.html#propdef-visibility"
+                "category": "css-display",
+                "url": "https://drafts.csswg.org/css-display/#propdef-visibility",
+                "obsolete-category": "css-22",
+                "obsolete-url": "https://www.w3.org/TR/CSS22/visufx.html#propdef-visibility"
             }
         },
         "white-space": {
@@ -8685,16 +8685,15 @@
                 "auto"
             ],
             "codegen-properties": {
-                "animation-wrapper": "NonNormalizedDiscreteWrapper<ContentVisibility>",
-                "animation-wrapper-requires-non-normalized-discrete-interpolation": true,
+                "animation-wrapper": "StyleTypeWrapper",
                 "parser-grammar": "<<values>>"
             },
             "status": {
                 "status": "in development"
             },
             "specification": {
-                "category": "css-content-visibility",
-                "url": "https://www.w3.org/TR/css-contain-2/#content-visibility"
+                "category": "css-contain",
+                "url": "https://drafts.csswg.org/css-contain/#propdef-content-visibility"
             }
         },
         "backface-visibility": {
@@ -12856,11 +12855,6 @@
             "shortname": "CSS Generated Content",
             "longname": "CSS Generated Content Module",
             "url": "https://www.w3.org/TR/css-content-3/"
-        },
-        "css-content-visibility": {
-            "shortname": "CSS Content Visibility",
-            "longname": "CSS Content Visibility Module",
-            "url": "https://www.w3.org/TR/css-contain-2/#content-visibility"
         },
         "css-counter-styles": {
             "shortname": "CSS Counter Styles",

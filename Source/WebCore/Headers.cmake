@@ -3291,6 +3291,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/color/StyleResolvedColor.h
 
     style/values/contain/StyleContainerName.h
+    style/values/contain/StyleContentVisibility.h
 
     style/values/content/StyleContent.h
     style/values/content/StyleQuotes.h
@@ -3299,7 +3300,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/css2/StyleZIndex.h
 
+    style/values/display/StyleDisplay.h
     style/values/display/StyleOrder.h
+    style/values/display/StyleVisibility.h
 
     style/values/easing/StyleEasingFunction.h
 

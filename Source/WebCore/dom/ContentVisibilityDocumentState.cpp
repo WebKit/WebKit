@@ -224,7 +224,7 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
         RefPtr<const Element> found;
         if (element.renderer() && element.renderer()->isSkippedContent()) {
             for (RefPtr candidate = element; candidate; candidate = candidate->parentElementInComposedTree()) {
-                if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == ContentVisibility::Auto)
+                if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == Style::ContentVisibility::Auto)
                     found = candidate;
             }
         }

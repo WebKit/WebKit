@@ -46,8 +46,8 @@ public:
     void setSpan(unsigned span) { m_span = span; }
 
     bool isTableColumnGroupWithColumnChildren() const { return firstChild(); }
-    bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
-    bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
+    bool isTableColumn() const { return style().display() == Style::Display::TableColumn; }
+    bool isTableColumnGroup() const { return style().display() == Style::Display::TableColumnGroup; }
 
     RenderTableCol* enclosingColumnGroup() const;
     RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const;
