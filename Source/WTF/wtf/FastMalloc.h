@@ -644,8 +644,8 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 // delete(T*, std::destroying_delete_t, size_t) is preferred over delete(void*)
 // in overload resolution, so we can use it to interpose before calling delete(void*).
 // Note: WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR must be declared in every subclass.
-#define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(T) \
-void operator delete(T* object, std::destroying_delete_t, size_t size) { \
+#define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(T, _Nonnullmacro) \
+void operator delete(T* _Nonnullmacro object, std::destroying_delete_t, size_t size) { \
     ASSERT_UNUSED(size, sizeof(T) == size); \
     object->T::~T(); \
     if (object->checkedPtrCountWithoutThreadCheck()) [[unlikely]] { \
@@ -656,15 +656,26 @@ void operator delete(T* object, std::destroying_delete_t, size_t size) { \
 } \
 using WTFDidOverrideDeleteForCheckedPtr = int;
 
+#define WTF_CHECKEDPTR_NO_NONNULL
+
 // Note: WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR must be declared in the most derived subclass.
 #define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ClassName) \
 public: \
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName) \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName, WTF_CHECKEDPTR_NO_NONNULL) \
+private: \
+using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int
+
+#define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_NONNULL(ClassName) \
+public: \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName, _Nonnull) \
 private: \
 using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int
 
 #define WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(ClassName) \
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName) \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName, WTF_CHECKEDPTR_NO_NONNULL) \
+using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int
+#define WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR_NONNULL(ClassName) \
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(ClassName, _Nonnull) \
 using __thisIsHereToForceASemicolonAfterWTFOverrideDelete UNUSED_TYPE_ALIAS = int
 
 #if HAVE(36BIT_ADDRESS)
