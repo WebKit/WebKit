@@ -430,7 +430,7 @@ static void setBackForwardCacheState(Page& page, Document::BackForwardCacheState
     });
 }
 
-static void firePageHideEventRecursively(Frame& frame)
+static void firePageHideAndFreezeEventsRecursively(Frame& frame)
 {
     std::optional<UnloadCountIncrementer> unloadCountIncrementer;
     if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame)) {
@@ -445,9 +445,10 @@ static void firePageHideEventRecursively(Frame& frame)
         unloadCountIncrementer.emplace(document.get());
 
         localFrame->loader().stopLoading(UnloadEventPolicy::UnloadAndPageHide);
+        document->freeze();
     }
     for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
-        firePageHideEventRecursively(*child);
+        firePageHideAndFreezeEventsRecursively(*child);
 }
 
 std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSuspension forceSuspension)
@@ -467,8 +468,8 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
     if (CheckedRef focusController = page.focusController(); focusController->focusedLocalFrame())
         focusController->setFocusedFrame(mainFrame.ptr());
 
-    // Fire the pagehide event in all frames.
-    firePageHideEventRecursively(mainFrame);
+    // Fire the pagehide and freeze events in all frames.
+    firePageHideAndFreezeEventsRecursively(mainFrame);
 
     page.destroyRenderTrees();
 

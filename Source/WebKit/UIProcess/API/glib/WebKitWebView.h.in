@@ -926,6 +926,28 @@ webkit_web_view_is_immersive_mode_enabled            (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_leave_immersive_mode                 (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_freeze                               (WebKitWebView               *web_view,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback       callback,
+                                                      gpointer                  user_data);
+
+WEBKIT_API gboolean
+webkit_web_view_freeze_finish                        (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                    **error);
+
+WEBKIT_API void
+webkit_web_view_resume                               (WebKitWebView               *web_view,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback       callback,
+                                                      gpointer                  user_data);
+
+WEBKIT_API gboolean
+webkit_web_view_resume_finish                        (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                    **error);
+
 #if USE(GI_FINISH_FUNC_ANNOTATION)
 /**
  * webkit_web_view_run_async_javascript_function_in_world: (finish-func webkit_web_view_run_javascript_in_world_finish)

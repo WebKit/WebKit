@@ -2049,6 +2049,11 @@ public:
 
     void processSpeculationRulesHeader(const String& headerValue, const URL& baseURL);
 
+    void freeze();
+    void resume();
+    void discard();
+    bool wasDiscarded() const { return m_discarded; }
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -2802,6 +2807,9 @@ private:
     const Ref<DocumentSyncData> m_syncData;
 
     Vector<Ref<LoadableSpeculationRules>> m_loadableSpeculationRules;
+
+    bool m_frozen { false };
+    bool m_discarded { false };
 }; // class Document
 
 inline AXObjectCache* Document::existingAXObjectCache() const
