@@ -57,8 +57,7 @@ struct IntersectionObserverData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(IntersectionObserverData);
 
     // IntersectionObservers for which the node that owns this IntersectionObserverData is the root.
-    // An IntersectionObserver is only owned by a JavaScript wrapper. ActiveDOMObject::virtualHasPendingActivity
-    // is overridden to keep this wrapper alive while the observer has ongoing observations.
+    // ActiveDOMObject::virtualHasPendingActivity is overridden to keep this wrapper alive while the observer has ongoing observations.
     Vector<WeakPtr<IntersectionObserver>> observers;
 
     // IntersectionObserverRegistrations for which the node that owns this IntersectionObserverData is the target.
@@ -77,7 +76,11 @@ public:
         Variant<double, Vector<double>> threshold;
     };
 
-    static ExceptionOr<Ref<IntersectionObserver>> create(Document&, Ref<IntersectionObserverCallback>&&, Init&&, IncludeObscuredInsets = IncludeObscuredInsets::No);
+    // Internal users of IntersectionObserver should have their notifications delivered synchronously.
+    // JavaScript will post a task for asynchronous delivery.
+    enum class NotificationDelivery : uint8_t { Asynchronous, Synchronous };
+
+    static ExceptionOr<Ref<IntersectionObserver>> create(Document&, Ref<IntersectionObserverCallback>&&, Init&&, IncludeObscuredInsets = IncludeObscuredInsets::No, NotificationDelivery = NotificationDelivery::Asynchronous);
 
     ~IntersectionObserver();
 
@@ -106,19 +109,20 @@ public:
     void targetDestroyed(Element&);
     void rootDestroyed();
 
-    enum class NeedNotify : bool { No, Yes };
-    NeedNotify updateObservations(Document&);
+    bool updateObservations(Document&);
 
     std::optional<ReducedResolutionSeconds> nowTimestamp() const;
 
     void appendQueuedEntry(Ref<IntersectionObserverEntry>&&);
     void notify();
 
+    NotificationDelivery notificationDelivery() const { return m_notificationDelivery; }
+
     IntersectionObserverCallback* callbackConcurrently() { return m_callback.get(); }
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:
-    IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, IntersectionObserverMarginBox&& parsedRootMargin, IntersectionObserverMarginBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets);
+    IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, IntersectionObserverMarginBox&& parsedRootMargin, IntersectionObserverMarginBox&& parsedScrollMargin, Vector<double>&& thresholds, IncludeObscuredInsets, NotificationDelivery);
 
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
@@ -149,6 +153,7 @@ private:
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
     Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation;
     IncludeObscuredInsets m_includeObscuredInsets { IncludeObscuredInsets::No };
+    NotificationDelivery m_notificationDelivery;
 };
 
 } // namespace WebCore

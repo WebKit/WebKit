@@ -1,0 +1,7 @@
+Intersection observations should queue a task to notify observers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The IntersectionObserver callback did not run synchronously
+

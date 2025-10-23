@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<script src="../resources/ui-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+#target {
+    width: 200px;
+    height: 200px;
+    margin: 200px;
+    background-color: green;
+}
+
+#target.intersecting {
+    background-color: red;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description('Intersection observations should queue a task to notify observers.');
+if (!window.internals)
+    testFailed('Test requires internals.');
+
+var observer;
+function ioCallback(entries)
+{
+    const target = document.getElementById('target');
+    for (const entry of entries) {
+        if (entry.intersectionRatio === 1)
+            target.classList.add('intersecting');
+        else
+            target.classList.remove('intersecting');
+    }
+}
+
+function testIOCallbackDidNotRun()
+{
+    if (target.classList.contains('intersecting'))
+        testFailed("The IntersectionObserver callback ran synchronously.");
+    else
+        testPassed("The IntersectionObserver callback did not run synchronously");
+    window.testRunner.notifyDone();
+}
+
+
+window.addEventListener('load', () => {
+    const target = document.getElementById('target');
+    observer = new IntersectionObserver(ioCallback, { threshold: [ 0, 1 ] });
+    observer.observe(target);
+    /*
+     * This dance deserves some comment.
+     * What we are trying to do is test that an intersection observation queued a task
+     * to run the callback instead of running it during the "update the rendering" step where
+     * the interesection was computed. In order to do that, we need the "update the rendering"
+     * algorithm to have run once and any observation tasks queued during that step to have not run.
+     * The way to accomplish this is earlier in the update the rendering steps we queue a task
+     * that will perform the final check. Since rAF callbacks are run before updating intersection
+     * observations we can queue a task from there which checks that the div has not yet been mutated.
+     * Unfortunately a zero delay timer does not run before the Event Loop's task queue so we can't use
+     * UIHelper.renderingUpdate which does approximately this sequence of steps but with Web APIs.
+     */
+    requestAnimationFrame(() => {
+        window.internals.queueTask('DOMManipulation', testIOCallbackDidNotRun);
+    });
+});
+
+</script>
+<body>
+<div id="target"></div>
+</body>
