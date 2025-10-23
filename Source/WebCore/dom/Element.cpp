@@ -5685,7 +5685,7 @@ Ref<Attr> Element::ensureAttr(const QualifiedName& name)
     RefPtr<Attr> attrNode = findAttrNodeInList(attrNodeList, name);
     if (!attrNode) {
         attrNode = Attr::create(*this, name);
-        attrNode->setTreeScopeRecursively(treeScope());
+        attrNode->setTreeScopeRecursively(protectedTreeScope().get());
         attrNodeList.append(attrNode);
     }
     return attrNode.releaseNonNull();
