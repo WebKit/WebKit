@@ -493,7 +493,7 @@ RefPtr<CSSValue> consumeWebkitBoxReflect(CSSParserTokenRange& range, CSS::Proper
     // FIXME: Does not seem right to create "0px" here. We'd like to omit "0px" when serializing if there is also no image.
     RefPtr<CSSPrimitiveValue> offset;
     if (range.atEnd())
-        offset = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
+        offset = CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
     else {
         offset = CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
         if (!offset)

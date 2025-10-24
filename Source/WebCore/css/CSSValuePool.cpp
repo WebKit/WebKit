@@ -46,9 +46,9 @@ StaticCSSValuePool::StaticCSSValuePool()
         new (m_identifierValues[enumToUnderlyingType(keyword)].get()) CSSPrimitiveValue { CSSValue::StaticCSSValue, keyword };
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
-        new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        new (m_percentageValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
-        new (m_numberValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
+        new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Pixel);
+        new (m_percentageValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Percentage);
+        new (m_numberValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Number);
     }
 }
 

@@ -153,43 +153,43 @@ Value::~Value() = default;
 
 CSSUnitType Value::primitiveType() const
 {
-    // This returns the CSSUnitType associated with the value returned by doubleValue, or, if CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH, that a call to createCalculationValue() is needed.
+    // This returns the CSSUnitType associated with the value returned by doubleValue, or, if CSSUnitType::CalcPercentageWithLength, that a call to createCalculationValue() is needed.
 
     switch (m_category) {
     case CSS::Category::Integer:
-        return CSSUnitType::CSS_INTEGER;
+        return CSSUnitType::Integer;
     case CSS::Category::Number:
-        return CSSUnitType::CSS_NUMBER;
+        return CSSUnitType::Number;
     case CSS::Category::Percentage:
-        return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::Percentage;
     case CSS::Category::Length:
-        return CSSUnitType::CSS_PX;
+        return CSSUnitType::Pixel;
     case CSS::Category::Angle:
-        return CSSUnitType::CSS_DEG;
+        return CSSUnitType::Degree;
     case CSS::Category::Time:
-        return CSSUnitType::CSS_S;
+        return CSSUnitType::Second;
     case CSS::Category::Frequency:
-        return CSSUnitType::CSS_HZ;
+        return CSSUnitType::Hertz;
     case CSS::Category::Resolution:
-        return CSSUnitType::CSS_DPPX;
+        return CSSUnitType::DotsPerPixel;
     case CSS::Category::Flex:
-        return CSSUnitType::CSS_FR;
+        return CSSUnitType::Fr;
     case CSS::Category::LengthPercentage:
         if (!m_tree.type.percentHint)
-            return CSSUnitType::CSS_PX;
+            return CSSUnitType::Pixel;
         if (WTF::holdsAlternative<Percentage>(m_tree.root))
-            return CSSUnitType::CSS_PERCENTAGE;
-        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+            return CSSUnitType::Percentage;
+        return CSSUnitType::CalcPercentageWithLength;
     case CSS::Category::AnglePercentage:
         if (!m_tree.type.percentHint)
-            return CSSUnitType::CSS_DEG;
+            return CSSUnitType::Degree;
         if (WTF::holdsAlternative<Percentage>(m_tree.root))
-            return CSSUnitType::CSS_PERCENTAGE;
-        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE;
+            return CSSUnitType::Percentage;
+        return CSSUnitType::CalcPercentageWithAngle;
     }
 
     ASSERT_NOT_REACHED();
-    return CSSUnitType::CSS_NUMBER;
+    return CSSUnitType::Number;
 }
 
 void Value::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const

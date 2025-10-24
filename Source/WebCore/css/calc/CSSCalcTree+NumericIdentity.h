@@ -133,85 +133,85 @@ constexpr NumericIdentity toNumericIdentity(const CanonicalDimension& dimension)
 constexpr NumericIdentity toNumericIdentity(const NonCanonicalDimension& dimension)
 {
     switch (dimension.unit) {
-    case CSSUnitType::CSS_CM:       return NumericIdentity::CM;
-    case CSSUnitType::CSS_MM:       return NumericIdentity::MM;
-    case CSSUnitType::CSS_Q:        return NumericIdentity::Q;
-    case CSSUnitType::CSS_IN:       return NumericIdentity::INCH;
-    case CSSUnitType::CSS_PT:       return NumericIdentity::PT;
-    case CSSUnitType::CSS_PC:       return NumericIdentity::PC;
-    case CSSUnitType::CSS_EM:       return NumericIdentity::EM;
-    case CSSUnitType::CSS_EX:       return NumericIdentity::EX;
-    case CSSUnitType::CSS_LH:       return NumericIdentity::LH;
-    case CSSUnitType::CSS_CAP:      return NumericIdentity::CAP;
-    case CSSUnitType::CSS_CH:       return NumericIdentity::CH;
-    case CSSUnitType::CSS_IC:       return NumericIdentity::IC;
-    case CSSUnitType::CSS_RCAP:     return NumericIdentity::RCAP;
-    case CSSUnitType::CSS_RCH:      return NumericIdentity::RCH;
-    case CSSUnitType::CSS_REM:      return NumericIdentity::REM;
-    case CSSUnitType::CSS_REX:      return NumericIdentity::REX;
-    case CSSUnitType::CSS_RIC:      return NumericIdentity::RIC;
-    case CSSUnitType::CSS_RLH:      return NumericIdentity::RLH;
-    case CSSUnitType::CSS_VW:       return NumericIdentity::VW;
-    case CSSUnitType::CSS_VH:       return NumericIdentity::VH;
-    case CSSUnitType::CSS_VMIN:     return NumericIdentity::VMIN;
-    case CSSUnitType::CSS_VMAX:     return NumericIdentity::VMAX;
-    case CSSUnitType::CSS_VB:       return NumericIdentity::VB;
-    case CSSUnitType::CSS_VI:       return NumericIdentity::VI;
-    case CSSUnitType::CSS_SVW:      return NumericIdentity::SVW;
-    case CSSUnitType::CSS_SVH:      return NumericIdentity::SVH;
-    case CSSUnitType::CSS_SVMIN:    return NumericIdentity::SVMIN;
-    case CSSUnitType::CSS_SVMAX:    return NumericIdentity::SVMAX;
-    case CSSUnitType::CSS_SVB:      return NumericIdentity::SVB;
-    case CSSUnitType::CSS_SVI:      return NumericIdentity::SVI;
-    case CSSUnitType::CSS_LVW:      return NumericIdentity::LVW;
-    case CSSUnitType::CSS_LVH:      return NumericIdentity::LVH;
-    case CSSUnitType::CSS_LVMIN:    return NumericIdentity::LVMIN;
-    case CSSUnitType::CSS_LVMAX:    return NumericIdentity::LVMAX;
-    case CSSUnitType::CSS_LVB:      return NumericIdentity::LVB;
-    case CSSUnitType::CSS_LVI:      return NumericIdentity::LVI;
-    case CSSUnitType::CSS_DVW:      return NumericIdentity::DVW;
-    case CSSUnitType::CSS_DVH:      return NumericIdentity::DVH;
-    case CSSUnitType::CSS_DVMIN:    return NumericIdentity::DVMIN;
-    case CSSUnitType::CSS_DVMAX:    return NumericIdentity::DVMAX;
-    case CSSUnitType::CSS_DVB:      return NumericIdentity::DVB;
-    case CSSUnitType::CSS_DVI:      return NumericIdentity::DVI;
-    case CSSUnitType::CSS_CQW:      return NumericIdentity::CQW;
-    case CSSUnitType::CSS_CQH:      return NumericIdentity::CQH;
-    case CSSUnitType::CSS_CQI:      return NumericIdentity::CQI;
-    case CSSUnitType::CSS_CQB:      return NumericIdentity::CQB;
-    case CSSUnitType::CSS_CQMIN:    return NumericIdentity::CQMIN;
-    case CSSUnitType::CSS_CQMAX:    return NumericIdentity::CQMAX;
-    case CSSUnitType::CSS_RAD:      return NumericIdentity::RAD;
-    case CSSUnitType::CSS_GRAD:     return NumericIdentity::GRAD;
-    case CSSUnitType::CSS_TURN:     return NumericIdentity::TURN;
-    case CSSUnitType::CSS_MS:       return NumericIdentity::MS;
-    case CSSUnitType::CSS_KHZ:      return NumericIdentity::KHZ;
-    case CSSUnitType::CSS_X:        return NumericIdentity::X;
-    case CSSUnitType::CSS_DPI:      return NumericIdentity::DPI;
-    case CSSUnitType::CSS_DPCM:     return NumericIdentity::DPCM;
+    case CSSUnitType::Centimeter:       return NumericIdentity::CM;
+    case CSSUnitType::Millimeter:       return NumericIdentity::MM;
+    case CSSUnitType::QuarterMillimeter:        return NumericIdentity::Q;
+    case CSSUnitType::Inch:       return NumericIdentity::INCH;
+    case CSSUnitType::Point:       return NumericIdentity::PT;
+    case CSSUnitType::Pica:       return NumericIdentity::PC;
+    case CSSUnitType::Em:       return NumericIdentity::EM;
+    case CSSUnitType::Ex:       return NumericIdentity::EX;
+    case CSSUnitType::Lh:       return NumericIdentity::LH;
+    case CSSUnitType::Cap:      return NumericIdentity::CAP;
+    case CSSUnitType::Ch:       return NumericIdentity::CH;
+    case CSSUnitType::Ic:       return NumericIdentity::IC;
+    case CSSUnitType::Rcap:     return NumericIdentity::RCAP;
+    case CSSUnitType::Rch:      return NumericIdentity::RCH;
+    case CSSUnitType::Rem:      return NumericIdentity::REM;
+    case CSSUnitType::Rex:      return NumericIdentity::REX;
+    case CSSUnitType::Ric:      return NumericIdentity::RIC;
+    case CSSUnitType::Rlh:      return NumericIdentity::RLH;
+    case CSSUnitType::ViewportPercentageWidth:       return NumericIdentity::VW;
+    case CSSUnitType::ViewportPercentageHeight:       return NumericIdentity::VH;
+    case CSSUnitType::ViewportPercentageMin:     return NumericIdentity::VMIN;
+    case CSSUnitType::ViewportPercentageMax:     return NumericIdentity::VMAX;
+    case CSSUnitType::ViewportPercentageBlockSize:       return NumericIdentity::VB;
+    case CSSUnitType::ViewportPercentageInlineSize:       return NumericIdentity::VI;
+    case CSSUnitType::SmallViewportWidth:      return NumericIdentity::SVW;
+    case CSSUnitType::SmallViewportHeight:      return NumericIdentity::SVH;
+    case CSSUnitType::SmallViewportMin:    return NumericIdentity::SVMIN;
+    case CSSUnitType::SmallViewportMax:    return NumericIdentity::SVMAX;
+    case CSSUnitType::SmallViewportBlockSize:      return NumericIdentity::SVB;
+    case CSSUnitType::SmallViewportInlineSize:      return NumericIdentity::SVI;
+    case CSSUnitType::LargeViewportWidth:      return NumericIdentity::LVW;
+    case CSSUnitType::LargeViewportHeight:      return NumericIdentity::LVH;
+    case CSSUnitType::LargeViewportMin:    return NumericIdentity::LVMIN;
+    case CSSUnitType::LargeViewportMax:    return NumericIdentity::LVMAX;
+    case CSSUnitType::LargeViewportBlockSize:      return NumericIdentity::LVB;
+    case CSSUnitType::LargeViewportInlineSize:      return NumericIdentity::LVI;
+    case CSSUnitType::DynamicViewportWidth:      return NumericIdentity::DVW;
+    case CSSUnitType::DynamicViewportHeight:      return NumericIdentity::DVH;
+    case CSSUnitType::DynamicViewportMin:    return NumericIdentity::DVMIN;
+    case CSSUnitType::DynamicViewportMax:    return NumericIdentity::DVMAX;
+    case CSSUnitType::DynamicViewportBlockSize:      return NumericIdentity::DVB;
+    case CSSUnitType::DynamicViewportInlineSize:      return NumericIdentity::DVI;
+    case CSSUnitType::ContainerQueryWidth:      return NumericIdentity::CQW;
+    case CSSUnitType::ContainerQueryHeight:      return NumericIdentity::CQH;
+    case CSSUnitType::ContainerQueryInlineSize:      return NumericIdentity::CQI;
+    case CSSUnitType::ContainerQueryBlockSize:      return NumericIdentity::CQB;
+    case CSSUnitType::ContainerQueryMin:    return NumericIdentity::CQMIN;
+    case CSSUnitType::ContainerQueryMax:    return NumericIdentity::CQMAX;
+    case CSSUnitType::Radian:      return NumericIdentity::RAD;
+    case CSSUnitType::Gradian:     return NumericIdentity::GRAD;
+    case CSSUnitType::Turn:     return NumericIdentity::TURN;
+    case CSSUnitType::Millisecond:       return NumericIdentity::MS;
+    case CSSUnitType::Kilohertz:      return NumericIdentity::KHZ;
+    case CSSUnitType::X:        return NumericIdentity::X;
+    case CSSUnitType::DotsPerInch:      return NumericIdentity::DPI;
+    case CSSUnitType::DotsPerCentimeter:     return NumericIdentity::DPCM;
 
     // Invalid types for NonCanonicalDimension.
-    case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:
-    case CSSUnitType::CSS_PERCENTAGE:
-    case CSSUnitType::CSS_PX:
-    case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_S:
-    case CSSUnitType::CSS_HZ:
-    case CSSUnitType::CSS_DPPX:
-    case CSSUnitType::CSS_FR:
-    case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_CALC:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_DIMENSION:
-    case CSSUnitType::CSS_FONT_FAMILY:
-    case CSSUnitType::CSS_IDENT:
-    case CSSUnitType::CSS_PROPERTY_ID:
-    case CSSUnitType::CSS_QUIRKY_EM:
-    case CSSUnitType::CSS_STRING:
-    case CSSUnitType::CSS_UNKNOWN:
-    case CSSUnitType::CSS_VALUE_ID:
+    case CSSUnitType::Number:
+    case CSSUnitType::Integer:
+    case CSSUnitType::Percentage:
+    case CSSUnitType::Pixel:
+    case CSSUnitType::Degree:
+    case CSSUnitType::Second:
+    case CSSUnitType::Hertz:
+    case CSSUnitType::DotsPerPixel:
+    case CSSUnitType::Fr:
+    case CSSUnitType::Attr:
+    case CSSUnitType::Calc:
+    case CSSUnitType::CalcPercentageWithAngle:
+    case CSSUnitType::CalcPercentageWithLength:
+    case CSSUnitType::Dimension:
+    case CSSUnitType::FontFamily:
+    case CSSUnitType::Ident:
+    case CSSUnitType::PropertyId:
+    case CSSUnitType::QuirkyEm:
+    case CSSUnitType::String:
+    case CSSUnitType::Unknown:
+    case CSSUnitType::ValueId:
     case CSSUnitType::CustomIdent:
         break;
     }

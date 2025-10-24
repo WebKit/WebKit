@@ -76,30 +76,30 @@ public:
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
-    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
+    bool isAttr() const { return primitiveUnitType() == CSSUnitType::Attr; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
     bool isRootFontRelativeLength() const { return isRootFontRelativeLength(primitiveUnitType()); }
-    bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EM; }
+    bool isQuirkyEms() const { return primitiveType() == CSSUnitType::QuirkyEm; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
-    bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
-    bool isInteger() const { return primitiveType() == CSSUnitType::CSS_INTEGER; }
+    bool isNumber() const { return primitiveType() == CSSUnitType::Number; }
+    bool isInteger() const { return primitiveType() == CSSUnitType::Integer; }
     bool isNumberOrInteger() const { return isNumber() || isInteger(); }
-    bool isPercentage() const { return primitiveType() == CSSUnitType::CSS_PERCENTAGE; }
-    bool isPx() const { return primitiveType() == CSSUnitType::CSS_PX; }
+    bool isPercentage() const { return primitiveType() == CSSUnitType::Percentage; }
+    bool isPx() const { return primitiveType() == CSSUnitType::Pixel; }
     bool isTime() const { return unitCategory(primitiveType()) == CSSUnitCategory::Time; }
     bool isFrequency() const { return unitCategory(primitiveType()) == CSSUnitCategory::Frequency; }
-    bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
-    bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH; }
-    bool isDotsPerInch() const { return primitiveType() == CSSUnitType::CSS_DPI; }
-    bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::CSS_DPPX; }
-    bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
-    bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
+    bool isCalculated() const { return primitiveUnitType() == CSSUnitType::Calc; }
+    bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CalcPercentageWithLength; }
+    bool isDotsPerInch() const { return primitiveType() == CSSUnitType::DotsPerInch; }
+    bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::DotsPerPixel; }
+    bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::DotsPerCentimeter; }
+    bool isX() const { return primitiveType() == CSSUnitType::X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isContainerPercentageLength() const { return isContainerPercentageLength(primitiveUnitType()); }
-    bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
+    bool isFlex() const { return primitiveType() == CSSUnitType::Fr; }
 
     bool conversionToCanonicalUnitRequiresConversionData() const;
 
@@ -110,14 +110,14 @@ public:
     static Ref<CSSPrimitiveValue> create(Ref<CSSAttrValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
-    bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
+    bool isValueID() const { return primitiveUnitType() == CSSUnitType::ValueId; }
     CSSValueID valueID() const { return isValueID() ? m_value.valueID : CSSValueInvalid; }
 
     static Ref<CSSPrimitiveValue> create(CSSPropertyID);
-    bool isPropertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID; }
+    bool isPropertyID() const { return primitiveUnitType() == CSSUnitType::PropertyId; }
     CSSPropertyID propertyID() const { return isPropertyID() ? m_value.propertyID : CSSPropertyInvalid; }
 
-    bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
+    bool isString() const { return primitiveUnitType() == CSSUnitType::String; }
     static Ref<CSSPrimitiveValue> create(String);
 
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
@@ -125,7 +125,7 @@ public:
     String customIdent() const { ASSERT(isCustomIdent()); return stringValue(); }
 
     static Ref<CSSPrimitiveValue> createFontFamily(String);
-    bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
+    bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::FontFamily; }
 
     static inline CSSPrimitiveValue& implicitInitialValue();
 
@@ -278,61 +278,61 @@ template<typename TargetType> constexpr TargetType fromCSSValueID(CSSValueID);
 
 constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_PX
-        || type == CSSUnitType::CSS_CM
-        || type == CSSUnitType::CSS_MM
-        || type == CSSUnitType::CSS_IN
-        || type == CSSUnitType::CSS_PT
-        || type == CSSUnitType::CSS_PC;
+    return type == CSSUnitType::Pixel
+        || type == CSSUnitType::Centimeter
+        || type == CSSUnitType::Millimeter
+        || type == CSSUnitType::Inch
+        || type == CSSUnitType::Point
+        || type == CSSUnitType::Pica;
 }
 
 constexpr bool CSSPrimitiveValue::isRootFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_RCAP
-        || type == CSSUnitType::CSS_RCH
-        || type == CSSUnitType::CSS_REM
-        || type == CSSUnitType::CSS_REX
-        || type == CSSUnitType::CSS_RIC
-        || type == CSSUnitType::CSS_RLH;
+    return type == CSSUnitType::Rcap
+        || type == CSSUnitType::Rch
+        || type == CSSUnitType::Rem
+        || type == CSSUnitType::Rex
+        || type == CSSUnitType::Ric
+        || type == CSSUnitType::Rlh;
 }
 
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EM
-        || type == CSSUnitType::CSS_EX
-        || type == CSSUnitType::CSS_LH
-        || type == CSSUnitType::CSS_CAP
-        || type == CSSUnitType::CSS_CH
-        || type == CSSUnitType::CSS_IC
-        || type == CSSUnitType::CSS_QUIRKY_EM
+    return type == CSSUnitType::Em
+        || type == CSSUnitType::Ex
+        || type == CSSUnitType::Lh
+        || type == CSSUnitType::Cap
+        || type == CSSUnitType::Ch
+        || type == CSSUnitType::Ic
+        || type == CSSUnitType::QuirkyEm
         || isRootFontRelativeLength(type);
 }
 
 constexpr bool CSSPrimitiveValue::isContainerPercentageLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_CQW
-        || type == CSSUnitType::CSS_CQH
-        || type == CSSUnitType::CSS_CQI
-        || type == CSSUnitType::CSS_CQB
-        || type == CSSUnitType::CSS_CQMIN
-        || type == CSSUnitType::CSS_CQMAX;
+    return type == CSSUnitType::ContainerQueryWidth
+        || type == CSSUnitType::ContainerQueryHeight
+        || type == CSSUnitType::ContainerQueryInlineSize
+        || type == CSSUnitType::ContainerQueryBlockSize
+        || type == CSSUnitType::ContainerQueryMin
+        || type == CSSUnitType::ContainerQueryMax;
 }
 
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EM
-        || type == CSSUnitType::CSS_EX
-        || type == CSSUnitType::CSS_PX
-        || type == CSSUnitType::CSS_CM
-        || type == CSSUnitType::CSS_MM
-        || type == CSSUnitType::CSS_IN
-        || type == CSSUnitType::CSS_PT
-        || type == CSSUnitType::CSS_PC
-        || type == CSSUnitType::CSS_Q
+    return type == CSSUnitType::Em
+        || type == CSSUnitType::Ex
+        || type == CSSUnitType::Pixel
+        || type == CSSUnitType::Centimeter
+        || type == CSSUnitType::Millimeter
+        || type == CSSUnitType::Inch
+        || type == CSSUnitType::Point
+        || type == CSSUnitType::Pica
+        || type == CSSUnitType::QuarterMillimeter
         || isFontRelativeLength(type)
         || isViewportPercentageLength(type)
         || isContainerPercentageLength(type)
-        || type == CSSUnitType::CSS_QUIRKY_EM;
+        || type == CSSUnitType::QuirkyEm;
 }
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
@@ -378,19 +378,19 @@ template<typename T> std::optional<T> CSSPrimitiveValue::resolveAsIntegerIfNotCa
 template<typename T> T CSSPrimitiveValue::resolveAsNumber(const CSSToLengthConversionData& conversionData) const
 {
     ASSERT(isNumberOrInteger());
-    return value<T>(CSSUnitType::CSS_NUMBER, conversionData);
+    return value<T>(CSSUnitType::Number, conversionData);
 }
 
 template<typename T> T CSSPrimitiveValue::resolveAsNumberNoConversionDataRequired() const
 {
     ASSERT(isNumberOrInteger());
-    return valueNoConversionDataRequired<T>(CSSUnitType::CSS_NUMBER);
+    return valueNoConversionDataRequired<T>(CSSUnitType::Number);
 }
 
 template<typename T> T CSSPrimitiveValue::resolveAsNumberDeprecated() const
 {
     ASSERT(isNumberOrInteger());
-    return valueDeprecated<T>(CSSUnitType::CSS_NUMBER);
+    return valueDeprecated<T>(CSSUnitType::Number);
 }
 
 template<typename T> std::optional<T> CSSPrimitiveValue::resolveAsNumberIfNotCalculated() const
@@ -431,13 +431,13 @@ template<CSS::AngleUnit angleUnit, typename T> T CSSPrimitiveValue::computeAngle
 {
     if constexpr (angleUnit == CSS::AngleUnit::Deg) {
         switch (type) {
-        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::Degree:
             return angle;
-        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::Radian:
             return rad2deg(angle);
-        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::Gradian:
             return grad2deg(angle);
-        case CSSUnitType::CSS_TURN:
+        case CSSUnitType::Turn:
             return turn2deg(angle);
         default:
             ASSERT_NOT_REACHED();
@@ -445,13 +445,13 @@ template<CSS::AngleUnit angleUnit, typename T> T CSSPrimitiveValue::computeAngle
         }
     } else if constexpr (angleUnit == CSS::AngleUnit::Rad) {
         switch (type) {
-        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::Degree:
             return deg2rad(angle);
-        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::Radian:
             return angle;
-        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::Gradian:
             return grad2rad(angle);
-        case CSSUnitType::CSS_TURN:
+        case CSSUnitType::Turn:
             return turn2rad(angle);
         default:
             ASSERT_NOT_REACHED();
@@ -459,13 +459,13 @@ template<CSS::AngleUnit angleUnit, typename T> T CSSPrimitiveValue::computeAngle
         }
     } else if constexpr (angleUnit == CSS::AngleUnit::Grad) {
         switch (type) {
-        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::Degree:
             return deg2grad(angle);
-        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::Radian:
             return rad2grad(angle);
-        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::Gradian:
             return angle;
-        case CSSUnitType::CSS_TURN:
+        case CSSUnitType::Turn:
             return turn2grad(angle);
         default:
             ASSERT_NOT_REACHED();
@@ -473,13 +473,13 @@ template<CSS::AngleUnit angleUnit, typename T> T CSSPrimitiveValue::computeAngle
         }
     } else if constexpr (angleUnit == CSS::AngleUnit::Turn) {
         switch (type) {
-        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::Degree:
             return deg2turn(angle);
-        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::Radian:
             return rad2Turn(angle);
-        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::Gradian:
             return grad2turn(angle);
-        case CSSUnitType::CSS_TURN:
+        case CSSUnitType::Turn:
             return angle;
         default:
             ASSERT_NOT_REACHED();
@@ -512,9 +512,9 @@ template<CSS::TimeUnit timeUnit, typename T> inline T CSSPrimitiveValue::compute
 {
     if constexpr (timeUnit == CSS::TimeUnit::S) {
         switch (type) {
-        case CSSUnitType::CSS_S:
+        case CSSUnitType::Second:
             return value;
-        case CSSUnitType::CSS_MS:
+        case CSSUnitType::Millisecond:
             return value * CSS::secondsPerMillisecond;
         default:
             ASSERT_NOT_REACHED();
@@ -522,9 +522,9 @@ template<CSS::TimeUnit timeUnit, typename T> inline T CSSPrimitiveValue::compute
         }
     } else if constexpr (timeUnit == CSS::TimeUnit::Ms) {
         switch (type) {
-        case CSSUnitType::CSS_S:
+        case CSSUnitType::Second:
             return value / CSS::secondsPerMillisecond;
-        case CSSUnitType::CSS_MS:
+        case CSSUnitType::Millisecond:
             return value;
         default:
             ASSERT_NOT_REACHED();
@@ -551,9 +551,9 @@ template<CSS::FrequencyUnit frequencyUnit, typename T> inline T CSSPrimitiveValu
 {
     if constexpr (frequencyUnit == CSS::FrequencyUnit::Hz) {
         switch (type) {
-        case CSSUnitType::CSS_HZ:
+        case CSSUnitType::Hertz:
             return value;
-        case CSSUnitType::CSS_KHZ:
+        case CSSUnitType::Kilohertz:
             return value * CSS::hertzPerKilohertz;
         default:
             ASSERT_NOT_REACHED();
@@ -561,9 +561,9 @@ template<CSS::FrequencyUnit frequencyUnit, typename T> inline T CSSPrimitiveValu
         }
     } else if constexpr (frequencyUnit == CSS::FrequencyUnit::Khz) {
         switch (type) {
-        case CSSUnitType::CSS_HZ:
+        case CSSUnitType::Hertz:
             return value / CSS::hertzPerKilohertz;
-        case CSSUnitType::CSS_KHZ:
+        case CSSUnitType::Kilohertz:
             return value;
         default:
             ASSERT_NOT_REACHED();
@@ -578,13 +578,13 @@ template<CSS::ResolutionUnit resolutionUnit, typename T> inline T CSSPrimitiveVa
 {
     if constexpr (resolutionUnit == CSS::ResolutionUnit::Dppx) {
         switch (type) {
-        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::DotsPerPixel:
             return resolution;
-        case CSSUnitType::CSS_X:
+        case CSSUnitType::X:
             return resolution * CSS::dppxPerX;
-        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::DotsPerInch:
             return resolution * CSS::dppxPerDpi;
-        case CSSUnitType::CSS_DPCM:
+        case CSSUnitType::DotsPerCentimeter:
             return resolution * CSS::dppxPerDpcm;
         default:
             ASSERT_NOT_REACHED();
@@ -592,13 +592,13 @@ template<CSS::ResolutionUnit resolutionUnit, typename T> inline T CSSPrimitiveVa
         }
     } else if constexpr (resolutionUnit == CSS::ResolutionUnit::X) {
         switch (type) {
-        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::DotsPerPixel:
             return resolution / CSS::dppxPerX;
-        case CSSUnitType::CSS_X:
+        case CSSUnitType::X:
             return resolution;
-        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::DotsPerInch:
             return resolution * CSS::dppxPerDpi / CSS::dppxPerX;
-        case CSSUnitType::CSS_DPCM:
+        case CSSUnitType::DotsPerCentimeter:
             return resolution * CSS::dppxPerDpcm / CSS::dppxPerX;
         default:
             ASSERT_NOT_REACHED();
@@ -606,13 +606,13 @@ template<CSS::ResolutionUnit resolutionUnit, typename T> inline T CSSPrimitiveVa
         }
     } else if constexpr (resolutionUnit == CSS::ResolutionUnit::Dpi) {
         switch (type) {
-        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::DotsPerPixel:
             return resolution / CSS::dppxPerDpi;
-        case CSSUnitType::CSS_X:
+        case CSSUnitType::X:
             return resolution * CSS::dppxPerX / CSS::dppxPerDpi;
-        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::DotsPerInch:
             return resolution;
-        case CSSUnitType::CSS_DPCM:
+        case CSSUnitType::DotsPerCentimeter:
             return resolution * CSS::dppxPerDpcm / CSS::dppxPerDpi;
         default:
             ASSERT_NOT_REACHED();
@@ -620,13 +620,13 @@ template<CSS::ResolutionUnit resolutionUnit, typename T> inline T CSSPrimitiveVa
         }
     } else if constexpr (resolutionUnit == CSS::ResolutionUnit::Dpcm) {
         switch (type) {
-        case CSSUnitType::CSS_DPPX:
+        case CSSUnitType::DotsPerPixel:
             return resolution / CSS::dppxPerDpcm;
-        case CSSUnitType::CSS_X:
+        case CSSUnitType::X:
             return resolution * CSS::dppxPerX / CSS::dppxPerDpcm;
-        case CSSUnitType::CSS_DPI:
+        case CSSUnitType::DotsPerInch:
             return resolution * CSS::dppxPerDpi / CSS::dppxPerDpcm;
-        case CSSUnitType::CSS_DPCM:
+        case CSSUnitType::DotsPerCentimeter:
             return resolution;
         default:
             ASSERT_NOT_REACHED();
@@ -672,13 +672,13 @@ template<typename T> T CSSPrimitiveValue::resolveAsFlexNoConversionDataRequired(
 template<typename T> T CSSPrimitiveValue::resolveAsLengthNoConversionDataRequired() const
 {
     ASSERT(isLength());
-    return valueNoConversionDataRequired<T>(CSSUnitType::CSS_PX);
+    return valueNoConversionDataRequired<T>(CSSUnitType::Pixel);
 }
 
 template<typename T> T CSSPrimitiveValue::resolveAsLengthDeprecated() const
 {
     ASSERT(isLength());
-    return valueDeprecated<T>(CSSUnitType::CSS_PX);
+    return valueDeprecated<T>(CSSUnitType::Pixel);
 }
 
 // MARK: valueID(...)

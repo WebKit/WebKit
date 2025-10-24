@@ -379,7 +379,7 @@ static Style::PaddingEdge toTruncatedPaddingEdge(auto value)
 
 Style::PaddingBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::Em);
     auto padding = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
@@ -435,7 +435,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
 {
     Ref document = element.document();
-    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::Em);
     // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
     auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, document->renderStyle(), nullptr, document->renderView() }));
 
@@ -599,7 +599,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
     }
 
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::Em);
     auto emPixels = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
@@ -954,7 +954,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // CSSPrimitiveValue::resolveAsLength only needs the element's style to calculate em lengths.
     // Since the element might not be in a document, just pass nullptr for the root element style,
     // the parent element style, and the render view.
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::Em);
     auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, nullptr, nullptr, nullptr }));
 
     auto paddingBox = Style::PaddingBox { 0_css_px, edge, 0_css_px, edge };
@@ -1896,7 +1896,7 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
 
     CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
 
-    auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EM);
+    auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::Em);
     auto size = Style::PreferredSize::Fixed { emSize->resolveAsLength<float>(conversionData) };
 
     style.setWidth(size);

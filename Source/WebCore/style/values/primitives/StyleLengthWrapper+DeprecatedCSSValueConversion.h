@@ -50,7 +50,7 @@ template<LengthWrapperBaseDerived T> struct DeprecatedCSSValueConversion<T> {
                         typename T::Fixed {
                             CSS::clampToRange<T::Fixed::range, float>(primitiveValue.resolveAsLengthNoConversionDataRequired(), minValueForCssLength, maxValueForCssLength),
                         },
-                        primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+                        primitiveValue.primitiveType() == CSSUnitType::QuirkyEm
                     };
                 }
 
@@ -70,7 +70,7 @@ template<LengthWrapperBaseDerived T> struct DeprecatedCSSValueConversion<T> {
                     typename T::Fixed {
                         CSS::clampToRange<T::Fixed::range, float>(primitiveValue.resolveAsLength(*conversionData), minValueForCssLength, maxValueForCssLength),
                     },
-                    primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+                    primitiveValue.primitiveType() == CSSUnitType::QuirkyEm
                 };
             }
 

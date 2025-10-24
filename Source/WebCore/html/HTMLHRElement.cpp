@@ -74,11 +74,11 @@ void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
     switch (name.nodeName()) {
     case AttributeNames::alignAttr:
         if (equalLettersIgnoringASCIICase(value, "left"_s)) {
-            addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, 0, CSSUnitType::Pixel);
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalLettersIgnoringASCIICase(value, "right"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, 0, CSSUnitType::Pixel);
         } else {
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, CSSValueAuto);
@@ -102,9 +102,9 @@ void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         break;
     case AttributeNames::sizeAttr:
         if (int size = parseHTMLInteger(value).value_or(0); size > 1)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, size - 2, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, size - 2, CSSUnitType::Pixel);
         else
-            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderBottomWidth, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderBottomWidth, 0, CSSUnitType::Pixel);
         break;
     default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);

@@ -164,7 +164,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         controlLayer->setInlineStyleProperty(CSSPropertyPosition, "relative"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyBoxSizing, "border-box"_s);
         controlLayer->setInlineStyleProperty(CSSPropertyBorderRadius, "inherit"_s);
-        controlLayer->setInlineStyleProperty(CSSPropertyPadding, paddingValue, CSSUnitType::CSS_PX);
+        controlLayer->setInlineStyleProperty(CSSPropertyPadding, paddingValue, CSSUnitType::Pixel);
         shadowRoot->appendChild(controlLayer);
 
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));

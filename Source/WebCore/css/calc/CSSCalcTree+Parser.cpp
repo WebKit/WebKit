@@ -1585,7 +1585,7 @@ std::optional<TypedChild> parseCalcPercentage(const CSSParserToken& token, Parse
 
 std::optional<TypedChild> parseCalcDimension(const CSSParserToken& token, ParserState& state)
 {
-    if (token.unitType() == CSSUnitType::CSS_UNKNOWN)
+    if (token.unitType() == CSSUnitType::Unknown)
         return std::nullopt;
 
     auto child = makeNumeric(token.numericValue(), token.unitType());

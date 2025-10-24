@@ -54,7 +54,7 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
 {
     auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
     auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
-    auto rectifiedZ = z ? CSSNumericValue::rectifyNumberish(WTFMove(*z)) : Ref<CSSNumericValue> { CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER) };
+    auto rectifiedZ = z ? CSSNumericValue::rectifyNumberish(WTFMove(*z)) : Ref<CSSNumericValue> { CSSUnitValue::create(1.0, CSSUnitType::Number) };
 
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssscale-cssscale
     if (!isValidScaleCoord(rectifiedX) || !isValidScaleCoord(rectifiedY) || !isValidScaleCoord(rectifiedZ))

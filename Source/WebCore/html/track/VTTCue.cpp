@@ -157,7 +157,7 @@ void VTTCueBox::applyCSSPropertiesWithRegion()
 
     // the 'left' property must be set to left
     WTF::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double left) {
-        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_PERCENTAGE);
+        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::Percentage);
     }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
@@ -207,14 +207,14 @@ void VTTCueBox::applyCSSProperties()
 
     // the 'top' property must be set to top
     WTF::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double top) {
-        setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::CSS_CQH);
+        setInlineStyleProperty(CSSPropertyTop, top, CSSUnitType::ContainerQueryHeight);
     }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyTop, CSSValueAuto);
     }), cue->top());
 
     // the 'left' property must be set to left
     WTF::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double left) {
-        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::CSS_CQW);
+        setInlineStyleProperty(CSSPropertyLeft, left, CSSUnitType::ContainerQueryWidth);
     }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyLeft, CSSValueAuto);
     }), cue->left());
@@ -227,14 +227,14 @@ void VTTCueBox::applyCSSProperties()
 
     // the 'width' property must be set to width
     WTF::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double width) {
-        setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::CSS_CQW);
+        setInlineStyleProperty(CSSPropertyWidth, width, CSSUnitType::ContainerQueryWidth);
     }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
     }), cue->width());
 
     // the 'height' property must be set to height
     WTF::visit(WTF::makeVisitor([this, protectedThis = Ref { *this }] (double height) {
-        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::CSS_CQH);
+        setInlineStyleProperty(CSSPropertyHeight, height, CSSUnitType::ContainerQueryHeight);
     }, [this, protectedThis = Ref { *this }] (auto) {
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     }), cue->height());

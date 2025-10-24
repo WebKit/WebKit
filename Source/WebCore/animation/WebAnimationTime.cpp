@@ -70,16 +70,16 @@ WebAnimationTime::WebAnimationTime(const CSSNumberish& value)
     ASSERT(std::holds_alternative<RefPtr<CSSNumericValue>>(value));
     auto numericValue = std::get<RefPtr<CSSNumericValue>>(value);
     if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
+        if (unitValue->unitEnum() == CSSUnitType::Number) {
             m_type = Type::Time;
             m_value = unitValue->value() / 1000;
-        } else if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS)) {
+        } else if (auto milliseconds = unitValue->convertTo(CSSUnitType::Millisecond)) {
             m_type = Type::Time;
             m_value = milliseconds->value() / 1000;
-        } else if (auto seconds = unitValue->convertTo(CSSUnitType::CSS_S)) {
+        } else if (auto seconds = unitValue->convertTo(CSSUnitType::Second)) {
             m_type = Type::Time;
             m_value = seconds->value();
-        } else if (auto percentage = unitValue->convertTo(CSSUnitType::CSS_PERCENTAGE)) {
+        } else if (auto percentage = unitValue->convertTo(CSSUnitType::Percentage)) {
             m_type = Type::Percentage;
             m_value = percentage->value();
         }

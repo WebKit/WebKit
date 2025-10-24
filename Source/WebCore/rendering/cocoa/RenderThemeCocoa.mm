@@ -1198,7 +1198,7 @@ static RoundedShape shapeForSearchField(const RenderElement& box, const FloatRec
         supportsResults = input->maxResults() > 0;
 #endif
 
-    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::Em);
     const auto pixelsPerEm = emSize->resolveAsLength<float>(conversionData);
     const auto usingCapsuleShape = searchFieldCanBeCapsule(box, rect, pixelsPerEm, supportsResults);
 
@@ -1736,7 +1736,7 @@ bool RenderThemeCocoa::adjustInnerSpinButtonStyleForVectorBasedControls(RenderSt
     // change according to the height of the inner container.
 
     const auto logicalWidthEm = style.writingMode().isVertical() ? 1.5f : 1.f;
-    Ref emSize = CSSPrimitiveValue::create(logicalWidthEm, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(logicalWidthEm, CSSUnitType::Em);
     const auto pixelsPerEm = emSize->resolveAsLength<float>(conversionData);
 
     style.setLogicalWidth(Style::PreferredSize::Fixed { pixelsPerEm });
@@ -2071,8 +2071,8 @@ static void applyEmPadding(RenderStyle& style, const Element* element, float pad
     if (!element)
         return;
 
-    Ref paddingInline = CSSPrimitiveValue::create(paddingInlineEm, CSSUnitType::CSS_EM);
-    Ref paddingBlock = CSSPrimitiveValue::create(paddingBlockEm, CSSUnitType::CSS_EM);
+    Ref paddingInline = CSSPrimitiveValue::create(paddingInlineEm, CSSUnitType::Em);
+    Ref paddingBlock = CSSPrimitiveValue::create(paddingBlockEm, CSSUnitType::Em);
 
     Ref document = element->document();
 
@@ -2093,8 +2093,8 @@ static constexpr auto standardTextControlBlockPaddingEm = 0.25f;
 #if PLATFORM(MAC)
 static Style::PaddingBox paddingBoxForNumberField(const RenderStyle& style, const Element* element)
 {
-    Ref paddingInlineStart = CSSPrimitiveValue::create(standardTextControlInlinePaddingEm, CSSUnitType::CSS_EM);
-    Ref paddingInlineEndAndBlock = CSSPrimitiveValue::create(standardTextControlBlockPaddingEm, CSSUnitType::CSS_EM);
+    Ref paddingInlineStart = CSSPrimitiveValue::create(standardTextControlInlinePaddingEm, CSSUnitType::Em);
+    Ref paddingInlineEndAndBlock = CSSPrimitiveValue::create(standardTextControlBlockPaddingEm, CSSUnitType::Em);
     Ref document = element->document();
 
     const auto paddingInlineStartPixels = Style::PaddingEdge::Fixed { static_cast<float>(paddingInlineStart->resolveAsLength<int>({ style, document->renderStyle(), nullptr, document->renderView() })) };
@@ -2425,7 +2425,7 @@ bool RenderThemeCocoa::paintTextAreaDecorationsForVectorBasedControls(const Rend
 static void applyCommonButtonPaddingToStyleForVectorBasedControls(RenderStyle& style, const Element& element)
 {
     Document& document = element.document();
-    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::Em);
     // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
     auto pixels = Style::PaddingEdge::Fixed { static_cast<float>(emSize->resolveAsLength<int>({ style, document.renderStyle(), nullptr, document.renderView() })) };
 
@@ -2618,7 +2618,7 @@ bool RenderThemeCocoa::adjustButtonStyleForVectorBasedControls(RenderStyle& styl
     if (style.usedAppearance() == StyleAppearance::ColorWell)
         return true;
 
-    Ref emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::Em);
     auto pixels = Style::PaddingEdge::Fixed { static_cast<float>(emSize->resolveAsLength<int>({ style, nullptr, nullptr, nullptr })) };
 
     auto paddingBox = Style::PaddingBox { 0_css_px, pixels, 0_css_px, pixels };
@@ -2730,7 +2730,7 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
         glyphPath.addBezierCurveTo({ 6.31419f, 19.9961f }, { 6.6506f, 20.1625f }, { 7.05356f, 20.1625f });
     }
 
-    Ref emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::Em);
     const auto emPixels = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
     const auto glyphScale = 0.55f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
@@ -3546,7 +3546,7 @@ bool RenderThemeCocoa::adjustSearchFieldCancelButtonStyleForVectorBasedControls(
 
     CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
 
-    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::Em);
     auto pixelsPerEm = emSize->resolveAsLength<float>(conversionData);
 
     style.setWidth(Style::PreferredSize::Fixed { searchFieldDecorationEmSize * pixelsPerEm });
@@ -3643,7 +3643,7 @@ bool RenderThemeCocoa::adjustSearchFieldDecorationPartStyleForVectorBasedControl
 
     CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
 
-    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EM);
+    Ref emSize = CSSPrimitiveValue::create(1, CSSUnitType::Em);
     auto pixelsPerEm = emSize->resolveAsLength<float>(conversionData);
 
 #if PLATFORM(MAC)

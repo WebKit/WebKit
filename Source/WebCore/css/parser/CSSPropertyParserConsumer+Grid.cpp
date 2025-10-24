@@ -195,10 +195,10 @@ static RefPtr<CSSPrimitiveValue> consumeGridBreadth(CSSParserTokenRange& range, 
     const CSSParserToken& token = range.peek();
     if (isGridBreadthIdent(token.id()))
         return consumeIdent(range);
-    if (token.type() == DimensionToken && token.unitType() == CSSUnitType::CSS_FR) {
+    if (token.type() == DimensionToken && token.unitType() == CSSUnitType::Fr) {
         if (range.peek().numericValue() < 0)
             return nullptr;
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_FR);
+        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::Fr);
     }
     return CSSPrimitiveValueResolver<CSS::LengthPercentage<CSS::Nonnegative>>::consumeAndResolve(range, state);
 }

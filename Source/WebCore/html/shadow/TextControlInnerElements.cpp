@@ -148,7 +148,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
         // Set "flex-basis: 1em". Note that CSSPrimitiveValue::resolveAsLength<int>() only needs the element's
         // style to calculate em lengths. Since the element might not be in a document, just pass nullptr
         // for the root element style, the parent element style, and the render view.
-        auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EM);
+        auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::Em);
         int pixels = emSize->resolveAsLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
         newStyle->setFlexBasis(Style::FlexBasis::Fixed { static_cast<float>(pixels) });
     }

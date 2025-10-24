@@ -66,9 +66,9 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
     if (!angle->type().matches<CSSNumericBaseType::Angle>())
         return Exception { ExceptionCode::TypeError };
     return adoptRef(*new CSSRotate(Is2D::Yes,
-        CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
-        CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
-        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
+        CSSUnitValue::create(0.0, CSSUnitType::Number),
+        CSSUnitValue::create(0.0, CSSUnitType::Number),
+        CSSUnitValue::create(1.0, CSSUnitType::Number),
         WTFMove(angle)));
 }
 
@@ -188,7 +188,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
     if (!angleUnitValue || !xUnitValue || !yUnitValue || !zUnitValue)
         return Exception { ExceptionCode::TypeError };
 
-    auto angle = angleUnitValue->convertTo(CSSUnitType::CSS_DEG);
+    auto angle = angleUnitValue->convertTo(CSSUnitType::Degree);
     if (!angle)
         return Exception { ExceptionCode::TypeError };
 
