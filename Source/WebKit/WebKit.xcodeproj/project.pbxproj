@@ -140,7 +140,6 @@
 		029D6BB32C407AA30068CF99 /* JSWebExtensionAPISidebarAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 029D6BAD2C407AA30068CF99 /* JSWebExtensionAPISidebarAction.h */; };
 		029D6BB42C407AA30068CF99 /* JSWebExtensionAPISidePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 029D6BAF2C407AA30068CF99 /* JSWebExtensionAPISidePanel.h */; };
 		0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0701789B23BAE261005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp */; };
-		0712654928EE06F800AE69D7 /* WebChromeClientCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0712654728EE06F800AE69D7 /* WebChromeClientCocoa.mm */; };
 		071467782DFE84E500F77867 /* WebPage+Transferable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071467772DFE84E500F77867 /* WebPage+Transferable.swift */; };
 		071BC59023CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 071BC58D23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h */; };
 		07275C612D00CD24002315A5 /* CrossImportOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07275C602D00CD24002315A5 /* CrossImportOverlay.swift */; };
@@ -3238,7 +3237,6 @@
 		0701789B23BAE261005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerMIMETypeCache.cpp; sourceTree = "<group>"; };
 		0701789C23BAE262005F0FAA /* RemoteMediaPlayerMIMETypeCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaPlayerMIMETypeCache.h; sourceTree = "<group>"; };
 		070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaPermissionRequestManagerProxy.mm; sourceTree = "<group>"; };
-		0712654728EE06F800AE69D7 /* WebChromeClientCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClientCocoa.mm; sourceTree = "<group>"; };
 		071467772DFE84E500F77867 /* WebPage+Transferable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebPage+Transferable.swift"; sourceTree = "<group>"; };
 		071BC57723C93BB700680D7C /* AudioTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateRemote.h; sourceTree = "<group>"; };
 		071BC57923C93BB900680D7C /* AudioTrackPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateRemote.cpp; sourceTree = "<group>"; };
@@ -5665,6 +5663,8 @@
 		46C71AC82A942E1800E459AF /* GoToBackForwardItemParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GoToBackForwardItemParameters.serialization.in; sourceTree = "<group>"; };
 		46C916A82799D09D001A4E7C /* WebSharedWorkerServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServer.cpp; sourceTree = "<group>"; };
 		46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServer.h; sourceTree = "<group>"; };
+		46CBA2AF2EAB07AA00D771E2 /* WebLocalFrameLoaderClientCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLocalFrameLoaderClientCocoa.mm; sourceTree = "<group>"; };
+		46CBA2B12EAB080500D771E2 /* WebChromeClientCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClientCocoa.mm; sourceTree = "<group>"; };
 		46CD8C442B059FF500360248 /* IPCSemaphore.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IPCSemaphore.serialization.in; sourceTree = "<group>"; };
 		46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListCounts.h; sourceTree = "<group>"; };
 		46D246242AFE954F00F24C94 /* PlatformCAAnimationRemoteProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemoteProperties.h; sourceTree = "<group>"; };
@@ -13236,6 +13236,15 @@
 			path = cocoa;
 			sourceTree = "<group>";
 		};
+		46CBA2B02EAB07AA00D771E2 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				46CBA2B12EAB080500D771E2 /* WebChromeClientCocoa.mm */,
+				46CBA2AF2EAB07AA00D771E2 /* WebLocalFrameLoaderClientCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		4A410F4119AF7B27002EBAB5 /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
@@ -14945,7 +14954,7 @@
 		BC032D5D10F437220058C15A /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
-				CD6178111E6DE98000FDA57D /* cocoa */,
+				46CBA2B02EAB07AA00D771E2 /* cocoa */,
 				2D28F3DF1885CCB4004B9EAE /* ios */,
 				BC111ADE112F5B9A00337BAB /* mac */,
 				4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */,
@@ -16773,14 +16782,6 @@
 				0794B4AB24451BB90001B9C4 /* MediaUsageManagerCocoa.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		CD6178111E6DE98000FDA57D /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				0712654728EE06F800AE69D7 /* WebChromeClientCocoa.mm */,
-			);
-			name = cocoa;
 			sourceTree = "<group>";
 		};
 		CD73BA3D131A2A2100EEDED2 /* FullScreen */ = {
@@ -21210,11 +21211,6 @@
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
 				F4FE87B92E2F25030065A3F5 /* _WKTextExtraction.swift in Sources */,
 				5CA26D83217AD1B800F97A35 /* _WKWarningView.mm in Sources */,
-				3326F2652B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.mm in Sources */,
-				3326F2682B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestTranslator.mm in Sources */,
-				028D308A2C63E14B004F4FC6 /* _WKWebExtensionSidebar.mm in Sources */,
-				337822432947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm in Sources */,
-				3370420A2B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.mm in Sources */,
 				07E4BDC82A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm in Sources */,
 				EB517B802D7C09690019E451 /* AboutSchemeHandlerCocoa.mm in Sources */,
 				E37AE22D2D5E7A100010402E /* AdditionalFonts.mm in Sources */,
@@ -21576,7 +21572,6 @@
 				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,
-				0712654928EE06F800AE69D7 /* WebChromeClientCocoa.mm in Sources */,
 				EB44A69B2C8A4F6E006595BF /* WebClipCache.mm in Sources */,
 				E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */,
 				E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */,
@@ -21586,13 +21581,6 @@
 				99A514692D5ACF1800937177 /* WebDriverBidiProtocolObjects.cpp in Sources */,
 				1C974FE72AFAD17D009DE8FC /* WebExtensionCommand.cpp in Sources */,
 				1CC1A36C2B0D9A0900373759 /* WebExtensionMenuItem.cpp in Sources */,
-				1CC1A36E2B0DCEC900373759 /* WebExtensionMenuItemCocoa.mm in Sources */,
-				1C73167F2AC1EA27007FADA4 /* WebExtensionMessagePortCocoa.mm in Sources */,
-				028D308C2C63E214004F4FC6 /* WebExtensionSidebarCocoa.mm in Sources */,
-				1C66BDE22A8C2830009D4452 /* WebExtensionTabCocoa.mm in Sources */,
-				1CAB9B8628F743DB00E6C77E /* WebExtensionURLSchemeHandlerCocoa.mm in Sources */,
-				337822482947FBA5002106BB /* WebExtensionUtilities.mm in Sources */,
-				1C66BDE12A8C2830009D4452 /* WebExtensionWindowCocoa.mm in Sources */,
 				C18F3A152563334300797E66 /* WebInspectorPreferenceObserver.mm in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,

@@ -27,6 +27,7 @@
 #import "config.h"
 #import "DigitalCredentialsRequestValidatorBridge.h"
 
+#import "Logging.h"
 #import "WKIdentityDocumentRawRequestValidator.h"
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/ConsoleMessage.h>
@@ -42,6 +43,7 @@
 #import "WebKitSwiftSoftLink.h"
 
 namespace WebKit {
+using namespace WebCore;
 
 static RetainPtr<SecTrustRef> createSecTrustForChain(const Vector<RetainPtr<SecCertificateRef>> &chain)
 {

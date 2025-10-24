@@ -1820,52 +1820,6 @@ void WebLocalFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExten
     webPage->injectedBundleLoaderClient().willDestroyGlobalObjectForDOMWindowExtension(*webPage, extension);
 }
 
-#if PLATFORM(COCOA)
-    
-WebCore::IntPoint WebLocalFrameLoaderClient::accessibilityRemoteFrameOffset()
-{
-    RefPtr webPage = m_frame->page();
-    return webPage ? webPage->accessibilityRemoteFrameOffset() : IntPoint();
-}
-
-RemoteAXObjectRef WebLocalFrameLoaderClient::accessibilityRemoteObject()
-{
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return 0;
-    
-    return webPage->accessibilityRemoteObject();
-}
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void WebLocalFrameLoaderClient::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
-{
-    ASSERT(isMainRunLoop());
-    if (RefPtr webPage = m_frame->page())
-        webPage->setIsolatedTree(WTFMove(tree));
-}
-#endif
-
-void WebLocalFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
-{
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return completionHandler(response);
-
-    return completionHandler(webPage->injectedBundleResourceLoadClient().shouldCacheResponse(*webPage, m_frame, identifier) ? response : nil);
-}
-
-std::optional<double> WebLocalFrameLoaderClient::dataDetectionReferenceDate()
-{
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return std::nullopt;
-
-    return webPage->dataDetectionReferenceDate();
-}
-
-#endif // PLATFORM(COCOA)
-
 void WebLocalFrameLoaderClient::didChangeScrollOffset()
 {
     if (RefPtr webPage = m_frame->page())

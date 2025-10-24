@@ -846,6 +846,9 @@ WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC
 WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 
+WebProcess/WebCoreSupport/cocoa/WebChromeClientCocoa.mm @nonARC
+WebProcess/WebCoreSupport/cocoa/WebLocalFrameLoaderClientCocoa.mm @nonARC
+
 WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm @nonARC
 WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm @nonARC
 WebProcess/WebCoreSupport/ios/WebLocalFrameLoaderClientIOS.mm @nonARC
