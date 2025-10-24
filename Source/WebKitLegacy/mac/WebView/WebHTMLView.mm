@@ -4350,7 +4350,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if (auto tiffResource = _private->promisedDragTIFFDataSource) {
         if (auto* buffer = tiffResource->resourceBuffer()) {
-            NSURLResponse *response = tiffResource->response().nsURLResponse();
+            RetainPtr response = tiffResource->response().nsURLResponse();
             draggingElementURL = [response URL];
             wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:buffer->makeContiguous()->createNSData().get()]);
             NSString* filename = [response suggestedFilename];

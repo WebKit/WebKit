@@ -154,7 +154,7 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (NSURLResponse *)linkLocalResourceResponse
 {
     if (auto& response = _hitTestResult->linkLocalResourceResponse())
-        return response->nsURLResponse();
+        return response->protectedNSURLResponse().autorelease();
     return nil;
 }
 

@@ -56,7 +56,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURLResponse *)response
 {
-    return _navigationResponse->response().nsURLResponse();
+    return _navigationResponse->response().protectedNSURLResponse().autorelease();
 }
 
 - (BOOL)canShowMIMEType
@@ -93,7 +93,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURLRequest *)_request
 {
-    return _navigationResponse->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _navigationResponse->request().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).autorelease();
 }
 
 - (NSString *)_downloadAttribute

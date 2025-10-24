@@ -1015,7 +1015,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT_UNUSED(resource, !resource || resource == self.resource || !self.resource);
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     [strongSession task:self addSecurityOrigin:SecurityOrigin::create(response.url())];
-    [strongSession addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler), targetDispatcher = _targetDispatcher] () mutable {
+    [strongSession addDelegateOperation:[strongSelf = retainPtr(self), response = response.protectedNSURLResponse(), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler), targetDispatcher = _targetDispatcher] () mutable {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
             ASSERT_NOT_REACHED();
             targetDispatcher->dispatch([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {

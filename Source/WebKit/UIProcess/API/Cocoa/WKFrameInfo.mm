@@ -65,7 +65,8 @@ static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
 
 - (NSURLRequest *)request
 {
-    return _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) ?: [NSURLRequest requestWithURL:adoptNS([[NSURL alloc] initWithString:@""]).get()];
+    RetainPtr nsRequest = _frameInfo->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return nsRequest ? nsRequest.autorelease() : [NSURLRequest requestWithURL:adoptNS([[NSURL alloc] initWithString:@""]).get()];
 }
 
 - (WKSecurityOrigin *)securityOrigin

@@ -96,14 +96,12 @@ ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData&& r
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
-    auto requestCopy = m_nsRequest;
-    return requestCopy.autorelease();
+    return m_nsRequest.get();
 }
 
 RetainPtr<NSURLRequest> ResourceRequest::protectedNSURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
-    updatePlatformRequest(bodyPolicy);
-    return m_nsRequest;
+    return nsURLRequest(bodyPolicy);
 }
 
 ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() const

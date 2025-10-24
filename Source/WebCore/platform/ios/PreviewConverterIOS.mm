@@ -88,7 +88,7 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
     , m_originalResponse { response }
     , m_provider { provider }
     , m_platformDelegate { adoptNS([[WebPreviewConverterDelegate alloc] initWithDelegate:*this]) }
-    , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:nil]) }
+    , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.protectedNSURLResponse().get() options:nil]) }
 {
 }
 
@@ -102,7 +102,7 @@ HashSet<String, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIM
 
 ResourceRequest PreviewConverter::safeRequest(const ResourceRequest& request) const
 {
-    return [m_platformConverter safeRequestForRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)];
+    return [m_platformConverter safeRequestForRequest:request.protectedNSURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).get()];
 }
 
 ResourceResponse PreviewConverter::platformPreviewResponse() const
@@ -152,7 +152,7 @@ static NSDictionary *optionsWithPassword(const String& password)
 
 void PreviewConverter::platformUnlockWithPassword(const String& password)
 {
-    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:optionsWithPassword(password)]);
+    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.protectedNSURLResponse().get() options:optionsWithPassword(password)]);
 }
 
 } // namespace WebCore

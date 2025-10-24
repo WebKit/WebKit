@@ -107,7 +107,7 @@ static Ref<WebKit::WebURLSchemeTask> protectedURLSchemeTask(WKURLSchemeTaskImpl 
 {
     auto function = [strongSelf = retainPtr(self), self, response = retainPtr(response), request = retainPtr(request), handler = makeBlockPtr(completionHandler)] () mutable {
         return protectedURLSchemeTask(self)->willPerformRedirection(response.get(), request.get(), [handler = WTFMove(handler)] (WebCore::ResourceRequest&& actualNewRequest) {
-            handler.get()(actualNewRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
+            handler.get()(actualNewRequest.protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).get());
         });
     };
 

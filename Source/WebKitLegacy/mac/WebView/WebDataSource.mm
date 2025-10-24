@@ -476,7 +476,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSURLRequest *)initialRequest
 {
-    return toPrivate(_private)->loader->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return toPrivate(_private)->loader->originalRequest().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).autorelease();
 }
 
 - (NSMutableURLRequest *)request
@@ -486,12 +486,12 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
         return nil;
 
     // FIXME: this cast is dubious
-    return (NSMutableURLRequest *)toPrivate(_private)->loader->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
+    return (NSMutableURLRequest *)toPrivate(_private)->loader->request().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).autorelease();
 }
 
 - (NSURLResponse *)response
 {
-    return toPrivate(_private)->loader->response().nsURLResponse();
+    return toPrivate(_private)->loader->response().protectedNSURLResponse().autorelease();
 }
 
 - (NSString *)textEncodingName

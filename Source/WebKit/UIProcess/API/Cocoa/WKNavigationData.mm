@@ -53,7 +53,7 @@
 
 - (NSURLRequest *)originalRequest
 {
-    return _data->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    return _data->originalRequest().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).autorelease();
 }
 
 - (NSURL *)destinationURL
@@ -63,7 +63,7 @@
 
 - (NSURLResponse *)response
 {
-    return _data->response().nsURLResponse();
+    return _data->response().protectedNSURLResponse().autorelease();
 }
 
 #pragma mark WKObject protocol implementation
