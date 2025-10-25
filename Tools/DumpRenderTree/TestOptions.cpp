@@ -112,7 +112,6 @@ const TestFeatures& TestOptions::defaults()
             { "VisualViewportAPIEnabled", true },
             { "WebAudioEnabled", true },
             { "WebRTCEncodedTransformEnabled", true },
-            { "WebSQLEnabled", true },
             { "XSSAuditorEnabled", false },
 
             // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we

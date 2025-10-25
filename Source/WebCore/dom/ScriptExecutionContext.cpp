@@ -36,7 +36,6 @@
 #include "CrossOriginMode.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "DOMTimer.h"
-#include "DatabaseContext.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "EmptyScriptExecutionContext.h"
@@ -646,11 +645,6 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
 void ScriptExecutionContext::removeRejectedPromiseTracker()
 {
     m_rejectedPromiseTracker = nullptr;
-}
-
-void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)
-{
-    m_databaseContext = databaseContext;
 }
 
 bool ScriptExecutionContext::hasPendingActivity() const

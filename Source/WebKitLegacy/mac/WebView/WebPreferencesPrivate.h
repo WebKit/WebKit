@@ -206,7 +206,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL directoryUploadEnabled;
 @property (nonatomic) BOOL layoutFormattingContextIntegrationEnabled;
 @property (nonatomic, getter=isInAppBrowserPrivacyEnabled) BOOL inAppBrowserPrivacyEnabled;
-@property (nonatomic) BOOL webSQLEnabled;
 @property (nonatomic) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL animatedImageAsyncDecodingEnabled;
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
@@ -354,6 +353,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) int64_t applicationCacheTotalQuota;
 @property (nonatomic) int64_t applicationCacheDefaultOriginQuota;
 @property (nonatomic) BOOL mediaStreamEnabled;
+@property (nonatomic) BOOL webSQLEnabled;
 
 #if TARGET_OS_IPHONE
 @property (nonatomic) BOOL networkDataUsageTrackingEnabled;

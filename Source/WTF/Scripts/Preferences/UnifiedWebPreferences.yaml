@@ -9556,18 +9556,6 @@ WebRTCVP9Profile2CodecEnabled:
       "PLATFORM(COCOA)": true
       default: false
 
-WebSQLEnabled:
-  type: bool
-  status: embedder
-  humanReadableName: "Enable WebSQL"
-  humanReadableDescription: "Enable WebSQL"
-  webcoreBinding: custom
-  exposed: [ WebKitLegacy ]
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": WebKit::defaultWebSQLEnabled()
-      default: true
-
 WebSecurityEnabled:
   type: bool
   status: embedder

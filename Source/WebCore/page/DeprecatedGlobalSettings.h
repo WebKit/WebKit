@@ -84,9 +84,6 @@ public:
     static void setAttrStyleEnabled(bool isEnabled) { singleton().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return singleton().m_attrStyleEnabled; }
 
-    static void setWebSQLEnabled(bool isEnabled) { singleton().m_webSQLEnabled = isEnabled; }
-    static bool webSQLEnabled() { return singleton().m_webSQLEnabled; }
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     static void setAttachmentElementEnabled(bool areEnabled) { singleton().m_isAttachmentElementEnabled = areEnabled; }
     static bool attachmentElementEnabled() { return singleton().m_isAttachmentElementEnabled; }
@@ -154,7 +151,6 @@ private:
 
     bool m_isCustomPasteboardDataEnabled { false };
     bool m_attrStyleEnabled { false };
-    bool m_webSQLEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };

@@ -2660,16 +2660,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey];
 }
 
-- (BOOL)webSQLEnabled
-{
-    return [self _boolValueForKey:WebKitWebSQLEnabledPreferenceKey];
-}
-
-- (void)setWebSQLEnabled:(BOOL)webSQLEnabled
-{
-    [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
-}
-
 - (BOOL)siteSpecificQuirksModeEnabled
 {
     return [self _boolValueForKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
@@ -2971,6 +2961,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setMediaStreamEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)webSQLEnabled
+{
+    return NO;
+}
+
+- (void)setWebSQLEnabled:(BOOL)webSQLEnabled
 {
 }
 

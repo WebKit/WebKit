@@ -31,7 +31,6 @@
 #include "config.h"
 #include "CommandLineAPIHost.h"
 
-#include "Database.h"
 #include "Document.h"
 #include "EventTarget.h"
 #include "InspectorDOMStorageAgent.h"

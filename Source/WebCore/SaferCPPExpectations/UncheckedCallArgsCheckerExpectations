@@ -18,12 +18,6 @@ Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/IIRFilterNode.cpp
 Modules/webaudio/MediaStreamAudioDestinationNode.cpp
 Modules/webaudio/WaveShaperNode.cpp
-Modules/webdatabase/ChangeVersionWrapper.cpp
-Modules/webdatabase/Database.cpp
-Modules/webdatabase/DatabaseContext.cpp
-Modules/webdatabase/DatabaseManager.cpp
-Modules/webdatabase/LocalDOMWindowWebDatabase.cpp
-Modules/webdatabase/SQLTransaction.cpp
 Modules/websockets/WebSocketChannelInspector.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 StyleBuilderGenerated.cpp

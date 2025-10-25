@@ -130,7 +130,6 @@ private:
     void setToolTip(const String&);
 
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
-    void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final;
 
     void runOpenPanel(WebCore::LocalFrame&, WebCore::FileChooser&) override;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) override;

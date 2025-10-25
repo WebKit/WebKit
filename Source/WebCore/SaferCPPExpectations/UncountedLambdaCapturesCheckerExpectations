@@ -17,7 +17,6 @@ Modules/webcodecs/WebCodecsAudioEncoder.cpp
 Modules/webcodecs/WebCodecsBase.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoEncoder.cpp
-Modules/webdatabase/DatabaseThread.cpp
 [ Mac ] accessibility/isolatedtree/AXIsolatedObject.cpp
 [ Mac ] accessibility/isolatedtree/AXIsolatedObject.h
 [ Mac ] accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm

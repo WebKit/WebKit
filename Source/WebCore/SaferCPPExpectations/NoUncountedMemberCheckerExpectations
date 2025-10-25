@@ -5,8 +5,6 @@ Modules/notifications/NotificationResourcesLoader.h
 Modules/push-api/PushManager.h
 Modules/push-api/ServiceWorkerRegistrationPushAPI.h
 Modules/storage/StorageManager.cpp
-Modules/webdatabase/DatabaseTask.h
-Modules/webdatabase/SQLTransactionBackend.h
 [ Mac ] inspector/InspectorFrontendHost.cpp
 [ Mac ] inspector/InspectorFrontendHost.h
 [ Mac ] page/scrolling/ScrollLatchingController.h

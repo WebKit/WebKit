@@ -23,23 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DatabaseManagerClient.h>
 #import <wtf/NeverDestroyed.h>
+
+namespace WebCore {
+class SecurityOriginData;
+}
 
 namespace WebKit {
 
-class WebDatabaseManagerClient final : public WebCore::DatabaseManagerClient {
+class WebDatabaseManagerClient {
 public:
     static WebDatabaseManagerClient& sharedWebDatabaseManagerClient();
     
     virtual ~WebDatabaseManagerClient();
-    void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&) final;
-    void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WTF::String& databaseIdentifier) final;
+    void dispatchDidModifyOrigin(const WebCore::SecurityOriginData&);
+    void dispatchDidModifyDatabase(const WebCore::SecurityOriginData&, const WTF::String& databaseIdentifier);
 
 #if PLATFORM(IOS_FAMILY)
-    void dispatchDidAddNewOrigin() final;
-    void dispatchDidDeleteDatabase() final;
-    void dispatchDidDeleteDatabaseOrigin() final;
+    void dispatchDidAddNewOrigin();
+    void dispatchDidDeleteDatabase();
+    void dispatchDidDeleteDatabaseOrigin();
     void newDatabaseOriginWasAdded();
     void databaseWasDeleted();
     void databaseOriginWasDeleted();

@@ -392,7 +392,6 @@ Tests/WebKitCocoa/WebLocks.mm @nonARC
 Tests/WebKitCocoa/WebProcessKillIDBCleanup.mm @nonARC
 Tests/WebKitCocoa/WebProcessTerminate.mm @nonARC
 Tests/WebKitCocoa/WebPushDaemon.mm @nonARC
-Tests/WebKitCocoa/WebSQLBasics.mm @nonARC
 Tests/WebKitCocoa/WebSocket.mm @nonARC
 Tests/WebKitCocoa/WebTransport.mm @nonARC
 Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm @nonARC

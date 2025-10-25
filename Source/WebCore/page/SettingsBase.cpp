@@ -33,7 +33,6 @@
 #include "ChromeClient.h"
 #include "CookieStorage.h"
 #include "DOMTimer.h"
-#include "Database.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
 #include "FontCache.h"

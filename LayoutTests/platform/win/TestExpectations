@@ -118,8 +118,6 @@ storage/storageinfo-request-quota.html [ Skip ]
 storage/storagequota-query-usage.html [ Skip ]
 storage/storagequota-request-quota.html [ Skip ]
 
-storage/websql [ Skip ]
-
 # SPEECH_SYNTHESIS is disabled
 fast/speechsynthesis [ Skip ]
 
@@ -928,8 +926,6 @@ webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached
 webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
 http/tests/ssl/media-stream [ Skip ]
-
-[ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]

@@ -60,11 +60,9 @@
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/CredentialStorage.h>
-#include <WebCore/DatabaseTracker.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationResources.h>
-#include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SQLiteFileSystem.h>
@@ -546,10 +544,8 @@ void WebsiteDataStore::handleResolvedDirectoriesAsynchronously(const WebsiteData
 
     // Clear data of deprecated types.
     m_queue->dispatch([webSQLDirectory = crossThreadCopy(directories.webSQLDatabaseDirectory), directoriesToExclude = WTFMove(allCacheDirectories)]() {
-        if (!webSQLDirectory.isEmpty()) {
-            WebCore::DatabaseTracker::trackerWithDatabasePath(webSQLDirectory)->deleteAllDatabasesImmediately();
+        if (!webSQLDirectory.isEmpty())
             FileSystem::deleteEmptyDirectory(webSQLDirectory);
-        }
 
         for (auto& directory : directoriesToExclude)
             FileSystem::setExcludedFromBackup(directory, true);

@@ -136,7 +136,6 @@ Modules/speech/cocoa/SpeechRecognizerCocoa.mm @nonARC
 Modules/speech/cocoa/WebSpeechRecognizerTask.mm @nonARC
 Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm @nonARC
 Modules/system-preview/ARKitBadgeSystemImage.mm @nonARC
-Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm @nonARC
 accessibility/cocoa/AXCoreObjectCocoa.mm @nonARC
 accessibility/cocoa/AXTextMarkerCocoa.mm @nonARC
 accessibility/cocoa/AccessibilityObjectCocoa.mm @nonARC

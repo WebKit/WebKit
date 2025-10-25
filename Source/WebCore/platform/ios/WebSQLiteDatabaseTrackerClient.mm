@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WebBackgroundTaskController.h"
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
@@ -116,7 +115,6 @@ static NSUInteger getTransactionBackgroundTaskIdentifier() WTF_REQUIRES_LOCK(tra
         return;
 
     setTransactionBackgroundTaskIdentifier([backgroundTaskController startBackgroundTaskWithExpirationHandler:(^ {
-        WebCore::DatabaseTracker::singleton().closeAllDatabases(WebCore::CurrentQueryBehavior::Interrupt);
         [self endBackgroundTask];
     })]);
 }

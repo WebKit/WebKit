@@ -3933,26 +3933,6 @@
 		97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0A14FA09D5007457AE /* WebSocketFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97AABD2D14FA09D5007457AE /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */; };
-		97BC6A211505F081001B74AC /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69DF1505F081001B74AC /* Database.h */; };
-		97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E21505F081001B74AC /* DatabaseAuthorizer.h */; };
-		97BC6A251505F081001B74AC /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E31505F081001B74AC /* DatabaseCallback.h */; };
-		97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E61505F081001B74AC /* DatabaseContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC6A291505F081001B74AC /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E71505F081001B74AC /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC6A2E1505F081001B74AC /* DatabaseTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69EC1505F081001B74AC /* DatabaseTask.h */; };
-		97BC6A301505F081001B74AC /* DatabaseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69EE1505F081001B74AC /* DatabaseThread.h */; };
-		97BC6A321505F081001B74AC /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F01505F081001B74AC /* DatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC6A331505F081001B74AC /* DatabaseManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F11505F081001B74AC /* DatabaseManagerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC6A3B1505F081001B74AC /* SQLCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */; };
-		97BC6A3C1505F081001B74AC /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69FA1505F081001B74AC /* SQLError.h */; };
-		97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A001505F081001B74AC /* SQLResultSet.h */; };
-		97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A031505F081001B74AC /* SQLResultSetRowList.h */; };
-		97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A071505F081001B74AC /* SQLStatementCallback.h */; };
-		97BC6A4B1505F081001B74AC /* SQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A091505F081001B74AC /* SQLStatementErrorCallback.h */; };
-		97BC6A501505F081001B74AC /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A0E1505F081001B74AC /* SQLTransaction.h */; };
-		97BC6A521505F081001B74AC /* SQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A101505F081001B74AC /* SQLTransactionCallback.h */; };
-		97BC6A571505F081001B74AC /* SQLTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A151505F081001B74AC /* SQLTransactionCoordinator.h */; };
-		97BC6A581505F081001B74AC /* SQLTransactionErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A161505F081001B74AC /* SQLTransactionErrorCallback.h */; };
 		97BC84841236FD93000C6161 /* TextDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84821236FD93000C6161 /* TextDocumentParser.h */; };
 		97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC849A12370A4B000C6161 /* HTMLInputStream.h */; };
 		97BC84B412371180000C6161 /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84B212371180000C6161 /* TextDocument.h */; };
@@ -4503,7 +4483,6 @@
 		A8C4A80B09D563270003AC8D /* Attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7F909D563270003AC8D /* Attribute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8C4A80D09D563270003AC8D /* Attr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C4A7FB09D563270003AC8D /* Attr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8CCBB49151F831600AB7CE9 /* LocalDOMWindowWebDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CCBB47151F831600AB7CE9 /* LocalDOMWindowWebDatabase.h */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
 		A8CFF0510A154F09000A4234 /* TableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04C0A154F09000A4234 /* TableLayout.h */; };
@@ -7080,16 +7059,9 @@
 		FE0BCF3427C0661000BFB2DB /* ExtendedDOMIsoSubspaces.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0BCF3127C0660F00BFB2DB /* ExtendedDOMIsoSubspaces.h */; };
 		FE0BCF3527C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0BCF3327C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h */; };
 		FE0D84E910484348001A179E /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0D84E810484348001A179E /* WebEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1116C7826400F887C1 /* ChangeVersionData.h */; };
-		FE36FD1716C7826500F887C1 /* SQLTransactionStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1316C7826400F887C1 /* SQLTransactionStateMachine.h */; };
-		FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1416C7826400F887C1 /* SQLTransactionState.h */; };
-		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = FE699870192087E7006936BD /* FloatingPointEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80DA600E9C4703000D6F75 /* JSGeolocation.h */; };
-		FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8A674616CDD19E00930BF8 /* SQLStatement.h */; };
-		FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9E89FA16E2DC0400A908F8 /* OriginLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = FFAC30FC184FB145008C4F1E /* TrailingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC047183D27B700407109 /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = FFDBC045183D27B700407109 /* LineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8558,7 +8530,6 @@
 		1AE2AEC40A1D297B00B42B25 /* JSHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLQuoteElement.h; sourceTree = "<group>"; };
 		1AE79D40188DB61F002239C2 /* UserContentController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentController.cpp; sourceTree = "<group>"; };
 		1AE79D41188DB61F002239C2 /* UserContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentController.h; sourceTree = "<group>"; };
-		1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabase.cpp; sourceTree = "<group>"; };
 		1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabase.h; sourceTree = "<group>"; };
 		1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSet.cpp; sourceTree = "<group>"; };
 		1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSet.h; sourceTree = "<group>"; };
@@ -11345,7 +11316,6 @@
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		463EF33B2939417900069115 /* HashMapStylePropertyMapReadOnly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HashMapStylePropertyMapReadOnly.cpp; sourceTree = "<group>"; };
 		463EF33C2939417A00069115 /* HashMapStylePropertyMapReadOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashMapStylePropertyMapReadOnly.h; sourceTree = "<group>"; };
-		4642404520EAF0ED00B29FD2 /* DatabaseManagerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseManagerCocoa.mm; sourceTree = "<group>"; };
 		4644219928F5181900FE48C6 /* ScreenOrientationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenOrientationManager.cpp; sourceTree = "<group>"; };
 		4644BDC42ADBA4C2000A2245 /* TreeScopeInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeScopeInlines.h; sourceTree = "<group>"; };
 		4644F7EB272A1C160055599E /* WebLockMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLockMode.h; sourceTree = "<group>"; };
@@ -16117,47 +16087,6 @@
 		97AABD0C14FA09D5007457AE /* WebSocketHandshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshake.h; sourceTree = "<group>"; };
 		97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
-		97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
-		97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionWrapper.h; sourceTree = "<group>"; };
-		97BC69DE1505F081001B74AC /* Database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Database.cpp; sourceTree = "<group>"; };
-		97BC69DF1505F081001B74AC /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
-		97BC69E01505F081001B74AC /* Database.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Database.idl; sourceTree = "<group>"; };
-		97BC69E11505F081001B74AC /* DatabaseAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseAuthorizer.cpp; sourceTree = "<group>"; };
-		97BC69E21505F081001B74AC /* DatabaseAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseAuthorizer.h; sourceTree = "<group>"; };
-		97BC69E31505F081001B74AC /* DatabaseCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseCallback.h; sourceTree = "<group>"; };
-		97BC69E41505F081001B74AC /* DatabaseCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DatabaseCallback.idl; sourceTree = "<group>"; };
-		97BC69E51505F081001B74AC /* DatabaseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseContext.cpp; sourceTree = "<group>"; };
-		97BC69E61505F081001B74AC /* DatabaseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseContext.h; sourceTree = "<group>"; };
-		97BC69E71505F081001B74AC /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
-		97BC69EB1505F081001B74AC /* DatabaseTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseTask.cpp; sourceTree = "<group>"; };
-		97BC69EC1505F081001B74AC /* DatabaseTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTask.h; sourceTree = "<group>"; };
-		97BC69ED1505F081001B74AC /* DatabaseThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseThread.cpp; sourceTree = "<group>"; };
-		97BC69EE1505F081001B74AC /* DatabaseThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseThread.h; sourceTree = "<group>"; };
-		97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseTracker.cpp; sourceTree = "<group>"; };
-		97BC69F01505F081001B74AC /* DatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTracker.h; sourceTree = "<group>"; };
-		97BC69F11505F081001B74AC /* DatabaseManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManagerClient.h; sourceTree = "<group>"; };
-		97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLCallbackWrapper.h; sourceTree = "<group>"; };
-		97BC69FA1505F081001B74AC /* SQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLError.h; sourceTree = "<group>"; };
-		97BC69FB1505F081001B74AC /* SQLError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLError.idl; sourceTree = "<group>"; };
-		97BC69FF1505F081001B74AC /* SQLResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLResultSet.cpp; sourceTree = "<group>"; };
-		97BC6A001505F081001B74AC /* SQLResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLResultSet.h; sourceTree = "<group>"; };
-		97BC6A011505F081001B74AC /* SQLResultSet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSet.idl; sourceTree = "<group>"; };
-		97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLResultSetRowList.cpp; sourceTree = "<group>"; };
-		97BC6A031505F081001B74AC /* SQLResultSetRowList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLResultSetRowList.h; sourceTree = "<group>"; };
-		97BC6A041505F081001B74AC /* SQLResultSetRowList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSetRowList.idl; sourceTree = "<group>"; };
-		97BC6A071505F081001B74AC /* SQLStatementCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementCallback.h; sourceTree = "<group>"; };
-		97BC6A081505F081001B74AC /* SQLStatementCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementCallback.idl; sourceTree = "<group>"; };
-		97BC6A091505F081001B74AC /* SQLStatementErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatementErrorCallback.h; sourceTree = "<group>"; };
-		97BC6A0A1505F081001B74AC /* SQLStatementErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLStatementErrorCallback.idl; sourceTree = "<group>"; };
-		97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
-		97BC6A0E1505F081001B74AC /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransaction.h; sourceTree = "<group>"; };
-		97BC6A0F1505F081001B74AC /* SQLTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransaction.idl; sourceTree = "<group>"; };
-		97BC6A101505F081001B74AC /* SQLTransactionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCallback.h; sourceTree = "<group>"; };
-		97BC6A111505F081001B74AC /* SQLTransactionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionCallback.idl; sourceTree = "<group>"; };
-		97BC6A141505F081001B74AC /* SQLTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionCoordinator.cpp; sourceTree = "<group>"; };
-		97BC6A151505F081001B74AC /* SQLTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionCoordinator.h; sourceTree = "<group>"; };
-		97BC6A161505F081001B74AC /* SQLTransactionErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionErrorCallback.h; sourceTree = "<group>"; };
-		97BC6A171505F081001B74AC /* SQLTransactionErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLTransactionErrorCallback.idl; sourceTree = "<group>"; };
 		97BC84811236FD93000C6161 /* TextDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextDocumentParser.cpp; sourceTree = "<group>"; };
 		97BC84821236FD93000C6161 /* TextDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDocumentParser.h; sourceTree = "<group>"; };
 		97BC849A12370A4B000C6161 /* HTMLInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLInputStream.h; sourceTree = "<group>"; };
@@ -17330,9 +17259,6 @@
 		A8C4A7FB09D563270003AC8D /* Attr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Attr.h; sourceTree = "<group>"; };
 		A8C4A7FC09D563270003AC8D /* Attr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Attr.cpp; sourceTree = "<group>"; };
 		A8CB41020E85B8A50032C4F0 /* DashArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DashArray.h; sourceTree = "<group>"; };
-		A8CCBB46151F831600AB7CE9 /* LocalDOMWindowWebDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalDOMWindowWebDatabase.cpp; sourceTree = "<group>"; };
-		A8CCBB47151F831600AB7CE9 /* LocalDOMWindowWebDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDOMWindowWebDatabase.h; sourceTree = "<group>"; };
-		A8CCBB4E151F835A00AB7CE9 /* DOMWindow+WebDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "DOMWindow+WebDatabase.idl"; sourceTree = "<group>"; };
 		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
 		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
@@ -22635,16 +22561,10 @@
 		FE0BCF3327C0661000BFB2DB /* ExtendedDOMClientIsoSubspaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedDOMClientIsoSubspaces.h; sourceTree = "<group>"; };
 		FE0D84E810484348001A179E /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEvent.h; sourceTree = "<group>"; };
 		FE0D84EA1048436E001A179E /* WebEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEvent.mm; sourceTree = "<group>"; };
-		FE36FD1116C7826400F887C1 /* ChangeVersionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeVersionData.h; sourceTree = "<group>"; };
-		FE36FD1216C7826400F887C1 /* SQLTransactionStateMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionStateMachine.cpp; sourceTree = "<group>"; };
-		FE36FD1316C7826400F887C1 /* SQLTransactionStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionStateMachine.h; sourceTree = "<group>"; };
-		FE36FD1416C7826400F887C1 /* SQLTransactionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionState.h; sourceTree = "<group>"; };
 		FE3DC9902D0BA6F00021B6FC /* GraphicsTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsTZoneImpls.cpp; sourceTree = "<group>"; };
 		FE3DC9912D0BAC690021B6FC /* SVGTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTZoneImpls.cpp; sourceTree = "<group>"; };
 		FE3DC9932D0C063C0021B6FC /* PlatformTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformTZoneImpls.cpp; sourceTree = "<group>"; };
 		FE3DC9A82D0D63E10021B6FC /* DOMTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTZoneImpls.cpp; sourceTree = "<group>"; };
-		FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseManager.cpp; sourceTree = "<group>"; };
-		FE456F171677D74E005EDDF9 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
 		FE62AC562CFE603F00740A18 /* BindingsJSTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BindingsJSTZoneImpls.cpp; sourceTree = "<group>"; };
 		FE62AC572CFE659200740A18 /* CryptoAlgorithmTZoneImpls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmTZoneImpls.cpp; sourceTree = "<group>"; };
 		FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerIOS.mm; sourceTree = "<group>"; };
@@ -22652,16 +22572,10 @@
 		FE699870192087E7006936BD /* FloatingPointEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingPointEnvironment.h; sourceTree = "<group>"; };
 		FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGeolocation.cpp; sourceTree = "<group>"; };
 		FE80DA600E9C4703000D6F75 /* JSGeolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGeolocation.h; sourceTree = "<group>"; };
-		FE8A674516CDD19E00930BF8 /* SQLStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLStatement.cpp; sourceTree = "<group>"; };
-		FE8A674616CDD19E00930BF8 /* SQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLStatement.h; sourceTree = "<group>"; };
-		FE9E89F916E2DC0400A908F8 /* OriginLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginLock.cpp; sourceTree = "<group>"; };
-		FE9E89FA16E2DC0400A908F8 /* OriginLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginLock.h; sourceTree = "<group>"; };
 		FED13D390CEA934600D89466 /* EditorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorIOS.mm; sourceTree = "<group>"; };
 		FED13D3B0CEA936A00D89466 /* FrameIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FrameIOS.mm; sourceTree = "<group>"; };
 		FED13D3F0CEA939400D89466 /* IconIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconIOS.mm; sourceTree = "<group>"; };
 		FED13D500CEA949700D89466 /* RenderThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeIOS.h; sourceTree = "<group>"; };
-		FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionBackend.cpp; sourceTree = "<group>"; };
-		FEE1811216C319E800084849 /* SQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionBackend.h; sourceTree = "<group>"; };
 		FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoElement.cpp; sourceTree = "<group>"; };
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
 		FFAC30FC184FB145008C4F1E /* TrailingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingObjects.h; sourceTree = "<group>"; };
@@ -26744,14 +26658,6 @@
 				44EEA0F627449C0000594A83 /* imageControlsMac.css */,
 			);
 			path = mac;
-			sourceTree = "<group>";
-		};
-		4642404420EAF0BD00B29FD2 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				4642404520EAF0ED00B29FD2 /* DatabaseManagerCocoa.mm */,
-			);
-			path = cocoa;
 			sourceTree = "<group>";
 		};
 		4644F7EA272A1C160055599E /* web-locks */ = {
@@ -32240,7 +32146,6 @@
 				FD315FA212B025B100C1A359 /* webaudio */,
 				57D8462A1FEAF57F00CA3682 /* webauthn */,
 				CD1F9AEA26FD20A600617EB6 /* webcodecs */,
-				97BC69D51505F054001B74AC /* webdatabase */,
 				996E59DA1DF00D45006612B9 /* webdriver */,
 				1C28955D272E643900B3E2B4 /* WebGPU */,
 				97AABCF714FA09B5007457AE /* websockets */,
@@ -32442,70 +32347,6 @@
 				97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */,
 			);
 			path = websockets;
-			sourceTree = "<group>";
-		};
-		97BC69D51505F054001B74AC /* webdatabase */ = {
-			isa = PBXGroup;
-			children = (
-				4642404420EAF0BD00B29FD2 /* cocoa */,
-				FE36FD1116C7826400F887C1 /* ChangeVersionData.h */,
-				97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */,
-				97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */,
-				97BC69DE1505F081001B74AC /* Database.cpp */,
-				97BC69DF1505F081001B74AC /* Database.h */,
-				97BC69E01505F081001B74AC /* Database.idl */,
-				97BC69E11505F081001B74AC /* DatabaseAuthorizer.cpp */,
-				97BC69E21505F081001B74AC /* DatabaseAuthorizer.h */,
-				97BC69E31505F081001B74AC /* DatabaseCallback.h */,
-				97BC69E41505F081001B74AC /* DatabaseCallback.idl */,
-				97BC69E51505F081001B74AC /* DatabaseContext.cpp */,
-				97BC69E61505F081001B74AC /* DatabaseContext.h */,
-				97BC69E71505F081001B74AC /* DatabaseDetails.h */,
-				FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */,
-				FE456F171677D74E005EDDF9 /* DatabaseManager.h */,
-				97BC69F11505F081001B74AC /* DatabaseManagerClient.h */,
-				97BC69EB1505F081001B74AC /* DatabaseTask.cpp */,
-				97BC69EC1505F081001B74AC /* DatabaseTask.h */,
-				97BC69ED1505F081001B74AC /* DatabaseThread.cpp */,
-				97BC69EE1505F081001B74AC /* DatabaseThread.h */,
-				97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */,
-				97BC69F01505F081001B74AC /* DatabaseTracker.h */,
-				A8CCBB4E151F835A00AB7CE9 /* DOMWindow+WebDatabase.idl */,
-				A8CCBB46151F831600AB7CE9 /* LocalDOMWindowWebDatabase.cpp */,
-				A8CCBB47151F831600AB7CE9 /* LocalDOMWindowWebDatabase.h */,
-				FE9E89F916E2DC0400A908F8 /* OriginLock.cpp */,
-				FE9E89FA16E2DC0400A908F8 /* OriginLock.h */,
-				97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */,
-				97BC69FA1505F081001B74AC /* SQLError.h */,
-				97BC69FB1505F081001B74AC /* SQLError.idl */,
-				97BC69FF1505F081001B74AC /* SQLResultSet.cpp */,
-				97BC6A001505F081001B74AC /* SQLResultSet.h */,
-				97BC6A011505F081001B74AC /* SQLResultSet.idl */,
-				97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */,
-				97BC6A031505F081001B74AC /* SQLResultSetRowList.h */,
-				97BC6A041505F081001B74AC /* SQLResultSetRowList.idl */,
-				FE8A674516CDD19E00930BF8 /* SQLStatement.cpp */,
-				FE8A674616CDD19E00930BF8 /* SQLStatement.h */,
-				97BC6A071505F081001B74AC /* SQLStatementCallback.h */,
-				97BC6A081505F081001B74AC /* SQLStatementCallback.idl */,
-				97BC6A091505F081001B74AC /* SQLStatementErrorCallback.h */,
-				97BC6A0A1505F081001B74AC /* SQLStatementErrorCallback.idl */,
-				97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */,
-				97BC6A0E1505F081001B74AC /* SQLTransaction.h */,
-				97BC6A0F1505F081001B74AC /* SQLTransaction.idl */,
-				FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */,
-				FEE1811216C319E800084849 /* SQLTransactionBackend.h */,
-				97BC6A101505F081001B74AC /* SQLTransactionCallback.h */,
-				97BC6A111505F081001B74AC /* SQLTransactionCallback.idl */,
-				97BC6A141505F081001B74AC /* SQLTransactionCoordinator.cpp */,
-				97BC6A151505F081001B74AC /* SQLTransactionCoordinator.h */,
-				97BC6A161505F081001B74AC /* SQLTransactionErrorCallback.h */,
-				97BC6A171505F081001B74AC /* SQLTransactionErrorCallback.idl */,
-				FE36FD1416C7826400F887C1 /* SQLTransactionState.h */,
-				FE36FD1216C7826400F887C1 /* SQLTransactionStateMachine.cpp */,
-				FE36FD1316C7826400F887C1 /* SQLTransactionStateMachine.h */,
-			);
-			path = webdatabase;
 			sourceTree = "<group>";
 		};
 		97C1F5511228558800EDE616 /* parser */ = {
@@ -34073,7 +33914,6 @@
 		A83B79150CCB0078000B0825 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
-				1AE82F8D0CAAFA9D002237AE /* JSDatabase.cpp */,
 				1AE82F8E0CAAFA9D002237AE /* JSDatabase.h */,
 				B59DD698119029E5007E9684 /* JSDatabaseCallback.cpp */,
 				B59DD697119029E5007E9684 /* JSDatabaseCallback.h */,
@@ -42223,8 +42063,6 @@
 				722AF2E627E1D0A10078D997 /* CGContextStateSaver.h in Headers */,
 				1FC40FBA1655CCB90040F29E /* CGSubimageCacheWithTimer.h in Headers */,
 				072954F12C78F40300651E8F /* CGWindowUtilities.h in Headers */,
-				FE36FD1516C7826500F887C1 /* ChangeVersionData.h in Headers */,
-				97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */,
 				E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */,
 				E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */,
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
@@ -42730,17 +42568,7 @@
 				4B1E13E721790D660042CF98 /* CustomPaintCanvas.h in Headers */,
 				7B8ED5F026F0C13D008AC023 /* CVUtilities.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
-				97BC6A211505F081001B74AC /* Database.h in Headers */,
-				97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */,
-				97BC6A251505F081001B74AC /* DatabaseCallback.h in Headers */,
-				97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */,
-				97BC6A291505F081001B74AC /* DatabaseDetails.h in Headers */,
-				FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */,
-				97BC6A331505F081001B74AC /* DatabaseManagerClient.h in Headers */,
 				1ACB2B241A5733F400333392 /* DatabaseProvider.h in Headers */,
-				97BC6A2E1505F081001B74AC /* DatabaseTask.h in Headers */,
-				97BC6A301505F081001B74AC /* DatabaseThread.h in Headers */,
-				97BC6A321505F081001B74AC /* DatabaseTracker.h in Headers */,
 				BE23480D18A9871400E4B6E8 /* DataCue.h in Headers */,
 				C5227DF11C3C6DF100F5ED54 /* DataDetection.h in Headers */,
 				F446EDDF265DAFE30031DA8F /* DataDetectionResultsStorage.h in Headers */,
@@ -44916,7 +44744,6 @@
 				46C43D7829C03769005739B5 /* LocalDOMWindow.h in Headers */,
 				97D2AD0414B823A60093DF32 /* LocalDOMWindowProperty.h in Headers */,
 				AA2A5AD616A4861600975A25 /* LocalDOMWindowSpeechSynthesis.h in Headers */,
-				A8CCBB49151F831600AB7CE9 /* LocalDOMWindowWebDatabase.h in Headers */,
 				F5973DE015CFB2030027F804 /* LocaleCocoa.h in Headers */,
 				2AEB4FE42E0D393D00CC7134 /* LocaleToScriptMapping.h in Headers */,
 				65BF022F0974816300C43196 /* LocalFrame.h in Headers */,
@@ -45340,7 +45167,6 @@
 				4184F5161EAF05A800F18BF0 /* OrientationNotifier.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				FA9CD6322A01A78000EA5CAC /* OriginAccessPatterns.h in Headers */,
-				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
 				E755E8B324CA271E009F7C23 /* OscillatorOptions.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
@@ -46394,8 +46220,6 @@
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
 				84730D931248F0B300D3A9C9 /* SpotLightSource.h in Headers */,
 				7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */,
-				97BC6A3B1505F081001B74AC /* SQLCallbackWrapper.h in Headers */,
-				97BC6A3C1505F081001B74AC /* SQLError.h in Headers */,
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
@@ -46407,18 +46231,6 @@
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
-				97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */,
-				97BC6A451505F081001B74AC /* SQLResultSetRowList.h in Headers */,
-				FE8A674816CDD19E00930BF8 /* SQLStatement.h in Headers */,
-				97BC6A491505F081001B74AC /* SQLStatementCallback.h in Headers */,
-				97BC6A4B1505F081001B74AC /* SQLStatementErrorCallback.h in Headers */,
-				97BC6A501505F081001B74AC /* SQLTransaction.h in Headers */,
-				FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */,
-				97BC6A521505F081001B74AC /* SQLTransactionCallback.h in Headers */,
-				97BC6A571505F081001B74AC /* SQLTransactionCoordinator.h in Headers */,
-				97BC6A581505F081001B74AC /* SQLTransactionErrorCallback.h in Headers */,
-				FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */,
-				FE36FD1716C7826500F887C1 /* SQLTransactionStateMachine.h in Headers */,
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
 				26B999911803B3C900D01121 /* StackAllocator.h in Headers */,
 				510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */,

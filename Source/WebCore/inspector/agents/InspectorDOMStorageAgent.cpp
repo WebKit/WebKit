@@ -32,7 +32,6 @@
 #include "InspectorDOMStorageAgent.h"
 
 #include "DOMException.h"
-#include "Database.h"
 #include "Document.h"
 #include "InspectorResourceUtilities.h"
 #include "InstrumentingAgents.h"

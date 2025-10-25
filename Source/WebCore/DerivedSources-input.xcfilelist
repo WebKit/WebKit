@@ -1078,17 +1078,6 @@ $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoderEncodeOptions.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoderSupport.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrame.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/DOMWindow+WebDatabase.idl
-$(PROJECT_DIR)/Modules/webdatabase/Database.idl
-$(PROJECT_DIR)/Modules/webdatabase/DatabaseCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLError.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLResultSet.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLResultSetRowList.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLStatementCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLStatementErrorCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLTransaction.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLTransactionCallback.idl
-$(PROJECT_DIR)/Modules/webdatabase/SQLTransactionErrorCallback.idl
 $(PROJECT_DIR)/Modules/webdriver/Navigator+WebDriver.idl
 $(PROJECT_DIR)/Modules/websockets/CloseEvent.idl
 $(PROJECT_DIR)/Modules/websockets/WebSocket.idl

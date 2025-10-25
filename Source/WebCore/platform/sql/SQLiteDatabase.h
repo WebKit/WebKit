@@ -43,7 +43,6 @@ struct sqlite3;
 
 namespace WebCore {
 
-class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
@@ -135,8 +134,6 @@ public:
 #endif
         return m_db;
     }
-    
-    void setAuthorizer(DatabaseAuthorizer&);
 
     Lock& databaseMutex() { return m_lockingMutex; }
     bool isAutoCommitOn() const;
@@ -173,9 +170,6 @@ public:
     void decrementStatementCount();
 
 private:
-    static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
-
-    void enableAuthorizer(bool enable) WTF_REQUIRES_LOCK(m_authorizerLock);
     bool useWALJournalMode();
 
     int pageSize();
@@ -192,9 +186,6 @@ private:
 #endif
 
     bool m_useWAL { false };
-
-    Lock m_authorizerLock;
-    RefPtr<DatabaseAuthorizer> m_authorizer WTF_GUARDED_BY_LOCK(m_authorizerLock);
 
     Lock m_lockingMutex;
     RefPtr<Thread> m_openingThread { nullptr };

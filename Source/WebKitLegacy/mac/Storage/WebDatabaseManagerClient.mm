@@ -27,7 +27,6 @@
 
 #import "WebDatabaseManagerPrivate.h"
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -191,8 +190,6 @@ void WebDatabaseManagerClient::databaseWasDeleted()
         m_isHandlingDeleteDatabaseNotification = false;
         return;
     }
-    
-    DatabaseTracker::singleton().removeDeletedOpenedDatabases();
 }
 
 void WebDatabaseManagerClient::databaseOriginWasDeleted()

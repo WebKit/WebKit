@@ -23,7 +23,6 @@
 
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ContactInfo.h>
-#include <WebCore/DatabaseDetails.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DisabledAdaptations.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -337,8 +336,6 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual WebCore::HighlightVisibility appHighlightsVisiblility() const { return HighlightVisibility::Hidden; };
 #endif
-
-    virtual void exceededDatabaseQuota(LocalFrame&, const String& databaseName, DatabaseDetails) = 0;
 
     // Callback invoked when the application cache fails to save a cache object
     // because storing it would grow the database file past its defined maximum

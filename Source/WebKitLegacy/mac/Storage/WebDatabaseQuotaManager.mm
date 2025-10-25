@@ -26,7 +26,6 @@
 #import "WebDatabaseQuotaManager.h"
 
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOriginData.h>
 
 using namespace WebCore;
@@ -55,20 +54,16 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage([_origin _core]->data());
+    return 0;
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota([_origin _core]->data());
+    return 0;
 }
 
-// If the quota is set to a value lower than the current usage, that quota will
-// "stick" but no data will be purged to meet the new quota. This will simply
-// prevent new data from being added to databases in that origin.
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota([_origin _core]->data(), quota);
 }
 
 @end

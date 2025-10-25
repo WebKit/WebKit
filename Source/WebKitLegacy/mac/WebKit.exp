@@ -204,7 +204,6 @@ _WebFrameCanSuspendActiveDOMObjects
 _WebFrameHasPlugins
 _WebFrameHasUnloadListener
 _WebFrameMainDocumentError
-_WebFrameUsesDatabases
 _WebFrameUsesGeolocation
 _WebHistoryAllItemsRemovedNotification
 _WebHistoryItemChangedNotification

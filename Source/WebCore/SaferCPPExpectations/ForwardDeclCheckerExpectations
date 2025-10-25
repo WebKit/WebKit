@@ -24,8 +24,6 @@ Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
 Modules/WebGPU/Implementation/WebGPUXRSubImageImpl.cpp
 Modules/mediastream/RTCPeerConnection.h
 Modules/notifications/NotificationController.h
-Modules/webdatabase/DatabaseManager.h
-Modules/webdatabase/DatabaseThread.h
 [ Mac ] accessibility/AXTextMarker.cpp
 accessibility/AccessibilityObject.cpp
 bindings/js/GarbageCollectionController.cpp

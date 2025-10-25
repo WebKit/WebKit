@@ -820,17 +820,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrame.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl \
-    $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
-    $(WebCore)/Modules/webdatabase/Database.idl \
-    $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
-    $(WebCore)/Modules/webdatabase/SQLError.idl \
-    $(WebCore)/Modules/webdatabase/SQLResultSet.idl \
-    $(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
-    $(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \
-    $(WebCore)/Modules/webdatabase/SQLStatementErrorCallback.idl \
-    $(WebCore)/Modules/webdatabase/SQLTransaction.idl \
-    $(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
-    $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdriver/Navigator+WebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \

@@ -305,9 +305,6 @@ public:
 
     virtual EventTarget* errorEventTarget() = 0;
 
-    DatabaseContext* databaseContext() { return m_databaseContext.get(); }
-    void setDatabaseContext(DatabaseContext*);
-
     // These two methods are used when CryptoKeys are serialized into IndexedDB. As a side effect, it is also
     // used for things that utilize the same structure clone algorithm, for example, message passing between
     // worker and document.
@@ -431,8 +428,6 @@ private:
     std::unique_ptr<RejectedPromiseTracker> m_rejectedPromiseTracker;
 
     RefPtr<PublicURLManager> m_publicURLManager;
-
-    RefPtr<DatabaseContext> m_databaseContext;
 
     int m_circularSequentialID { 0 };
     int m_timerNestingLevel { 0 };

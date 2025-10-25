@@ -80,13 +80,6 @@ bool defaultRequiresUserGestureToLoadVideo()
     return shouldRequireUserGestureToLoadVideo;
 }
 
-bool defaultWebSQLEnabled()
-{
-    // For backward compatibility, keep WebSQL working until apps are rebuilt with the iOS 14 SDK.
-    static bool webSQLEnabled = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WebSQLDisabledByDefaultInLegacyWebKit);
-    return webSQLEnabled;
-}
-
 bool defaultAllowContentSecurityPolicySourceStarToMatchAnyProtocol()
 {
     static bool shouldAllowContentSecurityPolicySourceStarToMatchAnyProtocol = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CONTENT_SECURITY_POLICY_SOURCE_STAR_PROTOCOL_RESTRICTION);

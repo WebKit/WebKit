@@ -598,18 +598,6 @@ fast/events/drag-display-none-element.html
 # Skip tests in fast/text/shaping
 fast/text/shaping
 
-# WebSQL is disabled
-storage/websql [ Skip ]
-fast/dom/MutationObserver/database-callback-delivery.html [ Skip ]
-http/tests/security/cross-origin-websql-allowed.html [ Skip ]
-http/tests/security/cross-origin-websql.html [ Skip ]
-http/tests/security/same-origin-websql-blocked.html [ Skip ]
-http/tests/security/storage-blocking-loosened-websql.html [ Skip ]
-http/tests/security/storage-blocking-strengthened-websql.html [ Skip ]
-http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
-fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
-fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
-
 # WebKitTestRunner testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess.
 # We explicitly Skip the following tests instead of marking them as Failure because some of these tests will naturally pass
 # as a consequence of testRunner.setPrivateBrowsingEnabled_DEPRECATED() effectively being a no-op as of the time of writing (07/08/2015).

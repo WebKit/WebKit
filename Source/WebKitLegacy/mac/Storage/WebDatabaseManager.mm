@@ -32,15 +32,12 @@
 #import "WebDatabaseProvider.h"
 #import "WebPlatformStrategies.h"
 #import "WebSecurityOriginInternal.h"
-#import <WebCore/DatabaseManager.h>
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebDatabaseManagerInternal.h"
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/WebCoreThread.h>
 #endif
 
@@ -58,9 +55,8 @@ NSString *WebDatabaseIdentifierKey = @"WebDatabaseIdentifierKey";
 
 #if PLATFORM(IOS_FAMILY)
 CFStringRef WebDatabaseOriginsDidChangeNotification = CFSTR("WebDatabaseOriginsDidChangeNotification");
-#endif
-
 static NSString *databasesDirectoryPath();
+#endif
 
 @implementation WebDatabaseManager
 
@@ -77,50 +73,26 @@ static NSString *databasesDirectoryPath();
 
     WebPlatformStrategies::initializeIfNecessary();
 
-    DatabaseManager& dbManager = DatabaseManager::singleton();
-
-    // Set the database root path in WebCore
-    dbManager.initialize(databasesDirectoryPath());
-
-    // Set the DatabaseManagerClient
-    dbManager.setClient(&WebKit::WebDatabaseManagerClient::sharedWebDatabaseManagerClient());
-
     return self;
 }
 
 - (NSArray *)origins
 {
-    return createNSArray(DatabaseTracker::singleton().origins(), [] (auto&& origin) {
-        return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.securityOrigin().ptr()]);
-    }).autorelease();
+    return nil;
 }
 
 - (NSArray *)databasesWithOrigin:(WebSecurityOrigin *)origin
 {
-    if (!origin)
-        return nil;
-    return createNSArray(DatabaseTracker::singleton().databaseNames([origin _core]->data())).autorelease();
+    return nil;
 }
 
 - (NSDictionary *)detailsForDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    if (!origin)
-        return nil;
-
-    auto details = DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
-    if (details.name().isNull())
-        return nil;
-
-    return @{
-        WebDatabaseDisplayNameKey: details.displayName().isEmpty() ? databaseIdentifier : details.displayName().createNSString().get(),
-        WebDatabaseExpectedSizeKey: @(details.expectedUsage()),
-        WebDatabaseUsageKey: @(details.currentUsage()),
-    };
+    return nil;
 }
 
 - (void)deleteAllDatabases
 {
-    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This needs to be removed once DatabaseTrackers in multiple processes
     // are in sync: <rdar://problem/9567500> Remove Website Data pane is not kept in sync with Safari
@@ -130,18 +102,17 @@ static NSString *databasesDirectoryPath();
 
 - (BOOL)deleteOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteOrigin([origin _core]->data());
+    return YES;
 }
 
 - (BOOL)deleteDatabase:(NSString *)databaseIdentifier withOrigin:(WebSecurityOrigin *)origin
 {
-    return origin && DatabaseTracker::singleton().deleteDatabase([origin _core]->data(), databaseIdentifier);
+    return YES;
 }
 
 // For DumpRenderTree support only
 - (void)deleteAllIndexedDatabases
 {
-    WebDatabaseProvider::singleton().deleteAllDatabases();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -192,9 +163,6 @@ static bool isFileHidden(NSString *file)
             // There shouldn't be any directories in this folder - but check for it anyway.
             if (![fileManager fileExistsAtPath:dbFilePath isDirectory:&isDirectory] || isDirectory)
                 continue;
-            
-            if (DatabaseTracker::deleteDatabaseFileIfEmpty(dbFilePath))
-                ++deletedDatabaseFileCount;
         }
         
         // If we have removed every database file for this origin, delete the folder for this origin.
@@ -207,17 +175,16 @@ static bool isFileHidden(NSString *file)
 
 + (void)scheduleEmptyDatabaseRemoval
 {
-    DatabaseTracker::emptyDatabaseFilesRemovalTaskWillBeScheduled();
-    
     dispatch_async(globalDispatchQueueSingleton(0, 0), ^{
         [WebDatabaseManager removeEmptyDatabaseFiles];
-        DatabaseTracker::emptyDatabaseFilesRemovalTaskDidFinish();
     });
 }
 
 #endif // PLATFORM(IOS_FAMILY)
 
 @end
+
+#if PLATFORM(IOS_FAMILY)
 
 static NSString *databasesDirectoryPath()
 {
@@ -228,3 +195,5 @@ static NSString *databasesDirectoryPath()
     
     return [databasesDirectory stringByStandardizingPath];
 }
+
+#endif

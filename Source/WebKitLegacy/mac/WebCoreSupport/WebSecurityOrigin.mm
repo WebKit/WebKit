@@ -30,7 +30,6 @@
 
 #import "WebDatabaseQuotaManager.h"
 #import "WebQuotaManager.h"
-#import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/URL.h>
@@ -169,17 +168,16 @@ using namespace WebCore;
 
 - (unsigned long long)usage
 {
-    return DatabaseTracker::singleton().usage(reinterpret_cast<SecurityOrigin*>(_private)->data());
+    return 0;
 }
 
 - (unsigned long long)quota
 {
-    return DatabaseTracker::singleton().quota(reinterpret_cast<SecurityOrigin*>(_private)->data());
+    return 0;
 }
 
 - (void)setQuota:(unsigned long long)quota
 {
-    DatabaseTracker::singleton().setQuota(reinterpret_cast<SecurityOrigin*>(_private)->data(), quota);
 }
 
 @end

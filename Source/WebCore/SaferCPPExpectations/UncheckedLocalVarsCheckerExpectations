@@ -6,7 +6,6 @@ Modules/model-element/HTMLModelElement.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/storage/WorkerStorageConnection.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp
-Modules/webdatabase/SQLStatement.cpp
 Modules/websockets/WebSocket.cpp
 [ Mac ]  testing/Internals.mm
 [ Mac ] accessibility/isolatedtree/AXIsolatedObject.cpp

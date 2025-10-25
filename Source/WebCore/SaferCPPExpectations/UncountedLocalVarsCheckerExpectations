@@ -33,8 +33,6 @@ Modules/webauthn/AuthenticatorAssertionResponse.cpp
 Modules/webauthn/AuthenticatorAttestationResponse.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
-Modules/webdatabase/Database.cpp
-Modules/webdatabase/DatabaseManager.cpp
 [ Mac ] Modules/mediasession/MediaSession.cpp
 [ Mac ] editing/mac/EditorMac.mm
 [ Mac ] editing/mac/FrameSelectionMac.mm

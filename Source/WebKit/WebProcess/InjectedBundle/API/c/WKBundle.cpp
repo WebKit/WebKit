@@ -43,7 +43,6 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
-#include <WebCore/DatabaseTracker.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ServiceWorkerThreadProxy.h>
@@ -142,8 +141,6 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
 
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
-    // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
-    WebCore::DatabaseTracker::singleton().setQuota(*WebCore::SecurityOriginData::fromDatabaseIdentifier("file__0"_s), quota);
 }
 
 void WKBundleReleaseMemory(WKBundleRef)

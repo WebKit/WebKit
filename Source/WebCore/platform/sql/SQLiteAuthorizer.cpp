@@ -27,7 +27,6 @@
  */
 
 #include "config.h"
-#include "DatabaseAuthorizer.h"
 
 #include <sqlite3.h>
 
