@@ -336,8 +336,7 @@ void DocumentTimeline::transitionDidComplete(Ref<CSSTransition>&& transition)
     if (RefPtr keyframeEffect = transition->keyframeEffect()) {
         if (auto styleable = keyframeEffect->targetStyleable()) {
             auto property = transition->property();
-            if (styleable->hasRunningTransitionForProperty(property))
-                styleable->ensureCompletedTransitionsByProperty().set(property, WTFMove(transition));
+            styleable->ensureCompletedTransitionsByProperty().set(property, WTFMove(transition));
         }
     }
 }

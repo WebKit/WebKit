@@ -172,7 +172,7 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
                 animationsToRemove.append(animation);
 
             if (RefPtr transition = dynamicDowncast<CSSTransition>(animation)) {
-                if (!transition->needsTick() && transition->playState() == WebAnimation::PlayState::Finished && transition->owningElement())
+                if (transition->playState() == WebAnimation::PlayState::Finished && transition->owningElement())
                     completedTransitions.append(*transition);
             }
         }
