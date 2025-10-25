@@ -48,6 +48,7 @@
 
 class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient {
     WTF_MAKE_TZONE_ALLOCATED(WebEditorClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEditorClient);
 public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();

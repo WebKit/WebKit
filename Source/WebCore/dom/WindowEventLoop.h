@@ -66,6 +66,8 @@ private:
     static Ref<WindowEventLoop> create(const String&);
     WindowEventLoop(const String&);
 
+    EventLoopTaskGroup& perpetualTaskGroupForSimilarOriginWindowAgents();
+
     void scheduleToRun() final;
     bool isContextThread() const final;
     MicrotaskQueue& microtaskQueue() final;
@@ -87,7 +89,7 @@ private:
     // Each task scheduled in event loop is associated with a document so that it can be suspened or stopped
     // when the associated document is suspened or stopped. This task group is used to schedule a task
     // which is not scheduled to a specific document, and should only be used when it's absolutely required.
-    EventLoopTaskGroup m_perpetualTaskGroupForSimilarOriginWindowAgents;
+    const std::unique_ptr<EventLoopTaskGroup> m_perpetualTaskGroupForSimilarOriginWindowAgents;
 
     bool m_mutationObserverCompoundMicrotaskQueuedFlag { false };
     bool m_deliveringMutationRecords { false }; // FIXME: This flag doesn't exist in the spec.

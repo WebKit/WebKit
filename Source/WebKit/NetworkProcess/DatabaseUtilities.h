@@ -70,7 +70,7 @@ protected:
     WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType) const;
 
     const String m_storageFilePath;
-    mutable WebCore::SQLiteDatabase m_database;
+    mutable UniqueRef<WebCore::SQLiteDatabase> m_database;
     mutable WebCore::SQLiteTransaction m_transaction;
 };
 

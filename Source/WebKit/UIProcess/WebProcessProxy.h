@@ -389,7 +389,7 @@ public:
 #endif
 
 #if HAVE(DISPLAY_LINK)
-    DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
+    DisplayLink::Client& displayLinkClient() { return m_displayLinkClient.get(); }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
 
     void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
@@ -767,7 +767,7 @@ private:
         RefPtr<T> m_strongObject;
     };
 
-    BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
+    UniqueRef<BackgroundProcessResponsivenessTimer> m_backgroundResponsivenessTimer;
     
     WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
 
@@ -784,13 +784,13 @@ private:
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
 
-    int m_numberOfTimesSuddenTerminationWasDisabled;
+    int m_numberOfTimesSuddenTerminationWasDisabled { 0 };
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
     bool m_areThrottleStateChangesEnabled { true };
 
 #if HAVE(DISPLAY_LINK)
-    DisplayLinkProcessProxyClient m_displayLinkClient;
+    UniqueRef<DisplayLinkProcessProxyClient> m_displayLinkClient;
 #endif
 
 #if PLATFORM(COCOA)

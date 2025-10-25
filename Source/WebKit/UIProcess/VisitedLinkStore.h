@@ -39,7 +39,7 @@ namespace WebKit {
 
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkTableIdentifier>, private SharedStringHashStore::Client {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkTableIdentifier>, public SharedStringHashStore::Client {
 public:
     static Ref<VisitedLinkStore> create();
     VisitedLinkStore();
@@ -70,7 +70,7 @@ private:
     void sendStoreHandleToProcess(WebProcessProxy&);
 
     WeakHashSet<WebProcessProxy> m_processes;
-    SharedStringHashStore m_linkHashStore;
+    UniqueRef<SharedStringHashStore> m_linkHashStore;
 };
 
 } // namespace WebKit

@@ -136,27 +136,6 @@ WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
 {
     return LogMedia;
 }
-
-uint32_t PlaybackSessionInterfaceIOS::checkedPtrCount() const
-{
-    return CanMakeCheckedPtr::checkedPtrCount();
-}
-
-uint32_t PlaybackSessionInterfaceIOS::checkedPtrCountWithoutThreadCheck() const
-{
-    return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck();
-}
-
-void PlaybackSessionInterfaceIOS::incrementCheckedPtrCount() const
-{
-    CanMakeCheckedPtr::incrementCheckedPtrCount();
-}
-
-void PlaybackSessionInterfaceIOS::decrementCheckedPtrCount() const
-{
-    CanMakeCheckedPtr::decrementCheckedPtrCount();
-}
-
 #endif
 
 } // namespace WebCore

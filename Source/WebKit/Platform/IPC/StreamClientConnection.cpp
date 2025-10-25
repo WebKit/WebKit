@@ -35,6 +35,7 @@
 namespace IPC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamClientConnection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StreamClientConnection::DedicatedConnectionClient);
 
 // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
 
@@ -121,7 +122,7 @@ void StreamClientConnection::setMaxBatchSize(unsigned size)
 
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {
-    m_dedicatedConnectionClient.emplace(*this, receiver);
+    lazyInitialize(m_dedicatedConnectionClient, makeUniqueWithoutRefCountedCheck<DedicatedConnectionClient>(*this, receiver));
     m_connection->open(Ref { *m_dedicatedConnectionClient }.get(), dispatcher);
 }
 

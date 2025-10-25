@@ -276,13 +276,21 @@ template<typename P> struct DefaultHash<CheckedRef<P>> : PtrHash<CheckedRef<P>> 
 
 enum class DefaultedOperatorEqual : bool { No, Yes };
 
-template <typename StorageType, typename PtrCounterType> class CanMakeCheckedPtrBase {
+// DO NOT make use of this enum in new code. An object which supports CanMakeCheckedPtr must be heap allocated on its own.
+enum class CheckedPtrDeleteCheckException : bool { No, Yes };
+
+template <typename StorageType, typename PtrCounterType, typename DeletionFlagType, CheckedPtrDeleteCheckException deleteException> class CanMakeCheckedPtrBase {
 public:
     CanMakeCheckedPtrBase() = default;
     CanMakeCheckedPtrBase(CanMakeCheckedPtrBase&&) { }
     CanMakeCheckedPtrBase& operator=(CanMakeCheckedPtrBase&&) { return *this; }
     CanMakeCheckedPtrBase(const CanMakeCheckedPtrBase&) { }
     CanMakeCheckedPtrBase& operator=(const CanMakeCheckedPtrBase&) { return *this; }
+
+    ~CanMakeCheckedPtrBase()
+    {
+        ASSERT(m_hasBegunDeletion || deleteException == CheckedPtrDeleteCheckException::Yes);
+    }
 
     PtrCounterType checkedPtrCount() const { return m_checkedPtrCount; }
     void incrementCheckedPtrCount() const { ++m_checkedPtrCount; }
@@ -303,12 +311,22 @@ public:
             return m_checkedPtrCount.valueWithoutThreadCheck();
     }
 
+    void setBegunCheckedPtrDeletion()
+    {
+#if ASSERT_ENABLED
+        m_hasBegunDeletion = true;
+#endif
+    }
+
 private:
     mutable StorageType m_checkedPtrCount { 0 };
+#if ASSERT_ENABLED
+    DeletionFlagType m_hasBegunDeletion { false };
+#endif
 };
 
-template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No>
-class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t> {
+template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No, CheckedPtrDeleteCheckException deleteException = CheckedPtrDeleteCheckException::No>
+class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t, bool, deleteException> {
 public:
     ~CanMakeCheckedPtr()
     {
@@ -323,8 +341,8 @@ public:
     }
 };
 
-template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No>
-class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t> {
+template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No, CheckedPtrDeleteCheckException deleteException = CheckedPtrDeleteCheckException::No>
+class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t, std::atomic<bool>, deleteException> {
 public:
     ~CanMakeThreadSafeCheckedPtr()
     {

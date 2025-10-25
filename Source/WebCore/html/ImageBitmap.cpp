@@ -796,7 +796,7 @@ public:
 private:
     PendingImageBitmap(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
         : ActiveDOMObject(&scriptExecutionContext)
-        , m_blobLoader(FileReaderLoader::ReadAsArrayBuffer, this)
+        , m_blobLoader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadAsArrayBuffer, this))
         , m_blob(WTFMove(blob))
         , m_options(WTFMove(options))
         , m_rect(WTFMove(rect))
@@ -807,7 +807,7 @@ private:
     void start(ScriptExecutionContext& scriptExecutionContext)
     {
         m_pendingActivity = makePendingActivity(*this); // Prevent destruction until the load has finished.
-        m_blobLoader.start(&scriptExecutionContext, *m_blob);
+        m_blobLoader->start(&scriptExecutionContext, *m_blob);
     }
 
     // ActiveDOMObject
@@ -818,7 +818,7 @@ private:
     void didReceiveData() final { }
     void didFinishLoading() final
     {
-        createImageBitmapAndCallCompletionHandlerSoon(m_blobLoader.arrayBufferResult());
+        createImageBitmapAndCallCompletionHandlerSoon(m_blobLoader->arrayBufferResult());
     }
     void didFail(ExceptionCode) final
     {
@@ -843,10 +843,10 @@ private:
             return;
         }
 
-        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_completionHandler));
+        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader->url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_completionHandler));
     }
 
-    FileReaderLoader m_blobLoader;
+    const UniqueRef<FileReaderLoader> m_blobLoader;
     RefPtr<Blob> m_blob;
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;

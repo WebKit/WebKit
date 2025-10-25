@@ -36,6 +36,7 @@ namespace WebCore {
 class PageHeapAgent final : public WebHeapAgent {
     WTF_MAKE_NONCOPYABLE(PageHeapAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageHeapAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageHeapAgent);
 public:
     PageHeapAgent(PageAgentContext&);
     ~PageHeapAgent();

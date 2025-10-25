@@ -47,7 +47,7 @@ class ScrollerPairMac;
 
 struct ScrollbarColor;
 
-class ScrollerMac final : public CanMakeThreadSafeCheckedPtr<ScrollerMac> {
+class ScrollerMac final : public CanMakeThreadSafeCheckedPtr<ScrollerMac, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ScrollerMac);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollerMac);
     friend class ScrollerPairMac;

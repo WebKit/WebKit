@@ -624,7 +624,7 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 
 void ViewGestureController::removeSwipeSnapshot()
 {
-    m_snapshotRemovalTracker.reset();
+    m_snapshotRemovalTracker->reset();
 
     m_hasOutstandingRepaintRequest = false;
 

@@ -40,6 +40,7 @@ class Page;
 class DeviceOrientationClient : public DeviceClient {
     WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationClient);
     WTF_MAKE_NONCOPYABLE(DeviceOrientationClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClient);
 public:
     DeviceOrientationClient() = default;
     virtual ~DeviceOrientationClient() = default;

@@ -38,6 +38,7 @@ class Page;
 class DeviceMotionClient : public DeviceClient {
     WTF_MAKE_TZONE_ALLOCATED(DeviceMotionClient);
     WTF_MAKE_NONCOPYABLE(DeviceMotionClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceMotionClient);
 public:
     DeviceMotionClient() = default;
     virtual ~DeviceMotionClient() = default;

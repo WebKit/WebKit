@@ -444,6 +444,12 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
     USING_CAN_MAKE_CHECKEDPTR(ScriptExecutionContext);
 
+    void setBegunCheckedPtrDeletion()
+    {
+        ContainerNode::setBegunCheckedPtrDeletion();
+        ScriptExecutionContext::setBegunCheckedPtrDeletion();
+    }
+
     inline static Ref<Document> create(const Settings&, const URL&);
     static Ref<Document> createNonRenderedPlaceholder(LocalFrame&, const URL&);
     static Ref<Document> create(Document&);

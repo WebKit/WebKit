@@ -512,7 +512,7 @@ private:
     bool m_didCallEndSwipeGesture { false };
     bool m_removeSnapshotImmediatelyWhenGestureEnds { false };
 
-    SnapshotRemovalTracker m_snapshotRemovalTracker;
+    const UniqueRef<SnapshotRemovalTracker> m_snapshotRemovalTracker;
     WTF::Function<void()> m_loadCallback;
 };
 

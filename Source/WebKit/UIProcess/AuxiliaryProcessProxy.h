@@ -84,6 +84,7 @@ public:
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return IPC::Connection::Client::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { IPC::Connection::Client::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { IPC::Connection::Client::decrementCheckedPtrCount(); }
+    void setBegunCheckedPtrDeletion() final { IPC::Connection::Client::setBegunCheckedPtrDeletion(); }
 
     virtual ~AuxiliaryProcessProxy();
 

@@ -127,6 +127,7 @@ public:
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementCheckedPtrCount(); }
+    void setBegunCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr::setBegunCheckedPtrDeletion(); }
 
     void startLoading();
     void destroy();

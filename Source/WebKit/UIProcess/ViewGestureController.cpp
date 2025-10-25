@@ -91,6 +91,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
 #if PLATFORM(GTK)
     , m_swipeProgressTracker(webPageProxy, *this)
 #endif
+    , m_snapshotRemovalTracker(makeUniqueRef<SnapshotRemovalTracker>())
 {
     if (webPageProxy.hasRunningProcess())
         connectToProcess();
@@ -221,7 +222,7 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction, DeferT
 void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
 {
     m_didStartProvisionalLoad = true;
-    m_snapshotRemovalTracker.resume();
+    m_snapshotRemovalTracker->resume();
 #if !PLATFORM(IOS_FAMILY)
     requestRenderTreeSizeNotificationIfNeeded();
 #endif
@@ -237,27 +238,27 @@ void ViewGestureController::didStartProvisionalLoadForMainFrame()
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
-    if (!m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::VisuallyNonEmptyLayout))
+    if (!m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::VisuallyNonEmptyLayout))
         return;
 
-    m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::MainFrameLoad);
-    m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::SubresourceLoads);
-    m_snapshotRemovalTracker.startWatchdog(swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration);
+    m_snapshotRemovalTracker->cancelOutstandingEvent(SnapshotRemovalTracker::MainFrameLoad);
+    m_snapshotRemovalTracker->cancelOutstandingEvent(SnapshotRemovalTracker::SubresourceLoads);
+    m_snapshotRemovalTracker->startWatchdog(swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration);
 }
 
 void ViewGestureController::didRepaintAfterNavigation()
 {
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::RepaintAfterNavigation);
+    m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::RepaintAfterNavigation);
 }
 
 void ViewGestureController::didHitRenderTreeSizeThreshold()
 {
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::RenderTreeSizeThreshold);
+    m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::RenderTreeSizeThreshold);
 }
 
 void ViewGestureController::didRestoreScrollPosition()
 {
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::ScrollPositionRestoration);
+    m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::ScrollPositionRestoration);
 }
 
 void ViewGestureController::didReachNavigationTerminalState(API::Navigation* navigation)
@@ -265,18 +266,18 @@ void ViewGestureController::didReachNavigationTerminalState(API::Navigation* nav
     if (!m_pendingNavigation || navigation != m_pendingNavigation)
         return;
 
-    if (m_snapshotRemovalTracker.isPaused() && m_snapshotRemovalTracker.hasRemovalCallback()) {
+    if (m_snapshotRemovalTracker->isPaused() && m_snapshotRemovalTracker->hasRemovalCallback()) {
         removeSwipeSnapshot();
         return;
     }
 
-    if (!m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::MainFrameLoad))
+    if (!m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::MainFrameLoad))
         return;
 
     // Coming back from the back/forward cache will result in getting a load event, but no first visually non-empty layout.
     // WebCore considers a loaded document enough to be considered visually non-empty, so that's good
     // enough for us too.
-    m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);
+    m_snapshotRemovalTracker->cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);
 
     checkForActiveLoads();
 }
@@ -288,8 +289,8 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
     bool cancelledOutstandingEvent = false;
 
     // Same-document navigations don't have a main frame load or first visually non-empty layout.
-    cancelledOutstandingEvent |= m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::MainFrameLoad);
-    cancelledOutstandingEvent |= m_snapshotRemovalTracker.cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);
+    cancelledOutstandingEvent |= m_snapshotRemovalTracker->cancelOutstandingEvent(SnapshotRemovalTracker::MainFrameLoad);
+    cancelledOutstandingEvent |= m_snapshotRemovalTracker->cancelOutstandingEvent(SnapshotRemovalTracker::VisuallyNonEmptyLayout);
 
     if (!cancelledOutstandingEvent)
         return;
@@ -310,7 +311,7 @@ void ViewGestureController::checkForActiveLoads()
     }
 
     m_swipeActiveLoadMonitoringTimer.stop();
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SubresourceLoads);
+    m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::SubresourceLoads);
 }
 
 ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker()
@@ -689,10 +690,10 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
 
     if (renderTreeSizeThreshold) {
         desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
-        m_snapshotRemovalTracker.setRenderTreeSizeThreshold(renderTreeSizeThreshold);
+        m_snapshotRemovalTracker->setRenderTreeSizeThreshold(renderTreeSizeThreshold);
     }
 
-    m_snapshotRemovalTracker.start(desiredEvents, [this, protectedThis = Ref { *this }] { forceRepaintIfNeeded(); });
+    m_snapshotRemovalTracker->start(desiredEvents, [this, protectedThis = Ref { *this }] { forceRepaintIfNeeded(); });
 
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.
@@ -722,7 +723,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     if (RefPtr page = m_webPageProxy.get())
         page->navigationGestureDidEnd(true, *targetItem);
 
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd, SnapshotRemovalTracker::ShouldIgnoreEventIfPaused::No);
+    m_snapshotRemovalTracker->eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd, SnapshotRemovalTracker::ShouldIgnoreEventIfPaused::No);
 
     // removeSwipeSnapshot() was called between willEndSwipeGesture() and endSwipeGesture().
     // We couldn't remove it then, because the animation was still running, but now we can!
@@ -734,14 +735,14 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
 void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
 {
-    if (!m_snapshotRemovalTracker.hasOutstandingEvent(SnapshotRemovalTracker::RenderTreeSizeThreshold))
+    if (!m_snapshotRemovalTracker->hasOutstandingEvent(SnapshotRemovalTracker::RenderTreeSizeThreshold))
         return;
 
     RefPtr page = m_webPageProxy.get();
     if (!page)
         return;
 
-    auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
+    auto threshold = m_snapshotRemovalTracker->renderTreeSizeThreshold();
     if (page->provisionalPageProxy())
         page->provisionalPageProxy()->send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold));
     else

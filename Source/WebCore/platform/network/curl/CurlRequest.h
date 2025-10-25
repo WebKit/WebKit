@@ -89,6 +89,7 @@ private:
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementCheckedPtrCount(); }
+    void setBegunCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr::setBegunCheckedPtrDeletion(); }
 
     void retain() override { ref(); }
     void release() override { deref(); }

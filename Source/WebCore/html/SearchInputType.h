@@ -41,6 +41,7 @@ class SearchFieldResultsButtonElement;
 
 class SearchInputType final : public BaseTextInputType {
     WTF_MAKE_TZONE_ALLOCATED(SearchInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SearchInputType);
 public:
     static Ref<SearchInputType> create(HTMLInputElement& element)
     {

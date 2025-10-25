@@ -91,7 +91,6 @@ inline WindowEventLoop::WindowEventLoop(const String& agentClusterKey)
     : m_agentClusterKey(agentClusterKey)
     , m_timer(*this, &WindowEventLoop::didReachTimeToRun)
     , m_idleTimer(*this, &WindowEventLoop::didFireIdleTimer)
-    , m_perpetualTaskGroupForSimilarOriginWindowAgents(*this)
 {
 }
 
@@ -101,6 +100,13 @@ WindowEventLoop::~WindowEventLoop()
         return;
     auto didRemove = windowEventLoopMap().remove(m_agentClusterKey);
     RELEASE_ASSERT(didRemove);
+}
+
+EventLoopTaskGroup& WindowEventLoop::perpetualTaskGroupForSimilarOriginWindowAgents()
+{
+    if (!m_perpetualTaskGroupForSimilarOriginWindowAgents)
+        lazyInitialize(m_perpetualTaskGroupForSimilarOriginWindowAgents, makeUnique<EventLoopTaskGroup>(*this));
+    return *m_perpetualTaskGroupForSimilarOriginWindowAgents;
 }
 
 void WindowEventLoop::scheduleToRun()
@@ -242,7 +248,7 @@ void WindowEventLoop::queueMutationObserverCompoundMicrotask()
     if (m_mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     m_mutationObserverCompoundMicrotaskQueuedFlag = true;
-    m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([weakThis = WeakPtr { *this }] {
+    perpetualTaskGroupForSimilarOriginWindowAgents().queueMicrotask([weakThis = WeakPtr { *this }] {
         // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -263,7 +269,7 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
 {
     if (!m_processingBackupElementQueue) {
         m_processingBackupElementQueue = true;
-        m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([weakThis = WeakPtr { *this }] {
+        perpetualTaskGroupForSimilarOriginWindowAgents().queueMicrotask([weakThis = WeakPtr { *this }] {
             // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)

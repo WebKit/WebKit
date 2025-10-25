@@ -605,7 +605,7 @@ void ViewGestureController::didMoveSwipeSnapshotLayer()
 
 void ViewGestureController::removeSwipeSnapshot()
 {
-    m_snapshotRemovalTracker.reset();
+    m_snapshotRemovalTracker->reset();
 
     m_hasOutstandingRepaintRequest = false;
 

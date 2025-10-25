@@ -32,7 +32,7 @@ namespace WebCore {
 namespace Style {
 
 // This state has lifetime of a single style resolution cycle, including any layout interleaving.
-struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState> {
+struct TreeResolutionState : public CanMakeCheckedPtr<TreeResolutionState, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
     AnchorPositionedStates anchorPositionedStates;
 
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TreeResolutionState);

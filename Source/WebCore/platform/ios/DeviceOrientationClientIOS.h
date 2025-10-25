@@ -41,6 +41,7 @@ namespace WebCore {
 
 class DeviceOrientationClientIOS : public DeviceOrientationClient, public MotionManagerClient {
     WTF_MAKE_TZONE_ALLOCATED(DeviceOrientationClientIOS);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceOrientationClientIOS);
 public:
     DeviceOrientationClientIOS(RefPtr<DeviceOrientationUpdateProvider>&&);
     ~DeviceOrientationClientIOS() override;

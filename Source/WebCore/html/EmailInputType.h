@@ -37,6 +37,7 @@ namespace WebCore {
 
 class EmailInputType final : public BaseTextInputType {
     WTF_MAKE_TZONE_ALLOCATED(EmailInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmailInputType);
 public:
     static Ref<EmailInputType> create(HTMLInputElement& element)
     {

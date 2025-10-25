@@ -37,6 +37,7 @@ namespace WebCore {
 
 class URLInputType final : public BaseTextInputType {
     WTF_MAKE_TZONE_ALLOCATED(URLInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(URLInputType);
 public:
     static Ref<URLInputType> create(HTMLInputElement& element)
     {

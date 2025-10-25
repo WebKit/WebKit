@@ -39,6 +39,7 @@ struct GarbageCollectionData;
 class WebHeapAgent : public Inspector::InspectorHeapAgent {
     WTF_MAKE_NONCOPYABLE(WebHeapAgent);
     WTF_MAKE_TZONE_ALLOCATED(WebHeapAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebHeapAgent);
     friend class SendGarbageCollectionEventsTask;
 public:
     WebHeapAgent(WebAgentContext&);

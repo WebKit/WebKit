@@ -73,7 +73,7 @@ public:
     virtual Node* caretNode() = 0;
 };
 
-class CaretAnimator : public CanMakeCheckedPtr<CaretAnimator> {
+class CaretAnimator : public CanMakeCheckedPtr<CaretAnimator, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
     WTF_MAKE_TZONE_ALLOCATED(CaretAnimator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CaretAnimator);
 public:

@@ -47,7 +47,7 @@ class TextControlInnerTextElement;
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType, protected SpinButtonOwner, protected AutoFillButtonElement::AutoFillButtonOwner
-    , private DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
+    , public DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
 {
     WTF_MAKE_TZONE_ALLOCATED(TextFieldInputType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextFieldInputType);

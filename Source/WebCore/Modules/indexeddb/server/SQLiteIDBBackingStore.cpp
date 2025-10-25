@@ -889,13 +889,13 @@ String SQLiteIDBBackingStore::fullDatabasePath() const
 
 std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersionFromFile(const String& databasePath)
 {
-    SQLiteDatabase database;
-    if (!database.open(databasePath)) {
+    auto database = makeUniqueRef<SQLiteDatabase>();
+    if (!database->open(databasePath)) {
         LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8().data());
         return std::nullopt;
     }
-    if (!database.tableExists("IDBDatabaseInfo"_s)) {
-        LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
+    if (!database->tableExists("IDBDatabaseInfo"_s)) {
+        LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database->lastError(), database->lastErrorMsg());
         return std::nullopt;
     }
 
@@ -907,7 +907,7 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
     }
 
     auto databaseName = result.value().second;
-    auto versql = database.prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
+    auto versql = database->prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseVersion';"_s);
     String stringVersion = versql ? CheckedRef { *versql }->columnText(0) : String();
     auto databaseVersion = parseInteger<uint64_t>(stringVersion);
     if (!databaseVersion) {

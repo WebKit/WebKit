@@ -67,7 +67,7 @@ using namespace WebCore;
 
 #define ITP_DEBUG_MODE_RELEASE_LOG(fmt, ...) RELEASE_LOG_INFO(ITPDebug, "ResourceLoadStatisticsStore: " fmt, ##__VA_ARGS__)
 #define ITP_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), ##__VA_ARGS__)
-#define ITP_RELEASE_LOG_DATABASE_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 ", error=%d, message=%" PRIVATE_LOG_STRING "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), m_database.lastError(), m_database.lastErrorMsg(), ##__VA_ARGS__)
+#define ITP_RELEASE_LOG_DATABASE_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 ", error=%d, message=%" PRIVATE_LOG_STRING "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), m_database->lastError(), m_database->lastErrorMsg(), ##__VA_ARGS__)
 
 
 constexpr unsigned operatingDatesWindowLong { 30 }; // days
@@ -356,7 +356,7 @@ ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisti
     openAndUpdateSchemaIfNecessary();
     enableForeignKeys();
 
-    if (!m_database.turnOnIncrementalAutoVacuum())
+    if (!m_database->turnOnIncrementalAutoVacuum())
         ITP_RELEASE_LOG_DATABASE_ERROR("ResourceLoadStatisticsStore: failed to turn on auto vacuum");
 
     includeTodayAsOperatingDateIfNecessary();
@@ -469,7 +469,7 @@ HashSet<RegistrableDomain> ResourceLoadStatisticsStore::loadWebsitesWithUserInte
     ASSERT(!RunLoop::isMain());
 
     HashSet<RegistrableDomain> results;
-    auto statement = m_database.prepareStatement(domainWithUserInteractionQuery);
+    auto statement = m_database->prepareStatement(domainWithUserInteractionQuery);
     if (!statement)
         return { };
 
@@ -868,7 +868,7 @@ bool ResourceLoadStatisticsStore::tableExists(StringView tableName)
 void ResourceLoadStatisticsStore::deleteTable(StringView tableName)
 {
     ASSERT(tableExists(tableName));
-    auto dropTableQuery = m_database.prepareStatementSlow(makeString("DROP TABLE "_s, tableName));
+    auto dropTableQuery = m_database->prepareStatementSlow(makeString("DROP TABLE "_s, tableName));
     ASSERT(dropTableQuery);
     if (!dropTableQuery || dropTableQuery->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("deleteTable: failed to step statement");
@@ -876,7 +876,7 @@ void ResourceLoadStatisticsStore::deleteTable(StringView tableName)
 
 bool ResourceLoadStatisticsStore::missingUniqueIndices()
 {
-    auto statement = m_database.prepareStatement("SELECT COUNT(*) FROM sqlite_master WHERE type = 'index'"_s);
+    auto statement = m_database->prepareStatement("SELECT COUNT(*) FROM sqlite_master WHERE type = 'index'"_s);
     if (!statement) {
         ITP_RELEASE_LOG_DATABASE_ERROR("missingUniqueIndices: failed to prepare statement");
         return false;
@@ -921,7 +921,7 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
     Vector<WebCore::PrivateClickMeasurement> unattributed;
     {
         constexpr auto allUnattributedPrivateClickMeasurementAttributionsQuery = "SELECT * FROM UnattributedPrivateClickMeasurement"_s;
-        auto unattributedScopedStatement = m_database.prepareStatement(allUnattributedPrivateClickMeasurementAttributionsQuery);
+        auto unattributedScopedStatement = m_database->prepareStatement(allUnattributedPrivateClickMeasurementAttributionsQuery);
         if (!unattributedScopedStatement) {
             ITP_RELEASE_LOG_DATABASE_ERROR("migrateDataToPCMDatabaseIfNecessary: failed to prepare unattributedScopedStatement");
             return;
@@ -933,7 +933,7 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
     Vector<WebCore::PrivateClickMeasurement> attributed;
     {
         constexpr auto allAttributedPrivateClickMeasurementQuery = "SELECT * FROM AttributedPrivateClickMeasurement"_s;
-        auto attributedScopedStatement = m_database.prepareStatement(allAttributedPrivateClickMeasurementQuery);
+        auto attributedScopedStatement = m_database->prepareStatement(allAttributedPrivateClickMeasurementQuery);
         if (!attributedScopedStatement) {
             ITP_RELEASE_LOG_DATABASE_ERROR("migrateDataToPCMDatabaseIfNecessary: failed to prepare attributedScopedStatement");
             return;
@@ -972,7 +972,7 @@ void ResourceLoadStatisticsStore::addMissingTablesIfNecessary()
 
     for (auto& table : *missingTables) {
         auto createTableQuery = expectedTableAndIndexQueries().get(table).first;
-        if (!m_database.executeCommandSlow(createTableQuery))
+        if (!m_database->executeCommandSlow(createTableQuery))
             ITP_RELEASE_LOG_DATABASE_ERROR("addMissingTablesIfNecessary: failed to execute statement");
     }
 
@@ -1067,18 +1067,18 @@ bool ResourceLoadStatisticsStore::isEmpty() const
 
 bool ResourceLoadStatisticsStore::createUniqueIndices()
 {
-    if (!m_database.executeCommand(createUniqueIndexStorageAccessUnderTopFrameDomains)
-        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsTo)
-        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)
-        || !m_database.executeCommand(createUniqueIndexTopFrameUniqueRedirectsFrom)
-        || !m_database.executeCommand(createUniqueIndexTopFrameLinkDecorationsFrom)
-        || !m_database.executeCommand(createUniqueIndexTopFrameLoadedThirdPartyScripts)
-        || !m_database.executeCommand(createUniqueIndexSubframeUnderTopFrameDomains)
-        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
-        || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
-        || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsFrom)
-        || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
-        || !m_database.executeCommand(createUniqueIndexOperatingDates)) {
+    if (!m_database->executeCommand(createUniqueIndexStorageAccessUnderTopFrameDomains)
+        || !m_database->executeCommand(createUniqueIndexTopFrameUniqueRedirectsTo)
+        || !m_database->executeCommand(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)
+        || !m_database->executeCommand(createUniqueIndexTopFrameUniqueRedirectsFrom)
+        || !m_database->executeCommand(createUniqueIndexTopFrameLinkDecorationsFrom)
+        || !m_database->executeCommand(createUniqueIndexTopFrameLoadedThirdPartyScripts)
+        || !m_database->executeCommand(createUniqueIndexSubframeUnderTopFrameDomains)
+        || !m_database->executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
+        || !m_database->executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
+        || !m_database->executeCommand(createUniqueIndexSubresourceUniqueRedirectsFrom)
+        || !m_database->executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
+        || !m_database->executeCommand(createUniqueIndexOperatingDates)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createUniqueIndices: failed to execute statement");
         return false;
     }
@@ -1089,68 +1089,68 @@ bool ResourceLoadStatisticsStore::createSchema()
 {
     ASSERT(!RunLoop::isMain());
 
-    if (!m_database.executeCommand(createObservedDomain)) {
+    if (!m_database->executeCommand(createObservedDomain)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createObservedDomain");
         return false;
     }
 
     // FIXME: drop TopLevelDomains table as it is not used.
-    if (!m_database.executeCommand(createTopLevelDomains)) {
+    if (!m_database->executeCommand(createTopLevelDomains)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopLevelDomains");
         return false;
     }
 
-    if (!m_database.executeCommand(createStorageAccessUnderTopFrameDomains)) {
+    if (!m_database->executeCommand(createStorageAccessUnderTopFrameDomains)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createStorageAccessUnderTopFrameDomains");
         return false;
     }
 
-    if (!m_database.executeCommand(createTopFrameUniqueRedirectsTo)) {
+    if (!m_database->executeCommand(createTopFrameUniqueRedirectsTo)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopFrameUniqueRedirectsTo");
         return false;
     }
 
-    if (!m_database.executeCommand(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) {
+    if (!m_database->executeCommand(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement");
         return false;
     }
 
-    if (!m_database.executeCommand(createTopFrameUniqueRedirectsFrom)) {
+    if (!m_database->executeCommand(createTopFrameUniqueRedirectsFrom)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopFrameUniqueRedirectsFrom");
         return false;
     }
 
-    if (!m_database.executeCommand(createTopFrameLinkDecorationsFrom)) {
+    if (!m_database->executeCommand(createTopFrameLinkDecorationsFrom)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopFrameLinkDecorationsFrom");
         return false;
     }
 
-    if (!m_database.executeCommand(createTopFrameLoadedThirdPartyScripts)) {
+    if (!m_database->executeCommand(createTopFrameLoadedThirdPartyScripts)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createTopFrameLoadedThirdPartyScripts");
         return false;
     }
 
-    if (!m_database.executeCommand(createSubframeUnderTopFrameDomains)) {
+    if (!m_database->executeCommand(createSubframeUnderTopFrameDomains)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createSubframeUnderTopFrameDomains");
         return false;
     }
 
-    if (!m_database.executeCommand(createSubresourceUnderTopFrameDomains)) {
+    if (!m_database->executeCommand(createSubresourceUnderTopFrameDomains)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createSubresourceUnderTopFrameDomains");
         return false;
     }
 
-    if (!m_database.executeCommand(createSubresourceUniqueRedirectsTo)) {
+    if (!m_database->executeCommand(createSubresourceUniqueRedirectsTo)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createSubresourceUniqueRedirectsTo");
         return false;
     }
 
-    if (!m_database.executeCommand(createSubresourceUniqueRedirectsFrom)) {
+    if (!m_database->executeCommand(createSubresourceUniqueRedirectsFrom)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createSubresourceUniqueRedirectsFrom");
         return false;
     }
 
-    if (!m_database.executeCommand(createOperatingDates)) {
+    if (!m_database->executeCommand(createOperatingDates)) {
         ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createOperatingDates");
         return false;
     }
@@ -1287,7 +1287,7 @@ String ResourceLoadStatisticsStore::ensureAndMakeDomainList(const HashSet<Regist
 
 void ResourceLoadStatisticsStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
 {
-    auto insertRelationshipStatement = m_database.prepareStatementSlow(makeString(statement, ensureAndMakeDomainList(domainList), " );"_s));
+    auto insertRelationshipStatement = m_database->prepareStatementSlow(makeString(statement, ensureAndMakeDomainList(domainList), " );"_s));
 
     if (!insertRelationshipStatement || insertRelationshipStatement->bindInt(1, domainID) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("insertDomainRelationshipList: failed to bind first parameter");
@@ -1457,7 +1457,7 @@ Vector<ITPThirdPartyData> ResourceLoadStatisticsStore::aggregatedThirdPartyData(
 
     Vector<ITPThirdPartyData> thirdPartyDataList;
     const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%"_s : "1"_s;
-    auto sortedStatistics = m_database.prepareStatement(joinSubStatisticsForSorting());
+    auto sortedStatistics = m_database->prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
         || sortedStatistics->bindText(1, prevalentDomainsBindParameter)
         || sortedStatistics->bindText(2, "%"_s) != SQLITE_OK) {
@@ -1478,7 +1478,7 @@ void ResourceLoadStatisticsStore::incrementRecordsDeletedCountForDomains(HashSet
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN ("_s, buildList(domains), ')'));
+    auto domainsToUpdateStatement = m_database->prepareStatementSlow(makeString("UPDATE ObservedDomains SET dataRecordsRemoved = dataRecordsRemoved + 1 WHERE registrableDomain IN ("_s, buildList(domains), ')'));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("incrementRecordsDeletedCountForDomains: failed to step statement");
 }
@@ -1497,7 +1497,7 @@ unsigned ResourceLoadStatisticsStore::recursivelyFindNonPrevalentDomainsThatRedi
     ++numberOfRecursiveCalls;
 
     StdSet<unsigned> newlyIdentifiedDomains;
-    auto findSubresources = m_database.prepareStatement("SELECT SubresourceUniqueRedirectsFrom.fromDomainID from SubresourceUniqueRedirectsFrom INNER JOIN ObservedDomains ON ObservedDomains.domainID = SubresourceUniqueRedirectsFrom.fromDomainID WHERE subresourceDomainID = ? AND ObservedDomains.isPrevalent = 0"_s);
+    auto findSubresources = m_database->prepareStatement("SELECT SubresourceUniqueRedirectsFrom.fromDomainID from SubresourceUniqueRedirectsFrom INNER JOIN ObservedDomains ON ObservedDomains.domainID = SubresourceUniqueRedirectsFrom.fromDomainID WHERE subresourceDomainID = ? AND ObservedDomains.isPrevalent = 0"_s);
     if (!findSubresources || findSubresources->bindInt(1, primaryDomainID) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain: failed to bind parameter for findSubresources");
         return 0;
@@ -1510,7 +1510,7 @@ unsigned ResourceLoadStatisticsStore::recursivelyFindNonPrevalentDomainsThatRedi
             newlyIdentifiedDomains.insert(newDomainID);
     }
 
-    auto findTopFrames = m_database.prepareStatement("SELECT TopFrameUniqueRedirectsFrom.fromDomainID from TopFrameUniqueRedirectsFrom INNER JOIN ObservedDomains ON ObservedDomains.domainID = TopFrameUniqueRedirectsFrom.fromDomainID WHERE targetDomainID = ? AND ObservedDomains.isPrevalent = 0"_s);
+    auto findTopFrames = m_database->prepareStatement("SELECT TopFrameUniqueRedirectsFrom.fromDomainID from TopFrameUniqueRedirectsFrom INNER JOIN ObservedDomains ON ObservedDomains.domainID = TopFrameUniqueRedirectsFrom.fromDomainID WHERE targetDomainID = ? AND ObservedDomains.isPrevalent = 0"_s);
     if (!findTopFrames
         || findTopFrames->bindInt(1, primaryDomainID) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain: failed to bind parameter for findTopFrames");
@@ -1538,19 +1538,19 @@ void ResourceLoadStatisticsStore::markAsPrevalentIfHasRedirectedToPrevalent()
     ASSERT(!RunLoop::isMain());
 
     StdSet<unsigned> prevalentDueToRedirect;
-    auto subresourceRedirectStatement = m_database.prepareStatement("SELECT DISTINCT SubresourceUniqueRedirectsTo.subresourceDomainID FROM SubresourceUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = SubresourceUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
+    auto subresourceRedirectStatement = m_database->prepareStatement("SELECT DISTINCT SubresourceUniqueRedirectsTo.subresourceDomainID FROM SubresourceUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = SubresourceUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
     if (subresourceRedirectStatement) {
         while (subresourceRedirectStatement->step() == SQLITE_ROW)
             prevalentDueToRedirect.insert(subresourceRedirectStatement->columnInt(0));
     }
 
-    auto topFrameRedirectStatement = m_database.prepareStatement("SELECT DISTINCT TopFrameUniqueRedirectsTo.sourceDomainID FROM TopFrameUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = TopFrameUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
+    auto topFrameRedirectStatement = m_database->prepareStatement("SELECT DISTINCT TopFrameUniqueRedirectsTo.sourceDomainID FROM TopFrameUniqueRedirectsTo JOIN ObservedDomains ON ObservedDomains.domainID = TopFrameUniqueRedirectsTo.toDomainID AND ObservedDomains.isPrevalent = 1"_s);
     if (topFrameRedirectStatement) {
         while (topFrameRedirectStatement->step() == SQLITE_ROW)
             prevalentDueToRedirect.insert(topFrameRedirectStatement->columnInt(0));
     }
 
-    auto markPrevalentStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN ("_s, buildList(prevalentDueToRedirect), ')'));
+    auto markPrevalentStatement = m_database->prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN ("_s, buildList(prevalentDueToRedirect), ')'));
     if (!markPrevalentStatement || markPrevalentStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("markAsPrevalentIfHasRedirectedToPrevalent: failed to step statement");
 }
@@ -1560,7 +1560,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
     ASSERT(!RunLoop::isMain());
 
     HashMap<unsigned, NotVeryPrevalentResources> results;
-    auto notVeryPrevalentResourcesStatement = m_database.prepareStatement("SELECT domainID, registrableDomain, isPrevalent FROM ObservedDomains WHERE isVeryPrevalent = 0"_s);
+    auto notVeryPrevalentResourcesStatement = m_database->prepareStatement("SELECT domainID, registrableDomain, isPrevalent FROM ObservedDomains WHERE isVeryPrevalent = 0"_s);
     if (notVeryPrevalentResourcesStatement) {
         while (notVeryPrevalentResourcesStatement->step() == SQLITE_ROW) {
             unsigned key = static_cast<unsigned>(notVeryPrevalentResourcesStatement->columnInt(0));
@@ -1575,7 +1575,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
 
     auto domainIDsOfInterest = buildList(results.keys());
 
-    auto subresourceUnderTopFrameDomainsStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subresourceDomainID"_s));
+    auto subresourceUnderTopFrameDomainsStatement = m_database->prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(topFrameDomainID) FROM SubresourceUnderTopFrameDomains WHERE subresourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subresourceDomainID"_s));
     if (subresourceUnderTopFrameDomainsStatement) {
         while (subresourceUnderTopFrameDomainsStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUnderTopFrameDomainsStatement->columnInt(0));
@@ -1588,7 +1588,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
         }
     }
 
-    auto subresourceUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(toDomainID) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subresourceDomainID"_s));
+    auto subresourceUniqueRedirectsToCountStatement = m_database->prepareStatementSlow(makeString("SELECT subresourceDomainID, COUNT(toDomainID) FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subresourceDomainID"_s));
     if (subresourceUniqueRedirectsToCountStatement) {
         while (subresourceUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subresourceUniqueRedirectsToCountStatement->columnInt(0));
@@ -1601,7 +1601,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
         }
     }
 
-    auto subframeUnderTopFrameDomainsCountStatement = m_database.prepareStatementSlow(makeString("SELECT subframeDomainID, COUNT(topFrameDomainID) FROM SubframeUnderTopFrameDomains WHERE subframeDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subframeDomainID"_s));
+    auto subframeUnderTopFrameDomainsCountStatement = m_database->prepareStatementSlow(makeString("SELECT subframeDomainID, COUNT(topFrameDomainID) FROM SubframeUnderTopFrameDomains WHERE subframeDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY subframeDomainID"_s));
     if (subframeUnderTopFrameDomainsCountStatement) {
         while (subframeUnderTopFrameDomainsCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(subframeUnderTopFrameDomainsCountStatement->columnInt(0));
@@ -1614,7 +1614,7 @@ HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> Resour
         }
     }
 
-    auto topFrameUniqueRedirectsToCountStatement = m_database.prepareStatementSlow(makeString("SELECT sourceDomainID, COUNT(toDomainID) FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY sourceDomainID"_s));
+    auto topFrameUniqueRedirectsToCountStatement = m_database->prepareStatementSlow(makeString("SELECT sourceDomainID, COUNT(toDomainID) FROM TopFrameUniqueRedirectsTo WHERE sourceDomainID IN ("_s, domainIDsOfInterest, ") GROUP BY sourceDomainID"_s));
     if (topFrameUniqueRedirectsToCountStatement) {
         while (topFrameUniqueRedirectsToCountStatement->step() == SQLITE_ROW) {
             unsigned domainID = static_cast<unsigned>(topFrameUniqueRedirectsToCountStatement->columnInt(0));
@@ -1661,7 +1661,7 @@ void ResourceLoadStatisticsStore::classifyPrevalentResources()
 void ResourceLoadStatisticsStore::runIncrementalVacuumCommand()
 {
     ASSERT(!RunLoop::isMain());
-    m_database.runIncrementalVacuumCommand();
+    m_database->runIncrementalVacuumCommand();
 }
 
 bool ResourceLoadStatisticsStore::hasStorageAccess(const TopFrameDomain& topFrameDomain, const SubFrameDomain& subFrameDomain) const
@@ -1752,7 +1752,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
 
     auto transactionScope = beginTransactionIfNecessary();
 
-    auto incrementStorageAccess = m_database.prepareStatement("UPDATE ObservedDomains SET timesAccessedAsFirstPartyDueToStorageAccessAPI = timesAccessedAsFirstPartyDueToStorageAccessAPI + 1 WHERE domainID = ?"_s);
+    auto incrementStorageAccess = m_database->prepareStatement("UPDATE ObservedDomains SET timesAccessedAsFirstPartyDueToStorageAccessAPI = timesAccessedAsFirstPartyDueToStorageAccessAPI + 1 WHERE domainID = ?"_s);
     if (!incrementStorageAccess
         || incrementStorageAccess->bindInt(1, *subFrameStatus.second) != SQLITE_OK
         || incrementStorageAccess->step() != SQLITE_DONE) {
@@ -1815,7 +1815,7 @@ void ResourceLoadStatisticsStore::revokeStorageAccessPermission(const Registrabl
     if (!targetResult.second)
         return;
 
-    auto removeStorageAccess = m_database.prepareStatement("DELETE FROM StorageAccessUnderTopFrameDomains WHERE domainID = ?"_s);
+    auto removeStorageAccess = m_database->prepareStatement("DELETE FROM StorageAccessUnderTopFrameDomains WHERE domainID = ?"_s);
     if (!removeStorageAccess
         || removeStorageAccess->bindInt(1, *targetResult.second) != SQLITE_OK
         || removeStorageAccess->step() != SQLITE_DONE) {
@@ -1929,7 +1929,7 @@ void ResourceLoadStatisticsStore::grandfatherDataForDomains(const HashSet<Regist
         UNUSED_PARAM(result);
     }
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN ("_s, buildList(domains), ')'));
+    auto domainsToUpdateStatement = m_database->prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 1 WHERE registrableDomain IN ("_s, buildList(domains), ')'));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("grandfatherDataForDomains: failed to step statement");
 }
@@ -2059,7 +2059,7 @@ void ResourceLoadStatisticsStore::clearTopFrameUniqueRedirectsToSinceSameSiteStr
     if (!targetResult.second)
         return completionHandler();
 
-    auto removeRedirectsToSinceSameSite = m_database.prepareStatement("DELETE FROM TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement WHERE sourceDomainID = ?"_s);
+    auto removeRedirectsToSinceSameSite = m_database->prepareStatement("DELETE FROM TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement WHERE sourceDomainID = ?"_s);
     if (!removeRedirectsToSinceSameSite
         || removeRedirectsToSinceSameSite->bindInt(1, *targetResult.second) != SQLITE_OK
         || removeRedirectsToSinceSameSite->step() != SQLITE_DONE)
@@ -2199,7 +2199,7 @@ void ResourceLoadStatisticsStore::setDomainsAsPrevalent(StdSet<unsigned>&& domai
 {
     ASSERT(!RunLoop::isMain());
 
-    auto domainsToUpdateStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN ("_s, buildList(domains), ')'));
+    auto domainsToUpdateStatement = m_database->prepareStatementSlow(makeString("UPDATE ObservedDomains SET isPrevalent = 1 WHERE domainID IN ("_s, buildList(domains), ')'));
     if (!domainsToUpdateStatement || domainsToUpdateStatement->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("setDomainsAsPrevalent: failed to step statement");
 }
@@ -2533,7 +2533,7 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
 
 void ResourceLoadStatisticsStore::clearDatabaseContents()
 {
-    m_database.clearAllTables();
+    m_database->clearAllTables();
 
     if (!createSchema())
         ITP_RELEASE_LOG_ERROR("clearDatabaseContents: failed to create schema");
@@ -2613,7 +2613,7 @@ CookieAccess ResourceLoadStatisticsStore::cookieAccess(const SubResourceDomain& 
 {
     ASSERT(!RunLoop::isMain());
 
-    auto statement = m_database.prepareStatement("SELECT isPrevalent, hadUserInteraction FROM ObservedDomains WHERE registrableDomain = ?"_s);
+    auto statement = m_database->prepareStatement("SELECT isPrevalent, hadUserInteraction FROM ObservedDomains WHERE registrableDomain = ?"_s);
     if (!statement || statement->bindText(1, subresourceDomain.string()) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("cookieAccess: failed to bind parameter");
         return CookieAccess::CannotRequest;
@@ -2642,7 +2642,7 @@ StorageAccessPromptWasShown ResourceLoadStatisticsStore::hasUserGrantedStorageAc
 
     auto firstPartyPrimaryDomainID = *result.second;
 
-    auto statement = m_database.prepareStatement("SELECT COUNT(*) FROM StorageAccessUnderTopFrameDomains WHERE domainID = ? AND topLevelDomainID = ?"_s);
+    auto statement = m_database->prepareStatement("SELECT COUNT(*) FROM StorageAccessUnderTopFrameDomains WHERE domainID = ? AND topLevelDomainID = ?"_s);
     if (!statement
         || statement->bindInt(1, requestingDomainID) != SQLITE_OK
         || statement->bindInt(2, firstPartyPrimaryDomainID) != SQLITE_OK
@@ -2657,7 +2657,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::domainsToBlockAndDeleteCo
     ASSERT(!RunLoop::isMain());
 
     Vector<RegistrableDomain> results;
-    auto statement = m_database.prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 0"_s);
+    auto statement = m_database->prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 0"_s);
     if (!statement)
         return results;
 
@@ -2672,7 +2672,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::domainsToBlockButKeepCook
     ASSERT(!RunLoop::isMain());
 
     Vector<RegistrableDomain> results;
-    auto statement = m_database.prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 1"_s);
+    auto statement = m_database->prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE isPrevalent = 1 AND hadUserInteraction = 1"_s);
     if (!statement)
         return results;
 
@@ -2687,7 +2687,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::domainsWithUserInteractio
     ASSERT(!RunLoop::isMain());
 
     Vector<RegistrableDomain> results;
-    auto statement = m_database.prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE hadUserInteraction = 1"_s);
+    auto statement = m_database->prepareStatement("SELECT registrableDomain FROM ObservedDomains WHERE hadUserInteraction = 1"_s);
     if (!statement)
         return results;
 
@@ -2702,7 +2702,7 @@ HashMap<TopFrameDomain, Vector<SubResourceDomain>> ResourceLoadStatisticsStore::
     ASSERT(!RunLoop::isMain());
 
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> results;
-    auto statement = m_database.prepareStatement("SELECT subFrameDomain, registrableDomain FROM (SELECT o.registrableDomain as subFrameDomain, s.topLevelDomainID as topLevelDomainID FROM ObservedDomains as o INNER JOIN StorageAccessUnderTopFrameDomains as s WHERE o.domainID = s.domainID) as z INNER JOIN ObservedDomains ON domainID = z.topLevelDomainID;"_s);
+    auto statement = m_database->prepareStatement("SELECT subFrameDomain, registrableDomain FROM (SELECT o.registrableDomain as subFrameDomain, s.topLevelDomainID as topLevelDomainID FROM ObservedDomains as o INNER JOIN StorageAccessUnderTopFrameDomains as s WHERE o.domainID = s.domainID) as z INNER JOIN ObservedDomains ON domainID = z.topLevelDomainID;"_s);
     if (!statement)
         return results;
 
@@ -2753,7 +2753,7 @@ Vector<ResourceLoadStatisticsStore::DomainData> ResourceLoadStatisticsStore::dom
     ASSERT(!RunLoop::isMain());
 
     Vector<DomainData> results;
-    auto statement = m_database.prepareStatement("SELECT domainID, registrableDomain, mostRecentUserInteractionTime, mostRecentWebPushInteractionTime, hadUserInteraction, grandfathered, isScheduledForAllButCookieDataRemoval, countOfTopFrameRedirects FROM ObservedDomains LEFT JOIN (SELECT sourceDomainID, COUNT(*) as countOfTopFrameRedirects from TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement GROUP BY sourceDomainID) as z ON z.sourceDomainID = domainID"_s);
+    auto statement = m_database->prepareStatement("SELECT domainID, registrableDomain, mostRecentUserInteractionTime, mostRecentWebPushInteractionTime, hadUserInteraction, grandfathered, isScheduledForAllButCookieDataRemoval, countOfTopFrameRedirects FROM ObservedDomains LEFT JOIN (SELECT sourceDomainID, COUNT(*) as countOfTopFrameRedirects from TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement GROUP BY sourceDomainID) as z ON z.sourceDomainID = domainID"_s);
     if (!statement)
         return results;
 
@@ -2781,7 +2781,7 @@ void ResourceLoadStatisticsStore::clearGrandfathering(Vector<unsigned>&& domainI
 
     auto listToClear = buildList(domainIDsToClear);
 
-    auto clearGrandfatheringStatement = m_database.prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 0 WHERE domainID IN ("_s, listToClear, ')'));
+    auto clearGrandfatheringStatement = m_database->prepareStatementSlow(makeString("UPDATE ObservedDomains SET grandfathered = 0 WHERE domainID IN ("_s, listToClear, ')'));
     if (!clearGrandfatheringStatement)
         return;
 
@@ -2937,7 +2937,7 @@ void ResourceLoadStatisticsStore::pruneStatisticsIfNeeded()
     size_t countLeftToPrune = count - parameters().pruneEntriesDownTo;
     ASSERT(countLeftToPrune);
 
-    auto recordsToPrune = m_database.prepareStatement("SELECT domainID FROM ObservedDomains ORDER BY hadUserInteraction, isPrevalent, lastSeen LIMIT ?"_s);
+    auto recordsToPrune = m_database->prepareStatement("SELECT domainID FROM ObservedDomains ORDER BY hadUserInteraction, isPrevalent, lastSeen LIMIT ?"_s);
     if (!recordsToPrune || recordsToPrune->bindInt(1, countLeftToPrune) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("pruneStatisticsIfNeeded: failed to bind parameter");
         return;
@@ -2949,7 +2949,7 @@ void ResourceLoadStatisticsStore::pruneStatisticsIfNeeded()
 
     auto listToPrune = buildList(entriesToPrune);
 
-    auto pruneCommand = m_database.prepareStatementSlow(makeString("DELETE from ObservedDomains WHERE domainID IN ("_s, listToPrune, ')'));
+    auto pruneCommand = m_database->prepareStatementSlow(makeString("DELETE from ObservedDomains WHERE domainID IN ("_s, listToPrune, ')'));
     if (!pruneCommand || pruneCommand->step() != SQLITE_DONE)
         ITP_RELEASE_LOG_DATABASE_ERROR("pruneStatisticsIfNeeded: failed to step statement");
 }
@@ -3022,9 +3022,9 @@ void ResourceLoadStatisticsStore::updateDataRecordsRemoved(const RegistrableDoma
 
 bool ResourceLoadStatisticsStore::isCorrectSubStatisticsCount(const RegistrableDomain& subframeDomain, const TopFrameDomain& topFrameDomain)
 {
-    auto subFrameUnderTopFrameCount = m_database.prepareStatement(countSubframeUnderTopFrameQuery);
-    auto subresourceUnderTopFrameCount = m_database.prepareStatement(countSubresourceUnderTopFrameQuery);
-    auto subresourceUniqueRedirectsTo = m_database.prepareStatement(countSubresourceUniqueRedirectsToQuery);
+    auto subFrameUnderTopFrameCount = m_database->prepareStatement(countSubframeUnderTopFrameQuery);
+    auto subresourceUnderTopFrameCount = m_database->prepareStatement(countSubresourceUnderTopFrameQuery);
+    auto subresourceUniqueRedirectsTo = m_database->prepareStatement(countSubresourceUniqueRedirectsToQuery);
 
     if (!subFrameUnderTopFrameCount || !subresourceUnderTopFrameCount || !subresourceUniqueRedirectsTo) {
         ITP_RELEASE_LOG_DATABASE_ERROR("isCorrectSubStatisticsCount: failed to prepare statement");
@@ -3109,7 +3109,7 @@ void ResourceLoadStatisticsStore::appendSubStatisticList(StringBuilder& builder,
     if (!query.length())
         return;
 
-    auto data = m_database.prepareStatement(query);
+    auto data = m_database->prepareStatement(query);
 
     if (!data || data->bindInt(1, domainID(RegistrableDomain::uncheckedCreateFromHost(domain)).value()) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("appendSubStatisticList: failed to bind parameter");
@@ -3239,9 +3239,9 @@ bool ResourceLoadStatisticsStore::domainIDExistsInDatabase(int domainID)
 
 void ResourceLoadStatisticsStore::updateOperatingDatesParameters()
 {
-    auto countOperatingDatesStatement = m_database.prepareStatement("SELECT COUNT(*) FROM OperatingDates;"_s);
-    auto getMostRecentOperatingDateStatement = m_database.prepareStatement("SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1;"_s);
-    auto getOperatingDateWindowStatement = m_database.prepareStatement("SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1 OFFSET ?;"_s);
+    auto countOperatingDatesStatement = m_database->prepareStatement("SELECT COUNT(*) FROM OperatingDates;"_s);
+    auto getMostRecentOperatingDateStatement = m_database->prepareStatement("SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1;"_s);
+    auto getOperatingDateWindowStatement = m_database->prepareStatement("SELECT * FROM OperatingDates ORDER BY year DESC, month DESC, monthDay DESC LIMIT 1 OFFSET ?;"_s);
 
     if (!countOperatingDatesStatement || countOperatingDatesStatement->step() != SQLITE_ROW) {
         ITP_RELEASE_LOG_DATABASE_ERROR("updateOperatingDatesParameters: failed to step countOperatingDatesStatement");
@@ -3295,7 +3295,7 @@ void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
 
     int rowsToPrune = m_operatingDatesSize - operatingDatesWindowLong + 1;
     if (rowsToPrune > 0) {
-        auto deleteLeastRecentOperatingDateStatement = m_database.prepareStatement("DELETE FROM OperatingDates ORDER BY year, month, monthDay LIMIT ?;"_s);
+        auto deleteLeastRecentOperatingDateStatement = m_database->prepareStatement("DELETE FROM OperatingDates ORDER BY year, month, monthDay LIMIT ?;"_s);
         if (!deleteLeastRecentOperatingDateStatement
             || deleteLeastRecentOperatingDateStatement->bindInt(1, rowsToPrune) != SQLITE_OK
             || deleteLeastRecentOperatingDateStatement->step() != SQLITE_DONE) {
@@ -3304,7 +3304,7 @@ void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
         }
     }
 
-    auto insertOperatingDateStatement = m_database.prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
+    auto insertOperatingDateStatement = m_database->prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
     if (!insertOperatingDateStatement
         || insertOperatingDateStatement->bindInt(1, today.year()) != SQLITE_OK
         || insertOperatingDateStatement->bindInt(2, today.month()) != SQLITE_OK
@@ -3356,7 +3356,7 @@ void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Registr
         daysAgoInSeconds = nowTime(m_timeAdvanceForTesting).secondsSinceEpoch().value() - daysToSubtract;
         auto dateToInsert = OperatingDate::fromWallTime(WallTime::fromRawSeconds(daysAgoInSeconds));
 
-        auto insertOperatingDateStatement = m_database.prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
+        auto insertOperatingDateStatement = m_database->prepareStatement("INSERT OR IGNORE INTO OperatingDates (year, month, monthDay) SELECT ?, ?, ?;"_s);
         if (!insertOperatingDateStatement
             || insertOperatingDateStatement->bindInt(1, dateToInsert.year()) != SQLITE_OK
             || insertOperatingDateStatement->bindInt(2, dateToInsert.month()) != SQLITE_OK

@@ -39,7 +39,7 @@ class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 enum class DocumentMarkerType : uint32_t;
 
-struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorEqual::Yes> {
+struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorEqual::Yes, WTF::CheckedPtrDeleteCheckException::Yes> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(MarkedText);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(MarkedText);
 

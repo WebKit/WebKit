@@ -79,7 +79,7 @@ private:
     Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
     Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio { SVGAnimatedPreserveAspectRatio::create(this) };
-    SVGImageLoader m_imageLoader;
+    const UniqueRef<SVGImageLoader> m_imageLoader;
 };
 
 } // namespace WebCore

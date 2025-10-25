@@ -299,26 +299,6 @@ void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double cur
     manager.get().timing = [getAVValueTimingClassSingleton() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
 
-uint32_t PlaybackSessionInterfaceMac::checkedPtrCount() const
-{
-    return CanMakeCheckedPtr::checkedPtrCount();
-}
-
-uint32_t PlaybackSessionInterfaceMac::checkedPtrCountWithoutThreadCheck() const
-{
-    return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck();
-}
-
-void PlaybackSessionInterfaceMac::incrementCheckedPtrCount() const
-{
-    CanMakeCheckedPtr::incrementCheckedPtrCount();
-}
-
-void PlaybackSessionInterfaceMac::decrementCheckedPtrCount() const
-{
-    CanMakeCheckedPtr::decrementCheckedPtrCount();
-}
-
 RetainPtr<WebPlaybackControlsManager> PlaybackSessionInterfaceMac::protectedPlayBackControlsManager()
 {
     return playBackControlsManager();

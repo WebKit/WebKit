@@ -122,6 +122,7 @@ private:
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return WebCore::PasteboardStrategy::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { WebCore::PasteboardStrategy::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { WebCore::PasteboardStrategy::decrementCheckedPtrCount(); }
+    void setBegunCheckedPtrDeletion() final { WebCore::PasteboardStrategy::setBegunCheckedPtrDeletion(); }
 #endif
 };
 

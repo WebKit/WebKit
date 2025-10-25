@@ -43,7 +43,7 @@ struct PaintInfo;
 
 namespace LayoutIntegration {
 
-class FlexLayout final : public CanMakeCheckedPtr<FlexLayout> {
+class FlexLayout final : public CanMakeCheckedPtr<FlexLayout, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
     WTF_MAKE_TZONE_ALLOCATED(FlexLayout);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FlexLayout);
 public:

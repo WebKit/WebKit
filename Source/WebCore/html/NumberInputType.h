@@ -38,6 +38,7 @@ namespace WebCore {
 
 class NumberInputType final : public TextFieldInputType {
     WTF_MAKE_TZONE_ALLOCATED(NumberInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NumberInputType);
 public:
     static Ref<NumberInputType> create(HTMLInputElement& element)
     {

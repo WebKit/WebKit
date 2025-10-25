@@ -51,6 +51,7 @@ public:
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::checkedPtrCountWithoutThreadCheck(); }
     void incrementCheckedPtrCount() const final { RenderTextControlSingleLine::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { RenderTextControlSingleLine::decrementCheckedPtrCount(); }
+    void setBegunCheckedPtrDeletion() final { CanMakeCheckedPtr::setBegunCheckedPtrDeletion(); }
 
 private:
     void willBeDestroyed() override;

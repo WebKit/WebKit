@@ -50,6 +50,7 @@ using namespace Inspector;
 
 InspectorAuditResourcesObject::InspectorAuditResourcesObject(InspectorAuditAgent& auditAgent)
     : m_auditAgent(auditAgent)
+    , m_cachedImageClient(makeUniqueRef<InspectorAuditCachedImageClient>())
 {
 }
 
@@ -125,7 +126,7 @@ CachedResourceClient& InspectorAuditResourcesObject::clientForResource(const Cac
         return m_cachedFontClient;
 
     if (is<CachedImage>(cachedResource))
-        return m_cachedImageClient;
+        return m_cachedImageClient.get();
 
     if (is<CachedRawResource>(cachedResource))
         return m_cachedRawResourceClient;

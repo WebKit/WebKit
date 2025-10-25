@@ -171,7 +171,7 @@ private:
 
     // This lock protects m_database, m_originLockMap, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
     Lock m_databaseGuard;
-    SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    UniqueRef<SQLiteDatabase> m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     using OriginLockMap = HashMap<String, Ref<OriginLock>>;
     OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
