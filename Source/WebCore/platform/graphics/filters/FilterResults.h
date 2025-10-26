@@ -61,6 +61,4 @@ private:
     std::unique_ptr<ImageBufferAllocator> m_allocator;
 };
 
-using FilterResultsCreator = Function<std::unique_ptr<FilterResults>()>;
-
 } // namespace WebCore

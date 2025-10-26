@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 
 #include <WebCore/FilterEffectVector.h>
 #include <WebCore/FilterFunction.h>
+#include <WebCore/FilterResults.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsTypes.h>
@@ -33,7 +34,6 @@ namespace WebCore {
 
 class FilterEffect;
 class FilterImage;
-class FilterResults;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
@@ -49,7 +49,6 @@ public:
     void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
 
     FloatRect filterRegion() const { return m_filterRegion; }
-    void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
 
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
@@ -62,8 +61,12 @@ public:
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;
 
     virtual FilterEffectVector effectsOfType(FilterFunction::Type) const = 0;
+    virtual void mergeEffects(const Filter&) = 0;
 
     bool clampFilterRegionIfNeeded();
+
+    WEBCORE_EXPORT FilterResults& ensureResults(const Function<std::unique_ptr<FilterResults>()>&);
+    void clearEffectResult(FilterEffect&);
 
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
     WEBCORE_EXPORT FilterStyleVector createFilterStyles(GraphicsContext&, const FloatRect& sourceImageRect) const;
@@ -79,6 +82,8 @@ private:
     OptionSet<FilterRenderingMode> m_filterRenderingModes { FilterRenderingMode::Software };
     FloatSize m_filterScale;
     FloatRect m_filterRegion;
+
+    std::unique_ptr<FilterResults> m_results;
 };
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, const Floa
     , m_filterScale(filterScale)
     , m_filterRegion(filterRegion)
 {
+    clampFilterRegionIfNeeded();
 }
 
 FloatPoint Filter::scaledByFilterScale(const FloatPoint& point) const
@@ -101,12 +102,30 @@ void Filter::setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFil
     ASSERT(m_filterRenderingModes.contains(FilterRenderingMode::Software));
 }
 
+FilterResults& Filter::ensureResults(const Function<std::unique_ptr<FilterResults>()>& resultsCreator)
+{
+    if (!m_results)
+        m_results = resultsCreator();
+    return *m_results;
+}
+
+void Filter::clearEffectResult(FilterEffect& effect)
+{
+    if (m_results)
+        m_results->clearEffectResult(effect);
+}
+
 RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults& results)
 {
     RefPtr<FilterImage> input;
 
     if (sourceImage) {
-        auto absoluteSourceImageRect = enclosingIntRect(scaledByFilterScale(sourceImageRect));
+        auto scaledSourceImageRect = scaledByFilterScale(sourceImageRect);
+
+        auto absoluteSourceImageRect = enclosingIntRect(scaledSourceImageRect);
+        if (ImageBuffer::sizeNeedsClamping(absoluteSourceImageRect.size()))
+            absoluteSourceImageRect = IntRect(scaledSourceImageRect);
+
         input = FilterImage::create(m_filterRegion, sourceImageRect, absoluteSourceImageRect, Ref { *sourceImage }, results.allocator());
         if (!input)
             return nullptr;

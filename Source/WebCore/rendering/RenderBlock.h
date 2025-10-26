@@ -235,6 +235,7 @@ public:
     virtual bool hasLineIfEmpty() const;
 
     void updateDescendantTransformsAfterLayout();
+    void updateLayerFiltersAfterLayout();
 
     virtual bool canPerformSimplifiedLayout() const;
 

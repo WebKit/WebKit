@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,40 +35,35 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TransparencyLayerContextSwitcher);
 
 TransparencyLayerContextSwitcher::TransparencyLayerContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, RefPtr<Filter>&& filter)
-    : GraphicsContextSwitcher(WTFMove(filter))
+    : GraphicsContextSwitcher(sourceImageRect, WTFMove(filter))
 {
     if (m_filter)
         m_filterStyles = m_filter->createFilterStyles(destinationContext, sourceImageRect);
 }
 
-void TransparencyLayerContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&, const FloatRect& clipRect)
+SwitcherState TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext, std::optional<FloatRect> clipRect, float opacity)
 {
-    destinationContext.save();
-    destinationContext.beginTransparencyLayer(1);
+    ASSERT(m_state != SwitcherState::PaintingSource);
+    m_state = SwitcherState::PaintingSource;
 
-    for (auto& filterStyle : m_filterStyles) {
-        destinationContext.save();
-        destinationContext.clip(intersection(filterStyle.imageRect, clipRect));
-        destinationContext.setStyle(filterStyle.style);
-        destinationContext.beginTransparencyLayer(1);
-    }
-}
-
-void TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext, float opacity)
-{
     destinationContext.save();
     destinationContext.beginTransparencyLayer(opacity);
 
     for (auto& filterStyle : m_filterStyles) {
         destinationContext.save();
-        destinationContext.clip(filterStyle.imageRect);
+        destinationContext.clip(clipRect ? intersection(filterStyle.imageRect, *clipRect) : filterStyle.imageRect);
         destinationContext.setStyle(filterStyle.style);
         destinationContext.beginTransparencyLayer(1);
     }
+
+    return m_state;
 }
 
-void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&)
+SwitcherState TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
 {
+    ASSERT(m_state == SwitcherState::PaintingSource);
+    m_state = SwitcherState::None;
+
     for ([[maybe_unused]] auto& filterStyle : makeReversedRange(m_filterStyles)) {
         destinationContext.endTransparencyLayer();
         destinationContext.restore();
@@ -76,6 +71,13 @@ void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& desti
 
     destinationContext.endTransparencyLayer();
     destinationContext.restore();
+
+    return m_state;
+}
+
+void TransparencyLayerContextSwitcher::drawOutputImage(GraphicsContext&, const DestinationColorSpace&)
+{
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

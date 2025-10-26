@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Document.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/Element.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/ScrollTypes.h>

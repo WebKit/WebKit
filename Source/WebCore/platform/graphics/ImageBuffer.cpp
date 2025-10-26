@@ -443,7 +443,7 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<vo
 
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
         ASSERT(targetSwitcher);
-        targetSwitcher->endDrawSourceImage(context(), colorSpace());
+        targetSwitcher->endDrawSourceImage(context());
         return copyImageBufferToNativeImage(*this, CopyBackingStore, PreserveResolution::No);
     }
 

@@ -13847,6 +13847,8 @@
 		724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTBlendMinMax.h; sourceTree = "<group>"; };
 		724EE54E1DC7F25B00A91FFB /* ActivityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityState.h; sourceTree = "<group>"; };
 		724EE54F1DC7F25B00A91FFB /* ActivityStateChangeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityStateChangeObserver.h; sourceTree = "<group>"; };
+		724EEE3A2D13529500922C10 /* RenderFilterResource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderFilterResource.h; sourceTree = "<group>"; };
+		724EEE3B2D13529500922C10 /* RenderFilterResource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFilterResource.cpp; sourceTree = "<group>"; };
 		7252396B254CADC200F5FB15 /* NativeImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NativeImage.cpp; sourceTree = "<group>"; };
 		725F64BC2C7D633100F87348 /* ElementTextDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementTextDirection.h; sourceTree = "<group>"; };
 		725F64BD2C7D633100F87348 /* ElementTextDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ElementTextDirection.cpp; sourceTree = "<group>"; };
@@ -40114,6 +40116,8 @@
 				0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */,
 				066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */,
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
+				724EEE3B2D13529500922C10 /* RenderFilterResource.cpp */,
+				724EEE3A2D13529500922C10 /* RenderFilterResource.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
 				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,

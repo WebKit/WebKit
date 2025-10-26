@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +13,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -32,67 +32,32 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
-#include "FilterRenderingMode.h"
-#include "RenderLayer.h"
+#include "RenderFilterResource.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class CSSFilterRenderer;
 class CachedSVGDocument;
-class Element;
-class FilterOperations;
-class GraphicsContextSwitcher;
 
-class RenderLayerFilters final : private CachedSVGDocumentClient {
+class RenderLayerFilters final : private CachedSVGDocumentClient, public RenderFilterResource {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
-    explicit RenderLayerFilters(RenderLayer&);
-    virtual ~RenderLayerFilters();
-
-    const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
-    void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
-
-    CSSFilterRenderer* filter() const { return m_filter.get(); }
-    void clearFilter() { m_filter = nullptr; }
-    
-    bool hasFilterThatMovesPixels() const;
-    bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
-    bool hasSourceImage() const;
-
-    void updateReferenceFilterClients(const Style::Filter&);
-    void removeReferenceFilterClients();
-
-    void setPreferredFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) { m_preferredFilterRenderingModes = preferredFilterRenderingModes; }
-    void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
+    RenderLayerFilters() = default;
 
     static bool isIdentity(RenderElement&);
     static IntOutsets calculateOutsets(RenderElement&, const FloatRect& targetBoundingBox);
 
-    // Per render
-    LayoutRect repaintRect() const { return m_repaintRect; }
+    SwitcherState beginDrawSourceImage(RenderElement&, const FloatRect& targetBoundingBox, const FloatRect& clipRect, GraphicsContext*&);
+    SwitcherState endDrawSourceImage(RenderElement&, GraphicsContext*&);
 
-    GraphicsContext* beginFilterEffect(RenderElement&, GraphicsContext&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect);
-    void applyFilterEffect(GraphicsContext& destinationContext);
+    void addReferenceFilterClient(RenderLayer&);
+    void removeReferenceFilterClient(RenderLayer&);
 
 private:
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
-    void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
+    std::optional<std::tuple<Ref<Filter>, FloatRect>> createFilter(RenderElement&, const FloatRect& targetBoundingBox, GraphicsContext&) final;
 
-    const CheckedRef<RenderLayer> m_layer;
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
-
-    LayoutRect m_targetBoundingBox;
-    LayoutRect m_dirtySourceRect;
-    LayoutRect m_repaintRect;
-
-    OptionSet<FilterRenderingMode> m_preferredFilterRenderingModes { FilterRenderingMode::Software };
-    FloatSize m_filterScale { 1, 1 };
-    FloatRect m_filterRegion;
-
-    RefPtr<CSSFilterRenderer> m_filter;
-    std::unique_ptr<GraphicsContextSwitcher> m_targetSwitcher;
 };
 
 } // namespace WebCore

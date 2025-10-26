@@ -2,7 +2,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,9 +56,9 @@ RefPtr<SVGFilterRenderer> SVGFilterRenderer::create(SVGElement *contextElement, 
     return filter;
 }
 
-Ref<SVGFilterRenderer> SVGFilterRenderer::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion)
+Ref<SVGFilterRenderer> SVGFilterRenderer::create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, OptionSet<FilterRenderingMode> filterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
 {
-    Ref filter = adoptRef(*new SVGFilterRenderer(targetBoundingBox, primitiveUnits, WTFMove(expression), WTFMove(effects), renderingResourceIdentifier, filterScale, filterRegion));
+    Ref filter = adoptRef(*new SVGFilterRenderer(targetBoundingBox, primitiveUnits, WTFMove(expression), WTFMove(effects), filterScale, filterRegion, renderingResourceIdentifier));
     // Setting filter rendering modes cannot be moved to the constructor because it ends up
     // calling supportedFilterRenderingModes() which is a virtual function.
     filter->setFilterRenderingModes(filterRenderingModes);
@@ -72,7 +72,7 @@ SVGFilterRenderer::SVGFilterRenderer(const FloatSize& filterScale, const FloatRe
 {
 }
 
-SVGFilterRenderer::SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, const FloatSize& filterScale, const FloatRect& filterRegion)
+SVGFilterRenderer::SVGFilterRenderer(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&& expression, FilterEffectVector&& effects, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : Filter(Filter::Type::SVGFilterRenderer, filterScale, filterRegion, renderingResourceIdentifier)
     , m_targetBoundingBox(targetBoundingBox)
     , m_primitiveUnits(primitiveUnits)
@@ -278,21 +278,13 @@ FilterEffectVector SVGFilterRenderer::effectsOfType(FilterFunction::Type filterT
     return effects;
 }
 
-FilterResults& SVGFilterRenderer::ensureResults(NOESCAPE const FilterResultsCreator& resultsCreator)
+void SVGFilterRenderer::mergeEffects(const Filter& filter)
 {
-    if (!m_results)
-        m_results = resultsCreator();
-    return *m_results;
-}
+    RefPtr svgFilter = dynamicDowncast<SVGFilterRenderer>(filter);
+    if (!svgFilter)
+        return;
 
-void SVGFilterRenderer::clearEffectResult(FilterEffect& effect)
-{
-    if (m_results)
-        m_results->clearEffectResult(effect);
-}
-
-void SVGFilterRenderer::mergeEffects(const FilterEffectVector& effects)
-{
+    auto& effects = svgFilter->effects();
     ASSERT(m_effects.size() == effects.size());
 
     for (unsigned index = 0; index < m_effects.size(); ++index) {

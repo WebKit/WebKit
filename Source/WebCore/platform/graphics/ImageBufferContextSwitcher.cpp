@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferContextSwitcher);
 
-ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
-    : GraphicsContextSwitcher(WTFMove(filter))
-    , m_sourceImageRect(sourceImageRect)
+ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace, const FloatRect& sourceImageRect, RefPtr<Filter>&& filter, FilterResults* results)
+    : GraphicsContextSwitcher(sourceImageRect, WTFMove(filter))
     , m_results(results)
 {
-    if (sourceImageRect.isEmpty())
+    if (m_sourceImageRect.isEmpty())
         return;
 
     if (m_filter)
@@ -58,30 +57,34 @@ ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinat
     m_sourceImage->context().mergeAllChanges(state);
 }
 
-GraphicsContext* ImageBufferContextSwitcher::drawingContext(GraphicsContext& context) const
+GraphicsContext* ImageBufferContextSwitcher::drawingContext(GraphicsContext& destinationContext) const
 {
-    return m_sourceImage ? &m_sourceImage->context() : &context;
+    return m_sourceImage ? &m_sourceImage->context() : &destinationContext;
 }
 
-void ImageBufferContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect&)
+SwitcherState ImageBufferContextSwitcher::beginDrawSourceImage(GraphicsContext& destinationContext, std::optional<FloatRect> clipRect, float)
 {
-    if (auto* context = drawingContext(destinationContext)) {
-        context->save();
-        context->clearRect(repaintRect);
-        context->clip(repaintRect);
-    }
+    ASSERT(m_state != SwitcherState::PaintingSource);
+
+    if (clipRect)
+        drawingContext(destinationContext)->clearRect(*clipRect);
+
+    m_state = SwitcherState::PaintingSource;
+    return m_state;
 }
 
-void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
+SwitcherState ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext&)
 {
-    if (auto* context = drawingContext(destinationContext))
-        context->restore();
-
-    endDrawSourceImage(destinationContext, colorSpace);
+    ASSERT(m_state == SwitcherState::PaintingSource);
+    m_state = SwitcherState::SourcePainted;
+    return m_state;
 }
 
-void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
+void ImageBufferContextSwitcher::drawOutputImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
 {
+    if (m_state != SwitcherState::SourcePainted)
+        return;
+
     if (!m_filter) {
         if (m_sourceImage)
             destinationContext.drawImageBuffer(*m_sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });

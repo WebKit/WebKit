@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,17 +36,37 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextSwitcher);
 
-std::unique_ptr<GraphicsContextSwitcher> GraphicsContextSwitcher::create(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
+std::unique_ptr<GraphicsContextSwitcher> GraphicsContextSwitcher::create(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace, const FloatRect& sourceImageRect, RefPtr<Filter>&& filter, FilterResults* results)
 {
     if (filter && filter->filterRenderingModes().contains(FilterRenderingMode::GraphicsContext))
         return makeUnique<TransparencyLayerContextSwitcher>(destinationContext, sourceImageRect, WTFMove(filter));
 
-    return makeUnique<ImageBufferContextSwitcher>(destinationContext, sourceImageRect, colorSpace, WTFMove(filter), results);
+    return makeUnique<ImageBufferContextSwitcher>(destinationContext, colorSpace, sourceImageRect, WTFMove(filter), results);
 }
 
-GraphicsContextSwitcher::GraphicsContextSwitcher(RefPtr<Filter>&& filter)
-    : m_filter(WTFMove(filter))
+GraphicsContextSwitcher::GraphicsContextSwitcher(const FloatRect& sourceImageRect, RefPtr<Filter>&& filter)
+    : m_sourceImageRect(sourceImageRect)
+    , m_filter(WTFMove(filter))
 {
+}
+
+TextStream& operator<<(TextStream& ts, SwitcherState state)
+{
+    switch (state) {
+    case SwitcherState::None:
+        ts << "none";
+        break;
+    case SwitcherState::PaintingSource:
+        ts << "painting source";
+        break;
+    case SwitcherState::SourcePainted:
+        ts << "source painted";
+        break;
+    case SwitcherState::CycleDetected:
+        ts << "cycle detected";
+        break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ RefPtr<CanvasLayerContextSwitcher> CanvasLayerContextSwitcher::create(CanvasRend
     if (!effectiveDrawingContext)
         return nullptr;
 
-    auto targetSwitcher = GraphicsContextSwitcher::create(*effectiveDrawingContext, bounds, context.colorSpace(), WTFMove(filter));
+    auto targetSwitcher = GraphicsContextSwitcher::create(*effectiveDrawingContext, context.colorSpace(), bounds, WTFMove(filter));
     if (!targetSwitcher)
         return nullptr;
 
@@ -54,12 +54,14 @@ CanvasLayerContextSwitcher::CanvasLayerContextSwitcher(CanvasRenderingContext2DB
 {
     ASSERT(m_targetSwitcher);
     ASSERT(m_effectiveDrawingContext);
-    m_targetSwitcher->beginDrawSourceImage(*m_effectiveDrawingContext, context.globalAlpha());
+    m_targetSwitcher->beginDrawSourceImage(*m_effectiveDrawingContext, std::nullopt, context.globalAlpha());
 }
 
 CanvasLayerContextSwitcher::~CanvasLayerContextSwitcher()
 {
-    m_targetSwitcher->endDrawSourceImage(*m_effectiveDrawingContext, DestinationColorSpace::SRGB());
+    auto state = m_targetSwitcher->endDrawSourceImage(*m_effectiveDrawingContext);
+    if (state == SwitcherState::SourcePainted)
+        m_targetSwitcher->drawOutputImage(*m_effectiveDrawingContext, DestinationColorSpace::SRGB());
 }
 
 GraphicsContext* CanvasLayerContextSwitcher::drawingContext() const

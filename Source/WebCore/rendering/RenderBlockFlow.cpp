@@ -629,6 +629,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     }
 
     updateDescendantTransformsAfterLayout();
+    updateLayerFiltersAfterLayout();
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     auto contentArea = flippedContentBoxRect();

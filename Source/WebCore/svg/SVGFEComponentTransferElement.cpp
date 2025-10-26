@@ -71,6 +71,16 @@ void SVGFEComponentTransferElement::svgAttributeChanged(const QualifiedName& att
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
+bool SVGFEComponentTransferElement::isIdentity() const
+{
+    for (auto& child : childrenOfType<SVGComponentTransferFunctionElement>(*this)) {
+        auto type = child.type();
+        if (type != ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN && type != ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY)
+            return false;
+    }
+    return true;
+}
+
 RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     ComponentTransferFunctions functions;

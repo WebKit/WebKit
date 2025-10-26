@@ -7617,6 +7617,7 @@ class WebCore::FilterOperations {
     OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
     WebCore::FloatSize filterScale();
     WebCore::FloatRect filterRegion();
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 }
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SVGFilterRenderer {
@@ -7624,11 +7625,11 @@ class WebCore::FilterOperations {
     WebCore::SVGUnitTypes::SVGUnitType primitiveUnits();
     WebCore::SVGFilterExpression expression();
     [Validator='WebCore::SVGFilterRenderer::isValidSVGFilterExpression(*expression, *effects)'] Vector<Ref<WebCore::FilterEffect>> effects();
-    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 
     OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
     WebCore::FloatSize filterScale();
     WebCore::FloatRect filterRegion();
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
 }
 
 [Nested] enum class WebCore::UserStyleLevel : bool;

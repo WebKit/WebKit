@@ -485,6 +485,7 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         // FIXME: Only the items at the edges should contribute to the content area. But this distinction only matters in some weird cases with extreme negative margins.
 
         updateDescendantTransformsAfterLayout();
+        updateLayerFiltersAfterLayout();
     }
 
     updateLayerTransform();

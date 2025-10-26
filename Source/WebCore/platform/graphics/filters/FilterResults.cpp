@@ -55,7 +55,7 @@ size_t FilterResults::memoryCost() const
 
 bool FilterResults::canCacheResult(const FilterImage& result) const
 {
-    static constexpr size_t maxAllowedMemoryCost = 100 * MB;
+    static constexpr size_t maxAllowedMemoryCost = 200 * MB;
     CheckedSize totalMemoryCost = memoryCost();
 
     totalMemoryCost += result.memoryCost();
