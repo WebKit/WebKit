@@ -990,10 +990,15 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<Latin1Cha
     if (shouldCreateIdentifier || m_parsingBuiltinFunction) {
         std::span identifierSpan { identifierStart, static_cast<size_t>(currentSourcePtr() - identifierStart) };
         if (m_parsingBuiltinFunction && isBuiltinName) {
-            if (isWellKnownSymbol)
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierSpan));
-            else
-                ident = &m_arena->makeIdentifier(m_vm, m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierSpan));
+            if (isWellKnownSymbol) {
+                SUPPRESS_UNCOUNTED_LOCAL auto* symbol = m_vm.propertyNames->builtinNames().lookUpWellKnownSymbol(identifierSpan);
+                ASSERT_WITH_MESSAGE(symbol, "Private well-known symbol @@%s not found", StringView(identifierSpan).utf8().data());
+                ident = &m_arena->makeIdentifier(m_vm, symbol);
+            } else {
+                SUPPRESS_UNCOUNTED_LOCAL auto* symbol = m_vm.propertyNames->builtinNames().lookUpPrivateName(identifierSpan);
+                ASSERT_WITH_MESSAGE(symbol, "Private name @%s not found", StringView(identifierSpan).utf8().data());
+                ident = &m_arena->makeIdentifier(m_vm, symbol);
+            }
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
         } else {
