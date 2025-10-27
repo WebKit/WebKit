@@ -1537,6 +1537,33 @@ std::optional<WebCore::RectEdges<bool>> ArgumentCoder<WebCore::RectEdges<bool>>:
     };
 }
 
+void ArgumentCoder<UnsafeA>::encode(Encoder& encoder, const UnsafeA& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
+    struct ShouldBeSameSizeAsUnsafeA : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<UnsafeA>, false> {
+        int a;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsUnsafeA) == sizeof(UnsafeA));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(UnsafeA, a)
+    >::value);
+
+    encoder << instance.a;
+}
+
+std::optional<UnsafeA> ArgumentCoder<UnsafeA>::decode(Decoder& decoder)
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(decoder.allowsUnsafeDecoding());
+    auto a = decoder.decode<int>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        UnsafeA {
+            WTFMove(*a)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {

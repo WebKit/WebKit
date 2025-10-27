@@ -66,6 +66,7 @@ _test_receiver_names = [
     'TestWithWantsAsyncDispatch',
     'TestWithWantsDispatch',
     'TestWithWantsDispatchNoSyncMessages',
+    'TestWithUnsafeReply',
 ]
 
 

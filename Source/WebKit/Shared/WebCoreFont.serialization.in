@@ -60,7 +60,7 @@ using WebCore::FontPlatformData::IPCData = Variant<WebCore::FontPlatformSerializ
     WebCore::TextRenderingMode textRenderingMode();
     bool syntheticBold();
     bool syntheticOblique();
-    WebCore::FontPlatformData::IPCData toIPCData();
+    [Unsafe] WebCore::FontPlatformData::IPCData toIPCData();
 }
 
 header: <WebCore/FontPlatformData.h>
@@ -143,14 +143,14 @@ header: <WebCore/FontPlatformData.h>
 };
 
 [CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
-    Vector<uint8_t> fontFaceData;
+    [Unsafe] Vector<uint8_t> fontFaceData;
     std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
 
 [CustomHeader] struct WebCore::FontPlatformSerializedData {
     CTFontDescriptorOptions options;
-    RetainPtr<CFStringRef> referenceURL;
+    [Unsafe] RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
     std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
 };

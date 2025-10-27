@@ -57,6 +57,7 @@ import sys
 # OptionalTupleBit - The name of the bit indicating whether this member is serialized.
 # SupportWKKeyedCoder - For webkit_secure_coding types, in addition to the preferred property list code path, support SupportWKKeyedCoder
 # Precondition - Used to fail early from a decoder, for example if a soft linked framework is not present to decode a member
+# Unsafe - A known unsafe type which can only be used during decodes explicitly marked as expecting "unsafe" data.
 
 class Template(object):
     def __init__(self, template_type, namespace, name, enum_storage=None):
@@ -895,6 +896,8 @@ def decode_type(type, serialized_types):
         if member.condition is not None:
             result.append(f'#if {member.condition}')
         sanitized_variable_name = sanitize_string_for_variable_name(member.name)
+        if 'Unsafe' in member.attributes:
+            result.append(f'    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(decoder.allowsUnsafeDecoding());')
         r = re.compile(r'SecureCodingAllowed=\[(.*)\]')
         decodable_classes = [r.match(m).groups()[0] for m in list(filter(r.match, member.attributes))]
         if len(decodable_classes) == 1:

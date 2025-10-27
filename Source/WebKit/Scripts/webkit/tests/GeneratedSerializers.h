@@ -130,6 +130,7 @@ struct RequestEncodedWithBodyRValue;
 #if USE(SKIA)
 class SkFooBar;
 #endif
+class UnsafeA;
 
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
@@ -426,6 +427,11 @@ template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<UnsafeA> {
+    static void encode(Encoder&, const UnsafeA&);
+    static std::optional<UnsafeA> decode(Decoder&);
 };
 
 } // namespace IPC

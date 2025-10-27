@@ -29,8 +29,9 @@ MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
 CALL_WITH_REPLY_ID_ATTRIBUTE = "CallWithReplyID"
 ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE = "AllowedWhenWaitingForSyncReply"
 ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE = "AllowedWhenWaitingForSyncReplyDuringUnboundedIPC"
-SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
+SYNCHRONOUS_ATTRIBUTE = "Synchronous"
 STREAM_ATTRIBUTE = "Stream"
+UNSAFE_REPLY_ATTRIBUTE = "UnsafeReply"
 
 class MessageReceiver(object):
     def __init__(self, name, superclass, attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, condition, namespace, wants_send_cancel_reply):
@@ -135,7 +136,8 @@ def generate_global_model(receivers):
         async_reply_messages = []
         for message in receiver.messages:
             if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-                async_reply_messages.append(Message(name='%sReply' % message.name, parameters=message.reply_parameters, reply_parameters=None, attributes=None, condition=message.condition, enabled_by=message.enabled_by, enabled_by_exception=message.enabled_by_exception, enabled_by_conjunction=message.enabled_by_conjunction, coalescing_key_indices=message.coalescing_key_indices, is_async_reply=True))
+                attributes = [UNSAFE_REPLY_ATTRIBUTE] if message.has_attribute(UNSAFE_REPLY_ATTRIBUTE) else None
+                async_reply_messages.append(Message(name='%sReply' % message.name, parameters=message.reply_parameters, reply_parameters=None, attributes=attributes, condition=message.condition, enabled_by=message.enabled_by, enabled_by_exception=message.enabled_by_exception, enabled_by_conjunction=message.enabled_by_conjunction, coalescing_key_indices=message.coalescing_key_indices, is_async_reply=True))
         receiver.messages = receiver.messages + async_reply_messages
 
     return [ipc_receiver] + receivers
