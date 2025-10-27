@@ -146,4 +146,5 @@ messages -> WebProcessProxy WantsDispatchMessage {
     [EnabledBy=RemoteSnapshottingEnabled] CompleteDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier, WebCore::FrameIdentifier rootFrameIdentifier, float scale, WebCore::ColorSpace colorSpace) -> (bool success)
     [EnabledBy=RemoteSnapshottingEnabled] ReleaseDisplayOnlyImage(WebCore::PageIdentifier pageID, WebKit::RemoteSnapshotIdentifier imageIdentifier)
 #endif
+    EnsureMediaKeysStorageDirectory(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID)
 }
