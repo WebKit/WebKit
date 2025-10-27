@@ -356,16 +356,16 @@ static bool executeDeleteToEndOfParagraph(LocalFrame& frame, Event*, EditorComma
 
 static bool executeDeleteToMark(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto& editor = frame.editor();
+    Ref editor = frame.editor();
     auto& selection = frame.selection();
-    auto markRange = editor.mark().toNormalizedRange();
+    auto markRange = editor->mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (markRange && selectionRange) {
         if (!selection.setSelectedRange(unionRange(*markRange, *selectionRange), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             return false;
     }
-    editor.performDelete();
-    editor.setMark(selection.selection());
+    editor->performDelete();
+    editor->setMark(selection.selection());
     return true;
 }
 
@@ -1079,9 +1079,9 @@ static bool executeSelectSentence(LocalFrame& frame, Event*, EditorCommandSource
 
 static bool executeSelectToMark(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto& editor = frame.editor();
+    Ref editor = frame.editor();
     auto& selection = frame.selection();
-    auto markRange = editor.mark().toNormalizedRange();
+    auto markRange = editor->mark().toNormalizedRange();
     auto selectionRange = selection.selection().toNormalizedRange();
     if (!markRange || !selectionRange) {
         SystemSoundManager::singleton().systemBeep();
@@ -1238,11 +1238,11 @@ static bool supportedFromMenuOrKeyBinding(LocalFrame*)
 
 static bool defaultValueForSupportedCopyCut(LocalFrame& frame)
 {
-    auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard())
+    Ref settings = frame.settings();
+    if (settings->javaScriptCanAccessClipboard())
         return true;
     
-    switch (settings.clipboardAccessPolicy()) {
+    switch (settings->clipboardAccessPolicy()) {
     case ClipboardAccessPolicy::Allow:
     case ClipboardAccessPolicy::RequiresUserGesture:
         return true;
@@ -1267,11 +1267,11 @@ static bool supportedCopyCut(LocalFrame* frame)
 
 static bool defaultValueForSupportedPaste(LocalFrame& frame)
 {
-    auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
+    Ref settings = frame.settings();
+    if (settings->javaScriptCanAccessClipboard() && settings->domPasteAllowed())
         return true;
 
-    return settings.domPasteAccessRequestsEnabled();
+    return settings->domPasteAccessRequestsEnabled();
 }
 
 static bool supportedPaste(LocalFrame* frame)
@@ -1327,11 +1327,11 @@ static bool enableCaretInEditableText(LocalFrame& frame, Event* event, EditorCom
 
 static bool allowCopyCutFromDOM(LocalFrame& frame)
 {
-    auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard())
+    Ref settings = frame.settings();
+    if (settings->javaScriptCanAccessClipboard())
         return true;
     
-    switch (settings.clipboardAccessPolicy()) {
+    switch (settings->clipboardAccessPolicy()) {
     case ClipboardAccessPolicy::Allow:
         return true;
     case ClipboardAccessPolicy::Deny:
@@ -1424,11 +1424,11 @@ static bool enabledInRichlyEditableText(LocalFrame& frame, Event*, EditorCommand
 
 static bool allowPasteFromDOM(LocalFrame& frame)
 {
-    auto& settings = frame.settings();
-    if (settings.javaScriptCanAccessClipboard() && settings.domPasteAllowed())
+    Ref settings = frame.settings();
+    if (settings->javaScriptCanAccessClipboard() && settings->domPasteAllowed())
         return true;
 
-    return settings.domPasteAccessRequestsEnabled() && UserGestureIndicator::processingUserGesture();
+    return settings->domPasteAccessRequestsEnabled() && UserGestureIndicator::processingUserGesture();
 }
 
 static bool enabledPaste(LocalFrame& frame, Event*, EditorCommandSource source)
