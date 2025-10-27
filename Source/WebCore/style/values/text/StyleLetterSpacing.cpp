@@ -59,7 +59,7 @@ auto CSSValueConversion<LetterSpacing>::operator()(BuilderState& state, const CS
             typename LetterSpacing::Fixed {
                 CSS::clampToRange<LetterSpacing::Fixed::range, float>(primitiveValue->resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength),
             },
-            primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+            primitiveValue->primitiveType() == CSSUnitType::QuirkyEm
         };
     }
 

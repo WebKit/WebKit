@@ -475,7 +475,7 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // FIXME: Use isStringType(CSSUnitType)?
         auto primitiveType = primitiveValue->primitiveType();
-        if (primitiveType == CSSUnitType::CSS_STRING || primitiveType == CSSUnitType::CSS_IDENT || primitiveType == CSSUnitType::CSS_ATTR) {
+        if (primitiveType == CSSUnitType::String || primitiveType == CSSUnitType::Ident || primitiveType == CSSUnitType::Attr) {
             auto stringValue = value.cssText(CSS::defaultSerializationContext());
             if (stringValue.length()) {
                 result = stringValue;
@@ -657,13 +657,13 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
 static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValue, float& result)
 {
     switch (primitiveValue.primitiveType()) {
-    case CSSUnitType::CSS_PX:
-    case CSSUnitType::CSS_PT:
-    case CSSUnitType::CSS_PC:
-    case CSSUnitType::CSS_CM:
-    case CSSUnitType::CSS_MM:
-    case CSSUnitType::CSS_Q:
-    case CSSUnitType::CSS_IN:
+    case CSSUnitType::Pixel:
+    case CSSUnitType::Point:
+    case CSSUnitType::Pica:
+    case CSSUnitType::Centimeter:
+    case CSSUnitType::Millimeter:
+    case CSSUnitType::QuarterMillimeter:
+    case CSSUnitType::Inch:
         result = primitiveValue.resolveAsLengthDeprecated();
         return true;
     default:

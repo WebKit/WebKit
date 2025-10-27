@@ -249,12 +249,12 @@ enum class IntegerUnit : uint8_t {
 
 constexpr CSSUnitType toCSSUnitType(IntegerUnit)
 {
-    return CSSUnitType::CSS_INTEGER;
+    return CSSUnitType::Integer;
 }
 
 constexpr std::optional<IntegerUnit> toIntegerUnit(CSSUnitType cssUnit)
 {
-    if (cssUnit == CSSUnitType::CSS_INTEGER)
+    if (cssUnit == CSSUnitType::Integer)
         return IntegerUnit::Integer;
     return std::nullopt;
 }
@@ -289,12 +289,12 @@ enum class NumberUnit : uint8_t {
 
 constexpr CSSUnitType toCSSUnitType(NumberUnit)
 {
-    return CSSUnitType::CSS_NUMBER;
+    return CSSUnitType::Number;
 }
 
 constexpr std::optional<NumberUnit> toNumberUnit(CSSUnitType cssUnit)
 {
-    if (cssUnit == CSSUnitType::CSS_NUMBER)
+    if (cssUnit == CSSUnitType::Number)
         return NumberUnit::Number;
     return std::nullopt;
 }
@@ -329,12 +329,12 @@ enum class PercentageUnit : uint8_t {
 
 constexpr CSSUnitType toCSSUnitType(PercentageUnit)
 {
-    return CSSUnitType::CSS_PERCENTAGE;
+    return CSSUnitType::Percentage;
 }
 
 constexpr std::optional<PercentageUnit> toPercentageUnit(CSSUnitType cssUnit)
 {
-    if (cssUnit == CSSUnitType::CSS_PERCENTAGE)
+    if (cssUnit == CSSUnitType::Percentage)
         return PercentageUnit::Percentage;
     return std::nullopt;
 }
@@ -376,10 +376,10 @@ constexpr CSSUnitType toCSSUnitType(AngleUnit angleUnit)
     using enum AngleUnit;
 
     switch (angleUnit) {
-    case Deg:    return CSSUnitType::CSS_DEG;
-    case Rad:    return CSSUnitType::CSS_RAD;
-    case Grad:   return CSSUnitType::CSS_GRAD;
-    case Turn:   return CSSUnitType::CSS_TURN;
+    case Deg:    return CSSUnitType::Degree;
+    case Rad:    return CSSUnitType::Radian;
+    case Grad:   return CSSUnitType::Gradian;
+    case Turn:   return CSSUnitType::Turn;
     }
 
     WTF_UNREACHABLE();
@@ -390,10 +390,10 @@ constexpr std::optional<AngleUnit> toAngleUnit(CSSUnitType cssUnit)
     using enum AngleUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_DEG:  return Deg;
-    case CSSUnitType::CSS_RAD:  return Rad;
-    case CSSUnitType::CSS_GRAD: return Grad;
-    case CSSUnitType::CSS_TURN: return Turn;
+    case CSSUnitType::Degree:  return Deg;
+    case CSSUnitType::Radian:  return Rad;
+    case CSSUnitType::Gradian: return Grad;
+    case CSSUnitType::Turn: return Turn;
     default: break;
     }
 
@@ -550,56 +550,56 @@ constexpr CSSUnitType toCSSUnitType(LengthUnit lengthUnit)
     using enum LengthUnit;
 
     switch (lengthUnit) {
-    case Px:        return CSSUnitType::CSS_PX;
-    case Cm:        return CSSUnitType::CSS_CM;
-    case Mm:        return CSSUnitType::CSS_MM;
-    case Q:         return CSSUnitType::CSS_Q;
-    case In:        return CSSUnitType::CSS_IN;
-    case Pt:        return CSSUnitType::CSS_PT;
-    case Pc:        return CSSUnitType::CSS_PC;
-    case Em:        return CSSUnitType::CSS_EM;
-    case QuirkyEm:  return CSSUnitType::CSS_QUIRKY_EM;
-    case Ex:        return CSSUnitType::CSS_EX;
-    case Lh:        return CSSUnitType::CSS_LH;
-    case Cap:       return CSSUnitType::CSS_CAP;
-    case Ch:        return CSSUnitType::CSS_CH;
-    case Ic:        return CSSUnitType::CSS_IC;
-    case Rcap:      return CSSUnitType::CSS_RCAP;
-    case Rch:       return CSSUnitType::CSS_RCH;
-    case Rem:       return CSSUnitType::CSS_REM;
-    case Rex:       return CSSUnitType::CSS_REX;
-    case Ric:       return CSSUnitType::CSS_RIC;
-    case Rlh:       return CSSUnitType::CSS_RLH;
-    case Vw:        return CSSUnitType::CSS_VW;
-    case Vh:        return CSSUnitType::CSS_VH;
-    case Vmin:      return CSSUnitType::CSS_VMIN;
-    case Vmax:      return CSSUnitType::CSS_VMAX;
-    case Vb:        return CSSUnitType::CSS_VB;
-    case Vi:        return CSSUnitType::CSS_VI;
-    case Svw:       return CSSUnitType::CSS_SVW;
-    case Svh:       return CSSUnitType::CSS_SVH;
-    case Svmin:     return CSSUnitType::CSS_SVMIN;
-    case Svmax:     return CSSUnitType::CSS_SVMAX;
-    case Svb:       return CSSUnitType::CSS_SVB;
-    case Svi:       return CSSUnitType::CSS_SVI;
-    case Lvw:       return CSSUnitType::CSS_LVW;
-    case Lvh:       return CSSUnitType::CSS_LVH;
-    case Lvmin:     return CSSUnitType::CSS_LVMIN;
-    case Lvmax:     return CSSUnitType::CSS_LVMAX;
-    case Lvb:       return CSSUnitType::CSS_LVB;
-    case Lvi:       return CSSUnitType::CSS_LVI;
-    case Dvw:       return CSSUnitType::CSS_DVW;
-    case Dvh:       return CSSUnitType::CSS_DVH;
-    case Dvmin:     return CSSUnitType::CSS_DVMIN;
-    case Dvmax:     return CSSUnitType::CSS_DVMAX;
-    case Dvb:       return CSSUnitType::CSS_DVB;
-    case Dvi:       return CSSUnitType::CSS_DVI;
-    case Cqw:       return CSSUnitType::CSS_CQW;
-    case Cqh:       return CSSUnitType::CSS_CQH;
-    case Cqi:       return CSSUnitType::CSS_CQI;
-    case Cqb:       return CSSUnitType::CSS_CQB;
-    case Cqmin:     return CSSUnitType::CSS_CQMIN;
-    case Cqmax:     return CSSUnitType::CSS_CQMAX;
+    case Px:        return CSSUnitType::Pixel;
+    case Cm:        return CSSUnitType::Centimeter;
+    case Mm:        return CSSUnitType::Millimeter;
+    case Q:         return CSSUnitType::QuarterMillimeter;
+    case In:        return CSSUnitType::Inch;
+    case Pt:        return CSSUnitType::Point;
+    case Pc:        return CSSUnitType::Pica;
+    case Em:        return CSSUnitType::Em;
+    case QuirkyEm:  return CSSUnitType::QuirkyEm;
+    case Ex:        return CSSUnitType::Ex;
+    case Lh:        return CSSUnitType::Lh;
+    case Cap:       return CSSUnitType::Cap;
+    case Ch:        return CSSUnitType::Ch;
+    case Ic:        return CSSUnitType::Ic;
+    case Rcap:      return CSSUnitType::Rcap;
+    case Rch:       return CSSUnitType::Rch;
+    case Rem:       return CSSUnitType::Rem;
+    case Rex:       return CSSUnitType::Rex;
+    case Ric:       return CSSUnitType::Ric;
+    case Rlh:       return CSSUnitType::Rlh;
+    case Vw:        return CSSUnitType::ViewportPercentageWidth;
+    case Vh:        return CSSUnitType::ViewportPercentageHeight;
+    case Vmin:      return CSSUnitType::ViewportPercentageMin;
+    case Vmax:      return CSSUnitType::ViewportPercentageMax;
+    case Vb:        return CSSUnitType::ViewportPercentageBlockSize;
+    case Vi:        return CSSUnitType::ViewportPercentageInlineSize;
+    case Svw:       return CSSUnitType::SmallViewportWidth;
+    case Svh:       return CSSUnitType::SmallViewportHeight;
+    case Svmin:     return CSSUnitType::SmallViewportMin;
+    case Svmax:     return CSSUnitType::SmallViewportMax;
+    case Svb:       return CSSUnitType::SmallViewportBlockSize;
+    case Svi:       return CSSUnitType::SmallViewportInlineSize;
+    case Lvw:       return CSSUnitType::LargeViewportWidth;
+    case Lvh:       return CSSUnitType::LargeViewportHeight;
+    case Lvmin:     return CSSUnitType::LargeViewportMin;
+    case Lvmax:     return CSSUnitType::LargeViewportMax;
+    case Lvb:       return CSSUnitType::LargeViewportBlockSize;
+    case Lvi:       return CSSUnitType::LargeViewportInlineSize;
+    case Dvw:       return CSSUnitType::DynamicViewportWidth;
+    case Dvh:       return CSSUnitType::DynamicViewportHeight;
+    case Dvmin:     return CSSUnitType::DynamicViewportMin;
+    case Dvmax:     return CSSUnitType::DynamicViewportMax;
+    case Dvb:       return CSSUnitType::DynamicViewportBlockSize;
+    case Dvi:       return CSSUnitType::DynamicViewportInlineSize;
+    case Cqw:       return CSSUnitType::ContainerQueryWidth;
+    case Cqh:       return CSSUnitType::ContainerQueryHeight;
+    case Cqi:       return CSSUnitType::ContainerQueryInlineSize;
+    case Cqb:       return CSSUnitType::ContainerQueryBlockSize;
+    case Cqmin:     return CSSUnitType::ContainerQueryMin;
+    case Cqmax:     return CSSUnitType::ContainerQueryMax;
     }
 
     WTF_UNREACHABLE();
@@ -610,56 +610,56 @@ constexpr std::optional<LengthUnit> toLengthUnit(CSSUnitType cssUnit)
     using enum LengthUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_PX:        return Px;
-    case CSSUnitType::CSS_CM:        return Cm;
-    case CSSUnitType::CSS_MM:        return Mm;
-    case CSSUnitType::CSS_Q:         return Q;
-    case CSSUnitType::CSS_IN:        return In;
-    case CSSUnitType::CSS_PT:        return Pt;
-    case CSSUnitType::CSS_PC:        return Pc;
-    case CSSUnitType::CSS_EM:        return Em;
-    case CSSUnitType::CSS_QUIRKY_EM: return QuirkyEm;
-    case CSSUnitType::CSS_EX:        return Ex;
-    case CSSUnitType::CSS_LH:        return Lh;
-    case CSSUnitType::CSS_CAP:       return Cap;
-    case CSSUnitType::CSS_CH:        return Ch;
-    case CSSUnitType::CSS_IC:        return Ic;
-    case CSSUnitType::CSS_RCAP:      return Rcap;
-    case CSSUnitType::CSS_RCH:       return Rch;
-    case CSSUnitType::CSS_REM:       return Rem;
-    case CSSUnitType::CSS_REX:       return Rex;
-    case CSSUnitType::CSS_RIC:       return Ric;
-    case CSSUnitType::CSS_RLH:       return Rlh;
-    case CSSUnitType::CSS_VW:        return Vw;
-    case CSSUnitType::CSS_VH:        return Vh;
-    case CSSUnitType::CSS_VMIN:      return Vmin;
-    case CSSUnitType::CSS_VMAX:      return Vmax;
-    case CSSUnitType::CSS_VB:        return Vb;
-    case CSSUnitType::CSS_VI:        return Vi;
-    case CSSUnitType::CSS_SVW:       return Svw;
-    case CSSUnitType::CSS_SVH:       return Svh;
-    case CSSUnitType::CSS_SVMIN:     return Svmin;
-    case CSSUnitType::CSS_SVMAX:     return Svmax;
-    case CSSUnitType::CSS_SVB:       return Svb;
-    case CSSUnitType::CSS_SVI:       return Svi;
-    case CSSUnitType::CSS_LVW:       return Lvw;
-    case CSSUnitType::CSS_LVH:       return Lvh;
-    case CSSUnitType::CSS_LVMIN:     return Lvmin;
-    case CSSUnitType::CSS_LVMAX:     return Lvmax;
-    case CSSUnitType::CSS_LVB:       return Lvb;
-    case CSSUnitType::CSS_LVI:       return Lvi;
-    case CSSUnitType::CSS_DVW:       return Dvw;
-    case CSSUnitType::CSS_DVH:       return Dvh;
-    case CSSUnitType::CSS_DVMIN:     return Dvmin;
-    case CSSUnitType::CSS_DVMAX:     return Dvmax;
-    case CSSUnitType::CSS_DVB:       return Dvb;
-    case CSSUnitType::CSS_DVI:       return Dvi;
-    case CSSUnitType::CSS_CQW:       return Cqw;
-    case CSSUnitType::CSS_CQH:       return Cqh;
-    case CSSUnitType::CSS_CQI:       return Cqi;
-    case CSSUnitType::CSS_CQB:       return Cqb;
-    case CSSUnitType::CSS_CQMIN:     return Cqmin;
-    case CSSUnitType::CSS_CQMAX:     return Cqmax;
+    case CSSUnitType::Pixel:        return Px;
+    case CSSUnitType::Centimeter:        return Cm;
+    case CSSUnitType::Millimeter:        return Mm;
+    case CSSUnitType::QuarterMillimeter:         return Q;
+    case CSSUnitType::Inch:        return In;
+    case CSSUnitType::Point:        return Pt;
+    case CSSUnitType::Pica:        return Pc;
+    case CSSUnitType::Em:        return Em;
+    case CSSUnitType::QuirkyEm: return QuirkyEm;
+    case CSSUnitType::Ex:        return Ex;
+    case CSSUnitType::Lh:        return Lh;
+    case CSSUnitType::Cap:       return Cap;
+    case CSSUnitType::Ch:        return Ch;
+    case CSSUnitType::Ic:        return Ic;
+    case CSSUnitType::Rcap:      return Rcap;
+    case CSSUnitType::Rch:       return Rch;
+    case CSSUnitType::Rem:       return Rem;
+    case CSSUnitType::Rex:       return Rex;
+    case CSSUnitType::Ric:       return Ric;
+    case CSSUnitType::Rlh:       return Rlh;
+    case CSSUnitType::ViewportPercentageWidth:        return Vw;
+    case CSSUnitType::ViewportPercentageHeight:        return Vh;
+    case CSSUnitType::ViewportPercentageMin:      return Vmin;
+    case CSSUnitType::ViewportPercentageMax:      return Vmax;
+    case CSSUnitType::ViewportPercentageBlockSize:        return Vb;
+    case CSSUnitType::ViewportPercentageInlineSize:        return Vi;
+    case CSSUnitType::SmallViewportWidth:       return Svw;
+    case CSSUnitType::SmallViewportHeight:       return Svh;
+    case CSSUnitType::SmallViewportMin:     return Svmin;
+    case CSSUnitType::SmallViewportMax:     return Svmax;
+    case CSSUnitType::SmallViewportBlockSize:       return Svb;
+    case CSSUnitType::SmallViewportInlineSize:       return Svi;
+    case CSSUnitType::LargeViewportWidth:       return Lvw;
+    case CSSUnitType::LargeViewportHeight:       return Lvh;
+    case CSSUnitType::LargeViewportMin:     return Lvmin;
+    case CSSUnitType::LargeViewportMax:     return Lvmax;
+    case CSSUnitType::LargeViewportBlockSize:       return Lvb;
+    case CSSUnitType::LargeViewportInlineSize:       return Lvi;
+    case CSSUnitType::DynamicViewportWidth:       return Dvw;
+    case CSSUnitType::DynamicViewportHeight:       return Dvh;
+    case CSSUnitType::DynamicViewportMin:     return Dvmin;
+    case CSSUnitType::DynamicViewportMax:     return Dvmax;
+    case CSSUnitType::DynamicViewportBlockSize:       return Dvb;
+    case CSSUnitType::DynamicViewportInlineSize:       return Dvi;
+    case CSSUnitType::ContainerQueryWidth:       return Cqw;
+    case CSSUnitType::ContainerQueryHeight:       return Cqh;
+    case CSSUnitType::ContainerQueryInlineSize:       return Cqi;
+    case CSSUnitType::ContainerQueryBlockSize:       return Cqb;
+    case CSSUnitType::ContainerQueryMin:     return Cqmin;
+    case CSSUnitType::ContainerQueryMax:     return Cqmax;
     default: break;
     }
 
@@ -897,8 +897,8 @@ constexpr CSSUnitType toCSSUnitType(TimeUnit timeUnit)
     using enum TimeUnit;
 
     switch (timeUnit) {
-    case S:    return CSSUnitType::CSS_S;
-    case Ms:   return CSSUnitType::CSS_MS;
+    case S:    return CSSUnitType::Second;
+    case Ms:   return CSSUnitType::Millisecond;
     }
 
     WTF_UNREACHABLE();
@@ -909,8 +909,8 @@ constexpr std::optional<TimeUnit> toTimeUnit(CSSUnitType cssUnit)
     using enum TimeUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_S:    return S;
-    case CSSUnitType::CSS_MS:   return Ms;
+    case CSSUnitType::Second:    return S;
+    case CSSUnitType::Millisecond:   return Ms;
     default: break;
     }
 
@@ -975,8 +975,8 @@ constexpr CSSUnitType toCSSUnitType(FrequencyUnit frequencyUnit)
     using enum FrequencyUnit;
 
     switch (frequencyUnit) {
-    case Hz:    return CSSUnitType::CSS_HZ;
-    case Khz:   return CSSUnitType::CSS_KHZ;
+    case Hz:    return CSSUnitType::Hertz;
+    case Khz:   return CSSUnitType::Kilohertz;
     }
 
     WTF_UNREACHABLE();
@@ -987,8 +987,8 @@ constexpr std::optional<FrequencyUnit> toFrequencyUnit(CSSUnitType cssUnit)
     using enum FrequencyUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_HZ:    return Hz;
-    case CSSUnitType::CSS_KHZ:   return Khz;
+    case CSSUnitType::Hertz:    return Hz;
+    case CSSUnitType::Kilohertz:   return Khz;
     default: break;
     }
 
@@ -1055,10 +1055,10 @@ constexpr CSSUnitType toCSSUnitType(ResolutionUnit resolutionUnit)
     using enum ResolutionUnit;
 
     switch (resolutionUnit) {
-    case Dppx:   return CSSUnitType::CSS_DPPX;
-    case X:      return CSSUnitType::CSS_X;
-    case Dpi:    return CSSUnitType::CSS_DPI;
-    case Dpcm:   return CSSUnitType::CSS_DPCM;
+    case Dppx:   return CSSUnitType::DotsPerPixel;
+    case X:      return CSSUnitType::X;
+    case Dpi:    return CSSUnitType::DotsPerInch;
+    case Dpcm:   return CSSUnitType::DotsPerCentimeter;
     }
 
     WTF_UNREACHABLE();
@@ -1069,10 +1069,10 @@ constexpr std::optional<ResolutionUnit> toResolutionUnit(CSSUnitType cssUnit)
     using enum ResolutionUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_DPPX: return Dppx;
-    case CSSUnitType::CSS_X:    return X;
-    case CSSUnitType::CSS_DPI:  return Dpi;
-    case CSSUnitType::CSS_DPCM: return Dpcm;
+    case CSSUnitType::DotsPerPixel: return Dppx;
+    case CSSUnitType::X:    return X;
+    case CSSUnitType::DotsPerInch:  return Dpi;
+    case CSSUnitType::DotsPerCentimeter: return Dpcm;
     default: break;
     }
 
@@ -1169,12 +1169,12 @@ enum class FlexUnit : uint8_t {
 
 constexpr CSSUnitType toCSSUnitType(FlexUnit)
 {
-    return CSSUnitType::CSS_FR;
+    return CSSUnitType::Fr;
 }
 
 constexpr std::optional<FlexUnit> toFlexUnit(CSSUnitType cssUnit)
 {
-    if (cssUnit == CSSUnitType::CSS_FR)
+    if (cssUnit == CSSUnitType::Fr)
         return FlexUnit::Fr;
     return std::nullopt;
 }
@@ -1230,11 +1230,11 @@ constexpr CSSUnitType toCSSUnitType(AnglePercentageUnit anglePercentageUnit)
     using enum AnglePercentageUnit;
 
     switch (anglePercentageUnit) {
-    case Deg:           return CSSUnitType::CSS_DEG;
-    case Rad:           return CSSUnitType::CSS_RAD;
-    case Grad:          return CSSUnitType::CSS_GRAD;
-    case Turn:          return CSSUnitType::CSS_TURN;
-    case Percentage:    return CSSUnitType::CSS_PERCENTAGE;
+    case Deg:           return CSSUnitType::Degree;
+    case Rad:           return CSSUnitType::Radian;
+    case Grad:          return CSSUnitType::Gradian;
+    case Turn:          return CSSUnitType::Turn;
+    case Percentage:    return CSSUnitType::Percentage;
     }
 
     WTF_UNREACHABLE();
@@ -1245,11 +1245,11 @@ constexpr std::optional<AnglePercentageUnit> toAnglePercentageUnit(CSSUnitType c
     using enum AnglePercentageUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_DEG:          return Deg;
-    case CSSUnitType::CSS_RAD:          return Rad;
-    case CSSUnitType::CSS_GRAD:         return Grad;
-    case CSSUnitType::CSS_TURN:         return Turn;
-    case CSSUnitType::CSS_PERCENTAGE:   return Percentage;
+    case CSSUnitType::Degree:          return Deg;
+    case CSSUnitType::Radian:          return Rad;
+    case CSSUnitType::Gradian:         return Grad;
+    case CSSUnitType::Turn:         return Turn;
+    case CSSUnitType::Percentage:   return Percentage;
     default: break;
     }
 
@@ -1381,57 +1381,57 @@ constexpr CSSUnitType toCSSUnitType(LengthPercentageUnit lengthPercentageUnit)
     using enum LengthPercentageUnit;
 
     switch (lengthPercentageUnit) {
-    case Px:            return CSSUnitType::CSS_PX;
-    case Cm:            return CSSUnitType::CSS_CM;
-    case Mm:            return CSSUnitType::CSS_MM;
-    case Q:             return CSSUnitType::CSS_Q;
-    case In:            return CSSUnitType::CSS_IN;
-    case Pt:            return CSSUnitType::CSS_PT;
-    case Pc:            return CSSUnitType::CSS_PC;
-    case Em:            return CSSUnitType::CSS_EM;
-    case QuirkyEm:      return CSSUnitType::CSS_QUIRKY_EM;
-    case Ex:            return CSSUnitType::CSS_EX;
-    case Lh:            return CSSUnitType::CSS_LH;
-    case Cap:           return CSSUnitType::CSS_CAP;
-    case Ch:            return CSSUnitType::CSS_CH;
-    case Ic:            return CSSUnitType::CSS_IC;
-    case Rcap:          return CSSUnitType::CSS_RCAP;
-    case Rch:           return CSSUnitType::CSS_RCH;
-    case Rem:           return CSSUnitType::CSS_REM;
-    case Rex:           return CSSUnitType::CSS_REX;
-    case Ric:           return CSSUnitType::CSS_RIC;
-    case Rlh:           return CSSUnitType::CSS_RLH;
-    case Vw:            return CSSUnitType::CSS_VW;
-    case Vh:            return CSSUnitType::CSS_VH;
-    case Vmin:          return CSSUnitType::CSS_VMIN;
-    case Vmax:          return CSSUnitType::CSS_VMAX;
-    case Vb:            return CSSUnitType::CSS_VB;
-    case Vi:            return CSSUnitType::CSS_VI;
-    case Svw:           return CSSUnitType::CSS_SVW;
-    case Svh:           return CSSUnitType::CSS_SVH;
-    case Svmin:         return CSSUnitType::CSS_SVMIN;
-    case Svmax:         return CSSUnitType::CSS_SVMAX;
-    case Svb:           return CSSUnitType::CSS_SVB;
-    case Svi:           return CSSUnitType::CSS_SVI;
-    case Lvw:           return CSSUnitType::CSS_LVW;
-    case Lvh:           return CSSUnitType::CSS_LVH;
-    case Lvmin:         return CSSUnitType::CSS_LVMIN;
-    case Lvmax:         return CSSUnitType::CSS_LVMAX;
-    case Lvb:           return CSSUnitType::CSS_LVB;
-    case Lvi:           return CSSUnitType::CSS_LVI;
-    case Dvw:           return CSSUnitType::CSS_DVW;
-    case Dvh:           return CSSUnitType::CSS_DVH;
-    case Dvmin:         return CSSUnitType::CSS_DVMIN;
-    case Dvmax:         return CSSUnitType::CSS_DVMAX;
-    case Dvb:           return CSSUnitType::CSS_DVB;
-    case Dvi:           return CSSUnitType::CSS_DVI;
-    case Cqw:           return CSSUnitType::CSS_CQW;
-    case Cqh:           return CSSUnitType::CSS_CQH;
-    case Cqi:           return CSSUnitType::CSS_CQI;
-    case Cqb:           return CSSUnitType::CSS_CQB;
-    case Cqmin:         return CSSUnitType::CSS_CQMIN;
-    case Cqmax:         return CSSUnitType::CSS_CQMAX;
-    case Percentage:    return CSSUnitType::CSS_PERCENTAGE;
+    case Px:            return CSSUnitType::Pixel;
+    case Cm:            return CSSUnitType::Centimeter;
+    case Mm:            return CSSUnitType::Millimeter;
+    case Q:             return CSSUnitType::QuarterMillimeter;
+    case In:            return CSSUnitType::Inch;
+    case Pt:            return CSSUnitType::Point;
+    case Pc:            return CSSUnitType::Pica;
+    case Em:            return CSSUnitType::Em;
+    case QuirkyEm:      return CSSUnitType::QuirkyEm;
+    case Ex:            return CSSUnitType::Ex;
+    case Lh:            return CSSUnitType::Lh;
+    case Cap:           return CSSUnitType::Cap;
+    case Ch:            return CSSUnitType::Ch;
+    case Ic:            return CSSUnitType::Ic;
+    case Rcap:          return CSSUnitType::Rcap;
+    case Rch:           return CSSUnitType::Rch;
+    case Rem:           return CSSUnitType::Rem;
+    case Rex:           return CSSUnitType::Rex;
+    case Ric:           return CSSUnitType::Ric;
+    case Rlh:           return CSSUnitType::Rlh;
+    case Vw:            return CSSUnitType::ViewportPercentageWidth;
+    case Vh:            return CSSUnitType::ViewportPercentageHeight;
+    case Vmin:          return CSSUnitType::ViewportPercentageMin;
+    case Vmax:          return CSSUnitType::ViewportPercentageMax;
+    case Vb:            return CSSUnitType::ViewportPercentageBlockSize;
+    case Vi:            return CSSUnitType::ViewportPercentageInlineSize;
+    case Svw:           return CSSUnitType::SmallViewportWidth;
+    case Svh:           return CSSUnitType::SmallViewportHeight;
+    case Svmin:         return CSSUnitType::SmallViewportMin;
+    case Svmax:         return CSSUnitType::SmallViewportMax;
+    case Svb:           return CSSUnitType::SmallViewportBlockSize;
+    case Svi:           return CSSUnitType::SmallViewportInlineSize;
+    case Lvw:           return CSSUnitType::LargeViewportWidth;
+    case Lvh:           return CSSUnitType::LargeViewportHeight;
+    case Lvmin:         return CSSUnitType::LargeViewportMin;
+    case Lvmax:         return CSSUnitType::LargeViewportMax;
+    case Lvb:           return CSSUnitType::LargeViewportBlockSize;
+    case Lvi:           return CSSUnitType::LargeViewportInlineSize;
+    case Dvw:           return CSSUnitType::DynamicViewportWidth;
+    case Dvh:           return CSSUnitType::DynamicViewportHeight;
+    case Dvmin:         return CSSUnitType::DynamicViewportMin;
+    case Dvmax:         return CSSUnitType::DynamicViewportMax;
+    case Dvb:           return CSSUnitType::DynamicViewportBlockSize;
+    case Dvi:           return CSSUnitType::DynamicViewportInlineSize;
+    case Cqw:           return CSSUnitType::ContainerQueryWidth;
+    case Cqh:           return CSSUnitType::ContainerQueryHeight;
+    case Cqi:           return CSSUnitType::ContainerQueryInlineSize;
+    case Cqb:           return CSSUnitType::ContainerQueryBlockSize;
+    case Cqmin:         return CSSUnitType::ContainerQueryMin;
+    case Cqmax:         return CSSUnitType::ContainerQueryMax;
+    case Percentage:    return CSSUnitType::Percentage;
     }
 
     WTF_UNREACHABLE();
@@ -1442,57 +1442,57 @@ constexpr std::optional<LengthPercentageUnit> toLengthPercentageUnit(CSSUnitType
     using enum LengthPercentageUnit;
 
     switch (cssUnit) {
-    case CSSUnitType::CSS_PX:           return Px;
-    case CSSUnitType::CSS_CM:           return Cm;
-    case CSSUnitType::CSS_MM:           return Mm;
-    case CSSUnitType::CSS_Q:            return Q;
-    case CSSUnitType::CSS_IN:           return In;
-    case CSSUnitType::CSS_PT:           return Pt;
-    case CSSUnitType::CSS_PC:           return Pc;
-    case CSSUnitType::CSS_EM:           return Em;
-    case CSSUnitType::CSS_QUIRKY_EM:    return QuirkyEm;
-    case CSSUnitType::CSS_EX:           return Ex;
-    case CSSUnitType::CSS_LH:           return Lh;
-    case CSSUnitType::CSS_CAP:          return Cap;
-    case CSSUnitType::CSS_CH:           return Ch;
-    case CSSUnitType::CSS_IC:           return Ic;
-    case CSSUnitType::CSS_RCAP:         return Rcap;
-    case CSSUnitType::CSS_RCH:          return Rch;
-    case CSSUnitType::CSS_REM:          return Rem;
-    case CSSUnitType::CSS_REX:          return Rex;
-    case CSSUnitType::CSS_RIC:          return Ric;
-    case CSSUnitType::CSS_RLH:          return Rlh;
-    case CSSUnitType::CSS_VW:           return Vw;
-    case CSSUnitType::CSS_VH:           return Vh;
-    case CSSUnitType::CSS_VMIN:         return Vmin;
-    case CSSUnitType::CSS_VMAX:         return Vmax;
-    case CSSUnitType::CSS_VB:           return Vb;
-    case CSSUnitType::CSS_VI:           return Vi;
-    case CSSUnitType::CSS_SVW:          return Svw;
-    case CSSUnitType::CSS_SVH:          return Svh;
-    case CSSUnitType::CSS_SVMIN:        return Svmin;
-    case CSSUnitType::CSS_SVMAX:        return Svmax;
-    case CSSUnitType::CSS_SVB:          return Svb;
-    case CSSUnitType::CSS_SVI:          return Svi;
-    case CSSUnitType::CSS_LVW:          return Lvw;
-    case CSSUnitType::CSS_LVH:          return Lvh;
-    case CSSUnitType::CSS_LVMIN:        return Lvmin;
-    case CSSUnitType::CSS_LVMAX:        return Lvmax;
-    case CSSUnitType::CSS_LVB:          return Lvb;
-    case CSSUnitType::CSS_LVI:          return Lvi;
-    case CSSUnitType::CSS_DVW:          return Dvw;
-    case CSSUnitType::CSS_DVH:          return Dvh;
-    case CSSUnitType::CSS_DVMIN:        return Dvmin;
-    case CSSUnitType::CSS_DVMAX:        return Dvmax;
-    case CSSUnitType::CSS_DVB:          return Dvb;
-    case CSSUnitType::CSS_DVI:          return Dvi;
-    case CSSUnitType::CSS_CQW:          return Cqw;
-    case CSSUnitType::CSS_CQH:          return Cqh;
-    case CSSUnitType::CSS_CQI:          return Cqi;
-    case CSSUnitType::CSS_CQB:          return Cqb;
-    case CSSUnitType::CSS_CQMIN:        return Cqmin;
-    case CSSUnitType::CSS_CQMAX:        return Cqmax;
-    case CSSUnitType::CSS_PERCENTAGE:   return Percentage;
+    case CSSUnitType::Pixel:           return Px;
+    case CSSUnitType::Centimeter:           return Cm;
+    case CSSUnitType::Millimeter:           return Mm;
+    case CSSUnitType::QuarterMillimeter:            return Q;
+    case CSSUnitType::Inch:           return In;
+    case CSSUnitType::Point:           return Pt;
+    case CSSUnitType::Pica:           return Pc;
+    case CSSUnitType::Em:           return Em;
+    case CSSUnitType::QuirkyEm:    return QuirkyEm;
+    case CSSUnitType::Ex:           return Ex;
+    case CSSUnitType::Lh:           return Lh;
+    case CSSUnitType::Cap:          return Cap;
+    case CSSUnitType::Ch:           return Ch;
+    case CSSUnitType::Ic:           return Ic;
+    case CSSUnitType::Rcap:         return Rcap;
+    case CSSUnitType::Rch:          return Rch;
+    case CSSUnitType::Rem:          return Rem;
+    case CSSUnitType::Rex:          return Rex;
+    case CSSUnitType::Ric:          return Ric;
+    case CSSUnitType::Rlh:          return Rlh;
+    case CSSUnitType::ViewportPercentageWidth:           return Vw;
+    case CSSUnitType::ViewportPercentageHeight:           return Vh;
+    case CSSUnitType::ViewportPercentageMin:         return Vmin;
+    case CSSUnitType::ViewportPercentageMax:         return Vmax;
+    case CSSUnitType::ViewportPercentageBlockSize:           return Vb;
+    case CSSUnitType::ViewportPercentageInlineSize:           return Vi;
+    case CSSUnitType::SmallViewportWidth:          return Svw;
+    case CSSUnitType::SmallViewportHeight:          return Svh;
+    case CSSUnitType::SmallViewportMin:        return Svmin;
+    case CSSUnitType::SmallViewportMax:        return Svmax;
+    case CSSUnitType::SmallViewportBlockSize:          return Svb;
+    case CSSUnitType::SmallViewportInlineSize:          return Svi;
+    case CSSUnitType::LargeViewportWidth:          return Lvw;
+    case CSSUnitType::LargeViewportHeight:          return Lvh;
+    case CSSUnitType::LargeViewportMin:        return Lvmin;
+    case CSSUnitType::LargeViewportMax:        return Lvmax;
+    case CSSUnitType::LargeViewportBlockSize:          return Lvb;
+    case CSSUnitType::LargeViewportInlineSize:          return Lvi;
+    case CSSUnitType::DynamicViewportWidth:          return Dvw;
+    case CSSUnitType::DynamicViewportHeight:          return Dvh;
+    case CSSUnitType::DynamicViewportMin:        return Dvmin;
+    case CSSUnitType::DynamicViewportMax:        return Dvmax;
+    case CSSUnitType::DynamicViewportBlockSize:          return Dvb;
+    case CSSUnitType::DynamicViewportInlineSize:          return Dvi;
+    case CSSUnitType::ContainerQueryWidth:          return Cqw;
+    case CSSUnitType::ContainerQueryHeight:          return Cqh;
+    case CSSUnitType::ContainerQueryInlineSize:          return Cqi;
+    case CSSUnitType::ContainerQueryBlockSize:          return Cqb;
+    case CSSUnitType::ContainerQueryMin:        return Cqmin;
+    case CSSUnitType::ContainerQueryMax:        return Cqmax;
+    case CSSUnitType::Percentage:   return Percentage;
     default: break;
     }
 

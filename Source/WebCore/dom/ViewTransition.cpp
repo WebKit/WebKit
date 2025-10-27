@@ -973,8 +973,8 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
     // pseudo tree (the document element), so that it doesn't get applied a second time when rendering the
     // snapshots.
     LayoutSize cssSize = adjustLayoutSizeForAbsoluteZoom(output.size, documentElementRenderer->style());
-    RefPtr { output.properties }->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(cssSize.width(), CSSUnitType::CSS_PX));
-    RefPtr { output.properties }->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(cssSize.height(), CSSUnitType::CSS_PX));
+    RefPtr { output.properties }->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(cssSize.width(), CSSUnitType::Pixel));
+    RefPtr { output.properties }->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(cssSize.height(), CSSUnitType::Pixel));
 }
 
 // https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles

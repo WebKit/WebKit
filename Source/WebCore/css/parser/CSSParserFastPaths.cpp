@@ -123,10 +123,10 @@ static inline bool parseSimpleLength(std::span<const CharacterType> characters, 
 {
     if (characters.size() > 2 && isASCIIAlphaCaselessEqual(characters[characters.size() - 2], 'p') && isASCIIAlphaCaselessEqual(characters[characters.size() - 1], 'x')) {
         dropLast(characters, 2);
-        unit = CSSUnitType::CSS_PX;
+        unit = CSSUnitType::Pixel;
     } else if (!characters.empty() && characters.back() == '%') {
         dropLast(characters);
-        unit = CSSUnitType::CSS_PERCENTAGE;
+        unit = CSSUnitType::Percentage;
     }
 
     auto parsedNumber = parseCSSNumber(characters);
@@ -189,7 +189,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
     ASSERT(!string.isEmpty());
 
     double number;
-    auto unit = CSSUnitType::CSS_NUMBER;
+    auto unit = CSSUnitType::Number;
 
     if (string.is8Bit()) {
         if (!parseSimpleLength(string.span8(), unit, number))
@@ -199,10 +199,10 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
             return nullptr;
     }
 
-    if (unit == CSSUnitType::CSS_NUMBER) {
+    if (unit == CSSUnitType::Number) {
         if (number && cssParserMode != SVGAttributeMode)
             return nullptr;
-        unit = CSSUnitType::CSS_PX;
+        unit = CSSUnitType::Pixel;
     }
 
     if (number < valueRange.min || number > valueRange.max)
@@ -312,7 +312,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
     if (current.empty())
         return std::nullopt;
 
-    if (expectedUnitType == CSSUnitType::CSS_NUMBER && (current.front() == '.' || current.front() == '%'))
+    if (expectedUnitType == CSSUnitType::Number && (current.front() == '.' || current.front() == '%'))
         return std::nullopt;
 
     if (current.front() == '.') {
@@ -328,17 +328,17 @@ static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const Characte
         localValue += percentage;
     }
 
-    if (expectedUnitType == CSSUnitType::CSS_PERCENTAGE && current.front() != '%')
+    if (expectedUnitType == CSSUnitType::Percentage && current.front() != '%')
         return std::nullopt;
 
     if (skipExactly(current, '%')) {
-        expectedUnitType = CSSUnitType::CSS_PERCENTAGE;
+        expectedUnitType = CSSUnitType::Percentage;
         localValue = localValue / 100.0 * 255.0;
         // Clamp values at 255 for percentages over 100%
         if (localValue > 255)
             localValue = 255;
     } else
-        expectedUnitType = CSSUnitType::CSS_NUMBER;
+        expectedUnitType = CSSUnitType::Number;
 
     skipWhile<isASCIIWhitespace>(current);
 
@@ -609,7 +609,7 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
     }
 
     if (mightBeRGB(characters) || mightBeRGBA(characters)) {
-        auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
+        auto expectedUnitType = CSSUnitType::Unknown;
         auto current = mightBeRGBA(characters) ? characters.subspan(5) : characters.subspan(4);
 
         // Red and green will both terminate with ','.
@@ -775,13 +775,13 @@ static bool parseTransformTranslateArguments(StringParsingBuffer<CharType>& buff
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
-        CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+        CSSUnitType unit = CSSUnitType::Number;
         double number;
         if (!parseSimpleLength(buffer.span().first(argumentLength), unit, number))
             return false;
-        if (!number && unit == CSSUnitType::CSS_NUMBER)
-            unit = CSSUnitType::CSS_PX;
-        if (unit == CSSUnitType::CSS_NUMBER || (unit == CSSUnitType::CSS_PERCENTAGE && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
+        if (!number && unit == CSSUnitType::Number)
+            unit = CSSUnitType::Pixel;
+        if (unit == CSSUnitType::Number || (unit == CSSUnitType::Percentage && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
             return false;
         arguments.append(CSSPrimitiveValue::create(number, unit));
         buffer.advanceBy(argumentLength + 1);
@@ -819,7 +819,7 @@ static bool parseTransformNumberArguments(StringParsingBuffer<CharType>& buffer,
         auto number = parseCSSNumber(buffer.span().first(argumentLength));
         if (!number)
             return false;
-        arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::CSS_NUMBER));
+        arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::Number));
         buffer.advanceBy(argumentLength + 1);
         --expectedCount;
     }
@@ -1024,7 +1024,7 @@ static RefPtr<CSSValue> parseOpacity(StringView string)
             return nullptr;
     }
 
-    return CSSPrimitiveValue::create(number, CSSUnitType::CSS_NUMBER);
+    return CSSPrimitiveValue::create(number, CSSUnitType::Number);
 }
 
 static RefPtr<CSSValue> parseColorWithAuto(StringView string, const CSSParserContext& context)

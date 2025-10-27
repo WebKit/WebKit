@@ -68,7 +68,7 @@ auto CSSValueConversion<MarginEdge>::operator()(BuilderState& state, const CSSPr
             typename MarginEdge::Fixed {
                 CSS::clampToRange<MarginEdge::Fixed::range, float>(primitiveValue.resolveAsLength(conversionData) * textZoom, minValueForCssLength, maxValueForCssLength),
             },
-            primitiveValue.primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+            primitiveValue.primitiveType() == CSSUnitType::QuirkyEm
         };
     }
 

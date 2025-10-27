@@ -127,13 +127,13 @@ void Editor::platformPasteFont()
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.
         style->setProperty(CSSPropertyFontFamily, [NSString stringWithFormat:@"'%@'", retainPtr([font familyName]).get()]);
-        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create([font pointSize], CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create([font pointSize], CSSUnitType::Pixel));
         // FIXME: Map to the entire range of CSS weight values.
         style->setProperty(CSSPropertyFontWeight, ([NSFontManager.sharedFontManager weightOfFont:font.get()] >= 7) ? CSSValueBold : CSSValueNormal);
         style->setProperty(CSSPropertyFontStyle, ([NSFontManager.sharedFontManager traitsOfFont:font.get()] & NSItalicFontMask) ? CSSValueItalic : CSSValueNormal);
     } else {
         style->setProperty(CSSPropertyFontFamily, "Helvetica"_s);
-        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(12, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyFontSize, CSSPrimitiveValue::create(12, CSSUnitType::Pixel));
         style->setProperty(CSSPropertyFontWeight, CSSValueNormal);
         style->setProperty(CSSPropertyFontStyle, CSSValueNormal);
     }

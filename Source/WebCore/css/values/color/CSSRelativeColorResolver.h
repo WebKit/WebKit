@@ -53,10 +53,10 @@ WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const 
     auto originComponents = asColorComponents(originColorAsColorType.resolved());
 
     const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
-        { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
-        { std::get<2>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
-        { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Replace any symbol value (e.g. CSSValueR) to their corresponding channel value.
@@ -93,10 +93,10 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
     auto originComponents = asColorComponents(originColorAsColorType.resolved());
 
     const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
-        { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
-        { std::get<2>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
-        { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Replace any symbol value (e.g. CSSValueR) to their corresponding channel value.

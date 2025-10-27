@@ -192,7 +192,7 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
 void HTMLMeterElement::didElementStateChange()
 {
     Ref valueElement = *m_valueElement;
-    valueElement->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio() * 100, CSSUnitType::CSS_PERCENTAGE);
+    valueElement->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio() * 100, CSSUnitType::Percentage);
     setValueClass(valueElement, gaugeRegion());
 
     if (CheckedPtr renderer = renderMeter())

@@ -119,88 +119,88 @@ static unsigned sortPriority(CSSUnitType unit)
 
     switch (unit) {
     // number
-    case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:      return 0;
+    case CSSUnitType::Number:
+    case CSSUnitType::Integer:      return 0;
     // percentage
-    case CSSUnitType::CSS_PERCENTAGE:   return 1;
+    case CSSUnitType::Percentage:   return 1;
 
     // dimension (by unit, ordered ASCII case-insensitively)
-    case CSSUnitType::CSS_CAP:          return 2;
-    case CSSUnitType::CSS_CH:           return 3;
-    case CSSUnitType::CSS_CM:           return 4;
-    case CSSUnitType::CSS_CQB:          return 5;
-    case CSSUnitType::CSS_CQH:          return 6;
-    case CSSUnitType::CSS_CQI:          return 7;
-    case CSSUnitType::CSS_CQMAX:        return 8;
-    case CSSUnitType::CSS_CQMIN:        return 9;
-    case CSSUnitType::CSS_CQW:          return 10;
-    case CSSUnitType::CSS_DEG:          return 11;
-    case CSSUnitType::CSS_DPCM:         return 12;
-    case CSSUnitType::CSS_DPI:          return 13;
-    case CSSUnitType::CSS_DPPX:         return 14;
-    case CSSUnitType::CSS_DVB:          return 15;
-    case CSSUnitType::CSS_DVH:          return 16;
-    case CSSUnitType::CSS_DVI:          return 17;
-    case CSSUnitType::CSS_DVMAX:        return 18;
-    case CSSUnitType::CSS_DVMIN:        return 19;
-    case CSSUnitType::CSS_DVW:          return 20;
-    case CSSUnitType::CSS_EM:           return 21;
-    case CSSUnitType::CSS_EX:           return 22;
-    case CSSUnitType::CSS_FR:           return 23;
-    case CSSUnitType::CSS_GRAD:         return 24;
-    case CSSUnitType::CSS_HZ:           return 25;
-    case CSSUnitType::CSS_IC:           return 26;
-    case CSSUnitType::CSS_IN:           return 27;
-    case CSSUnitType::CSS_KHZ:          return 28;
-    case CSSUnitType::CSS_LH:           return 29;
-    case CSSUnitType::CSS_LVB:          return 30;
-    case CSSUnitType::CSS_LVH:          return 31;
-    case CSSUnitType::CSS_LVI:          return 32;
-    case CSSUnitType::CSS_LVMAX:        return 33;
-    case CSSUnitType::CSS_LVMIN:        return 34;
-    case CSSUnitType::CSS_LVW:          return 35;
-    case CSSUnitType::CSS_MM:           return 36;
-    case CSSUnitType::CSS_MS:           return 37;
-    case CSSUnitType::CSS_PC:           return 38;
-    case CSSUnitType::CSS_PT:           return 39;
-    case CSSUnitType::CSS_PX:           return 40;
-    case CSSUnitType::CSS_Q:            return 41;
-    case CSSUnitType::CSS_RAD:          return 42;
-    case CSSUnitType::CSS_RCAP:         return 43;
-    case CSSUnitType::CSS_RCH:          return 44;
-    case CSSUnitType::CSS_REM:          return 45;
-    case CSSUnitType::CSS_REX:          return 46;
-    case CSSUnitType::CSS_RIC:          return 47;
-    case CSSUnitType::CSS_RLH:          return 48;
-    case CSSUnitType::CSS_S:            return 49;
-    case CSSUnitType::CSS_SVB:          return 50;
-    case CSSUnitType::CSS_SVH:          return 51;
-    case CSSUnitType::CSS_SVI:          return 52;
-    case CSSUnitType::CSS_SVMAX:        return 53;
-    case CSSUnitType::CSS_SVMIN:        return 54;
-    case CSSUnitType::CSS_SVW:          return 55;
-    case CSSUnitType::CSS_TURN:         return 56;
-    case CSSUnitType::CSS_VB:           return 57;
-    case CSSUnitType::CSS_VH:           return 58;
-    case CSSUnitType::CSS_VI:           return 59;
-    case CSSUnitType::CSS_VMAX:         return 50;
-    case CSSUnitType::CSS_VMIN:         return 61;
-    case CSSUnitType::CSS_VW:           return 62;
-    case CSSUnitType::CSS_X:            return 63;
+    case CSSUnitType::Cap:          return 2;
+    case CSSUnitType::Ch:           return 3;
+    case CSSUnitType::Centimeter:           return 4;
+    case CSSUnitType::ContainerQueryBlockSize:          return 5;
+    case CSSUnitType::ContainerQueryHeight:          return 6;
+    case CSSUnitType::ContainerQueryInlineSize:          return 7;
+    case CSSUnitType::ContainerQueryMax:        return 8;
+    case CSSUnitType::ContainerQueryMin:        return 9;
+    case CSSUnitType::ContainerQueryWidth:          return 10;
+    case CSSUnitType::Degree:          return 11;
+    case CSSUnitType::DotsPerCentimeter:         return 12;
+    case CSSUnitType::DotsPerInch:          return 13;
+    case CSSUnitType::DotsPerPixel:         return 14;
+    case CSSUnitType::DynamicViewportBlockSize:          return 15;
+    case CSSUnitType::DynamicViewportHeight:          return 16;
+    case CSSUnitType::DynamicViewportInlineSize:          return 17;
+    case CSSUnitType::DynamicViewportMax:        return 18;
+    case CSSUnitType::DynamicViewportMin:        return 19;
+    case CSSUnitType::DynamicViewportWidth:          return 20;
+    case CSSUnitType::Em:           return 21;
+    case CSSUnitType::Ex:           return 22;
+    case CSSUnitType::Fr:           return 23;
+    case CSSUnitType::Gradian:         return 24;
+    case CSSUnitType::Hertz:           return 25;
+    case CSSUnitType::Ic:           return 26;
+    case CSSUnitType::Inch:           return 27;
+    case CSSUnitType::Kilohertz:          return 28;
+    case CSSUnitType::Lh:           return 29;
+    case CSSUnitType::LargeViewportBlockSize:          return 30;
+    case CSSUnitType::LargeViewportHeight:          return 31;
+    case CSSUnitType::LargeViewportInlineSize:          return 32;
+    case CSSUnitType::LargeViewportMax:        return 33;
+    case CSSUnitType::LargeViewportMin:        return 34;
+    case CSSUnitType::LargeViewportWidth:          return 35;
+    case CSSUnitType::Millimeter:           return 36;
+    case CSSUnitType::Millisecond:           return 37;
+    case CSSUnitType::Pica:           return 38;
+    case CSSUnitType::Point:           return 39;
+    case CSSUnitType::Pixel:           return 40;
+    case CSSUnitType::QuarterMillimeter:            return 41;
+    case CSSUnitType::Radian:          return 42;
+    case CSSUnitType::Rcap:         return 43;
+    case CSSUnitType::Rch:          return 44;
+    case CSSUnitType::Rem:          return 45;
+    case CSSUnitType::Rex:          return 46;
+    case CSSUnitType::Ric:          return 47;
+    case CSSUnitType::Rlh:          return 48;
+    case CSSUnitType::Second:            return 49;
+    case CSSUnitType::SmallViewportBlockSize:          return 50;
+    case CSSUnitType::SmallViewportHeight:          return 51;
+    case CSSUnitType::SmallViewportInlineSize:          return 52;
+    case CSSUnitType::SmallViewportMax:        return 53;
+    case CSSUnitType::SmallViewportMin:        return 54;
+    case CSSUnitType::SmallViewportWidth:          return 55;
+    case CSSUnitType::Turn:         return 56;
+    case CSSUnitType::ViewportPercentageBlockSize:           return 57;
+    case CSSUnitType::ViewportPercentageHeight:           return 58;
+    case CSSUnitType::ViewportPercentageInlineSize:           return 59;
+    case CSSUnitType::ViewportPercentageMax:         return 50;
+    case CSSUnitType::ViewportPercentageMin:         return 61;
+    case CSSUnitType::ViewportPercentageWidth:           return 62;
+    case CSSUnitType::X:            return 63;
 
     // Non-numeric types are not supported.
-    case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_CALC:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_DIMENSION:
-    case CSSUnitType::CSS_FONT_FAMILY:
-    case CSSUnitType::CSS_IDENT:
-    case CSSUnitType::CSS_PROPERTY_ID:
-    case CSSUnitType::CSS_QUIRKY_EM:
-    case CSSUnitType::CSS_STRING:
-    case CSSUnitType::CSS_UNKNOWN:
-    case CSSUnitType::CSS_VALUE_ID:
+    case CSSUnitType::Attr:
+    case CSSUnitType::Calc:
+    case CSSUnitType::CalcPercentageWithAngle:
+    case CSSUnitType::CalcPercentageWithLength:
+    case CSSUnitType::Dimension:
+    case CSSUnitType::FontFamily:
+    case CSSUnitType::Ident:
+    case CSSUnitType::PropertyId:
+    case CSSUnitType::QuirkyEm:
+    case CSSUnitType::String:
+    case CSSUnitType::Unknown:
+    case CSSUnitType::ValueId:
     case CSSUnitType::CustomIdent:
         break;
     }

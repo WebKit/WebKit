@@ -282,10 +282,10 @@ template<typename Descriptor>
 static std::optional<CSS::Color> consumeRelativeFunctionParameters(CSSParserTokenRange& args, ColorParserState& state, CSS::Color&& originColor)
 {
     const CSSCalcSymbolsAllowed symbolsAllowed {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
-        { std::get<1>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
-        { std::get<2>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER },
-        { std::get<3>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER }
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number }
     };
 
     auto c1 = consumeRelativeComponent<Descriptor, 0>(args, state, symbolsAllowed);

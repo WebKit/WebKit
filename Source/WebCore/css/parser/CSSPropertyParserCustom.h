@@ -631,7 +631,7 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
                 else if (!flexShrink)
                     flexShrink = WTFMove(number);
                 else if (number->isZero() == true) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
-                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
+                    flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Pixel);
                 else
                     return false;
             } else if (!flexBasis) {
@@ -655,7 +655,7 @@ inline bool PropertyParserCustom::consumeFlexShorthand(CSSParserTokenRange& rang
         // if turned back on for nested columns, etc.). We have layout test coverage of both
         // scenarios.
         if (!flexBasis)
-            flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PERCENTAGE);
+            flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::Percentage);
     }
 
     if (!range.atEnd())

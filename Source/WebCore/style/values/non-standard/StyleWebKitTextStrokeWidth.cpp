@@ -42,7 +42,7 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
         return 0_css_px;
 
     auto handleKeyword = [&](double result) -> WebkitTextStrokeWidth {
-        Ref emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
+        Ref emsValue = CSSPrimitiveValue::create(result, CSSUnitType::Em);
         return toStyleFromCSSValue<WebkitTextStrokeWidth::Length>(state, emsValue);
     };
 

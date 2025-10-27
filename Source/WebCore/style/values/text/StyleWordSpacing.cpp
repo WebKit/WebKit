@@ -59,7 +59,7 @@ auto CSSValueConversion<WordSpacing>::operator()(BuilderState& state, const CSSV
             typename WordSpacing::Fixed {
                 CSS::clampToRange<WordSpacing::Fixed::range, float>(primitiveValue->resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength),
             },
-            primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM
+            primitiveValue->primitiveType() == CSSUnitType::QuirkyEm
         };
     }
 

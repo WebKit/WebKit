@@ -935,21 +935,21 @@ std::optional<Type> toType(const Progress&);
 constexpr CSSUnitType toCSSUnit(const CanonicalDimension::Dimension& dimension)
 {
     switch (dimension) {
-    case CanonicalDimension::Dimension::Length:         return CSSUnitType::CSS_PX;
-    case CanonicalDimension::Dimension::Angle:          return CSSUnitType::CSS_DEG;
-    case CanonicalDimension::Dimension::Time:           return CSSUnitType::CSS_S;
-    case CanonicalDimension::Dimension::Frequency:      return CSSUnitType::CSS_HZ;
-    case CanonicalDimension::Dimension::Resolution:     return CSSUnitType::CSS_DPPX;
-    case CanonicalDimension::Dimension::Flex:           return CSSUnitType::CSS_FR;
+    case CanonicalDimension::Dimension::Length:         return CSSUnitType::Pixel;
+    case CanonicalDimension::Dimension::Angle:          return CSSUnitType::Degree;
+    case CanonicalDimension::Dimension::Time:           return CSSUnitType::Second;
+    case CanonicalDimension::Dimension::Frequency:      return CSSUnitType::Hertz;
+    case CanonicalDimension::Dimension::Resolution:     return CSSUnitType::DotsPerPixel;
+    case CanonicalDimension::Dimension::Flex:           return CSSUnitType::Fr;
     }
 
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return CSSUnitType::CSS_PX;
+    return CSSUnitType::Pixel;
 }
 
 // Maps Numeric type to its CSSUnitType counterpart.
-constexpr CSSUnitType toCSSUnit(const Number&) { return CSSUnitType::CSS_NUMBER; }
-constexpr CSSUnitType toCSSUnit(const Percentage&) { return CSSUnitType::CSS_PERCENTAGE; }
+constexpr CSSUnitType toCSSUnit(const Number&) { return CSSUnitType::Number; }
+constexpr CSSUnitType toCSSUnit(const Percentage&) { return CSSUnitType::Percentage; }
 constexpr CSSUnitType toCSSUnit(const CanonicalDimension& dimension) { return toCSSUnit(dimension.dimension); }
 constexpr CSSUnitType toCSSUnit(const NonCanonicalDimension& dimension) { return dimension.unit; }
 
