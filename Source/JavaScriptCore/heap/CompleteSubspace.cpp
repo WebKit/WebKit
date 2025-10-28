@@ -120,7 +120,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
 
     if (Allocator allocator = allocatorForNonInline(size, AllocatorForMode::EnsureAllocator))
         return allocator.allocate(vm.heap, allocator.cellSize(), deferralContext, AllocationFailureMode::ReturnNull);
-    
+
     if (size <= Options::preciseAllocationCutoff()
         && size <= MarkedSpace::largeCutoff) {
         dataLog("FATAL: attampting to allocate small object using large allocation.\n");
@@ -210,4 +210,3 @@ void CompleteSubspace::prepareAllAllocators()
 }
 
 } // namespace JSC
-

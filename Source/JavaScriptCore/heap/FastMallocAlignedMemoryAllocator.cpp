@@ -41,6 +41,8 @@ FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator() = default;
 
 void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::tryAlignedMalloc(Gigacage::Primitive, alignment, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.memalign(alignment, size, true);
 #else
@@ -51,6 +53,8 @@ void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignmen
 
 void FastMallocAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::alignedFree(Gigacage::Primitive, basePtr);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.free(basePtr);
 #else
@@ -66,6 +70,8 @@ void FastMallocAlignedMemoryAllocator::dump(PrintStream& out) const
 
 void* FastMallocAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::tryMalloc(Gigacage::Primitive, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.malloc(size);
 #else
@@ -75,6 +81,8 @@ void* FastMallocAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 
 void FastMallocAlignedMemoryAllocator::freeMemory(void* pointer)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::free(Gigacage::Primitive, pointer);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.free(pointer);
 #else
@@ -84,6 +92,8 @@ void FastMallocAlignedMemoryAllocator::freeMemory(void* pointer)
 
 void* FastMallocAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_t size)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::tryRealloc(Gigacage::Primitive, pointer, size);
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.realloc(pointer, size);
 #else
@@ -92,4 +102,3 @@ void* FastMallocAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_
 }
 
 } // namespace JSC
-

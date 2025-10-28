@@ -82,7 +82,7 @@ void* StructureAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
+#if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT) && !USE(COMPRESSED_HEAP)
 #if !USE(SYSTEM_MALLOC)
 
 static const bmalloc_type structureHeapType { BMALLOC_TYPE_INITIALIZER(MarkedBlock::blockSize, MarkedBlock::blockSize, "Structure Heap") };
@@ -98,6 +98,7 @@ public:
         uintptr_t mappedHeapSize = structureHeapAddressSize;
         for (unsigned i = 0; i < 8; ++i) {
             g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(mappedHeapSize, structureHeapAddressSize, OSAllocator::FastMallocPages));
+
             if (g_jscConfig.startOfStructureHeap)
                 break;
             mappedHeapSize /= 2;
@@ -231,19 +232,28 @@ void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 
 void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 {
-    g_jscConfig.startOfStructureHeap = 0;
-    g_jscConfig.sizeOfStructureHeap = UINTPTR_MAX;
+    if constexpr (useCompressedHeap && is64Bit()) {
+        g_jscConfig.startOfStructureHeap = std::bit_cast<uintptr_t>(Gigacage::basePtr(Gigacage::Primitive));
+        g_jscConfig.sizeOfStructureHeap = Gigacage::size(Gigacage::Primitive);
+    }else {
+        g_jscConfig.startOfStructureHeap = 0;
+        g_jscConfig.sizeOfStructureHeap = UINTPTR_MAX;
+    }
 }
 
 void* StructureAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {
     ASSERT_UNUSED(alignment, alignment == MarkedBlock::blockSize);
     ASSERT_UNUSED(size, size == MarkedBlock::blockSize);
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::tryAlignedMalloc(Gigacage::Primitive, MarkedBlock::blockSize, MarkedBlock::blockSize);
     return tryFastCompactAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
 }
 
 void StructureAlignedMemoryAllocator::freeAlignedMemory(void* block)
 {
+    if constexpr (useCompressedHeap && is64Bit())
+        return Gigacage::alignedFree(Gigacage::Primitive, block);
     fastAlignedFree(block);
 }
 

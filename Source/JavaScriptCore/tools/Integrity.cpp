@@ -252,11 +252,14 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
         AUDIT_VERIFY(cellIsProperlyAligned,
             "cell %p cell.type %d allocator.cellSize %zu", cell, cell->type(), allocatorCellSize);
     }
-
+    
     JSType cellType = cell->type();
-    if (cell->type() != JSCellButterflyType)
-        AUDIT_VERIFY(!Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
 
+    if constexpr (useCompressedHeap && is64Bit())
+        AUDIT_VERIFY(Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
+    else
+        AUDIT_VERIFY(cell->type() == JSCellButterflyType || !Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
+    
     WeakSet& weakSet = cell->cellContainer().weakSet();
     AUDIT_VERIFY(!weakSet.m_allocator || isSanePointer(weakSet.m_allocator),
         "cell %p cell.type %d weakSet.allocator %p", cell, cell->type(), weakSet.m_allocator);

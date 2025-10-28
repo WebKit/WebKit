@@ -438,7 +438,7 @@
 
 #if !defined(USE_COMPRESSED_HEAP)
 /* Change run-jsc-stress-tests too. */
-#define USE_COMPRESSED_HEAP 0
+#define USE_COMPRESSED_HEAP 1
 #endif
 
 #if defined(__cplusplus)

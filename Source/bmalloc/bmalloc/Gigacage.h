@@ -47,6 +47,8 @@
 #define GIGACAGE_ENABLED 0
 #endif
 
+#define BUSE_COMPRESSED_HEAP 1
+
 
 namespace Gigacage {
 
@@ -62,7 +64,7 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
-constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
+constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36 && !BUSE_COMPRESSED_HEAP;
 
 #if GIGACAGE_ENABLED
 
@@ -73,7 +75,7 @@ constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacag
 // In Linux, if `vm.overcommit_memory = 2` is specified, mmap with large size can fail if it exceeds the size of RAM.
 // So we specify GIGACAGE_ALLOCATION_CAN_FAIL = 1.
 #if BOS(LINUX)
-#define GIGACAGE_ALLOCATION_CAN_FAIL 1
+#define GIGACAGE_ALLOCATION_CAN_FAIL !BUSE_COMPRESSED_HEAP
 #else
 #define GIGACAGE_ALLOCATION_CAN_FAIL 0
 #endif

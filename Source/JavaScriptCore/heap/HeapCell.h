@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <JavaScriptCore/CPU.h>
 #include <JavaScriptCore/DestructionMode.h>
 #include <JavaScriptCore/EnsureStillAliveHere.h>
+#include <wtf/Gigacage.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -48,7 +50,10 @@ public:
         Auxiliary
     };
     
-    HeapCell() { }
+    HeapCell() {
+        if constexpr (useCompressedHeap && is64Bit())
+            RELEASE_ASSERT(Gigacage::contains(this));
+    }
     
     // We're intentionally only zapping the bits for the structureID and leaving
     // the rest of the cell header bits intact for crash analysis uses.

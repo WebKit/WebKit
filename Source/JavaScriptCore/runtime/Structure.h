@@ -239,12 +239,16 @@ protected:
             }
         }
         previous->fireStructureTransitionWatchpoint(deferred);
+        if constexpr (useCompressedHeap)
+            id(); // Run assertions that this was allocated correctly.
     }
 
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
         ASSERT(m_prototype.get().isEmpty() || isValidPrototype(m_prototype.get()));
+        if constexpr (useCompressedHeap)
+            id(); // Run assertions that this was allocated correctly.
     }
 
 private:

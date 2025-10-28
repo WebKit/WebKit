@@ -42,6 +42,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSStringInlines.h>
 #include <JavaScriptCore/MathCommon.h>
+#include <JavaScriptCore/Scribble.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
 
@@ -444,11 +445,15 @@ inline JSValue::JSValue(HashTableDeletedValueTag)
 inline JSValue::JSValue(JSCell* ptr)
 {
     u.asInt64 = reinterpret_cast<uintptr_t>(ptr);
+    if constexpr (useCompressedHeap && is64Bit())
+        RELEASE_ASSERT(!u.ptr || u.asInt64 == SCRIBBLE_WORD ||u.ptr == JSCell::seenMultipleCalleeObjects() || Gigacage::contains(u.ptr));
 }
 
 inline JSValue::JSValue(const JSCell* ptr)
 {
     u.asInt64 = reinterpret_cast<uintptr_t>(const_cast<JSCell*>(ptr));
+    if constexpr (useCompressedHeap && is64Bit())
+        RELEASE_ASSERT(!u.ptr || u.asInt64 == SCRIBBLE_WORD ||u.ptr == JSCell::seenMultipleCalleeObjects() || Gigacage::contains(u.ptr));
 }
 
 inline JSValue::operator bool() const
@@ -578,6 +583,8 @@ inline bool JSValue::isNumber() const
 ALWAYS_INLINE JSCell* JSValue::asCell() const
 {
     ASSERT(isCell());
+    if constexpr (useCompressedHeap && is64Bit())
+        RELEASE_ASSERT(!u.ptr || u.asInt64 == SCRIBBLE_WORD ||u.ptr == JSCell::seenMultipleCalleeObjects() || Gigacage::contains(u.ptr));
     return u.ptr;
 }
 
