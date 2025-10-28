@@ -8995,6 +8995,22 @@ WebAuthenticationEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+WebAuthenticationSecureEnabled:
+  type: bool
+  status: preview
+  category: security
+  humanReadableName: "Secure Web Authentication API"
+  humanReadableDescription: "Protect WebAuthn credentials API from being overridden by scripts and extensions"
+  condition: ENABLE(WEB_AUTHN)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 WebCodecsAV1Enabled:
   type: bool
   status: preview

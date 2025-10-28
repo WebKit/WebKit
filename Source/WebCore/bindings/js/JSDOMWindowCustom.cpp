@@ -58,6 +58,14 @@
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/Structure.h>
 
+#if ENABLE(WEB_AUTHN)
+#include "JSCredentialsContainer.h"
+#include "JSNavigator.h"
+#include "Navigator.h"
+#include "NavigatorCredentials.h"
+#include <JavaScriptCore/ProxyObject.h>
+#endif
+
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"
 #endif
@@ -72,6 +80,11 @@ using namespace JSC;
 static JSC_DECLARE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase);
 #if ENABLE(USER_MESSAGE_HANDLERS)
 static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_webkit);
+#endif
+
+#if ENABLE(WEB_AUTHN)
+static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_navigatorWithCredentialsProtection);
+static JSC_DECLARE_HOST_FUNCTION(navigatorProxyGetTrap);
 #endif
 
 template<typename Visitor>
@@ -98,6 +111,77 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_webkit, (JSGlobalObject* lexicalGlobalObjec
     if (!localDOMWindow)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS(lexicalGlobalObject, castedThis->globalObject(), localDOMWindow->webkitNamespace()));
+}
+#endif
+
+#if ENABLE(WEB_AUTHN)
+JSC_DEFINE_HOST_FUNCTION(navigatorProxyGetTrap, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (callFrame->argumentCount() < 2)
+        return JSValue::encode(jsUndefined());
+
+    JSValue target = callFrame->argument(0);
+    JSValue property = callFrame->argument(1);
+
+    if (!property.isString())
+        return JSValue::encode(jsUndefined());
+
+    String propertyString = asString(property)->value(lexicalGlobalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (propertyString == "credentials"_s) {
+        auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
+        if (!jsDOMWindow)
+            return JSValue::encode(jsUndefined());
+
+        RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(jsDOMWindow->wrapped());
+        if (!localDOMWindow)
+            return JSValue::encode(jsUndefined());
+
+        if (RefPtr frame = localDOMWindow->frame()) {
+            if (frame->settings().webAuthenticationSecureEnabled()) {
+                auto& realNavigator = localDOMWindow->navigator();
+                auto* realCredentials = NavigatorCredentials::credentials(realNavigator);
+                if (!realCredentials)
+                    return JSValue::encode(jsUndefined());
+                return JSValue::encode(toJS(lexicalGlobalObject, jsDOMWindow->globalObject(), realCredentials));
+            }
+        }
+    }
+
+    if (!target.isObject())
+        return JSValue::encode(jsUndefined());
+
+    scope.release();
+    return JSValue::encode(asObject(target)->get(lexicalGlobalObject, Identifier::fromString(vm, propertyString)));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsDOMWindow_navigatorWithCredentialsProtection, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
+{
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* castedThis = toJSDOMGlobalObject<JSDOMWindow>(vm, JSValue::decode(thisValue));
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped()))
+        return JSValue::encode(jsUndefined());
+
+    RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(castedThis->wrapped());
+    if (!localDOMWindow)
+        return JSValue::encode(jsUndefined());
+
+    auto& realNavigator = localDOMWindow->navigator();
+    JSValue realNavigatorValue = toJS(lexicalGlobalObject, castedThis->globalObject(), &realNavigator);
+
+    // Always wrap navigator in a proxy that protects .credentials access
+    // This handles both direct assignment and Object.defineProperty shadowing
+    JSObject* handler = constructEmptyObject(lexicalGlobalObject);
+    JSFunction* getTrap = JSFunction::create(vm, lexicalGlobalObject, 2, "get"_s, navigatorProxyGetTrap, ImplementationVisibility::Public);
+    handler->putDirect(vm, vm.propertyNames->get, getTrap);
+
+    scope.release();
+    return JSValue::encode(ProxyObject::create(lexicalGlobalObject, asObject(realNavigatorValue), handler));
 }
 #endif
 
@@ -210,12 +294,6 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
     if (thisObject->m_windowCloseWatchpoints->isStillValid())
         slot.setWatchpointSet(*thisObject->m_windowCloseWatchpoints);
 
-    // (2) Regular own properties.
-    if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
-        return true;
-    if (slot.isVMInquiry() && slot.isTaintedByOpaqueObject()) [[unlikely]]
-        return false;
-
 #if ENABLE(USER_MESSAGE_HANDLERS)
     RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
     if (propertyName == builtinNames(lexicalGlobalObject->vm()).webkitPublicName() && localDOMWindow && localDOMWindow->shouldHaveWebKitNamespaceForWorld(thisObject->world(), lexicalGlobalObject)) {
@@ -223,6 +301,26 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
         return true;
     }
 #endif
+
+#if ENABLE(WEB_AUTHN)
+#if !ENABLE(USER_MESSAGE_HANDLERS)
+    RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
+#endif
+    if (propertyName == Identifier::fromString(lexicalGlobalObject->vm(), "navigator"_s) && localDOMWindow) {
+        if (RefPtr frame = localDOMWindow->frame()) {
+            if (frame->settings().webAuthenticationSecureEnabled()) {
+                slot.setCustom(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::DontDelete), jsDOMWindow_navigatorWithCredentialsProtection);
+                return true;
+            }
+        }
+    }
+#endif
+
+    // (2) Regular own properties.
+    if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
+        return true;
+    if (slot.isVMInquiry() && slot.isTaintedByOpaqueObject()) [[unlikely]]
+        return false;
 
     return false;
 }
@@ -283,6 +381,18 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
         throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
         return false;
     }
+
+#if ENABLE(WEB_AUTHN)
+    if (propertyName == Identifier::fromString(vm, "PublicKeyCredential"_s)) {
+        RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
+        if (localDOMWindow) {
+            if (RefPtr frame = localDOMWindow->frame()) {
+                if (frame->settings().webAuthenticationSecureEnabled())
+                    return false;
+            }
+        }
+    }
+#endif
 
     if (parseIndex(propertyName) && !allowsLegacyExpandoIndexedProperties())
         return typeError(lexicalGlobalObject, scope, slot.isStrictMode(), makeUnsupportedIndexedSetterErrorMessage("Window"_s));

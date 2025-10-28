@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ WebAuthenticationSecureEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+    </script>
+</head>
+<body>
+    <pre id="console"></pre>
+    <script>
+        if (this.testRunner)
+            testRunner.dumpAsText();
+        // Test window.PublicKeyCredential replacement
+        var originalPublicKeyCredential = window.PublicKeyCredential;
+        window.PublicKeyCredential = 1;
+        log(window.PublicKeyCredential === originalPublicKeyCredential ? "PASS: window.PublicKeyCredential cannot be overridden" : "FAIL: window.PublicKeyCredential was overridden");
+
+        // Test CredentialsContainer.get protection
+        var originalGet = navigator.credentials.get;
+        navigator.credentials.get = 1;
+        log(navigator.credentials.get === originalGet ? "PASS: navigator.credentials.get cannot be overridden" : "FAIL: navigator.credentials.get was overridden");
+
+        // Test CredentialsContainer.create protection
+        var originalCreate = navigator.credentials.create;
+        navigator.credentials.create = 1;
+        log(navigator.credentials.create === originalCreate ? "PASS: navigator.credentials.create cannot be overridden" : "FAIL: navigator.credentials.create was overridden");
+
+        // Test navigator shadowing protection
+        var realCredentials = navigator.credentials;
+        window.navigator = {};
+        log(navigator.credentials === realCredentials ? "PASS: navigator.credentials returns real object even when navigator is shadowed" : "FAIL: navigator.credentials was affected by shadowing");
+
+        // Test navigator shadowing via Object.defineProperty
+        var realCredentials2 = navigator.credentials;
+        try {
+            Object.defineProperty(window, 'navigator', {
+                value: { credentials: { get: function() { return "fake"; }, create: function() { return "fake"; } } },
+                writable: false,
+                configurable: true
+            });
+            log(navigator.credentials === realCredentials2 ? "PASS: navigator.credentials returns real object even when navigator is redefined via Object.defineProperty" : "FAIL: navigator.credentials was affected by Object.defineProperty");
+        } catch (e) {
+            log("PASS: Object.defineProperty on navigator blocked: " + e.message);
+        }
+
+        // Test navigator.credentials shadowing via Object.defineProperty
+        var realCredentials3 = navigator.credentials;
+        try {
+            Object.defineProperty(navigator, 'credentials', {
+                value: { get: function() { return "fake"; }, create: function() { return "fake"; } },
+                writable: false,
+                configurable: true
+            });
+            log(navigator.credentials === realCredentials3 ? "PASS: navigator.credentials cannot be redefined via Object.defineProperty" : "FAIL: navigator.credentials was redefined via Object.defineProperty");
+        } catch (e) {
+            log("PASS: Object.defineProperty on navigator.credentials blocked: " + e.message);
+        }
+
+        // Test Object.defineProperty on credentials.get
+        var realGet2 = navigator.credentials.get;
+        try {
+            Object.defineProperty(navigator.credentials, 'get', {
+                value: function() { return "fake"; },
+                writable: false,
+                configurable: true
+            });
+            log(navigator.credentials.get === realGet2 ? "PASS: credentials.get cannot be redefined via Object.defineProperty" : "FAIL: credentials.get was redefined via Object.defineProperty");
+        } catch (e) {
+            log("PASS: Object.defineProperty on credentials.get blocked: " + e.message);
+        }
+
+        // Test Object.defineProperty on credentials.create
+        var realCreate2 = navigator.credentials.create;
+        try {
+            Object.defineProperty(navigator.credentials, 'create', {
+                value: function() { return "fake"; },
+                writable: false,
+                configurable: true
+            });
+            log(navigator.credentials.create === realCreate2 ? "PASS: credentials.create cannot be redefined via Object.defineProperty" : "FAIL: credentials.create was redefined via Object.defineProperty");
+        } catch (e) {
+            log("PASS: Object.defineProperty on credentials.create blocked: " + e.message);
+        }
+
+        // Test PublicKeyCredential.isConditionalMediationAvailable protection
+        var originalIsConditional = PublicKeyCredential.isConditionalMediationAvailable;
+        PublicKeyCredential.isConditionalMediationAvailable = 1;
+        log(PublicKeyCredential.isConditionalMediationAvailable === originalIsConditional ? "PASS: PublicKeyCredential.isConditionalMediationAvailable cannot be overridden" : "FAIL: PublicKeyCredential.isConditionalMediationAvailable was overridden");
+
+        // Test PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable protection
+        var originalIsUserVerifying = PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable;
+        PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable = 1;
+        log(PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === originalIsUserVerifying ? "PASS: PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable cannot be overridden" : "FAIL: PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable was overridden");
+
+        // Test PublicKeyCredential.getClientCapabilities protection
+        var originalGetClientCaps = PublicKeyCredential.getClientCapabilities;
+        PublicKeyCredential.getClientCapabilities = 1;
+        log(PublicKeyCredential.getClientCapabilities === originalGetClientCaps ? "PASS: PublicKeyCredential.getClientCapabilities cannot be overridden" : "FAIL: PublicKeyCredential.getClientCapabilities was overridden");
+    </script>
+</body>
+</html>

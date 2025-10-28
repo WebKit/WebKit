@@ -88,6 +88,10 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "ConditionallyUnforgeableBySetting": {
+            "contextsAllowed": ["attribute", "operation"],
+            "values": ["*"]
+        },
         "ConstantsScope": {
             "contextsAllowed": ["interface"],
             "values": ["*"]

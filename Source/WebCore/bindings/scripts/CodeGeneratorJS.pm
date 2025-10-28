@@ -5171,6 +5171,25 @@ sub GenerateImplementation
         push(@finishCreation, "#endif\n") if $conditionalString;
         $hasNonTrivialFinishCreation = 1;
     }
+
+    # Support for ConditionallyUnforgeableBySetting instance operations
+    my @conditionallyUnforgeableInstanceOps = grep { $_->extendedAttributes->{ConditionallyUnforgeableBySetting} && !$_->isStatic } @{$interface->operations};
+    foreach my $operation (@conditionallyUnforgeableInstanceOps) {
+        next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
+        my $functionName = $operation->name;
+        my $settingName = $operation->extendedAttributes->{ConditionallyUnforgeableBySetting};
+        my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
+        push(@finishCreation, "#if ${conditionalString}\n") if $conditionalString;
+        push(@finishCreation, "    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues()." . ToMethodName($settingName) . ") {\n");
+        push(@finishCreation, "        auto propertyName = Identifier::fromString(vm, \"$functionName\"_s);\n");
+        push(@finishCreation, "        auto value = get(globalObject(), propertyName);\n");
+        push(@finishCreation, "        if (value)\n");
+        push(@finishCreation, "            putDirect(vm, propertyName, value, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);\n");
+        push(@finishCreation, "    }\n");
+        push(@finishCreation, "#endif\n") if $conditionalString;
+        $hasNonTrivialFinishCreation = 1;
+    }
+
     if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
         push(@finishCreation, "    vm.heap.reportExtraMemoryAllocated(this, wrapped().memoryCost());\n");
         $hasNonTrivialFinishCreation = 1;
@@ -8627,6 +8646,22 @@ sub GenerateConstructorHelperMethods
         $classForThis = "nullptr";
     }
     push(@$outputArray, "    reifyStaticProperties(vm, ${classForThis}, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
+
+    # Handle ConditionallyUnforgeableBySetting static properties
+    my @conditionallyUnforgeableProperties = grep { $_->extendedAttributes->{ConditionallyUnforgeableBySetting} && $_->isStatic } @{$interface->operations}, @{$interface->attributes};
+    foreach my $property (@conditionallyUnforgeableProperties) {
+        my $name = $property->name;
+        my $settingName = $property->extendedAttributes->{ConditionallyUnforgeableBySetting};
+        my $conditionalString = $codeGenerator->GenerateConditionalString($property);
+        push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
+        push(@$outputArray, "    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settingsValues()." . ToMethodName($settingName) . ") {\n");
+        push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, \"$name\"_s);\n");
+        push(@$outputArray, "        auto value = getDirect(vm, propertyName);\n");
+        push(@$outputArray, "        if (value)\n");
+        push(@$outputArray, "            putDirect(vm, propertyName, value, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);\n");
+        push(@$outputArray, "    }\n");
+        push(@$outputArray, "#endif\n") if $conditionalString;
+    }
 
     my @runtimeEnabledProperties = GetRuntimeEnabledStaticProperties($interface);
 

@@ -866,6 +866,7 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
                     && ![feature.key isEqualToString:@"BeaconAPIEnabled"]
                     && ![feature.key isEqualToString:@"LocalFileContentSniffingEnabled"]
                     && ![feature.key isEqualToString:@"HTTPSByDefaultEnabled"]
+                    && ![feature.key isEqualToString:@"WebAuthenticationSecureEnabled"]
                     && ![feature.key isEqualToString:@"DeclarativeWebPush"]) {
                     [preferences _setEnabled:YES forFeature:feature];
                 }
