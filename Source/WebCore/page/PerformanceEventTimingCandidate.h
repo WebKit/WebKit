@@ -28,6 +28,7 @@
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTimingInteractionID.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -41,6 +42,7 @@ struct PerformanceEventTimingCandidate {
     Seconds processingEnd;
     Seconds duration;
     WeakPtr<EventTarget, EventTarget::WeakPtrImplType> target;
+    String targetSelector;
     EventTimingInteractionID interactionID;
 };
 

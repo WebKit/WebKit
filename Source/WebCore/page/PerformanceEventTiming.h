@@ -46,6 +46,7 @@ public:
     DOMHighResTimeStamp processingEnd() const { return m_processingEnd.milliseconds(); }
     bool cancelable() const { return m_cancelable; }
     Node* target() const;
+    String targetSelector() const { return m_targetSelector; }
     uint64_t interactionId() const;
 
     Type performanceEntryType() const final;
@@ -65,6 +66,7 @@ private:
     Seconds m_processingEnd;
     EventTimingInteractionID m_interactionID;
     WeakPtr<EventTarget, EventTarget::WeakPtrImplType> m_target;
+    String m_targetSelector;
 };
 
 } // namespace WebCore

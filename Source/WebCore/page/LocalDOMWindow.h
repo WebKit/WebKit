@@ -286,6 +286,7 @@ public:
     PerformanceEventTimingCandidate initializeEventTimingEntry(Event&, EventType);
     void finalizeEventTimingEntry(PerformanceEventTimingCandidate&, const Event&, EventType);
     void dispatchPendingEventTimingEntries();
+    String generateCSSSelector(EventTarget&);
     uint64_t interactionCount() { return m_interactionCount; }
     // Misleading function names that mirror the spec; see https://github.com/w3c/event-timing/issues/158 :
     bool hasDispatchedInputEvent() const { return m_hasDispatchedInputEvent; }
@@ -464,7 +465,9 @@ private:
         PerformanceEventTimingCandidate keyDown;
         std::optional<PerformanceEventTimingCandidate> keyPress { std::nullopt };
     };
-    HashMap<int64_t, PendingKeyDownState, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_pendingKeyDowns;
+
+    Vector<int64_t, 8> m_pendingKeys;
+    Vector<PendingKeyDownState> m_pendingKeyDowns;
 
     EventTimingInteractionID m_userInteractionValue;
     uint64_t m_interactionCount { 0 };

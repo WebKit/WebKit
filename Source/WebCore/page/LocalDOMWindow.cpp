@@ -66,6 +66,7 @@
 #include "DocumentWindow.h"
 #include "Editor.h"
 #include "Element.h"
+#include "ElementInlines.h"
 #include "EventCounts.h"
 #include "EventHandler.h"
 #include "EventListener.h"
@@ -2518,27 +2519,34 @@ EventTimingInteractionID LocalDOMWindow::computeInteractionID(Event& event, Even
         if (keyboardEvent->isComposing())
             return { };
 
-        auto it = m_pendingKeyDowns.find(keyboardEvent->keyCode());
-        if (it == m_pendingKeyDowns.end())
+        auto index = m_pendingKeys.find(keyboardEvent->keyCode());
+        if (index == WTF::notFound)
             return { };
 
-        auto interactionID = it->value.keyDown.interactionID.isUnassigned() ? generateInteractionID() : it->value.keyDown.interactionID;
-        it->value.keyDown.interactionID = interactionID;
-        m_performanceEventTimingCandidates.append(it->value.keyDown);
-        if (it->value.keyPress) {
-            it->value.keyPress->interactionID = interactionID;
-            m_performanceEventTimingCandidates.append(*it->value.keyPress);
+        auto& keyPressData = m_pendingKeyDowns[index];
+        auto interactionID = keyPressData.keyDown.interactionID.isUnassigned() ? generateInteractionID() : keyPressData.keyDown.interactionID;
+        keyPressData.keyDown.interactionID = interactionID;
+        m_performanceEventTimingCandidates.append(keyPressData.keyDown);
+        if (keyPressData.keyPress) {
+            keyPressData.keyPress->interactionID = interactionID;
+            m_performanceEventTimingCandidates.append(*keyPressData.keyPress);
         }
-        m_pendingKeyDowns.remove(it);
+        m_pendingKeys[index] = m_pendingKeys.last();
+        m_pendingKeyDowns[index] = m_pendingKeyDowns.last();
+        m_pendingKeys.removeLast();
+        m_pendingKeyDowns.removeLast();
+
         keyboardEvent->setInteractionID(interactionID);
         return interactionID;
     }
     case EventType::compositionstart: {
         for (auto& pendingEntry : m_pendingKeyDowns) {
-            m_performanceEventTimingCandidates.append(pendingEntry.value.keyDown);
-            if (pendingEntry.value.keyPress)
-                m_performanceEventTimingCandidates.append(*pendingEntry.value.keyPress);
+            m_performanceEventTimingCandidates.append(pendingEntry.keyDown);
+            if (pendingEntry.keyPress)
+                m_performanceEventTimingCandidates.append(*pendingEntry.keyPress);
         }
+
+        m_pendingKeys.clear();
         m_pendingKeyDowns.clear();
         return { };
     }
@@ -2628,6 +2636,27 @@ EventTimingInteractionID LocalDOMWindow::generateInteractionIDWithoutIncreasingI
     return ensureUserInteractionValue();
 }
 
+String LocalDOMWindow::generateCSSSelector(EventTarget& target)
+{
+    if (!target.isNode())
+        return ""_s;
+
+    auto node = downcast<Node>(&target);
+
+    if (!node->isElementNode())
+        return node->nodeName();
+
+    auto element = downcast<Element>(node);
+    if (element->elementData() && element->elementData()->hasID())
+        return makeString(node->nodeName(), ", #"_s, element->elementData()->idForStyleResolution().string());
+
+    auto& src = element->attributeWithoutSynchronization(HTMLNames::srcAttr);
+    if (!src.isNull())
+        return makeString(node->nodeName(), "[src="_s, src , "]"_s);
+
+    return node->nodeName();
+}
+
 PerformanceEventTimingCandidate LocalDOMWindow::initializeEventTimingEntry(Event& event, EventType type)
 {
     auto startTime = performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(event.timeStamp());
@@ -2644,6 +2673,7 @@ PerformanceEventTimingCandidate LocalDOMWindow::initializeEventTimingEntry(Event
         .processingEnd = { },
         .duration = { },
         .target = { },
+        .targetSelector = { },
         .interactionID = computeInteractionID(event, type)
     };
 }
@@ -2653,6 +2683,8 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
     auto processingEnd = performance().nowInReducedResolutionSeconds();
     entry.processingEnd = processingEnd;
     entry.target = event.target();
+    if (entry.target)
+        entry.targetSelector = generateCSSSelector(*entry.target);
 
     switch (type) {
     case EventType::pointerdown: {
@@ -2683,18 +2715,22 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
             m_performanceEventTimingCandidates.append(entry);
             return;
         }
-        auto it = m_pendingKeyDowns.find(keyCode);
-        if (it != m_pendingKeyDowns.end()) {
-            it->value.keyDown.interactionID = generateInteractionIDWithoutIncreasingInteractionCount();
-            m_performanceEventTimingCandidates.append(it->value.keyDown);
-            if (it->value.keyPress) {
-                it->value.keyPress->interactionID = it->value.keyDown.interactionID;
-                m_performanceEventTimingCandidates.append(*it->value.keyPress);
+
+        auto index = m_pendingKeys.find(keyCode);
+        if (index != WTF::notFound) {
+            auto& pendingKeyDownState = m_pendingKeyDowns[index];
+            pendingKeyDownState.keyDown.interactionID = generateInteractionIDWithoutIncreasingInteractionCount();
+            m_performanceEventTimingCandidates.append(WTFMove(pendingKeyDownState.keyDown));
+            if (pendingKeyDownState.keyPress) {
+                pendingKeyDownState.keyPress->interactionID = pendingKeyDownState.keyDown.interactionID;
+                m_performanceEventTimingCandidates.append(WTFMove(*pendingKeyDownState.keyPress));
             }
-            it->value = { .keyDown = entry };
+            pendingKeyDownState = { .keyDown = entry };
             return;
         }
-        m_pendingKeyDowns.set(keyCode, PendingKeyDownState { .keyDown = entry });
+
+        m_pendingKeys.append(keyCode);
+        m_pendingKeyDowns.append({ .keyDown = entry });
         return;
     }
     case EventType::keypress: {
@@ -2704,12 +2740,12 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
             return;
         }
         auto keyCode = keyboardEvent->keyCodeForKeyDown();
-        auto it = m_pendingKeyDowns.find(keyCode);
-        if (it == m_pendingKeyDowns.end()) {
+        auto index = m_pendingKeys.find(keyCode);
+        if (index != WTF::notFound) {
             m_performanceEventTimingCandidates.append(entry);
             return;
         }
-        it->value.keyPress = entry;
+        m_pendingKeyDowns[index].keyPress = entry;
         return;
     }
     default:
@@ -2724,11 +2760,11 @@ void LocalDOMWindow::dispatchPendingEventTimingEntries()
         m_pendingPointerDown->duration = std::max(renderingTime - m_pendingPointerDown->startTime, Seconds::fromMilliseconds(1));
 
     for (auto& keydownEntry : m_pendingKeyDowns) {
-        if (!keydownEntry.value.keyDown.duration)
-            keydownEntry.value.keyDown.duration = std::max(renderingTime - keydownEntry.value.keyDown.startTime, Seconds::fromMilliseconds(1));
+        if (!keydownEntry.keyDown.duration)
+            keydownEntry.keyDown.duration = std::max(renderingTime - keydownEntry.keyDown.startTime, Seconds::fromMilliseconds(1));
 
-        if (keydownEntry.value.keyPress && !keydownEntry.value.keyPress->duration)
-            keydownEntry.value.keyPress->duration = std::max(renderingTime - keydownEntry.value.keyPress->startTime, Seconds::fromMilliseconds(1));
+        if (keydownEntry.keyPress && !keydownEntry.keyPress->duration)
+            keydownEntry.keyPress->duration = std::max(renderingTime - keydownEntry.keyPress->startTime, Seconds::fromMilliseconds(1));
     }
 
     if (m_performanceEventTimingCandidates.isEmpty())
