@@ -34,10 +34,10 @@ namespace WebCore {
 
 struct VideoConfiguration {
     String contentType;
-    uint32_t width;
-    uint32_t height;
-    uint64_t bitrate;
-    double framerate;
+    uint32_t width { };
+    uint32_t height { };
+    uint64_t bitrate { };
+    double framerate { };
     std::optional<bool> alphaChannel;
     std::optional<ColorGamut> colorGamut;
     std::optional<HdrMetadataType> hdrMetadataType;
