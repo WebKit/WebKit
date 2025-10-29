@@ -14505,10 +14505,15 @@ void WebPageProxy::removePlaybackTargetPickerClient(PlaybackTargetClientContextI
         pageClient->checkedMediaSessionManager()->removePlaybackTargetPickerClient(internals(), contextId);
 }
 
-void WebPageProxy::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::FloatRect& rect, bool hasVideo)
+Awaitable<void> WebPageProxy::showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier contextId, const WebCore::FloatRect& rect, bool hasVideo, FrameIdentifier frameID)
 {
-    if (RefPtr pageClient = this->pageClient())
-        pageClient->checkedMediaSessionManager()->showPlaybackTargetPicker(internals(), contextId, protectedPageClient()->rootViewToScreen(IntRect(rect)), hasVideo, useDarkAppearance());
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        co_return;
+
+    std::optional<FloatRect> mainFrameCoordinates = co_await this->convertRectToMainFrameCoordinates(rect, frameID);
+    FloatRect rectToPass = mainFrameCoordinates ? mainFrameCoordinates.value() : rect;
+    pageClient->checkedMediaSessionManager()->showPlaybackTargetPicker(internals(), contextId, protectedPageClient()->rootViewToScreen(IntRect(rectToPass)), hasVideo, useDarkAppearance());
 }
 
 void WebPageProxy::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaProducerMediaStateFlags state)

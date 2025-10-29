@@ -1934,11 +1934,21 @@ void WebChromeClient::showPlaybackTargetPicker(PlaybackTargetClientContextIdenti
         return;
 
     RefPtr frameView = page->localMainFrameView();
+    if (!frameView) {
+        if (RefPtr corePage = page->corePage()) {
+            if (RefPtr focusedFrame = dynamicDowncast<LocalFrame>(corePage->focusController().focusedFrame()))
+                frameView = focusedFrame->view();
+        }
+    }
     if (!frameView)
         return;
 
+    std::optional<FrameIdentifier> frameID = frameView->rootFrameID();
+    if (!frameID)
+        return;
+
     FloatRect rect(frameView->contentsToRootView(frameView->windowToContents(position)), FloatSize());
-    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo));
+    page->send(Messages::WebPageProxy::ShowPlaybackTargetPicker(contextId, rect, isVideo, *frameID));
 }
 
 void WebChromeClient::playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier contextId, MediaProducerMediaStateFlags state)
