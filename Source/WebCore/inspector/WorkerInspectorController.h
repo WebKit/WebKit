@@ -29,6 +29,7 @@
 #include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Stopwatch.h>
@@ -79,7 +80,7 @@ private:
 
     void updateServiceWorkerPageFrontendCount();
 
-    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const UniqueRef<InstrumentingAgents> m_instrumentingAgents;
     const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;

@@ -34,6 +34,7 @@
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorRuntimeAgent.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
@@ -75,7 +76,7 @@ private:
     const UniqueRef<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
 
-    WeakRef<InstrumentingAgents> m_instrumentingAgents;
+    const CheckedRef<InstrumentingAgents> m_instrumentingAgents;
 
     WeakRef<Page> m_inspectedPage;
 };

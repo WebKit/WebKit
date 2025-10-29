@@ -1133,7 +1133,7 @@ void InspectorInstrumentation::didEnableExtensionImpl(InstrumentingAgents& instr
 void InspectorInstrumentation::willDestroyWebGLProgram(WebGLProgram& program)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (RefPtr agents = instrumentingAgents(program.protectedScriptExecutionContext().get()))
+    if (CheckedPtr agents = instrumentingAgents(program.protectedScriptExecutionContext().get()))
         willDestroyWebGLProgramImpl(*agents, program);
 }
 
@@ -1340,7 +1340,7 @@ InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const LocalFr
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const LocalFrame& frame)
 {
-    return frame.inspectorController().m_instrumentingAgents.get();
+    return frame.inspectorController().m_instrumentingAgents;
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& document)
@@ -1354,7 +1354,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& doc
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)
 {
     ASSERT(isMainThread());
-    return page.inspectorController().m_instrumentingAgents.get();
+    return page.inspectorController().m_instrumentingAgents;
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(ScriptExecutionContext& context)

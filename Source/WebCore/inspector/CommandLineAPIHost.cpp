@@ -84,11 +84,10 @@ void CommandLineAPIHost::disconnect()
 
 void CommandLineAPIHost::inspect(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue object, JSC::JSValue hints)
 {
-    RefPtr agents = m_instrumentingAgents.get();
-    if (!agents)
+    if (!m_instrumentingAgents)
         return;
 
-    auto* inspectorAgent = agents->persistentInspectorAgent();
+    auto* inspectorAgent = m_instrumentingAgents->persistentInspectorAgent();
     if (!inspectorAgent)
         return;
 

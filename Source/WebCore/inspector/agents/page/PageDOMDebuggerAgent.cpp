@@ -45,19 +45,19 @@ PageDOMDebuggerAgent::~PageDOMDebuggerAgent() = default;
 
 bool PageDOMDebuggerAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledPageDOMDebuggerAgent() == this && InspectorDOMDebuggerAgent::enabled();
+    return m_instrumentingAgents->enabledPageDOMDebuggerAgent() == this && InspectorDOMDebuggerAgent::enabled();
 }
 
 void PageDOMDebuggerAgent::enable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageDOMDebuggerAgent(this);
+    m_instrumentingAgents->setEnabledPageDOMDebuggerAgent(this);
 
     InspectorDOMDebuggerAgent::enable();
 }
 
 void PageDOMDebuggerAgent::disable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageDOMDebuggerAgent(nullptr);
+    m_instrumentingAgents->setEnabledPageDOMDebuggerAgent(nullptr);
 
     m_domSubtreeModifiedBreakpoints.clear();
     m_domAttributeModifiedBreakpoints.clear();
@@ -70,7 +70,7 @@ Inspector::Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::setDOMBreakpoint(
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -107,7 +107,7 @@ Inspector::Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::removeDOMBreakpoi
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -252,7 +252,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     ASSERT(closestBreakpointOwner);
 
     auto pauseData = buildPauseDataForDOMBreakpoint(*closestBreakpointType, *closestBreakpointOwner);
-    if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
             if (auto targetNodeId = domAgent->pushNodeToFrontend(&node))
                 pauseData->setInteger("targetNodeId"_s, targetNodeId);
@@ -311,7 +311,7 @@ Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector
 
     auto pauseData = JSON::Object::create();
     pauseData->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(breakpointType));
-    if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent()) {
         if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
             pauseData->setInteger("nodeId"_s, breakpointOwnerNodeId);
     }

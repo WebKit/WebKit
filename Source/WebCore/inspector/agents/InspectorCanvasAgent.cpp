@@ -138,14 +138,14 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCanvasAgent::disable()
 
 bool InspectorCanvasAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledCanvasAgent() == this;
+    return m_instrumentingAgents->enabledCanvasAgent() == this;
 }
 
 void InspectorCanvasAgent::internalEnable()
 {
     ASSERT(!enabled());
 
-    Ref { m_instrumentingAgents.get() }->setEnabledCanvasAgent(this);
+    m_instrumentingAgents->setEnabledCanvasAgent(this);
 
     {
         Locker locker { CanvasRenderingContext::instancesLock() };
@@ -180,7 +180,7 @@ void InspectorCanvasAgent::internalEnable()
 
 void InspectorCanvasAgent::internalDisable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledCanvasAgent(nullptr);
+    m_instrumentingAgents->setEnabledCanvasAgent(nullptr);
 
     reset();
 

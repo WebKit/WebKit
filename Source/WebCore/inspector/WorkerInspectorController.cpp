@@ -202,7 +202,7 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 
     WebAgentContext webContext = {
         baseContext,
-        m_instrumentingAgents.get(),
+        m_instrumentingAgents,
     };
 
     WorkerAgentContext workerContext = {
@@ -249,7 +249,7 @@ void WorkerInspectorController::createLazyAgents()
     m_agents.append(WTFMove(scriptProfilerAgentPtr));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
+        commandLineAPIHost->init(m_instrumentingAgents);
 }
 
 WorkerDebuggerAgent& WorkerInspectorController::ensureDebuggerAgent()

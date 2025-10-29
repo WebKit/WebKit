@@ -81,19 +81,19 @@ PageTimelineAgent::~PageTimelineAgent() = default;
 
 bool PageTimelineAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledPageTimelineAgent() == this && InspectorTimelineAgent::enabled();
+    return m_instrumentingAgents->enabledPageTimelineAgent() == this && InspectorTimelineAgent::enabled();
 }
 
 void PageTimelineAgent::internalEnable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageTimelineAgent(this);
+    m_instrumentingAgents->setEnabledPageTimelineAgent(this);
 
     InspectorTimelineAgent::internalEnable();
 }
 
 void PageTimelineAgent::internalDisable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageTimelineAgent(nullptr);
+    m_instrumentingAgents->setEnabledPageTimelineAgent(nullptr);
 
     m_autoCaptureEnabled = false;
 
@@ -102,12 +102,12 @@ void PageTimelineAgent::internalDisable()
 
 bool PageTimelineAgent::tracking() const
 {
-    return Ref { m_instrumentingAgents.get() }->trackingPageTimelineAgent() == this && InspectorTimelineAgent::tracking();
+    return m_instrumentingAgents->trackingPageTimelineAgent() == this && InspectorTimelineAgent::tracking();
 }
 
 void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 {
-    Ref { m_instrumentingAgents.get() }->setTrackingPageTimelineAgent(this);
+    m_instrumentingAgents->setTrackingPageTimelineAgent(this);
 
     // FIXME: Abstract away platform-specific code once https://bugs.webkit.org/show_bug.cgi?id=142748 is fixed.
 
@@ -161,7 +161,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 
 void PageTimelineAgent::internalStop()
 {
-    Ref { m_instrumentingAgents.get() }->setTrackingPageTimelineAgent(nullptr);
+    m_instrumentingAgents->setTrackingPageTimelineAgent(nullptr);
 
     m_autoCapturePhase = AutoCapturePhase::None;
 
@@ -278,7 +278,7 @@ void PageTimelineAgent::mainFrameStartedLoading()
     m_autoCapturePhase = AutoCapturePhase::BeforeLoad;
 
     // Pre-emptively disable breakpoints. The frontend must re-enable them.
-    if (auto* webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
+    if (auto* webDebuggerAgent = m_instrumentingAgents->enabledWebDebuggerAgent())
         webDebuggerAgent->setBreakpointsActive(false);
 
     // Inform the frontend we started an auto capture. The frontend must stop capture.

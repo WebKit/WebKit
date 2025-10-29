@@ -140,7 +140,7 @@ PageAgentContext InspectorController::pageAgentContext()
 
     WebAgentContext webContext = {
         baseContext,
-        m_instrumentingAgents.get()
+        m_instrumentingAgents
     };
 
     PageAgentContext pageContext = {
@@ -197,7 +197,7 @@ void InspectorController::createLazyAgents()
     m_agents.append(makeUnique<InspectorAnimationAgent>(pageContext));
 
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
+        commandLineAPIHost->init(m_instrumentingAgents);
 }
 
 void InspectorController::inspectedPageDestroyed()
@@ -266,7 +266,7 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel& frontendCh
     InspectorInstrumentation::frontendCreated();
 
     if (connectedFirstFrontend) {
-        InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+        InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents);
         m_agents.didCreateFrontendAndBackend();
     }
 
@@ -296,7 +296,7 @@ void InspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
         m_injectedScriptManager->discardInjectedScripts();
 
         // Unplug all instrumentations since they aren't needed now.
-        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents);
     }
 
     m_inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
@@ -323,7 +323,7 @@ void InspectorController::disconnectAllFrontends()
         InspectorInstrumentation::frontendDeleted();
 
     // Unplug all instrumentations to prevent further agent callbacks.
-    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents);
 
     // Notify agents first, since they may need to use InspectorBackendClient.
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);

@@ -58,9 +58,9 @@ public:
     static Ref<CommandLineAPIHost> create();
     ~CommandLineAPIHost();
 
-    void init(RefPtr<InstrumentingAgents> instrumentingAgents)
+    void init(InstrumentingAgents& instrumentingAgents)
     {
-        m_instrumentingAgents = instrumentingAgents;
+        m_instrumentingAgents = &instrumentingAgents;
     }
 
     void disconnect();
@@ -99,7 +99,7 @@ public:
 private:
     CommandLineAPIHost();
 
-    RefPtr<InstrumentingAgents> m_instrumentingAgents;
+    CheckedPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<InspectableObject> m_inspectedObject; // $0
     Inspector::PerGlobalObjectWrapperWorld m_wrappers;
 };

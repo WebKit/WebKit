@@ -70,17 +70,17 @@ InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent() = default;
 
 bool InspectorDOMDebuggerAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledDOMDebuggerAgent() == this;
+    return m_instrumentingAgents->enabledDOMDebuggerAgent() == this;
 }
 
 void InspectorDOMDebuggerAgent::enable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledDOMDebuggerAgent(this);
+    m_instrumentingAgents->setEnabledDOMDebuggerAgent(this);
 }
 
 void InspectorDOMDebuggerAgent::disable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledDOMDebuggerAgent(nullptr);
+    m_instrumentingAgents->setEnabledDOMDebuggerAgent(nullptr);
 
     m_listenerBreakpoints.clear();
     m_pauseOnAllIntervalsBreakpoint = nullptr;
@@ -288,8 +288,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
 
     auto breakpoint = m_pauseOnAllListenersBreakpoint;
     if (!breakpoint) {
@@ -348,8 +347,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
         }
     }
     if (!breakpoint) {
-        Ref agents = m_instrumentingAgents.get();
-        if (auto* domAgent = agents->persistentDOMAgent())
+        if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent())
             breakpoint = domAgent->breakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
     }
     if (!breakpoint)
