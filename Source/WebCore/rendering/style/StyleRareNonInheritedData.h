@@ -40,6 +40,7 @@
 #include <WebCore/StyleContainIntrinsicSize.h>
 #include <WebCore/StyleContainerName.h>
 #include <WebCore/StyleContentAlignmentData.h>
+#include <WebCore/StyleContentVisibility.h>
 #include <WebCore/StyleGapGutter.h>
 #include <WebCore/StyleMaskBorder.h>
 #include <WebCore/StyleMaximumLines.h>
@@ -245,7 +246,7 @@ public:
     PREFERRED_TYPE(Style::ScrollBehavior) unsigned scrollBehavior : 1;
     PREFERRED_TYPE(TextDecorationStyle) unsigned textDecorationStyle : 3;
     PREFERRED_TYPE(TextGroupAlign) unsigned textGroupAlign : 3;
-    PREFERRED_TYPE(ContentVisibility) unsigned contentVisibility : 2;
+    PREFERRED_TYPE(Style::ContentVisibility) unsigned contentVisibility : 2;
     PREFERRED_TYPE(BlendMode) unsigned effectiveBlendMode: 5;
     PREFERRED_TYPE(Isolation) unsigned isolation : 1;
     PREFERRED_TYPE(InputSecurity) unsigned inputSecurity : 1;

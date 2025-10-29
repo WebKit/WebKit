@@ -88,7 +88,6 @@ public:
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
     static bool animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyID);
-    static bool animationUsesNonNormalizedDiscreteInterpolation(CSSPropertyID);
 
     static bool animationIsAccelerated(CSSPropertyID, const Settings&);
     static std::span<const CSSPropertyID> allAcceleratedAnimationProperties(const Settings&);

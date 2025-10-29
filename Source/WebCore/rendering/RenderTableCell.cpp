@@ -617,7 +617,7 @@ static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell
 
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    ASSERT(style().display() == DisplayType::TableCell);
+    ASSERT(style().display() == Style::Display::TableCell);
     ASSERT(!row() || row()->rowIndexWasSet());
 
     RenderBlockFlow::styleDidChange(diff, oldStyle);
@@ -1377,7 +1377,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 {
     ASSERT(paintInfo.phase == PaintPhase::CollapsedTableBorders);
 
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style().usedVisibility() != Visibility::Visible)
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().usedVisibility() != Style::Visibility::Visible)
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
@@ -1485,7 +1485,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
-    if (style().usedVisibility() != Visibility::Visible)
+    if (style().usedVisibility() != Style::Visibility::Visible)
         return;
 
     RenderTable* tableElt = table();
@@ -1568,7 +1568,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().usedVisibility() != Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
+    if (style().usedVisibility() != Style::Visibility::Visible || paintInfo.phase != PaintPhase::Mask)
         return;
 
     RenderTable* tableElt = table();

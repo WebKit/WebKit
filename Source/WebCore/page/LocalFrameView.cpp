@@ -1677,7 +1677,7 @@ bool LocalFrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation ori
     scrollbarState.scrollbarPart = ScrollbarBGPart;
     scrollbarState.orientation = orientation;
     auto scrollbarStyle = renderer->getUncachedPseudoStyle({ PseudoElementType::WebKitScrollbar, scrollbarState }, &renderer->style());
-    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
+    return scrollbarStyle && scrollbarStyle->display() == Style::Display::None;
 }
 
 NativeScrollbarVisibility LocalFrameView::horizontalNativeScrollbarVisibility() const
@@ -5064,7 +5064,7 @@ float LocalFrameView::adjustVerticalPageScrollStepForFixedContent(float step)
     float bottomObscuredArea = 0;
     for (const auto& viewPositionedOutOfFlowBox : *viewPositionedOutOfFlowBoxes) {
         const RenderStyle& style = viewPositionedOutOfFlowBox.style();
-        if (style.position() != PositionType::Fixed || style.usedVisibility() == Visibility::Hidden || style.opacity().isTransparent())
+        if (style.position() != PositionType::Fixed || style.usedVisibility() == Style::Visibility::Hidden || style.opacity().isTransparent())
             continue;
 
         FloatQuad contentQuad = viewPositionedOutOfFlowBox.absoluteContentQuad();
@@ -5849,7 +5849,7 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
                 return false;
             if (!element->renderer()->opacity())
                 return false;
-            return element->renderer()->style().usedVisibility() == Visibility::Visible;
+            return element->renderer()->style().usedVisibility() == Style::Visibility::Visible;
         };
 
         if (!isVisible(documentElement))

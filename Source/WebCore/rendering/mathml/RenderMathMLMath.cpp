@@ -71,7 +71,7 @@ void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
 {
     ASSERT(needsLayout());
 
-    if (style().display() != DisplayType::Block) {
+    if (style().display() != Style::Display::Block) {
         RenderMathMLRow::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }

@@ -709,7 +709,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         CheckedPtr renderer = currentNode->renderer();
-        if (!renderer || renderer->style().visibility() != Visibility::Visible)
+        if (!renderer || renderer->style().visibility() != Style::Visibility::Visible)
             continue;
 
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
@@ -824,7 +824,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
         // skip position in unrendered or invisible node
         CheckedPtr renderer = currentNode->renderer();
-        if (!renderer || renderer->style().visibility() != Visibility::Visible)
+        if (!renderer || renderer->style().visibility() != Style::Visibility::Visible)
             continue;
 
         if (rule == CanCrossEditingBoundary && boundaryCrossed) {
@@ -982,7 +982,7 @@ bool Position::isCandidate() const
     if (!renderer)
         return false;
 
-    if (renderer->style().visibility() != Visibility::Visible)
+    if (renderer->style().visibility() != Style::Visibility::Visible)
         return false;
 
     if (renderer->isBR()) {
@@ -1043,7 +1043,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!positionRenderer)
         return false;
 
-    if (renderer->style().visibility() != Visibility::Visible || positionRenderer->style().visibility() != Visibility::Visible)
+    if (renderer->style().visibility() != Style::Visibility::Visible || positionRenderer->style().visibility() != Style::Visibility::Visible)
         return false;
 
     if (node == positionNode) {

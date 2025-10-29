@@ -288,7 +288,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLRow::paint(info, paintOffset);
 
-    if (!firstChild() || info.context().paintingDisabled() || style().usedVisibility() != Visibility::Visible || !isValid())
+    if (!firstChild() || info.context().paintingDisabled() || style().usedVisibility() != Style::Visibility::Visible || !isValid())
         return;
 
     // We draw the radical operator.

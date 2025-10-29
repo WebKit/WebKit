@@ -54,7 +54,7 @@ static void removeTextBoxTrimStart(LocalFrameViewLayoutContext& layoutContext)
 
 static bool shouldIgnoreAsFirstLastFormattedLineContainer(const RenderBlockFlow& container)
 {
-    if (container.style().display() == DisplayType::RubyAnnotation || container.createsNewFormattingContext())
+    if (container.style().display() == Style::Display::RubyAnnotation || container.createsNewFormattingContext())
         return true;
     // Empty continuation pre/post blocks should be ignored as they are implementation detail.
     if (container.isAnonymousBlock()) {

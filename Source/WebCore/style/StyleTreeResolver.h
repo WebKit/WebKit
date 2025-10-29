@@ -25,16 +25,17 @@
 
 #pragma once
 
-#include <WebCore/AnchorPositionEvaluator.h>
-#include <WebCore/PositionTryFallback.h>
+#include "AnchorPositionEvaluator.h"
+#include "PositionTryFallback.h"
 #include "PropertyCascade.h"
+#include "RenderStyle.h"
 #include "ResolvedStyle.h"
 #include "SelectorChecker.h"
 #include "SelectorMatchingState.h"
-#include <WebCore/RenderStyle.h>
-#include <WebCore/StyleChange.h>
-#include <WebCore/StyleUpdate.h>
-#include <WebCore/Styleable.h>
+#include "StyleChange.h"
+#include "StyleDisplay.h"
+#include "StyleUpdate.h"
+#include "Styleable.h"
 #include "TreeResolutionState.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -256,12 +257,12 @@ bool postResolutionCallbacksAreSuspended();
 inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
 {
     auto display = style.display();
-    return display == DisplayType::Block
-        || display == DisplayType::ListItem
-        || display == DisplayType::InlineBlock
-        || display == DisplayType::TableCell
-        || display == DisplayType::TableCaption
-        || display == DisplayType::FlowRoot;
+    return display == Display::Block
+        || display == Display::ListItem
+        || display == Display::InlineBlock
+        || display == Display::TableCell
+        || display == Display::TableCaption
+        || display == Display::FlowRoot;
 }
 
 class PostResolutionCallbackDisabler {

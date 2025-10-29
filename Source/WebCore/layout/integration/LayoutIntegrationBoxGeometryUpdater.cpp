@@ -308,7 +308,7 @@ static bool shouldUseMarginBoxAsBaseline(const RenderBox& renderBox)
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderBox)) {
         // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'
         // property has a computed value other than 'visible'. see https://www.w3.org/TR/CSS22/visudet.html
-        if (blockFlow->style().display() == DisplayType::InlineBlock && !blockFlow->style().isOverflowVisible())
+        if (blockFlow->style().display() == Style::Display::InlineBlock && !blockFlow->style().isOverflowVisible())
             return true;
 
         if (blockFlow->childrenInline() && !blockFlow->hasLines() && !blockFlow->hasLineIfEmpty())
@@ -559,7 +559,7 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
         if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderBox))
             return !renderListMarker->isImage();
 
-        if ((is<RenderReplaced>(renderBox) && renderBox.style().display() == DisplayType::Inline)
+        if ((is<RenderReplaced>(renderBox) && renderBox.style().display() == Style::Display::Inline)
             || is<RenderListBox>(renderBox)
             || is<RenderSlider>(renderBox)
             || is<RenderTextControlMultiLine>(renderBox)

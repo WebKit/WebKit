@@ -213,37 +213,37 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     }
 
     switch (style.display()) {
-    case DisplayType::None:
-    case DisplayType::Contents:
+    case Style::Display::None:
+    case Style::Display::Contents:
         return nullptr;
-    case DisplayType::Inline:
+    case Style::Display::Inline:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::Inline))
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
         return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
-    case DisplayType::Block:
-    case DisplayType::FlowRoot:
-    case DisplayType::InlineBlock:
+    case Style::Display::Block:
+    case Style::Display::FlowRoot:
+    case Style::Display::InlineBlock:
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
-    case DisplayType::ListItem:
+    case Style::Display::ListItem:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::ListItem))
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
         return createRenderer<RenderListItem>(element, WTFMove(style));
-    case DisplayType::Flex:
-    case DisplayType::InlineFlex:
+    case Style::Display::Flex:
+    case Style::Display::InlineFlex:
         return createRenderer<RenderFlexibleBox>(RenderObject::Type::FlexibleBox, element, WTFMove(style));
-    case DisplayType::Grid:
-    case DisplayType::InlineGrid:
+    case Style::Display::Grid:
+    case Style::Display::InlineGrid:
         return createRenderer<RenderGrid>(element, WTFMove(style));
-    case DisplayType::Box:
-    case DisplayType::InlineBox:
+    case Style::Display::Box:
+    case Style::Display::InlineBox:
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
-    case DisplayType::RubyBase:
+    case Style::Display::RubyBase:
         return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
-    case DisplayType::RubyAnnotation:
+    case Style::Display::RubyAnnotation:
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
-    case DisplayType::Ruby:
+    case Style::Display::Ruby:
         return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
-    case DisplayType::RubyBlock:
+    case Style::Display::RubyBlock:
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
     default: {
@@ -251,21 +251,21 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTFMove(style));
 
         switch (style.display()) {
-        case DisplayType::Table:
-        case DisplayType::InlineTable:
+        case Style::Display::Table:
+        case Style::Display::InlineTable:
             return createRenderer<RenderTable>(RenderObject::Type::Table, element, WTFMove(style));
-        case DisplayType::TableCell:
+        case Style::Display::TableCell:
             return createRenderer<RenderTableCell>(element, WTFMove(style));
-        case DisplayType::TableCaption:
+        case Style::Display::TableCaption:
             return createRenderer<RenderTableCaption>(element, WTFMove(style));
-        case DisplayType::TableRowGroup:
-        case DisplayType::TableHeaderGroup:
-        case DisplayType::TableFooterGroup:
+        case Style::Display::TableRowGroup:
+        case Style::Display::TableHeaderGroup:
+        case Style::Display::TableFooterGroup:
             return createRenderer<RenderTableSection>(element, WTFMove(style));
-        case DisplayType::TableRow:
+        case Style::Display::TableRow:
             return createRenderer<RenderTableRow>(element, WTFMove(style));
-        case DisplayType::TableColumnGroup:
-        case DisplayType::TableColumn:
+        case Style::Display::TableColumnGroup:
+        case Style::Display::TableColumn:
             return createRenderer<RenderTableCol>(element, WTFMove(style));
         default:
             break;
@@ -509,7 +509,7 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
                 return RequiredRepaint::RendererOnly;
             }
 
-            auto willBecomeHiddenSkippedContent =  newStyle.usedContentVisibility() == ContentVisibility::Hidden && oldStyle.usedContentVisibility() != ContentVisibility::Hidden && oldStyle.usedVisibility() == Visibility::Visible;
+            auto willBecomeHiddenSkippedContent = newStyle.usedContentVisibility() == Style::ContentVisibility::Hidden && oldStyle.usedContentVisibility() != Style::ContentVisibility::Hidden && oldStyle.usedVisibility() == Style::Visibility::Visible;
             if (willBecomeHiddenSkippedContent) {
                 ASSERT(diff == StyleDifference::Layout);
                 return RequiredRepaint::RendererOnly;
@@ -518,8 +518,8 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
 
         if (diff > StyleDifference::RepaintLayer && oldStyle.usedVisibility() != newStyle.usedVisibility()) {
             if (CheckedPtr enclosingLayer = this->enclosingLayer()) {
-                bool rendererWillBeHidden = newStyle.usedVisibility() != Visibility::Visible;
-                if (rendererWillBeHidden && enclosingLayer->hasVisibleContent() && (this == &enclosingLayer->renderer() || enclosingLayer->renderer().style().usedVisibility() != Visibility::Visible))
+                bool rendererWillBeHidden = newStyle.usedVisibility() != Style::Visibility::Visible;
+                if (rendererWillBeHidden && enclosingLayer->hasVisibleContent() && (this == &enclosingLayer->renderer() || enclosingLayer->renderer().style().usedVisibility() != Style::Visibility::Visible))
                     return RequiredRepaint::RendererOnly;
             }
         }
@@ -541,7 +541,7 @@ bool RenderElement::repaintBeforeStyleChange(StyleDifference diff, const RenderS
 
     if (shouldRepaintBeforeStyleChange == RequiredRepaint::RendererOnly) {
         if (isOutOfFlowPositioned() && downcast<RenderLayerModelObject>(*this).checkedLayer()->isSelfPaintingLayer()) {
-            if (oldStyle.usedVisibility() == Visibility::Hidden) {
+            if (oldStyle.usedVisibility() == Style::Visibility::Hidden) {
                 // Repaint on hidden renderer is a no-op.
                 return false;
             }
@@ -863,7 +863,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (!elementChild->isAnonymous() || elementChild->style().pseudoElementType() || elementChild->isViewTransitionContainingBlock())
             continue;
 
-        bool isBlockOrRuby = is<RenderBlock>(elementChild.get()) || elementChild->style().display() == DisplayType::Ruby;
+        bool isBlockOrRuby = is<RenderBlock>(elementChild.get()) || elementChild->style().display() == Style::Display::Ruby;
         if (propagationType == StylePropagationType::BlockAndRubyChildren && !isBlockOrRuby)
             continue;
 
@@ -873,7 +873,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 
         auto newStyle = [&] {
             auto display = elementChild->style().display();
-            if (display == DisplayType::RubyBase || display == DisplayType::Ruby)
+            if (display == Style::Display::RubyBase || display == Style::Display::Ruby)
                 return createAnonymousStyleForRuby(style(), display);
             return RenderStyle::createAnonymousStyleWithDisplay(style(), display);
         }();
@@ -912,13 +912,13 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             return;
         bool contentVisibilityChanged = oldStyle && oldStyle->contentVisibility() != newStyle.contentVisibility();
         if (contentVisibilityChanged) {
-            if (oldStyle->contentVisibility() == ContentVisibility::Auto)
+            if (oldStyle->contentVisibility() == Style::ContentVisibility::Auto)
                 ContentVisibilityDocumentState::unobserve(*protectedElement());
-            auto wasSkippedContent = oldStyle->contentVisibility() == ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
-            auto isSkippedContent = newStyle.contentVisibility() == ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
+            auto wasSkippedContent = oldStyle->contentVisibility() == Style::ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
+            auto isSkippedContent = newStyle.contentVisibility() == Style::ContentVisibility::Hidden ? IsSkippedContent::Yes : IsSkippedContent::No;
             ContentVisibilityDocumentState::updateAnimations(*element(), wasSkippedContent, isSkippedContent);
         }
-        if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == ContentVisibility::Auto)
+        if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == Style::ContentVisibility::Auto)
             ContentVisibilityDocumentState::observe(*protectedElement());
     };
 
@@ -1148,7 +1148,7 @@ void RenderElement::insertedIntoTree()
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
+    if (parent()->style().usedVisibility() != Style::Visibility::Visible && style().usedVisibility() == Style::Visibility::Visible && !hasLayer()) {
         if (CheckedPtr parentLayer = layerParent())
             parentLayer->dirtyVisibleContentStatus();
     }
@@ -1159,7 +1159,7 @@ void RenderElement::insertedIntoTree()
 void RenderElement::willBeRemovedFromTree()
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
-    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
+    if (parent()->style().usedVisibility() != Style::Visibility::Visible && style().usedVisibility() == Style::Visibility::Visible && !hasLayer()) {
         // FIXME: should get parent layer. Necessary?
         if (CheckedPtr enclosingLayer = parent()->enclosingLayer())
             enclosingLayer->dirtyVisibleContentStatus();
@@ -1235,7 +1235,7 @@ void RenderElement::willBeDestroyed()
     if (m_hasPausedImageAnimations)
         checkedView()->removeRendererWithPausedImageAnimations(*this);
 
-    if (style().contentVisibility() == ContentVisibility::Auto && element())
+    if (style().contentVisibility() == Style::ContentVisibility::Auto && element())
         ContentVisibilityDocumentState::unobserve(*protectedElement());
 }
 
@@ -1621,7 +1621,7 @@ bool RenderElement::isVisibleIgnoringGeometry() const
 {
     if (document().activeDOMObjectsAreSuspended())
         return false;
-    if (style().usedVisibility() != Visibility::Visible)
+    if (style().usedVisibility() != Style::Visibility::Visible)
         return false;
     if (view().frameView().isOffscreen())
         return false;
@@ -1650,7 +1650,7 @@ bool RenderElement::isInsideEntirelyHiddenLayer() const
 {
     if (isSVGLayerAwareRenderer() && document().settings().layerBasedSVGEngineEnabled() && enclosingLayer()->enclosingSVGHiddenOrResourceContainer())
         return true;
-    return style().usedVisibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent();
+    return style().usedVisibility() != Style::Visibility::Visible && !enclosingLayer()->hasVisibleContent();
 }
 
 void RenderElement::registerForVisibleInViewportCallback()

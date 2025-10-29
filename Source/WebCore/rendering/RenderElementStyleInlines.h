@@ -130,7 +130,7 @@ inline bool RenderElement::shouldApplyPaintContainment(const RenderStyle* styleT
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
 {
     auto visibility = !request || request->userTriggered() ? style().usedVisibility() : style().visibility();
-    return visibility == Visibility::Visible
+    return visibility == Style::Visibility::Visible
         && !isSkippedContent()
         && ((request && request->ignoreCSSPointerEventsProperty()) || usedPointerEvents() != PointerEvents::None);
 }

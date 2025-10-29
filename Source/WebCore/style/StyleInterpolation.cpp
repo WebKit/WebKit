@@ -35,9 +35,10 @@
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleInterpolationClient.h"
-#include "StyleInterpolationFunctions.h"
+#include "StyleInterpolationContext.h"
 #include "StyleInterpolationWrapperBase.h"
 #include "StyleInterpolationWrapperMap.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include <wtf/ZippedRange.h>
 
 namespace WebCore::Style::Interpolation {
@@ -55,7 +56,7 @@ static void interpolateStandardProperty(CSSPropertyID property, RenderStyle& des
 
     auto isDiscrete = !wrapper->canInterpolate(from, to, compositeOperation);
     Context context { property, progress, isDiscrete, compositeOperation, iterationCompositeOperation, currentIteration, from.color(), to.color(), client };
-    if (!CSSProperty::animationUsesNonNormalizedDiscreteInterpolation(property))
+    if (wrapper->requiresNormalizedProgress(from, to))
         context.normalizeProgress();
     wrapper->interpolate(destination, from, to, context);
 #if !LOG_DISABLED
@@ -77,7 +78,7 @@ static std::optional<CustomProperty::Value> interpolateSyntaxValues(const Render
         [&](const Color& fromStyleColor) -> std::optional<CustomProperty::Value> {
             auto& toStyleColor = std::get<Color>(to);
             if (!fromStyleColor.isCurrentColor() || !toStyleColor.isCurrentColor())
-                return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), context);
+                return blend(fromStyleColor, toStyleColor, fromStyle, toStyle, context);
             return { };
         },
         [&](const TransformFunction& fromTransform) -> std::optional<CustomProperty::Value> {

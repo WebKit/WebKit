@@ -508,7 +508,7 @@ ethiopic-numeric
 //none
 //
 // CSS_PROP_DISPLAY:
-// The order here must match the order of the DisplayType enum in RenderStyleConstants.h.
+// The order here must match the order of the Style::Display enum in RenderStyleConstants.h.
 //
 inline
 block

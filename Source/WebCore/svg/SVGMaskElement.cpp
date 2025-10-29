@@ -179,7 +179,7 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
         if (!renderer || !childNode->isSVGElement())
             continue;
         const auto& style = renderer->style();
-        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
+        if (style.display() == Style::Display::None || style.usedVisibility() != Style::Visibility::Visible)
             continue;
         auto r = renderer->repaintRectInLocalCoordinates(repaintRectCalculation);
         if (auto transform = transformationMatrixFromChild(downcast<RenderLayerModelObject>(*renderer)))

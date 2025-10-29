@@ -503,7 +503,7 @@ void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareN
     LOG_IF_DIFFERENT_WITH_CAST(TextDecorationStyle, textDecorationStyle);
     LOG_IF_DIFFERENT_WITH_CAST(TextGroupAlign, textGroupAlign);
 
-    LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, contentVisibility);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::ContentVisibility, contentVisibility);
     LOG_IF_DIFFERENT_WITH_CAST(BlendMode, effectiveBlendMode);
 
     LOG_IF_DIFFERENT_WITH_CAST(Isolation, isolation);

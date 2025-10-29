@@ -341,7 +341,7 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     auto displayType = renderer->style().display();
     bool isListItem = element.hasTagName(HTMLNames::liTag);
     if (isListItem || element.hasTagName(HTMLNames::aTag)) {
-        if (displayType == DisplayType::Block || displayType == DisplayType::InlineBlock)
+        if (displayType == Style::Display::Block || displayType == Style::Display::InlineBlock)
             return true;
 
         auto floating = renderer->style().floating();
@@ -358,13 +358,13 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
             return true;
     }
 
-    if (displayType == DisplayType::TableCell)
+    if (displayType == Style::Display::TableCell)
         return true;
 
-    if (element.hasTagName(HTMLNames::spanTag) && displayType == DisplayType::InlineBlock)
+    if (element.hasTagName(HTMLNames::spanTag) && displayType == Style::Display::InlineBlock)
         return true;
 
-    if (displayType == DisplayType::Block && (element.hasTagName(HTMLNames::h1Tag) || element.hasTagName(HTMLNames::h2Tag) || element.hasTagName(HTMLNames::h3Tag)
+    if (displayType == Style::Display::Block && (element.hasTagName(HTMLNames::h1Tag) || element.hasTagName(HTMLNames::h2Tag) || element.hasTagName(HTMLNames::h3Tag)
         || element.hasTagName(HTMLNames::h4Tag) || element.hasTagName(HTMLNames::h5Tag) || element.hasTagName(HTMLNames::h6Tag)))
         return true;
 

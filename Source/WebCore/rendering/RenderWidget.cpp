@@ -205,7 +205,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                     return;
             }
 
-            if (style().usedVisibility() != Visibility::Visible)
+            if (style().usedVisibility() != Style::Visibility::Visible)
                 m_widget->hide();
             else {
                 m_widget->show();
@@ -233,7 +233,7 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_widget) {
-        if (style().usedVisibility() != Visibility::Visible)
+        if (style().usedVisibility() != Style::Visibility::Visible)
             m_widget->hide();
         else
             m_widget->show();

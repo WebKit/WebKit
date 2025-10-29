@@ -1336,9 +1336,9 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     stream << (isComposited() ? "C" : "-");
 
     auto contentVisibility = style().contentVisibility();
-    if (contentVisibility == ContentVisibility::Hidden)
+    if (contentVisibility == Style::ContentVisibility::Hidden)
         stream << "H";
-    else if (contentVisibility == ContentVisibility::Auto)
+    else if (contentVisibility == Style::ContentVisibility::Auto)
         stream << "A";
     else
         stream << "-";

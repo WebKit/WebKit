@@ -356,7 +356,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         const auto& style = styleForRenderer(*current);
         extractDecorations(style, style.textDecorationLine());
 
-        if (current->style().display() == DisplayType::RubyAnnotation)
+        if (current->style().display() == Style::Display::RubyAnnotation)
             return;
 
         current = current->parent();

@@ -397,7 +397,7 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
         return false;
     if (isRenderSVGBlock())
         return false;
-    if (style().display() == DisplayType::RubyBlock || style().display() == DisplayType::RubyAnnotation)
+    if (style().display() == Style::Display::RubyBlock || style().display() == Style::Display::RubyAnnotation)
         return false;
 #if ENABLE(MATHML)
     if (isRenderMathMLBlock())
@@ -647,7 +647,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     // FIXME: This repaint logic should be moved into a separate helper function!
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
-    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (styleToUse.usedVisibility() == Visibility::Visible || enclosingLayer()->hasVisibleContent())) {
+    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (styleToUse.usedVisibility() == Style::Visibility::Visible || enclosingLayer()->hasVisibleContent())) {
         // FIXME: We could tighten up the left and right invalidation points if we let layoutInlineChildren fill them in based off the particular lines
         // it had to lay out. We wouldn't need the hasNonVisibleOverflow() hack in that case either.
         LayoutUnit repaintLogicalLeft = logicalLeftVisualOverflow();
@@ -2415,7 +2415,7 @@ void RenderBlockFlow::updateStylesForColumnChildren(const RenderStyle* oldStyle)
 {
     auto columnsNeedLayout = oldStyle && (oldStyle->columnCount() != style().columnCount() || oldStyle->columnWidth() != style().columnWidth()); 
     for (auto* child = firstChildBox(); child && (child->isRenderFragmentedFlow() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox()) {
-        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), DisplayType::Block));
+        child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), Style::Display::Block));
         if (columnsNeedLayout)
             child->setNeedsLayoutAndPreferredWidthsUpdate();
     }
@@ -3439,7 +3439,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
                     logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
                     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                     if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
-                        if (paintInfo && box->renderer().parent()->style().usedVisibility() == Visibility::Visible)
+                        if (paintInfo && box->renderer().parent()->style().usedVisibility() == Style::Visibility::Visible)
                             paintInfo->context().fillRect(gapRect, box->renderer().parent()->selectionBackgroundColor());
                         // VisibleSelection may be non-contiguous, see comment above.
                         result.uniteCenter(gapRect);
@@ -3573,7 +3573,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     if (!block->childrenInline()) {
         // Look among our immediate children for an alternate box that contains the point.
         for (RenderBox* child = block->firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (!child->height() || child->style().usedVisibility() != WebCore::Visibility::Visible || child->isFloatingOrOutOfFlowPositioned())
+            if (!child->height() || child->style().usedVisibility() != Style::Visibility::Visible || child->isFloatingOrOutOfFlowPositioned())
                 continue;
             float top = child->y();
             
@@ -4194,7 +4194,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     
     unsigned lineCount = m_lineCountForTextAutosizing;
     if (lineCount == NOT_SET) {
-        if (style().usedVisibility() != Visibility::Visible)
+        if (style().usedVisibility() != Style::Visibility::Visible)
             lineCount = NO_LINE;
         else {
             size_t lineCountInBlock = 0;
@@ -4202,7 +4202,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
                 lineCountInBlock = this->lineCount();
             else {
                 for (auto& listItem : childrenOfType<RenderListItem>(*this)) {
-                    if (!listItem.childrenInline() || listItem.style().usedVisibility() != Visibility::Visible)
+                    if (!listItem.childrenInline() || listItem.style().usedVisibility() != Style::Visibility::Visible)
                         continue;
                     lineCountInBlock += listItem.lineCount();
                     if (lineCountInBlock > 1)
@@ -4530,7 +4530,7 @@ static inline std::optional<std::pair<const RenderText&, const RenderText&>> tra
         if (is<RenderInline>(renderer))
             return true;
         auto& renderBox = downcast<RenderBoxModelObject>(renderer);
-        return !renderBox.isInFlow() || renderBox.style().display() == DisplayType::RubyAnnotation;
+        return !renderBox.isInFlow() || renderBox.style().display() == Style::Display::RubyAnnotation;
     };
 
     auto walker = InlineWalker(blockContainer, rubyBase.firstInFlowChild());
@@ -4647,7 +4647,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
         auto isInterlinearTypeAnnotation = [&] {
             if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*child)) {
                 auto& style = renderBlock->style();
-                return style.display() == DisplayType::RubyAnnotation && (!style.isInterCharacterRubyPosition() || styleToUse.writingMode().isVerticalTypographic());
+                return style.display() == Style::Display::RubyAnnotation && (!style.isInterCharacterRubyPosition() || styleToUse.writingMode().isVerticalTypographic());
             }
             return false;
         };
@@ -4723,13 +4723,13 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     childMin += bpm;
                     childMax += bpm;
 
-                    if (childStyle.display() == DisplayType::RubyBase && !childIterator.endOfInline)
+                    if (childStyle.display() == Style::Display::RubyBase && !childIterator.endOfInline)
                         rubyBaseContentStack.append({ inlineMin, inlineMax, false });
 
                     inlineMin += childMin;
                     inlineMax += childMax;
 
-                    if (childStyle.display() == DisplayType::RubyBase && childIterator.endOfInline) {
+                    if (childStyle.display() == Style::Display::RubyBase && childIterator.endOfInline) {
                         if (!rubyBaseContentStack.isEmpty()) {
                             auto rubyBaseStart = rubyBaseContentStack.last();
                             auto baseHasBreakingPositionAfter = hasTrailingSoftWrapOpportunity(*renderInline, *this);

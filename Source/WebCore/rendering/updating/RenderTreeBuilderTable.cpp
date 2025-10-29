@@ -133,11 +133,11 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
         return parent;
 
     if (CheckedPtr tableColumn = dynamicDowncast<RenderTableCol>(child)) {
-        if (!tableColumn->element() || tableColumn->style().display() == DisplayType::TableColumnGroup) {
+        if (!tableColumn->element() || tableColumn->style().display() == Style::Display::TableColumnGroup) {
             // COLGROUPs and anonymous RenderTableCols (generated wrappers for COLs) are direct children of the table renderer.
             return parent;
         }
-        auto newColGroup = createRenderer<RenderTableCol>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::TableColumnGroup));
+        auto newColGroup = createRenderer<RenderTableCol>(parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), Style::Display::TableColumnGroup));
         newColGroup->initializeStyle();
         auto& colGroup = *newColGroup;
         m_builder.attach(parent, WTFMove(newColGroup), beforeChild);
@@ -160,8 +160,8 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     auto* parentCandidate = beforeChild;
     while (parentCandidate && parentCandidate->parent()->isAnonymous()
         && !is<RenderTableSection>(*parentCandidate)
-        && parentCandidate->style().display() != DisplayType::TableCaption
-        && parentCandidate->style().display() != DisplayType::TableColumnGroup)
+        && parentCandidate->style().display() != Style::Display::TableCaption
+        && parentCandidate->style().display() != Style::Display::TableColumnGroup)
         parentCandidate = parentCandidate->parent();
 
     if (parentCandidate) {
@@ -181,8 +181,8 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     }
 
     if (beforeChild && !is<RenderTableSection>(*beforeChild)
-        && beforeChild->style().display() != DisplayType::TableCaption
-        && beforeChild->style().display() != DisplayType::TableColumnGroup)
+        && beforeChild->style().display() != Style::Display::TableCaption
+        && beforeChild->style().display() != Style::Display::TableColumnGroup)
         beforeChild = nullptr;
 
     auto newSection = createAnonymousTableSectionWithStyle(parent.protectedDocument(), parent.style());
@@ -287,28 +287,28 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(const Rend
 
 RenderPtr<RenderTable> RenderTreeBuilder::Table::createAnonymousTableWithStyle(Document& document, const RenderStyle& style)
 {
-    auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == DisplayType::Inline ? DisplayType::InlineTable : DisplayType::Table));
+    auto table = createRenderer<RenderTable>(RenderObject::Type::Table, document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == Style::Display::Inline ? Style::Display::InlineTable : Style::Display::Table));
     table->initializeStyle();
     return table;
 }
 
 RenderPtr<RenderTableCell> RenderTreeBuilder::Table::createAnonymousTableCellWithStyle(Document& document, const RenderStyle& style)
 {
-    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableCell));
+    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::Display::TableCell));
     cell->initializeStyle();
     return cell;
 }
 
 RenderPtr<RenderTableRow> RenderTreeBuilder::Table::createAnonymousTableRowWithStyle(Document& document, const RenderStyle& style)
 {
-    auto row = createRenderer<RenderTableRow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableRow));
+    auto row = createRenderer<RenderTableRow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::Display::TableRow));
     row->initializeStyle();
     return row;
 }
 
 RenderPtr<RenderTableSection> RenderTreeBuilder::Table::createAnonymousTableSectionWithStyle(Document& document, const RenderStyle& style)
 {
-    auto section = createRenderer<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::TableRowGroup));
+    auto section = createRenderer<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, Style::Display::TableRowGroup));
     section->initializeStyle();
     return section;
 }

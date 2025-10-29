@@ -45,9 +45,12 @@
 #include "SVGRenderStyleDefs.h"
 #include "ScrollAxis.h"
 #include "ScrollTypes.h"
+#include "StyleContentVisibility.h"
+#include "StyleDisplay.h"
 #include "StyleImageOrientation.h"
 #include "StyleScrollBehavior.h"
 #include "StyleTextDecorationLine.h"
+#include "StyleVisibility.h"
 #include "StyleWebKitOverflowScrolling.h"
 #include "StyleWebKitTouchCallout.h"
 #include "TextFlags.h"
@@ -731,130 +734,194 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #endif
 
-constexpr CSSValueID toCSSValueID(DisplayType e)
+constexpr CSSValueID toCSSValueID(Style::Display display)
 {
-    switch (e) {
-    case DisplayType::Inline:
+    switch (display) {
+    case Style::Display::Inline:
         return CSSValueInline;
-    case DisplayType::Block:
+    case Style::Display::Block:
         return CSSValueBlock;
-    case DisplayType::ListItem:
+    case Style::Display::ListItem:
         return CSSValueListItem;
-    case DisplayType::InlineBlock:
+    case Style::Display::InlineBlock:
         return CSSValueInlineBlock;
-    case DisplayType::Table:
+    case Style::Display::Table:
         return CSSValueTable;
-    case DisplayType::InlineTable:
+    case Style::Display::InlineTable:
         return CSSValueInlineTable;
-    case DisplayType::TableRowGroup:
+    case Style::Display::TableRowGroup:
         return CSSValueTableRowGroup;
-    case DisplayType::TableHeaderGroup:
+    case Style::Display::TableHeaderGroup:
         return CSSValueTableHeaderGroup;
-    case DisplayType::TableFooterGroup:
+    case Style::Display::TableFooterGroup:
         return CSSValueTableFooterGroup;
-    case DisplayType::TableRow:
+    case Style::Display::TableRow:
         return CSSValueTableRow;
-    case DisplayType::TableColumnGroup:
+    case Style::Display::TableColumnGroup:
         return CSSValueTableColumnGroup;
-    case DisplayType::TableColumn:
+    case Style::Display::TableColumn:
         return CSSValueTableColumn;
-    case DisplayType::TableCell:
+    case Style::Display::TableCell:
         return CSSValueTableCell;
-    case DisplayType::TableCaption:
+    case Style::Display::TableCaption:
         return CSSValueTableCaption;
-    case DisplayType::Box:
+    case Style::Display::Box:
         return CSSValueWebkitBox;
-    case DisplayType::InlineBox:
+    case Style::Display::InlineBox:
         return CSSValueWebkitInlineBox;
-    case DisplayType::Flex:
+    case Style::Display::Flex:
         return CSSValueFlex;
-    case DisplayType::InlineFlex:
+    case Style::Display::InlineFlex:
         return CSSValueInlineFlex;
-    case DisplayType::Grid:
+    case Style::Display::Grid:
         return CSSValueGrid;
-    case DisplayType::InlineGrid:
+    case Style::Display::InlineGrid:
         return CSSValueInlineGrid;
-    case DisplayType::None:
+    case Style::Display::None:
         return CSSValueNone;
-    case DisplayType::Contents:
+    case Style::Display::Contents:
         return CSSValueContents;
-    case DisplayType::FlowRoot:
+    case Style::Display::FlowRoot:
         return CSSValueFlowRoot;
-    case DisplayType::Ruby:
+    case Style::Display::Ruby:
         return CSSValueRuby;
-    case DisplayType::RubyBlock:
+    case Style::Display::RubyBlock:
         return CSSValueBlockRuby;
-    case DisplayType::RubyBase:
+    case Style::Display::RubyBase:
         return CSSValueRubyBase;
-    case DisplayType::RubyAnnotation:
+    case Style::Display::RubyAnnotation:
         return CSSValueRubyText;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr DisplayType fromCSSValueID(CSSValueID valueID)
+template<> struct Style::ValueRepresentation<Style::Display> {
+    template<typename... F> constexpr decltype(auto) operator()(Style::Display value, F&&... f)
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        switch (value) {
+        case Style::Display::Inline:
+            return visitor(CSS::Keyword::Inline { });
+        case Style::Display::Block:
+            return visitor(CSS::Keyword::Block { });
+        case Style::Display::ListItem:
+            return visitor(CSS::Keyword::ListItem { });
+        case Style::Display::InlineBlock:
+            return visitor(CSS::Keyword::InlineBlock { });
+        case Style::Display::Table:
+            return visitor(CSS::Keyword::Table { });
+        case Style::Display::InlineTable:
+            return visitor(CSS::Keyword::InlineTable { });
+        case Style::Display::TableRowGroup:
+            return visitor(CSS::Keyword::TableRowGroup { });
+        case Style::Display::TableHeaderGroup:
+            return visitor(CSS::Keyword::TableHeaderGroup { });
+        case Style::Display::TableFooterGroup:
+            return visitor(CSS::Keyword::TableFooterGroup { });
+        case Style::Display::TableRow:
+            return visitor(CSS::Keyword::TableRow { });
+        case Style::Display::TableColumnGroup:
+            return visitor(CSS::Keyword::TableColumnGroup { });
+        case Style::Display::TableColumn:
+            return visitor(CSS::Keyword::TableColumn { });
+        case Style::Display::TableCell:
+            return visitor(CSS::Keyword::TableCell { });
+        case Style::Display::TableCaption:
+            return visitor(CSS::Keyword::TableCaption { });
+        case Style::Display::Box:
+            return visitor(CSS::Keyword::WebkitBox { });
+        case Style::Display::InlineBox:
+            return visitor(CSS::Keyword::WebkitInlineBox { });
+        case Style::Display::Flex:
+            return visitor(CSS::Keyword::Flex { });
+        case Style::Display::InlineFlex:
+            return visitor(CSS::Keyword::InlineFlex { });
+        case Style::Display::Grid:
+            return visitor(CSS::Keyword::Grid { });
+        case Style::Display::InlineGrid:
+            return visitor(CSS::Keyword::InlineGrid { });
+        case Style::Display::None:
+            return visitor(CSS::Keyword::None { });
+        case Style::Display::Contents:
+            return visitor(CSS::Keyword::Contents { });
+        case Style::Display::FlowRoot:
+            return visitor(CSS::Keyword::FlowRoot { });
+        case Style::Display::Ruby:
+            return visitor(CSS::Keyword::Ruby { });
+        case Style::Display::RubyBlock:
+            return visitor(CSS::Keyword::BlockRuby { });
+        case Style::Display::RubyBase:
+            return visitor(CSS::Keyword::RubyBase { });
+        case Style::Display::RubyAnnotation:
+            return visitor(CSS::Keyword::RubyText { });
+        }
+        RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    }
+};
+
+template<> constexpr Style::Display fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueInline:
-        return DisplayType::Inline;
+        return Style::Display::Inline;
     case CSSValueBlock:
-        return DisplayType::Block;
+        return Style::Display::Block;
     case CSSValueListItem:
-        return DisplayType::ListItem;
+        return Style::Display::ListItem;
     case CSSValueInlineBlock:
-        return DisplayType::InlineBlock;
+        return Style::Display::InlineBlock;
     case CSSValueTable:
-        return DisplayType::Table;
+        return Style::Display::Table;
     case CSSValueInlineTable:
-        return DisplayType::InlineTable;
+        return Style::Display::InlineTable;
     case CSSValueTableRowGroup:
-        return DisplayType::TableRowGroup;
+        return Style::Display::TableRowGroup;
     case CSSValueTableHeaderGroup:
-        return DisplayType::TableHeaderGroup;
+        return Style::Display::TableHeaderGroup;
     case CSSValueTableFooterGroup:
-        return DisplayType::TableFooterGroup;
+        return Style::Display::TableFooterGroup;
     case CSSValueTableRow:
-        return DisplayType::TableRow;
+        return Style::Display::TableRow;
     case CSSValueTableColumnGroup:
-        return DisplayType::TableColumnGroup;
+        return Style::Display::TableColumnGroup;
     case CSSValueTableColumn:
-        return DisplayType::TableColumn;
+        return Style::Display::TableColumn;
     case CSSValueTableCell:
-        return DisplayType::TableCell;
+        return Style::Display::TableCell;
     case CSSValueTableCaption:
-        return DisplayType::TableCaption;
+        return Style::Display::TableCaption;
     case CSSValueWebkitBox:
-        return DisplayType::Box;
+        return Style::Display::Box;
     case CSSValueWebkitInlineBox:
-        return DisplayType::InlineBox;
+        return Style::Display::InlineBox;
     case CSSValueFlex:
-        return DisplayType::Flex;
+        return Style::Display::Flex;
     case CSSValueInlineFlex:
-        return DisplayType::InlineFlex;
+        return Style::Display::InlineFlex;
     case CSSValueGrid:
-        return DisplayType::Grid;
+        return Style::Display::Grid;
     case CSSValueInlineGrid:
-        return DisplayType::InlineGrid;
+        return Style::Display::InlineGrid;
     case CSSValueNone:
-        return DisplayType::None;
+        return Style::Display::None;
     case CSSValueContents:
-        return DisplayType::Contents;
+        return Style::Display::Contents;
     case CSSValueFlowRoot:
-        return DisplayType::FlowRoot;
+        return Style::Display::FlowRoot;
     case CSSValueRuby:
-        return DisplayType::Ruby;
+        return Style::Display::Ruby;
     case CSSValueBlockRuby:
-        return DisplayType::RubyBlock;
+        return Style::Display::RubyBlock;
     case CSSValueRubyBase:
-        return DisplayType::RubyBase;
+        return Style::Display::RubyBase;
     case CSSValueRubyText:
-        return DisplayType::RubyAnnotation;
+        return Style::Display::RubyAnnotation;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return DisplayType::Inline;
+    return Style::Display::Inline;
 }
 
 #define TYPE EmptyCell
@@ -1362,7 +1429,7 @@ template<> constexpr UserSelect fromCSSValueID(CSSValueID valueID)
     return UserSelect::Text;
 }
 
-#define TYPE Visibility
+#define TYPE Style::Visibility
 #define FOR_EACH(CASE) CASE(Visible) CASE(Hidden) CASE(Collapse)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
@@ -2482,7 +2549,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#define TYPE ContentVisibility
+#define TYPE Style::ContentVisibility
 #define FOR_EACH(CASE) CASE(Visible) CASE(Hidden) CASE(Auto)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE

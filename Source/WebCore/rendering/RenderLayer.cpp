@@ -385,7 +385,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
 
     if (needsVisibleContentStatusUpdate) {
         m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = renderer.style().usedVisibility() == Visibility::Visible;
+        m_hasVisibleContent = renderer.style().usedVisibility() == Style::Visibility::Visible;
     }
 }
 
@@ -511,7 +511,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
 
     if (oldChild.hasBlendMode() || (oldChild.hasNotIsolatedBlendingDescendants() && !oldChild.isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
-    if (renderer().style().usedVisibility() != Visibility::Visible)
+    if (renderer().style().usedVisibility() != Style::Visibility::Visible)
         dirtyVisibleContentStatus();
 }
 
@@ -2032,7 +2032,7 @@ bool RenderLayer::computeHasVisibleContent() const
     if (renderer().isSkippedContent())
         return false;
 
-    if (renderer().style().usedVisibility() == Visibility::Visible)
+    if (renderer().style().usedVisibility() == Style::Visibility::Visible)
         return true;
 
     // Layer's renderer has visibility:hidden, but some non-layer child may have visibility:visible.
@@ -2046,7 +2046,7 @@ bool RenderLayer::computeHasVisibleContent() const
     const auto* renderer = this->renderer().firstChild();
     while (renderer) {
         if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer); renderElement && !renderElement->hasLayer()) {
-            if (renderElement->style().usedVisibility() == Visibility::Visible)
+            if (renderElement->style().usedVisibility() == Style::Visibility::Visible)
                 return true;
             if (auto* firstChild = renderElement->firstChild()) {
                 renderer = firstChild;
@@ -4640,7 +4640,7 @@ static RefPtr<Element> flattenedParent(Element* element)
         return nullptr;
     RefPtr parent = element->parentElementInComposedTree();
     while (parent) {
-        if (!parent->isConnected() || parent->computedStyle()->display() != DisplayType::Contents)
+        if (!parent->isConnected() || parent->computedStyle()->display() != Style::Display::Contents)
             break;
         parent = parent->parentElementInComposedTree();
     }
@@ -5828,7 +5828,7 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
 
     // We can't use hasVisibleContent(), because that will be true if our renderer is hidden, but some child
     // is visible and that child doesn't cover the entire rect.
-    if (renderer().style().usedVisibility() != Visibility::Visible)
+    if (renderer().style().usedVisibility() != Style::Visibility::Visible)
         return false;
 
     if (shouldPaintWithFilters() && renderer().style().filter().hasFilterThatAffectsOpacity())

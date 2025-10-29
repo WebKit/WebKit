@@ -112,10 +112,8 @@ enum class ContainerType : uint8_t;
 enum class Containment : uint8_t;
 enum class ContentDistribution : uint8_t;
 enum class ContentPosition : uint8_t;
-enum class ContentVisibility : uint8_t;
 enum class CursorType : uint8_t;
 enum class CursorVisibility : bool;
-enum class DisplayType : uint8_t;
 enum class DominantBaseline : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint32_t;
@@ -212,7 +210,6 @@ enum class UserDrag : uint8_t;
 enum class UserModify : uint8_t;
 enum class UserSelect : uint8_t;
 enum class VectorEffect : uint8_t;
-enum class Visibility : uint8_t;
 enum class WhiteSpace : uint8_t;
 enum class WhiteSpaceCollapse : uint8_t;
 enum class WindRule : bool;
@@ -383,6 +380,8 @@ struct ZIndex;
 struct ZoomFactor;
 
 enum class Change : uint8_t;
+enum class ContentVisibility : uint8_t;
+enum class Display : uint8_t;
 enum class GridTrackSizingDirection : bool;
 enum class ImageOrientation : bool;
 enum class LineBoxContain : uint8_t;
@@ -390,6 +389,7 @@ enum class PositionTryOrder : uint8_t;
 enum class SVGGlyphOrientationHorizontal : uint8_t;
 enum class SVGGlyphOrientationVertical : uint8_t;
 enum class ScrollBehavior : bool;
+enum class Visibility : uint8_t;
 enum class WebkitOverflowScrolling : bool;
 enum class WebkitTouchCallout : bool;
 
@@ -467,7 +467,7 @@ public:
     static RenderStyle cloneIncludingPseudoElements(const RenderStyle&);
     static std::unique_ptr<RenderStyle> clonePtr(const RenderStyle&);
 
-    static RenderStyle createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, DisplayType);
+    static RenderStyle createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, Style::Display);
     static RenderStyle createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
@@ -575,7 +575,7 @@ public:
 
     // attribute getter methods
 
-    constexpr DisplayType display() const { return static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay); }
+    constexpr Style::Display display() const { return static_cast<Style::Display>(m_nonInheritedFlags.effectiveDisplay); }
     constexpr WritingMode writingMode() const { return m_inheritedFlags.writingMode; }
     bool isLeftToRightDirection() const { return writingMode().isBidiLTR(); } // deprecated, because of confusion between physical inline directions and bidi / line-relative directions
 
@@ -711,8 +711,8 @@ public:
     inline OverscrollBehavior overscrollBehaviorX() const;
     inline OverscrollBehavior overscrollBehaviorY() const;
     
-    Visibility visibility() const { return static_cast<Visibility>(m_inheritedFlags.visibility); }
-    inline Visibility usedVisibility() const;
+    Style::Visibility visibility() const { return static_cast<Style::Visibility>(m_inheritedFlags.visibility); }
+    inline Style::Visibility usedVisibility() const;
 
     const Style::VerticalAlign& verticalAlign() const;
 
@@ -926,12 +926,12 @@ public:
     inline const Style::ContainerNames& containerNames() const;
     inline bool containerTypeAndNamesEqual(const RenderStyle&) const;
 
-    inline ContentVisibility contentVisibility() const;
+    inline Style::ContentVisibility contentVisibility() const;
 
     // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
     // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
     // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.
-    inline ContentVisibility usedContentVisibility() const;
+    inline Style::ContentVisibility usedContentVisibility() const;
     inline bool isSkippedRootOrSkippedContent() const;
 
     inline const Style::ContainIntrinsicSize& containIntrinsicWidth() const;
@@ -1283,12 +1283,12 @@ public:
     inline const Style::ViewTransitionClasses& viewTransitionClasses() const;
     inline const Style::ViewTransitionName& viewTransitionName() const;
 
-    void setDisplay(DisplayType value)
+    void setDisplay(Style::Display display)
     {
-        m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
+        m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(display);
         m_nonInheritedFlags.effectiveDisplay = m_nonInheritedFlags.originalDisplay;
     }
-    void setEffectiveDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
+    void setEffectiveDisplay(Style::Display display) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(display); }
     void setPosition(PositionType v) { m_nonInheritedFlags.position = static_cast<unsigned>(v); }
     void setFloating(Float v) { m_nonInheritedFlags.floating = static_cast<unsigned>(v); }
 
@@ -1368,7 +1368,7 @@ public:
     void setOverflowY(Overflow v) { m_nonInheritedFlags.overflowY = static_cast<unsigned>(v); }
     inline void setOverscrollBehaviorX(OverscrollBehavior);
     inline void setOverscrollBehaviorY(OverscrollBehavior);
-    void setVisibility(Visibility v) { m_inheritedFlags.visibility = static_cast<unsigned>(v); }
+    void setVisibility(Style::Visibility visibility) { m_inheritedFlags.visibility = static_cast<unsigned>(visibility); }
     void setVerticalAlign(Style::VerticalAlign&&);
 
     inline void setClip(Style::Clip&&);
@@ -1477,9 +1477,8 @@ public:
     inline void setContainIntrinsicWidth(Style::ContainIntrinsicSize&&);
     inline void setContainIntrinsicHeight(Style::ContainIntrinsicSize&&);
 
-    inline void setContentVisibility(ContentVisibility);
-
-    inline void setUsedContentVisibility(ContentVisibility);
+    inline void setContentVisibility(Style::ContentVisibility);
+    inline void setUsedContentVisibility(Style::ContentVisibility);
 
     inline void setListStyleType(Style::ListStyleType&&);
     void setListStyleImage(Style::ImageOrNone&&);
@@ -2001,7 +2000,7 @@ public:
     static inline Style::Clip initialClip();
     static inline Style::SVGCenterCoordinateComponent initialCx();
     static inline Style::SVGCenterCoordinateComponent initialCy();
-    static constexpr DisplayType initialDisplay();
+    static constexpr Style::Display initialDisplay();
     static constexpr UnicodeBidi initialUnicodeBidi();
     static constexpr PositionType initialPosition();
     static inline Style::VerticalAlign initialVerticalAlign();
@@ -2053,7 +2052,7 @@ public:
     static constexpr OptionSet<TextTransform> initialTextTransform();
     static inline Style::ViewTransitionClasses initialViewTransitionClasses();
     static inline Style::ViewTransitionName initialViewTransitionName();
-    static constexpr Visibility initialVisibility();
+    static constexpr Style::Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static constexpr Style::WebkitBorderSpacing initialBorderHorizontalSpacing();
     static constexpr Style::WebkitBorderSpacing initialBorderVerticalSpacing();
@@ -2163,7 +2162,7 @@ public:
     static constexpr ContainerType initialContainerType();
     static Style::ContainerNames initialContainerNames();
     static inline Style::Content initialContent();
-    static constexpr ContentVisibility initialContentVisibility();
+    static constexpr Style::ContentVisibility initialContentVisibility();
 
     static inline Style::ContainIntrinsicSize initialContainIntrinsicWidth();
     static inline Style::ContainIntrinsicSize initialContainIntrinsicHeight();
@@ -2519,8 +2518,8 @@ private:
         void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
 #endif
 
-        PREFERRED_TYPE(DisplayType) unsigned effectiveDisplay : 5;
-        PREFERRED_TYPE(DisplayType) unsigned originalDisplay : 5;
+        PREFERRED_TYPE(Style::Display) unsigned effectiveDisplay : 5;
+        PREFERRED_TYPE(Style::Display) unsigned originalDisplay : 5;
         PREFERRED_TYPE(Overflow) unsigned overflowX : 3;
         PREFERRED_TYPE(Overflow) unsigned overflowY : 3;
         PREFERRED_TYPE(Clear) unsigned clear : 3;
@@ -2567,7 +2566,7 @@ private:
 
         // Cursors and Visibility = 13 bits aligned onto 4 bits + 1 byte + 1 bit
         PREFERRED_TYPE(PointerEvents) unsigned char pointerEvents : 4;
-        PREFERRED_TYPE(Visibility) unsigned char visibility : 2;
+        PREFERRED_TYPE(Style::Visibility) unsigned char visibility : 2;
         PREFERRED_TYPE(CursorType) unsigned char cursorType : 6;
 #if ENABLE(CURSOR_VISIBILITY)
         PREFERRED_TYPE(CursorVisibility) unsigned char cursorVisibility : 1;
@@ -2597,23 +2596,12 @@ private:
     // This constructor is used to implement the replace operation.
     RenderStyle(RenderStyle&, RenderStyle&&);
 
-    constexpr DisplayType originalDisplay() const { return static_cast<DisplayType>(m_nonInheritedFlags.originalDisplay); }
+    constexpr Style::Display originalDisplay() const { return static_cast<Style::Display>(m_nonInheritedFlags.originalDisplay); }
 
     const Style::Color& unresolvedColorForProperty(CSSPropertyID, bool visitedLink = false) const;
 
     inline bool hasAutoLeftAndRight() const;
     inline bool hasAutoTopAndBottom() const;
-
-    static constexpr bool isDisplayInlineType(DisplayType);
-    static constexpr bool isDisplayBlockType(DisplayType);
-    static constexpr bool isDisplayFlexibleBox(DisplayType);
-    static constexpr bool isDisplayGridBox(DisplayType);
-    static constexpr bool isDisplayFlexibleOrGridBox(DisplayType);
-    static constexpr bool isDisplayDeprecatedFlexibleBox(DisplayType);
-    static constexpr bool isDisplayListItemType(DisplayType);
-    static constexpr bool isDisplayTableOrTablePart(DisplayType);
-    static constexpr bool isInternalTableBox(DisplayType);
-    static constexpr bool isRubyContainerOrInternalRubyBox(DisplayType);
 
     bool changeAffectsVisualOverflow(const RenderStyle&) const;
     bool changeRequiresLayout(const RenderStyle&, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const;

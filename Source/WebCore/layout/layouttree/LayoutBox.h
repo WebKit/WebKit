@@ -29,6 +29,7 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderStyle.h>
 #include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleDisplay.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -128,29 +129,29 @@ public:
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isBodyBox() const { return m_nodeType == NodeType::Body; }
-    bool isRuby() const { return style().display() == DisplayType::Ruby; }
-    bool isRubyBase() const { return style().display() == DisplayType::RubyBase; }
+    bool isRuby() const { return style().display() == Style::Display::Ruby; }
+    bool isRubyBase() const { return style().display() == Style::Display::RubyBase; }
     bool isRubyInlineBox() const { return isRuby() || isRubyBase(); }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
     bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
-    bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
-    bool isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
-    bool isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
-    bool isTableFooter() const { return style().display() == DisplayType::TableFooterGroup; }
-    bool isTableRow() const { return style().display() == DisplayType::TableRow; }
-    bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
-    bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
-    bool isTableCell() const { return style().display() == DisplayType::TableCell; }
+    bool isTableCaption() const { return style().display() == Style::Display::TableCaption; }
+    bool isTableHeader() const { return style().display() == Style::Display::TableHeaderGroup; }
+    bool isTableBody() const { return style().display() == Style::Display::TableRowGroup; }
+    bool isTableFooter() const { return style().display() == Style::Display::TableFooterGroup; }
+    bool isTableRow() const { return style().display() == Style::Display::TableRow; }
+    bool isTableColumnGroup() const { return style().display() == Style::Display::TableColumnGroup; }
+    bool isTableColumn() const { return style().display() == Style::Display::TableColumn; }
+    bool isTableCell() const { return style().display() == Style::Display::TableCell; }
     bool isInternalTableBox() const;
-    bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
+    bool isFlexBox() const { return style().display() == Style::Display::Flex || style().display() == Style::Display::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
     bool isFlexItem() const;
-    bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
+    bool isGridBox() const { return style().display() == Style::Display::Grid || style().display() == Style::Display::InlineGrid; }
     bool isGridItem() const;
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
-    bool isListItem() const { return style().display() == DisplayType::ListItem; }
+    bool isListItem() const { return style().display() == Style::Display::ListItem; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
     bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
 

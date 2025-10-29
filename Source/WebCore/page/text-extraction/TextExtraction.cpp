@@ -316,7 +316,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible)
         return { SkipExtraction::SelfAndSubtree };
 
-    if (renderer->style().usedVisibility() == Visibility::Hidden)
+    if (renderer->style().usedVisibility() == Style::Visibility::Hidden)
         return { SkipExtraction::Self };
 
     if (RefPtr textNode = dynamicDowncast<Text>(node)) {
@@ -796,7 +796,7 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
     appendReplacedContentOrBackgroundImage(*renderer);
 
     for (auto& descendant : descendantsOfType<RenderObject>(*renderer)) {
-        if (descendant.style().usedVisibility() == Visibility::Hidden)
+        if (descendant.style().usedVisibility() == Style::Visibility::Hidden)
             continue;
 
         if (descendant.style().opacity() < minOpacityToConsiderVisible)
@@ -1035,7 +1035,7 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
         if (!renderer)
             return completion(false, "Target is not rendered (possibly display: none)"_s);
 
-        if (renderer->style().usedVisibility() != Visibility::Visible)
+        if (renderer->style().usedVisibility() != Style::Visibility::Visible)
             return completion(false, "Target is hidden via CSS visibility"_s);
     }
 

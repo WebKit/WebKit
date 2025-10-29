@@ -29,6 +29,7 @@
 #include <WebCore/StyleAccentColor.h>
 #include <WebCore/StyleBlockEllipsis.h>
 #include <WebCore/StyleColor.h>
+#include <WebCore/StyleContentVisibility.h>
 #include <WebCore/StyleCursor.h>
 #include <WebCore/StyleCustomPropertyData.h>
 #include <WebCore/StyleDynamicRangeLimit.h>
@@ -193,7 +194,7 @@ public:
     PREFERRED_TYPE(bool) unsigned effectivelyTransparent : 1;
     PREFERRED_TYPE(bool) unsigned isInSubtreeWithBlendMode : 1;
     PREFERRED_TYPE(bool) unsigned isForceHidden : 1;
-    PREFERRED_TYPE(ContentVisibility) unsigned usedContentVisibility : 2;
+    PREFERRED_TYPE(Style::ContentVisibility) unsigned usedContentVisibility : 2;
     PREFERRED_TYPE(bool) unsigned autoRevealsWhenFound : 1;
     PREFERRED_TYPE(bool) unsigned insideDefaultButton : 1;
     PREFERRED_TYPE(bool) unsigned insideSubmitButton : 1;

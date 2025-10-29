@@ -65,6 +65,7 @@
 #import <WebCore/RenderText.h>
 #import <WebCore/ScriptDisallowedScope.h>
 #import <WebCore/Settings.h>
+#import <WebCore/StyleDisplay.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>
@@ -445,7 +446,7 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(LocalFrame* frame, NSArr
                 return result;
             }
             searchedCellAbove = true;
-        } else if (auto* renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == Visibility::Visible) {
+        } else if (auto* renderText = dynamicDowncast<RenderText>(n->renderer()); renderText && renderText->style().usedVisibility() == WebCore::Style::Visibility::Visible) {
             // For each text chunk, run the regexp
             String nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes

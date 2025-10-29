@@ -35,11 +35,21 @@
 #endif
 
 #include "AnimationMalloc.h"
-#include "StyleInterpolationFunctions.h"
+#include "CSSPropertyNames.h"
+#include "Color.h"
+#include "ColorBlending.h"
+#include "FontCascade.h"
+#include "Logging.h"
+#include "RenderStyleSetters.h"
+#include "StyleCalculationValue.h"
+#include "StyleInterpolationClient.h"
+#include "StyleInterpolationContext.h"
 #include "StyleInterpolationWrapperBase.h"
+#include "StyleLengthWrapper+Blending.h"
 #include "StylePrimitiveKeyword+Logging.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore::Style::Interpolation {
@@ -79,33 +89,6 @@ private:
     GetterType (RenderStyle::*m_getter)() const;
 };
 
-template<typename T, typename GetterType = T, typename SetterType = T>
-class Wrapper : public WrapperWithGetter<T, GetterType> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Wrapper, Animation);
-public:
-    Wrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType))
-        : WrapperWithGetter<T, GetterType>(property, getter)
-        , m_setter(setter)
-    {
-    }
-
-    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
-    {
-        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
-    }
-
-protected:
-    void (RenderStyle::*m_setter)(SetterType);
-};
-
-// Deduction guide for getter/setters that return and take values.
-template<typename T>
-Wrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T)) -> Wrapper<T, T, T>;
-
-// Deduction guide for getter/setters that return const references and take r-value references.
-template<typename T>
-Wrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> Wrapper<T, const T&, T&&>;
-
 // MARK: - Typed Wrappers
 
 template<typename T, typename GetterType = T, typename SetterType = T>
@@ -134,6 +117,11 @@ public:
     bool requiresInterpolationForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const override
     {
         return Style::requiresInterpolationForAccumulativeIteration(this->value(from), this->value(to), from, to);
+    }
+
+    bool requiresNormalizedProgress(const RenderStyle& from, const RenderStyle& to) const override
+    {
+        return Style::requiresNormalizedProgress(this->value(from), this->value(to), from, to);
     }
 
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
@@ -246,34 +234,24 @@ DiscreteWrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (Re
 template<typename T>
 DiscreteWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> DiscreteWrapper<T, T, T&&>;
 
-template<typename T>
-class NonNormalizedDiscreteWrapper final : public Wrapper<T> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonNormalizedDiscreteWrapper, Animation);
-public:
-    NonNormalizedDiscreteWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
-        : Wrapper<T>(property, getter, setter)
-    {
-    }
-
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final
-    {
-        return false;
-    }
-};
-
 // MARK: - Font Property Wrappers
 
-class FontSizeWrapper final : public Wrapper<float> {
+class FontSizeWrapper final : public WrapperWithGetter<float> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontSizeWrapper, Animation);
 public:
     FontSizeWrapper()
-        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &RenderStyle::computedFontSize, &RenderStyle::setFontSize)
+        : WrapperWithGetter<float>(CSSPropertyID::CSSPropertyFontSize, &RenderStyle::computedFontSize)
     {
     }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         return a.specifiedFontSize() == b.specifiedFontSize();
+    }
+
+    void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
+    {
+        destination.setFontSize(WebCore::blend(this->value(from), this->value(to), context));
     }
 };
 
@@ -348,7 +326,7 @@ public:
 
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
     {
-        (destination.*m_setter)(blendFunc(value(from), value(to), context));
+        (destination.*m_setter)(WebCore::blend(value(from), value(to), context));
     }
 
 private:
@@ -520,22 +498,6 @@ public:
         LOG_WITH_STREAM(Animations, stream << " blending " << property() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
     }
 #endif
-};
-
-class VisibilityWrapper final : public Wrapper<Visibility> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisibilityWrapper, Animation);
-public:
-    VisibilityWrapper()
-        : Wrapper(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility)
-    {
-    }
-
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
-    {
-        // https://drafts.csswg.org/web-animations-1/#animating-visibility
-        // If neither value is visible, then discrete animation is used.
-        return value(from) == Visibility::Visible || value(to) == Visibility::Visible;
-    }
 };
 
 // MARK: - FillLayer Wrappers

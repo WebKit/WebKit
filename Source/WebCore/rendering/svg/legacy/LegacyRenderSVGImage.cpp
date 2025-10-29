@@ -185,7 +185,7 @@ void LegacyRenderSVGImage::layout()
 void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
-        || style().usedVisibility() == Visibility::Hidden || !imageResource().cachedImage())
+        || style().usedVisibility() == Style::Visibility::Hidden || !imageResource().cachedImage())
         return;
 
     FloatRect boundingBox = repaintRectInLocalCoordinates();

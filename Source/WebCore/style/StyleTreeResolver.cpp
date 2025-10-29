@@ -270,7 +270,7 @@ void TreeResolver::resetStyleForNonRenderedDescendants(Element& subtreeRoot)
 
 static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle)
 {
-    if (newStyle.display() != DisplayType::None)
+    if (newStyle.display() != Style::Display::None)
         return true;
     if (element.renderOrDisplayContentsStyle())
         return true;
@@ -346,7 +346,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
     if (!affectsRenderedSubtree(element, *update.style)) {
         styleable.setLastStyleChangeEventStyle(nullptr);
-        if (update.style->display() == DisplayType::None && element.hasDisplayNone())
+        if (update.style->display() == Style::Display::None && element.hasDisplayNone())
             return { WTFMove(update), DescendantsToResolve::None };
         return { };
     }
@@ -444,12 +444,12 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree, const RenderStyle* existingStyle)
 {
-    if (elementUpdate.style->display() == DisplayType::None)
+    if (elementUpdate.style->display() == Style::Display::None)
         return { };
 
     if (pseudoElementIdentifier.type == PseudoElementType::Backdrop && !element.isInTopLayer())
         return { };
-    if (pseudoElementIdentifier.type == PseudoElementType::Marker && elementUpdate.style->display() != DisplayType::ListItem)
+    if (pseudoElementIdentifier.type == PseudoElementType::Marker && elementUpdate.style->display() != Style::Display::ListItem)
         return { };
 
     auto userAgentShadowTreeEnclosingResolver = [&] -> Resolver* {
@@ -567,7 +567,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
 static bool isChildInBlockFormattingContext(const RenderStyle& style)
 {
     // FIXME: Incomplete. There should be shared code with layout for this.
-    if (style.display() != DisplayType::Block && style.display() != DisplayType::ListItem)
+    if (style.display() != Style::Display::Block && style.display() != Style::Display::ListItem)
         return false;
     if (style.hasOutOfFlowPosition())
         return false;
@@ -580,7 +580,7 @@ static bool isChildInBlockFormattingContext(const RenderStyle& style)
 
 std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement(Element& element, const ElementUpdate& elementUpdate)
 {
-    if (elementUpdate.style->display() == DisplayType::Inline) {
+    if (elementUpdate.style->display() == Style::Display::Inline) {
         auto* parent = boxGeneratingParent();
         if (!parent)
             return { };
@@ -604,7 +604,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
             return nullptr;
 
         for (auto& parent : makeReversedRange(m_parentStack)) {
-            if (parent.style.display() == DisplayType::Contents)
+            if (parent.style.display() == Style::Display::Contents)
                 continue;
             if (!supportsFirstLineAndLetterPseudoElement(parent.style))
                 return nullptr;
@@ -637,14 +637,14 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLetterPseudoEleme
         if (parent().resolvedFirstLineAndLetterChild)
             return nullptr;
 
-        bool skipInlines = elementUpdate.style->display() == DisplayType::Inline;
+        bool skipInlines = elementUpdate.style->display() == Style::Display::Inline;
         if (!skipInlines && !isChildInBlockFormattingContext(*elementUpdate.style))
             return nullptr;
 
         for (auto& parent : makeReversedRange(m_parentStack)) {
-            if (parent.style.display() == DisplayType::Contents)
+            if (parent.style.display() == Style::Display::Contents)
                 continue;
-            if (skipInlines && parent.style.display() == DisplayType::Inline)
+            if (skipInlines && parent.style.display() == Style::Display::Inline)
                 continue;
             skipInlines = false;
 
@@ -726,9 +726,9 @@ auto TreeResolver::boxGeneratingParent() const -> const Parent*
 {
     // 'display: contents' doesn't generate boxes.
     for (auto& parent : makeReversedRange(m_parentStack)) {
-        if (parent.style.display() == DisplayType::None)
+        if (parent.style.display() == Style::Display::None)
             return nullptr;
-        if (parent.style.display() != DisplayType::Contents)
+        if (parent.style.display() != Style::Display::Contents)
             return &parent;
     }
     ASSERT_NOT_REACHED();
@@ -744,9 +744,9 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
 const RenderStyle* TreeResolver::parentBoxStyleForPseudoElement(const ElementUpdate& elementUpdate) const
 {
     switch (elementUpdate.style->display()) {
-    case DisplayType::None:
+    case Style::Display::None:
         return nullptr;
-    case DisplayType::Contents:
+    case Style::Display::Contents:
         return parentBoxStyle();
     default:
         return elementUpdate.style.get();
@@ -975,7 +975,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
 
     styleBuilder.applyAllProperties();
 
-    if (newStyle->display() == DisplayType::None)
+    if (newStyle->display() == Style::Display::None)
         return nullptr;
 
     Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
@@ -1159,7 +1159,7 @@ static bool hasLoadingStylesheet(const Style::Scope& styleScope, const Element& 
 
 static std::unique_ptr<RenderStyle> createInheritedDisplayContentsStyleIfNeeded(const RenderStyle& parentElementStyle, const RenderStyle* parentBoxStyle)
 {
-    if (parentElementStyle.display() != DisplayType::Contents)
+    if (parentElementStyle.display() != Style::Display::Contents)
         return nullptr;
     if (parentBoxStyle && parentBoxStyle->inheritedEqual(parentElementStyle))
         return nullptr;
@@ -1207,7 +1207,7 @@ void TreeResolver::resolveComposedTree()
         if (RefPtr text = dynamicDowncast<Text>(node)) {
             auto containsOnlyASCIIWhitespace = text->containsOnlyASCIIWhitespace();
             auto needsTextUpdate = [&] {
-                if ((text->hasInvalidRenderer() && parent.changes != Change::Renderer) || parent.style.display() == DisplayType::Contents)
+                if ((text->hasInvalidRenderer() && parent.changes != Change::Renderer) || parent.style.display() == Style::Display::Contents)
                     return true;
                 if (!text->renderer() && containsOnlyASCIIWhitespace && parent.style.preserveNewline()) {
                     // FIXME: This really needs to be done only when parent.style.preserveNewline() changes value.
@@ -1317,7 +1317,7 @@ void TreeResolver::resolveComposedTree()
 
         resetDescendantStyleRelations(element, descendantsToResolve);
 
-        auto isInDisplayNoneTree = parent.isInDisplayNoneTree == IsInDisplayNoneTree::Yes || !style || style->display() == DisplayType::None;
+        auto isInDisplayNoneTree = parent.isInDisplayNoneTree == IsInDisplayNoneTree::Yes || !style || style->display() == Style::Display::None;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         pushParent(element, *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No, didAXUpdateFontSubtree, didAXUpdateTextColorSubtree);
 #else
