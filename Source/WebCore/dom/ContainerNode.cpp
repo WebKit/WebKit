@@ -336,6 +336,27 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 }
 
 template<typename DOMInsertionWork>
+static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertionDeferringPostInsertionCallbacks(ContainerNode& containerNode, Node& child, Node* beforeChild,
+    ContainerNode::ChildChange::Source source, ReplacedAllChildren replacedAllChildren, NodeVector& postInsertionNotificationTargets, NOESCAPE const DOMInsertionWork& doNodeInsertion)
+{
+    auto childChange = makeChildChangeForInsertion(containerNode, child, beforeChild, source, replacedAllChildren);
+
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+        Style::ChildChangeInvalidation styleInvalidation(containerNode, childChange);
+
+        if (containerNode.isShadowRoot() || containerNode.isInShadowTree()) [[unlikely]]
+            containerNode.containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
+        doNodeInsertion();
+        ChildListMutationScope(containerNode).childAdded(child);
+        notifyChildNodeInserted(containerNode, child, postInsertionNotificationTargets);
+    }
+    containerNode.childrenChanged(childChange);
+}
+
+template<typename DOMInsertionWork>
 static ALWAYS_INLINE void executeParserNodeInsertionIntoIsolatedTreeWithoutNotifyingParent(ContainerNode& containerNode, Node& child, NOESCAPE const DOMInsertionWork& doNodeInsertion)
 {
     {
@@ -877,6 +898,11 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
 {
     Ref protectedThis { *this };
 
+    if (auto* fragment = dynamicDowncast<DocumentFragment>(newChild)) {
+        if (fragment->isDocumentFragmentForInnerOuterHTML())
+            return appendChildrenFromInnerOuterHTMLFragment(*fragment);
+    }
+
     NodeVector targets;
     auto removeResult = removeSelfOrChildNodesForInsertion(newChild, targets);
     if (removeResult.hasException())
@@ -910,6 +936,41 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
         });
     }
 
+    dispatchSubtreeModifiedEvent();
+    return { };
+}
+
+ExceptionOr<void> ContainerNode::appendChildrenFromInnerOuterHTMLFragment(DocumentFragment& fragment)
+{
+    ASSERT(fragment.isDocumentFragmentForInnerOuterHTML());
+    ASSERT(!fragment.wrapper());
+
+    if (!fragment.hasChildNodes())
+        return { };
+
+    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+
+    ChildListMutationScope mutation(*this);
+    NodeVector postInsertionNotificationTargets;
+
+    while (RefPtr child = fragment.firstChild()) {
+        RefPtr nextSibling = child->nextSibling();
+        fragment.removeBetween(nullptr, nextSibling.get(), *child);
+
+        executeNodeInsertionWithScriptAssertionDeferringPostInsertionCallbacks(*this, *child, nullptr, ChildChange::Source::API, ReplacedAllChildren::No, postInsertionNotificationTargets, [&] {
+            child->setTreeScopeRecursively(treeScope());
+            appendChildCommon(*child);
+        });
+    }
+
+    ASSERT(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(*this));
+    for (auto& target : postInsertionNotificationTargets)
+        target->didFinishInsertingNode();
+
+    for (RefPtr child = firstChild(); child; child = child->nextSibling())
+        dispatchChildInsertionEvents(*child);
+
+    fragment.rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
     return { };
 }

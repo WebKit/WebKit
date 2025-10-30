@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class DocumentFragment;
 class HTMLCollection;
 class RadioNodeList;
 class RenderElement;
@@ -178,6 +179,7 @@ private:
 
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);
+    ExceptionOr<void> appendChildrenFromInnerOuterHTMLFragment(DocumentFragment&);
 
     void insertBeforeCommon(Node& nextChild, Node& oldChild);
     void appendChildCommon(Node&);
