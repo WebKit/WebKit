@@ -243,7 +243,6 @@ http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html [ Skip
 http/tests/resourceLoadStatistics/classify-as-prevalent-based-on-top-frame-redirect-collusion.html [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Skip ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking.html [ Skip ]
-http/tests/security/aboutBlank/security-context-window-open.html [ Skip ]
 http/tests/security/beforeload-iframe-server-redirect.html [ Skip ]
 http/tests/security/block-top-level-navigations-by-third-party-iframes.html [ Skip ]
 http/tests/security/block-top-level-navigation-to-different-scheme-by-third-party-iframes.html [ Skip ]

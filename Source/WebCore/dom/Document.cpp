@@ -8362,7 +8362,12 @@ void Document::initSecurityContext()
 
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
-    setCookieURL(m_url);
+    if (m_frame->isMainFrame())
+        setCookieURL(m_url);
+    else if (RefPtr page = m_frame->page())
+        setCookieURL(page->mainFrameURL());
+    else
+        setCookieURL({ });
 
     // Flags from CSP will be added when the response is received, but should not be carried over to the frame's next document.
     enforceSandboxFlags(m_frame->sandboxFlagsFromSandboxAttributeNotCSP());
@@ -8425,9 +8430,9 @@ void Document::initSecurityContext()
     // If we do not obtain a meaningful origin from the URL, then we try to
     // find one via the frame hierarchy.
     RefPtr parentFrame = m_frame->tree().parent();
-    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
+    RefPtr openerFrame = m_frame->opener();
 
-    RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
+    RefPtr ownerFrame = parentFrame.get();
     if (!ownerFrame)
         ownerFrame = openerFrame;
 
@@ -8436,22 +8441,27 @@ void Document::initSecurityContext()
         return;
     }
 
-    CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
-    contentSecurityPolicy->copyStateFrom(ownerFrame->protectedDocument()->checkedContentSecurityPolicy().get());
-    contentSecurityPolicy->updateSourceSelf(ownerFrame->document()->protectedSecurityOrigin());
+    // FIXME: With site isolation, we shouldn't inerit at this point, we should inherit from the frame's creation parameters.
+    RefPtr localOwnerFrame = dynamicDowncast<LocalFrame>(ownerFrame.get());
+    RefPtr localOpenerFrame = dynamicDowncast<LocalFrame>(openerFrame.get());
 
-    setCrossOriginEmbedderPolicy(ownerFrame->document()->crossOriginEmbedderPolicy());
+    CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
+    if (RefPtr ownerDocument = localOwnerFrame ? localOwnerFrame->document() : nullptr) {
+        contentSecurityPolicy->copyStateFrom(ownerDocument->checkedContentSecurityPolicy().get());
+        contentSecurityPolicy->updateSourceSelf(ownerDocument->protectedSecurityOrigin());
+        setCrossOriginEmbedderPolicy(ownerDocument->crossOriginEmbedderPolicy());
+    }
 
     // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
     // If creator is non-null and creator's origin is same origin with creator's relevant settings object's top-level origin, then set coop
     // to creator's browsing context's top-level browsing context's active document's cross-origin opener policy.
-    if (m_frame->isMainFrame() && openerFrame && openerFrame->document() && openerFrame->document()->isSameOriginAsTopDocument())
-        setCrossOriginOpenerPolicy(openerFrame->document()->crossOriginOpenerPolicy());
+    if (m_frame->isMainFrame() && localOpenerFrame && localOpenerFrame->document() && localOpenerFrame->document()->isSameOriginAsTopDocument())
+        setCrossOriginOpenerPolicy(localOpenerFrame->document()->crossOriginOpenerPolicy());
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
-    if (RefPtr openerDocument = openerFrame ? openerFrame->document() : nullptr)
+    if (RefPtr openerDocument = localOpenerFrame ? localOpenerFrame->document() : nullptr)
         contentSecurityPolicy->inheritInsecureNavigationRequestsToUpgradeFromOpener(*openerDocument->checkedContentSecurityPolicy());
 
     if (isSandboxed(SandboxFlag::Origin)) {
@@ -8459,15 +8469,21 @@ void Document::initSecurityContext()
         // but we're also sandboxed, the only thing we inherit is the ability
         // to load local resources. This lets about:blank iframes in file://
         // URL documents load images and other resources from the file system.
-        if (ownerFrame->document()->securityOrigin().canLoadLocalResources())
+        if (localOwnerFrame && localOwnerFrame->document()->securityOrigin().canLoadLocalResources())
             securityOrigin().grantLoadLocalResources();
         return;
     }
 
-    setCookieURL(ownerFrame->document()->cookieURL());
-    // We alias the SecurityOrigins to match Firefox, see Bug 15313
-    // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
+    if (RefPtr page = m_frame->page())
+        setCookieURL(page->mainFrameURL());
+    else
+        setCookieURL({ });
+
+    if (localOwnerFrame) {
+        // We alias the SecurityOrigins to match Firefox, see Bug 15313
+        // https://bugs.webkit.org/show_bug.cgi?id=15313
+        setSecurityOriginPolicy(localOwnerFrame->document()->securityOriginPolicy());
+    }
 }
 
 void Document::initContentSecurityPolicy()
