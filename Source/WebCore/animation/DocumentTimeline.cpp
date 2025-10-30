@@ -202,8 +202,6 @@ AnimationTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documen
 
 void DocumentTimeline::documentDidUpdateAnimationsAndSendEvents()
 {
-    applyPendingAcceleratedAnimations();
-
     if (!m_animationResolutionScheduled)
         scheduleNextTick();
 }
@@ -411,6 +409,11 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
         scheduleAnimationResolution();
     else
         clearTickScheduleTimer();
+}
+
+void DocumentTimeline::runPostLayoutTasks()
+{
+    applyPendingAcceleratedAnimations();
 }
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()

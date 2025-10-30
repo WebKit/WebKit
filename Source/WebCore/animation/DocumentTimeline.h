@@ -65,6 +65,7 @@ public:
     void transitionDidComplete(Ref<CSSTransition>&&);
 
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
+    void runPostLayoutTasks();
     void detachFromDocument() override;
 
     void enqueueAnimationEvent(AnimationEventBase&);
