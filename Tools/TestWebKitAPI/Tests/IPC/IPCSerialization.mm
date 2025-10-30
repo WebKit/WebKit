@@ -1681,7 +1681,8 @@ TEST(IPCSerialization, NSURLRequest)
     runTestNS({ urlRequest });
 }
 
-#if USE(AVFOUNDATION) && PLATFORM(MAC)
+// FIXME: rdar://163132998 ([ Tahoe ] 2x TestIPC.IPCSerialization.* (api-tests) are constant failures (301206))
+#if USE(AVFOUNDATION) && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 260000)
 TEST(IPCSerialization, AVOutputContext)
 {
     RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] init]);
@@ -1731,7 +1732,12 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
                                  signature:(NSData *)signature;
 @end
 
+// FIXME: rdar://163132998 ([ Tahoe ] 2x TestIPC.IPCSerialization.* (api-tests) are constant failures (301206))
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000)
+TEST(IPCSerialization, DISABLED_SecureCoding)
+#else
 TEST(IPCSerialization, SecureCoding)
+#endif
 {
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
