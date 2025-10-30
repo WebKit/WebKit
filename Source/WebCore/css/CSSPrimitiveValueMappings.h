@@ -1374,6 +1374,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE WhiteSpaceTrim
+#define FOR_EACH(CASE) CASE(DiscardBefore) CASE(DiscardAfter) CASE(DiscardInner) CASE(None)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE WordBreak
 #define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord) CASE(AutoPhrase)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

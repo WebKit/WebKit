@@ -143,6 +143,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , anchorFunctionScrollCompensatedAxes(0)
     , isPopoverInvoker(false)
     , useSVGZoomRulesForLength(false)
+    , whiteSpaceTrim(static_cast<unsigned>(RenderStyle::initialWhiteSpaceTrim()))
 {
 }
 
@@ -250,6 +251,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , anchorFunctionScrollCompensatedAxes(o.anchorFunctionScrollCompensatedAxes)
     , isPopoverInvoker(o.isPopoverInvoker)
     , useSVGZoomRulesForLength(o.useSVGZoomRulesForLength)
+    , whiteSpaceTrim(o.whiteSpaceTrim)
 {
 }
 

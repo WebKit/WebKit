@@ -594,6 +594,13 @@ enum class WhiteSpaceCollapse : uint8_t {
     BreakSpaces
 };
 
+enum class WhiteSpaceTrim : uint8_t {
+    None,
+    DiscardBefore,
+    DiscardAfter,
+    DiscardInner
+};
+
 enum class ReflectionDirection : uint8_t {
     Below,
     Above,
@@ -1383,6 +1390,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, UserSelect);
 WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceCollapse);
+WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceTrim);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathShift);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);

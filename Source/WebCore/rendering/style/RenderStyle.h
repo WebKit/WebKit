@@ -213,6 +213,7 @@ enum class VectorEffect : uint8_t;
 enum class Visibility : uint8_t;
 enum class WhiteSpace : uint8_t;
 enum class WhiteSpaceCollapse : uint8_t;
+enum class WhiteSpaceTrim : uint8_t;
 enum class WindRule : bool;
 enum class WordBreak : uint8_t;
 
@@ -810,6 +811,7 @@ public:
     inline bool breakWords() const;
 
     WhiteSpaceCollapse whiteSpaceCollapse() const { return static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse); }
+    inline WhiteSpaceTrim whiteSpaceTrim() const;
     TextWrapMode textWrapMode() const { return static_cast<TextWrapMode>(m_inheritedFlags.textWrapMode); }
     TextWrapStyle textWrapStyle() const { return static_cast<TextWrapStyle>(m_inheritedFlags.textWrapStyle); }
 
@@ -1443,6 +1445,7 @@ public:
     inline void setImageRendering(ImageRendering);
 
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
+    void setWhiteSpaceTrim(WhiteSpaceTrim);
 
     void setTextWrapMode(TextWrapMode v) { m_inheritedFlags.textWrapMode = static_cast<unsigned>(v); }
     void setTextWrapStyle(TextWrapStyle v) { m_inheritedFlags.textWrapStyle = static_cast<unsigned>(v); }
@@ -2052,6 +2055,7 @@ public:
     static inline Style::ViewTransitionName initialViewTransitionName();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
+    static constexpr WhiteSpaceTrim initialWhiteSpaceTrim();
     static constexpr Style::WebkitBorderSpacing initialBorderHorizontalSpacing();
     static constexpr Style::WebkitBorderSpacing initialBorderVerticalSpacing();
     static inline Style::Cursor initialCursor();
