@@ -796,6 +796,128 @@ TEST_F(iOSMouseSupport, BasicPointerInteractionRegions)
     }
 }
 
+TEST_F(iOSMouseSupport, LeftClickFiresPointerAndMouseEvents)
+{
+    // FIXME: It is not ideal that we have to wait for a static amount of time
+    // between sets of events if we want to test multiple pointerdowns.
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    static const char* page = R"PAGEDATA(
+        <script>
+            window.mousedownCount = 0;
+            window.mouseupCount = 0;
+            window.pointerdownCount = 0;
+            window.pointerupCount = 0;
+            window.clickCount = 0;
+
+            document.addEventListener('mousedown', () => { window.mousedownCount++ });
+            document.addEventListener('mouseup', () => { window.mouseupCount++ });
+            document.addEventListener('pointerdown', () => { window.pointerdownCount++ });
+            document.addEventListener('pointerup', () => { window.pointerupCount++ });
+            document.addEventListener('click', () => { window.clickCount++ });
+        </script>
+        )PAGEDATA";
+
+    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:page]];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+    testHarness.mouseDown(UIEventButtonMaskPrimary);
+    testHarness.mouseUp();
+
+    TestWebKitAPI::Util::runFor(0.1_s);
+
+    testHarness.mouseDown(UIEventButtonMaskPrimary);
+    testHarness.mouseUp();
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.mousedownCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.mouseupCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.pointerdownCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.pointerupCount"]);
+    EXPECT_WK_STREQ("2", [webView stringByEvaluatingJavaScript:@"window.clickCount"]);
+}
+
+static constexpr UIEventButtonMask middleButton = 1 << 2;
+static constexpr UIEventButtonMask backButton = 1 << 3;
+static constexpr UIEventButtonMask forwardButton = 1 << 4;
+
+TEST_F(iOSMouseSupport, NonPrimaryMouseButtonsForEvents)
+{
+    // FIXME: It is not ideal that we have to wait for a static amount of time
+    // between sets of events if we want to test multiple pointerdowns.
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    static const char* page = R"PAGEDATA(
+        <script>
+            window.mousedownInfo = "none";
+            window.mouseupInfo = "none";
+            window.pointerdownInfo = "none";
+            window.pointerupInfo = "none";
+            window.auxclickInfo = "none";
+            window.clickInfo = "none";
+
+            document.addEventListener('mousedown', (e) => {
+                window.mousedownInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('mouseup', (e) => {
+                window.mouseupInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('pointerdown', (e) => {
+                window.pointerdownInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('pointerup', (e) => {
+                window.pointerupInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('auxclick', (e) => {
+                window.auxclickInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+            document.addEventListener('click', (e) => {
+                window.clickInfo = "button: " + e.button + " buttons: " + e.buttons + " which: " + e.which;
+            });
+        </script>
+        )PAGEDATA";
+
+    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:page]];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(10, 10);
+
+    auto performMouseClick = [&](UIEventButtonMask buttonMask) {
+        TestWebKitAPI::Util::runFor(0.1_s);
+        testHarness.mouseDown(buttonMask);
+        testHarness.mouseUp();
+        [webView waitForPendingMouseEvents];
+    };
+
+    auto assertResults = [&](int button, int downButtons, int upButtons) {
+        RetainPtr downString = [[NSString alloc] initWithFormat:@"button: %d buttons: %d which: %d", button, downButtons, button + 1];
+        RetainPtr upString = [[NSString alloc] initWithFormat:@"button: %d buttons: %d which: %d", button, upButtons, button + 1];
+
+        EXPECT_WK_STREQ(downString.get(), [webView stringByEvaluatingJavaScript:@"window.mousedownInfo"]);
+        EXPECT_WK_STREQ(downString.get(), [webView stringByEvaluatingJavaScript:@"window.pointerdownInfo"]);
+        EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.mouseupInfo"]);
+        EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.pointerupInfo"]);
+        if (button)
+            EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.auxclickInfo"]);
+        else
+            EXPECT_WK_STREQ(upString.get(), [webView stringByEvaluatingJavaScript:@"window.clickInfo"]);
+    };
+
+    performMouseClick(UIEventButtonMaskPrimary);
+    assertResults(0, 1, 0);
+    performMouseClick(middleButton);
+    assertResults(1, 4, 0);
+    performMouseClick(backButton);
+    assertResults(3, 8, 0);
+    performMouseClick(forwardButton);
+    assertResults(4, 16, 0);
+    performMouseClick(UIEventButtonMaskSecondary);
+    assertResults(2, 2, 0);
+}
+
 #endif // HAVE(UI_POINTER_INTERACTION)
 
 #endif // PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)

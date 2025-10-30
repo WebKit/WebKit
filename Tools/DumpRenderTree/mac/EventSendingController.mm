@@ -37,12 +37,18 @@
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreeFileDraggingSource.h"
 #import "DumpRenderTreePasteboard.h"
+#import "InstanceMethodSwizzler.h"
 #import "ModifierKeys.h"
 #import "WebCoreTestSupport.h"
+#import <WebCore/MouseEvent.h>
 #import <WebCore/MouseEventTypes.h>
+#import <WebCore/Node.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>
+#import <wtf/HashFunctions.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashTraits.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
@@ -69,26 +75,23 @@ extern "C" void _NSNewKillRingSequence();
 @end
 #endif
 
-enum MouseAction {
-    MouseDown,
-    MouseUp,
-    MouseDragged
-};
-
-// Match the DOM spec (sadly the DOM spec does not provide an enum)
-enum MouseButton {
-    LeftMouseButton = 0,
-    MiddleMouseButton = 1,
-    RightMouseButton = 2,
-    NoMouseButton = -2
+enum class MouseAction : uint8_t {
+    Down,
+    Up,
+    Dragged,
 };
 
 NSPoint lastMousePosition;
 NSPoint lastClickPosition;
-int lastClickButton = NoMouseButton;
+NSInteger lastButtonDown;
+int lastClickButton = std::to_underlying(WebCore::MouseButton::None);
 static RetainPtr<NSArray> webkitDomEventNames;
 BOOL replayingSavedEvents;
-unsigned mouseButtonsCurrentlyDown = 0;
+auto mouseButtonsCurrentlyDown = [] {
+    WTF::HashMap<WebCore::MouseButton, bool, WTF::IntHash<WebCore::MouseButton>, WTF::StrongEnumHashTraits<WebCore::MouseButton>> map;
+    map.reserveInitialCapacity(5);
+    return map;
+}();
 
 static RetainPtr<NSMutableArray>& savedMouseEvents()
 {
@@ -413,34 +416,35 @@ static NSDraggingSession *drt_WebHTMLView_beginDraggingSessionWithItemsEventSour
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
+static NSEventType eventTypeForMouseButtonAndAction(WebCore::MouseButton button, MouseAction action)
 {
+    using namespace WebCore;
     switch (button) {
-    case LeftMouseButton:
+    case MouseButton::Left:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeLeftMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeLeftMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeLeftMouseDragged;
         }
-    case RightMouseButton:
+    case MouseButton::Right:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeRightMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeRightMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeRightMouseDragged;
         }
     default:
         switch (action) {
-        case MouseDown:
+        case MouseAction::Down:
             return NSEventTypeOtherMouseDown;
-        case MouseUp:
+        case MouseAction::Up:
             return NSEventTypeOtherMouseUp;
-        case MouseDragged:
+        case MouseAction::Dragged:
             return NSEventTypeOtherMouseDragged;
         }
     }
@@ -586,7 +590,35 @@ static std::unique_ptr<ClassMethodSwizzler> eventPressedMouseButtonsSwizzlerForV
 
 static NSUInteger swizzledEventPressedMouseButtons()
 {
-    return mouseButtonsCurrentlyDown;
+    NSUInteger mouseButtons = 0;
+    static constexpr std::array potentialMouseButtons { WebCore::MouseButton::Left, WebCore::MouseButton::Right, WebCore::MouseButton::Middle, WebCore::MouseButton::Back, WebCore::MouseButton::Forward };
+    for (std::size_t idx = 0; idx < potentialMouseButtons.size(); ++idx) {
+        if (mouseButtonsCurrentlyDown.getOptional(potentialMouseButtons[idx]).value_or(false))
+            mouseButtons += (1 << idx);
+    }
+    return mouseButtons;
+}
+
+static NSInteger swizzledEventButtonNumber()
+{
+    return lastButtonDown;
+}
+
+static NSInteger nsEventButtonNumberFromWebCoreMouseButton(WebCore::MouseButton button)
+{
+    using namespace WebCore;
+    switch (button) {
+    case MouseButton::Right:
+        return 1;
+    case MouseButton::Middle:
+        return 2;
+    case MouseButton::Back:
+        return 3;
+    case MouseButton::Forward:
+        return 4;
+    default:
+        return 0;
+    }
 }
 #endif
 
@@ -597,13 +629,18 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 - (void)mouseDown:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
 {
-    mouseButtonsCurrentlyDown |= (1 << buttonNumber);
+    auto button = WebCore::MouseEvent::buttonFromShort(static_cast<int16_t>(buttonNumber));
+    mouseButtonsCurrentlyDown.set(button, true);
+
+#if !PLATFORM(IOS_FAMILY)
+    lastButtonDown = nsEventButtonNumberFromWebCoreMouseButton(button);
+#endif
 
     [[[mainFrame frameView] documentView] layout];
     [self updateClickCountForButton:buttonNumber];
     
 #if !PLATFORM(IOS_FAMILY)
-    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseDown);
+    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Down);
     auto event = retainPtr([NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
                                    modifierFlags:buildModifierFlags(modifiers)
@@ -627,13 +664,14 @@ static NSUInteger swizzledEventPressedMouseButtons()
         {
 #if !PLATFORM(IOS_FAMILY)
             auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(subView, event.get());
+            auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
 #endif
             [subView mouseDown:event.get()];
         }
 #if !PLATFORM(IOS_FAMILY)
         [NSApp _setCurrentEvent:nil];
 #endif
-        if (buttonNumber == LeftMouseButton)
+        if (button == WebCore::MouseButton::Left)
             leftMouseButtonDown = YES;
     }
 }
@@ -670,7 +708,8 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
 - (void)mouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers
 {
-    mouseButtonsCurrentlyDown &= ~(1 << buttonNumber);
+    auto button = WebCore::MouseEvent::buttonFromShort(static_cast<int16_t>(buttonNumber));
+    mouseButtonsCurrentlyDown.set(button, false);
 
     if (dragMode && !replayingSavedEvents) {
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(mouseUp:withModifiers:)]];
@@ -687,7 +726,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 
     [[[mainFrame frameView] documentView] layout];
 #if !PLATFORM(IOS_FAMILY)
-    NSEventType eventType = eventTypeForMouseButtonAndAction(buttonNumber, MouseUp);
+    NSEventType eventType = eventTypeForMouseButtonAndAction(button, MouseAction::Up);
     auto event = retainPtr([NSEvent mouseEventWithType:eventType
                                         location:lastMousePosition 
                                    modifierFlags:buildModifierFlags(modifiers)
@@ -715,13 +754,14 @@ static NSUInteger swizzledEventPressedMouseButtons()
     {
 #if !PLATFORM(IOS_FAMILY)
         auto eventPressedMouseButtonsSwizzler = eventPressedMouseButtonsSwizzlerForViewAndEvent(targetView, event.get());
+        auto eventButtonNumberSwizzler = makeUnique<InstanceMethodSwizzler>([NSEvent class], @selector(buttonNumber), reinterpret_cast<IMP>(swizzledEventButtonNumber));
 #endif
         [targetView mouseUp:event.get()];
     }
 #if !PLATFORM(IOS_FAMILY)
     [NSApp _setCurrentEvent:nil];
 #endif
-    if (buttonNumber == LeftMouseButton)
+    if (button == WebCore::MouseButton::Left)
         leftMouseButtonDown = NO;
     lastClick = [event timestamp];
     lastClickPosition = lastMousePosition;
@@ -926,7 +966,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
 {
 #if PLATFORM(MAC)
     [[[mainFrame frameView] documentView] layout];
-    [self updateClickCountForButton:RightMouseButton];
+    [self updateClickCountForButton:std::to_underlying(WebCore::MouseButton::Right)];
 
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown
                                         location:lastMousePosition 

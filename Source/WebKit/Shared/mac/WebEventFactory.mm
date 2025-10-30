@@ -278,6 +278,10 @@ NSInteger WebEventFactory::toNSButtonNumber(WebKit::WebMouseEventButton mouseBut
         return 1 << 1;
     case WebKit::WebMouseEventButton::Middle:
         return 1 << 2;
+    case WebKit::WebMouseEventButton::Back:
+        return 1 << 3;
+    case WebKit::WebMouseEventButton::Forward:
+        return 1 << 4;
     }
     ASSERT_NOT_REACHED();
     return 0;

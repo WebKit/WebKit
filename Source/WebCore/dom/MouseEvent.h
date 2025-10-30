@@ -30,8 +30,8 @@
 #include <WebCore/MouseRelatedEvent.h>
 
 #include <wtf/Platform.h>
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-#include "PlatformTouchEventIOS.h"
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include <WebKitAdditions/PlatformTouchEventIOS.h>
 #endif
 
 namespace JSC {
@@ -77,6 +77,7 @@ public:
         int16_t button, EventTarget* relatedTarget);
 
     MouseButton button() const;
+    WEBCORE_EXPORT static MouseButton buttonFromShort(int16_t buttonValue);
     int16_t buttonAsShort() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
     SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }

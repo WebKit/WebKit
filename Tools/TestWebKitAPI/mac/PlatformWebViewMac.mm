@@ -165,6 +165,8 @@ static NSEventType eventTypeForButton(WKEventMouseButton button)
     case kWKEventMouseButtonRightButton:
         return NSEventTypeRightMouseDown;
     case kWKEventMouseButtonMiddleButton:
+    case kWKEventMouseButtonBackButton:
+    case kWKEventMouseButtonForwardButton:
         return NSEventTypeOtherMouseDown;
     case kWKEventMouseButtonNoButton:
         return NSEventTypeLeftMouseDown;
@@ -207,6 +209,29 @@ void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x,
                                      eventNumber:0
                                       clickCount:0
                                         pressure:0];
+
+    auto adjustedNSEvent = [&] {
+        auto eventField = [&] {
+            switch (button) {
+            case kWKEventMouseButtonMiddleButton:
+                return 2;
+            case kWKEventMouseButtonBackButton:
+                return 3;
+            case kWKEventMouseButtonForwardButton:
+                return 4;
+            default:
+                return 0;
+            }
+        };
+        CGEventRef cgEvent = event.CGEvent;
+        CGEventSetIntegerValueField(cgEvent, kCGMouseEventButtonNumber, eventField());
+        return [NSEvent eventWithCGEvent:cgEvent];
+    };
+
+    if (button == kWKEventMouseButtonMiddleButton
+        || button == kWKEventMouseButtonBackButton
+        || button == kWKEventMouseButtonForwardButton)
+        event = adjustedNSEvent();
 
     [m_view mouseDown:event];
 }

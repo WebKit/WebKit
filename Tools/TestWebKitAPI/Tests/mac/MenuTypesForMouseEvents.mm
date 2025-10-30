@@ -53,6 +53,12 @@ static void buildAndPerformTest(NSEventType buttonEvent, NSEventModifierFlags mo
                                           clickCount:0
                                             pressure:0];
 
+        if (buttonEvent == NSEventTypeOtherMouseDown) {
+            CGEventRef cgEvent = event.CGEvent;
+            CGEventSetIntegerValueField(cgEvent, kCGMouseEventButtonNumber, 2);
+            event = [NSEvent eventWithCGEvent:cgEvent];
+        }
+
         auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, nil, webView.get());
 
         EXPECT_EQ(expectedButton, pme.button());

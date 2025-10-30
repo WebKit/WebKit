@@ -153,6 +153,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     Left,
     Middle,
     Right,
+    Back,
+    Forward,
     None
 };
 

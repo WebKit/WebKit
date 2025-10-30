@@ -102,6 +102,7 @@
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
 		31DA8A3D1E7205CC00E1DF2F /* IOSLayoutTestCommunication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */; };
+		334BF3B92D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 334BF3B82D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm */; };
 		33558B2E2AF1C22B0041E63F /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C7881F250C69E400C0AA24 /* WPTFunctions.cpp */; };
 		41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */; };
 		41D5B62622DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 41D5B62522DD9D36000F4C4A /* FakeHelvetica-SingleExtendedCharacter.ttf */; };
@@ -378,6 +379,7 @@
 		3148A0531E6F85B600D3B316 /* IOSLayoutTestCommunication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IOSLayoutTestCommunication.cpp; path = ../TestRunnerShared/IOSLayoutTestCommunication.cpp; sourceTree = "<group>"; };
 		3148A0541E6F85B600D3B316 /* IOSLayoutTestCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSLayoutTestCommunication.h; path = ../TestRunnerShared/IOSLayoutTestCommunication.h; sourceTree = "<group>"; };
 		3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationProvider.cpp; sourceTree = "<group>"; };
+		334BF3B82D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxyCocoa.mm; sourceTree = "<group>"; };
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -729,6 +731,7 @@
 			children = (
 				0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */,
 				0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */,
+				334BF3B82D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm */,
 				2904FA1D265CC5D900A7EBC9 /* StringFunctionsCocoa.h */,
 				2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */,
 				BC9192041333E4F8003011DC /* TestInvocationCocoa.mm */,
@@ -1367,6 +1370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
+				334BF3B92D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,

@@ -77,6 +77,8 @@ UIEventButtonMask WebIOSEventFactory::toUIEventButtonMask(WebKit::WebMouseEventB
     case WebKit::WebMouseEventButton::Right:
         return UIEventButtonMaskSecondary;
     case WebKit::WebMouseEventButton::Middle:
+    case WebKit::WebMouseEventButton::Back:
+    case WebKit::WebMouseEventButton::Forward:
         // iOS does not currently support any mouse buttons other than Primary and Secondary.
         ASSERT_NOT_REACHED();
         return UIEventButtonMaskPrimary;

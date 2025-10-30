@@ -2008,6 +2008,7 @@ static void runTest(const std::string& inputLine)
 
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
+    lastButtonDown = 0;
 
     prevTestBFItem() = [[[mainFrame webView] backForwardList] currentItem];
 

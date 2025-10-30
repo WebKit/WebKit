@@ -1,0 +1,19 @@
+This tests the `buttons` property for mouse events we send.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Left Mouse Button
+PASS eventLog is "mousedown(1) mouseup(0) click(0) mousedown(1) mouseup(0) click(0) dblclick(0) "
+Middle Mouse Button
+PASS eventLog is "mousedown(4) mouseup(0) auxclick(0) mousedown(4) mouseup(0) auxclick(0) "
+Right Mouse Button
+PASS eventLog is "mousedown(2) mouseup(0) auxclick(0) mousedown(2) mouseup(0) auxclick(0) "
+Left and Right Mouse Buttons
+PASS eventLog is "mousedown(1) mousedown(3) mouseup(1) auxclick(1) mouseup(0) "
+Left, Right, and Middle Mouse Buttons
+PASS eventLog is "mousedown(1) mousedown(3) mousedown(7) mouseup(3) auxclick(3) mouseup(1) mouseup(0) "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

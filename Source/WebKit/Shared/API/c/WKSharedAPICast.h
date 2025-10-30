@@ -365,6 +365,12 @@ inline WKEventMouseButton toAPI(WebMouseEventButton mouseButton)
     case WebMouseEventButton::Right:
         wkMouseButton = kWKEventMouseButtonRightButton;
         break;
+    case WebMouseEventButton::Back:
+        wkMouseButton = kWKEventMouseButtonBackButton;
+        break;
+    case WebMouseEventButton::Forward:
+        wkMouseButton = kWKEventMouseButtonForwardButton;
+        break;
     }
 
     return wkMouseButton;
@@ -386,6 +392,12 @@ inline WKEventMouseButton toAPI(WebCore::MouseButton mouseButton)
         break;
     case WebCore::MouseButton::Right:
         wkMouseButton = kWKEventMouseButtonRightButton;
+        break;
+    case WebCore::MouseButton::Back:
+        wkMouseButton = kWKEventMouseButtonBackButton;
+        break;
+    case WebCore::MouseButton::Forward:
+        wkMouseButton = kWKEventMouseButtonForwardButton;
         break;
     default:
         break;

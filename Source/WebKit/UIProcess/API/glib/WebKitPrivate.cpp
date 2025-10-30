@@ -99,6 +99,10 @@ unsigned toWebKitMouseButton(WebKit::WebMouseEventButton button)
         return 2;
     case WebKit::WebMouseEventButton::Right:
         return 3;
+    case WebKit::WebMouseEventButton::Back:
+        return 4;
+    case WebKit::WebMouseEventButton::Forward:
+        return 5;
     }
     ASSERT_NOT_REACHED();
     return 0;

@@ -85,6 +85,8 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
     // +[NSEvent pressedMouseButtons] does not account for the NSEvent objects created through eventSender JS in tests.
     // As such, that method always returns 0. To fix this, we swizzle out +[NSEvent pressedMouseButtons], keep track of
     // the mouse button currently being pressed down, and supply the appropriate return value as specified in documentation.
+    // FIXME: We should add support for the back and forward mouse buttons as well.
+
     auto methodToSwizzle = class_getClassMethod(RetainPtr { objc_getMetaClass(NSStringFromClass([NSEvent class]).UTF8String) }.get(), @selector(pressedMouseButtons));
     // FIXME: This looks like a safer cpp false positive. It wants me to retain the Objective C block passed to imp_implementationWithBlock(),
     // which gets implicitly constructed from a C++ lambda on this line.
@@ -208,9 +210,11 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         dragEventType = NSEventTypeLeftMouseDragged;
         upEventType = NSEventTypeLeftMouseUp;
         break;
+    case WebMouseEventButton::Back:
+    case WebMouseEventButton::Forward:
     case WebMouseEventButton::Middle:
         downEventType = NSEventTypeOtherMouseDown;
-        dragEventType = NSEventTypeLeftMouseDragged;
+        dragEventType = NSEventTypeOtherMouseDragged;
         upEventType = NSEventTypeOtherMouseUp;
         break;
     case WebMouseEventButton::Right:

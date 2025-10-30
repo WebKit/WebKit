@@ -42,11 +42,11 @@ enum class SyntheticClickType : uint8_t { NoTap, OneFingerTap, TwoFingerTap };
 // changed since the last event, as specified in the DOM API for Pointer Events.
 // https://w3c.github.io/uievents/#dom-mouseevent-button
 // https://w3c.github.io/pointerevents/#the-button-property
-enum class MouseButton : int8_t { None = -2, PointerHasNotChanged, Left, Middle, Right, Other };
+enum class MouseButton : int8_t { None = -2, PointerHasNotChanged, Left, Middle, Right, Back, Forward, Other };
 
 inline MouseButton buttonFromShort(int16_t buttonValue)
 {
-    static constexpr std::array knownMouseButtonCases { MouseButton::None, MouseButton::PointerHasNotChanged, MouseButton::Left, MouseButton::Middle, MouseButton::Right };
+    static constexpr std::array knownMouseButtonCases { MouseButton::None, MouseButton::PointerHasNotChanged, MouseButton::Left, MouseButton::Middle, MouseButton::Right, MouseButton::Back, MouseButton::Forward };
     bool isKnownButton = std::ranges::any_of(knownMouseButtonCases, [buttonValue](MouseButton button) {
         return buttonValue == enumToUnderlyingType(button);
     });

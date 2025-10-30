@@ -49,6 +49,10 @@ WebCore::MouseButton platform(WebMouseEventButton button)
         return WebCore::MouseButton::Middle;
     case WebMouseEventButton::Right:
         return WebCore::MouseButton::Right;
+    case WebMouseEventButton::Back:
+        return WebCore::MouseButton::Back;
+    case WebMouseEventButton::Forward:
+        return WebCore::MouseButton::Forward;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -65,6 +69,10 @@ WebMouseEventButton kit(WebCore::MouseButton button)
         return WebMouseEventButton::Middle;
     case WebCore::MouseButton::Right:
         return WebMouseEventButton::Right;
+    case WebCore::MouseButton::Back:
+        return WebMouseEventButton::Back;
+    case WebCore::MouseButton::Forward:
+        return WebMouseEventButton::Forward;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

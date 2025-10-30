@@ -1856,6 +1856,7 @@ webkit.org/b/277235 fast/dynamic/content-visibility-crash-with-continuation-and-
 fast/editing/apply-relative-font-style-change-crash-004.html [ Failure ]
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
+webkit.org/b/238644 fast/events/mouse-event-buttons.html [ Skip ]
 
 # Makes a subsequent test an assertion failure crash
 webkit.org/b/277121 [ Debug ] fast/events/event-handler-detached-document.html

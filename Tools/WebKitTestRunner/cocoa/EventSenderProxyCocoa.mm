@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKEvent_h
-#define WKEvent_h
+#import "config.h"
+#import "EventSenderProxy.h"
 
-#include <WebKit/WKBase.h>
+#import <WebCore/PlatformMouseEvent.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WTR {
 
-enum {
-    kWKEventModifiersShiftKey = 1 << 0,
-    kWKEventModifiersControlKey = 1 << 1,
-    kWKEventModifiersAltKey = 1 << 2,
-    kWKEventModifiersMetaKey = 1 << 3,
-    kWKEventModifiersCapsLockKey = 1 << 4
-};
-typedef uint32_t WKEventModifiers;
-
-enum {
-    kWKEventMouseButtonLeftButton = 0,
-    kWKEventMouseButtonMiddleButton = 1,
-    kWKEventMouseButtonRightButton = 2,
-    kWKEventMouseButtonBackButton = 3,
-    kWKEventMouseButtonForwardButton = 4,
-    kWKEventMouseButtonNoButton = -2
-};
-typedef int32_t WKEventMouseButton;
-
-#ifdef __cplusplus
+unsigned EventSenderProxy::mouseButtonsCurrentlyDown() const
+{
+    unsigned mouseButtons = 0;
+    static constexpr std::array potentialMouseButtons { WebCore::MouseButton::Left, WebCore::MouseButton::Right, WebCore::MouseButton::Middle, WebCore::MouseButton::Back, WebCore::MouseButton::Forward };
+    for (std::size_t idx = 0; idx < potentialMouseButtons.size(); ++idx) {
+        if (m_mouseButtonsCurrentlyDown.getOptional(potentialMouseButtons[idx]).value_or(false))
+            mouseButtons += (1 << idx);
+    }
+    return mouseButtons;
 }
-#endif
 
-#endif /* WKEvent_h */
+}

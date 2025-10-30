@@ -743,6 +743,7 @@ Bug(WPE) fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
 
 # clickCount related failures
 webkit.org/b/174674 fast/events/mouse-click-events.html [ Failure ]
+webkit.org/b/174674 fast/events/mouse-event-buttons.html [ Failure ]
 
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
