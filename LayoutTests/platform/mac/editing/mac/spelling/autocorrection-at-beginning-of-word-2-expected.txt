@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (8,130) size 581x136 clip at (9,131) size 579x134
-  RenderTextControl {TEXTAREA} at (0,0) size 581x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (0,0) size 581x136 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 575x26
       RenderText {#text} at (0,0) size 45x13
         text run at (0,0) width 45: "mesage "

@@ -23,7 +23,7 @@ FAIL Property color value 'FieldText' resolves to the same color as text on a nu
 PASS Property color value 'Field' resolves to the same color as the background-color of a date field (light)
 FAIL Property color value 'FieldText' resolves to the same color as text on a date field (light) assert_equals: expected "rgb(0, 0, 0)" but got "rgba(0, 0, 0, 0.847)"
 PASS Property color value 'Field' resolves to the same color as the background-color of a text area (light)
-FAIL Property color value 'FieldText' resolves to the same color as text on a text area (light) assert_equals: expected "rgb(0, 0, 0)" but got "rgba(0, 0, 0, 0.847)"
+PASS Property color value 'FieldText' resolves to the same color as text on a text area (light)
 PASS Property color value 'Mark' has the same color as the background-color of a mark element (light)
 PASS Property color value 'MarkText' has the same color as the color of a mark element (light)
 PASS Property color value 'LinkText' has the same color as the color of an anchor element (light)
@@ -50,8 +50,8 @@ FAIL Property color value 'Field' resolves to the same color as the background-c
 FAIL Property color value 'FieldText' resolves to the same color as text on a number field (dark) assert_equals: expected "rgb(255, 255, 255)" but got "rgba(255, 255, 255, 0.847)"
 FAIL Property color value 'Field' resolves to the same color as the background-color of a date field (dark) assert_equals: expected "rgb(30, 30, 30)" but got "rgba(255, 255, 255, 0.247)"
 FAIL Property color value 'FieldText' resolves to the same color as text on a date field (dark) assert_equals: expected "rgb(255, 255, 255)" but got "rgba(255, 255, 255, 0.847)"
-FAIL Property color value 'Field' resolves to the same color as the background-color of a text area (dark) assert_equals: expected "rgb(30, 30, 30)" but got "rgba(255, 255, 255, 0.247)"
-FAIL Property color value 'FieldText' resolves to the same color as text on a text area (dark) assert_equals: expected "rgb(255, 255, 255)" but got "rgba(255, 255, 255, 0.847)"
+PASS Property color value 'Field' resolves to the same color as the background-color of a text area (dark)
+PASS Property color value 'FieldText' resolves to the same color as text on a text area (dark)
 PASS Property color value 'Mark' has the same color as the background-color of a mark element (dark)
 PASS Property color value 'MarkText' has the same color as the color of a mark element (dark)
 PASS Property color value 'LinkText' has the same color as the color of an anchor element (dark)

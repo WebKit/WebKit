@@ -14,7 +14,7 @@ layer at (0,0) size 800x300
           RenderBR {BR} at (371,168) size 0x18
           RenderText {#text} at (0,0) size 0x0
 layer at (8,44) size 371x58 clip at (9,45) size 369x56
-  RenderTextControl {TEXTAREA} at (0,0) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (0,0) size 371x58 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
@@ -23,7 +23,7 @@ layer at (8,44) size 371x58 clip at (9,45) size 369x56
         text run at (28,14) width 1: " "
       RenderBR {BR} at (0,27) size 0x13
 layer at (8,106) size 371x58 clip at (9,107) size 369x56
-  RenderTextControl {TEXTAREA} at (0,62) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (0,62) size 371x58 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
@@ -32,7 +32,7 @@ layer at (8,106) size 371x58 clip at (9,107) size 369x56
         text run at (28,14) width 1: " "
       RenderBR {BR} at (0,27) size 0x13
 layer at (8,168) size 371x58 clip at (9,169) size 369x56
-  RenderTextControl {TEXTAREA} at (0,124) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (0,124) size 371x58 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
@@ -41,7 +41,7 @@ layer at (8,168) size 371x58 clip at (9,169) size 369x56
         text run at (28,14) width 1: " "
       RenderBR {BR} at (0,27) size 0x13
 layer at (8,230) size 371x58 clip at (9,231) size 369x56
-  RenderTextControl {TEXTAREA} at (0,186) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (0,186) size 371x58 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"

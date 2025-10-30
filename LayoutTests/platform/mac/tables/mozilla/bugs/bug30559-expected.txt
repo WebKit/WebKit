@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 60x36 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (0,0) size 0x0
 layer at (260,36) size 56x32 clip at (261,37) size 54x30
-  RenderTextControl {TEXTAREA} at (2,2) size 56x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+  RenderTextControl {TEXTAREA} at (2,2) size 56x32 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
     RenderBlock {DIV} at (3,3) size 50x13
       RenderText {#text} at (0,0) size 18x13
         text run at (0,0) width 18: "bar"

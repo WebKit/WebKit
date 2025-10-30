@@ -708,8 +708,8 @@ input::-webkit-list-button {
 textarea {
     appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    color: CanvasText;
-    background-color: Canvas;
+    color: FieldText;
+    background-color: Field;
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
