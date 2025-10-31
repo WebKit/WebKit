@@ -843,13 +843,24 @@ Image* HTMLImageElement::image() const
 
 bool HTMLImageElement::allowsAnimation() const
 {
+    if (auto* image = this->image()) {
+        if (image->allowsAnimation() == ImageAllowsAnimation::Yes)
+            return true;
+        if (document().page())
+            return document().page()->imageAnimationEnabled();
+    }
+    return false;
+}
+
+bool HTMLImageElement::isAnimating() const
+{
     if (auto* image = this->image())
-        return image->allowsAnimation().value_or(document().page() ? document().page()->imageAnimationEnabled() : false);
+        return image->isAnimating();
     return false;
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
+void HTMLImageElement::setAllowsAnimation(ImageAllowsAnimation allowsAnimation)
 {
     if (!document().settings().imageAnimationControlEnabled())
         return;
@@ -860,7 +871,7 @@ void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
             renderer->repaint();
 
         if (RefPtr page = document().page()) {
-            if (allowsAnimation.value_or(false))
+            if (allowsAnimation == ImageAllowsAnimation::Yes)
                 page->addIndividuallyPlayingAnimationElement(*this);
             else
                 page->removeIndividuallyPlayingAnimationElement(*this);

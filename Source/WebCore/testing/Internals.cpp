@@ -1191,12 +1191,12 @@ void Internals::setImageAnimationEnabled(bool enabled)
 
 void Internals::resumeImageAnimation(HTMLImageElement& element)
 {
-    element.setAllowsAnimation(true);
+    element.setAllowsAnimation(ImageAllowsAnimation::Yes);
 }
 
 void Internals::pauseImageAnimation(HTMLImageElement& element)
 {
-    element.setAllowsAnimation(false);
+    element.setAllowsAnimation(ImageAllowsAnimation::No);
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 

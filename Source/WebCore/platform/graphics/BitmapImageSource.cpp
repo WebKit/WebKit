@@ -306,6 +306,9 @@ bool BitmapImageSource::isAnimationAllowed() const
     if (m_frameAnimator && !m_frameAnimator->isAnimationAllowed())
         return false;
 
+    if (auto bitmapImage = m_bitmapImage.get(); bitmapImage && bitmapImage->allowsAnimation() == ImageAllowsAnimation::No)
+        return false;
+
     // ImageObserver may disallow animation.
     if (auto imageObserver = this->imageObserver())
         return imageObserver->allowsAnimation(*m_bitmapImage);
@@ -612,7 +615,8 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
 
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
-    startAnimation(subsamplingLevel, options);
+    if (isAnimationAllowed())
+        startAnimation(subsamplingLevel, options);
 
     auto effectiveOptions = options;
 

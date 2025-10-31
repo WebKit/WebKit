@@ -46,6 +46,7 @@ class SecurityOrigin;
 
 struct ImageCandidate;
 
+enum class ImageAllowsAnimation : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 enum class RequestPriority : uint8_t;
@@ -160,8 +161,9 @@ public:
     bool allowsOrientationOverride() const;
 
     bool allowsAnimation() const;
+    bool isAnimating() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
+    WEBCORE_EXPORT void setAllowsAnimation(ImageAllowsAnimation);
 #endif
 
     String fetchPriorityForBindings() const;

@@ -964,7 +964,7 @@ HTMLImageElement* HitTestResult::imageElement() const
 bool HitTestResult::isAnimating() const
 {
     if (auto* imageElement = this->imageElement())
-        return imageElement->allowsAnimation();
+        return imageElement->isAnimating();
     return false;
 }
 
@@ -981,7 +981,7 @@ void HitTestResult::pauseAnimation() const
 void HitTestResult::setAllowsAnimation(bool allowAnimation) const
 {
     if (auto* imageElement = this->imageElement()) {
-        imageElement->setAllowsAnimation(allowAnimation);
+        imageElement->setAllowsAnimation(allowAnimation ? ImageAllowsAnimation::Yes : ImageAllowsAnimation::No);
         if (auto* renderer = m_innerNonSharedNode->renderer())
             renderer->repaint();
     }

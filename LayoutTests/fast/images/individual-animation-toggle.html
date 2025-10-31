@@ -16,7 +16,7 @@ async function toggleAnimationPlayState(shouldAnimate) {
     if (shouldAnimate) {
         debug("Resuming animation.");
         internals.resumeImageAnimation(gif);
-        await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+        await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
     } else {
         debug("Pausing animation.");
         internals.pauseImageAnimation(gif);

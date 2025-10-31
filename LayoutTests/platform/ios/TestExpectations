@@ -8358,6 +8358,6 @@ imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html [ Fa
 # webkit.org/b/301602 [ iOS 26 ] imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html is a constant text failure
 imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html [ Failure ]
 
-webkit.org/b/301655 fast/images/page-wide-animation-toggle.html [ Pass Timeout ]
+fast/images/page-wide-animation-toggle.html [ Pass ]
 
 webkit.org/b/301670 imported/w3c/web-platform-tests/css/css-anchor-position/popover-implicit-anchor.html [ Failure ]

@@ -1043,9 +1043,9 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
             } else if (image && image->isAnimated()) {
                 // Override any individual animation play state that may have been set.
                 if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element()))
-                    imageElement->setAllowsAnimation(std::nullopt);
+                    imageElement->setAllowsAnimation(ImageAllowsAnimation::FollowPageState);
                 else
-                    image->setAllowsAnimation(std::nullopt);
+                    image->setAllowsAnimation(ImageAllowsAnimation::FollowPageState);
 
                 // Animations of this type require a repaint to be paused or resumed.
                 if (shouldAnimate && hasPausedAnimation) {

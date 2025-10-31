@@ -53,6 +53,12 @@ class Timer;
 
 enum class CompositeOperator : uint8_t;
 
+enum class ImageAllowsAnimation : uint8_t {
+    No,
+    Yes,
+    FollowPageState,
+};
+
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
 
@@ -134,8 +140,10 @@ public:
     virtual void resetAnimation() {}
     virtual bool isAnimating() const { return false; }
     WEBCORE_EXPORT bool animationPending() const;
-    std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
-    void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
+
+    ImageAllowsAnimation allowsAnimation() const { return m_allowsAnimation; }
+    void setAllowsAnimation(ImageAllowsAnimation allowsAnimation) { m_allowsAnimation = allowsAnimation; }
+
     static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
     WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
 
@@ -197,8 +205,8 @@ private:
     WeakPtr<ImageObserver> m_imageObserver;
     std::unique_ptr<ImageAdapter> m_adapter;
 
-    // A value of true or false will override the default Page::imageAnimationEnabled state.
-    std::optional<bool> m_allowsAnimation { std::nullopt };
+    // This will override the default Page::imageAnimationEnabled state.
+    ImageAllowsAnimation m_allowsAnimation { ImageAllowsAnimation::FollowPageState };
     std::unique_ptr<Timer> m_animationStartTimer;
     static bool gSystemAllowsAnimationControls;
 };
