@@ -125,6 +125,10 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
             return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
     }
 
+    // Type compatibility check: color properties cannot accept BorderImageWidth or other non-color-related values
+    if (CSSProperty::isColorProperty(propertyID) && value->isBorderImageWidthValue())
+        return Exception { ExceptionCode::TypeError, "Invalid type for property"_s };
+
     // FIXME: CSSValuePair has specific behavior related to coalescing its 2 values when they are equal.
     // Throw an error when using them with Typed OM to avoid subtle bugs when the serialization isn't representative of the value.
     if (auto pair = dynamicDowncast<CSSValuePair>(value)) {

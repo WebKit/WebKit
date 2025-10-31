@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Checks that StylePropertyMap.set() validates type compatibility for color properties.");
+
+// Test that color properties reject non-color values
+// Color properties should not accept border-image-width values (or other incompatible types)
+let target = document.getElementById("target");
+
+// Get a non-color value from border-image-width (returns BorderImageWidth CSSValue)
+let borderValues = target.computedStyleMap().getAll('border-image-width');
+
+// Attempting to use border-image-width values for color properties should throw TypeError
+shouldThrow("target.attributeStyleMap.set('color', ...borderValues)", '"TypeError: Invalid type for property"');
+shouldThrow("target.attributeStyleMap.set('background-color', ...borderValues)", '"TypeError: Invalid type for property"');
+
+// Verify color still accepts valid color values
+shouldNotThrow("target.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'red'))");
+shouldBeEqualToString("target.style.color", "red");
+
+</script>
+</body>
+</html>

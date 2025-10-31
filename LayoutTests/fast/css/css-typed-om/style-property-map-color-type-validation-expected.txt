@@ -1,0 +1,13 @@
+Checks that StylePropertyMap.set() validates type compatibility for color properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.attributeStyleMap.set('color', ...borderValues) threw exception TypeError: Invalid type for property.
+PASS target.attributeStyleMap.set('background-color', ...borderValues) threw exception TypeError: Invalid type for property.
+PASS target.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'red')) did not throw exception.
+PASS target.style.color is "red"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
