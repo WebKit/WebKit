@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
 NativeWebTouchEvent::NativeWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, deviceScaleFactor))
     , m_fallbackTouchPoint { wpe_input_touch_event_type_null, 0, 0, 0, 0 }

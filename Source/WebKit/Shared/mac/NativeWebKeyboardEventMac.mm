@@ -31,12 +31,14 @@
 #import "WebEventFactory.h"
 #import <WebCore/KeyboardEvent.h>
 
-
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
 using namespace WebCore;
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<KeypressCommand>& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, replacesSoftSpace, commands))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, handledByInputMethod, replacesSoftSpace, commands).get()) // FIXME: Avoid creating a temporary WebKeyboardEvent.
     , m_nativeEvent(event)
 {
 }

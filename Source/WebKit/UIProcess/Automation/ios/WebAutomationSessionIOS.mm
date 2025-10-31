@@ -60,7 +60,7 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 
         case WebEventKeyDown:
         case WebEventKeyUp:
-            page.handleKeyboardEvent(NativeWebKeyboardEvent(event, NativeWebKeyboardEvent::HandledByInputMethod::No));
+            page.handleKeyboardEvent(NativeWebKeyboardEvent::create(event, NativeWebKeyboardEvent::HandledByInputMethod::No));
             break;
         }
     }

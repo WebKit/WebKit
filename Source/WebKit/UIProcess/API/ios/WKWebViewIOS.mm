@@ -2434,7 +2434,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     auto event = WebKit::WebIOSEventFactory::createWebWheelEvent(update, _contentView.get(), overridePhase);
 
     _wheelEventCountInCurrentScrollGesture++;
-    _page->dispatchWheelEventWithoutScrolling(event, [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isHandledByDefault](bool defaultPrevented) {
+    _page->dispatchWheelEventWithoutScrolling(WTFMove(event), [weakSelf = WeakObjCPtr<WKWebView>(self), strongCompletion = makeBlockPtr(completion), isCancelable, isHandledByDefault](bool defaultPrevented) {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf) {
             if (isCancelable)

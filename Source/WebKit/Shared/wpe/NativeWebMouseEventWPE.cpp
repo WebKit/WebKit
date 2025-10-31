@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
 NativeWebMouseEvent::NativeWebMouseEvent(WPEEvent* event)
     : WebMouseEvent(WebEventFactory::createWebMouseEvent(event))
 {

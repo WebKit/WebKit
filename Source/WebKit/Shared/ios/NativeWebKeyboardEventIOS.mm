@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(::WebEvent *event, HandledByInputMethod handledByInputMethod)
     : WebKeyboardEvent(WebIOSEventFactory::createWebKeyboardEvent(event, handledByInputMethod == HandledByInputMethod::Yes))
     , m_nativeEvent(event)

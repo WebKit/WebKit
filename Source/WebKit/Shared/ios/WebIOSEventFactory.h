@@ -41,11 +41,11 @@ namespace WebKit {
 
 class WebIOSEventFactory {
 public:
-    static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *, bool handledByInputMethod);
-    static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
+    static Ref<WebKit::WebKeyboardEvent> createWebKeyboardEvent(::WebEvent *, bool handledByInputMethod);
+    static Ref<WebKit::WebMouseEvent> createWebMouseEvent(::WebEvent *);
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    static WebKit::WebWheelEvent createWebWheelEvent(WKBEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
+    static Ref<WebKit::WebWheelEvent> createWebWheelEvent(WKBEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
     static WebCore::FloatSize translationInView(WKBEScrollViewScrollUpdate *, UIView *);
 #endif
 

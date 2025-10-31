@@ -33,12 +33,14 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMouseEvent);
+
 #if PLATFORM(MAC)
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
+WebMouseEvent::WebMouseEvent(WebEventInit&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, int eventNumber, int menuType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<Ref<WebMouseEvent>>& coalescedEvents, const Vector<Ref<WebMouseEvent>>& predictedEvents)
 #elif PLATFORM(GTK)
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, PlatformMouseEvent::IsTouch isTouchEvent, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
+WebMouseEvent::WebMouseEvent(WebEventInit&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, PlatformMouseEvent::IsTouch isTouchEvent, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<Ref<WebMouseEvent>>& coalescedEvents, const Vector<Ref<WebMouseEvent>>& predictedEvents)
 #else
-WebMouseEvent::WebMouseEvent(WebEvent&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<WebMouseEvent>& coalescedEvents, const Vector<WebMouseEvent>& predictedEvents)
+WebMouseEvent::WebMouseEvent(WebEventInit&& event, WebMouseEventButton button, unsigned short buttons, const DoublePoint& positionInView, const DoublePoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, double force, WebMouseEventSyntheticClickType syntheticClickType, WebCore::PointerID pointerId, const String& pointerType, GestureWasCancelled gestureWasCancelled, const DoublePoint& unadjustedMovementDelta, const Vector<Ref<WebMouseEvent>>& coalescedEvents, const Vector<Ref<WebMouseEvent>>& predictedEvents)
 #endif
     : WebEvent(WTFMove(event))
     , m_button(button)
@@ -88,6 +90,11 @@ WebMouseEventSyntheticClickType syntheticClickType(const WebCore::NavigationActi
     if (mouseEventData && mouseEventData->buttonDown && mouseEventData->isTrusted)
         return static_cast<WebMouseEventSyntheticClickType>(mouseEventData->syntheticClickType);
     return WebMouseEventSyntheticClickType::NoTap;
+}
+
+Ref<WebMouseEvent> WebMouseEvent::clone() const
+{
+    return WebMouseEvent::create(*this);
 }
 
 } // namespace WebKit

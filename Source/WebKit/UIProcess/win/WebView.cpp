@@ -339,7 +339,7 @@ void WebView::windowAncestryDidChange()
 
 LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    NativeWebMouseEvent mouseEvent = NativeWebMouseEvent(hWnd, message, wParam, lParam, m_wasActivatedByMouseEvent, m_page->intrinsicDeviceScaleFactor());
+    auto mouseEvent = NativeWebMouseEvent::create(hWnd, message, wParam, lParam, m_wasActivatedByMouseEvent, m_page->intrinsicDeviceScaleFactor());
     setWasActivatedByMouseEvent(false);
 
     switch (message) {
@@ -376,8 +376,8 @@ LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 LRESULT WebView::onWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    NativeWebWheelEvent wheelEvent(hWnd, message, wParam, lParam, m_page->intrinsicDeviceScaleFactor());
-    if (wheelEvent.controlKey()) {
+    auto wheelEvent = NativeWebWheelEvent::create(hWnd, message, wParam, lParam, m_page->intrinsicDeviceScaleFactor());
+    if (wheelEvent->controlKey()) {
         // We do not want WebKit to handle Control + Wheel, this should be handled by the client application
         // to zoom the page.
         handled = false;
@@ -465,7 +465,7 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
                 pendingCharEvents.append(msg);
         }
     }
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
+    m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
 
     // We claim here to always have handled the event. If the event is not in fact handled, we will
     // find out later in didNotHandleKeyEvent.

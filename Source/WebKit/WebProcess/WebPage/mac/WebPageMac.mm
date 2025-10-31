@@ -537,7 +537,7 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 #endif
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::shouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent>&& event, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
@@ -546,14 +546,14 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event.position())), hitType);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event->position())), hitType);
     if (hitResult.isSelected())
-        result = frame->eventHandler().eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event.get()));
 #endif
     completionHandler(result);
 }
 
-void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
+void WebPage::requestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent>&& event)
 {
     if (WebProcess::singleton().parentProcessConnection()->inSendSync()) {
         // In case we're already inside a sendSync message, it's possible that the page is in a
@@ -567,12 +567,12 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
         return;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event.position())), hitType);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->protectedView()->windowToContents(flooredIntPoint(event->position())), hitType);
     frame->eventHandler().setActivationEventNumber(eventNumber);
     bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     if (hitResult.isSelected())
-        result = frame->eventHandler().eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event.get()));
     else
 #endif
         result = !!hitResult.scrollbar();

@@ -31,6 +31,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
 NativeWebWheelEvent::NativeWebWheelEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(hwnd, message, wParam, lParam, deviceScaleFactor))
     , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))

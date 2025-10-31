@@ -33,6 +33,7 @@
 namespace WebKit {
 
 class WebWheelEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebWheelEvent);
 public:
     enum Granularity : uint8_t {
         ScrollByPageWheelEvent,
@@ -56,12 +57,11 @@ public:
         Natural,
     };
 
-    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity);
-#if PLATFORM(COCOA)
-    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType);
-#elif PLATFORM(GTK) || USE(LIBWPE)
-    WebWheelEvent(WebEvent&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas);
-#endif
+    template<typename... Args>
+    static Ref<WebWheelEvent> create(Args&&... args)
+    {
+        return adoptRef(*new WebWheelEvent(std::forward<Args>(args)...));
+    }
 
     const WebCore::IntPoint position() const { return m_position; }
     void setPosition(WebCore::IntPoint position) { m_position = position; }
@@ -87,12 +87,24 @@ public:
 
     static bool isWheelEventType(WebEventType);
 
+    Ref<WebWheelEvent> clone() const;
+
+protected:
+    explicit WebWheelEvent(const WebWheelEvent&) = default;
+
+    WebWheelEvent(WebEventInit&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity);
+#if PLATFORM(COCOA)
+    WebWheelEvent(WebEventInit&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, bool directionInvertedFromDevice, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType, Granularity);
+#elif PLATFORM(GTK) || USE(LIBWPE)
+    WebWheelEvent(WebEventInit&&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Granularity);
+#endif
+
 private:
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;
     WebCore::FloatSize m_delta;
     WebCore::FloatSize m_wheelTicks;
-    uint32_t m_granularity { ScrollByPageWheelEvent };
+    Granularity m_granularity { ScrollByPageWheelEvent };
     uint32_t m_phase { Phase::PhaseNone };
     uint32_t m_momentumPhase { Phase::PhaseNone };
 

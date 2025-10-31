@@ -55,7 +55,15 @@ struct WKTouchEvent;
 #if ENABLE(TOUCH_EVENTS)
 
 class NativeWebTouchEvent : public WebTouchEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebTouchEvent);
 public:
+    template<typename... Args>
+    static Ref<NativeWebTouchEvent> create(Args&&... args)
+    {
+        return adoptRef(*new NativeWebTouchEvent(std::forward<Args>(args)...));
+    }
+
+private:
 #if PLATFORM(IOS_FAMILY)
 #if defined(__OBJC__)
     explicit NativeWebTouchEvent(const WKTouchEvent&, UIKeyModifierFlags);
@@ -75,7 +83,6 @@ public:
     NativeWebTouchEvent();
 #endif
 
-private:
 #if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
     Vector<WebPlatformTouchPoint> extractWebTouchPoints(const WKTouchEvent&);
     Vector<WebTouchEvent> extractCoalescedWebTouchEvents(const WKTouchEvent&, UIKeyModifierFlags);

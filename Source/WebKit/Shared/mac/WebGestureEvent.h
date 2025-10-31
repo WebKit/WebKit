@@ -42,8 +42,25 @@ class Encoder;
 namespace WebKit {
 
 class WebGestureEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebGestureEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGestureEvent);
 public:
-    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
+    template<typename... Args>
+    static Ref<WebGestureEvent> create(Args&&... args)
+    {
+        return adoptRef(*new WebGestureEvent(std::forward<Args>(args)...));
+    }
+
+    WebCore::IntPoint position() const { return m_position; }
+
+    float gestureScale() const { return m_gestureScale; }
+    float gestureRotation() const { return m_gestureRotation; }
+
+    Ref<WebGestureEvent> clone() const { return create(*this); }
+
+protected:
+    WebGestureEvent(const WebGestureEvent&) = default;
+    WebGestureEvent(WebEventInit&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
         : WebEvent(WTFMove(event))
         , m_position(position)
         , m_gestureScale(gestureScale)
@@ -52,11 +69,6 @@ public:
         ASSERT(isGestureEventType(type()));
     }
 
-    WebCore::IntPoint position() const { return m_position; }
-
-    float gestureScale() const { return m_gestureScale; }
-    float gestureRotation() const { return m_gestureRotation; }
-    
 private:
     bool isGestureEventType(WebEventType) const;
 

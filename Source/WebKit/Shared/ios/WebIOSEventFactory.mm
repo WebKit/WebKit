@@ -100,7 +100,7 @@ static OptionSet<WebEventModifier> modifiersForEvent(::WebEvent *event)
     return modifiers;
 }
 
-WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
+Ref<WebKeyboardEvent> WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
     WebEventType type = (event.type == WebEventKeyUp) ? WebEventType::KeyUp : WebEventType::KeyDown;
     String text;
@@ -145,10 +145,10 @@ WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, b
         unmodifiedText = text;
     }
 
-    return WebKeyboardEvent { { type, modifiers, MonotonicTime::fromRawSeconds(timestamp) }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey };
+    return WebKeyboardEvent::create(WebEventInit { type, modifiers, MonotonicTime::fromRawSeconds(timestamp) }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey);
 }
 
-WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
+Ref<WebMouseEvent> WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
 {
     // This currently only supports synthetic mouse moved events with no button pressed.
     ASSERT_ARG(event, event.type == WebEventMouseMoved);
@@ -163,7 +163,7 @@ WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
     int clickCount = 0;
     double timestamp = event.timestamp;
 
-    return WebMouseEvent({ type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount);
+    return WebMouseEvent::create(WebEventInit { type, OptionSet<WebEventModifier> { }, MonotonicTime::fromRawSeconds(timestamp) }, button, buttons, position, position, deltaX, deltaY, deltaZ, clickCount);
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -201,20 +201,19 @@ WebCore::FloatSize WebIOSEventFactory::translationInView(WKBEScrollViewScrollUpd
 #endif
 }
 
-WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
+Ref<WebWheelEvent> WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([update locationInView:contentView]);
     auto delta = translationInView(update, contentView);
     WebCore::FloatSize wheelTicks = delta;
     wheelTicks.scale(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep()));
     auto timestamp = MonotonicTime::fromRawSeconds(update.timestamp);
-    return {
-        { WebEventType::Wheel, OptionSet<WebEventModifier> { }, timestamp },
+    return WebWheelEvent::create(
+        WebEventInit { WebEventType::Wheel, OptionSet<WebEventModifier> { }, timestamp },
         scrollLocation,
         scrollLocation,
         delta,
         wheelTicks,
-        WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
         false,
         overridePhase.value_or(toWebPhase(update.phase)),
         WebWheelEvent::PhaseNone,
@@ -222,9 +221,10 @@ WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate
         1,
         delta,
         timestamp,
-        { },
-        WebWheelEvent::MomentumEndType::Unknown
-    };
+        std::optional<WebCore::FloatSize> { },
+        WebWheelEvent::MomentumEndType::Unknown,
+        WebWheelEvent::Granularity::ScrollByPixelWheelEvent
+    );
 }
 #endif
 

@@ -172,7 +172,7 @@ private:
     Lock m_scrollingTreeLock;
     RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
 
-    Deque<WebWheelEvent, 2> m_wheelEventsBeingProcessed; // FIXME: Remove
+    Deque<Ref<WebWheelEvent>, 2> m_wheelEventsBeingProcessed; // FIXME: Remove
 
     const WeakPtr<RemoteScrollingCoordinatorProxyMac> m_scrollingCoordinator;
     WebCore::PageIdentifier m_pageIdentifier;

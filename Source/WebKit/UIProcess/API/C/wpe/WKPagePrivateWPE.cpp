@@ -107,5 +107,5 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
 
     const float deviceScaleFactor = 1;
 
-    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent(&wpeEvent, deviceScaleFactor));
+    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent::create(&wpeEvent, deviceScaleFactor));
 }

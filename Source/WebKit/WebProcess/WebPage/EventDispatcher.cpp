@@ -170,7 +170,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
 
         scrollingTree->willProcessWheelEvent();
 
-        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, useMainThreadForScrolling, pageID, wheelEventOrigin, this, protectedThis = Ref { *this }] {
+        ScrollingThread::dispatch([scrollingTree, wheelEvent = wheelEvent.clone(), platformWheelEvent, processingSteps, useMainThreadForScrolling, pageID, wheelEventOrigin, this, protectedThis = Ref { *this }] {
             if (useMainThreadForScrolling) {
                 scrollingTree->willSendEventToMainThread(platformWheelEvent);
                 dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps, wheelEventOrigin);
@@ -189,7 +189,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
             // If we scrolled on the scrolling thread (even if we send the event to the main thread for passive event handlers)
             // respond to the UI process that the event was handled.
             if (wheelEventOrigin == WheelEventOrigin::UIProcess)
-                sendDidReceiveEvent(pageID, wheelEvent.type(), result.wasHandled);
+                sendDidReceiveEvent(pageID, wheelEvent->type(), result.wasHandled);
         });
     } while (false);
 #else
@@ -199,15 +199,15 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
 #endif
 }
 
-void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
+void EventDispatcher::wheelEvent(PageIdentifier pageID, Ref<WebWheelEvent>&& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    if (m_momentumEventDispatcher->handleWheelEvent(pageID, wheelEvent, rubberBandableEdges)) {
-        sendDidReceiveEvent(pageID, wheelEvent.type(), true);
+    if (m_momentumEventDispatcher->handleWheelEvent(pageID, wheelEvent.get(), rubberBandableEdges)) {
+        sendDidReceiveEvent(pageID, wheelEvent->type(), true);
         return;
     }
 #endif
-    internalWheelEvent(pageID, wheelEvent, rubberBandableEdges, WheelEventOrigin::UIProcess);
+    internalWheelEvent(pageID, wheelEvent.get(), rubberBandableEdges, WheelEventOrigin::UIProcess);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -231,12 +231,10 @@ TouchEventData::~TouchEventData() = default;
 
 TouchEventData& TouchEventData::operator=(TouchEventData&&) = default;
 
-void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, UniqueRef<TouchEventQueue>& destinationQueue)
+std::unique_ptr<TouchEventQueue> EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage)
 {
     Locker locker { m_touchEventsLock };
-
-    if (auto queue = m_touchEvents.take(webPage.identifier()); queue)
-        destinationQueue = makeUniqueRefFromNonNullUniquePtr(WTFMove(queue));
+    return m_touchEvents.take(webPage.identifier());
 }
 
 void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool, std::optional<RemoteWebTouchEvent>)>&& completionHandler)
@@ -300,7 +298,7 @@ void EventDispatcher::dispatchTouchEvents()
 void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, WheelEventOrigin wheelEventOrigin)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, pageID, wheelEvent = wheelEvent.clone(), wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
         dispatchWheelEvent(pageID, wheelEvent, steps, wheelEventOrigin);
     });
 }

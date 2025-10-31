@@ -65,7 +65,27 @@ struct wpe_input_pointer_event;
 namespace WebKit {
 
 class NativeWebMouseEvent : public WebMouseEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebMouseEvent);
 public:
+    template<typename... Args>
+    static Ref<NativeWebMouseEvent> create(Args&&... args)
+    {
+        return adoptRef(*new NativeWebMouseEvent(std::forward<Args>(args)...));
+    }
+
+#if USE(APPKIT)
+    NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(GTK)
+    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(IOS_FAMILY)
+    ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(WIN)
+    const MSG* nativeEvent() const { return &m_nativeEvent; }
+#else
+    const void* nativeEvent() const { return nullptr; }
+#endif
+
+private:
 #if USE(APPKIT)
     NativeWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *);
 #elif PLATFORM(GTK)
@@ -87,19 +107,6 @@ public:
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool, float deviceScaleFactor);
 #endif
 
-#if USE(APPKIT)
-    NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(GTK)
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(IOS_FAMILY)
-    ::WebEvent* nativeEvent() const { return m_nativeEvent.get(); }
-#elif PLATFORM(WIN)
-    const MSG* nativeEvent() const { return &m_nativeEvent; }
-#else
-    const void* nativeEvent() const { return nullptr; }
-#endif
-
-private:
 #if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(GTK) && USE(GTK4)

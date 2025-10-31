@@ -37,6 +37,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
 NativeWebWheelEvent::NativeWebWheelEvent(GdkEvent* event, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position, globalPosition, delta, wheelTicks, phase, momentumPhase, hasPreciseDeltas))
     , m_nativeEvent(event ? constructNativeEvent(event) : nullptr)

@@ -127,20 +127,12 @@ private:
 };
 
 class WebTouchEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebTouchEvent);
 public:
-    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::DoublePoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
-        : WebEvent(WTFMove(event))
-        , m_touchPoints(touchPoints)
-        , m_coalescedEvents(coalescedEvents)
-        , m_predictedEvents(predictedEvents)
-        , m_position(position)
-        , m_canPreventNativeGestures(canPreventNativeGestures)
-        , m_isPotentialTap(isPotentialTap)
-        , m_isGesture(isGesture)
-        , m_gestureScale(gestureScale)
-        , m_gestureRotation(gestureRotation)
+    template<typename... Args>
+    static Ref<WebTouchEvent> create(Args&&... args)
     {
-        ASSERT(type() == WebEventType::TouchStart || type() == WebEventType::TouchMove || type() == WebEventType::TouchEnd || type() == WebEventType::TouchCancel);
+        return adoptRef(*new WebTouchEvent(std::forward<Args>(args)...));
     }
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
@@ -165,7 +157,24 @@ public:
     void setCanPreventNativeGestures(bool canPreventNativeGestures) { m_canPreventNativeGestures = canPreventNativeGestures; }
 
     bool allTouchPointsAreReleased() const;
-    
+
+protected:
+    WebTouchEvent(const WebTouchEvent&) = default;
+    WebTouchEvent(WebEventInit&& event, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::DoublePoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents)
+        : WebEvent(WTFMove(event))
+        , m_touchPoints(touchPoints)
+        , m_coalescedEvents(coalescedEvents)
+        , m_predictedEvents(predictedEvents)
+        , m_position(position)
+        , m_canPreventNativeGestures(canPreventNativeGestures)
+        , m_isPotentialTap(isPotentialTap)
+        , m_isGesture(isGesture)
+        , m_gestureScale(gestureScale)
+        , m_gestureRotation(gestureRotation)
+    {
+        ASSERT(type() == WebEventType::TouchStart || type() == WebEventType::TouchMove || type() == WebEventType::TouchEnd || type() == WebEventType::TouchCancel);
+    }
+
 private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
     Vector<WebTouchEvent> m_coalescedEvents;
@@ -223,14 +232,19 @@ private:
 };
 
 class WebTouchEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebTouchEvent);
 public:
-    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&, Vector<WebTouchEvent>&&);
+    template<typename... Args>
+    static Ref<WebTouchEvent> create(Args&&... args)
+    {
+        return adoptRef(*new WebTouchEvent(std::forward<Args>(args)...));
+    }
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
-    const Vector<WebTouchEvent>& coalescedEvents() const { return m_coalescedEvents; }
+    const Vector<Ref<WebTouchEvent>>& coalescedEvents() const { return m_coalescedEvents; }
 
-    const Vector<WebTouchEvent>& predictedEvents() const { return m_predictedEvents; }
+    const Vector<Ref<WebTouchEvent>>& predictedEvents() const { return m_predictedEvents; }
 
     bool allTouchPointsAreReleased() const;
 
@@ -238,12 +252,16 @@ public:
     virtual bool isNativeWebTouchEvent() const { return false; }
 #endif
 
+protected:
+    WebTouchEvent(const WebTouchEvent&) = default;
+    WebTouchEvent(WebEventInit&&, Vector<WebPlatformTouchPoint>&&, Vector<Ref<WebTouchEvent>>&&, Vector<Ref<WebTouchEvent>>&&);
+
 private:
     static bool isTouchEventType(WebEventType);
 
     Vector<WebPlatformTouchPoint> m_touchPoints;
-    Vector<WebTouchEvent> m_coalescedEvents;
-    Vector<WebTouchEvent> m_predictedEvents;
+    Vector<Ref<WebTouchEvent>> m_coalescedEvents;
+    Vector<Ref<WebTouchEvent>> m_predictedEvents;
 };
 
 #endif // PLATFORM(IOS_FAMILY)

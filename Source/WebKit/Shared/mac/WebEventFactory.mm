@@ -88,7 +88,7 @@ bool WebEventFactory::shouldBeHandledAsContextClick(const WebCore::PlatformMouse
     return (static_cast<NSMenuType>(event.menuTypeForEvent()) == NSMenuTypeContextMenu);
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *windowView)
+Ref<WebMouseEvent> WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *lastPressureEvent, NSView *windowView)
 {
     NSPoint position = WebCore::pointForEvent(event, windowView);
     NSPoint globalPosition = WebCore::globalPointForEvent(event);
@@ -122,10 +122,10 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
 
     auto unadjustedMovementDelta = WebCore::unadjustedMovementForEvent(event);
 
-    return WebMouseEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::DoublePoint(position), WebCore::DoublePoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent, GestureWasCancelled::No, unadjustedMovementDelta);
+    return WebMouseEvent::create(WebEventInit { type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::DoublePoint(position), WebCore::DoublePoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent, GestureWasCancelled::No, unadjustedMovementDelta);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
+Ref<WebWheelEvent> WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
 {
     NSPoint position = WebCore::pointForEvent(event, windowView);
     NSPoint globalPosition = WebCore::globalPointForEvent(event);
@@ -208,12 +208,12 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         rawPlatformDelta = std::nullopt;
     }
 
-    return WebWheelEvent({ WebEventType::Wheel, modifiers, timestamp, WTF::UUID::createVersion4() }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
-        granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
-        scrollCount, unacceleratedScrollingDelta, ioHIDEventTimestamp, rawPlatformDelta, momentumEndType);
+    return WebWheelEvent::create(WebEventInit { WebEventType::Wheel, modifiers, timestamp, WTF::UUID::createVersion4() }, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
+        directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
+        scrollCount, unacceleratedScrollingDelta, ioHIDEventTimestamp, rawPlatformDelta, momentumEndType, granularity);
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
+Ref<WebKeyboardEvent> WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
     WebEventType type = WebCore::isKeyUpEvent(event) ? WebEventType::KeyUp : WebEventType::KeyDown;
     String text = WebCore::textFromEvent(event, replacesSoftSpace);
@@ -248,7 +248,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
         unmodifiedText = text;
     }
 
-    return WebKeyboardEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey);
+    return WebKeyboardEvent::create(WebEventInit { type, modifiers, timestamp, WTF::UUID::createVersion4() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey);
 }
 
 NSEventModifierFlags WebEventFactory::toNSEventModifierFlags(OptionSet<WebKit::WebEventModifier> modifiers)

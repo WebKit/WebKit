@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
 NativeWebWheelEvent::NativeWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, deviceScaleFactor, phase, momentumPhase))
 {

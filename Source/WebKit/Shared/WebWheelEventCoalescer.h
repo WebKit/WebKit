@@ -35,24 +35,24 @@ class WebWheelEventCoalescer {
     WTF_MAKE_TZONE_ALLOCATED(WebWheelEventCoalescer);
 public:
     // If this returns true, use nextEventToDispatch() to get the event to dispatch.
-    bool shouldDispatchEvent(const NativeWebWheelEvent&);
-    std::optional<WebWheelEvent> nextEventToDispatch();
+    bool shouldDispatchEvent(Ref<NativeWebWheelEvent>&&);
+    RefPtr<WebWheelEvent> nextEventToDispatch();
 
-    std::optional<NativeWebWheelEvent> takeOldestEventBeingProcessed();
+    RefPtr<NativeWebWheelEvent> takeOldestEventBeingProcessed();
 
     bool hasEventsBeingProcessed() const { return !m_eventsBeingProcessed.isEmpty(); }
     
     void clear();
 
 private:
-    using CoalescedEventSequence = Vector<NativeWebWheelEvent>;
+    using CoalescedEventSequence = Vector<Ref<NativeWebWheelEvent>>;
 
     static bool canCoalesce(const WebWheelEvent&, const WebWheelEvent&);
-    static WebWheelEvent coalesce(const WebWheelEvent&, const WebWheelEvent&);
+    static Ref<WebWheelEvent> coalesce(const WebWheelEvent&, const WebWheelEvent&);
 
     bool shouldDispatchEventNow(const WebWheelEvent&) const;
 
-    Deque<NativeWebWheelEvent, 2> m_wheelEventQueue;
+    Deque<Ref<NativeWebWheelEvent>, 2> m_wheelEventQueue;
     Deque<std::unique_ptr<CoalescedEventSequence>> m_eventsBeingProcessed;
 };
 
