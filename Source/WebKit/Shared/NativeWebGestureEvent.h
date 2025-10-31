@@ -35,6 +35,8 @@ OBJC_CLASS NSView;
 namespace WebKit {
 
 class NativeWebGestureEvent final : public WebGestureEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebGestureEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NativeWebGestureEvent);
 public:
     static std::optional<NativeWebGestureEvent> create(NSEvent *, NSView *);
 

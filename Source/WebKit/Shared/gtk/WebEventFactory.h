@@ -44,14 +44,14 @@ namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, int, std::optional<WebCore::FloatSize>);
-    static WebMouseEvent createWebMouseEvent(const GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
-    static WebMouseEvent createWebMouseEvent(const WebCore::DoublePoint&);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const String&, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands);
+    static UniqueRef<WebMouseEvent> createWebMouseEvent(const GdkEvent*, int, std::optional<WebCore::FloatSize>);
+    static UniqueRef<WebMouseEvent> createWebMouseEvent(const GdkEvent*, const WebCore::DoublePoint&, int, std::optional<WebCore::FloatSize>);
+    static UniqueRef<WebMouseEvent> createWebMouseEvent(const WebCore::DoublePoint&);
+    static UniqueRef<WebKeyboardEvent> createWebKeyboardEvent(const GdkEvent*, const String&, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
+    static UniqueRef<WebTouchEvent> createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif
-    static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize&, const WebCore::FloatSize&, WebWheelEvent::Phase, WebWheelEvent::Phase, bool hasPreciseDeltas);
+    static UniqueRef<WebWheelEvent> createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize&, const WebCore::FloatSize&, WebWheelEvent::Phase, WebWheelEvent::Phase, bool hasPreciseDeltas);
 };
 
 } // namespace WebKit

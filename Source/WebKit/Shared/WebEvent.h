@@ -46,14 +46,24 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+struct WebEventInit {
+    WebEventType type;
+    OptionSet<WebEventModifier> modifiers;
+    MonotonicTime timestamp;
+    std::optional<WTF::UUID> authorizationToken;
+};
+
+class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent> {
     WTF_MAKE_TZONE_ALLOCATED(WebEvent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
 public:
+    explicit WebEvent(WebEventInit&&);
     WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken);
     WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp);
 
     virtual ~WebEvent() = default;
+
+    WebEventInit init() const { return WebEventInit { m_type, m_modifiers, m_timestamp, m_authorizationToken }; }
 
     WebEventType type() const { return m_type; }
 

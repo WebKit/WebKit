@@ -1208,7 +1208,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
 
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent));
     if (!filterResult.handled) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), filterResult.keyText, isAutoRepeat,
+        priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(reinterpret_cast<GdkEvent*>(keyEvent), filterResult.keyText, isAutoRepeat,
             priv->keyBindingTranslator.commandsForKeyEvent(keyEvent)));
     }
 
@@ -1223,7 +1223,7 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
     priv->keyAutoRepeatHandler.keyRelease();
 
     if (!priv->inputMethodFilter.filterKeyEvent(reinterpret_cast<GdkEvent*>(keyEvent)).handled)
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(keyEvent), { }, false, { }));
+        priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(reinterpret_cast<GdkEvent*>(keyEvent), { }, false, { }));
 
     return GDK_EVENT_STOP;
 }
@@ -1283,7 +1283,7 @@ static gboolean webkitWebViewBaseKeyPressed(WebKitWebViewBase* webViewBase, unsi
 
     auto filterResult = priv->inputMethodFilter.filterKeyEvent(event);
     if (!filterResult.handled) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, filterResult.keyText, isAutoRepeat,
+        priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(event, filterResult.keyText, isAutoRepeat,
             priv->keyBindingTranslator.commandsForKeyEvent(GTK_EVENT_CONTROLLER_KEY(controller))));
     }
 
@@ -1298,7 +1298,7 @@ static void webkitWebViewBaseKeyReleased(WebKitWebViewBase* webViewBase, unsigne
 
     auto* event = gtk_event_controller_get_current_event(controller);
     if (!priv->inputMethodFilter.filterKeyEvent(event).handled)
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event, { }, false, { }));
+        priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(event, { }, false, { }));
 }
 #endif
 
@@ -3124,7 +3124,7 @@ WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBa
 
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase* webViewBase, const String& text, std::optional<Vector<CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    webViewBase->priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
+    webViewBase->priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 static inline OptionSet<WebEventModifier> toWebKitModifiers(unsigned modifiers)
@@ -3335,7 +3335,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
 
         auto filterResult = priv->inputMethodFilter.filterKeyEvent(GDK_KEY_PRESS, keyval, keycode, modifiers);
         if (!filterResult.handled) {
-            priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+            priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(
                 WebEventType::KeyDown,
                 filterResult.keyText.isNull() ? WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval) : filterResult.keyText,
                 WebKeyboardEvent::keyValueStringForGdkKeyval(keyval),
@@ -3352,7 +3352,7 @@ void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase* webViewBase, KeyEven
 
     if (type != KeyEventType::Press) {
         if (!priv->inputMethodFilter.filterKeyEvent(GDK_KEY_RELEASE, keyval, keycode, modifiers).handled) {
-            priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(
+            priv->pageProxy->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(
                 WebEventType::KeyUp,
                 WebKeyboardEvent::singleCharacterStringForGdkKeyval(keyval),
                 WebKeyboardEvent::keyValueStringForGdkKeyval(keyval),

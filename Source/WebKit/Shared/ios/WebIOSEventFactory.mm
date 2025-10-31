@@ -100,7 +100,7 @@ static OptionSet<WebEventModifier> modifiersForEvent(::WebEvent *event)
     return modifiers;
 }
 
-WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
+UniqueRef<WebKeyboardEvent> WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
     WebEventType type = (event.type == WebEventKeyUp) ? WebEventType::KeyUp : WebEventType::KeyDown;
     String text;
@@ -148,7 +148,7 @@ WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, b
     return WebKeyboardEvent { { type, modifiers, MonotonicTime::fromRawSeconds(timestamp) }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, autoRepeat, isKeypad, isSystemKey };
 }
 
-WebMouseEvent WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
+UniqueRef<WebMouseEvent> WebIOSEventFactory::createWebMouseEvent(::WebEvent *event)
 {
     // This currently only supports synthetic mouse moved events with no button pressed.
     ASSERT_ARG(event, event.type == WebEventMouseMoved);
@@ -201,7 +201,7 @@ WebCore::FloatSize WebIOSEventFactory::translationInView(WKBEScrollViewScrollUpd
 #endif
 }
 
-WebWheelEvent WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
+UniqueRef<WebWheelEvent> WebIOSEventFactory::createWebWheelEvent(WKBEScrollViewScrollUpdate *update, UIView *contentView, std::optional<WebWheelEvent::Phase> overridePhase)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([update locationInView:contentView]);
     auto delta = translationInView(update, contentView);

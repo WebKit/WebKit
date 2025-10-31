@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutorepeat)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat))
 {

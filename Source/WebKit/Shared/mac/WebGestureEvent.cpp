@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebGestureEvent);
+
 bool WebGestureEvent::isGestureEventType(WebEventType type) const
 {
     return type == WebEventType::GestureStart || type == WebEventType::GestureChange || type == WebEventType::GestureEnd;

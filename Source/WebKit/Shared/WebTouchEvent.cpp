@@ -33,9 +33,11 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTouchEvent);
+
 #if !PLATFORM(IOS_FAMILY)
 
-WebTouchEvent::WebTouchEvent(WebEvent&& event, Vector<WebPlatformTouchPoint>&& touchPoints, Vector<WebTouchEvent>&& coalescedEvents, Vector<WebTouchEvent>&& predictedEvents)
+WebTouchEvent::WebTouchEvent(WebEventInit&& event, Vector<WebPlatformTouchPoint>&& touchPoints, Vector<WebTouchEvent>&& coalescedEvents, Vector<WebTouchEvent>&& predictedEvents)
     : WebEvent(WTFMove(event))
     , m_touchPoints(WTFMove(touchPoints))
     , m_coalescedEvents(WTFMove(coalescedEvents))

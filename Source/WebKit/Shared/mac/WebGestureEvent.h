@@ -42,8 +42,10 @@ class Encoder;
 namespace WebKit {
 
 class WebGestureEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebGestureEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebGestureEvent);
 public:
-    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
+    WebGestureEvent(WebEventInit&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
         : WebEvent(WTFMove(event))
         , m_position(position)
         , m_gestureScale(gestureScale)

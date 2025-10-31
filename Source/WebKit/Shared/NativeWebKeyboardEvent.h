@@ -66,6 +66,8 @@ namespace WebKit {
 struct EditingRange;
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebKeyboardEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NativeWebKeyboardEvent);
 public:
 #if USE(APPKIT)
     // FIXME: Share iOS's HandledByInputMethod enum here instead of passing a boolean.

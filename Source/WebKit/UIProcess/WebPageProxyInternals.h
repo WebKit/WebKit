@@ -267,7 +267,7 @@ public:
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
-    Deque<NativeWebKeyboardEvent> keyEventQueue;
+    Deque<UniqueRef<NativeWebKeyboardEvent>> keyEventQueue;
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
     WebCore::LayoutPoint maxStableLayoutViewportOrigin;
     WebCore::FloatSize maximumUnobscuredSize;

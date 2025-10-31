@@ -396,14 +396,14 @@ gboolean ViewPlatform::handleEvent(WPEEvent* event)
         }
         auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
         if (!filterResult.handled)
-            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, filterResult.keyText, m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
+            page().handleKeyboardEvent(makeUniqueRef<WebKit::NativeWebKeyboardEvent>(event, filterResult.keyText, m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
         return TRUE;
     }
     case WPE_EVENT_KEYBOARD_KEY_UP: {
         m_keyAutoRepeatHandler.keyRelease();
         auto filterResult = m_inputMethodFilter.filterKeyEvent(event);
         if (!filterResult.handled)
-            page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
+            page().handleKeyboardEvent(makeUniqueRef<WebKit::NativeWebKeyboardEvent>(event, String(), false));
         return TRUE;
     }
     case WPE_EVENT_TOUCH_DOWN:
@@ -495,7 +495,7 @@ void ViewPlatform::handleGesture(WPEEvent* event)
 
 void ViewPlatform::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
+    page().handleKeyboardEvent(makeUniqueRef<WebKit::NativeWebKeyboardEvent>(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 void ViewPlatform::setCursor(const WebCore::Cursor& cursor)

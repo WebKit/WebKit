@@ -127,8 +127,10 @@ private:
 };
 
 class WebTouchEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebTouchEvent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebTouchEvent);
 public:
-    WebTouchEvent(WebEvent&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::DoublePoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
+    WebTouchEvent(WebEventInit&& event, const Vector<WebPlatformTouchPoint>& touchPoints, const Vector<WebTouchEvent>& coalescedEvents, const Vector<WebTouchEvent>& predictedEvents, WebCore::DoublePoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation, bool canPreventNativeGestures = true)
         : WebEvent(WTFMove(event))
         , m_touchPoints(touchPoints)
         , m_coalescedEvents(coalescedEvents)
@@ -224,7 +226,7 @@ private:
 
 class WebTouchEvent : public WebEvent {
 public:
-    WebTouchEvent(WebEvent&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&, Vector<WebTouchEvent>&&);
+    WebTouchEvent(WebEventInit&&, Vector<WebPlatformTouchPoint>&&, Vector<WebTouchEvent>&&, Vector<WebTouchEvent>&&);
 
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 

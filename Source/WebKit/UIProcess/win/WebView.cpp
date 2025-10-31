@@ -465,7 +465,7 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
                 pendingCharEvents.append(msg);
         }
     }
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
+    m_page->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(hWnd, message, wParam, lParam, WTFMove(pendingCharEvents)));
 
     // We claim here to always have handled the event. If the event is not in fact handled, we will
     // find out later in didNotHandleKeyEvent.

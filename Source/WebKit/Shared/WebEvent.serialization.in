@@ -28,12 +28,13 @@
     CapsLockKey
 };
 
-class WebKit::WebEvent {
-    WebKit::WebEventType type();
-    OptionSet<WebKit::WebEventModifier> modifiers();
-    MonotonicTime timestamp();
-    WTF::UUID authorizationToken();
-};
+header: "WebEvent.h"
+[CustomHeader] struct WebKit::WebEventInit {
+    WebKit::WebEventType type;
+    OptionSet<WebKit::WebEventModifier> modifiers;
+    MonotonicTime timestamp;
+    std::optional<WTF::UUID> authorizationToken;
+}
 
 enum class WebKit::WebEventType : uint8_t {
     MouseDown,
@@ -60,7 +61,8 @@ enum class WebKit::WebEventType : uint8_t {
 #endif
 };
 
-class WebKit::WebKeyboardEvent : WebKit::WebEvent {
+class WebKit::WebKeyboardEvent {
+    WebKit::WebEventInit init();
     String text();
 #if !PLATFORM(GTK) && !USE(LIBWPE)
     String unmodifiedText();
@@ -98,7 +100,8 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-class WebKit::WebTouchEvent : WebKit::WebEvent {
+class WebKit::WebTouchEvent {
+    WebKit::WebEventInit init();
     Vector<WebKit::WebPlatformTouchPoint> touchPoints();
     Vector<WebKit::WebTouchEvent> coalescedEvents();
     Vector<WebKit::WebTouchEvent> predictedEvents();
@@ -164,7 +167,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 
 enum class WebKit::GestureWasCancelled : bool;
 
-class WebKit::WebMouseEvent : WebKit::WebEvent {
+class WebKit::WebMouseEvent {
+    WebKit::WebEventInit init();
     WebKit::WebMouseEventButton button();
     unsigned short buttons();
     WebCore::DoublePoint position();
@@ -196,7 +200,8 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-class WebKit::WebGestureEvent : WebKit::WebEvent {
+class WebKit::WebGestureEvent {
+    WebKit::WebEventInit init();
     WebCore::IntPoint position();
     float gestureScale();
     float gestureRotation();
@@ -225,7 +230,8 @@ class WebKit::WebGestureEvent : WebKit::WebEvent {
     Natural,
 };
 
-class WebKit::WebWheelEvent : WebKit::WebEvent {
+class WebKit::WebWheelEvent {
+    WebKit::WebEventInit init();
     WebCore::IntPoint position();
     WebCore::IntPoint globalPosition();
     WebCore::FloatSize delta();

@@ -100,9 +100,9 @@ static OptionSet<WebEventModifier> modifiersForKeyboardEvent(struct wpe_input_ke
     return modifiers;
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
+UniqueRef<WebKeyboardEvent> WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboard_event* event, const String& text, bool isAutoRepeat, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
 {
-    return WebKeyboardEvent({ event->pressed ? WebEventType::KeyDown : WebEventType::KeyUp, modifiersForKeyboardEvent(event), monotonicTimeForEventTimeInMilliseconds(event->time) },
+    return makeUniqueRef<WebKeyboardEvent>(WebEventInit { event->pressed ? WebEventType::KeyDown : WebEventType::KeyUp, modifiersForKeyboardEvent(event), monotonicTimeForEventTimeInMilliseconds(event->time) },
         text.isNull() ? WebCore::PlatformKeyboardEvent::singleCharacterString(event->key_code) : text,
         WebCore::PlatformKeyboardEvent::keyValueForWPEKeyCode(event->key_code),
         WebCore::PlatformKeyboardEvent::keyCodeForHardwareKeyCode(event->hardware_key_code),
@@ -169,7 +169,7 @@ static inline unsigned clickCount(struct wpe_input_pointer_event* event)
     return gLastClickCount;
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
+UniqueRef<WebMouseEvent> WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
 {
     auto type = WebEventType::MouseMove;
     switch (event->type) {
@@ -203,7 +203,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     // FIXME: Proper button support. deltaX/Y/Z.
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
-    return WebMouseEvent({ type, modifiersForEventModifiers(event->modifiers), monotonicTimeForEventTimeInMilliseconds(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
+    return makeUniqueRef<WebMouseEvent>(WebEventInit { type, modifiersForEventModifiers(event->modifiers), monotonicTimeForEventTimeInMilliseconds(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
         0, 0, 0, clickCount(event), 0, syntheticClickType);
 }
 
@@ -234,7 +234,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
             ASSERT_NOT_REACHED();
         }
 
-        return WebWheelEvent({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, position, position,
+        return makeUniqueRef<WebWheelEvent>({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, position, position,
             delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase,
             hasPreciseScrollingDeltas);
     }
@@ -267,7 +267,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
         ASSERT_NOT_REACHED();
     };
 
-    return WebWheelEvent({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, position, position,
+    return makeUniqueRef<WebWheelEvent>({ WebEventType::Wheel, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, position, position,
         delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, momentumPhase,
         hasPreciseScrollingDeltas);
 }
@@ -293,7 +293,7 @@ static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId, 
     return WebKit::WebPlatformTouchPoint::State::Stationary;
 }
 
-WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
+UniqueRef<WebTouchEvent> WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
 {
     WebEventType type;
     switch (event->type) {
@@ -328,7 +328,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent({ type, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, WTFMove(touchPoints), { }, { });
+    return makeUniqueRef<WebTouchEvent>({ type, OptionSet<WebEventModifier> { }, monotonicTimeForEventTimeInMilliseconds(event->time) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

@@ -4402,27 +4402,28 @@ void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
     sendToProcessContainingFrame(targetFrameID, Messages::WebPage::KeyEvent(targetFrameID, event));
 }
 
-bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
+bool WebPageProxy::handleKeyboardEvent(UniqueRef<NativeWebKeyboardEvent>&& event)
 {
     if (!hasRunningProcess())
         return false;
 
     if (!m_mainFrame) {
-        m_uiClient->didNotHandleKeyEvent(this, event);
+        m_uiClient->didNotHandleKeyEvent(this, event.get());
         return false;
     }
 
-    LOG_WITH_STREAM(KeyHandling, stream << "WebPageProxy::handleKeyboardEvent: " << event.type());
+    LOG_WITH_STREAM(KeyHandling, stream << "WebPageProxy::handleKeyboardEvent: " << event->type());
 
-    internals().keyEventQueue.append(event);
+    CheckedRef eventRef = event.get();
+    internals().keyEventQueue.append(WTFMove(event));
 
     Ref process = m_legacyMainFrameProcess;
-    process->startResponsivenessTimer(event.type() == WebEventType::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
+    process->startResponsivenessTimer(eventRef->type() == WebEventType::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
     // Otherwise, sent from DidReceiveEvent message handler.
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
-        sendKeyEvent(event);
+        sendKeyEvent(eventRef.get());
     }
 
     return true;
@@ -11069,7 +11070,7 @@ void WebPageProxy::keyEventHandlingCompleted(std::optional<WebEventType> eventTy
     MESSAGE_CHECK(m_legacyMainFrameProcess, !internals().keyEventQueue.isEmpty());
     auto event = internals().keyEventQueue.takeFirst();
     if (eventType)
-        MESSAGE_CHECK(m_legacyMainFrameProcess, *eventType == event.type());
+        MESSAGE_CHECK(m_legacyMainFrameProcess, *eventType == event->type());
 
 #if PLATFORM(WIN)
     if (!handled && eventType && *eventType == WebEventType::RawKeyDown)
@@ -11078,9 +11079,9 @@ void WebPageProxy::keyEventHandlingCompleted(std::optional<WebEventType> eventTy
 
     bool canProcessMoreKeyEvents = !internals().keyEventQueue.isEmpty();
     if (canProcessMoreKeyEvents && m_mainFrame) {
-        auto nextEvent = internals().keyEventQueue.first();
+        CheckedRef nextEvent = internals().keyEventQueue.first().get();
         LOG(KeyHandling, " UI process: sent keyEvent from keyEventHandlingCompleted");
-        sendKeyEvent(nextEvent);
+        sendKeyEvent(nextEvent.get());
     }
 
     // The call to doneWithKeyEvent may close this WebPage.
@@ -11088,7 +11089,7 @@ void WebPageProxy::keyEventHandlingCompleted(std::optional<WebEventType> eventTy
     Ref protectedThis { *this };
 
     if (RefPtr pageClient = this->pageClient())
-        pageClient->doneWithKeyEvent(event, handled);
+        pageClient->doneWithKeyEvent(event.get(), handled);
     if (!handled)
         m_uiClient->didNotHandleKeyEvent(this, event);
 

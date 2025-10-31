@@ -33,6 +33,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam, Vector<MSG>&& pendingCharEvents)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(hwnd, message, wParam, lParam))
     , m_nativeEvent(createNativeEvent(hwnd, message, wParam, lParam))

@@ -1552,7 +1552,7 @@ bool WebViewImpl::becomeFirstResponder()
         RetainPtr<NSEvent> keyboardEvent;
         if ([event type] == NSEventTypeKeyDown || [event type] == NSEventTypeKeyUp)
             keyboardEvent = event;
-        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, NativeWebKeyboardEvent(keyboardEvent.get(), false, false, { }), [] { });
+        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, makeUniqueRef<NativeWebKeyboardEvent>(keyboardEvent.get(), false, false, Vector<WebCore::KeypressCommand> { }).get(), [] { });
     }
     return true;
 }
@@ -5911,8 +5911,8 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // FIXME: Why is the firstResponder check needed?
     if (m_view.getAutoreleased() == [m_view.get() window].firstResponder) {
         interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-            if (weakThis)
-                weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+            if (CheckedPtr checkedThis = weakThis.get())
+                checkedThis->m_page->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(capturedEvent.get(), handledByInputMethod, false, commands));
         });
         return YES;
     }
@@ -5929,8 +5929,8 @@ void WebViewImpl::keyUp(NSEvent *event)
 
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -5952,8 +5952,8 @@ void WebViewImpl::keyDown(NSEvent *event)
 
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -5969,8 +5969,8 @@ void WebViewImpl::flagsChanged(NSEvent *event)
         return;
 
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(makeUniqueRef<NativeWebKeyboardEvent>(capturedEvent.get(), handledByInputMethod, false, commands));
     });
 }
 

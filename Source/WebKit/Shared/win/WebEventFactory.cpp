@@ -333,7 +333,7 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEventType type)
     }
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
+UniqueRef<WebMouseEvent> WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView, float deviceScaleFactor)
 {
     WebEventType type;
     WebMouseEventButton button = WebMouseEventButton::None;
@@ -406,10 +406,10 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     auto modifiers = modifiersForEvent(wParam);
     auto buttons = buttonsForEvent(wParam);
 
-    return WebMouseEvent( { type, modifiers, MonotonicTime::now() }, button, buttons, flooredIntPoint(position), flooredIntPoint(globalPosition), 0, 0, 0, clickCount, didActivateWebView);
+    return makeUniqueRef<WebMouseEvent>(WebEventInit { type, modifiers, MonotonicTime::now() }, button, buttons, flooredIntPoint(position), flooredIntPoint(globalPosition), 0, 0, 0, clickCount, didActivateWebView);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
+UniqueRef<WebWheelEvent> WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
 {
     POINT positionPoint = point(lParam);
     FloatPoint globalPosition = positionPoint;
@@ -453,7 +453,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
         }
     }
 
-    return WebWheelEvent( { WebEventType::Wheel, modifiers, MonotonicTime::now() }, flooredIntPoint(position), flooredIntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
+    return makeUniqueRef<WebWheelEvent>( { WebEventType::Wheel, modifiers, MonotonicTime::now() }, flooredIntPoint(position), flooredIntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
 }
 
 static WindowsKeyNames& windowsKeyNames()
@@ -462,7 +462,7 @@ static WindowsKeyNames& windowsKeyNames()
     return keyNames;
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
+UniqueRef<WebKeyboardEvent> WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     auto type = keyboardEventTypeForEvent(message);
     String text = textFromEvent(wparam, type);
@@ -478,13 +478,13 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message
     bool isSystemKey = isSystemKeyEvent(message);
     auto modifiers = modifiersForCurrentKeyState();
 
-    return WebKeyboardEvent( { type, modifiers, MonotonicTime::now() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey);
+    return makeUniqueRef<WebKeyboardEvent>(WebEventInit { type, modifiers, MonotonicTime::now() }, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey);
 }
 
 #if ENABLE(TOUCH_EVENTS)
-WebTouchEvent WebEventFactory::createWebTouchEvent()
+UniqueRef<WebTouchEvent> WebEventFactory::createWebTouchEvent()
 {
-    return WebTouchEvent({ WebEventType::TouchMove, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, { }, { }, { });
+    return makeUniqueRef<WebTouchEvent>({ WebEventType::TouchMove, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, { }, { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebGestureEvent);
+
 static inline std::optional<WebEventType> webEventTypeForNSEvent(NSEvent *event)
 {
     switch (event.phase) {

@@ -31,7 +31,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebWheelEvent);
+
+WebWheelEvent::WebWheelEvent(WebEventInit&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity)
     : WebEvent(WTFMove(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -43,7 +45,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 }
 
 #if PLATFORM(COCOA)
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType)
+WebWheelEvent::WebWheelEvent(WebEventInit&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType)
     : WebEvent(WTFMove(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -63,7 +65,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
     ASSERT(isWheelEventType(type()));
 }
 #elif PLATFORM(GTK) || USE(LIBWPE)
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas)
+WebWheelEvent::WebWheelEvent(WebEventInit&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas)
     : WebEvent(WTFMove(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
