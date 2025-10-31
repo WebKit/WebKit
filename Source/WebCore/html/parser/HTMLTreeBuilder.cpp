@@ -1067,13 +1067,15 @@ void HTMLTreeBuilder::closeTheCell()
 {
     ASSERT(m_insertionMode == InsertionMode::InCell);
     if (m_tree.openElements().inTableScope(HTML::td)) {
-        ASSERT(!m_tree.openElements().inTableScope(HTML::th));
-        processFakeEndTag(TagName::td);
-        return;
+        m_tree.generateImpliedEndTags();
+        m_tree.openElements().popUntilPopped(elementNameForTag(Namespace::HTML, TagName::td));
     }
-    ASSERT(m_tree.openElements().inTableScope(HTML::th));
-    processFakeEndTag(TagName::th);
-    ASSERT(m_insertionMode == InsertionMode::InRow);
+    if (m_tree.openElements().inTableScope(HTML::th)) {
+        m_tree.generateImpliedEndTags();
+        m_tree.openElements().popUntilPopped(elementNameForTag(Namespace::HTML, TagName::th));
+    }
+    m_tree.activeFormattingElements().clearToLastMarker();
+    m_insertionMode = InsertionMode::InRow;
 }
 
 void HTMLTreeBuilder::processStartTagForInTable(AtomHTMLToken&& token)
@@ -2421,8 +2423,11 @@ void HTMLTreeBuilder::processEndTag(AtomHTMLToken&& token)
         ASSERT(m_insertionMode == InsertionMode::InSelect || m_insertionMode == InsertionMode::InSelectInTable);
         switch (token.tagName()) {
         case TagName::optgroup:
-            if (m_tree.currentStackItem().elementName() == HTML::option && m_tree.oneBelowTop() && m_tree.oneBelowTop()->elementName() == HTML::optgroup)
-                processFakeEndTag(TagName::option);
+            if (m_tree.currentStackItem().elementName() == HTML::option && m_tree.oneBelowTop() && m_tree.oneBelowTop()->elementName() == HTML::optgroup) {
+                m_tree.openElements().pop();
+                m_tree.openElements().pop();
+                return;
+            }
             if (m_tree.currentStackItem().elementName() == HTML::optgroup) {
                 m_tree.openElements().pop();
                 return;
