@@ -28,35 +28,20 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS WebCoreMediaCaptureStatusBarHandler;
 
 namespace WebCore {
-class MediaCaptureStatusBarManager;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaCaptureStatusBarManager> : std::true_type { };
-}
-
-namespace WebCore {
-
-class MediaCaptureStatusBarManager : public CanMakeWeakPtr<MediaCaptureStatusBarManager> {
-    WTF_MAKE_TZONE_ALLOCATED(MediaCaptureStatusBarManager);
+class MediaCaptureStatusBarManager : public RefCountedAndCanMakeWeakPtr<MediaCaptureStatusBarManager> {
 public:
     static bool hasSupport();
 
     using TapCallback = Function<void(CompletionHandler<void()>&&)>;
     using ErrorCallback = Function<void()>;
-    MediaCaptureStatusBarManager(TapCallback&& callback, ErrorCallback&& errorCallback)
-        : m_tapCallback(WTFMove(callback))
-        , m_errorCallback(WTFMove(errorCallback))
-    {
-    }
+    static Ref<MediaCaptureStatusBarManager> create(TapCallback&& tapCallback, ErrorCallback&& errorCallback) { return adoptRef(*new MediaCaptureStatusBarManager(WTFMove(tapCallback), WTFMove(errorCallback))); }
     ~MediaCaptureStatusBarManager();
 
     void start();
@@ -66,6 +51,12 @@ public:
     void didTap(CompletionHandler<void()>&& completionHandler) { m_tapCallback(WTFMove(completionHandler)); }
 
 private:
+    MediaCaptureStatusBarManager(TapCallback&& callback, ErrorCallback&& errorCallback)
+        : m_tapCallback(WTFMove(callback))
+        , m_errorCallback(WTFMove(errorCallback))
+    {
+    }
+
     RetainPtr<WebCoreMediaCaptureStatusBarHandler> m_handler;
     TapCallback m_tapCallback;
     ErrorCallback m_errorCallback;

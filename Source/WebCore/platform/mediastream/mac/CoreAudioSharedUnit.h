@@ -97,8 +97,8 @@ public:
     void setSampleRateRange(LongCapabilityRange range) { m_sampleRateCapabilities = range; }
 
 #if PLATFORM(IOS_FAMILY)
-    void setIsInBackground(bool);
-    void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback) { m_statusBarWasTappedCallback = WTFMove(callback); }
+    static void setIsInBackground(bool);
+    WEBCORE_EXPORT static void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&&);
 #endif
 
     bool canRenderAudio() const { return m_canRenderAudio; }
@@ -226,7 +226,7 @@ private:
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
 
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<MediaCaptureStatusBarManager> m_statusBarManager;
+    RefPtr<MediaCaptureStatusBarManager> m_statusBarManager;
     Function<void(CompletionHandler<void()>&&)> m_statusBarWasTappedCallback;
 #endif
 

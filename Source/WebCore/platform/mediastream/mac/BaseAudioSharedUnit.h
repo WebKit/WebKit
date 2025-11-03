@@ -102,11 +102,12 @@ public:
     WEBCORE_EXPORT static void allowStarting();
 #endif
 
+    void captureFailed();
+
 protected:
     BaseAudioSharedUnit();
 
     void forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>&) const;
-    void captureFailed();
 
     virtual void cleanupAudioUnit() = 0;
     virtual OSStatus startInternal() = 0;

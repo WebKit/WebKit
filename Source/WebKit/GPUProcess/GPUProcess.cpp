@@ -241,7 +241,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters,
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
 #endif
 #if PLATFORM(IOS_FAMILY)
-    CoreAudioSharedUnit::defaultSingleton().setStatusBarWasTappedCallback([weakProcess = WeakPtr { *this }] (auto completionHandler) {
+    CoreAudioSharedUnit::setStatusBarWasTappedCallback([weakProcess = WeakPtr { *this }] (auto completionHandler) {
         if (RefPtr process = weakProcess.get())
             process->parentProcessConnection()->sendWithAsyncReply(Messages::GPUProcessProxy::StatusBarWasTapped(), [] { }, 0);
         completionHandler();

@@ -932,33 +932,68 @@ void CoreAudioSharedUnit::willChangeCaptureDevice()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void CoreAudioSharedUnit::setIsInBackground(bool isInBackground)
-{
-    if (!MediaCaptureStatusBarManager::hasSupport())
-        return;
-
-    if (!isInBackground) {
-        if (m_statusBarManager) {
-            m_statusBarManager->stop();
-            m_statusBarManager = nullptr;
-        }
-        return;
+class MicrophoneCaptureStatusBarManager {
+public:
+    static MicrophoneCaptureStatusBarManager& singleton()
+    {
+        static NeverDestroyed<MicrophoneCaptureStatusBarManager> singleton;
+        return singleton;
     }
 
-    if (m_statusBarManager)
-        return;
+    void setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback)
+    {
+        ASSERT(!m_statusBarWasTappedCallback);
+        m_statusBarWasTappedCallback = WTFMove(callback);
+    }
 
-    m_statusBarManager = makeUnique<MediaCaptureStatusBarManager>([this](CompletionHandler<void()>&& completionHandler) {
-        if (m_statusBarWasTappedCallback)
-            m_statusBarWasTappedCallback(WTFMove(completionHandler));
-    }, [this] {
-        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit status bar failed");
-        auto statusBarManager = std::exchange(m_statusBarManager, { });
-        statusBarManager->stop();
-        if (isRunning())
-            captureFailed();
-    });
-    m_statusBarManager->start();
+    void setIsInBackground(bool isInBackground)
+    {
+        if (!MediaCaptureStatusBarManager::hasSupport())
+            return;
+
+        if (!isInBackground) {
+            if (m_statusBarManager) {
+                m_statusBarManager->stop();
+                m_statusBarManager = nullptr;
+            }
+            return;
+        }
+
+        if (m_statusBarManager)
+            return;
+
+        m_statusBarManager = MediaCaptureStatusBarManager::create([this](CompletionHandler<void()>&& completionHandler) {
+            if (m_statusBarWasTappedCallback)
+                m_statusBarWasTappedCallback(WTFMove(completionHandler));
+        }, [this] {
+            RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit status bar failed");
+            auto statusBarManager = std::exchange(m_statusBarManager, { });
+            statusBarManager->stop();
+
+            CoreAudioSharedUnit::forEach([](auto& unit) {
+                if (unit.isRunning())
+                    unit.captureFailed();
+            });
+        });
+        m_statusBarManager->start();
+    }
+
+private:
+    MicrophoneCaptureStatusBarManager() = default;
+    friend class NeverDestroyed<MicrophoneCaptureStatusBarManager>;
+
+    Function<void(CompletionHandler<void()>&&)> m_statusBarWasTappedCallback;
+    RefPtr<MediaCaptureStatusBarManager> m_statusBarManager;
+};
+
+void CoreAudioSharedUnit::setIsInBackground(bool isInBackground)
+{
+    MicrophoneCaptureStatusBarManager::singleton().setIsInBackground(isInBackground);
+}
+
+void CoreAudioSharedUnit::setStatusBarWasTappedCallback(Function<void(CompletionHandler<void()>&&)>&& callback)
+{
+    MicrophoneCaptureStatusBarManager::singleton().setStatusBarWasTappedCallback(WTFMove(callback));
 }
 #endif
 
