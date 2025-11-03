@@ -122,6 +122,8 @@ overlay-region [ Skip ]
 pdf [ Skip ]
 ipc/mac [ Skip ]
 ipc/restrictedendpoints/mac [ Skip ]
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
 
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]

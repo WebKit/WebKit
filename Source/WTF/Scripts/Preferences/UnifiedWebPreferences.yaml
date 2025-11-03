@@ -7496,17 +7496,17 @@ SidewaysWritingModesEnabled:
 
 SiteIsolationEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: security
   humanReadableName: "Site Isolation"
   humanReadableDescription: "Put cross-origin iframes in a different process"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
   sharedPreferenceForWebProcess: true
 
 SiteIsolationSharedProcessEnabled:
