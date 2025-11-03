@@ -82,8 +82,13 @@ public:
         FloatSize size;
     };
 
+    struct CSSValueSystemColorInformation;
+    virtual std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation, bool useDarkAppearance) const;
+
 protected:
     virtual Color pictureFrameColor(const RenderElement&);
+    static std::optional<Color> systemColorFromCSSValueID(CSSValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
+    static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformationList();
 #if ENABLE(ATTACHMENT_ELEMENT)
     int attachmentBaseline(const RenderAttachment&) const final;
     void paintAttachmentText(GraphicsContext&, AttachmentLayout*) final;

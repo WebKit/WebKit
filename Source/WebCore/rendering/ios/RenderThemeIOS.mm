@@ -1079,99 +1079,27 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
     }
 }
 
-struct CSSValueSystemColorInformation {
-    CSSValueID cssValueID;
-    SEL selector;
-    bool makeOpaque { false };
-    float opacity { 1.0f };
-};
-
-static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformationList()
-{
-    static NeverDestroyed<Vector<CSSValueSystemColorInformation>> cssValueSystemColorInformationList;
-
-    static std::once_flag initializeOnce;
-    std::call_once(
-        initializeOnce,
-        [] {
-        cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
-            { CSSValueCanvas, @selector(systemBackgroundColor) },
-            { CSSValueCanvastext, @selector(labelColor) },
-            { CSSValueText, @selector(labelColor) },
-            { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
-            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
-            { CSSValueAppleSystemGray, @selector(systemGrayColor) },
-            { CSSValueAppleSystemGreen, @selector(systemGreenColor) },
-            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
-            { CSSValueAppleSystemOrange, @selector(systemOrangeColor) },
-            { CSSValueAppleSystemPink, @selector(systemPinkColor) },
-            { CSSValueAppleSystemPurple, @selector(systemPurpleColor) },
-            { CSSValueAppleSystemRed, @selector(systemRedColor) },
-            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
-            { CSSValueAppleSystemYellow, @selector(systemYellowColor) },
-            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
-            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
-            { CSSValueAppleSystemOpaqueFill, @selector(systemFillColor), true },
-            { CSSValueAppleSystemOpaqueSecondaryFill, @selector(secondarySystemFillColor), true },
-            // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
-            { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
-            { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
-            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
-            { CSSValueAppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
-            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
-            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
-            { CSSValueAppleSystemLabel, @selector(labelColor) },
-            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
-            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
-            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
-            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
-            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
-            // FIXME: <rdar://problem/79471528> Adopt [UIColor opaqueSeparatorColor] once it has a high contrast variant.
-            { CSSValueAppleSystemOpaqueSeparator, @selector(separatorColor), true },
-            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
-            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemGrid, @selector(separatorColor) },
-            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
-            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
-            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
-        });
-    });
-
-    return cssValueSystemColorInformationList;
-}
-
-static inline std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
+std::optional<Color> RenderThemeIOS::systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance) const
 {
     UIColor *color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClassSingleton(), systemColorInformation.selector);
     if (!color)
         return std::nullopt;
 
-    Color systemColor(roundAndClampToSRGBALossy(color.CGColor), Color::Flags::Semantic);
+    Color computedColor(roundAndClampToSRGBALossy(color.CGColor), Color::Flags::Semantic);
 
     if (systemColorInformation.opacity < 1.0f)
-        systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
+        computedColor = computedColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
 
-    if (systemColorInformation.makeOpaque)
-        return blendSourceOver(useDarkAppearance ? Color::black : Color::white, systemColor);
+    if (systemColorInformation.makeOpaque) {
+        OptionSet<StyleColorOptions> options;
+        if (useDarkAppearance)
+            options.add(StyleColorOptions::UseDarkAppearance);
 
-    return systemColor;
-}
-
-static std::optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
-{
-    LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
-
-    for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
-        if (cssValueSystemColorInformation.cssValueID == cssValueID)
-            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance);
+        Color canvasColor = systemColor(CSSValueCanvas, options);
+        return blendSourceOver(canvasColor, computedColor);
     }
 
-    return std::nullopt;
+    return computedColor;
 }
 
 static RenderThemeIOS::CSSValueToSystemColorMap& globalCSSValueToSystemColorMap()
@@ -1189,7 +1117,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
             for (bool useElevatedUserInterfaceLevel : { false, true }) {
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
                 for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
-                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
+                    if (auto color = RenderThemeCocoa::singleton().systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
                         map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
                 }
             }

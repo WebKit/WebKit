@@ -75,8 +75,9 @@
 #import "ApplePayLogoSystemImage.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIFont.h>
+#if PLATFORM(MAC)
+#import "LocalDefaultSystemAppearance.h"
+#import <pal/spi/mac/NSColorSPI.h>
 #endif
 
 #if ENABLE(VIDEO)
@@ -84,12 +85,14 @@
 #import <wtf/BlockObjCExceptions.h>
 #endif
 
-#if ENABLE(APPLE_PAY)
-#import <pal/cocoa/PassKitSoftLink.h>
+#if PLATFORM(IOS_FAMILY)
+#import "LocalCurrentTraitCollection.h"
+#import <UIKit/UIFont.h>
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#import <pal/ios/UIKitSoftLink.h>
+#if ENABLE(APPLE_PAY)
+#import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
 namespace WebCore {
@@ -109,17 +112,13 @@ static bool formControlRefreshEnabled(const Element* element)
     return element->document().settings().formControlRefreshEnabled();
 }
 
-static Color colorCompositedOverCanvasColor(const Color& color, OptionSet<StyleColorOptions> styleColorOptions)
+static Color colorCompositedOverCanvasColorIfNeeded(const Color& color, OptionSet<StyleColorOptions> styleColorOptions)
 {
+    if (styleColorOptions.contains(StyleColorOptions::UseSystemAppearance) || color.isOpaque())
+        return color;
+
     const auto backingColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
     return blendSourceOver(backingColor, color);
-}
-
-static Color colorCompositedOverCanvasColor(CSSValueID cssValue, OptionSet<StyleColorOptions> styleColorOptions)
-{
-    const auto backingColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
-    const auto foregroundColor = RenderTheme::singleton().systemColor(cssValue, styleColorOptions);
-    return blendSourceOver(backingColor, foregroundColor);
 }
 
 static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect, Path path)
@@ -151,15 +150,21 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
 }
 
 #if PLATFORM(MAC)
-
 static Color highContrastOutlineColor(OptionSet<StyleColorOptions> styleColorOptions)
 {
     auto labelColor = RenderTheme::singleton().systemColor(CSSValueAppleSystemLabel, styleColorOptions);
     return labelColor.colorWithAlphaMultipliedBy(0.65f);
 }
+#endif
 
 static void drawHighContrastOutline(GraphicsContext& context, Path path, OptionSet<StyleColorOptions> styleColorOptions)
 {
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(path);
+    UNUSED_PARAM(styleColorOptions);
+    return;
+#else
     static constexpr auto highContrastOutlineThickness = 1.f;
 
     GraphicsContextStateSaver stateSaver(context);
@@ -170,8 +175,8 @@ static void drawHighContrastOutline(GraphicsContext& context, Path path, OptionS
     context.setStrokeThickness(highContrastOutlineThickness * 2);
     context.setStrokeColor(outlineColor);
     context.strokePath(path);
-}
 #endif
+}
 
 static constexpr auto controlTintLuminanceThreshold = 0.5f;
 
@@ -913,6 +918,13 @@ static Color platformAdjustedColorForPressedState(const Color color, OptionSet<S
 #endif
 }
 
+static void fillShape(GraphicsContext& context, Path path, Color color)
+{
+    GraphicsContextStateSaver stateSaver { context };
+    context.setFillColor(color);
+    context.fillPath(path);
+}
+
 static void drawShapeWithBorder(GraphicsContext& context, float deviceScaleFactor, Path path, FloatRect boundingRect, Color backgroundColor, float borderThickness, Color borderColor)
 {
     GraphicsContextStateSaver stateSaver { context };
@@ -1016,42 +1028,46 @@ static Color adjustCheckboxRadioBackgroundColorDisabledState(const Color& backgr
 #if PLATFORM(IOS_FAMILY)
     const auto isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
     if (PAL::currentUserInterfaceIdiomIsVision()) {
-        auto disabledBackgroundColor = RenderTheme::singleton().systemColor(isEmpty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
-        return colorCompositedOverCanvasColor(disabledBackgroundColor, styleColorOptions);
+        const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
+        auto cssValueID = useSystemAppearance ? CSSValueAppleSystemTertiaryFill : CSSValueAppleSystemOpaqueTertiaryFill;
+        if (isEmpty)
+            cssValueID = useSystemAppearance ? CSSValueWebkitControlBackground : CSSValueWebkitOpaqueControlBackground;
+
+        return RenderTheme::singleton().systemColor(cssValueID, styleColorOptions);
     }
 #else
     UNUSED_PARAM(states);
 #endif
     auto disabledBackgroundColor = backgroundColor.colorWithAlphaMultipliedBy(checkboxRadioBorderDisabledOpacityForVectorBasedControls);
-    return colorCompositedOverCanvasColor(disabledBackgroundColor, styleColorOptions);
+    return colorCompositedOverCanvasColorIfNeeded(disabledBackgroundColor, styleColorOptions);
 }
 
 Color RenderThemeCocoa::checkboxRadioBackgroundColorForVectorBasedControls(const RenderStyle& style, OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions) const
 {
     const auto isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
-
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
+    const auto cssValueForEmptyBackground = useSystemAppearance ? CSSValueAppleSystemQuaternaryLabel : CSSValueWebkitOpaqueControlBackground;
     Color backgroundColor = Color::white;
     const auto tintColor = controlTintColorWithContrast(style, styleColorOptions);
 
 #if PLATFORM(IOS_FAMILY)
     if (PAL::currentUserInterfaceIdiomIsVision()) {
         backgroundColor = isEmpty ? Color(DisplayP3<float> { 0.835, 0.835, 0.835 }) : tintColor;
-        return colorCompositedOverCanvasColor(backgroundColor, styleColorOptions);
+        return colorCompositedOverCanvasColorIfNeeded(backgroundColor, styleColorOptions);
     }
 
-    backgroundColor = isEmpty ? systemColor(CSSValueWebkitControlBackground, styleColorOptions) : tintColor;
+    return isEmpty ? systemColor(cssValueForEmptyBackground, styleColorOptions) : tintColor;
 #else
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
 
     if (isEmpty)
-        backgroundColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
-    else if (!isWindowActive)
-        backgroundColor = systemColor(CSSValueAppleSystemTertiaryFill, styleColorOptions);
-    else
-        backgroundColor = tintColor;
+        return systemColor(cssValueForEmptyBackground, styleColorOptions);
+    else if (!isWindowActive) {
+        const auto cssValueID = useSystemAppearance ? CSSValueAppleSystemTertiaryLabel : CSSValueAppleSystemOpaqueTertiaryLabel;
+        return systemColor(cssValueID, styleColorOptions);
+    } else
+        return colorCompositedOverCanvasColorIfNeeded(tintColor, styleColorOptions);
 #endif
-
-    return colorCompositedOverCanvasColor(backgroundColor, styleColorOptions);
 }
 
 static RoundedShape continuousRoundedShape(const FloatRect& rect, const float cornerRadius, ShouldComputePath computePath)
@@ -1263,9 +1279,11 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     const auto paintRect = checkboxShape.boundingRect;
 
 #if PLATFORM(IOS_FAMILY)
-    bool isVision = PAL::currentUserInterfaceIdiomIsVision();
+    const auto isVision = PAL::currentUserInterfaceIdiomIsVision();
+    const auto userPrefersContrast = false;
 #else
-    bool isVision = false;
+    const auto isVision = false;
+    const auto userPrefersContrast = Theme::singleton().userPrefersContrast();
 #endif
 
     auto& context = paintInfo.context();
@@ -1274,6 +1292,7 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     auto controlStates = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
     auto deviceScaleFactor = box.document().deviceScaleFactor();
     auto styleColorOptions = box.styleColorOptions();
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
     auto usedZoom = box.style().usedZoom();
 
     const auto isEnabled = controlStates.contains(ControlStyle::State::Enabled);
@@ -1302,12 +1321,16 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
             context.fillPath(path);
 
             paintCheckboxRadioInnerShadowForVectorBasedControls(paintInfo, checkboxShape, controlStates, true);
-        } else {
+        } else if (!useSystemAppearance) {
             const auto borderColor = checkboxRadioBorderColorForVectorBasedControls(controlStates, styleColorOptions);
             const auto borderThickness = checkboxRadioBorderWidthForVectorBasedControls * usedZoom;
             context.setStrokeStyle(StrokeStyle::SolidStroke);
 
             drawShapeWithBorder(context, deviceScaleFactor, path, paintRect, backgroundColor, borderThickness, borderColor);
+        } else {
+            if (userPrefersContrast)
+                drawHighContrastOutline(context, path, box.styleColorOptions());
+            fillShape(context, path, backgroundColor);
         }
 
         return true;
@@ -1360,10 +1383,8 @@ bool RenderThemeCocoa::paintCheckboxForVectorBasedControls(const RenderElement& 
     context.setFillColor(indicatorColor);
     context.fillPath(glyphPath);
 
-#if PLATFORM(MAC)
-    if (Theme::singleton().userPrefersContrast())
+    if (userPrefersContrast)
         drawHighContrastOutline(context, path, box.styleColorOptions());
-#endif
 
     return true;
 }
@@ -1392,6 +1413,7 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
     const auto controlStates = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
     const auto deviceScaleFactor = box.document().deviceScaleFactor();
     const auto styleColorOptions = box.styleColorOptions();
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
     const auto usedZoom = box.style().usedZoom();
 
     const auto isEnabled = controlStates.contains(ControlStyle::State::Enabled);
@@ -1414,7 +1436,8 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
         context.restore();
     }
 
-    if (controlStates.contains(ControlStyle::State::Checked)) {
+    const auto isChecked = controlStates.contains(ControlStyle::State::Checked);
+    if (isChecked) {
         if (!isVision) {
             context.setFillColor(backgroundColor);
             context.fillPath(boundingPath);
@@ -1428,17 +1451,21 @@ bool RenderThemeCocoa::paintRadioForVectorBasedControls(const RenderElement& box
 
         context.setFillColor(indicatorColor);
         context.fillEllipse(innerCircleRect);
+    } else if (!isVision) {
+        if (!useSystemAppearance) {
+            const auto borderColor = checkboxRadioBorderColorForVectorBasedControls(controlStates, styleColorOptions);
+            const auto borderThickness = checkboxRadioBorderWidthForVectorBasedControls * usedZoom;
+            drawShapeWithBorder(context, deviceScaleFactor, boundingPath, paintRect, backgroundColor, borderThickness, borderColor);
+        } else
+            fillShape(context, boundingPath, backgroundColor);
+    }
 
 #if PLATFORM(MAC)
-    if (Theme::singleton().userPrefersContrast())
-        drawHighContrastOutline(context, boundingPath, box.styleColorOptions());
-#endif
-    } else if (!isVision) {
-        const auto borderColor = checkboxRadioBorderColorForVectorBasedControls(controlStates, styleColorOptions);
-        const auto borderThickness = checkboxRadioBorderWidthForVectorBasedControls * usedZoom;
-
-        drawShapeWithBorder(context, deviceScaleFactor, boundingPath, paintRect, backgroundColor, borderThickness, borderColor);
+    if (Theme::singleton().userPrefersContrast()) {
+        if (isChecked || useSystemAppearance)
+            drawHighContrastOutline(context, boundingPath, box.styleColorOptions());
     }
+#endif
 
     if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
         drawFocusRingForPathForVectorBasedControls(box, paintInfo, paintRect, boundingPath);
@@ -1454,6 +1481,7 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
     CheckedRef style = box.style();
     const auto deviceScaleFactor = box.document().deviceScaleFactor();
     const auto styleColorOptions = box.styleColorOptions();
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
 
     const auto zoomScale = style->usedZoom();
     const auto borderWidth = zoomScale;
@@ -1472,8 +1500,10 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
 #endif
         if (isSubmitStyleButton(box.element()) && isWindowActive)
             backgroundColor = controlTintColorWithContrast(box.style(), styleColorOptions);
+        else if (useSystemAppearance)
+            backgroundColor = systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions);
         else
-            backgroundColor = colorCompositedOverCanvasColor(CSSValueAppleSystemOpaqueSecondaryFill, styleColorOptions);
+            backgroundColor = systemColor(CSSValueAppleSystemOpaqueSecondaryFill, styleColorOptions);
     }
 
     if (!isEnabled)
@@ -1491,14 +1521,27 @@ bool RenderThemeCocoa::paintButtonForVectorBasedControls(const RenderElement& bo
     const auto path = buttonShape.path.value();
     const auto boundingRect = buttonShape.boundingRect;
 
+    const auto usingSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
+
 #if PLATFORM(MAC)
     const auto userPrefersContrast = Theme::singleton().userPrefersContrast();
-    const auto borderColor = userPrefersContrast ? highContrastOutlineColor(styleColorOptions) : systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+    const auto skipBorder = usingSystemAppearance && !userPrefersContrast;
+    if (skipBorder) {
+        context.setFillColor(backgroundColor);
+        context.fillPath(path);
+    } else {
+        const auto borderColor = userPrefersContrast ? highContrastOutlineColor(styleColorOptions) : systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+        drawShapeWithBorder(context, deviceScaleFactor, path, boundingRect, backgroundColor, borderWidth, borderColor);
+    }
 #else
-    const auto borderColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+    if (usingSystemAppearance) {
+        context.setFillColor(backgroundColor);
+        context.fillPath(path);
+    } else {
+        const auto borderColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
+        drawShapeWithBorder(context, deviceScaleFactor, path, boundingRect, backgroundColor, borderWidth, borderColor);
+    }
 #endif
-
-    drawShapeWithBorder(context, deviceScaleFactor, path, boundingRect, backgroundColor, borderWidth, borderColor);
 
     if (controlIsFocusedWithOutlineStyleAutoForVectorBasedControls(box))
         drawFocusRingForPathForVectorBasedControls(box, paintInfo, boundingRect, path);
@@ -2781,7 +2824,8 @@ bool RenderThemeCocoa::adjustMeterStyleForVectorBasedControls(RenderStyle&, cons
     return false;
 }
 
-static constexpr auto cssValueForProgressAndMeterTrackColor = CSSValueAppleSystemOpaqueFill;
+static constexpr auto cssValueForProgressAndMeterTrackColor = CSSValueAppleSystemFill;
+static constexpr auto cssValueForOpaqueProgressAndMeterTrackColor = CSSValueAppleSystemOpaqueFill;
 
 bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
@@ -2801,20 +2845,27 @@ bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& ren
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
 
     auto styleColorOptions = renderer.styleColorOptions();
+    auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS_FAMILY)
+    const auto userPrefersContrast = false;
+#else
     const auto userPrefersContrast = Theme::singleton().userPrefersContrast();
     FloatRoundedRect boundingRoundedRect = roundedFillRect;
-    if (userPrefersContrast)
-        context.save();
-    else
-        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 #endif
 
-    roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSizeForVectorBasedControls);
-    context.fillRoundedRect(roundedFillRect, systemColor(cssValueForProgressAndMeterTrackColor, styleColorOptions));
+    if (userPrefersContrast)
+        context.save();
 
+    if (!useSystemAppearance && !userPrefersContrast) {
+        context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitOpaqueControlBackground, styleColorOptions));
+        roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSizeForVectorBasedControls);
+    }
+
+    const auto trackColorID = useSystemAppearance ? cssValueForProgressAndMeterTrackColor : cssValueForOpaqueProgressAndMeterTrackColor;
+
+    context.fillRoundedRect(roundedFillRect, systemColor(trackColorID, styleColorOptions));
     context.clipRoundedRect(roundedFillRect);
 
     FloatRect fillRect(roundedFillRect.rect());
@@ -3014,6 +3065,10 @@ bool RenderThemeCocoa::adjustProgressBarStyleForVectorBasedControls(RenderStyle&
 
 static constexpr auto cssValueForInactiveBarFill = CSSValueAppleSystemTertiaryLabel;
 
+// FIXME: The track thickness should change based on the size of the slider.
+constexpr auto trackThicknessForVectorBasedControls = 6.0;
+constexpr auto trackRadiusForVectorBasedControls = trackThicknessForVectorBasedControls / 2.0;
+
 bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElement& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!formControlRefreshEnabled(renderer))
@@ -3028,19 +3083,15 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
 
     auto styleColorOptions = renderer.styleColorOptions();
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
-
-    constexpr auto barBlockSize = 8.f;
-
-    constexpr auto barCornerRadiusInlineSize = 4.f;
-    constexpr auto barCornerRadiusBlockSize = 4.f;
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
 
     constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
     constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 
-    FloatRoundedRect::Radii barCornerRadii(
-        isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
-        isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
-    );
+    const auto usedZoom = renderer.style().usedZoom();
+    const auto trackThickness = trackThicknessForVectorBasedControls * usedZoom;
+    const auto trackRadius = trackRadiusForVectorBasedControls * usedZoom;
+    FloatRoundedRect::Radii barCornerRadii(trackRadius, trackRadius);
 
     auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
 
@@ -3049,24 +3100,33 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
     float rectBlockSize = logicalRect.height();
     float rectBlockStart = logicalRect.y();
 
-    if (rectBlockSize < barBlockSize) {
+    if (rectBlockSize < trackThickness) {
         // The rect is smaller than the standard progress bar. We clip to the
         // element's rect to avoid leaking pixels outside the repaint rect.
         context.clip(rect);
     }
 
     float trackInlineStart = rectInlineStart + nativeControlBorderInlineSizeForVectorBasedControls;
-    float trackBlockStart = rectBlockStart + (rectBlockSize - barBlockSize) / 2.0f;
+    float trackBlockStart = rectBlockStart + (rectBlockSize - trackThickness) / 2.0f;
     float trackInlineSize = rectInlineSize - 2 * nativeControlBorderInlineSizeForVectorBasedControls;
 
-    FloatRect trackRect(trackInlineStart, trackBlockStart, trackInlineSize, barBlockSize);
+    FloatRect trackRect(trackInlineStart, trackBlockStart, trackInlineSize, trackThickness);
     FloatRoundedRect roundedTrackRect(isHorizontalWritingMode ? trackRect : trackRect.transposedRect(), barCornerRadii);
 
-    FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
-    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSizeForVectorBasedControls);
-    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+#if PLATFORM(MAC)
+    const auto userPrefersContrast = Theme::singleton().userPrefersContrast();
+#else
+    const auto userPrefersContrast = false;
+#endif
 
-    context.fillRoundedRect(roundedTrackRect, systemColor(cssValueForProgressAndMeterTrackColor, styleColorOptions));
+    if (!useSystemAppearance && !userPrefersContrast) {
+        FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
+        roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSizeForVectorBasedControls);
+        context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+    }
+
+    const auto trackColorID = useSystemAppearance ? cssValueForProgressAndMeterTrackColor : cssValueForOpaqueProgressAndMeterTrackColor;
+    context.fillRoundedRect(roundedTrackRect, systemColor(trackColorID, styleColorOptions));
 
     float barInlineSize;
     float barInlineStart = trackInlineStart;
@@ -3110,8 +3170,17 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
 #endif
     const auto fillColor = isWindowActive ? controlTintColorWithContrast(renderer.style(), styleColorOptions) : systemColor(cssValueForInactiveBarFill, styleColorOptions);
 
-    FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
+    FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, trackThickness);
     context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), fillColor.colorWithAlphaMultipliedBy(alpha));
+
+#if PLATFORM(MAC)
+    if (userPrefersContrast) {
+        Path path;
+        path.addRoundedRect(roundedTrackRect);
+        drawHighContrastOutline(context, path, styleColorOptions);
+        return true;
+    }
+#endif
 
     return true;
 }
@@ -3134,12 +3203,6 @@ static bool hasVisibleSliderThumbDescendant(const RenderElement& box)
     return false;
 }
 
-#if PLATFORM(MAC)
-constexpr auto trackThicknessForVectorBasedControls = 8.0;
-#else
-constexpr auto trackThicknessForVectorBasedControls = 4.0;
-#endif
-constexpr auto trackRadiusForVectorBasedControls = trackThicknessForVectorBasedControls / 2.0;
 constexpr auto tickLengthForVectorBasedControls = trackThicknessForVectorBasedControls / 4.0;
 constexpr auto defaultSliderTickRadius = trackThicknessForVectorBasedControls / 8.0;
 constexpr FloatSize sliderThumbSize = { 24.f, 16.f };
@@ -3289,14 +3352,11 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
 
     FloatRoundedRect::Radii cornerRadii(cornerRadius, cornerRadius);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
-    FloatRoundedRect outerBorder(trackClip, cornerRadii);
-
-    outerBorder.inflateWithRadii(nativeControlBorderInlineSizeForVectorBasedControls * usedZoom);
 
     auto styleColorOptions = box.styleColorOptions();
-
-    auto borderColor = systemColor(CSSValueWebkitControlBackground, styleColorOptions);
-    auto trackColor = systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions);
+    auto borderColor = systemColor(CSSValueWebkitOpaqueControlBackground, styleColorOptions);
+    auto trackColor = systemColor(CSSValueAppleSystemFill, styleColorOptions);
+    const auto useSystemAppearance = styleColorOptions.contains(StyleColorOptions::UseSystemAppearance);
 
 #if PLATFORM(MAC)
     const auto isWindowActive = states.contains(ControlStyle::State::WindowActive);
@@ -3317,9 +3377,17 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
         trackColor = colorWithContrastOverlay(trackColor, styleColorOptions, 0.05f);
         fillColor = colorWithContrastOverlay(fillColor, styleColorOptions, 0.08f);
     }
+    const auto userPrefersContrast = Theme::singleton().userPrefersContrast();
+#else
+    const auto userPrefersContrast = false;
 #endif
 
-    context.fillRoundedRect(outerBorder, borderColor);
+    if (!useSystemAppearance && !userPrefersContrast) {
+        FloatRoundedRect outerBorder(trackClip, cornerRadii);
+        outerBorder.inflateWithRadii(nativeControlBorderInlineSizeForVectorBasedControls * usedZoom);
+        context.fillRoundedRect(outerBorder, borderColor);
+    }
+
     context.fillRoundedRect(innerBorder, trackColor);
     context.clipRoundedRect(innerBorder);
 
@@ -3374,6 +3442,15 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
 
         paintSliderTicksForVectorBasedControls(box, paintInfo, rect, isThumbVisible, tickColorOn, tickColorOff);
     }
+
+#if PLATFORM(MAC)
+    if (userPrefersContrast) {
+        Path path;
+        path.addRoundedRect(innerBorder);
+        drawHighContrastOutline(context, path, styleColorOptions);
+        return true;
+    }
+#endif
 
     return true;
 }
@@ -4688,6 +4765,155 @@ bool RenderThemeCocoa::isSubmitStyleButton(const Node* node) const
         return button->isExplicitlySetSubmitButton();
 
     return false;
+}
+
+struct RenderThemeCocoa::CSSValueSystemColorInformation {
+    CSSValueID cssValueID;
+    SEL selector;
+    bool makeOpaque { false };
+#if PLATFORM(IOS_FAMILY)
+    float opacity { 1.0f };
+#endif
+};
+
+const Vector<RenderThemeCocoa::CSSValueSystemColorInformation>& RenderThemeCocoa::cssValueSystemColorInformationList()
+{
+    static NeverDestroyed<Vector<CSSValueSystemColorInformation>> cssValueSystemColorInformationList;
+
+    static std::once_flag initializeOnce;
+    std::call_once(
+        initializeOnce,
+        [] {
+        cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
+#if PLATFORM(MAC)
+            { CSSValueActivecaption, @selector(windowFrameTextColor) },
+            { CSSValueAppworkspace, @selector(headerColor) },
+            { CSSValueButtonface, @selector(controlColor) },
+            { CSSValueButtonhighlight, @selector(controlHighlightColor) },
+            { CSSValueButtonshadow, @selector(controlShadowColor) },
+            { CSSValueButtontext, @selector(controlTextColor) },
+            { CSSValueCanvas, @selector(textBackgroundColor) },
+            { CSSValueCanvastext, @selector(textColor) },
+            { CSSValueText, @selector(textColor) },
+            { CSSValueAppleSystemControlBackground, @selector(controlBackgroundColor) },
+            { CSSValueWebkitOpaqueControlBackground, @selector(controlBackgroundColor), true },
+            { CSSValueAppleSystemBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemSecondaryBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemTertiaryBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemGroupedBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemContainerBorder, @selector(containerBorderColor) },
+            { CSSValueAppleSystemGrid, @selector(gridColor) },
+            { CSSValueAppleSystemHeaderText, @selector(headerTextColor) },
+            { CSSValueAppleSystemTextBackground, @selector(textBackgroundColor) },
+            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(unemphasizedSelectedContentBackgroundColor) },
+            { CSSValueCaptiontext, @selector(textColor) },
+            { CSSValueField, @selector(controlColor) },
+            { CSSValueFieldtext, @selector(controlTextColor) },
+            { CSSValueGraytext, @selector(disabledControlTextColor) },
+            { CSSValueHighlighttext, @selector(selectedTextColor) },
+            { CSSValueInactiveborder, @selector(controlBackgroundColor) },
+            { CSSValueInactivecaption, @selector(controlBackgroundColor) },
+            { CSSValueInactivecaptiontext, @selector(textColor) },
+            { CSSValueInfotext, @selector(textColor) },
+            { CSSValueMenutext, @selector(labelColor) },
+            { CSSValueScrollbar, @selector(scrollBarColor) },
+            { CSSValueThreeddarkshadow, @selector(controlDarkShadowColor) },
+            { CSSValueThreedface, @selector(controlColor) },
+            { CSSValueThreedshadow, @selector(shadowColor) },
+            { CSSValueThreedhighlight, @selector(highlightColor) },
+            { CSSValueThreedlightshadow, @selector(controlLightHighlightColor) },
+            { CSSValueWindow, @selector(windowBackgroundColor) },
+            { CSSValueWindowframe, @selector(windowFrameColor) },
+            { CSSValueWindowtext, @selector(windowFrameTextColor) },
+            { CSSValueAppleSystemAlternateSelectedText, @selector(alternateSelectedControlTextColor) },
+            { CSSValueAppleSystemSelectedText, @selector(selectedTextColor) },
+            { CSSValueAppleSystemUnemphasizedSelectedText, @selector(unemphasizedSelectedTextColor) },
+            { CSSValueAppleSystemUnemphasizedSelectedTextBackground, @selector(unemphasizedSelectedTextBackgroundColor) },
+            { CSSValueAppleSystemFindHighlightBackground, @selector(findHighlightColor) },
+            { CSSValueAppleSystemOpaqueTertiaryLabel, @selector(tertiaryLabelColor), true },
+            { CSSValueAppleSystemQuinaryLabel, @selector(quinaryLabelColor) },
+#else
+            { CSSValueCanvas, @selector(systemBackgroundColor) },
+            { CSSValueCanvastext, @selector(labelColor) },
+            { CSSValueText, @selector(labelColor) },
+            { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
+            { CSSValueWebkitOpaqueControlBackground, @selector(systemBackgroundColor), true },
+            { CSSValueAppleSystemIndigo, @selector(systemIndigoColor) },
+            { CSSValueAppleSystemTeal, @selector(systemTealColor) },
+            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
+            { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
+            // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
+            { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
+            { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
+            { CSSValueAppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
+            { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
+            { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
+            { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
+            { CSSValueAppleSystemLabel, @selector(labelColor) },
+            // FIXME: <rdar://problem/79471528> Adopt [UIColor opaqueSeparatorColor] once it has a high contrast variant.
+            { CSSValueAppleSystemOpaqueSeparator, @selector(separatorColor), true },
+            { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
+            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemGrid, @selector(separatorColor) },
+            { CSSValueAppleSystemHeaderText, @selector(labelColor) },
+            { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
+            { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
+#endif
+            { CSSValueAppleSystemPlaceholderText, @selector(placeholderTextColor) },
+            { CSSValueAppleSystemLabel, @selector(labelColor) },
+            { CSSValueAppleSystemSecondaryLabel, @selector(secondaryLabelColor) },
+            { CSSValueAppleSystemTertiaryLabel, @selector(tertiaryLabelColor) },
+            { CSSValueAppleSystemQuaternaryLabel, @selector(quaternaryLabelColor) },
+            { CSSValueAppleSystemFill, @selector(systemFillColor) },
+            { CSSValueAppleSystemOpaqueFill, @selector(systemFillColor), true },
+            { CSSValueAppleSystemSecondaryFill, @selector(secondarySystemFillColor) },
+            { CSSValueAppleSystemOpaqueSecondaryFill, @selector(secondarySystemFillColor), true },
+            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
+            { CSSValueAppleSystemSeparator, @selector(separatorColor) },
+            { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
+            { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
+            { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
+            { CSSValueAppleSystemGray, @selector(systemGrayColor) },
+            { CSSValueAppleSystemGreen, @selector(systemGreenColor) },
+            { CSSValueAppleSystemOrange, @selector(systemOrangeColor) },
+            { CSSValueAppleSystemPink, @selector(systemPinkColor) },
+            { CSSValueAppleSystemPurple, @selector(systemPurpleColor) },
+            { CSSValueAppleSystemRed, @selector(systemRedColor) },
+            { CSSValueAppleSystemYellow, @selector(systemYellowColor) },
+        });
+    });
+
+    return cssValueSystemColorInformationList.get();
+}
+
+std::optional<Color> RenderThemeCocoa::systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance) const
+{
+    UNUSED_PARAM(systemColorInformation);
+    UNUSED_PARAM(useDarkAppearance);
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+std::optional<Color> RenderThemeCocoa::systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel = false)
+{
+#if PLATFORM(MAC)
+    UNUSED_PARAM(useElevatedUserInterfaceLevel);
+    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
+#else
+    LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
+#endif
+
+    for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
+        if (cssValueSystemColorInformation.cssValueID == cssValueID)
+            return RenderThemeCocoa::singleton().systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance);
+    }
+
+    return std::nullopt;
 }
 
 }

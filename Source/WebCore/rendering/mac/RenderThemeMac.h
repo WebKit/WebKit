@@ -163,6 +163,8 @@ private:
     bool isImageControlsButton(const Element&) const final;
 #endif
 
+    std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation, bool useDarkAppearance) const final;
+
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;

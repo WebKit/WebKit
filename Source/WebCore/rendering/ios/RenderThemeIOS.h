@@ -180,6 +180,8 @@ private:
     Color pictureFrameColor(const RenderElement&) override;
 
     void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
+
+    std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation, bool useDarkAppearance) const final;
 };
 
 }

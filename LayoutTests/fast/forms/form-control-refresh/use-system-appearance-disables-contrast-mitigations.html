@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            background: black;
+        }
+        .range {
+            height: 16px;
+        }
+        .range::-webkit-slider-thumb {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="button" value="Button">
+    <button>Button</button>
+    <input type="checkbox">
+    <input type="file">
+    <meter></meter>
+    <progress value="0"></progress>
+    <input type="radio">
+    <select>
+        <option>Select</option>
+    </select>
+    <input class="range" type='range' value="0">
+    <input type="button" value="Button" disabled>
+    <button disabled>Button</button>
+    <input type="checkbox" disabled>
+    <input type="file" disabled>
+    <input type="radio" disabled>
+    <select disabled>
+        <option>Select</option>
+    </select>
+    <input class="range" type='range' value="0" disabled>
+</body>
+</html>
