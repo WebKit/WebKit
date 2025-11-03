@@ -214,6 +214,8 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
         additionalArguments = messageArgumentsVector.subspan(1);
     }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - CONSOLE - " << messageText);
+
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), lexicalGlobalObject);
 
     String url = message->url();
