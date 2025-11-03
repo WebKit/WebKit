@@ -990,6 +990,14 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     bool canIntercept = documentCanHaveURLRewritten(*document, destination->url()) && (!isTraversal || isSameDocument);
     bool canBeCanceled = !isTraversal || (document->isTopDocument() && isSameDocument); // FIXME: and user involvement is not browser-ui or navigation's relevant global object has transient activation.
     bool hashChange = !classicHistoryAPIState && equalIgnoringFragmentIdentifier(document->url(), destination->url()) && !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier());
+
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - hashChange - " << hashChange);
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - !classicHistoryAPIState - " << !classicHistoryAPIState);
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - equalIgnoringFragmentIdentifier(document->url(), destination->url()) - " << equalIgnoringFragmentIdentifier(document->url(), destination->url()));
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier() - " << !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier()));
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - document->url() - " << document->url());
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::innerDispatchNavigateEvent) - destination->url() - " << destination->url());
+
     auto info = apiMethodTracker ? apiMethodTracker->info : JSC::jsUndefined();
 
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
@@ -1186,6 +1194,13 @@ Navigation::DispatchResult Navigation::dispatchTraversalNavigateEvent(HistoryIte
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-push/replace/reload-navigate-event
 bool Navigation::dispatchPushReplaceReloadNavigateEvent(const URL& url, NavigationNavigationType navigationType, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (N::dispatchPushReplaceReloadNavigateEvent) - params - ");
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - url - " << url.string());
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - isSameDocument - " << isSameDocument);
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - formState - " << !!formState);
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - classicHistoryAPIState - " << !!classicHistoryAPIState);
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - sourceElement - " << !!sourceElement);
+
     Ref destination = NavigationDestination::create(url, nullptr, isSameDocument);
     if (classicHistoryAPIState)
         destination->setStateObject(classicHistoryAPIState);

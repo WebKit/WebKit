@@ -2363,6 +2363,8 @@ void LocalDOMWindow::languagesChanged()
 
 void LocalDOMWindow::dispatchLoadEvent()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "RLOG - (LocalDOMWindow::dispatchLoadEvent)");
+
     // If we did not protect it, the document loader and its timing subobject might get destroyed
     // as a side effect of what event handling code does.
     Ref protectedThis { *this };
