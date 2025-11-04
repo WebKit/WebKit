@@ -351,7 +351,7 @@ void CoreAudioCaptureSource::delaySamples(Seconds seconds)
 void CoreAudioCaptureSource::setIsInBackground(bool value)
 {
     if (isProducingData())
-        protectedUnit()->setIsInBackground(value);
+        CoreAudioSharedUnit::setIsInBackground(value);
 }
 #endif
 

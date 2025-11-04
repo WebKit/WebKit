@@ -32,7 +32,7 @@
 #include <pal/spi/ios/SBSStatusBarSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RuntimeApplicationChecks.h>
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakPtr.h>
 
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -88,8 +88,8 @@ using namespace WebCore;
         RELEASE_LOG_ERROR(WebRTC, "WebCoreMediaCaptureStatusBarHandler _acquireStatusBarOverride failed, code = %ld, description is '%s'", [error code], [error localizedDescription].UTF8String);
 
         callOnMainThread([self, strongSelf = retainPtr(self)] {
-            if (m_manager)
-                m_manager->didError();
+            if (RefPtr manager = m_manager.get())
+                manager->didError();
         });
     }];
 
@@ -98,13 +98,13 @@ using namespace WebCore;
         if (acquired)
             return;
         callOnMainThread([self, strongSelf = retainPtr(self)] {
-            if (m_manager)
-                m_manager->didError();
+            if (RefPtr manager = m_manager.get())
+                manager->didError();
         });
     } invalidationHandler:^{
         callOnMainThread([self, strongSelf = retainPtr(self)] {
-            if (m_manager)
-                m_manager->didError();
+            if (RefPtr manager = m_manager.get())
+                manager->didError();
         });
     }];
 }
@@ -128,9 +128,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 {
     callOnMainThread([self, strongSelf = retainPtr(self), completion = makeBlockPtr(completion)]() mutable {
-        if (!m_manager)
+        RefPtr manager = m_manager.get();
+        if (!manager)
             return;
-        m_manager->didTap([completion = WTFMove(completion)] {
+        manager->didTap([completion = WTFMove(completion)] {
             completion.get()();
         });
     });
@@ -141,7 +142,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator invalidatedRegistrationWithError:(NSError *)error
 {
     callOnMainThread([self, strongSelf = retainPtr(self)] {
-        if (m_manager)
+        if (RefPtr manager = m_manager.get())
             m_manager->didError();
     });
 }
@@ -149,8 +150,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 namespace WebCore {
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaCaptureStatusBarManager);
 
 bool MediaCaptureStatusBarManager::hasSupport()
 {
