@@ -222,8 +222,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     UnlinkedFunctionExecutable* executable = codeCache->getUnlinkedGlobalFunctionExecutable(vm, name, source, lexicallyScopedFeatures, codeGenerationMode, functionConstructorParametersEndPosition, error);
 
-    if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(globalObject, source.provider(), error.line(), error.message());
+    globalObject->sourceParsed(source.provider(), error.line(), error.message());
 
     if (error.isValid()) {
         exception = error.toErrorObject(globalObject, source, overrideLineNumber);

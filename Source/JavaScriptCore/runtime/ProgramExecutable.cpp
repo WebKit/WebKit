@@ -94,8 +94,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     UnlinkedProgramCodeBlock* unlinkedCodeBlock = vm.codeCache()->getUnlinkedProgramCodeBlock(
         vm, this, source(), codeGenerationMode, error);
 
-    if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(globalObject, source().provider(), error.line(), error.message());
+    globalObject->sourceParsed(source().provider(), error.line(), error.message());
 
     if (error.isValid())
         return error.toErrorObject(globalObject, source());

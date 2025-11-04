@@ -245,6 +245,7 @@
 #include "ShadowRealmObjectInlines.h"
 #include "ShadowRealmPrototypeInlines.h"
 #include "SourceCodeKey.h"
+#include "SourceProvider.h"
 #include "StrictEvalActivationInlines.h"
 #include "StringConstructorInlines.h"
 #include "StringIteratorPrototypeInlines.h"
@@ -3612,8 +3613,11 @@ WeakPtr<ConsoleClient> JSGlobalObject::consoleClient() const
 void JSGlobalObject::setDebugger(Debugger* debugger)
 {
     m_debugger = debugger;
-    if (debugger)
+    if (debugger) {
         vm().ensureShadowChicken();
+        for (auto& sourceProvider : m_sourceProviders)
+            debugger->sourceParsed(this, sourceProvider.get(), -1, nullString());
+    }
 }
 
 bool JSGlobalObject::hasInteractiveDebugger() const 
@@ -3762,5 +3766,12 @@ Ref<JSGlobalObjectDebuggable> JSGlobalObject::protectedInspectorDebuggable()
     return inspectorDebuggable();
 }
 #endif
+
+void JSGlobalObject::sourceParsed(RefPtr<SourceProvider> sourceProvider, int errorLine, const String& errorMessage)
+{
+    m_sourceProviders.add(sourceProvider);
+    if (m_debugger)
+        m_debugger->sourceParsed(this, sourceProvider.get(), errorLine, errorMessage);
+}
 
 } // namespace JSC

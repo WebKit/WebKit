@@ -55,8 +55,7 @@ UnlinkedModuleProgramCodeBlock* ModuleProgramExecutable::getUnlinkedCodeBlock(JS
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
     unlinkedModuleProgramCode = vm.codeCache()->getUnlinkedModuleProgramCodeBlock(vm, this, source(), codeGenerationMode, error);
 
-    if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(globalObject, source().provider(), error.line(), error.message());
+    globalObject->sourceParsed(source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
         throwVMError(globalObject, throwScope, error.toErrorObject(globalObject, source()));
