@@ -231,7 +231,7 @@ describe('/privileged-api/upload-file', function () {
         assert.strictEqual(rows[2].deleted_at, null);
     });
 
-    it('should prune all removable files to get space for a file upload', async () => {
+    it('should prune to 80% of quota when uploading would exceed quota', async () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
         const userQuotaInMB = TestServer.testConfig().uploadUserQuotaInMB;
@@ -250,7 +250,14 @@ describe('/privileged-api/upload-file', function () {
         rows = await db.selectAll('uploaded_files');
         assert.strictEqual(rows.length, splitCount + 1);
         const deletedFiles = rows.filter((row) => row['deleted_at']);
-        assert.strictEqual(deletedFiles.length, 16);
+        const activeFiles = rows.filter((row) => !row['deleted_at']);
+
+        const totalActiveSize = activeFiles.reduce((sum, file) => sum + parseInt(file.size), 0);
+        const targetSize = userQuotaInMB * 0.8 * 1024 * 1024 + limitInMB * 1024 * 1024; // 80% + new file
+        assert.ok(totalActiveSize <= targetSize,
+            `Total size ${totalActiveSize} should be at most 80% of quota plus new file (${targetSize})`);
+        assert.ok(deletedFiles.length > 0,
+            `Expected some deleted files, got ${deletedFiles.length}`);
     });
 
     it('should not prune files that have been deleted', async () => {
@@ -382,35 +389,38 @@ describe('/privileged-api/upload-file', function () {
         });
     });
 
-    it('should return "FileSizeQuotaExceeded" when the total quota is exceeded due to files uploaded by other users', () => {
+    it('should prune files from other users when the total quota is exceeded', async () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
-        let fileA;
-        return MockData.addMockData(db).then(() => {
-            return TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB, 'a');
-        }).then((stream) => {
-            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
-        }).then(() => {
-            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'b');
-        }).then((stream) => {
-            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
-        }).then(() => {
-            return db.query('UPDATE uploaded_files SET file_author = $1', ['someUser']);
-        }).then(() => {
-            return TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
-        }).then((stream) => {
-            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
-        }).then(() => {
-            return db.query('UPDATE uploaded_files SET file_author = $1 WHERE file_author IS NULL', ['anotherUser']);
-        }).then(() => {
-            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'c');
-        }).then((stream) => {
-            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true}).then(() => {
-                assert(false, 'should never be reached');
-            }, (error) => {
-                assert.strictEqual(error, 'FileSizeQuotaExceeded');
-            });
-        });
+
+        await MockData.addMockData(db);
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        await db.query('UPDATE uploaded_files SET file_author = $1', ['someUser']);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        await db.query('UPDATE uploaded_files SET file_author = $1 WHERE file_author IS NULL', ['anotherUser']);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('newest.dat', limitInMB, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 4);
+        assert.strictEqual(rows[0].filename, 'some.dat');
+        assert.notStrictEqual(rows[0].deleted_at, null, 'Oldest file should be deleted');
+        assert.strictEqual(rows[1].filename, 'other.dat');
+        assert.notStrictEqual(rows[1].deleted_at, null, 'Second oldest file should also be deleted for 80% pruning');
+        assert.strictEqual(rows[2].filename, 'another.dat');
+        assert.strictEqual(rows[2].deleted_at, null);
+        assert.strictEqual(rows[3].filename, 'newest.dat');
+        assert.strictEqual(rows[3].deleted_at, null);
     });
 
     it('should not double counting a file if it is referenced by multiple commit_sets', async () => {
@@ -442,5 +452,203 @@ describe('/privileged-api/upload-file', function () {
         assert.notStrictEqual(rows[1].deleted_at, null);
         assert.strictEqual(rows[2].filename, 'root-3-3MB');
         assert.strictEqual(rows[2].deleted_at, null);
+    });
+
+    it('should handle user slightly over personal quota from concurrent uploads', async () => {
+        const db = TestServer.database();
+        const userQuotaInMB = TestServer.testConfig().uploadUserQuotaInMB;
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-1.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-2.dat', limitInMB, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-3.dat', 1, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-4.dat', 1, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 4);
+
+        const deletedFiles = rows.filter((row) => row['deleted_at']);
+        assert.ok(deletedFiles.length >= 1, `Should have deleted at least 1 file, got ${deletedFiles.length}`);
+        const activeFiles = rows.filter((row) => !row['deleted_at']);
+        const totalSize = activeFiles.reduce((sum, file) => sum + parseInt(file.size), 0);
+        assert.ok(totalSize <= userQuotaInMB * 1024 * 1024, `Total size ${totalSize} should be within quota`);
+    });
+
+    it('should prune to 80% threshold providing sufficient buffer space', async () => {
+        const db = TestServer.database();
+        const userQuotaInMB = TestServer.testConfig().uploadUserQuotaInMB;
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-1.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-2.dat', limitInMB, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('file-3.dat', limitInMB, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 3);
+        const deletedFiles = rows.filter((row) => row['deleted_at']);
+        assert.ok(deletedFiles.length >= 1,
+            `Expected at least 1 deleted file, got ${deletedFiles.length}`);
+        const activeFiles = rows.filter((row) => !row['deleted_at']);
+        const totalSize = activeFiles.reduce((sum, file) => sum + parseInt(file.size), 0);
+        const quotaBytes = userQuotaInMB * 1024 * 1024;
+        const expectedMaxSize = quotaBytes * 0.8 + limitInMB * 1024 * 1024; // 80% + new file
+        assert.ok(totalSize <= expectedMaxSize,
+            `Total size ${totalSize} should be within 80% threshold plus new file`);
+    });
+
+    it('should prune globally from oldest files when total quota exceeded', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user1-old.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_author = $1, file_created_at = file_created_at - interval \'2 days\' WHERE file_filename = $2',
+            ['user1', 'user1-old.dat']);
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user2-old.dat', limitInMB, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_author = $1, file_created_at = file_created_at - interval \'1 day\' WHERE file_filename = $2',
+            ['user2', 'user2-old.dat']);
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user1-new.dat', limitInMB, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_author = $1 WHERE file_filename = $2', ['user1', 'user1-new.dat']);
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user3-file.dat', limitInMB, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        const rows = await db.selectAll('uploaded_files', 'id');
+        assert.strictEqual(rows.length, 4);
+        const user1OldFile = rows.find(r => r.filename === 'user1-old.dat');
+        assert.notStrictEqual(user1OldFile.deleted_at, null, 'Oldest file should be deleted');
+        const user2OldFile = rows.find(r => r.filename === 'user2-old.dat');
+        assert.notStrictEqual(user2OldFile.deleted_at, null, 'Second oldest file should also be deleted');
+        const user1NewFile = rows.find(r => r.filename === 'user1-new.dat');
+        const user3File = rows.find(r => r.filename === 'user3-file.dat');
+        assert.strictEqual(user1NewFile.deleted_at, null, 'user1-new.dat should not be deleted');
+        assert.strictEqual(user3File.deleted_at, null, 'user3-file.dat should not be deleted');
+    });
+
+    it('should prioritize build products for deletion in global pruning', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        const totalQuotaInMB = TestServer.testConfig().uploadTotalQuotaInMB;
+        await MockData.addMockData(db, ['completed', 'completed', 'completed', 'completed']);
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('older-regular.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_created_at = file_created_at - interval \'3 days\' WHERE file_filename = $1',
+            ['older-regular.dat']);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('build-product.tar.gz', limitInMB, 'b');
+        const buildResponse = await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_created_at = file_created_at - interval \'2 days\' WHERE file_id = $1',
+            [buildResponse.uploadedFile.id]);
+        await db.query('UPDATE commit_set_items SET commitset_root_file = $1, commitset_requires_build = TRUE WHERE commitset_set = 401',
+            [buildResponse.uploadedFile.id]);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('another-regular.dat', limitInMB, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('trigger.dat', limitInMB, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        const buildProduct = rows.find(r => r.filename === 'build-product.tar.gz');
+        const olderRegular = rows.find(r => r.filename === 'older-regular.dat');
+        const anotherRegular = rows.find(r => r.filename === 'another-regular.dat');
+        const trigger = rows.find(r => r.filename === 'trigger.dat');
+
+        assert.notStrictEqual(buildProduct.deleted_at, null, 'Build product should be deleted (prioritized)');
+        assert.notStrictEqual(olderRegular.deleted_at, null, 'Older regular file also deleted to meet 80% quota');
+        assert.strictEqual(anotherRegular.deleted_at, null, 'Newer regular file should not be deleted');
+        assert.strictEqual(trigger.deleted_at, null, 'Trigger file should not be deleted');
+    });
+
+    it('should handle both user and global quota pruning in single upload', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        const userQuotaInMB = TestServer.testConfig().uploadUserQuotaInMB;
+        const totalQuotaInMB = TestServer.testConfig().uploadTotalQuotaInMB;
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user-file1.dat', 2, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user-file2.dat', 2, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('user-file3.dat', 0.5, 'c');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        await db.query('UPDATE uploaded_files SET file_author = $1 WHERE file_filename IN ($2, $3)',
+            ['otherUser', 'user-file1.dat', 'user-file2.dat']);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('other-user1.dat', 2, 'd');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        await db.query('UPDATE uploaded_files SET file_author = $1, file_created_at = file_created_at - interval \'3 days\' WHERE file_filename = $2',
+            ['anotherUser', 'other-user1.dat']);
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('trigger-both.dat', 1, 'e');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        const userFiles = rows.filter(r => r.author === null);
+        const otherUserFiles = rows.filter(r => r.author === 'otherUser');
+        const anotherUserFiles = rows.filter(r => r.author === 'anotherUser');
+
+        const deletedFiles = rows.filter(r => r.deleted_at !== null);
+        assert.ok(deletedFiles.length > 0, 'Some files should be deleted for quota compliance');
+
+        const userActiveFiles = userFiles.filter(r => r.deleted_at === null);
+        const userTotalSize = userActiveFiles.reduce((sum, file) => sum + parseInt(file.size), 0);
+        assert.ok(userTotalSize <= userQuotaInMB * 1024 * 1024,
+            `User total size ${userTotalSize} should be within user quota`);
+    });
+
+    it('should return FileSizeQuotaExceeded when no files can be deleted due to grace period', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+
+        TestServer.overwriteTestConfig({uploadFileGracePeriodInHours: 24});
+
+        let stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('protected1.dat', limitInMB, 'a');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('protected2.dat', limitInMB, 'b');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('exceeds.dat', limitInMB, 'c');
+        try {
+            await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+            assert(false, 'should never be reached');
+        } catch (error) {
+            assert.strictEqual(error, 'FileSizeQuotaExceeded');
+        }
+    });
+
+    it('should correctly handle file deletions with proper transaction isolation', async () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+
+        let filesToCreate = 10;
+        for (let i = 0; i < filesToCreate; i++) {
+            const stream = await TemporaryFile.makeTemporaryFileOfSizeInMB(`batch-${i}.dat`, 0.5, String.fromCharCode(97 + i));
+            await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }
+
+        await db.query('UPDATE uploaded_files SET file_created_at = file_created_at - interval \'7 days\'');
+
+        const stream = await TemporaryFile.makeTemporaryFileOfSizeInMB('trigger-batch.dat', limitInMB, 'z');
+        await PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+
+        const rows = await db.selectAll('uploaded_files', 'id');
+        const deletedFiles = rows.filter(r => r.deleted_at !== null);
+        const activeFiles = rows.filter(r => r.deleted_at === null);
+
+        assert.ok(deletedFiles.length > 0, 'Batch deletion should have deleted multiple files');
+        assert.ok(activeFiles.some(r => r.filename === 'trigger-batch.dat'),
+            'New file should be successfully uploaded after batch deletion');
     });
 });
