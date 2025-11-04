@@ -3193,11 +3193,13 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseDown")) {
             m_eventSenderProxy->mouseDown(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+            m_eventSenderProxy->waitForPendingMouseEvents();
             return completionHandler(nullptr);
         }
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseUp")) {
             m_eventSenderProxy->mouseUp(uint64Value(dictionary, "Button"), uint64Value(dictionary, "Modifiers"), stringValue(dictionary, "PointerType"));
+            m_eventSenderProxy->waitForPendingMouseEvents();
             return completionHandler(nullptr);
         }
 
@@ -3213,6 +3215,7 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
 
         if (WKStringIsEqualToUTF8CString(subMessageName, "MouseMoveTo")) {
             m_eventSenderProxy->mouseMoveTo(doubleValue(dictionary, "X"), doubleValue(dictionary, "Y"), stringValue(dictionary, "PointerType"));
+            m_eventSenderProxy->waitForPendingMouseEvents();
             return completionHandler(nullptr);
         }
 
