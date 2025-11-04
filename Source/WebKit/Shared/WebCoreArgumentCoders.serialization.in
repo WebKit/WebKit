@@ -3884,7 +3884,7 @@ header: <WebCore/FEComponentTransfer.h>
     WebCore::EdgeModeType edgeMode();
     [Validator='kernelUnitLength->x() > 0 && kernelUnitLength->y() > 0'] WebCore::FloatPoint kernelUnitLength();
     bool preserveAlpha();
-    [Validator='kernelSize->unclampedArea() == kernel->size()'] Vector<float> kernel();
+    [Validator='!kernelSize->canOverflow() && kernelSize->area() == kernel->size()'] Vector<float> kernel();
 
     WebCore::DestinationColorSpace operatingColorSpace();
 };
