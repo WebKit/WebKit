@@ -56,7 +56,9 @@
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
+#include "SandboxExtension.h"
 #include <WebCore/DragActions.h>
+#include <WebCore/DragData.h>
 #endif
 
 #if PLATFORM(MACCATALYST)
@@ -339,9 +341,17 @@ public:
     RefPtr<WebDataListSuggestionsDropdown> dataListSuggestionsDropdown;
 
 #if ENABLE(DRAG_SUPPORT)
+    struct DragOperationData {
+        WebCore::DragData dragData;
+        String dragStorageName;
+        SandboxExtension::Handle sandboxExtensionHandle;
+        Vector<SandboxExtension::Handle> sandboxExtensionsForUpload;
+        std::optional<WebCore::FrameIdentifier> lastFrameID;
+    };
     WebCore::IntRect currentDragCaretEditableElementRect;
     WebCore::IntRect currentDragCaretRect;
     WebCore::DragHandlingMethod currentDragHandlingMethod { WebCore::DragHandlingMethod::None };
+    std::optional<DragOperationData> currentDragOperationData;
 #endif
 
     RefPtr<WebColorPicker> colorPicker;

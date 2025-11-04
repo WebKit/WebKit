@@ -44,6 +44,7 @@ enum class RenderAsTextFlag : uint16_t;
 
 struct FocusEventData;
 struct MessageWithMessagePorts;
+struct RemoteUserInputEventData;
 
 class RemoteFrameClient : public FrameLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteFrameClient);
@@ -61,6 +62,9 @@ public:
     virtual void unbindRemoteAccessibilityFrames(int) = 0;
     virtual void focus() = 0;
     virtual void unfocus() = 0;
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+    virtual void propagateDragAndDrop(FrameIdentifier, WebCore::RemoteUserInputEventData, CompletionHandler<void(bool)>&&) = 0;
+#endif
     virtual void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) = 0;
     virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
     virtual void reportMixedContentViolation(bool blocked, const URL& target) = 0;

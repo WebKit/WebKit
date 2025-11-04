@@ -344,6 +344,10 @@
 #import <wtf/FastMalloc.h>
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+#import <wtf/Box.h>
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #if PLATFORM(IOS_FAMILY)
@@ -1983,9 +1987,17 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (BOOL)_tryToPerformDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
+    RefPtr localMainFrame = [self _mainCoreFrame];
+    if (!localMainFrame)
+        return NO;
+
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    return _private->page->dragController().performDragOperation(WTFMove(dragData));
+    auto preventedDefault = Box<bool>::create(false);
+    _private->page->dragController().performDragOperation(WTFMove(dragData), *localMainFrame, [preventedDefault] (bool dragPreventedDefault) mutable {
+        *preventedDefault = dragPreventedDefault;
+    });
+    return *preventedDefault;
 }
 
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)globalPosition
@@ -6358,7 +6370,8 @@ static bool needsWebViewInitThreadWorkaround()
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);
-                        core(self)->dragController().performDragOperation(WebCore::DragData { *dragData });
+                        RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame());
+                        core(self)->dragController().performDragOperation(WebCore::DragData { *dragData }, *localMainFrame, [] (bool) mutable { });
                         delete dragData;
                         delete fileNames;
                     }
@@ -6368,10 +6381,13 @@ static bool needsWebViewInitThreadWorkaround()
 
         return true;
     }
-    bool returnValue = core(self)->dragController().performDragOperation(WebCore::DragData { *dragData });
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame());
+    auto returnValue = Box<bool>::create(false);
+    core(self)->dragController().performDragOperation(WebCore::DragData { *dragData }, *localMainFrame, [returnValue](bool value) {
+        *returnValue = value;
+    });
     delete dragData;
-
-    return returnValue;
+    return *returnValue;
 }
 
 - (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types

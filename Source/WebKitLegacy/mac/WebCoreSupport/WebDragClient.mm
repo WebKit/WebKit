@@ -63,6 +63,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardWriter.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -124,12 +125,6 @@ static WebHTMLView *getTopHTMLView(LocalFrame* frame)
     return (WebHTMLView*)[[kit(dynamicDowncast<WebCore::LocalFrame>(frame->page()->mainFrame())) frameView] documentView];
 }
 
-void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const WebCore::DragData& dragData)
-{
-    [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:kit(action) forDraggingInfo:dragData.platformData()];
-}
-
-
 OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint& rootViewPoint)
 {
     NSPoint viewPoint = [m_webView _convertPointFromRootView:rootViewPoint];
@@ -139,6 +134,14 @@ OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint
 void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action, const WebCore::IntPoint& mouseDownPoint, WebCore::DataTransfer& dataTransfer)
 {
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:kit(action) fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name().createNSString().get()]];
+}
+
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, const DragData& dragData, std::optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!frameID) {
+        [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:kit(action) forDraggingInfo:dragData.platformData()];
+    }
+    completionHandler();
 }
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame, const std::optional<NodeIdentifier>& nodeID)
@@ -223,8 +226,9 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 
-void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&)
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
 OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
@@ -258,8 +262,9 @@ bool WebDragClient::useLegacyDragClient()
     return true;
 }
 
-void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&)
+void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction, const DragData&, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void()>&& completionHandler)
 {
+    completionHandler();
 }
 
 OptionSet<WebCore::DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)

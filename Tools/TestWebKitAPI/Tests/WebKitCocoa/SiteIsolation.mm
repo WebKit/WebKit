@@ -2125,6 +2125,111 @@ TEST(SiteIsolation, PasteGIF)
 
 #endif
 
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+TEST(SiteIsolation, DragAndDropWithoutNavigation)
+{
+    auto mainframeHTML = "<!DOCTYPE html>"
+    "<html>"
+    "    <head>"
+    "        <meta charset='utf8'>"
+    "        <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>"
+    "        <style>"
+    "            body {"
+    "                width: 100%;"
+    "                height: 100%;"
+    "                margin: 0;"
+    "                background-color: antiquewhite;"
+    "            }"
+    "        </style>"
+    "    </head>"
+    "    <body>"
+    "        <iframe src='https://domain2.com/subframe' style='width: 600px; height: 600px;'></iframe>"
+    "    </body>"
+    "</html>"_s;
+
+    auto subframeHTML = "<!DOCTYPE html>"
+    "<html>"
+    "    <head>"
+    "    <meta charset='utf8'>"
+    "    <meta name='viewport' content='width=device-width, initial-scale=1' />"
+    "    <style>"
+    "        body {"
+    "            margin: 0;"
+    "        }"
+    "       #draggable {"
+    "           background-color: cyan;"
+    "           width: 200px;"
+    "           height: 200px;"
+    "           border: 1px black dotted;"
+    "       }"
+    "       #dropzone {"
+    "           background-color: pink;"
+    "           width: 200px;"
+    "           height: 200px;"
+    "           border: 1px black dotted;"
+    "       }"
+    "    </style>"
+    "    </head>"
+    "    <body>"
+    "       <div draggable='true' id='draggable'>Hello World</div>"
+    "       <div id='dropzone'></div>"
+    "    <script>"
+    "        window.dropCount = 0;"
+    "        const draggable = document.getElementById('draggable');"
+    "        draggable.addEventListener('dragstart', function(e) {"
+    "               e.dataTransfer.setData('text/plain', 'hello world');"
+    "           });"
+    "       const dropzone = document.getElementById('dropzone');"
+    "       dropzone.addEventListener('dragenter', e => e.preventDefault());"
+    "       dropzone.addEventListener('dragover', e => e.preventDefault());"
+    "       dropzone.addEventListener('drop', function(e) {"
+    "           e.preventDefault();"
+    "           const data = e.dataTransfer.getData('text/plain');"
+    "           window.dropCount = 1;"
+    "       });"
+    "    </script>"
+    "    </body>"
+    "</html>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html "_s } }, mainframeHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html "_s } }, subframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr webView = [simulator webView];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [simulator runFrom:CGPointMake(72, 92) to:CGPointMake(86, 274)];
+
+    __block bool didDecideNavigationPolicy = false;
+    [navigationDelegate setDecidePolicyForNavigationAction:^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        didDecideNavigationPolicy = true;
+    }];
+
+    __block bool done = false;
+    __block int windowDropCount = 0;
+    [webView evaluateJavaScript:@"window.dropCount" inFrame:[webView firstChildFrame] completionHandler:^(id resultValue, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+        windowDropCount = [resultValue intValue];
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(didDecideNavigationPolicy);
+    EXPECT_EQ(windowDropCount, 1);
+}
+#endif
+
 TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)
 {
     HTTPServer server({

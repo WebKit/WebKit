@@ -3804,30 +3804,61 @@ void WebPageProxy::dragExited(DragData& dragData)
     performDragControllerAction(DragControllerAction::Exited, dragData);
 }
 
-void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
+#if PLATFORM(COCOA)
+void WebPageProxy::propagateDragAndDrop(IPC::Connection& connection, FrameIdentifier frameID, RemoteUserInputEventData remoteUserInputEventData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto& currentOperation = internals().currentDragOperationData;
+    if (!currentOperation) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
+    MESSAGE_CHECK_BASE(!currentOperation->lastFrameID ||  currentOperation->lastFrameID == frameID, &connection);
+    currentOperation->lastFrameID = remoteUserInputEventData.targetFrameID;
+
+    sendWithAsyncReplyToProcessContainingFrame(remoteUserInputEventData.targetFrameID, Messages::WebPage::PerformDragOperation(remoteUserInputEventData.targetFrameID, currentOperation->dragData), [completionHandler = WTFMove(completionHandler)](bool handled) mutable {
+        completionHandler(handled);
+    });
+}
+
+void WebPageProxy::fetchSandboxExtensionsForDragAction(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&)>&& completionHandler)
+{
+    auto& currentOperation = internals().currentDragOperationData;
+    if (!currentOperation) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ }, { });
+        return;
+    }
+
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        completionHandler({ }, { });
+        return;
+    }
+
+    MESSAGE_CHECK_BASE(!currentOperation->lastFrameID ||  currentOperation->lastFrameID == frameID, &connection);
+    grantAccessToCurrentPasteboardData(currentOperation->dragStorageName, [] () { }, frameID);
+    completionHandler(WTFMove(currentOperation->sandboxExtensionHandle), WTFMove(currentOperation->sandboxExtensionsForUpload));
+}
+#endif
+
+void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload, std::optional<WebCore::FrameIdentifier> frameID)
 {
     if (!hasRunningProcess())
         return;
 
 #if PLATFORM(GTK)
-    URL url { dragData.asURL() };
-    if (url.protocolIsFile())
-        protectedLegacyMainFrameProcess()->assumeReadAccessToBaseURL(*this, url.string(), [] { });
-    else if (!dragData.fileNames().isEmpty())
-        protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(siteIsolatedProcess().coreProcessIdentifier(), dragData.fileNames()), [] { });
-
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData);
-#elif PLATFORM(COCOA)
-    grantAccessToCurrentPasteboardData(dragStorageName, [this, protectedThis = Ref { *this }, dragStorageName, dragData = WTFMove(dragData), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), sandboxExtensionsForUpload = WTFMove(sandboxExtensionsForUpload)] () mutable {
-        sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-            if (RefPtr pageClient = this->pageClient())
-                pageClient->didPerformDragOperation(handled);
-        });
-    });
 #else
-    sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-        if (RefPtr pageClient = this->pageClient())
-            pageClient->didPerformDragOperation(handled);
+    if (!hasRunningProcess())
+        return;
+    if (!frameID)
+        internals().currentDragOperationData = { dragData, dragStorageName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload), std::nullopt };
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PerformDragOperation(frameID, internals().currentDragOperationData->dragData), [this, protectedThis = Ref { *this }, frameID] (bool handled) mutable {
+        if (!frameID)
+            internals().currentDragOperationData = std::nullopt;
+        protectedPageClient()->didPerformDragOperation(handled);
     });
 #endif
 }

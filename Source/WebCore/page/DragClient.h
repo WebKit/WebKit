@@ -29,6 +29,7 @@
 #include <WebCore/DragData.h>
 #include <WebCore/DragItem.h>
 #include <WebCore/FloatPoint.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -55,7 +56,7 @@ class DragClient {
 public:
     virtual bool useLegacyDragClient() { return true; }
 
-    virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&) = 0;
+    virtual void willPerformDragDestinationAction(DragDestinationAction, const DragData&, std::optional<FrameIdentifier>, CompletionHandler<void()>&&) = 0;
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) = 0;
     virtual void didConcludeEditDrag() { }
     virtual OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;

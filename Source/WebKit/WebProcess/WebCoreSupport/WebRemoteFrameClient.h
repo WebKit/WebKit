@@ -52,6 +52,9 @@ private:
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, Vector<uint8_t>&&, CompletionHandler<void(Vector<uint8_t>, int)>&&) final;
     void unbindRemoteAccessibilityFrames(int) final;
     void updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint) final;
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+    void propagateDragAndDrop(WebCore::FrameIdentifier, WebCore::RemoteUserInputEventData, CompletionHandler<void(bool)>&&) final;
+#endif
     bool isWebRemoteFrameClient() const final { return true; }
 
     void closePage() final;

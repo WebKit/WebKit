@@ -41,6 +41,7 @@
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/RemoteUserInputEventData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -228,6 +229,16 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
     coreFrame->setCustomNavigatorPlatform(WTFMove(websitePolicies.customNavigatorPlatform));
     coreFrame->setAutoplayPolicy(core(websitePolicies.autoplayPolicy));
 }
+
+#if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
+void WebRemoteFrameClient::propagateDragAndDrop(FrameIdentifier frameID, WebCore::RemoteUserInputEventData remoteUserInputEventData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (RefPtr page = m_frame->page())
+        page->sendWithAsyncReply(Messages::WebPageProxy::PropagateDragAndDrop(frameID, WTFMove(remoteUserInputEventData)), WTFMove(completionHandler));
+    else
+        completionHandler(false);
+}
+#endif
 
 void WebRemoteFrameClient::updateScrollingMode(ScrollbarMode scrollingMode)
 {

@@ -36,12 +36,27 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebDragClient);
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData&)
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, const DragData& dragData, std::optional<FrameIdentifier> frameID, CompletionHandler<void()>&& completionHandler)
 {
-    if (action == DragDestinationAction::Load)
-        protectedPage()->willPerformLoadDragDestinationAction();
-    else
-        protectedPage()->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
+#if PLATFORM(COCOA)
+    if (frameID) {
+        protectedPage()->fetchSandboxExtensionsForDragAction(frameID.value(), [page = RefPtr { m_page.get() }, action, completionHandler = WTFMove(completionHandler)] () mutable {
+            if (action == DragDestinationAction::Load)
+                page->willPerformLoadDragDestinationAction();
+            else
+                page->mayPerformUploadDragDestinationAction();
+            completionHandler();
+        });
+    } else {
+        if (action == DragDestinationAction::Load)
+            protectedPage()->willPerformLoadDragDestinationAction();
+        else
+            protectedPage()->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
+        completionHandler();
+    }
+#else
+    completionHandler();
+#endif
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&)
