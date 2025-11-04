@@ -116,6 +116,7 @@ inline GridTemplateAreas forwardInheritedValue(const GridTemplateAreas& value) {
 inline GridTemplateList forwardInheritedValue(const GridTemplateList& value) { auto copy = value; return copy; }
 inline GridTrackSizes forwardInheritedValue(const GridTrackSizes& value) { auto copy = value; return copy; }
 inline HyphenateCharacter forwardInheritedValue(const HyphenateCharacter& value) { auto copy = value; return copy; }
+inline ItemTolerance forwardInheritedValue(const ItemTolerance& value) { auto copy = value; return copy; }
 inline LetterSpacing forwardInheritedValue(const LetterSpacing& value) { auto copy = value; return copy; }
 inline LineHeight forwardInheritedValue(const LineHeight& value) { auto copy = value; return copy; }
 inline ListStyleType forwardInheritedValue(const ListStyleType& value) { auto copy = value; return copy; }

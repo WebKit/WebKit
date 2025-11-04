@@ -3246,6 +3246,7 @@ style/values/grid/StyleGridTemplateList.cpp
 style/values/grid/StyleGridTrackBreadth.cpp
 style/values/grid/StyleGridTrackSize.cpp
 style/values/grid/StyleGridTrackSizes.cpp
+style/values/grid/StyleItemTolerance.cpp
 style/values/images/StyleGradient.cpp
 style/values/images/StyleImageOrNone.cpp
 style/values/images/StyleImageOrientation.cpp

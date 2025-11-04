@@ -146,6 +146,7 @@ inline void RenderStyle::setContentVisibility(ContentVisibility value) { SET_NES
 inline void RenderStyle::setUsedAppearance(StyleAppearance a) { SET_NESTED(m_nonInheritedData, miscData, usedAppearance, static_cast<unsigned>(a)); }
 inline void RenderStyle::setEffectiveInert(bool effectiveInert) { SET(m_rareInheritedData, effectiveInert, effectiveInert); }
 inline void RenderStyle::setIsEffectivelyTransparent(bool effectivelyTransparent) { SET(m_rareInheritedData, effectivelyTransparent, effectivelyTransparent); }
+inline void RenderStyle::setItemTolerance(Style::ItemTolerance&& tolerance) { SET_NESTED(m_nonInheritedData, rareData, itemTolerance, WTFMove(tolerance)); }
 inline void RenderStyle::setUsedTouchActions(OptionSet<TouchAction> touchActions) { SET(m_rareInheritedData, usedTouchActions, touchActions); }
 inline void RenderStyle::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
 inline void RenderStyle::setFieldSizing(FieldSizing value) { SET_NESTED(m_nonInheritedData, rareData, fieldSizing, static_cast<unsigned>(value)); }

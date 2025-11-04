@@ -193,17 +193,75 @@ void GridMasonryLayout::updateItemOffset(const RenderBox& gridItem, LayoutUnit o
 GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
 {
     auto itemSpanLength = Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection());
+    auto gridAxisLines = m_gridAxisTracksCount + 1;
+
+    // Get item-tolerance from the masonry container's style
+    const auto& tolerance = m_renderGrid->style().itemTolerance();
+
+    if (tolerance.isInfinite()) {
+        // Infinite tolerance: place items strictly in order without considering track lengths
+        // Use round-robin placement starting from the cursor position
+        auto startingLine = m_autoFlowNextCursor;
+
+        // If the item doesn't fit at the cursor position, wrap to the beginning
+        if (startingLine + itemSpanLength > m_gridAxisTracksCount)
+            startingLine = 0;
+
+        auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength);
+        return masonryGridAreaFromGridAxisSpan(gridAxisPosition);
+    }
+
+    // For normal and length-percentage tolerances, find the shortest track
+    // starting from the cursor position to maintain DOM order preference
     auto smallestMaxPos = LayoutUnit::max();
     unsigned smallestMaxPosLine = 0;
-    auto gridAxisLines = m_gridAxisTracksCount + 1;
-    for (unsigned startingLine = 0; startingLine < gridAxisLines - itemSpanLength; startingLine++) {
+    LayoutUnit toleranceValue;
+
+    if (tolerance.isNormal()) {
+        // Normal resolves to 1em
+        toleranceValue = m_renderGrid->style().computedFontSize();
+    } else {
+        // For length-percentage values, manually resolve the value
+        // This avoids template evaluation complexity
+        auto referenceLength = m_renderGrid->contentBoxLogicalWidth();
+        tolerance.switchOn(
+            [&](CSS::Keyword::Normal) { /* Already handled above */ },
+            [&](const Style::LengthPercentage<CSS::Nonnegative>& lengthPercentage) {
+                lengthPercentage.switchOn(
+                    [&](const auto& length) {
+                        // Handle Length case
+                        if constexpr (requires { length.resolveZoom(Style::ZoomNeeded { }); })
+                            toleranceValue = LayoutUnit(length.resolveZoom(Style::ZoomNeeded { }));
+                        // Handle Percentage case
+                        else if constexpr (requires { length.value; }) {
+                            auto percentValue = length.value;
+                            toleranceValue = LayoutUnit(percentValue / 100.0f * referenceLength);
+                        // Handle Calc case
+                        } else
+                            toleranceValue = LayoutUnit(length.protectedCalculation()->evaluate(referenceLength, Style::ZoomNeeded { }));
+                    }
+                );
+            },
+            [&](CSS::Keyword::Infinite) { /* Already handled above */ }
+        );
+    }
+
+    // Search for the best position, starting from the cursor to respect DOM order
+    auto maxStartingLine = gridAxisLines - itemSpanLength;
+    for (unsigned i = 0; i < maxStartingLine; i++) {
+        // Start from cursor position and wrap around
+        auto startingLine = (m_autoFlowNextCursor + i) % maxStartingLine;
+
         LayoutUnit maxPosForCurrentStartingLine;
         for (unsigned lineOffset = 0; lineOffset < itemSpanLength; lineOffset++)
             maxPosForCurrentStartingLine = std::max(maxPosForCurrentStartingLine, m_runningPositions[startingLine + lineOffset]);
-        if (maxPosForCurrentStartingLine < smallestMaxPos) {
+
+        // Only update if this position is significantly better (outside tolerance)
+        // This ensures we keep earlier positions when tracks are within tolerance
+        if (maxPosForCurrentStartingLine + toleranceValue < smallestMaxPos) {
             smallestMaxPos = maxPosForCurrentStartingLine;
             smallestMaxPosLine = startingLine;
-        } 
+        }
     }
     auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(smallestMaxPosLine, smallestMaxPosLine + itemSpanLength);
     return masonryGridAreaFromGridAxisSpan(gridAxisPosition);

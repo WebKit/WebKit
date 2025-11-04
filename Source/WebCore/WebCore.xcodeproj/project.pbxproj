@@ -1008,6 +1008,7 @@
 		2B365C841525119E0091D27B /* LegacyRenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250F6000DBBCD8 /* LegacyRenderSVGEllipse.h */; };
 		2B598F99286F6BF4005AF06F /* Formats.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B598F98286F6BF4005AF06F /* Formats.h */; };
 		2B59E5CD287B81B3004CC9FF /* DecompressionStreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B59E5C9287B81B2004CC9FF /* DecompressionStreamDecoder.h */; };
+		2BB68FC72EB3278700349579 /* StyleItemTolerance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB68FC62EB3278700349579 /* StyleItemTolerance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
 		2BF645612878D7600072285F /* CompressionStreamEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BF6455D2878D75F0072285F /* CompressionStreamEncoder.h */; };
 		2D0621441DA639B600A7FB26 /* WebKitMediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0621421DA6398800A7FB26 /* WebKitMediaKeyMessageEvent.cpp */; };
@@ -9800,6 +9801,8 @@
 		2B59E5CA287B81B2004CC9FF /* DecompressionStreamDecoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DecompressionStreamDecoder.idl; sourceTree = "<group>"; };
 		2B59E5CB287B81B3004CC9FF /* DecompressionStreamDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecompressionStreamDecoder.cpp; sourceTree = "<group>"; };
 		2B6C54C82865945300D66A51 /* CompressionStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CompressionStream.idl; sourceTree = "<group>"; };
+		2BB68FC62EB3278700349579 /* StyleItemTolerance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleItemTolerance.h; sourceTree = "<group>"; };
+		2BB68FC82EB3279A00349579 /* StyleItemTolerance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleItemTolerance.cpp; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
 		2BF6455D2878D75F0072285F /* CompressionStreamEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompressionStreamEncoder.h; sourceTree = "<group>"; };
@@ -18758,6 +18761,8 @@
 		BC4631CB2EAACB3300EA911F /* StyleWillChange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleWillChange.cpp; sourceTree = "<group>"; };
 		BC4631EC2EAC4FB200EA911F /* StyleBackgroundLayers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBackgroundLayers.h; sourceTree = "<group>"; };
 		BC4631ED2EAC55D900EA911F /* StyleMaskLayers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMaskLayers.h; sourceTree = "<group>"; };
+		BC4631A12EAA8A0F00EA911F /* StyleTextAutospace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTextAutospace.h; sourceTree = "<group>"; };
+		BC4631A22EAA8A0F00EA911F /* StyleTextAutospace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextAutospace.cpp; sourceTree = "<group>"; };
 		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; };
 		BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceRule.cpp; sourceTree = "<group>"; };
 		BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSFontFaceRule.h; sourceTree = "<group>"; };
@@ -37318,6 +37323,8 @@
 				BCD9F1EA2E24376600D1C3DF /* StyleGridTrackSizes.cpp */,
 				BCD9F1E82E24364200D1C3DF /* StyleGridTrackSizes.h */,
 				BCD9F2012E255F0000D1C3DF /* StyleGridTrackSizingDirection.h */,
+				2BB68FC82EB3279A00349579 /* StyleItemTolerance.cpp */,
+				2BB68FC62EB3278700349579 /* StyleItemTolerance.h */,
 			);
 			path = grid;
 			sourceTree = "<group>";
@@ -46635,6 +46642,7 @@
 				BC731F9B2E6F396E00A6584F /* StyleInterpolationContext.h in Headers */,
 				E46C794B1F13E82B00F371E1 /* StyleInvalidationFunctions.h in Headers */,
 				E47127CB163438AE00ED6F5A /* StyleInvalidator.h in Headers */,
+				2BB68FC72EB3278700349579 /* StyleItemTolerance.h in Headers */,
 				BC34D37E2E428981001EAD95 /* StyleLengthWrapper+Blending.h in Headers */,
 				BC22AAFC2E37F879009AC0C3 /* StyleLengthWrapper.h in Headers */,
 				BCB02B432E93FD66008A0B68 /* StyleLengthWrapperData.h in Headers */,

@@ -183,6 +183,7 @@ inline ColumnAxis RenderStyle::columnAxis() const { return static_cast<ColumnAxi
 inline Style::ColumnCount RenderStyle::columnCount() const { return m_nonInheritedData->miscData->multiCol->count; }
 inline ColumnFill RenderStyle::columnFill() const { return static_cast<ColumnFill>(m_nonInheritedData->miscData->multiCol->fill); }
 inline const Style::GapGutter& RenderStyle::columnGap() const { return m_nonInheritedData->rareData->columnGap; }
+inline const Style::ItemTolerance& RenderStyle::itemTolerance() const { return m_nonInheritedData->rareData->itemTolerance; }
 inline ColumnProgression RenderStyle::columnProgression() const { return static_cast<ColumnProgression>(m_nonInheritedData->miscData->multiCol->progression); }
 inline const Style::Color& RenderStyle::columnRuleColor() const { return m_nonInheritedData->miscData->multiCol->rule.color(); }
 inline bool RenderStyle::columnRuleIsTransparent() const { return m_nonInheritedData->miscData->multiCol->rule.isTransparent(); }
@@ -394,6 +395,7 @@ constexpr ColumnAxis RenderStyle::initialColumnAxis() { return ColumnAxis::Auto;
 constexpr Style::ColumnCount RenderStyle::initialColumnCount() { return CSS::Keyword::Auto { }; }
 constexpr ColumnFill RenderStyle::initialColumnFill() { return ColumnFill::Balance; }
 inline Style::GapGutter RenderStyle::initialColumnGap() { return CSS::Keyword::Normal { }; }
+inline Style::ItemTolerance RenderStyle::initialItemTolerance() { return CSS::Keyword::Normal { }; }
 constexpr ColumnProgression RenderStyle::initialColumnProgression() { return ColumnProgression::Normal; }
 constexpr Style::LineWidth RenderStyle::initialColumnRuleWidth() { return CSS::Keyword::Medium { }; }
 constexpr ColumnSpan RenderStyle::initialColumnSpan() { return ColumnSpan::None; }

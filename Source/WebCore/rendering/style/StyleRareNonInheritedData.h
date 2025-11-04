@@ -41,6 +41,7 @@
 #include <WebCore/StyleContainerName.h>
 #include <WebCore/StyleContentAlignmentData.h>
 #include <WebCore/StyleGapGutter.h>
+#include <WebCore/StyleItemTolerance.h>
 #include <WebCore/StyleMaskBorder.h>
 #include <WebCore/StyleMaximumLines.h>
 #include <WebCore/StyleOffsetAnchor.h>
@@ -194,6 +195,8 @@ public:
 
     Style::GapGutter columnGap;
     Style::GapGutter rowGap;
+
+    Style::ItemTolerance itemTolerance;
 
     Style::OffsetPath offsetPath;
     Style::OffsetDistance offsetDistance;

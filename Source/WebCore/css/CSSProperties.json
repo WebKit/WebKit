@@ -4819,6 +4819,23 @@
                 "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
+        "item-tolerance": {
+            "animation-type": "by computed value",
+            "initial": "normal",
+            "values": [
+                "normal",
+                "infinite"
+            ],
+            "codegen-properties": {
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<ItemTolerance>",
+                "parser-grammar": "normal | <length-percentage> | infinite"
+            },
+            "specification": {
+                "category": "css-grid",
+                "url": "https://drafts.csswg.org/css-grid-3/#item-tolerance"
+            }
+        },
         "left": {
             "animation-type": "by computed value",
             "initial": "auto",
