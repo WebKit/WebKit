@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || OS(ANDROID)
 
 #include "PlatformDisplay.h"
 

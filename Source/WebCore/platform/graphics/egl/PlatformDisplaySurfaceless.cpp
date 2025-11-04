@@ -33,11 +33,19 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplaySurfaceless> PlatformDisplaySurfaceless::create()
 {
+    RefPtr<GLDisplay> glDisplay;
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (!GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless"))
+
+#if OS(ANDROID) && defined(EGL_PLATFORM_ANDROID_KHR)
+    // While not terribly common, custom Android builds other than AOSP or
+    // official Google ones may support to more than one window system.
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_android")) [[unlikely]]
+        glDisplay = GLDisplay::create(eglGetPlatformDisplay(EGL_PLATFORM_ANDROID_KHR, EGL_DEFAULT_DISPLAY, nullptr));
+#endif
+
+    if (!glDisplay && !GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless"))
         return nullptr;
 
-    RefPtr<GLDisplay> glDisplay;
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
         glDisplay = GLDisplay::create(eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr));
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
