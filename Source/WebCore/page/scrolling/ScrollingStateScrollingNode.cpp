@@ -414,6 +414,10 @@ void ScrollingStateScrollingNode::setScrollbarWidth(ScrollbarWidth scrollbarWidt
         return;
     m_scrollbarWidth = scrollbarWidth;
     setPropertyChanged(Property::ScrollbarWidth);
+    if (m_scrollableAreaParameters.scrollbarWidthStyle != scrollbarWidth) {
+        m_scrollableAreaParameters.scrollbarWidthStyle = scrollbarWidth;
+        setPropertyChanged(Property::ScrollableAreaParams);
+    }
 }
 
 void ScrollingStateScrollingNode::setUseDarkAppearanceForScrollbars(bool useDarkAppearanceForScrollbars)

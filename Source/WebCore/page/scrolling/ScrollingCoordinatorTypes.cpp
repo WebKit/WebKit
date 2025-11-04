@@ -151,10 +151,6 @@ TextStream& operator<<(TextStream& ts, const ScrollableAreaParameters& scrollabl
         ts.dumpProperty("allows horizontal scrolling"_s, scrollableAreaParameters.allowsHorizontalScrolling);
     if (scrollableAreaParameters.allowsVerticalScrolling)
         ts.dumpProperty("allows vertical scrolling"_s, scrollableAreaParameters.allowsVerticalScrolling);
-    if (scrollableAreaParameters.horizontalNativeScrollbarVisibility == NativeScrollbarVisibility::HiddenByStyle)
-        ts.dumpProperty("horizontal scrollbar hidden by style"_s, scrollableAreaParameters.horizontalNativeScrollbarVisibility);
-    if (scrollableAreaParameters.verticalNativeScrollbarVisibility == NativeScrollbarVisibility::HiddenByStyle)
-        ts.dumpProperty("vertical scrollbar hidden by style"_s, scrollableAreaParameters.verticalNativeScrollbarVisibility);
 
     return ts;
 }

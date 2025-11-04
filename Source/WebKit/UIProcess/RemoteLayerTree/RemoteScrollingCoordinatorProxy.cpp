@@ -260,6 +260,16 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
     return rootNode && rootNode->canHaveScrollbars();
 }
 
+NativeScrollbarVisibility RemoteScrollingCoordinatorProxy::mainFrameHorizontalScrollbarVisibility() const
+{
+    return m_scrollingTree->mainFrameHorizontalScrollbarVisibility();
+}
+
+NativeScrollbarVisibility RemoteScrollingCoordinatorProxy::mainFrameVerticalScrollbarVisibility() const
+{
+    return m_scrollingTree->mainFrameVerticalScrollbarVisibility();
+}
+
 WebCore::ScrollbarWidth RemoteScrollingCoordinatorProxy::mainFrameScrollbarWidth() const
 {
     return m_scrollingTree->mainFrameScrollbarWidth();

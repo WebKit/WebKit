@@ -1,0 +1,18 @@
+Test scrollbar-width on overflow and main document
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Overflow should not have scrollbar-width:none
+
+PASS Scrollbar state:
+Overflow should have scrollbar-width:none
+none
+PASS Scrollbar state: none
+Overflow should not have scrollbar-width:none
+
+PASS Scrollbar state:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

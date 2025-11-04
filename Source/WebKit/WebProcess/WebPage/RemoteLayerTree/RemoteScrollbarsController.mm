@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteScrollbarsController.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include <WebCore/ScrollableArea.h>
 #include <WebCore/ScrollbarThemeMac.h>

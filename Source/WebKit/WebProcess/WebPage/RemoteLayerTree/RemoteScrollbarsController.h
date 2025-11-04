@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #include <WebCore/NSScrollerImpDetails.h>
 #include <WebCore/ScrollbarsController.h>
