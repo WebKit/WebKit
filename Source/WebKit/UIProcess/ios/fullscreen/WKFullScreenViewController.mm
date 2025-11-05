@@ -53,6 +53,10 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 
+#if !PLATFORM(VISION) && __has_include(<UIKit/UIView_Background.h>) && HAVE(UI_GLASS_EFFECT)
+#import <UIKit/UIView_Background.h>
+#endif
+
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 #import "FullscreenClient.h"
 #import "WKSLinearMediaPlayer.h"
@@ -65,6 +69,7 @@
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
+static constexpr CGFloat buttonContentInset = 8.0;
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 static const Seconds bannerMinimumHideDelay = 1_s;
@@ -154,7 +159,7 @@ private:
     RetainPtr<UIView> _animatingView;
     RetainPtr<UIStackView> _stackView;
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
-    RetainPtr<UIStackView> _banner;
+    RetainPtr<UIView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
     RetainPtr<UITapGestureRecognizer> _bannerTapToDismissRecognizer;
     MonotonicTime _bannerMinimumHideDelayTime;
@@ -163,6 +168,10 @@ private:
     RetainPtr<WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    RetainPtr<UIStackView> _closeStack;
+    RetainPtr<UIStackView> _controlsStack;
+#endif
     RetainPtr<NSLayoutConstraint> _topConstraint;
     String _location;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
@@ -302,8 +311,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [[self delegate] showUI];
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
         [_stackView setHidden:NO];
         [_stackView setAlpha:1];
+#else
+        [_closeStack setHidden:NO];
+        [_closeStack setAlpha:1];
+        [_controlsStack setHidden:!_controlsStack.get().arrangedSubviews.count];
+        if (![_controlsStack isHidden])
+            [_controlsStack setAlpha:1];
+#endif
         self.prefersStatusBarHidden = NO;
         self.prefersHomeIndicatorAutoHidden = NO;
         if (_topConstraint)
@@ -336,7 +353,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
         [_topConstraint setActive:YES];
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
         [_stackView setAlpha:0];
+#else
+        [_closeStack setAlpha:0];
+        [_controlsStack setAlpha:0];
+#endif
         self.prefersStatusBarHidden = YES;
         self.prefersHomeIndicatorAutoHidden = YES;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -345,8 +367,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     } completion:^(BOOL finished) {
         if (!finished)
             return;
-
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
         [_stackView setHidden:YES];
+#else
+        [_closeStack setHidden:YES];
+        [_controlsStack setHidden:YES];
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
         [_centeredStackView setHidden:YES];
 #endif
@@ -525,7 +551,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (_environmentPickerButtonViewController == environmentPickerButtonViewController) {
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
         ASSERT(!environmentPickerButtonViewController || [[_stackView arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+#else
+        ASSERT(!environmentPickerButtonViewController || [[_controlsStack arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+#endif
         return;
     }
 
@@ -534,7 +564,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     [self addChildViewController:environmentPickerButtonViewController];
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
     [_stackView insertArrangedSubview:environmentPickerButtonViewController.view atIndex:1];
+#else
+    [_controlsStack insertArrangedSubview:environmentPickerButtonViewController.view atIndex:0];
+    [self _updateControlsStackConstraints];
+#endif
     [environmentPickerButtonViewController didMoveToParentViewController:self];
     _environmentPickerButtonViewController = environmentPickerButtonViewController;
     _buttonState.add(EnvironmentPicker);
@@ -548,7 +583,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIView *environmentPickerButtonView = [_environmentPickerButtonViewController view];
 
     [_environmentPickerButtonViewController willMoveToParentViewController:nil];
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
     [_stackView removeArrangedSubview:environmentPickerButtonView];
+#else
+    [_controlsStack removeArrangedSubview:environmentPickerButtonView];
+    [self _updateControlsStackConstraints];
+#endif
     [environmentPickerButtonView removeFromSuperview];
     [self removeChildViewController:_environmentPickerButtonViewController.get()];
 
@@ -768,6 +808,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_cancelButton sizeToFit];
     [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    [[_cancelButton layer] setCornerRadius:buttonSize.width / 2.0];
+    [[_cancelButton layer] setMasksToBounds:1];
+#endif
 #if PLATFORM(APPLETV)
     [_cancelButton setConfiguration:UIButtonConfiguration.filledButtonConfiguration];
 #endif
@@ -777,9 +821,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton setImage:[UIImage systemImageNamed:@"pip.exit"] forState:UIControlStateSelected];
     [_pipButton sizeToFit];
     [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
-
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    [[_pipButton layer] setCornerRadius:buttonSize.width / 2.0];
+    [[_pipButton layer] setMasksToBounds:1];
+#endif
     if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *buttonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+        buttonConfiguration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+        buttonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(buttonContentInset, buttonContentInset, buttonContentInset, buttonContentInset);
+#endif
         [_cancelButton setConfiguration:buttonConfiguration];
         [_pipButton setConfiguration:buttonConfiguration];
 
@@ -791,6 +842,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
         [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
 #endif
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
+        _stackView = adoptNS([[UIStackView alloc] init]);
+        [_stackView addArrangedSubview:_cancelButton.get()];
+        [_stackView addArrangedSubview:_pipButton.get()];
+        [_stackView addArrangedSubview:_moreActionsButton.get()];
+        [_stackView setSpacing:24.0];
+#else
+        _closeStack = adoptNS([[UIStackView alloc] init]);
+        [_closeStack setAxis:UILayoutConstraintAxisHorizontal];
+        [_closeStack setAlignment:UIStackViewAlignmentCenter];
+        [_closeStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_closeStack addArrangedSubview:_cancelButton.get()];
+        [_animatingView addSubview:_closeStack.get()];
+
+        [[_closeStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_closeStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+
+        _controlsStack = adoptNS([[UIStackView alloc] init]);
+        [_controlsStack setAxis:UILayoutConstraintAxisHorizontal];
+        [_controlsStack setAlignment:UIStackViewAlignmentCenter];
+        [_controlsStack setSpacing:16.0];
+        [_controlsStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_controlsStack addArrangedSubview:_pipButton.get()];
+        [_animatingView addSubview:_controlsStack.get()];
+
+        [[_controlsStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+#endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
         _enterVideoFullscreenButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -801,14 +879,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _centeredStackView = adoptNS([[UIStackView alloc] init]);
         [_centeredStackView setSpacing:24.0];
 #endif
-
-        _stackView = adoptNS([[UIStackView alloc] init]);
-        [_stackView addArrangedSubview:_cancelButton.get()];
-        [_stackView addArrangedSubview:_pipButton.get()];
-#if PLATFORM(VISION)
-        [_stackView addArrangedSubview:_moreActionsButton.get()];
-#endif
-        [_stackView setSpacing:24.0];
     } else {
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
 #if PLATFORM(APPLETV)
@@ -817,31 +887,89 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
 #endif
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+        _closeStack = adoptNS([[UIStackView alloc] init]);
+        [_closeStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_closeStack addArrangedSubview:_cancelButton.get()];
+        [_animatingView addSubview:_closeStack.get()];
+
+        [[_closeStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_closeStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+
+        _controlsStack = adoptNS([[UIStackView alloc] init]);
+        [_controlsStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_controlsStack setAlignment:UIStackViewAlignmentCenter];
+        [_controlsStack addArrangedSubview:_pipButton.get()];
+        [_animatingView addSubview:_controlsStack.get()];
+
+        [[_controlsStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+#endif
         _stackView = WTFMove(stackView);
     }
 
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    if (_closeStack) {
+        [self _applyGlassMaterialToView:_closeStack.get()];
+        auto cornerRadius = alternateFullScreenControlDesignEnabled ? 22.0 : 30.0;
+        [self _updateCornerRadiusForStackView:_closeStack.get() withRadius:cornerRadius];
+    }
+    if (_controlsStack) {
+        [self _applyGlassMaterialToView:_controlsStack.get()];
+        auto cornerRadius = alternateFullScreenControlDesignEnabled ? 22.0 : 30.0;
+        [self _updateCornerRadiusForStackView:_controlsStack.get() withRadius:cornerRadius];
+        [self _updateControlsStackConstraints];
+    }
+#endif
+
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_animatingView addSubview:_stackView.get()];
-
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     [_centeredStackView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_animatingView addSubview:_centeredStackView.get()];
 #endif
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
-    _bannerLabel = adoptNS([[_WKInsetLabel alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
-    [_bannerLabel setEdgeInsets:UIEdgeInsetsMake(16, 16, 16, 16)];
+    static constexpr CGFloat bannerLabelInset = 16;
+#if HAVE(UI_GLASS_EFFECT)
+    auto labelFrame = CGRectZero;
+#else
+    auto labelFrame = CGRectMake(0, 0, 100, 100);
+#endif
+    _bannerLabel = adoptNS([[_WKInsetLabel alloc] initWithFrame:labelFrame]);
     [_bannerLabel setBackgroundColor:[UIColor clearColor]];
+    [_bannerLabel setTextColor:UIColor.labelColor];
+    [_bannerLabel setEdgeInsets:UIEdgeInsetsMake(bannerLabelInset, bannerLabelInset, bannerLabelInset, bannerLabelInset)];
     [_bannerLabel setNumberOfLines:0];
     [_bannerLabel setLineBreakMode:NSLineBreakByWordWrapping];
     [_bannerLabel setTextAlignment:NSTextAlignmentCenter];
+    [_bannerLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     SUPPRESS_UNRETAINED_ARG RetainPtr bannerText = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), self.location]);
     [_bannerLabel setText:bannerText.get()];
 
+#if HAVE(UI_GLASS_EFFECT) && !PLATFORM(VISION)
+    _banner = adoptNS([[UIView alloc] init]);
+    [self _applyGlassMaterialToView:_banner.get()];
+
+    if (!_bannerLabel)
+        _bannerLabel = adoptNS([[_WKInsetLabel alloc] initWithFrame:CGRectZero]);
+    [_bannerLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+    [_banner addSubview:_bannerLabel.get()];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [[_bannerLabel leadingAnchor] constraintEqualToAnchor:[_banner leadingAnchor] constant:bannerLabelInset],
+        [[_bannerLabel trailingAnchor] constraintEqualToAnchor:[_banner trailingAnchor] constant:-bannerLabelInset],
+        [[_bannerLabel topAnchor] constraintEqualToAnchor:[_banner topAnchor] constant:bannerLabelInset],
+        [[_bannerLabel bottomAnchor] constraintEqualToAnchor:[_banner bottomAnchor] constant:-bannerLabelInset],
+    ]];
+#else
+    // FIXME: Remove this fallback code when we bump to iOS 26, since all devices should support UI_GLASS_EFFECT by then.
     auto banner = adoptNS([[WKFullscreenStackView alloc] init]);
     [banner addArrangedSubview:_bannerLabel.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
     _banner = WTFMove(banner);
-
+#endif
     _bannerTapToDismissRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_bannerDismissalRecognized:)]);
     [_bannerTapToDismissRecognizer setDelegate:self];
     [_banner addGestureRecognizer:_bannerTapToDismissRecognizer.get()];
@@ -857,12 +985,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _topGuide = adoptNS([[UILayoutGuide alloc] init]);
     [self.view addLayoutGuide:_topGuide.get()];
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
+    _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
     NSLayoutConstraint *stackViewToTopGuideConstraint;
     if (alternateFullScreenControlDesignEnabled)
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:3];
     else
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
-    _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
@@ -877,9 +1006,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]],
 #endif
     ]];
+#else
+    [NSLayoutConstraint activateConstraints:@[
+        _topConstraint.get(),
+        [[_closeStack topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2.0],
+        [[_controlsStack topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2.0],
+        [[_closeStack leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
+        [[_controlsStack leadingAnchor] constraintEqualToSystemSpacingAfterAnchor:_closeStack.get().trailingAnchor multiplier:1.0],
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+        [[_banner topAnchor] constraintEqualToSystemSpacingBelowAnchor:[_controlsStack bottomAnchor] multiplier:3],
+        [[_banner centerXAnchor] constraintEqualToAnchor:self.view.centerXAnchor],
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        [[_centeredStackView topAnchor] constraintEqualToAnchor:[_closeStack topAnchor]],
+        [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]],
+#endif
+    ]];
+#endif
 
+#if PLATFORM(VISION) || !HAVE(UI_GLASS_EFFECT)
     [_stackView setAlpha:0];
     [_stackView setHidden:YES];
+#else
+    [_closeStack setAlpha:0];
+    [_closeStack setHidden:YES];
+    [_controlsStack setAlpha:0];
+    [_controlsStack setHidden:YES];
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     [_centeredStackView setAlpha:0];
     [_centeredStackView setHidden:YES];
@@ -944,6 +1097,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self._webView setFrame:[_animatingView bounds]];
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_bannerLabel setPreferredMaxLayoutWidth:self.view.bounds.size.width];
+
+#if HAVE(UI_GLASS_EFFECT)
+    if (_banner) {
+        CGFloat cornerRadius = [_banner layer].bounds.size.height / 2;
+        [[_banner layer] setCornerRadius:cornerRadius];
+
+        for (UIView *subview in _banner.get().subviews) {
+            if (RetainPtr effectView = dynamic_objc_cast<UIVisualEffectView>(subview))
+                [[effectView layer] setCornerRadius:cornerRadius];
+        }
+    }
+#endif
+#endif
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+    CGFloat buttonDimension = alternateFullScreenControlDesignEnabled ? 44.0 : 60.0;
+
+    if (_closeStack)
+        [self _updateCornerRadiusForStackView:_closeStack.get() withRadius:buttonDimension / 2.0];
+
+    if (_controlsStack) {
+        [self _updateCornerRadiusForStackView:_controlsStack.get() withRadius:buttonDimension / 2.0];
+        [self _updateControlsStackConstraints];
+    }
 #endif
 }
 
@@ -1012,7 +1189,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     CGRect cancelFrame = _cancelButton.get().frame;
     CGPoint maxXY = CGPointMake(CGRectGetMaxX(cancelFrame), CGRectGetMaxY(cancelFrame));
-    insets.setTop([_cancelButton convertPoint:maxXY toView:self.view].y);
+    CGFloat topY = [_cancelButton convertPoint:maxXY toView:self.view].y;
+
+#if !PLATFORM(VISION) && HAVE(UI_GLASS_EFFECT)
+    if (_controlsStack) {
+        CGRect controlsFrame = _controlsStack.get().frame;
+        CGPoint controlsMax = CGPointMake(CGRectGetMaxX(controlsFrame), CGRectGetMaxY(controlsFrame));
+        topY =  std::max(topY, [_controlsStack convertPoint:controlsMax toView:self.view].y);
+    }
+#endif
+
+    insets.setTop(topY);
     return insets;
 }
 
@@ -1180,6 +1367,49 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     [button setTintColor:[UIColor whiteColor]];
 }
+
+#if HAVE(UI_GLASS_EFFECT) && !PLATFORM(VISION)
+- (void)_applyGlassMaterialToView:(UIView *)view
+{
+    RetainPtr glassEffect = [UIGlassEffect effectWithStyle:UIGlassEffectStyleClear];
+    RetainPtr effectView = adoptNS([[UIVisualEffectView alloc] initWithEffect:glassEffect.get()]);
+    [effectView setFrame:view.bounds];
+    [effectView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+
+    [view addSubview:effectView.get()];
+    [view sendSubviewToBack:effectView.get()];
+}
+
+- (void)_updateCornerRadiusForStackView:(UIView *)stackView withRadius:(CGFloat)radius
+{
+    [[stackView layer] setCornerRadius:radius];
+    [[stackView layer] setMasksToBounds:YES];
+
+    for (UIView *subview in stackView.subviews) {
+        if (RetainPtr effectView = dynamic_objc_cast<UIVisualEffectView>(subview)) {
+            [[effectView.get() layer] setCornerRadius:radius];
+            [[effectView.get() layer] setMasksToBounds:YES];
+        }
+    }
+}
+
+- (void)_updateControlsStackConstraints
+{
+    if (!_controlsStack)
+        return;
+
+    for (NSLayoutConstraint *constraint in _controlsStack.get().constraints) {
+        if (constraint.firstAttribute == NSLayoutAttributeWidth)
+            [constraint setActive:NO];
+    }
+
+    if (_controlsStack.get().arrangedSubviews.count <= 1) {
+        auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+        CGFloat buttonDimension = alternateFullScreenControlDesignEnabled ? 44.0 : 60.0;
+        [[_controlsStack widthAnchor] constraintEqualToConstant:buttonDimension].active = YES;
+    }
+}
+#endif
 
 - (void)wkExtrinsicButtonWillDisplayMenu:(WKExtrinsicButton *)button
 {
