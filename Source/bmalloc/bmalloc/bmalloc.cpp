@@ -67,7 +67,7 @@ void freeOutOfLine(void* object, HeapKind kind)
     free(object, kind);
 }
 
-void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, CompactAllocationMode mode, HeapKind kind)
+void* tryLargeMemalignVirtual(size_t requiredAlignment, size_t requestedSize, CompactAllocationMode mode, HeapKind kind)
 {
     RELEASE_BASSERT(isPowerOfTwo(requiredAlignment));
 
@@ -100,9 +100,26 @@ void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSi
 #endif
     }
 
-    if (result)
-        vmZeroAndPurge(result, size);
+    return result;
+}
 
+void vmZeroAndPurge(void* result, size_t size)
+{
+    if (!result) [[unlikely]]
+        return;
+
+    if (!size) [[unlikely]]
+        return;
+
+    bmalloc::vmZeroAndPurge(result, size);
+}
+
+void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, CompactAllocationMode mode, HeapKind kind)
+{
+    size_t pageSize = vmPageSize();
+    size_t size = roundUpToMultipleOf(pageSize, requestedSize);
+    auto* result = tryLargeMemalignVirtual(requiredAlignment, requestedSize, mode, kind);
+    vmZeroAndPurge(result, size);
     return result;
 }
 

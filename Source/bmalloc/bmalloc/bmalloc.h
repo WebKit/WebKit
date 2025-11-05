@@ -212,6 +212,8 @@ BINLINE void* realloc(void* object, size_t newSize, CompactAllocationMode mode, 
 // will page fault on first access. It returns to you memory that initially only
 // uses up virtual address space, not `size` bytes of physical memory.
 BEXPORT void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
+BEXPORT void* tryLargeMemalignVirtual(size_t alignment, size_t size, CompactAllocationMode mode, HeapKind kind = HeapKind::Primary);
+BEXPORT void vmZeroAndPurge(void*, size_t size);
 
 BINLINE void free(void* object, HeapKind kind = HeapKind::Primary)
 {

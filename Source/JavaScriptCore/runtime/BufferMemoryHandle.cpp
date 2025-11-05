@@ -79,7 +79,7 @@ BufferMemoryResult BufferMemoryManager::tryAllocateFastMemory()
         if (m_fastMemories.size() >= m_maxFastMemoryCount)
             return BufferMemoryResult(nullptr, BufferMemoryResult::SyncTryToReclaimMemory);
 
-        void* result = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, BufferMemoryHandle::fastMappedBytes());
+        void* result = Gigacage::tryAllocateVirtualPages(Gigacage::Primitive, BufferMemoryHandle::fastMappedBytes());
         if (!result)
             return BufferMemoryResult(nullptr, BufferMemoryResult::SyncTryToReclaimMemory);
 
@@ -110,7 +110,7 @@ BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(
 {
     BufferMemoryResult result = [&] {
         Locker locker { m_lock };
-        void* result = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, mappedCapacity);
+        void* result = Gigacage::tryAllocateVirtualPages(Gigacage::Primitive, mappedCapacity);
         if (!result)
             return BufferMemoryResult(nullptr, BufferMemoryResult::SyncTryToReclaimMemory);
 

@@ -112,6 +112,7 @@ static RefPtr<BufferMemoryHandle> tryAllocateResizableMemory(VM* vm, size_t size
     constexpr bool readable = false;
     constexpr bool writable = false;
     OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
+    Gigacage::vmZeroAndPurge(slowMemory, initialBytes);
     return adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, PageCount::fromBytes(initialBytes), PageCount::fromBytes(maximumBytes), MemorySharingMode::Shared, MemoryMode::BoundsChecking));
 }
 
@@ -519,8 +520,8 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
             size_t desiredSize = newPageCount.bytes();
             RELEASE_ASSERT(desiredSize <= MAX_ARRAY_BUFFER_SIZE);
 
-            if (desiredSize > memoryHandle->size()) {
-                size_t bytesToAdd = desiredSize - memoryHandle->size();
+            if (desiredSize > oldPageCount.bytes()) {
+                size_t bytesToAdd = desiredSize - oldPageCount.bytes();
                 ASSERT(bytesToAdd);
                 ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToAdd) == bytesToAdd);
                 bool allocationSuccess = tryAllocate(&vm,
@@ -534,14 +535,19 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 RELEASE_ASSERT(memory);
 
                 // Signaling memory must have been pre-allocated virtually.
-                uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
+                uint8_t* startAddress = static_cast<uint8_t*>(memory) + oldPageCount.bytes();
 
                 dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + bytesToAdd), ")");
                 constexpr bool readable = true;
                 constexpr bool writable = true;
                 OSAllocator::protect(startAddress, bytesToAdd, readable, writable);
+                Gigacage::vmZeroAndPurge(startAddress, bytesToAdd);
+
+                // oldPageCount -> newPageCount ranges are already zero-cleared via Gigacage::vmZeroAndPurge.
+                if (m_contents.m_sizeInBytes < oldPageCount.bytes())
+                    memset(std::bit_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, oldPageCount.bytes() - m_contents.m_sizeInBytes);
             } else {
-                size_t bytesToSubtract = memoryHandle->size() - desiredSize;
+                size_t bytesToSubtract = oldPageCount.bytes() - desiredSize;
                 ASSERT(bytesToSubtract);
                 ASSERT(roundUpToMultipleOf<PageCount::pageSize>(bytesToSubtract) == bytesToSubtract);
                 BufferMemoryManager::singleton().freePhysicalBytes(bytesToSubtract);
@@ -558,10 +564,11 @@ Expected<int64_t, GrowFailReason> ArrayBuffer::resize(VM& vm, size_t newByteLeng
                 OSAllocator::protect(startAddress, bytesToSubtract, readable, writable);
             }
             memoryHandle->updateSize(desiredSize);
+        } else {
+            // If oldPageCount and newPageCount are the same, only different part should be zero-cleared.
+            if (m_contents.m_sizeInBytes < newByteLength)
+                memset(std::bit_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
         }
-
-        if (m_contents.m_sizeInBytes < newByteLength)
-            memset(std::bit_cast<uint8_t*>(data()) + m_contents.m_sizeInBytes, 0, newByteLength - m_contents.m_sizeInBytes);
 
         m_contents.m_sizeInBytes = newByteLength;
     }
@@ -646,13 +653,15 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + memoryHandle->size();
 
         dataLogLnIf(ArrayBufferInternal::verbose, "Marking memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
+
+        // Zero clear backing content before calling OSAllocator::protect. We may access to these page region from the concurrent thread (including wasm).
+        // Need to ensure that newly accessible pages are zeroed even from concurrent threads.
+        Gigacage::vmZeroAndPurge(startAddress, extraBytes);
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);
         memoryHandle->updateSize(desiredSize);
     }
-
-    memset(std::bit_cast<uint8_t*>(data()) + sizeInBytes, 0, newByteLength - sizeInBytes);
 
     updateSize(newByteLength);
     return deltaByteLength;
