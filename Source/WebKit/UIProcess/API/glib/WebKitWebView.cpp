@@ -5121,6 +5121,9 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 #else
 #define SNAPSHOT_TYPE cairo_surface_t*
 #endif
+#else
+#define SNAPSHOT_TYPE WebKitImage*
+#endif
 
 /**
  * webkit_web_view_get_snapshot:
@@ -5162,6 +5165,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
     getPage(webView).takeSnapshotLegacy({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
         if (handle) {
             if (auto bitmap = ShareableBitmap::create(WTFMove(*handle), SharedMemory::Protection::ReadOnly)) {
+#if PLATFORM(GTK)
 #if USE(GTK4)
                 if (auto texture = PLATFORM_IMAGE_TO_TEXTURE(bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore).get())) {
                     g_task_return_pointer(task.get(), texture.leakRef(), g_object_unref);
@@ -5177,6 +5181,21 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
                     g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
                     return;
                 }
+#endif
+#else
+                RELEASE_ASSERT(bitmap->bytesPerRow() <= std::numeric_limits<guint>::max());
+                const auto imageSize = bitmap->size();
+                auto* image = webkitImageNew(bitmapSize.width(), bitmapSize.height(), bitmap->bytesPerRow(),
+                    [bitmap = WTFMove(bitmap)](WebKitImage*) {
+                        auto* b = bitmap.leakRef();
+                        return adoptGRef(g_bytes_new_with_free_func(b->span().data(), b->span().size(),
+                            [](void* data) {
+                                reinterpret_cast<ShareableBitmap*>(data)->deref();
+                            },
+                            b));
+                    });
+                g_task_return_pointer(task.get(), image, g_object_unref);
+                return;
 #endif
             }
         }
@@ -5207,7 +5226,6 @@ SNAPSHOT_TYPE webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsync
         g_set_error_literal(error, WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
     return nullptr;
 }
-#endif // PLATFORM(GTK)
 
 void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {

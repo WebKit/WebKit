@@ -186,7 +186,6 @@ typedef enum {
     WEBKIT_INSECURE_CONTENT_DISPLAYED
 } WebKitInsecureContentEvent;
 
-#if PLATFORM(GTK)
 /**
  * WebKitSnapshotOptions:
  * @WEBKIT_SNAPSHOT_OPTIONS_NONE: Do not include any special options.
@@ -217,7 +216,6 @@ typedef enum {
   WEBKIT_SNAPSHOT_REGION_VISIBLE = 0,
   WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT,
 } WebKitSnapshotRegion;
-#endif
 
 /**
  * WebKitWebProcessTerminationReason:
@@ -777,7 +775,6 @@ webkit_web_view_get_tls_info                         (WebKitWebView             
                                                       GTlsCertificate          **certificate,
                                                       GTlsCertificateFlags      *errors);
 
-#if PLATFORM(GTK)
 WEBKIT_API void
 webkit_web_view_get_snapshot                         (WebKitWebView             *web_view,
                                                       WebKitSnapshotRegion       region,
@@ -785,6 +782,7 @@ webkit_web_view_get_snapshot                         (WebKitWebView             
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
+#if PLATFORM(GTK)
 #if USE(GTK4)
 WEBKIT_API GdkTexture *
 webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
@@ -796,6 +794,11 @@ webkit_web_view_get_snapshot_finish                  (WebKitWebView             
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 #endif
+#else
+WEBKIT_API WebKitImage *
+webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
 #endif
 
 WEBKIT_API WebKitUserContentManager *
