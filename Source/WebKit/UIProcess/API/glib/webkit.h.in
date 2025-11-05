@@ -73,6 +73,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitGeolocationManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitGeolocationPermissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitHitTestResult.h>
+#include <@API_INCLUDE_PREFIX@/WebKitImage.h>
 #include <@API_INCLUDE_PREFIX@/WebKitInputMethodContext.h>
 #include <@API_INCLUDE_PREFIX@/WebKitInstallMissingMediaPluginsPermissionRequest.h>
 #if !ENABLE(2022_GLIB_API)
