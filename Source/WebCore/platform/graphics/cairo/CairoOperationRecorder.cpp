@@ -1152,24 +1152,23 @@ IntRect OperationRecorder::clipBounds() const
     return enclosingIntRect(state.ctmInverse.mapRect(state.clipBounds));
 }
 
-void OperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void OperationRecorder::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
-    struct ClipToImageBuffer final: PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect> {
-        virtual ~ClipToImageBuffer() = default;
+    struct ClipToNativeImage final: PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect> {
+        virtual ~ClipToNativeImage() = default;
 
         void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clipToImageBuffer(context, arg<0>().get(), arg<1>());
+            Cairo::clipToNativeImage(context, arg<0>().get(), arg<1>());
         }
 
         void dump(TextStream& ts) override
         {
-            ts << indent << "ClipToImageBuffer<>\n"_s;
+            ts << indent << "ClipToNativeImage<>\n"_s;
         }
     };
 
-    if (auto nativeImage = buffer.createNativeImageReference())
-        append(createCommand<ClipToImageBuffer>(nativeImage->platformImage(), destRect));
+    append(createCommand<ClipToNativeImage>(nativeImage.platformImage(), destRect));
 }
 
 void OperationRecorder::applyDeviceScaleFactor(float)

@@ -460,6 +460,12 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
+void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& rect)
+{
+    if (RefPtr image = nativeImageForDrawing(buffer))
+        clipToNativeImage(*image, rect);
+}
+
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();

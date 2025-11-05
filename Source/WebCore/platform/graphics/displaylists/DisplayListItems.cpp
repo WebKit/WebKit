@@ -237,6 +237,18 @@ void ClipToImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
     ts.dumpProperty("dest-rect"_s, destinationRect());
 }
 
+void ClipToNativeImage::apply(GraphicsContext& context) const
+{
+    context.clipToNativeImage(m_image, m_destinationRect);
+}
+
+void ClipToNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
+{
+    if (flags.contains(AsTextFlag::IncludeResourceIdentifiers))
+        ts.dumpProperty("image-identifier"_s, m_image->renderingResourceIdentifier());
+    ts.dumpProperty("dest-rect"_s, destinationRect());
+}
+
 void ClipOutToPath::apply(GraphicsContext& context) const
 {
     context.clipOut(m_path);

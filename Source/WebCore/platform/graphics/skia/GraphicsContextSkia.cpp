@@ -686,13 +686,11 @@ IntRect GraphicsContextSkia::clipBounds() const
     return enclosingIntRect(m_canvas.getLocalClipBounds());
 }
 
-void GraphicsContextSkia::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void GraphicsContextSkia::clipToNativeImage(const NativeImage& nativeImage, const FloatRect& destRect)
 {
-    if (auto nativeImage = nativeImageForDrawing(buffer)) {
-        auto image = nativeImage->platformImage();
-        trackAcceleratedRenderingFenceIfNeeded(image);
-        m_canvas.clipShader(image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y()))));
-    }
+    auto image = nativeImage.platformImage();
+    trackAcceleratedRenderingFenceIfNeeded(image);
+    m_canvas.clipShader(image->makeShader(SkTileMode::kDecal, SkTileMode::kDecal, { }, SkMatrix::Translate(SkFloatToScalar(destRect.x()), SkFloatToScalar(destRect.y()))));
 }
 
 void GraphicsContextSkia::drawFocusRing(const Path& path, float, const Color& color)

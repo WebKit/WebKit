@@ -102,7 +102,7 @@ private:
     void clipOut(const WebCore::Path&) override;
     void clipPath(const WebCore::Path&, WebCore::WindRule) override;
     WebCore::IntRect clipBounds() const override;
-    void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
+    void clipToNativeImage(const WebCore::NativeImage&, const WebCore::FloatRect&) override;
 #if ENABLE(VIDEO)
     void drawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) override;
 #endif

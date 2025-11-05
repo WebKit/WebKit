@@ -218,10 +218,9 @@ IntRect GraphicsContextCairo::clipBounds() const
     return Cairo::State::getClipBounds(*platformContext());
 }
 
-void GraphicsContextCairo::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
+void GraphicsContextCairo::clipToNativeImage(const NativeImage& image, const FloatRect& destRect)
 {
-    if (auto nativeImage = nativeImageForDrawing(buffer))
-        Cairo::clipToImageBuffer(*this, nativeImage->platformImage().get(), destRect);
+    Cairo::clipToNativeImage(*this, image.platformImage().get(), destRect);
 }
 
 void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, const Color& color)

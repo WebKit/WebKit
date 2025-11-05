@@ -405,6 +405,27 @@ private:
     FloatRect m_destinationRect;
 };
 
+class ClipToNativeImage {
+public:
+    static constexpr char name[] = "clip-to-native-image";
+
+    ClipToNativeImage(Ref<const NativeImage> image, const FloatRect& destinationRect)
+        : m_image(WTFMove(image))
+        , m_destinationRect(destinationRect)
+    {
+    }
+
+    const NativeImage& image() const { return m_image; }
+    FloatRect destinationRect() const { return m_destinationRect; }
+
+    void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    const Ref<const NativeImage> m_image;
+    FloatRect m_destinationRect;
+};
+
 class ClipOutToPath {
 public:
     static constexpr char name[] = "clip-out-to-path";

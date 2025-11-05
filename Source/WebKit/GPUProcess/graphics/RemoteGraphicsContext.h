@@ -93,6 +93,7 @@ public:
     void clipOut(const WebCore::FloatRect&);
     void clipOutRoundedRect(const WebCore::FloatRoundedRect&);
     void clipToImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
+    void clipToNativeImage(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destinationRect);
     void clipOutToPath(const WebCore::Path&);
     void clipPath(const WebCore::Path&, WebCore::WindRule);
     void resetClip();

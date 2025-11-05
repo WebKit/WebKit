@@ -260,6 +260,12 @@ void Recorder::updateStateForClipToImageBuffer(const FloatRect& rect)
     currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
 }
 
+void Recorder::updateStateForClipToNativeImage(const FloatRect& rect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect));
+}
+
 IntRect Recorder::clipBounds() const
 {
     if (auto inverse = currentState().ctm.inverse())

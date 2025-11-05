@@ -97,6 +97,7 @@ private:
     void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final;
     void clipPath(const WebCore::Path&, WebCore::WindRule) final;
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
+    void clipToNativeImage(const WebCore::NativeImage&, const WebCore::FloatRect& destinationRect) final;
     void resetClip() final;
     void beginTransparencyLayer(float) final;
     void beginTransparencyLayer(WebCore::CompositeOperator, WebCore::BlendMode) final;
@@ -145,7 +146,7 @@ private:
     void endPage() final;
     void setURLForRect(const URL&, const WebCore::FloatRect&) final;
 
-    bool recordResourceUse(WebCore::NativeImage&);
+    bool recordResourceUse(const WebCore::NativeImage&);
     bool recordResourceUse(WebCore::ImageBuffer&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::Font&);

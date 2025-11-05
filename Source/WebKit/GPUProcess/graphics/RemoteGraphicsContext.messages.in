@@ -71,6 +71,7 @@ messages -> RemoteGraphicsContext Stream {
     ClipOut(WebCore::FloatRect rect)
     ClipOutRoundedRect(WebCore::FloatRoundedRect rect)
     ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
+    ClipToNativeImage(WebCore::RenderingResourceIdentifier identifier, WebCore::FloatRect destinationRect)
     ClipOutToPath(WebCore::Path path)
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
     ResetClip()
