@@ -113,7 +113,7 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_data.allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_data.allowsContentJavaScript = allows; }
 
-    bool enhancedSecurityEnabled() const { return m_enhancedSecurityEnabled; }
+    bool enhancedSecurityEnabled() const;
     void setEnhancedSecurityEnabled(bool enabled) { m_enhancedSecurityEnabled = enabled; }
 
     bool lockdownModeEnabled() const;

@@ -85,6 +85,16 @@ bool WebsitePolicies::lockdownModeEnabled() const
     return m_lockdownModeEnabled ? *m_lockdownModeEnabled : WebKit::lockdownModeEnabledBySystem();
 }
 
+bool WebsitePolicies::enhancedSecurityEnabled() const
+{
+#if PLATFORM(COCOA)
+    if (WebKit::enhancedSecurityEnabledByUserDefault())
+        return true;
+#endif
+
+    return m_enhancedSecurityEnabled;
+}
+
 const WebCore::ResourceRequest& WebsitePolicies::alternateRequest() const
 {
     return m_data.alternateRequest;

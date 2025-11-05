@@ -1234,6 +1234,11 @@ void setLockdownModeEnabledGloballyForTesting(std::optional<bool> enabledForTest
         processPool->lockdownModeStateChanged();
 }
 
+bool enhancedSecurityEnabledByUserDefault()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOverrideEnhancedSecurity"];
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void WebProcessPool::applicationIsAboutToSuspend()

@@ -150,6 +150,7 @@ void addLockdownModeObserver(LockdownModeObserver&);
 void removeLockdownModeObserver(LockdownModeObserver&);
 bool lockdownModeEnabledBySystem();
 void setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
+bool enhancedSecurityEnabledByUserDefault();
 
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
