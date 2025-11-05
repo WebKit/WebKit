@@ -322,6 +322,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
         return;
 
     m_documentIsBeingReplaced = true;
+    resetScript();
 
     if (isMainFrame()) {
         if (RefPtr page = this->page())
