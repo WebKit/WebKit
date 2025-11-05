@@ -53,6 +53,8 @@
 
     Vector<String> overrideLanguages;
 #if PLATFORM(COCOA)
+    std::optional<WebKit::SandboxExtensionHandle> overrideMetalShaderCacheHandle;
+    String overrideMetalShaderCachePath;
     bool enableMetalDebugDeviceForTesting;
     bool enableMetalShaderValidationForTesting;
 #if ENABLE(VP9)

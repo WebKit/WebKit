@@ -48,6 +48,7 @@ namespace WebKit {
 
 bool GPUProcessProxy::s_enableMetalDebugDeviceInNewGPUProcessesForTesting { false };
 bool GPUProcessProxy::s_enableMetalShaderValidationInNewGPUProcessesForTesting { false };
+bool GPUProcessProxy::s_enableMetalShaderCacheOverriden { false };
 
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
@@ -58,6 +59,11 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 #endif
+    if (m_isMetalShaderCacheOverriden) {
+        parameters.overrideMetalShaderCachePath = WebsiteDataStore::defaultResolvedContainerTemporaryDirectory();
+        parameters.overrideMetalShaderCachePath = String([parameters.overrideMetalShaderCachePath.createNSString().get() stringByDeletingLastPathComponent]);
+        parameters.overrideMetalShaderCacheHandle = SandboxExtension::createHandleWithoutResolvingPath(parameters.overrideMetalShaderCachePath, SandboxExtension::Type::ReadWrite);
+    }
     parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
     parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
 }

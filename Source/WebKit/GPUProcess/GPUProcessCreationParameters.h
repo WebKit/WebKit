@@ -70,6 +70,8 @@ struct GPUProcessCreationParameters {
 
     Vector<String> overrideLanguages;
 #if PLATFORM(COCOA)
+    std::optional<WebKit::SandboxExtensionHandle> overrideMetalShaderCacheHandle;
+    String overrideMetalShaderCachePath;
     bool enableMetalDebugDeviceForTesting { false };
     bool enableMetalShaderValidationForTesting { false };
 #if ENABLE(VP9)

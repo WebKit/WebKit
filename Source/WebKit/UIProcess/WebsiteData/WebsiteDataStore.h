@@ -194,10 +194,11 @@ public:
 #if PLATFORM(IOS_FAMILY)
     String resolvedCookieStorageDirectory();
     String resolvedContainerTemporaryDirectory();
-    static String defaultResolvedContainerTemporaryDirectory();
     static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
-
+#if PLATFORM(COCOA)
+    static String defaultResolvedContainerTemporaryDirectory();
+#endif
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
     void setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&&);
     void setPrivateTokenIPCForTesting(bool enabled);

@@ -152,6 +152,12 @@ void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& para
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS) && USE(EXTENSIONKIT)
     MTLSetShaderCachePath(parameters.containerCachesDirectory.createNSString().get());
+#elif PLATFORM(MAC)
+    if (auto handle = parameters.overrideMetalShaderCacheHandle) {
+        SandboxExtension::consumePermanently(*handle);
+        auto& path = parameters.overrideMetalShaderCachePath;
+        MTLSetShaderCachePath([NSString stringWithUTF8String:path.utf8().data()]);
+    }
 #endif
 
 #if USE(EXTENSIONKIT)

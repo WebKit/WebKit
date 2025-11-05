@@ -210,6 +210,7 @@ GPUProcessProxy::GPUProcessProxy()
 #if PLATFORM(COCOA)
     m_isMetalDebugDeviceEnabledForTesting = s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     m_isMetalShaderValidationEnabledForTesting = s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+    m_isMetalShaderCacheOverriden = s_enableMetalShaderCacheOverriden;
     if (s_gpuProcessMediaCodecCapabilities) {
 #if ENABLE(VP9)
         parameters.hasVP9HardwareDecoder = s_gpuProcessMediaCodecCapabilities->hasVP9HardwareDecoder;

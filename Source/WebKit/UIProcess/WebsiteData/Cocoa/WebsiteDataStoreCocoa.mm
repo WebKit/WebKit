@@ -962,6 +962,20 @@ UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
     return UnifiedOriginStorageLevel::Standard;
 }
 
+#if PLATFORM(COCOA)
+
+String WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
+{
+    static NeverDestroyed<String> resolvedTemporaryDirectory;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        resolvedTemporaryDirectory.get() = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
+    });
+    return resolvedTemporaryDirectory;
+}
+
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& subpath)
@@ -1015,16 +1029,6 @@ String WebsiteDataStore::resolvedContainerTemporaryDirectory()
         m_resolvedContainerTemporaryDirectory = defaultResolvedContainerTemporaryDirectory();
 
     return m_resolvedContainerTemporaryDirectory;
-}
-
-String WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
-{
-    static NeverDestroyed<String> resolvedTemporaryDirectory;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        resolvedTemporaryDirectory.get() = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
-    });
-    return resolvedTemporaryDirectory;
 }
 
 void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)

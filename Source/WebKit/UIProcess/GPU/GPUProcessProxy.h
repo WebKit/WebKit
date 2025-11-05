@@ -152,6 +152,7 @@ public:
     static bool isMetalShaderValidationEnabledInNewGPUProcessesForTesting() { return s_enableMetalShaderValidationInNewGPUProcessesForTesting; }
     bool isMetalDebugDeviceEnabledForTesting() const { return m_isMetalDebugDeviceEnabledForTesting; }
     bool isMetalShaderValidationEnabledForTesting() const { return m_isMetalShaderValidationEnabledForTesting; }
+    static void setEnableMetalShaderCacheOverriden(bool enable) { s_enableMetalShaderCacheOverriden = enable; }
 #endif
 
 #if ENABLE(VIDEO)
@@ -254,6 +255,7 @@ private:
     bool m_hasSentGPUToolsSandboxExtensions { false };
     bool m_isMetalDebugDeviceEnabledForTesting { false };
     bool m_isMetalShaderValidationEnabledForTesting { false };
+    bool m_isMetalShaderCacheOverriden { false };
 #endif
 
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -263,6 +265,7 @@ private:
 #if PLATFORM(COCOA)
     static bool s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     static bool s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+    static bool s_enableMetalShaderCacheOverriden;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

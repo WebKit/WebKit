@@ -168,6 +168,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 // Test only. Should be called before a GPU process has been launched.
 + (void)_setEnableMetalDebugDeviceInNewGPUProcessesForTesting:(BOOL)enable WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 + (void)_setEnableMetalShaderValidationInNewGPUProcessesForTesting:(BOOL)enable WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
++ (void)_setEnableMetalShaderCacheOverridenForTesting:(BOOL)enable WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 + (BOOL)_isMetalDebugDeviceEnabledInGPUProcessForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 + (BOOL)_isMetalShaderValidationEnabledInGPUProcessForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
