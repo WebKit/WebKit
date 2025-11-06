@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 </head>
 <body>
 <script>
@@ -22,35 +22,33 @@ function iframeForMessage(message)
     return allFrames.find(frame => frame.contentWindow === message.source);
 }
 
-var failCount = 0;
-function iFrameLeaked()
-{
-    if (++failCount >= framesToCreate) {
-        testFailed("All iframe documents leaked.");
-        finishJSTest();
-    }
-}
+frameDocumentIDs = [];
+checkCount = 0;
 
 function iframeLoaded(iframe)
 {
     let frameDocumentID = internals.documentIdentifier(iframe.contentWindow.document);
-    let checkCount = 0;
-    iframe.addEventListener("load", () => {
-        let handle = setInterval(() => {
-            gc();
-            if (!internals.isDocumentAlive(frameDocumentID)) {
-                clearInterval(handle);
-                testPassed("The iframe document didn't leak.");
-                finishJSTest();
-            }
-            if (++checkCount > 5) {
-                clearInterval(handle);
-                iframeLeaked();
-            }
-        }, 10);
-    });
+    frameDocumentIDs.push(frameDocumentID);
 
     iframe.src = "about:blank";
+    if (frameDocumentIDs.length == framesToCreate) {
+        handle = setInterval(() => {
+            gc();
+            for (const documentID of frameDocumentIDs) {
+                if (!internals.isDocumentAlive(documentID)) {
+                    clearInterval(handle);
+                    testPassed("The iframe document didn't leak.");
+                    finishJSTest();
+                    return;
+                }
+            }
+            if (++checkCount > 10) {
+                clearInterval(handle);
+                testFailed("All iframe documents leaked.");
+                finishJSTest();
+            }
+        }, 10);
+    }
 }
 
 onload = () => {
@@ -63,6 +61,5 @@ onload = () => {
     allFrames.forEach(frame => frame.src = "https://127.0.0.1:8443/geolocation/resources/geolocation-get-position-callback.html");
 };
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

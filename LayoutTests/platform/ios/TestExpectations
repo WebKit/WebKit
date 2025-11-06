@@ -8226,8 +8226,6 @@ webkit.org/b/297144 fast/forms/state-restore-to-non-edited-controls.html [ Pass 
 
 webkit.org/b/297240 http/tests/site-isolation/edge-sampling-commit-root-frame-load.html [ Failure ]
 
-webkit.org/b/295751 [ Release ] http/tests/geolocation/geolocation-get-current-position-does-not-leak.https.html [ Pass Failure ]
-
 webkit.org/b/297251 [ Release ] fast/mediastream/getUserMedia-echoCancellation.html [ Pass Failure ]
 
 # webkit.org/b/297405 2x imported/w3c/web-platform-tests/css/css-flexbox/ (layout-tests) tests are constant image failures 
