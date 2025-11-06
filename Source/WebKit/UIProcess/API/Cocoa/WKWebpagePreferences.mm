@@ -517,7 +517,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
 - (BOOL)_enhancedSecurityEnabled
 {
-    return _websitePolicies->enhancedSecurityEnabled();
+    return protectedWebsitePolicies(self)->enhancedSecurityEnabled();
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
@@ -860,9 +860,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (WKSecurityRestrictionMode)securityRestrictionMode
 {
-    if (Ref { *_websitePolicies }->lockdownModeEnabled())
+    Ref websitePolicies { *_websitePolicies };
+    if (websitePolicies->lockdownModeEnabled())
         return WKSecurityRestrictionModeLockdown;
-    if (_websitePolicies->enhancedSecurityEnabled())
+    if (websitePolicies->enhancedSecurityEnabled())
         return WKSecurityRestrictionModeMaximizeCompatibility;
     return WKSecurityRestrictionModeNone;
 }
