@@ -2614,6 +2614,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecStringResolved);
         break;
 
+    case StringAt:
     case StringCharAt: {
         auto& value = forNode(node->child1());
         JSValue constant = value.value();
@@ -2624,7 +2625,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        setTypeForNode(node, SpecStringResolved);
+        if (node->op() == StringAt && node->arrayMode().isOutOfBounds())
+            setTypeForNode(node, SpecStringResolved | SpecOther);
+        else
+            setTypeForNode(node, SpecStringResolved);
         break;
     }
 
@@ -2639,14 +2643,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         setNonCellTypeForNode(node, SpecInt32Only);
-        break;
-    }
-
-    case StringAt: {
-        if (node->arrayMode().isOutOfBounds())
-            setTypeForNode(node, SpecString | SpecOther);
-        else
-            setTypeForNode(node, SpecString);
         break;
     }
 
