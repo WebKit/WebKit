@@ -125,7 +125,7 @@ static IntPoint positionFromEvent(WPEEvent* event)
     return { };
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
+Ref<WebMouseEvent> WebEventFactory::createWebMouseEvent(WPEEvent* event)
 {
     auto modifiers = wpe_event_get_modifiers(event);
     FloatPoint movementDelta;
@@ -155,7 +155,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebMouseEvent({ type.value(), modifiersFromWPEModifiers(modifiers), monotonicTimeForEvent(event) },
+    return WebMouseEvent::create(WebEventInit { type.value(), modifiersFromWPEModifiers(modifiers), monotonicTimeForEvent(event), std::nullopt },
         button,
         pressedMouseButtons(modifiers),
         position,
@@ -166,13 +166,13 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(WPEEvent* event)
         clickCount);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event)
+Ref<WebWheelEvent> WebEventFactory::createWebWheelEvent(WPEEvent* event)
 {
     auto phase = wpe_event_scroll_is_stop(event) ? WebWheelEvent::Phase::PhaseEnded : WebWheelEvent::Phase::PhaseChanged;
     return createWebWheelEvent(event, phase);
 }
 
-WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
+Ref<WebWheelEvent> WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
 {
     double deltaX, deltaY;
     wpe_event_scroll_get_deltas(event, &deltaX, &deltaY);
@@ -208,16 +208,16 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(WPEEvent* event, WebWheelEven
         delta = wheelTicks.scaled(stepX, stepY);
     }
 
-    return WebWheelEvent({ WebEventType::Wheel, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) },
-        position, position, delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, phase, WebWheelEvent::Phase::PhaseNone, hasPreciseScrollingDeltas);
+    return WebWheelEvent::create(WebEventInit { WebEventType::Wheel, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event), std::nullopt },
+        position, position, delta, wheelTicks, phase, WebWheelEvent::Phase::PhaseNone, hasPreciseScrollingDeltas, WebWheelEvent::ScrollByPixelWheelEvent);
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutoRepeat)
+Ref<WebKeyboardEvent> WebEventFactory::createWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutoRepeat)
 {
     auto type = wpe_event_get_event_type(event) == WPE_EVENT_KEYBOARD_KEY_DOWN ? WebEventType::KeyDown : WebEventType::KeyUp;
     auto keyval = wpe_event_keyboard_get_keyval(event);
     auto keycode = wpe_event_keyboard_get_keycode(event);
-    return WebKeyboardEvent({ type, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) },
+    return WebKeyboardEvent::create(WebEventInit { type, modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event), std::nullopt },
         text.isNull() ? WebKeyboardEvent::singleCharacterStringForWPEKeyval(keyval) : text,
         WebKeyboardEvent::keyValueStringForWPEKeyval(keyval),
         WebKeyboardEvent::keyCodeStringForWPEKeycode(keycode),
@@ -228,7 +228,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(WPEEvent* event, const 
 }
 
 #if ENABLE(TOUCH_EVENTS)
-WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
+Ref<WebTouchEvent> WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
     std::optional<WebEventType> type;
     switch (wpe_event_get_event_type(event)) {
@@ -248,7 +248,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
+    return WebTouchEvent::create({ type.value(), modifiersFromWPEModifiers(wpe_event_get_modifiers(event)), monotonicTimeForEvent(event) }, WTFMove(touchPoints), { }, { });
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

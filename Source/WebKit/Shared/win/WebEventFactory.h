@@ -40,11 +40,11 @@ namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool didActivateWebView, float deviceScaleFactor);
-    static WebWheelEvent createWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
-    static WebKeyboardEvent createWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
+    static Ref<WebMouseEvent> createWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool didActivateWebView, float deviceScaleFactor);
+    static Ref<WebWheelEvent> createWebWheelEvent(HWND, UINT message, WPARAM, LPARAM, float deviceScaleFactor);
+    static Ref<WebKeyboardEvent> createWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent();
+    static Ref<WebTouchEvent> createWebTouchEvent();
 #endif
 };
 

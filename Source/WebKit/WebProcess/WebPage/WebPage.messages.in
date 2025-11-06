@@ -26,7 +26,7 @@
     DispatchedTo=WebContent
 ]
 messages -> WebPage WantsAsyncDispatchMessage {
-    SetInitialFocus(bool forward, bool isKeyboardEventValid, std::optional<WebKit::WebKeyboardEvent> event) -> ()
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, RefPtr<WebKit::WebKeyboardEvent> event) -> ()
     SetActivityState(OptionSet<WebCore::ActivityState> activityState, WebKit::ActivityStateChangeID activityStateChangeID) -> ()
 
     SetBackgroundColor(std::optional<WebCore::Color> color)
@@ -57,8 +57,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ViewWillEndLiveResize()
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
-    KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
-    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
+    KeyEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebKeyboardEvent> event)
+    MouseEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebMouseEvent> event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::IntPoint eventPoint, WebCore::IntPoint globalPoint);
 
 #if PLATFORM(IOS_FAMILY)
@@ -168,7 +168,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DidBeginTouchPoint(WebCore::FloatPoint locationInRootView)
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
-    TouchEvent(WebKit::WebTouchEvent event) -> (enum:uint8_t std::optional<WebKit::WebEventType> eventType, bool handled)
+    TouchEvent(Ref<WebKit::WebTouchEvent> event) -> (enum:uint8_t std::optional<WebKit::WebEventType> eventType, bool handled)
 #endif
 
     CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
@@ -540,7 +540,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
 #endif
 
-    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
+    ShouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent> event) -> (bool result) Synchronous
 
     SetTextAsync(String text)
 
@@ -561,7 +561,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
-    RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    RequestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent> event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     SetCaretAnimatorType(enum:uint8_t WebCore::CaretAnimatorType caretType)
     SetCaretBlinkingSuspended(bool blinkSuspended)
 #endif
@@ -631,7 +631,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     FlushDeferredDidReceiveMouseEvent()
 
-    PerformHitTestForMouseEvent(WebKit::WebMouseEvent event) -> (struct WebKit::WebHitTestResultData hitTestResult, OptionSet<WebKit::WebEventModifier> modifiers)
+    PerformHitTestForMouseEvent(Ref<WebKit::WebMouseEvent> event) -> (struct WebKit::WebHitTestResultData hitTestResult, OptionSet<WebKit::WebEventModifier> modifiers)
 
     SetStatusBarIsVisible(bool visible)
     SetMenuBarIsVisible(bool visible)
@@ -755,10 +755,10 @@ messages -> WebPage WantsAsyncDispatchMessage {
     CreateTextFragmentDirectiveFromSelection() -> (URL url)
     GetTextFragmentRanges() -> (Vector<WebKit::EditingRange> textFragmentEditingRanges)
 
-    HandleWheelEvent(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (std::optional<WebCore::ScrollingNodeID> scrollingNodeID, enum:uint8_t std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
+    HandleWheelEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebWheelEvent> event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (std::optional<WebCore::ScrollingNodeID> scrollingNodeID, enum:uint8_t std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
 
 #if PLATFORM(IOS_FAMILY)
-    DispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event) -> (bool defaultPrevented)
+    DispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier frameID, Ref<WebKit::WebWheelEvent> event) -> (bool defaultPrevented)
 #endif
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)

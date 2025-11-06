@@ -141,7 +141,7 @@ void WKPageHandleMouseEvent(WKPageRef pageRef, WKMouseEvent event)
 
     const float deviceScaleFactor = 1;
 
-    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent(&wpeEvent, deviceScaleFactor));
+    WebKit::toImpl(pageRef)->handleMouseEvent(NativeWebMouseEvent::create(&wpeEvent, deviceScaleFactor));
 }
 
 void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
@@ -159,7 +159,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         1, static_cast<int32_t>(event.delta.width), 0
     };
 
-    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent::create(&xEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
 
     struct wpe_input_axis_event yEvent = {
         wpe_input_axis_event_type_motion,
@@ -167,7 +167,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
         0, static_cast<int32_t>(event.delta.height), 0
     };
 
-    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
+    WebKit::toImpl(pageRef)->handleNativeWheelEvent(NativeWebWheelEvent::create(&yEvent, deviceScaleFactor, WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseNone));
 }
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)

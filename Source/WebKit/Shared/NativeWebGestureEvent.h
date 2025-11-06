@@ -35,8 +35,9 @@ OBJC_CLASS NSView;
 namespace WebKit {
 
 class NativeWebGestureEvent final : public WebGestureEvent {
+    WTF_MAKE_TZONE_ALLOCATED(NativeWebGestureEvent);
 public:
-    static std::optional<NativeWebGestureEvent> create(NSEvent *, NSView *);
+    static RefPtr<NativeWebGestureEvent> create(NSEvent *, NSView *);
 
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 

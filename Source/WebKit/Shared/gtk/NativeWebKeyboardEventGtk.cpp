@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebKeyboardEvent);
+
 #if USE(GTK4)
 #define constructNativeEvent(event) event
 #else

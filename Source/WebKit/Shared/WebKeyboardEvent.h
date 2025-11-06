@@ -37,20 +37,15 @@
 namespace WebKit {
 
 class WebKeyboardEvent : public WebEvent {
+    WTF_MAKE_TZONE_ALLOCATED(WebKeyboardEvent);
 public:
     ~WebKeyboardEvent();
 
-#if USE(APPKIT)
-    WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
-#elif PLATFORM(GTK)
-    WebKeyboardEvent(WebEvent&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad);
-#elif PLATFORM(IOS_FAMILY)
-    WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
-#elif USE(LIBWPE)
-    WebKeyboardEvent(WebEvent&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, bool isAutoRepeat, bool isKeypad);
-#else
-    WebKeyboardEvent(WebEvent&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
-#endif
+    template<typename... Args>
+    static Ref<WebKeyboardEvent> create(Args&&... args)
+    {
+        return adoptRef(*new WebKeyboardEvent(std::forward<Args>(args)...));
+    }
 
     const String& text() const { return m_text; }
     const String& unmodifiedText() const { return m_unmodifiedText; }
@@ -94,6 +89,20 @@ public:
     static String keyIdentifierForGdkKeyval(unsigned);
     static int windowsKeyCodeForGdkKeyval(unsigned);
     static String singleCharacterStringForGdkKeyval(unsigned);
+#endif
+
+protected:
+    explicit WebKeyboardEvent(const WebKeyboardEvent&) = default;
+#if USE(APPKIT)
+    WebKeyboardEvent(WebEventInit&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
+#elif PLATFORM(GTK)
+    WebKeyboardEvent(WebEventInit&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, Vector<String>&& commands, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
+#elif PLATFORM(IOS_FAMILY)
+    WebKeyboardEvent(WebEventInit&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
+#elif USE(LIBWPE)
+    WebKeyboardEvent(WebEventInit&&, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
+#else
+    WebKeyboardEvent(WebEventInit&&, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey);
 #endif
 
 private:

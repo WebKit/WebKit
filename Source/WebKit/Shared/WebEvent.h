@@ -46,14 +46,19 @@ class Encoder;
 
 namespace WebKit {
 
-class WebEvent : public CanMakeThreadSafeCheckedPtr<WebEvent, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
-    WTF_MAKE_TZONE_ALLOCATED(WebEvent);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebEvent);
-public:
-    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken);
-    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp);
+struct WebEventInit {
+    WebEventType type;
+    OptionSet<WebEventModifier> modifiers;
+    MonotonicTime timestamp;
+    std::optional<WTF::UUID> authorizationToken;
+};
 
+class WebEvent : public ThreadSafeRefCounted<WebEvent> {
+    WTF_MAKE_TZONE_ALLOCATED(WebEvent);
+public:
     virtual ~WebEvent() = default;
+
+    WebEventInit init() const { return WebEventInit { m_type, m_modifiers, m_timestamp, m_authorizationToken }; }
 
     WebEventType type() const { return m_type; }
 
@@ -69,6 +74,17 @@ public:
 
     bool isActivationTriggeringEvent() const;
     WTF::UUID authorizationToken() const { return m_authorizationToken; }
+
+protected:
+    explicit WebEvent(const WebEvent& other)
+        : m_type(other.m_type)
+        , m_modifiers(other.m_modifiers)
+        , m_timestamp(other.m_timestamp)
+        , m_authorizationToken(other.m_authorizationToken)
+    { }
+    explicit WebEvent(WebEventInit&&);
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp, WTF::UUID authorizationToken);
+    WebEvent(WebEventType, OptionSet<WebEventModifier>, MonotonicTime timestamp);
 
 private:
     WebEventType m_type;

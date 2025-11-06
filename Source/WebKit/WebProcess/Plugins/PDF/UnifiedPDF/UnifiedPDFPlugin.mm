@@ -1982,7 +1982,7 @@ static bool isContextMenuEvent(const WebMouseEvent& event)
 
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
-    m_lastMouseEvent = event;
+    m_lastMouseEvent = &const_cast<WebMouseEvent&>(event);
 
     if (!m_pdfDocument)
         return false;

@@ -254,10 +254,10 @@ inline static String pointerType(UITouchType type)
     return WebCore::mousePointerEventType();
 }
 
-- (std::optional<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(std::optional<WebKit::WebEventType>)type wasCancelled:(BOOL)cancelled
+- (RefPtr<WebKit::NativeWebMouseEvent>)createMouseEventWithType:(std::optional<WebKit::WebEventType>)type wasCancelled:(BOOL)cancelled
 {
     if (!type)
-        return std::nullopt;
+        return nullptr;
 
     auto modifiers = WebKit::WebIOSEventFactory::webEventModifiersForUIKeyModifierFlags(self._activeGesture.modifierFlags);
     BOOL isRightButton = modifiers.contains(WebKit::WebEventModifier::ControlKey) || (_pressedButtonMask.value_or(0) & UIEventButtonMaskSecondary);
@@ -287,7 +287,7 @@ inline static String pointerType(UITouchType type)
     }();
     auto delta = point - WebCore::DoublePoint { [currentTouch previousLocationInView:self.view] };
     // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
-    return WebKit::NativeWebMouseEvent {
+    return WebKit::NativeWebMouseEvent::create(
         *type,
         button,
         static_cast<unsigned short>(buttons),
@@ -302,7 +302,7 @@ inline static String pointerType(UITouchType type)
         0,
         cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No,
         pointerType(currentTouch.type)
-    };
+    );
 }
 
 #pragma mark - UIInteraction
@@ -382,7 +382,7 @@ inline static String pointerType(UITouchType type)
     _lastLocation = location;
     auto mouseEvent = [self createMouseEventWithType:WebKit::WebEventType::MouseMove wasCancelled:isCancelled];
     if (mouseEvent)
-        [_delegate mouseInteraction:self changedWithEvent:*mouseEvent];
+        [_delegate mouseInteraction:self changedWithEvent:mouseEvent.releaseNonNull()];
 }
 
 - (void)_updateMouseTouches:(NSSet<UITouch *> *)touches
@@ -419,7 +419,7 @@ inline static String pointerType(UITouchType type)
         return;
 
     if (eventType)
-        [_delegate mouseInteraction:self changedWithEvent:*mouseEvent];
+        [_delegate mouseInteraction:self changedWithEvent:mouseEvent.releaseNonNull()];
 
     if (eventType == WebKit::WebEventType::MouseUp) {
         _touching = NO;
@@ -490,7 +490,7 @@ inline static String pointerType(UITouchType type)
         return;
 
     WebCore::DoublePoint lockedPoint { _pointerLockState.lockedCursorPosition.value_or(CGPointZero) };
-    WebKit::NativeWebMouseEvent mouseEvent {
+    auto mouseEvent = WebKit::NativeWebMouseEvent::create(
         WebKit::WebEventType::MouseMove,
         WebKit::WebMouseEventButton::None,
         0,
@@ -505,9 +505,9 @@ inline static String pointerType(UITouchType type)
         0,
         WebKit::GestureWasCancelled::No,
         WebCore::mousePointerEventType()
-    };
+    );
 
-    [_delegate mouseInteraction:self changedWithEvent:mouseEvent];
+    [_delegate mouseInteraction:self changedWithEvent:WTFMove(mouseEvent)];
 }
 
 - (void)_startObservingMouseNotifications

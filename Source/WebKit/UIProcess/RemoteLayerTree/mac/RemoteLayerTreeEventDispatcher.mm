@@ -195,7 +195,7 @@ void RemoteLayerTreeEventDispatcher::willHandleWheelEvent(const WebWheelEvent& w
     ASSERT(isMainRunLoop());
     
     m_wheelEventActivityHysteresis.impulse();
-    m_wheelEventsBeingProcessed.append(wheelEvent);
+    m_wheelEventsBeingProcessed.append(const_cast<WebWheelEvent&>(wheelEvent));
 }
 
 void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
@@ -213,7 +213,7 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
 
     willHandleWheelEvent(wheelEvent);
 
-    ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent, rubberBandableEdges] {
+    ScrollingThread::dispatch([dispatcher = Ref { *this }, wheelEvent = wheelEvent.clone(), rubberBandableEdges] {
         dispatcher->scrollingThreadHandleWheelEvent(wheelEvent, rubberBandableEdges);
     });
 }

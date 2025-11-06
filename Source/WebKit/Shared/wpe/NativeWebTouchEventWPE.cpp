@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
 NativeWebTouchEvent::NativeWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
     : WebTouchEvent(WebEventFactory::createWebTouchEvent(event, WTFMove(touchPoints)))
 {

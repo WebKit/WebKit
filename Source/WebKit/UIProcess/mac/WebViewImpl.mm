@@ -1552,7 +1552,7 @@ bool WebViewImpl::becomeFirstResponder()
         RetainPtr<NSEvent> keyboardEvent;
         if ([event type] == NSEventTypeKeyDown || [event type] == NSEventTypeKeyUp)
             keyboardEvent = event;
-        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, NativeWebKeyboardEvent(keyboardEvent.get(), false, false, { }), [] { });
+        m_page->setInitialFocus(direction == NSSelectingNext, !!keyboardEvent, NativeWebKeyboardEvent::create(keyboardEvent.get(), false, false, Vector<WebCore::KeypressCommand> { }).ptr(), [] { });
     }
     return true;
 }
@@ -2239,7 +2239,7 @@ bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
         return false;
 
     auto previousEvent = setLastMouseDownEvent(event);
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get());
+    auto mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get());
     bool result = m_page->acceptsFirstMouse(event.eventNumber, mouseEvent);
     setLastMouseDownEvent(previousEvent.get());
     return result;
@@ -2268,7 +2268,7 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     }
 
     auto previousEvent = setLastMouseDownEvent(event);
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get());
+    auto mouseEvent = WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.get().get());
     bool result = m_page->shouldDelayWindowOrderingForEvent(mouseEvent);
     setLastMouseDownEvent(previousEvent.get());
     return result;
@@ -2491,8 +2491,7 @@ void WebViewImpl::scheduleMouseDidMoveOverElement(NSEvent *flagsChangedEvent)
     RetainPtr fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
         context:nullptr eventNumber:0 clickCount:0 pressure:0];
-    NativeWebMouseEvent webEvent(fakeEvent.get(), m_lastPressureEvent.get(), m_view.get().get());
-    m_page->dispatchMouseDidMoveOverElementAsynchronously(webEvent);
+    m_page->dispatchMouseDidMoveOverElementAsynchronously(NativeWebMouseEvent::create(fakeEvent.get(), m_lastPressureEvent.get(), m_view.get().get()));
 }
 
 WebCore::DestinationColorSpace WebViewImpl::colorSpace()
@@ -2693,8 +2692,7 @@ void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;
 
-    NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.get().get());
-    m_page->handleMouseEvent(webEvent);
+    m_page->handleMouseEvent(NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get()));
 
     m_lastPressureEvent = event;
 }
@@ -5081,8 +5079,7 @@ void WebViewImpl::scrollWheel(NSEvent *event)
         return;
     }
 
-    auto webEvent = NativeWebWheelEvent(event, m_view.getAutoreleased());
-    m_page->handleNativeWheelEvent(webEvent);
+    m_page->handleNativeWheelEvent(NativeWebWheelEvent::create(event, m_view.getAutoreleased()));
 }
 
 void WebViewImpl::swipeWithEvent(NSEvent *event)
@@ -5911,8 +5908,8 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // FIXME: Why is the firstResponder check needed?
     if (m_view.getAutoreleased() == [m_view.get() window].firstResponder) {
         interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-            if (weakThis)
-                weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+            if (CheckedPtr checkedThis = weakThis.get())
+                checkedThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, false, commands));
         });
         return YES;
     }
@@ -5929,8 +5926,8 @@ void WebViewImpl::keyUp(NSEvent *event)
 
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -5952,8 +5949,8 @@ void WebViewImpl::keyDown(NSEvent *event)
 
     m_isTextInsertionReplacingSoftSpace = false;
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, weakThis->m_isTextInsertionReplacingSoftSpace, commands));
     });
 }
 
@@ -5969,8 +5966,8 @@ void WebViewImpl::flagsChanged(NSEvent *event)
         return;
 
     interpretKeyEvent(event, [weakThis = WeakPtr { *this }, capturedEvent = retainPtr(event)](BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
-        if (weakThis)
-            weakThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent(capturedEvent.get(), handledByInputMethod, false, commands));
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->m_page->handleKeyboardEvent(NativeWebKeyboardEvent::create(capturedEvent.get(), handledByInputMethod, false, commands));
     });
 }
 
@@ -6016,15 +6013,12 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event)
                 return;
             if (handled)
                 LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
-            else {
-                NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased());
-                weakThis->m_page->handleMouseEvent(webEvent);
-            }
+            else
+                weakThis->m_page->handleMouseEvent(NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.getAutoreleased()));
         }];
         return;
     }
-    NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view.get().get());
-    m_page->handleMouseEvent(webEvent);
+    m_page->handleMouseEvent(NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get()));
 }
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event)

@@ -110,7 +110,7 @@ static void doMouseButtonEvent(WebPageProxy& page, MouseInteraction interaction,
     }
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
-    page.handleMouseEvent(NativeWebMouseEvent(hwnd, message, wparam, lparam, { }, page.deviceScaleFactor()));
+    page.handleMouseEvent(NativeWebMouseEvent::create(hwnd, message, wparam, lparam, { }, page.deviceScaleFactor()));
 }
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
@@ -329,8 +329,7 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     }
 
     auto hwnd = reinterpret_cast<HWND>(page.viewWidget());
-    NativeWebKeyboardEvent event(hwnd, message, wparam, lparam, { });
-    page.handleKeyboardEvent(event);
+    page.handleKeyboardEvent(NativeWebKeyboardEvent::create(hwnd, message, wparam, lparam, { }));
 }
 
 OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
@@ -359,8 +358,7 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
     //        If we need that information, the 4th argument should be set to an appropriate value, not 0.
     // https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-char
     // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-message-flags
-    NativeWebKeyboardEvent event(hwnd, WM_CHAR, keySequence.characterAt(0), 0, { });
-    page.handleKeyboardEvent(event);
+    page.handleKeyboardEvent(NativeWebKeyboardEvent::create(hwnd, WM_CHAR, keySequence.characterAt(0), 0, { }));
 }
 
 } // namespace WebKit

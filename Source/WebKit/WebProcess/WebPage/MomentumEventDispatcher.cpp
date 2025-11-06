@@ -75,7 +75,7 @@ bool MomentumEventDispatcher::eventShouldStartSyntheticMomentumPhase(WebCore::Pa
 bool MomentumEventDispatcher::handleWheelEvent(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
     m_lastRubberBandableEdges = rubberBandableEdges;
-    m_lastIncomingEvent = event;
+    m_lastIncomingEvent = &const_cast<WebWheelEvent&>(event);
 
     bool isMomentumEvent = event.isMomentumEvent();
 
@@ -169,7 +169,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
     ASSERT(m_currentGesture.active);
     ASSERT(m_currentGesture.initiatingEvent);
 
-    CheckedRef initiatingEvent = *m_currentGesture.initiatingEvent;
+    Ref initiatingEvent = *m_currentGesture.initiatingEvent;
     auto appKitScrollMultiplier = appKitScrollMultiplierForEvent(initiatingEvent);
     auto appKitAcceleratedDelta = delta * appKitScrollMultiplier;
     auto wheelTicks = appKitAcceleratedDelta / WebCore::Scrollbar::pixelsPerLineStep();
@@ -177,13 +177,12 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
 
     // FIXME: Ideally we would stick legitimate rawPlatformDeltas on the event,
     // but currently nothing will consume them, and we'd have to keep track of them separately.
-    WebWheelEvent syntheticEvent(
-        { WebEventType::Wheel, m_lastIncomingEvent->modifiers(), time },
+    auto syntheticEvent = WebWheelEvent::create(
+        WebEventInit { WebEventType::Wheel, m_lastIncomingEvent->modifiers(), time },
         initiatingEvent->position(),
         initiatingEvent->globalPosition(),
         appKitAcceleratedDelta,
         wheelTicks,
-        WebWheelEvent::ScrollByPixelWheelEvent,
         initiatingEvent->directionInvertedFromDevice(),
         WebWheelEvent::PhaseNone,
         phase,
@@ -191,10 +190,11 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         initiatingEvent->scrollCount(),
         delta,
         time,
-        { },
-        WebWheelEvent::MomentumEndType::Unknown);
+        std::optional<WebCore::FloatSize> { },
+        WebWheelEvent::MomentumEndType::Unknown,
+        WebWheelEvent::ScrollByPixelWheelEvent);
 
-    m_client->handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
+    m_client->handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, WTFMove(syntheticEvent), m_lastRubberBandableEdges);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     m_currentLogState.totalGeneratedOffset += appKitAcceleratedDelta.height();
@@ -212,7 +212,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
 
     m_currentGesture.active = true;
     m_currentGesture.pageIdentifier = pageIdentifier;
-    m_currentGesture.initiatingEvent = event;
+    m_currentGesture.initiatingEvent = &const_cast<WebWheelEvent&>(event);
     m_currentGesture.currentOffset = { };
     m_currentGesture.startTime = MonotonicTime::now();
     m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;

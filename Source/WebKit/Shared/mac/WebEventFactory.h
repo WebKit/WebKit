@@ -47,9 +47,9 @@ namespace WebKit {
 class WebEventFactory {
 public:
 #if USE(APPKIT)
-    static WebMouseEvent createWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *windowView);
-    static WebWheelEvent createWebWheelEvent(NSEvent *, NSView *windowView);
-    static WebKeyboardEvent createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
+    static Ref<WebMouseEvent> createWebMouseEvent(NSEvent *, NSEvent *lastPressureEvent, NSView *windowView);
+    static Ref<WebWheelEvent> createWebWheelEvent(NSEvent *, NSView *windowView);
+    static Ref<WebKeyboardEvent> createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
     static bool shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);
 
 #if defined(__OBJC__)

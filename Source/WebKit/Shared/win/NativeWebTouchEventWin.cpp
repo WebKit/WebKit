@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
 NativeWebTouchEvent::NativeWebTouchEvent()
     : WebTouchEvent(WebEventFactory::createWebTouchEvent())
 {

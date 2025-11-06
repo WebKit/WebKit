@@ -34,6 +34,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebGestureEvent);
+
 static inline std::optional<WebEventType> webEventTypeForNSEvent(NSEvent *event)
 {
     switch (event.phase) {
@@ -58,12 +60,12 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
     return location;
 }
 
-std::optional<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
+RefPtr<NativeWebGestureEvent> NativeWebGestureEvent::create(NSEvent *event, NSView *view)
 {
     auto type = webEventTypeForNSEvent(event);
     if (!type)
-        return std::nullopt;
-    return { NativeWebGestureEvent { *type, event, view } };
+        return nullptr;
+    return NativeWebGestureEvent::create(*type, event, view);
 }
 
 NativeWebGestureEvent::NativeWebGestureEvent(WebEventType type, NSEvent *event, NSView *view)

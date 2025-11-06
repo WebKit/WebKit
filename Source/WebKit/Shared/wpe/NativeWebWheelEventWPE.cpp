@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+
 NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
 {

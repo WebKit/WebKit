@@ -1025,7 +1025,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>&, CompletionHandler<void()>&&);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, WebKeyboardEvent*, CompletionHandler<void()>&&);
     
     void clearSelection(std::optional<WebCore::FrameIdentifier> = std::nullopt);
     void restoreSelectionInFocusedEditableElement();
@@ -1386,8 +1386,8 @@ public:
 
     bool isProcessingMouseEvents() const;
     void processNextQueuedMouseEvent();
-    void sendMouseEvent(WebCore::FrameIdentifier, const NativeWebMouseEvent&, std::optional<Vector<SandboxExtensionHandle>>&&);
-    void handleMouseEvent(const NativeWebMouseEvent&);
+    void sendMouseEvent(WebCore::FrameIdentifier, Ref<NativeWebMouseEvent>&&, std::optional<Vector<SandboxExtensionHandle>>&&);
+    void handleMouseEvent(Ref<NativeWebMouseEvent>&&);
     void dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent&);
 
     void doAfterProcessingAllPendingMouseEvents(Function<void()>&&);
@@ -1395,13 +1395,13 @@ public:
     void flushPendingMouseEventCallbacks();
 
     bool isProcessingWheelEvents() const;
-    void handleNativeWheelEvent(const NativeWebWheelEvent&);
+    void handleNativeWheelEvent(Ref<NativeWebWheelEvent>&&);
     void continueWheelEventHandling(const WebWheelEvent&, const WebCore::WheelEventHandlingResult&, std::optional<bool> willStartSwipe);
     void wheelEventHandlingCompleted(bool wasHandled);
 
     bool isProcessingKeyboardEvents() const;
-    void sendKeyEvent(const NativeWebKeyboardEvent&);
-    bool handleKeyboardEvent(const NativeWebKeyboardEvent&);
+    void sendKeyEvent(Ref<NativeWebKeyboardEvent>&&);
+    bool handleKeyboardEvent(Ref<NativeWebKeyboardEvent>&&);
 #if PLATFORM(WIN)
     void dispatchPendingCharEvents(const NativeWebKeyboardEvent&);
 #endif
@@ -1417,7 +1417,7 @@ public:
     void handleUnpreventableTouchEvent(const NativeWebTouchEvent&);
 
 #elif ENABLE(TOUCH_EVENTS)
-    void handleTouchEvent(IPC::Connection*, const NativeWebTouchEvent&);
+    void handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&);
 #endif
 
 #if PLATFORM(MAC)
@@ -2474,7 +2474,7 @@ public:
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
 
 #if PLATFORM(IOS_FAMILY)
-    void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+    void dispatchWheelEventWithoutScrolling(Ref<WebWheelEvent>&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS)

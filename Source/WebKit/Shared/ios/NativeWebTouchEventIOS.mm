@@ -36,6 +36,8 @@ namespace WebKit {
 
 #if ENABLE(TOUCH_EVENTS)
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebTouchEvent);
+
 static inline WebEventType webEventTypeForWKTouchEventType(WKTouchEventType type)
 {
     switch (type) {
@@ -136,15 +138,16 @@ Vector<WebTouchEvent> NativeWebTouchEvent::extractPredictedWebTouchEvents(const 
 
 NativeWebTouchEvent::NativeWebTouchEvent(const WKTouchEvent& event, UIKeyModifierFlags flags)
     : WebTouchEvent(
-        { webEventTypeForWKTouchEventType(event.type), webEventModifierFlags(flags), MonotonicTime::fromRawSeconds(event.timestamp) },
+        WebEventInit { webEventTypeForWKTouchEventType(event.type), webEventModifierFlags(flags), MonotonicTime::fromRawSeconds(event.timestamp) },
         extractWebTouchPoints(event),
-        extractCoalescedWebTouchEvents(event, flags),
-        extractPredictedWebTouchEvents(event, flags),
         positionForCGPoint(event.locationInRootViewCoordinates),
         event.isPotentialTap,
         event.inJavaScriptGesture,
         event.scale,
-        event.rotation)
+        event.rotation,
+        true,
+        extractCoalescedWebTouchEvents(event, flags),
+        extractPredictedWebTouchEvents(event, flags))
 {
 }
 

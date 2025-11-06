@@ -37,6 +37,15 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebEvent);
 
+WebEvent::WebEvent(WebEventInit&& init)
+    : m_type(init.type)
+    , m_modifiers(init.modifiers)
+    , m_timestamp(init.timestamp)
+    , m_authorizationToken(init.authorizationToken ? *init.authorizationToken : WTF::UUID::createVersion4())
+{
+
+}
+
 WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, MonotonicTime timestamp, WTF::UUID authorizationToken)
     : m_type(type)
     , m_modifiers(modifiers)

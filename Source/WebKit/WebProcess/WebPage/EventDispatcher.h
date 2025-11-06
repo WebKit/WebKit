@@ -109,7 +109,7 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     using TouchEventQueue = Vector<TouchEventData, 1>;
-    void takeQueuedTouchEventsForPage(const WebPage&, UniqueRef<TouchEventQueue>&);
+    std::unique_ptr<TouchEventQueue> takeQueuedTouchEventsForPage(const WebPage&);
 #endif
 
     void initializeConnection(IPC::Connection&);
@@ -121,7 +121,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers
-    void wheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges);
+    void wheelEvent(WebCore::PageIdentifier, Ref<WebWheelEvent>&&, WebCore::RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     void setScrollingAccelerationCurve(WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>);
 #endif

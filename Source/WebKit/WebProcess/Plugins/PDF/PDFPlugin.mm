@@ -964,7 +964,7 @@ NSEvent *PDFPlugin::nsEventForWebMouseEvent(const WebMouseEvent& event)
 
 bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
-    m_lastMouseEvent = event;
+    m_lastMouseEvent = &const_cast<WebMouseEvent&>(event);
 
     PlatformMouseEvent platformEvent = platform(event);
     IntPoint mousePosition = convertFromRootViewToPlugin(flooredIntPoint(event.position()));
@@ -1090,8 +1090,8 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event({ WebEventType::MouseDown, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
-    return handleContextMenuEvent(event);
+    auto event = WebMouseEvent::create(WebEventInit { WebEventType::MouseDown, OptionSet<WebEventModifier> { }, MonotonicTime::now() }, WebMouseEventButton::Right, 0, contentsPoint, contentsPoint, 0, 0, 0, 1, WebCore::ForceAtClick);
+    return handleContextMenuEvent(event.get());
 }
 
 bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)

@@ -783,7 +783,7 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
     return [NSURLConnection canHandleRequest:nsRequest.get()];
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::shouldDelayWindowOrderingEvent(Ref<WebKit::WebMouseEvent>&&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
     completionHandler(false);
@@ -5384,18 +5384,18 @@ static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const Expect
     return RemoteWebTouchEvent { transformer.error().remoteFrameID(), WTFMove(event) };
 }
 
-void WebPage::dispatchAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEventQueue>&& queue)
+void WebPage::dispatchAsynchronousTouchEvents(EventDispatcher::TouchEventQueue& queue)
 {
-    for (auto& touchEventData : queue.get()) {
+    for (auto& touchEventData : queue) {
         auto handleTouchEventResult = dispatchTouchEvent(touchEventData.frameID, touchEventData.event);
         if (auto& completionHandler = touchEventData.completionHandler)
             completionHandler(handleTouchEventResult.value_or(false), transformEventIfNecessary(handleTouchEventResult, WTFMove(touchEventData.event)));
     }
 }
 
-void WebPage::cancelAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEventQueue>&& queue)
+void WebPage::cancelAsynchronousTouchEvents(EventDispatcher::TouchEventQueue& queue)
 {
-    for (auto& touchEventData : queue.get()) {
+    for (auto& touchEventData : queue) {
         if (auto& completionHandler = touchEventData.completionHandler)
             completionHandler(true, std::nullopt);
     }

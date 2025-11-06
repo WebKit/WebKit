@@ -28,12 +28,13 @@
     CapsLockKey
 };
 
-class WebKit::WebEvent {
-    WebKit::WebEventType type();
-    OptionSet<WebKit::WebEventModifier> modifiers();
-    MonotonicTime timestamp();
-    WTF::UUID authorizationToken();
-};
+header: "WebEvent.h"
+[CustomHeader] struct WebKit::WebEventInit {
+    WebKit::WebEventType type;
+    OptionSet<WebKit::WebEventModifier> modifiers;
+    MonotonicTime timestamp;
+    std::optional<WTF::UUID> authorizationToken;
+}
 
 enum class WebKit::WebEventType : uint8_t {
     MouseDown,
@@ -60,7 +61,8 @@ enum class WebKit::WebEventType : uint8_t {
 #endif
 };
 
-class WebKit::WebKeyboardEvent : WebKit::WebEvent {
+[RefCounted] class WebKit::WebKeyboardEvent {
+    WebKit::WebEventInit init();
     String text();
 #if !PLATFORM(GTK) && !USE(LIBWPE)
     String unmodifiedText();
@@ -88,9 +90,7 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #endif
     bool isAutoRepeat();
     bool isKeypad();
-#if !PLATFORM(GTK) && !USE(LIBWPE)
     bool isSystemKey();
-#endif
 };
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
@@ -98,10 +98,9 @@ class WebKit::WebKeyboardEvent : WebKit::WebEvent {
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-class WebKit::WebTouchEvent : WebKit::WebEvent {
+[RefCounted] class WebKit::WebTouchEvent {
+    WebKit::WebEventInit init();
     Vector<WebKit::WebPlatformTouchPoint> touchPoints();
-    Vector<WebKit::WebTouchEvent> coalescedEvents();
-    Vector<WebKit::WebTouchEvent> predictedEvents();
 #if PLATFORM(IOS_FAMILY)
     WebCore::DoublePoint position();
     bool isPotentialTap();
@@ -110,6 +109,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     float gestureRotation();
     bool canPreventNativeGestures();
 #endif
+    Vector<Ref<WebKit::WebTouchEvent>> coalescedEvents();
+    Vector<Ref<WebKit::WebTouchEvent>> predictedEvents();
 };
 
 [Nested] enum class WebKit::WebPlatformTouchPoint::State : uint8_t {
@@ -164,7 +165,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 
 enum class WebKit::GestureWasCancelled : bool;
 
-class WebKit::WebMouseEvent : WebKit::WebEvent {
+[RefCounted] class WebKit::WebMouseEvent {
+    WebKit::WebEventInit init();
     WebKit::WebMouseEventButton button();
     unsigned short buttons();
     WebCore::DoublePoint position();
@@ -188,7 +190,7 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
 #endif
     WebKit::GestureWasCancelled gestureWasCancelled();
     WebCore::DoublePoint unadjustedMovementDelta();
-    Vector<WebKit::WebMouseEvent> coalescedEvents();
+    Vector<Ref<WebKit::WebMouseEvent>> coalescedEvents();
 };
 
 #if !PLATFORM(MAC) && PLATFORM(GTK)
@@ -196,7 +198,8 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-class WebKit::WebGestureEvent : WebKit::WebEvent {
+[RefCounted] class WebKit::WebGestureEvent {
+    WebKit::WebEventInit init();
     WebCore::IntPoint position();
     float gestureScale();
     float gestureRotation();
@@ -225,12 +228,12 @@ class WebKit::WebGestureEvent : WebKit::WebEvent {
     Natural,
 };
 
-class WebKit::WebWheelEvent : WebKit::WebEvent {
+[RefCounted] class WebKit::WebWheelEvent {
+    WebKit::WebEventInit init();
     WebCore::IntPoint position();
     WebCore::IntPoint globalPosition();
     WebCore::FloatSize delta();
     WebCore::FloatSize wheelTicks();
-    WebKit::WebWheelEvent::Granularity granularity();
 #if PLATFORM(COCOA)
     bool directionInvertedFromDevice();
 #endif
@@ -246,5 +249,6 @@ class WebKit::WebWheelEvent : WebKit::WebEvent {
     std::optional<WebCore::FloatSize> rawPlatformDelta();
     WebKit::WebWheelEvent::MomentumEndType momentumEndType();
 #endif
+    WebKit::WebWheelEvent::Granularity granularity();
 };
 

@@ -30,6 +30,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+
 NativeWebMouseEvent::NativeWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
     : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor, syntheticClickType))
 {

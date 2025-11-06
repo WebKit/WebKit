@@ -3564,7 +3564,7 @@ public:
     }
 
 private:
-    CheckedPtr<const WebEvent> m_previousCurrentEvent;
+    RefPtr<const WebEvent> m_previousCurrentEvent;
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -3605,7 +3605,7 @@ void WebPage::contextMenuForKeyEvent()
 }
 #endif
 
-void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
+void WebPage::mouseEvent(FrameIdentifier frameID, Ref<WebMouseEvent>&& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3618,7 +3618,7 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 #endif
 
     if (!shouldHandleEvent) {
-        send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), false, std::nullopt));
+        send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent->type(), false, std::nullopt));
         return;
     }
 
@@ -3630,17 +3630,17 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 
 #if !PLATFORM(IOS_FAMILY)
     if (!handled && m_headerBanner)
-        handled = Ref { *m_headerBanner }->mouseEvent(mouseEvent);
+        handled = Ref { *m_headerBanner }->mouseEvent(mouseEvent.get());
     if (!handled && m_footerBanner)
-        handled = Ref { *m_footerBanner }->mouseEvent(mouseEvent);
+        handled = Ref { *m_footerBanner }->mouseEvent(mouseEvent.get());
 #endif // !PLATFORM(IOS_FAMILY)
 
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID); !handled && frame) {
-        CurrentEvent currentEvent(mouseEvent);
-        auto mouseEventResult = frame->handleMouseEvent(mouseEvent);
+        CurrentEvent currentEvent(mouseEvent.get());
+        auto mouseEventResult = frame->handleMouseEvent(mouseEvent.get());
         if (auto remoteMouseEventData = mouseEventResult.remoteUserInputEventData()) {
             revokeSandboxExtensions(mouseEventSandboxExtensions);
-            send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), false, *remoteMouseEventData));
+            send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent->type(), false, *remoteMouseEventData));
             return;
         }
         handled = mouseEventResult.wasHandled();
@@ -3653,13 +3653,13 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
         if (!drawingArea)
             return false;
 
-        if (mouseEvent.type() != WebEventType::MouseMove)
+        if (mouseEvent->type() != WebEventType::MouseMove)
             return false;
 
-        if (mouseEvent.button() != WebMouseEventButton::None)
+        if (mouseEvent->button() != WebMouseEventButton::None)
             return false;
 
-        if (mouseEvent.force())
+        if (mouseEvent->force())
             return false;
 
         return true;
@@ -3674,14 +3674,14 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
         // This logic works in tandem with the mouse event queue in the UI process, which
         // coalesces mousemove events until the DidReceiveEvent() message is received after
         // the rendering update.
-        m_deferredDidReceiveMouseEvent = { { mouseEvent.type(), handled } };
+        m_deferredDidReceiveMouseEvent = { { mouseEvent->type(), handled } };
         return;
     }
 
-    send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent.type(), handled, std::nullopt));
+    send(Messages::WebPageProxy::DidReceiveEventIPC(mouseEvent->type(), handled, std::nullopt));
 
 #if PLATFORM(IOS_FAMILY)
-    if (mouseEvent.type() == WebEventType::MouseUp)
+    if (mouseEvent->type() == WebEventType::MouseUp)
         removeTextInteractionSources(TextInteractionSource::Mouse);
 #endif
 }
@@ -3731,9 +3731,9 @@ void WebPage::flushDeferredDidReceiveMouseEvent()
         send(Messages::WebPageProxy::DidReceiveEventIPC(*info->type, info->handled, std::nullopt));
 }
 
-void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>)>&& completionHandler)
+void WebPage::performHitTestForMouseEvent(Ref<WebMouseEvent>&& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>)>&& completionHandler)
 {
-    auto modifiers = event.modifiers();
+    auto modifiers = event->modifiers();
     RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
     if (!localMainFrame || !localMainFrame->view())
         return completionHandler({ }, modifiers);
@@ -3749,7 +3749,7 @@ void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, Completion
     completionHandler(WTFMove(hitTestResultData), modifiers);
 }
 
-void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
+void WebPage::handleWheelEvent(FrameIdentifier frameID, Ref<WebWheelEvent>&& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
 #if ENABLE(ASYNC_SCROLLING)
     RefPtr remoteScrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinator>(scrollingCoordinator());
@@ -3759,7 +3759,7 @@ void WebPage::handleWheelEvent(FrameIdentifier frameID, const WebWheelEvent& eve
     UNUSED_PARAM(willStartSwipe);
 #endif
 
-    auto [handleWheelEventResult, _] = wheelEvent(frameID, event, processingSteps);
+    auto [handleWheelEventResult, _] = wheelEvent(frameID, event.get(), processingSteps);
 #if ENABLE(ASYNC_SCROLLING)
     if (remoteScrollingCoordinator) {
         auto gestureInfo = remoteScrollingCoordinator->takeCurrentWheelGestureInfo();
@@ -3791,36 +3791,36 @@ std::pair<HandleUserInputEventResult, OptionSet<EventHandling>> WebPage::wheelEv
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::dispatchWheelEventWithoutScrolling(FrameIdentifier frameID, const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::dispatchWheelEventWithoutScrolling(FrameIdentifier frameID, Ref<WebWheelEvent>&& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(KINETIC_SCROLLING)
     RefPtr localMainFrame = this->localMainFrame();
     auto gestureState =  localMainFrame ? localMainFrame->eventHandler().wheelScrollGestureState() : std::nullopt;
-    bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking || wheelEvent.phase() == WebWheelEvent::PhaseBegan;
+    bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking || wheelEvent->phase() == WebWheelEvent::PhaseBegan;
 #else
     bool isCancelable = true;
 #endif
-    auto [result, handling] = this->wheelEvent(frameID, wheelEvent, { isCancelable ? WheelEventProcessingSteps::BlockingDOMEventDispatch : WheelEventProcessingSteps::NonBlockingDOMEventDispatch });
+    auto [result, handling] = this->wheelEvent(frameID, wheelEvent.get(), { isCancelable ? WheelEventProcessingSteps::BlockingDOMEventDispatch : WheelEventProcessingSteps::NonBlockingDOMEventDispatch });
     // The caller of dispatchWheelEventWithoutScrolling never cares about DidReceiveEvent being sent back.
     completionHandler(result.wasHandled() && handling.contains(EventHandling::DefaultPrevented));
 }
 #endif
 
-void WebPage::keyEvent(FrameIdentifier frameID, const WebKeyboardEvent& keyboardEvent)
+void WebPage::keyEvent(FrameIdentifier frameID, Ref<WebKeyboardEvent>&& keyboardEvent)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
     m_internals->userActivity.impulse();
 
-    PlatformKeyboardEvent::setCurrentModifierState(platform(keyboardEvent).modifiers());
+    PlatformKeyboardEvent::setCurrentModifierState(platform(keyboardEvent.get()).modifiers());
 
-    CurrentEvent currentEvent(keyboardEvent);
+    CurrentEvent currentEvent(keyboardEvent.get());
 
     bool handled = false;
     if (RefPtr frame = WebProcess::singleton().webFrame(frameID))
-        handled = frame->handleKeyEvent(keyboardEvent);
+        handled = frame->handleKeyEvent(keyboardEvent.get());
 
-    send(Messages::WebPageProxy::DidReceiveEventIPC(keyboardEvent.type(), handled, std::nullopt));
+    send(Messages::WebPageProxy::DidReceiveEventIPC(keyboardEvent->type(), handled, std::nullopt));
 }
 
 bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& event)
@@ -3983,17 +3983,17 @@ void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, 
         m_potentialTapSecurityOrigin = targetDocument->securityOrigin();
 }
 #elif ENABLE(TOUCH_EVENTS)
-void WebPage::touchEvent(const WebTouchEvent& touchEvent, CompletionHandler<void(std::optional<WebEventType>, bool)>&& completionHandler)
+void WebPage::touchEvent(Ref<WebTouchEvent>&& touchEvent, CompletionHandler<void(std::optional<WebEventType>, bool)>&& completionHandler)
 {
     RefPtr localMainFrame = this->localMainFrame();
     if (!localMainFrame)
         return;
 
-    CurrentEvent currentEvent(touchEvent);
+    CurrentEvent currentEvent(touchEvent.get());
 
-    bool handled = handleTouchEvent(localMainFrame->frameID(), touchEvent, m_page.get()).value_or(false);
+    bool handled = handleTouchEvent(localMainFrame->frameID(), touchEvent.get(), m_page.get()).value_or(false);
 
-    completionHandler(touchEvent.type(), handled);
+    completionHandler(touchEvent->type(), handled);
 }
 #endif
 
@@ -4159,7 +4159,7 @@ void WebPage::viewWillEndLiveResize()
         view->willEndLiveResize();
 }
 
-void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const std::optional<WebKeyboardEvent>& event, CompletionHandler<void()>&& completionHandler)
+void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, RefPtr<WebKeyboardEvent>&& event, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
         return completionHandler();
@@ -4173,7 +4173,7 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const std
     frame->protectedDocument()->setFocusedElement(nullptr);
 
     if (isKeyboardEventValid && event && event->type() == WebEventType::KeyDown) {
-        PlatformKeyboardEvent platformEvent(platform(CheckedRef { *event }));
+        PlatformKeyboardEvent platformEvent(platform(*event));
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::Type::RawKeyDown);
         focusController->setInitialFocus(forward ? FocusDirection::Forward : FocusDirection::Backward, &KeyboardEvent::create(platformEvent, &frame->windowProxy()).get());
         completionHandler();
