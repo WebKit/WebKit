@@ -34,6 +34,8 @@
 #import "Logging.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
+#import "MediaStrategy.h"
+#import "PlatformStrategies.h"
 #import "SourceBufferParserAVFObjC.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import "VideoMediaSampleRenderer.h"
@@ -49,6 +51,16 @@ namespace WebCore {
 #pragma mark -
 #pragma mark MediaSourcePrivateAVFObjC
 
+WorkQueue& MediaSourcePrivateAVFObjC::queueSingleton()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
+    std::call_once(onceKey, [] {
+        workQueue.construct(hasPlatformStrategies() && platformStrategies()->mediaStrategy()->hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier::AVFoundationMSE) ? WorkQueue::create("MediaSourcePrivateAVFObjC"_s) : Ref { WorkQueue::mainSingleton() });
+    });
+    return workQueue.get();
+}
+
 Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient& client)
 {
     auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateAVFObjC(parent, client));
@@ -57,7 +69,7 @@ Ref<MediaSourcePrivateAVFObjC> MediaSourcePrivateAVFObjC::create(MediaPlayerPriv
 }
 
 MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC& parent, MediaSourcePrivateClient& client)
-    : MediaSourcePrivate(client)
+    : MediaSourcePrivate(client, queueSingleton())
     , m_player(parent)
 #if !RELEASE_LOG_DISABLED
     , m_logger(parent.mediaPlayerLogger())
@@ -79,8 +91,10 @@ void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
 {
     ASSERT(player);
     m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
-    for (RefPtr sourceBuffer : m_sourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->setAudioVideoRenderer(m_player->audioVideoRenderer());
+    ensureOnDispatcher([protectedThis = Ref { *this }, renderer = m_player.get()->audioVideoRenderer()] {
+        for (Ref sourceBuffer : protectedThis->sourceBuffers())
+            downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->setAudioVideoRenderer(renderer);
+    });
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration& configuration, RefPtr<SourceBufferPrivate>& outPrivate)
@@ -94,8 +108,19 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
-        return AddStatus::NotSupported;
+
+    AddStatus returnedStatus;
+
+    callOnMainRunLoopAndWait([&] {
+        if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
+            returnedStatus = AddStatus::NotSupported;
+            return;
+        }
+        returnedStatus = AddStatus::Ok;
+    });
+
+    if (returnedStatus != AddStatus::Ok)
+        return returnedStatus;
 
     RefPtr parser = SourceBufferParser::create(contentType, configuration);
     if (!parser)
@@ -108,25 +133,28 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     newSourceBuffer->setResourceOwner(m_resourceOwner);
     outPrivate = newSourceBuffer.copyRef();
     newSourceBuffer->setMediaSourceDuration(duration());
-    m_sourceBuffers.append(WTFMove(newSourceBuffer));
-
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(WTFMove(newSourceBuffer));
+    }
     return AddStatus::Ok;
 }
 
 void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
 {
+    assertIsCurrent(m_dispatcher.get());
     if (downcast<SourceBufferPrivateAVFObjC>(&sourceBuffer) == m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo = nullptr;
-    if (m_bufferedRanges.contains(&sourceBuffer))
-        m_bufferedRanges.remove(&sourceBuffer);
-
     MediaSourcePrivate::removeSourceBuffer(sourceBuffer);
 }
 
 void MediaSourcePrivateAVFObjC::notifyActiveSourceBuffersChanged()
 {
-    if (auto player = this->player())
-        player->notifyActiveSourceBuffersChanged();
+    if (RefPtr player = this->player()) {
+        ensureOnMainThread([player] {
+            player->notifyActiveSourceBuffersChanged();
+        });
+    }
 }
 
 RefPtr<MediaPlayerPrivateInterface> MediaSourcePrivateAVFObjC::player() const
@@ -137,19 +165,26 @@ RefPtr<MediaPlayerPrivateInterface> MediaSourcePrivateAVFObjC::player() const
 void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime& duration)
 {
     MediaSourcePrivate::durationChanged(duration);
-    if (auto player = platformPlayer())
-        player->durationChanged();
+    if (RefPtr player = platformPlayer()) {
+        ensureOnMainThread([player] {
+            player->durationChanged();
+        });
+    }
 }
 
 void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
 {
-    if (auto player = platformPlayer(); status == EndOfStreamStatus::NoError && player)
-        player->setNetworkState(MediaPlayer::NetworkState::Loaded);
+    if (RefPtr player = platformPlayer(); status == EndOfStreamStatus::NoError && player) {
+        ensureOnMainThread([player] {
+            player->setNetworkState(MediaPlayer::NetworkState::Loaded);
+        });
+    }
     MediaSourcePrivate::markEndOfStream(status);
 }
 
 FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 {
+    assertIsCurrent(m_dispatcher.get());
     FloatSize result;
 
     for (auto* sourceBuffer : m_activeSourceBuffers)
@@ -160,6 +195,7 @@ FloatSize MediaSourcePrivateAVFObjC::naturalSize() const
 
 void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFObjC& sourceBuffer)
 {
+    assertIsCurrent(m_dispatcher.get());
     bool hasSelectedVideo = sourceBuffer.hasSelectedVideo();
     if (m_sourceBufferWithSelectedVideo == &sourceBuffer && !hasSelectedVideo)
         setSourceBufferWithSelectedVideo(nullptr);
@@ -169,14 +205,20 @@ void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFOb
 
 void MediaSourcePrivateAVFObjC::flushAndReenqueueActiveVideoSourceBuffers()
 {
-    for (auto* sourceBuffer : m_activeSourceBuffers)
-        downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushAndReenqueueVideo();
+    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        assertIsCurrent(protectedThis->m_dispatcher.get());
+        for (auto* sourceBuffer : protectedThis->m_activeSourceBuffers)
+            downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->flushAndReenqueueVideo();
+    });
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
 bool MediaSourcePrivateAVFObjC::waitingForKey() const
 {
-    return std::ranges::any_of(m_sourceBuffers, [](auto& sourceBuffer) {
+    return std::ranges::any_of(sourceBuffers(), [](auto& sourceBuffer) {
         return sourceBuffer->waitingForKey();
     });
 }
@@ -184,6 +226,7 @@ bool MediaSourcePrivateAVFObjC::waitingForKey() const
 
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
+    assertIsCurrent(m_dispatcher.get());
     if (m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo->setVideoRenderer(false);
 
@@ -209,7 +252,7 @@ void MediaSourcePrivateAVFObjC::failedToCreateRenderer(RendererType type)
 bool MediaSourcePrivateAVFObjC::needsVideoLayer() const
 {
     assertIsMainThread();
-    return std::ranges::any_of(m_sourceBuffers, [](auto& sourceBuffer) {
+    return std::ranges::any_of(sourceBuffers(), [](auto& sourceBuffer) {
         return downcast<SourceBufferPrivateAVFObjC>(sourceBuffer)->needsVideoLayer();
     });
 }
@@ -217,8 +260,10 @@ bool MediaSourcePrivateAVFObjC::needsVideoLayer() const
 void MediaSourcePrivateAVFObjC::bufferedChanged(const PlatformTimeRanges& buffered)
 {
     MediaSourcePrivate::bufferedChanged(buffered);
-    if (RefPtr player = m_player.get())
-        player->bufferedChanged();
+    ensureOnMainThread([player = m_player] {
+        if (RefPtr protectedPlayer = player.get())
+            protectedPlayer->bufferedChanged();
+    });
 }
 
 }

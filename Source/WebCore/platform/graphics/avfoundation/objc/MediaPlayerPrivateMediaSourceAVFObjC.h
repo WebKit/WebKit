@@ -40,9 +40,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/NativePromise.h>
-#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAsset;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
@@ -66,40 +64,39 @@ class VideoMediaSampleRenderer;
 class VideoTrackPrivate;
 
 class MediaPlayerPrivateMediaSourceAVFObjC
-    : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
-    , public RefCounted<MediaPlayerPrivateMediaSourceAVFObjC>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC, WTF::DestructionThread::Main>
     , public MediaPlayerPrivateInterface
     , private LoggerHelper
 {
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    
     explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer&);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
-
+    
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::AVFObjCMSE; }
-
+    
     static void registerMediaEngine(MediaEngineRegistrar);
-
+    
     // MediaPlayer Factory Methods
     static bool isAvailable();
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&);
-
+    
     using TrackIdentifier = AudioVideoRenderer::TrackIdentifier;
     void addAudioTrack(TrackIdentifier);
     void removeAudioTrack(TrackIdentifier);
-
+    
     void removeAudioTrack(AudioTrackPrivate&);
     void removeVideoTrack(VideoTrackPrivate&);
     void removeTextTrack(InbandTextTrackPrivate&);
-
+    
     MediaPlayer::NetworkState networkState() const override;
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
-
+    
     void seekInternal();
     void startSeek(const MediaTime&);
     void cancelPendingSeek();
@@ -108,12 +105,13 @@ public:
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
     void durationChanged();
-
+    
     void effectiveRateChanged();
     void setNaturalSize(const FloatSize&);
     void characteristicsChanged();
-
+    
     MediaTime currentTime() const override;
+    MediaTime currentOrPendingSeekTime() const final { return currentTime(); }
     bool timeIsProgressing() const final;
     MediaTime clampTimeToSensicalValue(const MediaTime&) const;
 
@@ -348,7 +346,7 @@ private:
     ThreadSafeWeakPtr<CDMSessionAVContentKeySession> m_session;
 #endif
     MediaPlayer::NetworkState m_networkState WTF_GUARDED_BY_CAPABILITY(mainThread);
-    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+    MediaPlayer::ReadyState m_readyState WTF_GUARDED_BY_CAPABILITY(mainThread) { MediaPlayer::ReadyState::HaveNothing };
     bool m_readyStateIsWaitingForAvailableFrame WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     MediaTime m_duration WTF_GUARDED_BY_CAPABILITY(mainThread) { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime WTF_GUARDED_BY_CAPABILITY(mainThread);

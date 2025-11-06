@@ -66,8 +66,11 @@ MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const Cont
     if (MockMediaPlayerMediaSource::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return AddStatus::NotSupported;
 
-    m_sourceBuffers.append(MockSourceBufferPrivate::create(*this));
-    outPrivate = m_sourceBuffers.last();
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(MockSourceBufferPrivate::create(*this));
+        outPrivate = m_sourceBuffers.last();
+    }
     outPrivate->setMediaSourceDuration(duration());
 
     return AddStatus::Ok;

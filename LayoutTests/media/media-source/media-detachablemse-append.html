@@ -65,7 +65,7 @@
         testExpected('video.duration > 0', true);
         await Promise.all([waitFor(video, 'loadedmetadata'), waitFor(video, 'loadeddata')]);
         testExpected('video.buffered.length', 1);
-        testExpected('video.readyState', readyState);
+        testExpected('video.readyState >= readyState', true);
 
         // Tracks are re-created.
         testExpected('video.videoTracks.length >= 1', true);

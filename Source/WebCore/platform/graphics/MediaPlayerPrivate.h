@@ -130,6 +130,7 @@ public:
 
     virtual MediaTime duration() const { return MediaTime::zeroTime(); }
 
+    // Methods need to be thread-safe should MSE be enabled in a worker.
     WEBCORE_EXPORT virtual MediaTime currentOrPendingSeekTime() const;
     virtual MediaTime currentTime() const { return MediaTime::zeroTime(); }
     virtual bool timeIsProgressing() const { return !paused(); }

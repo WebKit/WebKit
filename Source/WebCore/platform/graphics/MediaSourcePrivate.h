@@ -82,6 +82,7 @@ public:
     virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) = 0;
     virtual void removeSourceBuffer(SourceBufferPrivate&);
+    Vector<Ref<SourceBufferPrivate>> sourceBuffers() const;
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
     virtual void notifyActiveSourceBuffersChanged() = 0;
     virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides. Must be thread-safe
@@ -133,8 +134,9 @@ protected:
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
 
-    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
-    Vector<SourceBufferPrivate*> m_activeSourceBuffers;
+    mutable Lock m_lock;
+    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<SourceBufferPrivate*> m_activeSourceBuffers WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::atomic<bool> m_isEnded { false }; // Set on MediaSource's dispatcher.
     std::atomic<MediaSourceReadyState> m_readyState; // Set on MediaSource's dispatcher.
     std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
@@ -145,7 +147,6 @@ private:
     void updateBufferedRanges();
     void updateTracksType();
 
-    mutable Lock m_lock;
     MediaTime m_duration WTF_GUARDED_BY_LOCK(m_lock) { MediaTime::invalidTime() };
     PlatformTimeRanges m_buffered WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;

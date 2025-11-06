@@ -214,7 +214,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& o
     assertIsMainThread();
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_renderer->notifyWhenErrorOccurs([weakThis = WeakPtr { *this }](PlatformMediaError) {
+    m_renderer->notifyWhenErrorOccurs([weakThis = ThreadSafeWeakPtr { *this }](PlatformMediaError) {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get()) {
                 protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
@@ -223,21 +223,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& o
         });
     });
 
-    m_renderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyFirstFrameAvailable([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && !protectedThis->seeking())
                 protectedThis->setHasAvailableVideoFrame(true);
         });
     });
 
-    m_renderer->notifyWhenRequiresFlushToResume([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyWhenRequiresFlushToResume([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setLayerRequiresFlush();
         });
     });
 
-    m_renderer->notifyRenderingModeChanged([weakThis = WeakPtr { *this }] {
+    m_renderer->notifyRenderingModeChanged([weakThis = ThreadSafeWeakPtr { *this }] {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RefPtr player = protectedThis->m_player.get())
@@ -246,21 +246,21 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& o
         });
     });
 
-    m_renderer->notifySizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+    m_renderer->notifySizeChanged([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setNaturalSize(size);
         });
     });
 
-    m_renderer->notifyEffectiveRateChanged([weakThis = WeakPtr { *this }](double) {
+    m_renderer->notifyEffectiveRateChanged([weakThis = ThreadSafeWeakPtr { *this }](double) {
         ensureOnMainThread([weakThis] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->effectiveRateChanged();
         });
     });
 
-    m_renderer->notifyVideoLayerSizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+    m_renderer->notifyVideoLayerSizeChanged([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
             if (RefPtr protectedThis = weakThis.get()) {
                 if (RefPtr player = protectedThis->m_player.get())
@@ -438,7 +438,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToSensicalValue(const M
 bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
 {
     assertIsMainThread();
-    m_renderer->setTimeObserver(10_ms, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](const MediaTime& currentTime) mutable {
+    m_renderer->setTimeObserver(10_ms, [weakThis = ThreadSafeWeakPtr { *this }, callback = WTFMove(callback)](const MediaTime& currentTime) mutable {
         // This method is only used with the RemoteMediaPlayerProxy and RemoteAudioVideoRendererProxyManager where m_renderer is an AudioVideoRendererAVFObjC that runs on the main thread only (for now).
         assertIsMainThread();
         if (RefPtr protectedThis = weakThis.get())
@@ -517,7 +517,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     cancelPendingSeek();
     m_renderer->prepareToSeek();
 
-    mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::currentSingleton(), [weakThis = WeakPtr { *this }, seekTime = m_lastSeekTime] (auto&& result) mutable {
+    mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::currentSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, seekTime = m_lastSeekTime] (auto&& result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
             return; // seek cancelled;
@@ -533,7 +533,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::startSeek(const MediaTime& seekTime)
         ALWAYS_LOG(LOGIDENTIFIER, "Seeking pending, cancel earlier seek");
         cancelPendingSeek();
     }
-    m_renderer->seekTo(seekTime)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime](auto&& result) {
+    m_renderer->seekTo(seekTime)->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, seekTime](auto&& result) {
         assertIsMainThread();
         if (!result && result.error() != PlatformMediaError::RequiresFlushToResume)
             return; // cancelled.
@@ -629,6 +629,7 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
 {
     if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
         return mediaSourcePrivate->mediaPlayerReadyState();
+    assertIsMainThread();
     return m_readyState;
 }
 
@@ -650,7 +651,6 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    ASSERT_NOT_REACHED();
     return PlatformTimeRanges::emptyRanges();
 }
 
@@ -682,7 +682,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
 
             auto logSiteIdentifier = LOGIDENTIFIER;
             UNUSED_PARAM(logSiteIdentifier);
-            m_renderer->notifyTimeReachedAndStall(gapStart, [weakThis = WeakPtr { *this }, logSiteIdentifier](const MediaTime& stallTime) {
+            m_renderer->notifyTimeReachedAndStall(gapStart, [weakThis = ThreadSafeWeakPtr { *this }, logSiteIdentifier](const MediaTime& stallTime) {
                 ensureOnMainThread([weakThis, logSiteIdentifier, stallTime] {
                     RefPtr protectedThis = weakThis.get();
                     if (!protectedThis)
@@ -1222,7 +1222,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
         return;
 
     m_isGatheringVideoFrameMetadata = true;
-    m_renderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+    m_renderer->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
         ensureOnMainThread([weakThis, presentationTime, displayTime] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);

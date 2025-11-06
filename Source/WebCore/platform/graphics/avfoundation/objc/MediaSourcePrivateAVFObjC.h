@@ -103,11 +103,13 @@ public:
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
 
+    static WorkQueue& queueSingleton();
+
 private:
     friend class SourceBufferPrivateAVFObjC;
 
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
-    MediaPlayerPrivateMediaSourceAVFObjC* platformPlayer() const { return m_player.get(); }
+    RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> platformPlayer() const { return m_player.get(); }
 
     void notifyActiveSourceBuffersChanged() final;
     void removeSourceBuffer(SourceBufferPrivate&) final;
@@ -116,15 +118,14 @@ private:
 
     void bufferedChanged(const PlatformTimeRanges&) final;
 
-    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player;
-    SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo { nullptr };
+    ThreadSafeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player;
+    SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { nullptr };
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 
-    HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
     ProcessIdentity m_resourceOwner;
 };
 

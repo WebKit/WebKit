@@ -133,9 +133,10 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     if (returnedStatus != AddStatus::Ok)
         return returnedStatus;
 
-    ensureOnDispatcher([protectedThis = Ref { *this }, this, sourceBuffer = returnedSourceBuffer]() mutable {
-        m_sourceBuffers.append(WTFMove(sourceBuffer));
-    });
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(returnedSourceBuffer);
+    };
     outPrivate = WTFMove(returnedSourceBuffer);
     return returnedStatus;
 }
