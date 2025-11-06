@@ -70,7 +70,7 @@ void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
                 message->clear();
         }
     }
-    static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).discardInjectedScriptsFor(window);
+    Ref { static_cast<WebInjectedScriptManager&>(m_injectedScriptManager) }->discardInjectedScriptsFor(window);
 }
 
 void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentifier, const ResourceResponse& response)

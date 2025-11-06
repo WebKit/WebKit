@@ -98,7 +98,7 @@ private:
 
     WeakRef<LocalFrame> m_frame;
     const Ref<InstrumentingAgents> m_instrumentingAgents;
-    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<WTF::Stopwatch> m_executionStopwatch;
