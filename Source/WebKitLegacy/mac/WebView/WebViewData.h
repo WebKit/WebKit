@@ -27,6 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "LegacyWebPageDebuggable.h"
+#import "LegacyWebPageInspectorController.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebUIDelegate.h"
 #if HAVE(TOUCH_BAR)
@@ -326,5 +328,8 @@ class WebSelectionServiceController;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     std::unique_ptr<WebMediaPlaybackTargetPicker> m_playbackTargetPicker;
 #endif
+
+    RefPtr<LegacyWebPageInspectorController> inspectorController;
+    RefPtr<LegacyWebPageDebuggable> inspectorDebuggable;
 }
 @end

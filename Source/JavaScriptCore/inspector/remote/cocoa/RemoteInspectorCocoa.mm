@@ -514,6 +514,7 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
         [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
         break;
     case RemoteInspectionTarget::Type::WebPage:
+    case RemoteInspectionTarget::Type::LegacyWebPage:
         [listing setObject:target.url().createNSString().get() forKey:WIRURLKey];
         [listing setObject:target.name().createNSString().get() forKey:WIRTitleKey];
         [listing setObject:target.nameOverride().createNSString().get() forKey:WIROverrideNameKey];

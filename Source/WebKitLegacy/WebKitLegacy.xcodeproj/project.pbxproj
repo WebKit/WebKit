@@ -649,6 +649,10 @@
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
 		E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AEF97A1C0DF4BC00B01727 /* WebResourceLoadScheduler.h */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
+		F36D2BC52EBE994B0001B4A8 /* LegacyWebPageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = F36D2BC12EBE994B0001B4A8 /* LegacyWebPageDebuggable.h */; };
+		F36D2BC62EBE994B0001B4A8 /* LegacyWebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = F36D2BC32EBE994B0001B4A8 /* LegacyWebPageInspectorController.h */; };
+		F36D2BC72EBE994B0001B4A8 /* LegacyWebPageInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36D2BC42EBE994B0001B4A8 /* LegacyWebPageInspectorController.cpp */; };
+		F36D2BC82EBE994B0001B4A8 /* LegacyWebPageDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36D2BC22EBE994B0001B4A8 /* LegacyWebPageDebuggable.cpp */; };
 		F439B1A1284D8C39003DE041 /* WebHTMLViewForTestingMac.h in Headers */ = {isa = PBXBuildFile; fileRef = F439B1A0284D8C39003DE041 /* WebHTMLViewForTestingMac.h */; };
 		F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1484,6 +1488,10 @@
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F36D2BC12EBE994B0001B4A8 /* LegacyWebPageDebuggable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LegacyWebPageDebuggable.h; path = WebCoreSupport/LegacyWebPageDebuggable.h; sourceTree = SOURCE_ROOT; };
+		F36D2BC22EBE994B0001B4A8 /* LegacyWebPageDebuggable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyWebPageDebuggable.cpp; path = WebCoreSupport/LegacyWebPageDebuggable.cpp; sourceTree = SOURCE_ROOT; };
+		F36D2BC32EBE994B0001B4A8 /* LegacyWebPageInspectorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LegacyWebPageInspectorController.h; path = WebCoreSupport/LegacyWebPageInspectorController.h; sourceTree = SOURCE_ROOT; };
+		F36D2BC42EBE994B0001B4A8 /* LegacyWebPageInspectorController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyWebPageInspectorController.cpp; path = WebCoreSupport/LegacyWebPageInspectorController.cpp; sourceTree = SOURCE_ROOT; };
 		F439B1A0284D8C39003DE041 /* WebHTMLViewForTestingMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHTMLViewForTestingMac.h; sourceTree = "<group>"; };
 		F4C98E5C1DD6476F0012FDEC /* DOMHTMLElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLElementPrivate.h; sourceTree = "<group>"; };
 		F4F665C11DD67672007714B4 /* WebAutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAutocapitalizeTypes.h; sourceTree = "<group>"; };
@@ -2529,6 +2537,10 @@
 				FA96E4AF2AAAFA920090C5A3 /* LegacyHistoryItemClient.mm */,
 				5CB05C7F29CA0E7000CC1AA0 /* LegacySocketProvider.cpp */,
 				5CB05C7E29CA0E7000CC1AA0 /* LegacySocketProvider.h */,
+				F36D2BC22EBE994B0001B4A8 /* LegacyWebPageDebuggable.cpp */,
+				F36D2BC12EBE994B0001B4A8 /* LegacyWebPageDebuggable.h */,
+				F36D2BC42EBE994B0001B4A8 /* LegacyWebPageInspectorController.cpp */,
+				F36D2BC32EBE994B0001B4A8 /* LegacyWebPageInspectorController.h */,
 				5CA46E7721F1451D00CE86B4 /* NetworkStorageSessionMap.cpp */,
 				5CA46E7621F1451D00CE86B4 /* NetworkStorageSessionMap.h */,
 				5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */,
@@ -2862,6 +2874,8 @@
 				9364006F23996E81001E185E /* InProcessIDBServer.h in Headers */,
 				FA96E4B02AAAFA920090C5A3 /* LegacyHistoryItemClient.h in Headers */,
 				5CB05C8229CA0E7000CC1AA0 /* LegacySocketProvider.h in Headers */,
+				F36D2BC52EBE994B0001B4A8 /* LegacyWebPageDebuggable.h in Headers */,
+				F36D2BC62EBE994B0001B4A8 /* LegacyWebPageInspectorController.h in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
 				93D4379B1D57ABEF00AB85EA /* ObjCEventListener.h in Headers */,
 				93D4379D1D57ABEF00AB85EA /* ObjCNodeFilterCondition.h in Headers */,
@@ -3474,6 +3488,8 @@
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				9364006E23996E81001E185E /* InProcessIDBServer.cpp in Sources */,
 				FA96E4B12AAAFA920090C5A3 /* LegacyHistoryItemClient.mm in Sources */,
+				F36D2BC82EBE994B0001B4A8 /* LegacyWebPageDebuggable.cpp in Sources */,
+				F36D2BC72EBE994B0001B4A8 /* LegacyWebPageInspectorController.cpp in Sources */,
 				A10C1D601820300E0036883A /* PopupMenuIOS.mm in Sources */,
 				5C40CD2122D8F9C000E9DAD5 /* PopupMenuMac.mm in Sources */,
 				A10C1D611820300E0036883A /* SearchPopupMenuIOS.cpp in Sources */,

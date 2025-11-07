@@ -29,6 +29,7 @@
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 
@@ -64,6 +65,7 @@ static void deleteSetting(const String& key)
 
 void WebInspectorClient::sendMessageToFrontend(const String& message)
 {
+    ASSERT(m_frontendClient);
     m_frontendClient->frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 

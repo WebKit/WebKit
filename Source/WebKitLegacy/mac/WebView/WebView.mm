@@ -39,6 +39,8 @@
 #import "DOMRangeInternal.h"
 #import "LegacyHistoryItemClient.h"
 #import "LegacySocketProvider.h"
+#import "LegacyWebPageDebuggable.h"
+#import "LegacyWebPageInspectorController.h"
 #import "PageStorageSessionProvider.h"
 #import "SocketStreamHandleImpl.h"
 #import "StorageThread.h"
@@ -1524,8 +1526,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebCore::provideMediaKeySystemTo(*_private->page.get(), WebMediaKeySystemClient::singleton());
 #endif
 
+    _private->inspectorController = LegacyWebPageInspectorController::create(*_private->page);
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setInspectable(true);
+    _private->inspectorDebuggable = LegacyWebPageDebuggable::create(*_private->inspectorController, *_private->page);
+    _private->inspectorDebuggable->init();
+    _private->inspectorDebuggable->setInspectable(true);
 #endif
 
     _private->page->setCanStartMedia([self window]);
@@ -1791,8 +1796,11 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     _private->page->setGroupName(groupName);
 
+    _private->inspectorController = LegacyWebPageInspectorController::create(*_private->page);
 #if ENABLE(REMOTE_INSPECTOR)
-    _private->page->setInspectable(isInternalInstall());
+    _private->inspectorDebuggable = LegacyWebPageDebuggable::create(*_private->inspectorController, *_private->page);
+    _private->inspectorDebuggable->init();
+    _private->inspectorDebuggable->setInspectable(isInternalInstall());
 #endif
 
     [self _updateScreenScaleFromWindow];
@@ -2384,6 +2392,9 @@ static bool fastDocumentTeardownEnabled()
     if (!_private || _private->closed)
         return;
 
+    _private->inspectorDebuggable->detachFromPage();
+    _private->inspectorController->willDestroyPage(*_private->page);
+
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewWillCloseNotification object:self];
 
     _private->closed = YES;
@@ -2624,12 +2635,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)allowsRemoteInspection
 {
-    return _private->page->inspectable();
+    return _private->inspectorDebuggable->inspectable();
 }
 
 - (void)setAllowsRemoteInspection:(BOOL)allow
 {
-    _private->page->setInspectable(allow);
+    _private->inspectorDebuggable->setInspectable(allow);
 }
 
 - (void)setShowingInspectorIndication:(BOOL)showing
@@ -9596,6 +9607,11 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+- (LegacyWebPageInspectorController *)inspectorController
+{
+    return _private->inspectorController.get();
+}
 
 @end
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME <https://webkit.org/b/302429>: Remove this deprecated Page debuggable type as WebKitLegacy now also has
-// multi-target support, with the LegacyWebPageDebuggable that works with WI.MultiplexingBackendTarget in the frontend.
-
 #pragma once
 
-#if ENABLE(REMOTE_INSPECTOR)
+#include "LegacyWebPageInspectorController.h"
 
+#include <JavaScriptCore/RemoteControllableTarget.h>
 #include <JavaScriptCore/RemoteInspectionTarget.h>
+#include <WebCore/Page.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
-
-class Page;
-
-class PageDebuggable final : public Inspector::RemoteInspectionTarget {
-    WTF_MAKE_TZONE_ALLOCATED(PageDebuggable);
-    WTF_MAKE_NONCOPYABLE(PageDebuggable);
+class LegacyWebPageDebuggable final : public Inspector::RemoteInspectionTarget {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyWebPageDebuggable);
+    WTF_MAKE_NONCOPYABLE(LegacyWebPageDebuggable);
 public:
-    static Ref<PageDebuggable> create(Page&);
+    static Ref<LegacyWebPageDebuggable> create(LegacyWebPageInspectorController&, WebCore::Page&);
+    ~LegacyWebPageDebuggable() = default;
 
-    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::Page; }
+    Inspector::RemoteControllableTarget::Type type() const final { return Inspector::RemoteControllableTarget::Type::LegacyWebPage; }
 
     String name() const final;
     String url() const final;
@@ -56,20 +53,17 @@ public:
     void dispatchMessageFromRemote(String&& message) final;
     void setIndicating(bool) final;
 
-    const String& nameOverride() const { return m_nameOverride; }
+    const String& nameOverride() const final { return m_nameOverride; }
     void setNameOverride(const String&);
 
     void detachFromPage();
 
 private:
-    explicit PageDebuggable(Page&);
+    LegacyWebPageDebuggable(LegacyWebPageInspectorController&, WebCore::Page&);
 
-    WeakPtr<Page> m_page;
+    WeakPtr<LegacyWebPageInspectorController> m_inspectorController;
+    WeakPtr<WebCore::Page> m_page;
     String m_nameOverride;
 };
 
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(WebCore::PageDebuggable, Page);
-
-#endif // ENABLE(REMOTE_INSPECTOR)
+SPECIALIZE_TYPE_TRAITS_CONTROLLABLE_TARGET(LegacyWebPageDebuggable, LegacyWebPage);

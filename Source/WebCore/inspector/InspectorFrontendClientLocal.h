@@ -99,7 +99,7 @@ public:
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;
 
-    WEBCORE_EXPORT void sendMessageToBackend(const String& message) final;
+    WEBCORE_EXPORT void sendMessageToBackend(const String& message) override;
 
     WEBCORE_EXPORT bool isUnderTest() final;
     bool isRemote() const final { return false; }

@@ -512,11 +512,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
     protectedStorageNamespaceProvider()->setSessionStorageQuota(m_settings->sessionStorageQuota());
 
-#if ENABLE(REMOTE_INSPECTOR)
-    if (m_inspectorController->inspectorBackendClient() && m_inspectorController->inspectorBackendClient()->allowRemoteInspectionToPageDirectly())
-        m_inspectorDebuggable->init();
-#endif
-
 #if PLATFORM(COCOA)
     platformInitialize();
 #endif

@@ -30,6 +30,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "LegacyWebPageInspectorController.h"
 #import "WebFrameInternal.h"
 #import "WebInspector.h"
 #import "WebNodeHighlighter.h"
@@ -114,7 +115,7 @@ void WebInspectorClient::didSetSearchingForNode(bool enabled)
 #pragma mark -
 #pragma mark WebInspectorFrontendClient Implementation
 
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, LegacyWebPageInspectorController& webPageInspectorController, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
     : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTFMove(settings))
 {
     // iOS does not have a local inspector, this should not be reached.

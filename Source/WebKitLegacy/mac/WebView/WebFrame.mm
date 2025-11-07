@@ -36,6 +36,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
+#import "LegacyWebPageInspectorController.h"
 #import "WebArchiveInternal.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
@@ -336,6 +337,11 @@ WebView *getWebView(WebFrame *webFrame)
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 
+    if (RefPtr controller = [webView inspectorController]) {
+        frame->_private->webPageInspectorController = controller.get();
+        controller->frameCreated(coreFrame.get());
+    }
+
     return coreFrame;
 }
 
@@ -354,6 +360,9 @@ WebView *getWebView(WebFrame *webFrame)
     localMainFrame->init();
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
+
+    frame->_private->webPageInspectorController = [webView inspectorController];
+    [webView inspectorController]->frameCreated(*localMainFrame);
 }
 
 + (Ref<WebCore::LocalFrame>)_createSubframeWithOwnerElement:(WebCore::HTMLFrameOwnerElement&)ownerElement page:(WebCore::Page&)page frameName:(const AtomString&)name frameView:(WebFrameView *)frameView
@@ -436,7 +445,11 @@ static NSURL *createUniqueWebDataURL();
 
 - (void)_clearCoreFrame
 {
-    _private->coreFrame = 0;
+    if (RefPtr controller = _private->webPageInspectorController.get())
+        controller->willDestroyFrame(*_private->coreFrame);
+    _private->webPageInspectorController = nullptr;
+
+    _private->coreFrame = nullptr;
 }
 
 - (WebHTMLView *)_webHTMLDocumentView

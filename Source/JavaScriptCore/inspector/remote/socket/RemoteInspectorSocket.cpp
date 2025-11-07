@@ -129,7 +129,7 @@ TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspection
     targetListing->setString("url"_s, target.url());
     targetListing->setInteger("targetID"_s, target.targetIdentifier());
     targetListing->setBoolean("hasLocalDebugger"_s, target.hasLocalDebugger());
-    if (target.type() == RemoteInspectionTarget::Type::WebPage)
+    if (target.type() == RemoteInspectionTarget::Type::WebPage || target.type() == RemoteInspectionTarget::Type::LegacyWebPage)
         targetListing->setString("type"_s, "web-page"_s);
     else if (target.type() == RemoteInspectionTarget::Type::Page)
         targetListing->setString("type"_s, "page"_s);

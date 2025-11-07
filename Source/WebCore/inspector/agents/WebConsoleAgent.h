@@ -33,6 +33,7 @@ namespace WebCore {
 class LocalDOMWindow;
 class ResourceError;
 class ResourceResponse;
+class WebInjectedScriptManager;
 
 struct WebAgentContext;
 
@@ -45,6 +46,9 @@ public:
     void frameWindowDiscarded(LocalDOMWindow&);
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&);
     void didFailLoading(ResourceLoaderIdentifier, const ResourceError&);
+
+protected:
+    Ref<WebInjectedScriptManager> protectedInjectedScriptManager();
 };
 
 } // namespace WebCore

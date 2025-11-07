@@ -29,6 +29,7 @@
 #import "WebInspectorClient.h"
 
 #import "DOMNodeInternal.h"
+#import "LegacyWebPageInspectorController.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
@@ -113,14 +114,17 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(PageInspectorController* 
     [windowController.get() setInspectorClient:this];
 
     m_frontendPage = core([windowController.get() frontendWebView]);
-    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView.get().get(), windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings());
+
+    RefPtr webPageInspectorController = [m_inspectedWebView.get() inspectorController];
+    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView.get().get(), *webPageInspectorController, windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings());
 
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:m_frontendClient.get()]);
     [[m_inspectedWebView.get() inspector] setFrontend:webInspectorFrontend.get()];
 
     m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
 
-    return this;
+    webPageInspectorController->connectFrontend(*this);
+    return nullptr;
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -176,10 +180,10 @@ void WebInspectorClient::releaseFrontend()
     m_frontendPage = nullptr;
 }
 
-
-WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, LegacyWebPageInspectorController& webPageInspectorController, WebInspectorWindowController* frontendWindowController, PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings> settings)
     : InspectorFrontendClientLocal(inspectedPageController, frontendPage, WTFMove(settings))
     , m_inspectedWebView(inspectedWebView)
+    , m_webPageInspectorController(&webPageInspectorController)
     , m_frontendWindowController(frontendWindowController)
 {
     [frontendWindowController setFrontendClient:this];
@@ -464,6 +468,12 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         completionHandler([panel runModal]);
 }
 
+void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
+{
+    if (RefPtr controller = m_webPageInspectorController.get())
+        controller->dispatchMessageFromFrontend(message);
+}
+
 // MARK: -
 
 @implementation WebInspectorWindowController
@@ -739,8 +749,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
 
     if (Page* frontendPage = _frontendClient->frontendPage())
         frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
-    if (Page* inspectedPage = [_inspectedWebView.get() page])
-        inspectedPage->inspectorController().disconnectFrontend(*_inspectorClient);
+    RefPtr { [_inspectedWebView.get() inspectorController] }->disconnectFrontend(*_inspectorClient);
 
     [[_inspectedWebView.get() inspector] releaseFrontend];
     _inspectorClient->releaseFrontend();
