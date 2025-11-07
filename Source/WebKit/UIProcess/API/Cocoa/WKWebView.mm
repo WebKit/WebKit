@@ -6040,7 +6040,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (NSArray *)_scrollPerformanceData
 {
 #if PLATFORM(IOS_FAMILY)
-    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
+    if (CheckedPtr scrollPerfData = _page->scrollingPerformanceData())
         return scrollPerfData->data();
 #endif
     return nil;

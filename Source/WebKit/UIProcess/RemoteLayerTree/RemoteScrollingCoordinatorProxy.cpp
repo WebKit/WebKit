@@ -192,7 +192,7 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
 
         if (update.updateType == ScrollUpdateType::PositionUpdate) {
             webPageProxy->scrollingNodeScrollViewDidScroll(update.nodeID);
-            auto* scrollPerfData = webPageProxy->scrollingPerformanceData();
+            CheckedPtr scrollPerfData = webPageProxy->scrollingPerformanceData();
             // update.layoutViewportOrigin is set for frame scrolls.
             if (scrollPerfData && update.layoutViewportOrigin) {
                 auto layoutViewport = m_scrollingTree->layoutViewport();
@@ -366,7 +366,7 @@ void RemoteScrollingCoordinatorProxy::reportExposedUnfilledArea(MonotonicTime, u
 
 void RemoteScrollingCoordinatorProxy::reportSynchronousScrollingReasonsChanged(MonotonicTime timestamp, OptionSet<SynchronousScrollingReason> reasons)
 {
-    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = m_webPageProxy->scrollingPerformanceData())
+    if (CheckedPtr scrollPerfData = m_webPageProxy->scrollingPerformanceData())
         scrollPerfData->didChangeSynchronousScrollingReasons(timestamp, reasons.toRaw());
 }
 

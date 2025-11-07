@@ -34,8 +34,9 @@ namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxy;
 
-class RemoteLayerTreeScrollingPerformanceData {
+class RemoteLayerTreeScrollingPerformanceData : public CanMakeCheckedPtr<RemoteLayerTreeScrollingPerformanceData> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeScrollingPerformanceData);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeScrollingPerformanceData);
 public:
     RemoteLayerTreeScrollingPerformanceData(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeScrollingPerformanceData();
