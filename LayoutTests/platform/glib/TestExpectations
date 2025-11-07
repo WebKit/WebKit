@@ -754,6 +754,10 @@ imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-005.html [ Pass
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
+imported/w3c/web-platform-tests/page-lifecycle/child-display-none.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/page-lifecycle/child-out-of-viewport.tentative.html [ Pass ]
+imported/w3c/web-platform-tests/page-lifecycle/worker-dispay-none.tentative.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

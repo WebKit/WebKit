@@ -5935,6 +5935,21 @@ PageAtRuleMarginDescriptorsEnabled:
     WebCore:
       default: true
 
+PageLifecycleAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Page Lifecycle API"
+  humanReadableDescription: "Enable the Page Lifecycle API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(GTK) || PLATFORM(WPE)" : true
+      default: false
+    WebCore:
+      default: false
+
 PageVisibilityBasedProcessSuppressionEnabled:
   type: bool
   status: internal

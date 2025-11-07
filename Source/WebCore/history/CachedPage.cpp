@@ -77,7 +77,7 @@ CachedPage::~CachedPage()
         m_cachedMainFrame->destroy();
 }
 
-static void firePageShowEvent(Page& page)
+static void firePageShowAndResumeEvent(Page& page)
 {
     // Dispatching JavaScript events can cause frame destruction.
     Ref mainFrame = page.mainFrame();
@@ -94,6 +94,8 @@ static void firePageShowEvent(Page& page)
         RefPtr document = child->document();
         if (!document)
             continue;
+
+        document->resume();
 
         document->clearRevealForReactivation();
         // This takes care of firing the visibilitychange event and making sure the document is reported as visible.
@@ -176,7 +178,7 @@ void CachedPage::restore(Page& page)
             frameView->updateContentsSize();
     }
 
-    firePageShowEvent(page);
+    firePageShowAndResumeEvent(page);
 
     // Update Navigation API after pageshow events to ensure correct event ordering.
     if (CheckedRef backForwardController = page.backForward(); page.settings().navigationAPIEnabled() && localMainFrame)

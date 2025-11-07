@@ -111,6 +111,7 @@
     "formdata": { },
     "fullscreenchange": { },
     "fullscreenerror": { },
+    "freeze": { },
     "gamepadconnected": { "categories": ["Gamepad"] },
     "gamepaddisconnected": { "categories": ["Gamepad"] },
     "gatheringstatechange": { },

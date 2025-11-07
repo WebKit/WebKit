@@ -5933,3 +5933,104 @@ void webkit_web_view_leave_immersive_mode(WebKitWebView* webView)
         xrSystem->invalidate(PlatformXRSystem::InvalidationReason::Client);
 #endif
 }
+
+/**
+ * webkit_web_view_freeze:
+ * @web_view: a #WebKitWebView
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: (scope async): a #GAsyncReadyCallback to invoke when the operation finishes
+ * @user_data: (nullable): data to pass to @callback
+ *
+ * Asynchronously freezes the current web page associated with #WebKitWebView.
+ *
+ * Freezing a web view suspends script execution, timers, and other
+ * activities within the page, reducing CPU usage while keeping the
+ * page state intact. You can later call webkit_web_view_resume() to
+ * resume normal operation.
+ *
+ * When the operation finishes, @callback will be invoked. You should then call
+ * webkit_web_view_freeze_finish() to obtain the result of the operation.
+ *
+ * Since: 2.52
+ */
+void webkit_web_view_freeze(WebKitWebView *webView, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(!getPage(webView).isSuspended());
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    getPage(webView).suspend([task = WTFMove(task)](bool success) {
+        if (g_task_return_error_if_cancelled(task.get()))
+            return;
+        g_task_return_boolean(task.get(), success);
+    });
+}
+
+/**
+ * webkit_web_view_freeze_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for a #GError, or %NULL to ignore
+ *
+ * Finishes an asynchronous operation started with webkit_web_view_freeze().
+ *
+ * Returns: %TRUE if the operation completed successfully, or %FALSE if an error occurred.
+ *
+ * Since: 2.52
+ */
+gboolean webkit_web_view_freeze_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, webView), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
+
+/**
+ * webkit_web_view_resume:
+ * @web_view: a #WebKitWebView
+ * @cancellable: (nullable): a #GCancellable, or %NULL
+ * @callback: (scope async): a #GAsyncReadyCallback to invoke when the operation finishes
+ * @user_data: (nullable): data to pass to @callback
+ *
+ * Asynchronously resumes the current web page associated with #WebKitWebView.
+ * This reverses a previous call to webkit_web_view_freeze() and allows the
+ * page to continue running.
+ *
+ * When the operation finishes, @callback will be invoked. You should then call
+ * webkit_web_view_resume_finish() to obtain the result of the operation.
+ *
+ * Since: 2.52
+ */
+void webkit_web_view_resume(WebKitWebView *webView, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(getPage(webView).isSuspended());
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    getPage(webView).resume([task = WTFMove(task)](bool success) {
+        if (g_task_return_error_if_cancelled(task.get()))
+            return;
+        g_task_return_boolean(task.get(), success);
+    });
+}
+
+/**
+ * webkit_web_view_resume_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finishes an asynchronous operation started with webkit_web_view_resume().
+ *
+ * Returns: %TRUE if the operation completed successfully, or %FALSE if an error occurred.
+ *
+ * Since: 2.52
+ */
+gboolean webkit_web_view_resume_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, webView), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
