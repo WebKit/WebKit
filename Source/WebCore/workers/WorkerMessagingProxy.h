@@ -98,10 +98,9 @@ private:
 
     // WorkerBadgeProxy
     void setAppBadge(std::optional<uint64_t>) final;
-    
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    Markable<ScriptExecutionContextIdentifier> m_scriptExecutionContextIdentifier;
+
     ScriptExecutionContextIdentifier m_loaderContextIdentifier;
+    ScriptExecutionContextIdentifier m_workerContextIdentifier;
     const Ref<WorkerInspectorProxy> m_inspectorProxy;
     RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
     Worker* m_workerObject;

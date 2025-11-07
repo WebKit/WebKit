@@ -92,6 +92,5 @@ style/values/primitives/StylePrimitiveKeyword+CSSValueCreation.h
 style/values/primitives/StylePrimitiveKeyword+Serialization.h
 [ Mac ] testing/MockMediaSessionCoordinator.cpp
 workers/Worker.cpp
-workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletThread.cpp
 workers/shared/SharedWorkerObjectConnection.cpp
