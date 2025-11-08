@@ -1930,8 +1930,19 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
     return result;
 }
 
+template<typename T>
+concept IsCollection = requires(T collection)
+{
+    collection.begin();
+    collection.end();
+};
+
 template<typename MapFunction, typename SourceType>
-struct FlatMapper {
+struct FlatMapper;
+
+template<typename MapFunction, typename SourceType>
+requires IsCollection<typename std::invoke_result<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>::type>
+struct FlatMapper<MapFunction, SourceType> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&>::type>::SourceItemType;
 
@@ -1946,7 +1957,8 @@ struct FlatMapper {
 };
 
 template<typename MapFunction, typename SourceType>
-    requires (std::is_rvalue_reference_v<SourceType&&>)
+    requires std::is_rvalue_reference_v<SourceType&&>
+        && IsCollection<typename std::invoke_result_t<MapFunction, typename CollectionInspector<SourceType>::SourceItemType&>>
 struct FlatMapper<MapFunction, SourceType> {
     using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
     using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&&>::type>::SourceItemType;
@@ -1956,6 +1968,26 @@ struct FlatMapper<MapFunction, SourceType> {
         Vector<DestinationItemType> result;
         for (auto&& item : source)
             result.appendVector(mapFunction(WTFMove(item)));
+        result.shrinkToFit();
+        return result;
+    }
+};
+
+template<typename MapFunction, typename SourceType>
+    requires std::is_same_v<
+        typename CollectionInspector<SourceType>::SourceItemType,
+        typename std::invoke_result_t<MapFunction, typename CollectionInspector<SourceType>::SourceItemType>>
+struct FlatMapper<MapFunction, SourceType> {
+    using SourceItemType = typename CollectionInspector<SourceType>::SourceItemType;
+    using DestinationItemType = typename CollectionInspector<typename std::invoke_result<MapFunction, SourceItemType&>::type>::SourceItemType;
+
+    static Vector<DestinationItemType> flatMap(const SourceType& source, const MapFunction& mapFunction)
+    {
+        Vector<DestinationItemType> result;
+        for (auto&& item : source) {
+            if (auto i = mapFunction(item))
+                result.append(i);
+        }
         result.shrinkToFit();
         return result;
     }
