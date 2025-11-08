@@ -13,7 +13,6 @@ mac/History/WebHistory.h
 mac/History/WebHistoryItem.h
 mac/Misc/WebDownload.h
 mac/Misc/WebElementDictionary.h
-mac/Misc/WebLocalizableStrings.h
 [ Mac ] mac/Misc/WebSharingServicePickerController.h
 mac/Misc/WebUserContentURLPattern.h
 [ Mac ] mac/Panels/WebAuthenticationPanel.h

@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
 typedef NSString *WebLocalizedStringType;
@@ -42,7 +44,7 @@ typedef CFStringRef WebLocalizedStringType;
 
 typedef struct {
     const char *identifier;
-    __unsafe_unretained NSBundle *bundle;
+    SUPPRESS_UNRETAINED_MEMBER __unsafe_unretained NSBundle *bundle;
 } WebLocalizableStringsBundle;
 
 #ifdef __cplusplus
