@@ -980,6 +980,26 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
 
     promoteUpcomingAPIMethodTracker(destination->key());
 
+    // Enforce rate limiting to prevent excessive navigation requests.
+    // Only check for script-initiated navigations (those with an API method tracker).
+    if (m_ongoingAPIMethodTracker && !m_rateLimiter.navigationAllowed()) {
+        // Log a warning once per window when the limit is reached.
+        if (!m_rateLimiter.wasReported()) {
+            m_rateLimiter.markReported();
+            if (RefPtr document = protectedWindow()->document())
+                document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Excessive navigation attempts blocked."_s);
+        }
+
+        // Reject the promises and clean up.
+        RefPtr tracker = *m_ongoingAPIMethodTracker;
+        auto exception = Exception { ExceptionCode::QuotaExceededError, "Navigation rate limit exceeded"_s };
+        Ref { tracker->committedPromise }->reject(exception);
+        Ref { tracker->finishedPromise }->reject(exception);
+        cleanupAPIMethodTracker(tracker.get());
+
+        return DispatchResult::Completed;
+    }
+
     RefPtr document = protectedWindow()->document();
 
     RefPtr apiMethodTracker = m_ongoingAPIMethodTracker;
@@ -1265,6 +1285,26 @@ Vector<Ref<HistoryItem>> Navigation::filterHistoryItemsForNavigationAPI(Vector<R
     }
 
     return filteredItems;
+}
+
+bool Navigation::RateLimiter::navigationAllowed()
+{
+    auto currentTime = MonotonicTime::now();
+
+    // Check if we've exceeded the time window and need to reset.
+    if (currentTime - m_windowStartTime > m_windowDuration) {
+        m_windowStartTime = currentTime;
+        m_navigationCount = 0;
+        m_limitMessageSent = false;
+    }
+
+    // Allow navigation if we're still under the limit.
+    if (m_navigationCount < m_maxNavigationsPerWindow) {
+        ++m_navigationCount;
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace WebCore

@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that recursive navigation.navigate() calls with ReadableStream cleanup do not crash after hitting stack overflow");
+
+jsTestIsAsync = true;
+
+let navigationAttempts = 0;
+
+// Trigger the recursive navigation pattern from the original crash
+navigation.addEventListener('navigate', event => {
+    navigationAttempts++;
+
+    // Keep trying to navigate - one will eventually be rate limited
+    const result = navigation.navigate('#nav' + navigationAttempts);
+
+    // Check if this navigation was rate limited
+    result.committed.catch((e) => {
+        if (e.name === 'QuotaExceededError') {
+            // Successfully hit the rate limiter without crashing
+            testPassed("Did not crash");
+            finishJSTest();
+        }
+    });
+});
+
+// Create the ReadableStream that was involved in the original crash
+const stream = new Blob().stream();
+
+// Start the navigation cascade with a same-document navigation
+navigation.navigate('#start');
+</script>

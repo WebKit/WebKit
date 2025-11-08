@@ -1476,4 +1476,8 @@ enum ContentsFormat {
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
     [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
     [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
+
+    // Navigation API rate limiter testing
+    undefined setNavigationRateLimiterParameters(DOMWindow window, unsigned long maxNavigations, double windowDurationSeconds);
+    undefined resetNavigationRateLimiter(DOMWindow window);
 };

@@ -1465,6 +1465,10 @@ public:
 
     String windowLocationHost(DOMWindow&);
 
+    // Navigation API rate limiter testing
+    void setNavigationRateLimiterParameters(DOMWindow&, unsigned maxNavigations, double windowDurationSeconds);
+    void resetNavigationRateLimiter(DOMWindow&);
+
     ExceptionOr<String> systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 
     bool systemHasBattery() const;

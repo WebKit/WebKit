@@ -349,7 +349,7 @@ public:
 #endif
 
     // Navigation API
-    Navigation& navigation();
+    WEBCORE_EXPORT Navigation& navigation();
     Ref<Navigation> protectedNavigation();
 
     void willDetachDocumentFromFrame();
