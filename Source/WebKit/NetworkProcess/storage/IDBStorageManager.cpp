@@ -30,9 +30,9 @@
 #include "Logging.h"
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBServer.h>
-#include <WebCore/MemoryIDBBackingStore.h>
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteIDBBackingStore.h>
+#include <WebCore/SQLiteMemoryIDBBackingStore.h>
 #include <algorithm>
 #include <wtf/TZoneMalloc.h>
 
@@ -339,7 +339,7 @@ void IDBStorageManager::unregisterTransaction(WebCore::IDBServer::UniqueIDBDatab
 std::unique_ptr<WebCore::IDBServer::IDBBackingStore> IDBStorageManager::createBackingStore(const WebCore::IDBDatabaseIdentifier& identifier)
 {
     if (m_path.isEmpty() || identifier.isTransient())
-        return makeUnique<WebCore::IDBServer::MemoryIDBBackingStore>(identifier);
+        return makeUnique<WebCore::IDBServer::SQLiteMemoryIDBBackingStore>(identifier);
 
     auto name = WebCore::SQLiteFileSystem::computeHashForFileName(identifier.databaseName());
     return makeUnique<WebCore::IDBServer::SQLiteIDBBackingStore>(identifier, FileSystem::pathByAppendingComponent(m_path, name));

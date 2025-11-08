@@ -63,7 +63,7 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
         return IDBError { };
     }
 
-    m_sqliteTransaction = makeUnique<SQLiteTransaction>(database, true);
+    m_sqliteTransaction = makeUnique<SQLiteTransaction>(database, false);
     m_sqliteTransaction->begin();
 
     if (m_sqliteTransaction->inProgress())

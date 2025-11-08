@@ -174,6 +174,7 @@ WTF_EXPORT_PRIVATE String createTemporaryDirectory();
 
 #if PLATFORM(COCOA)
 WTF_EXPORT_PRIVATE NSString *createTemporaryDirectory(NSString *directoryPrefix = nil);
+WTF_EXPORT_PRIVATE String createTemporaryDirectory(const String& directoryPrefix);
 WTF_EXPORT_PRIVATE NSString *systemDirectoryPath();
 
 // Allow reading cloud files with no local copy.

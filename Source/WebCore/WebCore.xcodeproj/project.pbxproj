@@ -1004,6 +1004,7 @@
 		2AEF6FDB26E7ECC700326D02 /* CSSNumericArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AEF6FBF26E716EE00326D02 /* CSSNumericArray.h */; };
 		2AEF6FDC26E7ECCC00326D02 /* CSSNumericBaseType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AEF6FCF26E71F2E00326D02 /* CSSNumericBaseType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AEF6FDD26E7ECCF00326D02 /* CSSNumericType.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AEF6FCE26E71F2D00326D02 /* CSSNumericType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2B1A35462EBF5FBC00F83EA2 /* SQLiteMemoryIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B1A35452EBF5FBC00F83EA2 /* SQLiteMemoryIDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B365C743425119AAB91D27B /* RenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250EF555DB5CD8 /* RenderSVGEllipse.h */; };
 		2B365C841525119E0091D27B /* LegacyRenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250F6000DBBCD8 /* LegacyRenderSVGEllipse.h */; };
 		2B598F99286F6BF4005AF06F /* Formats.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B598F98286F6BF4005AF06F /* Formats.h */; };
@@ -2094,10 +2095,7 @@
 		517111B82AD393910047117B /* RTCIceRole.h in Headers */ = {isa = PBXBuildFile; fileRef = 517111B52AD393700047117B /* RTCIceRole.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517111B92AD393C40047117B /* RTCIceServerTransportProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 517111B32AD393410047117B /* RTCIceServerTransportProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517138F01BED1D1A000D5F01 /* IndexKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138EE1BED1D17000D5F01 /* IndexKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138F61BF12262000D5F01 /* IndexValueStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517138FC1BF3ADF4000D5F01 /* IDBCursorInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */; };
-		517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139021BF64DE3000D5F01 /* MemoryCursor.h */; };
 		51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EA91CF65899004723C4 /* GCObservation.cpp */; };
 		51714EAD1CF65951004723C4 /* GCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAA1CF65899004723C4 /* GCObservation.h */; };
@@ -2105,7 +2103,6 @@
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
-		51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */; };
 		517A41E52B02DA9200600ABE /* SpeechSynthesisErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 29F83EC627D3192600E1F0FD /* SpeechSynthesisErrorCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A52F01F47535B00DCDC0A /* SWServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A52EE1F47535900DCDC0A /* SWServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A53291F4B90B900DCDC0A /* ServiceWorkerRegistrationKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53261F4B90B200DCDC0A /* ServiceWorkerRegistrationKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2154,8 +2151,6 @@
 		518F4FF6194CA4E60081BAAE /* GamepadButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518F4FED194CA4E60081BAAE /* GamepadButton.cpp */; };
 		518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F4FFE194CAC3A0081BAAE /* JSGamepad.h */; };
 		518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F5000194CAC3A0081BAAE /* JSGamepadButton.h */; };
-		518F97031BE94C630023187C /* MemoryIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F97011BE94C5B0023187C /* MemoryIndex.h */; };
-		519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */; };
 		5198F7A51BBDB79300E2CC5F /* UniqueIDBDatabaseConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7A31BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5198F7A91BBDD38500E2CC5F /* UniqueIDBDatabaseTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7A71BBDD38100E2CC5F /* UniqueIDBDatabaseTransaction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5198F7AD1BBDD3EB00E2CC5F /* IDBTransactionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7AB1BBDD3E300E2CC5F /* IDBTransactionInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2177,7 +2172,6 @@
 		51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B45D211AB8D1E200117CD2 /* ContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B45D1F1AB8D1E200117CD2 /* ContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BA4AC41BBB5CD800DF3D6D /* IDBDatabaseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BA4ACC1BBC5BDD00DF3D6D /* IDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BA947123AC305300444846 /* RunJavaScriptParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA946F23AC305000444846 /* RunJavaScriptParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BCCE301F8F179E006BA0ED /* ServiceWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 517C87101F8EE72E00EB8076 /* ServiceWorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2199,7 +2193,6 @@
 		51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BAB90DA5547100A9E417 /* StorageEvent.h */; };
 		51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */; };
 		51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BB360DA5ACB600A9E417 /* StorageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1BAC11BD806470055D81F /* MemoryBackingStoreTransaction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E269371DD3BD9B006B6A58 /* IDBIterateCursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E269351DD3BD91006B6A58 /* IDBIterateCursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FC1D6E474B009C8831 /* GameControllerGamepad.h */; };
 		51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2212,7 +2205,6 @@
 		51ECC3FD2005930D00483EAE /* MessagePortChannelProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3FB2005930100483EAE /* MessagePortChannelProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE7B381AA50B0500F92B21 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE9D642D09479500D97E5E /* DocumentSyncData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE9D632D0946F000D97E5E /* DocumentSyncData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EEAA721BEFFA7900218008 /* IndexValueEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F0844C2D3E1D0700F85E0A /* H264UtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F084492D3E1D0700F85E0A /* H264UtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F174FE1F35899200C74950 /* WorkerType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F174FC1F35898800C74950 /* WorkerType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F175031F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175011F358B3600C74950 /* JSServiceWorkerUpdateViaCache.h */; };
@@ -9774,6 +9766,8 @@
 		2AEF6FE426E802F000326D02 /* CSSMathProduct.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSMathProduct.cpp; sourceTree = "<group>"; };
 		2AEF6FE526E802F100326D02 /* CSSMathSum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSMathSum.cpp; sourceTree = "<group>"; };
 		2B0838EE286674A800C23C32 /* GenericTransformStream.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GenericTransformStream.idl; sourceTree = "<group>"; };
+		2B1A35452EBF5FBC00F83EA2 /* SQLiteMemoryIDBBackingStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteMemoryIDBBackingStore.h; sourceTree = "<group>"; };
+		2B1A35472EBF5FC600F83EA2 /* SQLiteMemoryIDBBackingStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteMemoryIDBBackingStore.cpp; sourceTree = "<group>"; };
 		2B1B1C1E2E3A869C00D7D9ED /* ForwardDeclCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = ForwardDeclCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C1F2E3A869C00D7D9ED /* MemoryUnsafeCastCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemoryUnsafeCastCheckerExpectations; sourceTree = "<group>"; };
 		2B1B1C202E3A869C00D7D9ED /* NoUncheckedPtrMemberCheckerExpectations */ = {isa = PBXFileReference; lastKnownFileType = text; path = NoUncheckedPtrMemberCheckerExpectations; sourceTree = "<group>"; };
@@ -12149,14 +12143,8 @@
 		517111B72AD393700047117B /* RTCIceRole.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCIceRole.idl; sourceTree = "<group>"; };
 		517138ED1BED1D17000D5F01 /* IndexKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexKey.cpp; sourceTree = "<group>"; };
 		517138EE1BED1D17000D5F01 /* IndexKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexKey.h; sourceTree = "<group>"; };
-		517138F51BF12262000D5F01 /* IndexValueStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueStore.cpp; sourceTree = "<group>"; };
-		517138F61BF12262000D5F01 /* IndexValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueStore.h; sourceTree = "<group>"; };
 		517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorInfo.cpp; sourceTree = "<group>"; };
 		517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorInfo.h; sourceTree = "<group>"; };
-		517139011BF64DE3000D5F01 /* MemoryCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCursor.cpp; sourceTree = "<group>"; };
-		517139021BF64DE3000D5F01 /* MemoryCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryCursor.h; sourceTree = "<group>"; };
-		517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStoreCursor.cpp; sourceTree = "<group>"; };
-		517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStoreCursor.h; sourceTree = "<group>"; };
 		51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBActiveDOMObject.h; sourceTree = "<group>"; };
 		51714EA91CF65899004723C4 /* GCObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCObservation.cpp; sourceTree = "<group>"; };
 		51714EAA1CF65899004723C4 /* GCObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCObservation.h; sourceTree = "<group>"; };
@@ -12175,8 +12163,6 @@
 		51748FA21CC6EEEB00728D84 /* WorkerGlobalScopeConstructors.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = WorkerGlobalScopeConstructors.idl; sourceTree = "<group>"; };
 		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
-		51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStore.cpp; sourceTree = "<group>"; };
-		51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStore.h; sourceTree = "<group>"; };
 		517A52EE1F47535900DCDC0A /* SWServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWServer.h; sourceTree = "<group>"; };
 		517A52EF1F47535900DCDC0A /* SWServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServer.cpp; sourceTree = "<group>"; };
 		517A53241F4B904A00DCDC0A /* ServiceWorkerJobData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerJobData.cpp; sourceTree = "<group>"; };
@@ -12232,13 +12218,9 @@
 		518F4FFE194CAC3A0081BAAE /* JSGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepad.h; sourceTree = "<group>"; };
 		518F4FFF194CAC3A0081BAAE /* JSGamepadButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGamepadButton.cpp; sourceTree = "<group>"; };
 		518F5000194CAC3A0081BAAE /* JSGamepadButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepadButton.h; sourceTree = "<group>"; };
-		518F97001BE94C5B0023187C /* MemoryIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIndex.cpp; sourceTree = "<group>"; };
-		518F97011BE94C5B0023187C /* MemoryIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIndex.h; sourceTree = "<group>"; };
 		5192DDB72AB5189300E88DE7 /* NotificationPayloadCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NotificationPayloadCocoa.mm; sourceTree = "<group>"; };
 		5192DDB82AB51A9300E88DE7 /* NotificationOptionsPayloadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NotificationOptionsPayloadCocoa.mm; sourceTree = "<group>"; };
 		5194C26827FFD7C200AEF3CF /* NotificationDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NotificationDataCocoa.mm; sourceTree = "<group>"; };
-		519755F71BFD7DBC003DE980 /* MemoryIndexCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIndexCursor.cpp; sourceTree = "<group>"; };
-		519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIndexCursor.h; sourceTree = "<group>"; };
 		5198F7A21BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseConnection.cpp; sourceTree = "<group>"; };
 		5198F7A31BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseConnection.h; sourceTree = "<group>"; };
 		5198F7A61BBDD38100E2CC5F /* UniqueIDBDatabaseTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseTransaction.cpp; sourceTree = "<group>"; };
@@ -12279,8 +12261,6 @@
 		51BA4AC11BBB5CBF00DF3D6D /* IDBDatabaseInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseInfo.cpp; sourceTree = "<group>"; };
 		51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseInfo.h; sourceTree = "<group>"; };
 		51BA4AC71BBC5AD600DF3D6D /* IDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBBackingStore.h; sourceTree = "<group>"; };
-		51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryIDBBackingStore.cpp; sourceTree = "<group>"; };
-		51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryIDBBackingStore.h; sourceTree = "<group>"; };
 		51BA946F23AC305000444846 /* RunJavaScriptParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunJavaScriptParameters.h; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
@@ -12341,8 +12321,6 @@
 		51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageEvent.h; sourceTree = "<group>"; };
 		51E0BB360DA5ACB600A9E417 /* StorageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageMap.h; sourceTree = "<group>"; };
 		51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageMap.cpp; sourceTree = "<group>"; };
-		51E1BAC01BD806470055D81F /* MemoryBackingStoreTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryBackingStoreTransaction.cpp; sourceTree = "<group>"; };
-		51E1BAC11BD806470055D81F /* MemoryBackingStoreTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryBackingStoreTransaction.h; sourceTree = "<group>"; };
 		51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransactionCustom.cpp; sourceTree = "<group>"; };
 		51E269341DD3BD91006B6A58 /* IDBIterateCursorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIterateCursorData.cpp; sourceTree = "<group>"; };
 		51E269351DD3BD91006B6A58 /* IDBIterateCursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIterateCursorData.h; sourceTree = "<group>"; };
@@ -12373,8 +12351,6 @@
 		51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		51EE7B391AA5123100F92B21 /* ResourceLoadInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadInfo.cpp; sourceTree = "<group>"; };
 		51EE9D632D0946F000D97E5E /* DocumentSyncData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocumentSyncData.h; sourceTree = "<group>"; };
-		51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexValueEntry.cpp; sourceTree = "<group>"; };
-		51EEAA721BEFFA7900218008 /* IndexValueEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexValueEntry.h; sourceTree = "<group>"; };
 		51F084492D3E1D0700F85E0A /* H264UtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H264UtilitiesCocoa.h; sourceTree = "<group>"; };
 		51F0844A2D3E1D0700F85E0A /* H264UtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = H264UtilitiesCocoa.mm; sourceTree = "<group>"; };
 		51F174FA1F3588D700C74950 /* WorkerType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerType.idl; sourceTree = "<group>"; };
@@ -27480,24 +27456,6 @@
 				511EC1261C50AA570032F983 /* IDBSerialization.h */,
 				510A58EF1BAB720F00C19282 /* IDBServer.cpp */,
 				510A58F01BAB720F00C19282 /* IDBServer.h */,
-				51EEAA711BEFFA7900218008 /* IndexValueEntry.cpp */,
-				51EEAA721BEFFA7900218008 /* IndexValueEntry.h */,
-				517138F51BF12262000D5F01 /* IndexValueStore.cpp */,
-				517138F61BF12262000D5F01 /* IndexValueStore.h */,
-				51E1BAC01BD806470055D81F /* MemoryBackingStoreTransaction.cpp */,
-				51E1BAC11BD806470055D81F /* MemoryBackingStoreTransaction.h */,
-				517139011BF64DE3000D5F01 /* MemoryCursor.cpp */,
-				517139021BF64DE3000D5F01 /* MemoryCursor.h */,
-				51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */,
-				51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */,
-				518F97001BE94C5B0023187C /* MemoryIndex.cpp */,
-				518F97011BE94C5B0023187C /* MemoryIndex.h */,
-				519755F71BFD7DBC003DE980 /* MemoryIndexCursor.cpp */,
-				519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */,
-				51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */,
-				51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */,
-				517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */,
-				517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */,
 				516F7F6B1C31C79D00F111DC /* ServerOpenDBRequest.cpp */,
 				516F7F6C1C31C79D00F111DC /* ServerOpenDBRequest.h */,
 				512BDB481C456FAB006494DF /* SQLiteIDBBackingStore.cpp */,
@@ -27506,6 +27464,8 @@
 				511EC12E1C50ABEC0032F983 /* SQLiteIDBCursor.h */,
 				511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */,
 				511EC12A1C50ABBA0032F983 /* SQLiteIDBTransaction.h */,
+				2B1A35472EBF5FC600F83EA2 /* SQLiteMemoryIDBBackingStore.cpp */,
+				2B1A35452EBF5FBC00F83EA2 /* SQLiteMemoryIDBBackingStore.h */,
 				518864DE1BBAF30F00E540C9 /* UniqueIDBDatabase.cpp */,
 				518864DF1BBAF30F00E540C9 /* UniqueIDBDatabase.h */,
 				5198F7A21BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.cpp */,
@@ -43794,8 +43754,6 @@
 				5185FCB21BB4C4E80012898F /* IndexedDB.h in Headers */,
 				F4CF9C342AB4C5B100E9C72E /* IndexedDB.serialization.in in Headers */,
 				517138F01BED1D1A000D5F01 /* IndexKey.h in Headers */,
-				51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */,
-				517138F81BF128BB000D5F01 /* IndexValueStore.h in Headers */,
 				CD063F831E23FA8900812BE3 /* InitDataRegistry.h in Headers */,
 				E4F819C626FB4EBF0094E162 /* InlineBoxPainter.h in Headers */,
 				E30592641E27A3AD00D57C98 /* InlineClassicScript.h in Headers */,
@@ -45171,15 +45129,8 @@
 				5151F07E2615435A00FDB2B4 /* MediaUniqueIdentifier.h in Headers */,
 				07611DC12440E59B00D80704 /* MediaUsageInfo.h in Headers */,
 				939C0D2B2564E7F300B3211B /* MediaUtilities.h in Headers */,
-				51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
-				517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */,
-				51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */,
-				518F97031BE94C630023187C /* MemoryIndex.h in Headers */,
-				519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */,
 				071066F22E5D7756006FE6F3 /* MemoryInfo.h in Headers */,
-				51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */,
-				517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */,
 				413E00791DB0E4F2002341D2 /* MemoryRelease.h in Headers */,
 				721B3EF52968F47D004F5FF6 /* MenuListButtonPart.h in Headers */,
 				72FD88D1295E3C40006FACDC /* MenuListPart.h in Headers */,
@@ -46459,6 +46410,7 @@
 				512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */,
 				511EC1301C50ABF50032F983 /* SQLiteIDBCursor.h in Headers */,
 				511EC12C1C50ABBF0032F983 /* SQLiteIDBTransaction.h in Headers */,
+				2B1A35462EBF5FBC00F83EA2 /* SQLiteMemoryIDBBackingStore.h in Headers */,
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,

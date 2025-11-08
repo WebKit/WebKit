@@ -1142,7 +1142,9 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     CheckedPtr session = networkSession();
     if (!session)
         return;
-    if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
+    // Skip file path checking for ephemeral sessions since blob files are in temporary directories
+    // that persist across WebContent process restarts but file access permissions don't.
+    if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess() && !session->sessionID().isEphemeral())
         MESSAGE_CHECK(isFilePathAllowed(*session, fileBackedPath));
 
     m_blobURLs.add({ url, std::nullopt });
@@ -1206,8 +1208,6 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
     CheckedPtr session = networkSession();
     if (!session)
         return completionHandler({ });
-
-    MESSAGE_CHECK_COMPLETION(!session->sessionID().isEphemeral(), completionHandler({ }));
 
     Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)

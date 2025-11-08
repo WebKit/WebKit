@@ -29,9 +29,9 @@
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
-#include "MemoryIDBBackingStore.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
+#include "SQLiteMemoryIDBBackingStore.h"
 #include "SecurityOrigin.h"
 #include <algorithm>
 #include <wtf/CompletionHandler.h>
@@ -128,10 +128,10 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
 {
     ASSERT(!isMainThread());
     if (m_databaseDirectoryPath.isEmpty())
-        return makeUnique<MemoryIDBBackingStore>(identifier);
+        return makeUnique<SQLiteMemoryIDBBackingStore>(identifier);
 
     if (identifier.isTransient())
-        return makeUnique<MemoryIDBBackingStore>(identifier);
+        return makeUnique<SQLiteMemoryIDBBackingStore>(identifier);
 
     return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier));
 }

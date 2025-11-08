@@ -6668,12 +6668,9 @@ Vector<String> SerializedScriptValue::blobURLs() const
 
 void SerializedScriptValue::writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&& completionHandler)
 {
+    UNUSED_PARAM(isEphemeral);
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
-
-    // FIXME: Blobs are not supported in private browsing yet (webkit.org/b/156347).
-    if (isEphemeral)
-        return completionHandler({ });
 
     blobRegistry()->writeBlobsToTemporaryFilesForIndexedDB(blobURLs(), [completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }] (auto&& blobFilePaths) mutable {
         ASSERT(isMainThread());

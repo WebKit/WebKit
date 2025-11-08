@@ -187,6 +187,18 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.span().data() length:length];
 }
 
+String createTemporaryDirectory(const String& directoryPrefix)
+{
+    if (directoryPrefix.isEmpty())
+        return emptyString();
+
+    NSString *result = createTemporaryDirectory(directoryPrefix.createNSString().get());
+    if (!result)
+        return emptyString();
+
+    return String(result);
+}
+
 std::pair<FileHandle, CString> createTemporaryFileInDirectory(const String& directory, const String& suffix)
 {
     auto fsSuffix = fileSystemRepresentation(suffix);

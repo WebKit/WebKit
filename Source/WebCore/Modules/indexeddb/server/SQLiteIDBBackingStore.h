@@ -51,14 +51,14 @@ enum class IsSchemaUpgraded : bool { No, Yes };
 
 class SQLiteIDBCursor;
 
-class SQLiteIDBBackingStore final : public IDBBackingStore {
+class SQLiteIDBBackingStore : public IDBBackingStore {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteIDBBackingStore, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBBackingStore);
 public:
     WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
-    WEBCORE_EXPORT ~SQLiteIDBBackingStore() final;
+    WEBCORE_EXPORT ~SQLiteIDBBackingStore() override;
 
-    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
+    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) override;
     uint64_t databaseVersion() final;
 
     IDBError beginTransaction(const IDBTransactionInfo&) final;
@@ -84,11 +84,11 @@ public:
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
     IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
-    void deleteBackingStore() final;
+    void deleteBackingStore() override;
 
-    bool supportsSimultaneousReadWriteTransactions() final { return false; }
-    bool isEphemeral() final { return false; }
-    String fullDatabasePath() const final;
+    bool supportsSimultaneousReadWriteTransactions() override { return false; }
+    bool isEphemeral() override { return false; }
+    String fullDatabasePath() const override;
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
 
@@ -110,7 +110,8 @@ public:
     WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
     void handleLowMemoryWarning() final;
 
-private:
+protected:
+    // Protected methods for use by subclasses (e.g., SQLiteMemoryIDBBackingStore)
     IDBError ensureValidRecordsTable();
     IDBError ensureValidIndexRecordsTable();
     IDBError ensureValidIndexRecordsIndex();
@@ -120,6 +121,20 @@ private:
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     Expected<std::unique_ptr<IDBDatabaseInfo>, IDBError> extractExistingDatabaseInfo();
 
+    void closeSQLiteDB();
+
+    IDBDatabaseIdentifier m_identifier;
+    std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfoBeforeVersionChange;
+
+    std::unique_ptr<SQLiteDatabase> m_sqliteDB;
+
+    HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
+    HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
+
+    String m_databaseDirectory;
+
+private:
     IDBError deleteRecord(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, const IDBKeyData&);
     IDBError uncheckedGetKeyGeneratorValue(IDBObjectStoreIdentifier, uint64_t& outValue);
     IDBError uncheckedSetKeyGeneratorValue(IDBObjectStoreIdentifier, uint64_t value);
@@ -135,7 +150,6 @@ private:
     IDBError getAllObjectStoreRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
 
-    void closeSQLiteDB();
     void close() final;
 
     bool migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, IDBIndexIdentifier>, IDBIndexIdentifier>& indexIDMap);
@@ -205,17 +219,6 @@ private:
     SQLiteStatementAutoResetScope cachedStatementForGetAllObjectStoreRecords(const IDBGetAllRecordsData&);
 
     std::array<std::unique_ptr<SQLiteStatement>, static_cast<size_t>(SQL::Invalid)> m_cachedStatements;
-
-    IDBDatabaseIdentifier m_identifier;
-    std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
-    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfoBeforeVersionChange;
-
-    std::unique_ptr<SQLiteDatabase> m_sqliteDB;
-
-    HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
-    HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
-
-    String m_databaseDirectory;
 };
 
 } // namespace IDBServer
