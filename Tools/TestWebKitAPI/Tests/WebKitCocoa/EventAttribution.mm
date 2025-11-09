@@ -385,6 +385,126 @@ TEST(PrivateClickMeasurement, Basic)
     });
 }
 
+TEST(PrivateClickMeasurement, MeasureSafariIsDefault)
+{
+    runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+        [webView _storePrivateClickMeasurementWithSourceID:42 destinationURL:exampleURL() reportEndpoint:server.request().URL];
+    });
+}
+
+static BOOL forwardToEywa(NSData *body)
+{
+    NSURL *eywa = [NSURL URLWithString:@"https://supportmetrics.apple.com/content/services/pcm"];
+    NSMutableURLRequest * req = [NSMutableURLRequest requestWithURL:eywa];
+    req.HTTPMethod = @"POST";
+    [req setValue:@"text/plain" forHTTPHeaderField:@"Content-Type"];
+    req.HTTPBody = body;
+
+    NSURLSessionConfiguration *cfg = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    cfg.timeoutIntervalForRequest = 7.0;
+    NSURLSession * session = [NSURLSession sessionWithConfiguration:cfg];
+
+    __block BOOL ok = NO;
+    __block bool finished = false;
+
+    [[session dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *resp, NSError *err) {
+        if (!err && [resp isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *http = (NSHTTPURLResponse *)resp;
+            ok = (http.statusCode >= 200 && http.statusCode < 300);
+            // fprintf(stderr, "Eywa status: %ld\n", (long)http.statusCode);
+        }
+        finished = true;
+    }] resume];
+    TestWebKitAPI::Util::run(&finished);
+    return ok;
+}
+
+static void runEywaPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
+{
+    [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
+    bool done = false;
+    HTTPServer server([&done, connectionCount = 0](Connection connection) mutable {
+        switch (++connectionCount) {
+        case 1: // conversion trigger
+            connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
+                EXPECT_TRUE(contains(request1.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
+                constexpr auto redirect =
+                    "HTTP/1.1 302 Found\r\n"
+                    "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
+                    "Content-Length: 0\r\n\r\n"_s;
+                connection.send(redirect, [connection] {
+                    connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
+                        EXPECT_TRUE(contains(request2.span(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n"_span));
+                        constexpr auto response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n"_s;
+                        connection.send(response);
+                    });
+                });
+            });
+            break;
+
+        case 2: // attribution report arrives here; forward body to Eywa
+            connection.receiveHTTPRequest([&done, connection] (Vector<char>&& request3) {
+                EXPECT_TRUE(contains(request3.span(), "POST / HTTP/1.1\r\n"_span)); //
+
+                auto span = request3.span();
+                size_t bodyBegin = find(span, "\r\n\r\n"_span);
+                EXPECT_NE(bodyBegin, WTF::notFound); //
+                bodyBegin += strlen("\r\n\r\n");
+                auto bodySpan = span.subspan(bodyBegin);
+
+                NSData *bodyData = [NSData dataWithBytes:bodySpan.data() length:bodySpan.size()];
+                BOOL eywaOK = forwardToEywa(bodyData);
+
+                constexpr auto okResp = "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 0\r\n\r\n"_s;
+                connection.send(okResp, [&, connection, eywaOK] {
+                    EXPECT_TRUE(eywaOK);
+                    done = true;
+                });
+            });
+            break;
+        }
+    }, HTTPServer::Protocol::Https);
+
+    NSURL *serverURL = server.request().URL;
+
+    auto webView = configuration
+        ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration])
+        : webViewWithoutUsingDaemon();
+    webView.get().navigationDelegate = delegateAllowingAllTLS();
+    addAttributionToWebView(webView.get(), server);
+    [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+    [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
+
+    __block bool cleared = false;
+    [[webView configuration].websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^{
+        cleared = true;
+    }];
+    Util::run(&cleared);
+
+    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
+        [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
+            NSString *html = [NSString stringWithFormat:
+                @"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
+            if (setTestAppBundleID) {
+                [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
+                    [webView loadHTMLString:html baseURL:exampleURL()];
+                }];
+            } else
+                [webView loadHTMLString:html baseURL:exampleURL()];
+        }];
+    }];
+
+    Util::run(&done);
+}
+
+TEST(PrivateClickMeasurement, SendConversionReportToEywa)
+{
+    runEywaPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+        [webView _storePrivateClickMeasurementWithSourceID:42 destinationURL:exampleURL() reportEndpoint:server.request().URL];
+    });
+}
+
 TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
 {
     auto configuration = configurationWithoutUsingDaemon();
