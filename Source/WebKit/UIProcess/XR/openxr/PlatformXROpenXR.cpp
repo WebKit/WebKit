@@ -376,7 +376,7 @@ void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformX
                 return;
             }
 
-            active.renderQueue->dispatch([this, renderState = active.renderState, completionHandler = WTFMove(completionHandler)]() mutable {
+            active.renderQueue->dispatch([renderState = active.renderState, completionHandler = WTFMove(completionHandler)]() mutable {
                 auto addResult = renderState->hitTestSources.add(renderState->nextHitTestSource);
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
                 callOnMainRunLoop([source = renderState->nextHitTestSource, completionHandler = WTFMove(completionHandler)] mutable {
@@ -405,7 +405,7 @@ void OpenXRCoordinator::deleteHitTestSource(WebPageProxy& page, PlatformXR::HitT
                 return;
             }
 
-            active.renderQueue->dispatch([this, renderState = active.renderState, source]() mutable {
+            active.renderQueue->dispatch([renderState = active.renderState, source]() {
                 bool removed = renderState->hitTestSources.remove(source);
                 ASSERT_UNUSED(removed, removed);
             });
