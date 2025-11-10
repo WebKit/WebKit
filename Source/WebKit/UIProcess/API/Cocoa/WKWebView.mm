@@ -190,6 +190,7 @@
 #import <WebCore/WebCorePersistentCoders.h>
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
+#import <cmath>
 #import <wtf/BlockPtr.h>
 #import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>
@@ -3212,7 +3213,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
         if (WebCore::PageColorSampler::colorsAreSimilar(_page->underPageBackgroundColor(), topFixedColor))
             return 0;
 
-        return std::max<CGFloat>(-obscuredInsets.top - [_scrollView contentOffset].y, 0);
+        return std::fmax(-obscuredInsets.top - [_scrollView contentOffset].y, 0);
     }();
 
     return WebCore::FloatBoxExtent {

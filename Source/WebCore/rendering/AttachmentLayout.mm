@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
+#include <cmath>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -261,7 +262,7 @@ static CGFloat attachmentDynamicTypeScaleFactor()
     CGFloat dynamicPointSize = shortCaptionPointSizeWithContentSizeCategory(contentSizeCategory());
     if (!dynamicPointSize || !fixedPointSize)
         return 1;
-    return std::max<CGFloat>(1, dynamicPointSize / fixedPointSize);
+    return std::fmax(1, dynamicPointSize / fixedPointSize);
 }
 
 AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, AttachmentLayoutStyle)

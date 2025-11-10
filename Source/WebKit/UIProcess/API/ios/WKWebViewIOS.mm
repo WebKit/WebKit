@@ -76,6 +76,7 @@
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
+#import <cmath>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <ranges>
@@ -826,10 +827,10 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
         safeAreaInsets = UIEdgeInsetsAdd(safeAreaInsets, self._contentInsetsFromSystemMinimumLayoutMargins, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
         if (_haveSetObscuredInsets) {
-            safeAreaInsets.top = std::max<CGFloat>(0., safeAreaInsets.top - _obscuredInsets.top);
-            safeAreaInsets.left = std::max<CGFloat>(0., safeAreaInsets.left - _obscuredInsets.left);
-            safeAreaInsets.bottom = std::max<CGFloat>(0., safeAreaInsets.bottom - _obscuredInsets.bottom);
-            safeAreaInsets.right = std::max<CGFloat>(0., safeAreaInsets.right - _obscuredInsets.right);
+            safeAreaInsets.top = std::fmax(0., safeAreaInsets.top - _obscuredInsets.top);
+            safeAreaInsets.left = std::fmax(0., safeAreaInsets.left - _obscuredInsets.left);
+            safeAreaInsets.bottom = std::fmax(0., safeAreaInsets.bottom - _obscuredInsets.bottom);
+            safeAreaInsets.right = std::fmax(0., safeAreaInsets.right - _obscuredInsets.right);
         }
         return safeAreaInsets;
     }
@@ -3806,32 +3807,32 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     CGRect contentViewFrame = [_contentView frame];
     CGFloat minX = std::min<CGFloat>(0, scrollView.contentOffset.x);
     CGFloat minY = std::min<CGFloat>(0, scrollView.contentOffset.y);
-    CGFloat maxX = std::max<CGFloat>(scrollView.bounds.size.width + scrollView.contentOffset.x, contentViewBounds.size.width);
-    CGFloat maxY = std::max<CGFloat>(scrollView.bounds.size.height + scrollView.contentOffset.y, contentViewBounds.size.height);
+    CGFloat maxX = std::fmax(scrollView.bounds.size.width + scrollView.contentOffset.x, contentViewBounds.size.width);
+    CGFloat maxY = std::fmax(scrollView.bounds.size.height + scrollView.contentOffset.y, contentViewBounds.size.height);
 
     [_findOverlaysOutsideContentView->top setFrame:CGRectMake(
         CGRectGetMinX(contentViewFrame),
         minY,
-        std::max<CGFloat>(maxX - CGRectGetMinX(contentViewFrame), 0),
-        std::max<CGFloat>(CGRectGetMinY(contentViewFrame) - minY, 0))];
+        std::fmax(maxX - CGRectGetMinX(contentViewFrame), 0),
+        std::fmax(CGRectGetMinY(contentViewFrame) - minY, 0))];
 
     [_findOverlaysOutsideContentView->right setFrame:CGRectMake(
         CGRectGetMaxX(contentViewFrame),
         CGRectGetMinY(contentViewFrame),
-        std::max<CGFloat>(maxX - CGRectGetMaxX(contentViewFrame), 0),
-        std::max<CGFloat>(maxY - CGRectGetMinY(contentViewFrame), 0))];
+        std::fmax(maxX - CGRectGetMaxX(contentViewFrame), 0),
+        std::fmax(maxY - CGRectGetMinY(contentViewFrame), 0))];
 
     [_findOverlaysOutsideContentView->bottom setFrame:CGRectMake(
         minX,
         CGRectGetMaxY(contentViewFrame),
-        std::max<CGFloat>(CGRectGetMaxX(contentViewFrame) - minX, 0),
-        std::max<CGFloat>(maxY - CGRectGetMaxY(contentViewFrame), 0))];
+        std::fmax(CGRectGetMaxX(contentViewFrame) - minX, 0),
+        std::fmax(maxY - CGRectGetMaxY(contentViewFrame), 0))];
 
     [_findOverlaysOutsideContentView->left setFrame:CGRectMake(
         minX,
         minY,
-        std::max<CGFloat>(CGRectGetMinX(contentViewFrame) - minX, 0),
-        std::max<CGFloat>(CGRectGetMaxY(contentViewFrame) - minY, 0))];
+        std::fmax(CGRectGetMinX(contentViewFrame) - minX, 0),
+        std::fmax(CGRectGetMaxY(contentViewFrame) - minY, 0))];
 }
 
 - (void)_showFindOverlay

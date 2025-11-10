@@ -81,6 +81,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
+#import <cmath>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RuntimeApplicationChecks.h>
@@ -238,7 +239,7 @@ WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unob
     bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
     if (isBelowMinimumScale) {
         const CGFloat slope = 12;
-        CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
+        CGFloat factor = std::fmax(1 - slope * (minimumScale - displayedContentScale), 0);
 
         constrainedUnobscuredRect.setX(adjustedUnexposedEdge(documentRect.x(), constrainedUnobscuredRect.x(), factor));
         constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
