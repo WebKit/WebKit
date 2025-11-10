@@ -105,90 +105,80 @@ static vImage_Buffer makeVImageBuffer8888(CVPixelBufferRef buffer)
 
 RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, PlatformVideoColorSpace&& colorSpace)
 {
-    CVPixelBufferRef rawPixelBuffer = nullptr;
-
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, nullptr, &rawPixelBuffer);
-    if (status != noErr || !rawPixelBuffer)
-        return nullptr;
-    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, nullptr, pixelBuffer.adoptOut());
     if (status != noErr)
         return nullptr;
-
-    auto scope = makeScopeExit([pixelBuffer] {
-        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
-    });
-    ASSERT(span.size() >= height * planeY.sourceWidthBytes);
-    if (span.size() < height * planeY.sourceWidthBytes)
-        return nullptr;
-
-    auto data = span;
-    data = copyToCVPixelBufferPlane(pixelBuffer.get(), 0, data, height, planeY.sourceWidthBytes);
-    if (CVPixelBufferGetPlaneCount(pixelBuffer.get()) == 2) {
-        const auto heightUV = height / 2;
-        ASSERT(std::to_address(span.end()) >= data.subspan(heightUV * planeUV.sourceWidthBytes).data());
-        if (CVPixelBufferGetWidthOfPlane(pixelBuffer.get(), 1) != (width / 2)
-            || CVPixelBufferGetHeightOfPlane(pixelBuffer.get(), 1) != heightUV
-            || (data.subspan(heightUV * planeUV.sourceWidthBytes).data() > std::to_address(span.end())))
+    {
+        status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+        if (status != noErr)
             return nullptr;
-        copyToCVPixelBufferPlane(pixelBuffer.get(), 1, data, height / 2, planeUV.sourceWidthBytes);
-    }
+        auto scope = makeScopeExit([&pixelBuffer] {
+            CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
+        });
+        ASSERT(span.size() >= height * planeY.sourceWidthBytes);
+        if (span.size() < height * planeY.sourceWidthBytes)
+            return nullptr;
 
+        auto data = span;
+        data = copyToCVPixelBufferPlane(pixelBuffer.get(), 0, data, height, planeY.sourceWidthBytes);
+        if (CVPixelBufferGetPlaneCount(pixelBuffer.get()) == 2) {
+            const auto heightUV = height / 2;
+            ASSERT(std::to_address(span.end()) >= data.subspan(heightUV * planeUV.sourceWidthBytes).data());
+            if (CVPixelBufferGetWidthOfPlane(pixelBuffer.get(), 1) != (width / 2)
+                || CVPixelBufferGetHeightOfPlane(pixelBuffer.get(), 1) != heightUV
+                || (data.subspan(heightUV * planeUV.sourceWidthBytes).data() > std::to_address(span.end())))
+                return nullptr;
+            copyToCVPixelBufferPlane(pixelBuffer.get(), 1, data, height / 2, planeUV.sourceWidthBytes);
+        }
+    }
     return VideoFrameCV::create({ }, false, Rotation::None, WTFMove(pixelBuffer), WTFMove(colorSpace));
 }
 
 RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
-    CVPixelBufferRef rawPixelBuffer = nullptr;
-
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32ARGB, nullptr, &rawPixelBuffer);
-    if (status != noErr || !rawPixelBuffer)
-        return nullptr;
-    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32ARGB, nullptr, pixelBuffer.adoptOut());
     if (status != noErr)
         return nullptr;
-
-    auto scope = makeScopeExit([pixelBuffer] {
-        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
-    });
-
-    // Convert from RGBA to ARGB.
-    auto sourceBuffer = makeVImageBuffer8888(spanConstCast<uint8_t>(span), width, height, plane.sourceWidthBytes);
-    auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
-    uint8_t channelMap[4] = { 3, 0, 1, 2 };
-    auto error = vImagePermuteChannels_ARGB8888(&sourceBuffer, &destinationBuffer, channelMap, kvImageDoNotTile);
-    // Permutation will not fail as long as the provided arguments are valid.
-    ASSERT_UNUSED(error, error == kvImageNoError);
-
+    {
+        status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+        if (status != noErr)
+            return nullptr;
+        auto scope = makeScopeExit([&pixelBuffer] {
+            CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
+        });
+        // Convert from RGBA to ARGB.
+        auto sourceBuffer = makeVImageBuffer8888(spanConstCast<uint8_t>(span), width, height, plane.sourceWidthBytes);
+        auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
+        uint8_t channelMap[4] = { 3, 0, 1, 2 };
+        auto error = vImagePermuteChannels_ARGB8888(&sourceBuffer, &destinationBuffer, channelMap, kvImageDoNotTile);
+        // Permutation will not fail as long as the provided arguments are valid.
+        ASSERT_UNUSED(error, error == kvImageNoError);
+    }
     return VideoFrameCV::create({ }, false, Rotation::None, WTFMove(pixelBuffer), WTFMove(colorSpace));
 }
 
 RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
-    CVPixelBufferRef rawPixelBuffer = nullptr;
-
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, nullptr, &rawPixelBuffer);
-    if (status != noErr || !rawPixelBuffer)
-        return nullptr;
-    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, nullptr, pixelBuffer.adoptOut());
     if (status != noErr)
         return nullptr;
+    {
+        status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+        if (status != noErr)
+            return nullptr;
+        auto scope = makeScopeExit([&pixelBuffer] {
+            CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
+        });
 
-    auto scope = makeScopeExit([pixelBuffer] {
-        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
-    });
-
-    auto sourceBuffer = makeVImageBuffer8888(spanConstCast<uint8_t>(span), width, height, plane.sourceWidthBytes);
-    auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
-    auto error = vImageCopyBuffer(&sourceBuffer, &destinationBuffer, 4, kvImageDoNotTile);
-    // Copy will not fail as long as the provided arguments are valid.
-    ASSERT_UNUSED(error, error == kvImageNoError);
-
+        auto sourceBuffer = makeVImageBuffer8888(spanConstCast<uint8_t>(span), width, height, plane.sourceWidthBytes);
+        auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
+        auto error = vImageCopyBuffer(&sourceBuffer, &destinationBuffer, 4, kvImageDoNotTile);
+        // Copy will not fail as long as the provided arguments are valid.
+        ASSERT_UNUSED(error, error == kvImageNoError);
+    }
     return VideoFrameCV::create({ }, false, Rotation::None, WTFMove(pixelBuffer), WTFMove(colorSpace));
 }
 
@@ -526,13 +516,10 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
         static_cast<PixelBuffer*>(context)->deref();
     };
 
-    CVPixelBufferRef cvPixelBufferRaw = nullptr;
-    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, pixelBuffer.ptr(), nullptr, &cvPixelBufferRaw);
-
-    auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
-    if (!cvPixelBuffer) {
+    RetainPtr<CVPixelBufferRef> cvPixelBuffer;
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, pixelBuffer.ptr(), nullptr, cvPixelBuffer.adoptOut());
+    if (!cvPixelBuffer)
         return nullptr;
-    }
 
     // The CVPixelBuffer now owns the pixelBuffer and will call `deref()` on it when it gets destroyed.
     pixelBuffer->ref();

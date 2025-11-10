@@ -77,6 +77,8 @@ template<typename T> constexpr RetainPtr<RetainPtrType<T>> adoptCF(T CF_RELEASES
 
 template<typename T> constexpr RetainPtr<RetainPtrType<T>> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
+template<typename T> class RetainPtrAdoptOut;
+
 template<typename T> class RetainPtr {
 public:
     using ValueType = std::remove_pointer_t<T>;
@@ -145,6 +147,7 @@ public:
 
     template<typename U> friend constexpr RetainPtr<RetainPtrType<U>> adoptNS(U NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
 
+    [[nodiscard]] RetainPtrAdoptOut<T> adoptOut() LIFETIME_BOUND;
 private:
     enum AdoptTag { Adopt };
     constexpr RetainPtr(PtrType ptr, AdoptTag) : m_ptr(ptr) { }
@@ -177,12 +180,27 @@ private:
 #endif
 
     StorageType m_ptr { nullptr };
+    friend class RetainPtrAdoptOut<T>;
 };
 
 template<typename T> RetainPtr(T) -> RetainPtr<RetainPtrType<T>>;
 
 // Helper function for creating a RetainPtr using template argument deduction.
 template<typename T> RetainPtr<RetainPtrType<T>> retainPtr(T) WARN_UNUSED_RETURN;
+
+template<typename T> class RetainPtrAdoptOut {
+    using PtrType = RetainPtr<T>::PtrType;
+    using StorageType = RetainPtr<T>::StorageType;
+public:
+    explicit RetainPtrAdoptOut(StorageType* ptr)
+        : m_ptr(ptr)
+    {
+    }
+    ~RetainPtrAdoptOut() = default;
+    operator PtrType*() { return m_ptr; }
+private:
+    StorageType* m_ptr;
+};
 
 template<typename T> inline RetainPtr<T>::~RetainPtr()
 {
@@ -277,6 +295,12 @@ template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::ope
 template<typename T> inline void RetainPtr<T>::swap(RetainPtr& o)
 {
     std::swap(m_ptr, o.m_ptr);
+}
+
+template<typename T> inline RetainPtrAdoptOut<T> RetainPtr<T>::adoptOut()
+{
+    clear();
+    return RetainPtrAdoptOut<T> { &m_ptr };
 }
 
 template<typename T> inline void swap(RetainPtr<T>& a, RetainPtr<T>& b)

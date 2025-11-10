@@ -28,6 +28,7 @@
 
 #include "config.h"
 
+#include "Test.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 
@@ -181,11 +182,36 @@ TEST(RetainPtr, RetainPtrCF)
     EXPECT_EQ(1, CFGetRetainCount(object2.get()));
 }
 
-TEST(RETAIN_PTR_TEST_NAME, RetainPtrType)
+TEST(RetainPtr, RetainPtrTypeCF)
 {
     static_assert(std::is_same_v<RetainPtr<CFTypeRef>, RetainPtr<WTF::RetainPtrType<CFTypeRef>>>);
     static_assert(std::is_same_v<RetainPtr<CFStringRef>, RetainPtr<WTF::RetainPtrType<CFStringRef>>>);
     static_assert(std::is_same_v<RetainPtr<CFMutableStringRef>, RetainPtr<WTF::RetainPtrType<CFMutableStringRef>>>);
+}
+
+static bool createCFArray(bool  simulatedFailure, CF_RETURNS_RETAINED CFArrayRef* result)
+{
+    if (simulatedFailure)
+        return false;
+    *result = CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr);
+    return true;
+}
+
+TEST(RetainPtr, AdoptOut)
+{
+    RetainPtr<CFArrayRef> array;
+    EXPECT_NULL(array);
+    EXPECT_TRUE(createCFArray(false, array.adoptOut()));
+    EXPECT_NOT_NULL(array);
+    EXPECT_EQ(1, CFGetRetainCount(array.get()));
+    RetainPtr<CFArrayRef> prev = array;
+    EXPECT_TRUE(createCFArray(false, array.adoptOut()));
+    EXPECT_NOT_NULL(array);
+    EXPECT_EQ(1, CFGetRetainCount(array.get()));
+    EXPECT_NE(array, prev);
+    EXPECT_EQ(1, CFGetRetainCount(prev.get()));
+    EXPECT_FALSE(createCFArray(true, array.adoptOut()));
+    EXPECT_NULL(array);
 }
 
 } // namespace TestWebKitAPI
