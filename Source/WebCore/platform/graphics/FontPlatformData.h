@@ -80,6 +80,7 @@ interface IDWriteFontFace;
 
 namespace WebCore {
 
+class Font;
 class FontDescription;
 struct FontCustomPlatformData;
 struct FontSizeAdjust;
@@ -87,81 +88,10 @@ struct FontSizeAdjust;
 class SkiaHarfBuzzFont;
 #endif
 
-struct FontPlatformDataAttributes {
-    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique)
-        : m_size(size)
-        , m_orientation(orientation)
-        , m_widthVariant(widthVariant)
-        , m_textRenderingMode(textRenderingMode)
-        , m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        { }
-
 #if USE(CORE_TEXT)
-    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, RetainPtr<CFDictionaryRef> attributes, CTFontDescriptorOptions options, RetainPtr<CFStringRef> url, RetainPtr<CFStringRef> psName)
-        : m_size(size)
-        , m_orientation(orientation)
-        , m_widthVariant(widthVariant)
-        , m_textRenderingMode(textRenderingMode)
-        , m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        , m_attributes(attributes)
-        , m_options(options)
-        , m_url(url)
-        , m_psName(psName)
-        { }
-#endif
 
-#if PLATFORM(WIN) && USE(CAIRO)
-    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, LOGFONT font)
-        : m_size(size)
-        , m_orientation(orientation)
-        , m_widthVariant(widthVariant)
-        , m_textRenderingMode(textRenderingMode)
-        , m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        , m_font(font)
-        { }
-#endif
-
-#if USE(SKIA)
-    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, SkString familyName, SkFontStyle style, Vector<hb_feature_t>&& features)
-        : m_size(size)
-        , m_orientation(orientation)
-        , m_widthVariant(widthVariant)
-        , m_textRenderingMode(textRenderingMode)
-        , m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        , m_familyName(familyName)
-        , m_style(style)
-        , m_features(WTFMove(features))
-        { }
-#endif
-
-    float m_size { 0 };
-
-    FontOrientation m_orientation { FontOrientation::Horizontal };
-    FontWidthVariant m_widthVariant { FontWidthVariant::RegularWidth };
-    TextRenderingMode m_textRenderingMode { TextRenderingMode::AutoTextRendering };
-
-    bool m_syntheticBold { false };
-    bool m_syntheticOblique { false };
-
-#if PLATFORM(WIN) && USE(CAIRO)
-    LOGFONT m_font;
-#elif USE(CORE_TEXT)
-    RetainPtr<CFDictionaryRef> m_attributes;
-    CTFontDescriptorOptions m_options { (CTFontDescriptorOptions)0 }; // FIXME: <rdar://121670125>
-    RetainPtr<CFStringRef> m_url;
-    RetainPtr<CFStringRef> m_psName;
-#elif USE(SKIA)
-    SkString m_familyName;
-    SkFontStyle m_style;
-    Vector<hb_feature_t> m_features;
-#endif
-};
-
-#if USE(CORE_TEXT)
+using SystemUIFontType = uint32_t;
+#define SystemUIFontTypeNone UINT32_MAX
 
 // FIXME: Some of these structures have std::optional<RetainPtr<>> which seems weird,
 // but generated encode/decode of RetainPtrs doesn't currently handle null values very well.
@@ -220,20 +150,51 @@ struct FontPlatformSerializedAttributes {
 #endif
 };
 
-struct FontPlatformSerializedCreationData {
-    Vector<uint8_t> fontFaceData;
-    std::optional<FontPlatformSerializedAttributes> attributes;
-    String itemInCollection;
-};
-
 struct FontPlatformSerializedData {
     CTFontDescriptorOptions options { 0 }; // <rdar://121670125>
     RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
     std::optional<FontPlatformSerializedAttributes> attributes;
 };
+
+struct FontMetadata {
+    double pointSize = { 0.0 };
+    WebCore::FontOrientation orientation = FontOrientation::Horizontal;
+    WebCore::FontWidthVariant widthVariant = FontWidthVariant::RegularWidth;
+    WebCore::TextRenderingMode textRenderingMode = TextRenderingMode::AutoTextRendering;
+    bool syntheticBold = false;
+    bool syntheticOblique = false;
+};
+
+struct InstalledFont {
+    struct SystemUIFont {
+        SystemUIFontType systemUIFontType { SystemUIFontTypeNone };
+        String language;
+        RetainPtr<CTFontRef> toCTFont(double pointSize) const;
+    };
+
+    struct PostScriptFont {
+        String postScriptName;
+        CTFontDescriptorOptions fontDescriptorOptions;
+        std::optional<FontPlatformSerializedAttributes> fontSerializedAttributes;
+        RetainPtr<CTFontRef> toCTFont(double pointSize) const;
+    };
+
+    Variant<SystemUIFont, PostScriptFont> font;
+    FontMetadata metadata;
+    WEBCORE_EXPORT RetainPtr<CTFontRef> toCTFont() const;
+    Ref<Font> toFont() const;
+};
+
+struct CustomFontCreationData {
+    FontMetadata metadata;
+    Vector<uint8_t> fontFaceData;
+    std::optional<FontPlatformSerializedAttributes> attributes;
+    String itemInCollection;
+};
+
 #elif USE(SKIA)
-struct FontPlatformSerializedCreationData {
+struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
     String itemInCollection;
 };
@@ -242,7 +203,7 @@ struct FontPlatformSerializedData {
     sk_sp<SkData> typefaceData;
 };
 #elif USE(CAIRO)
-struct FontPlatformSerializedCreationData {
+struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
     String itemInCollection;
 };
@@ -303,10 +264,6 @@ public:
     WEBCORE_EXPORT FontPlatformData(sk_sp<SkTypeface>&&, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode, Vector<hb_feature_t>&&, const FontCustomPlatformData* = nullptr);
 #endif
 
-    using Attributes = FontPlatformDataAttributes;
-
-    WEBCORE_EXPORT static FontPlatformData create(const Attributes&, const FontCustomPlatformData*);
-
     WEBCORE_EXPORT FontPlatformData(const FontPlatformData&);
     WEBCORE_EXPORT FontPlatformData& operator=(const FontPlatformData&);
     WEBCORE_EXPORT ~FontPlatformData();
@@ -321,7 +278,7 @@ public:
     HFONT hfont() const { return m_hfont ? m_hfont->get() : 0; }
 #endif
 
-    using IPCData = Variant<FontPlatformSerializedData, FontPlatformSerializedCreationData>;
+    using IPCData = Variant<FontPlatformSerializedData, CustomFontCreationData>;
 #if USE(CORE_TEXT)
     WEBCORE_EXPORT FontPlatformData(float size, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&&, RefPtr<FontCustomPlatformData>&&);
 #elif USE(SKIA)
@@ -429,8 +386,6 @@ public:
         return m_customPlatformData.get();
     }
     inline RefPtr<const FontCustomPlatformData> protectedCustomPlatformData() const; // Defined in FontCustomPlatformData.h
-
-    WEBCORE_EXPORT Attributes attributes() const;
 
 private:
     bool platformIsEqual(const FontPlatformData&) const;

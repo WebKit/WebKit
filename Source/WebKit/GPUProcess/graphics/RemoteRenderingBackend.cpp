@@ -406,20 +406,9 @@ void RemoteRenderingBackend::releaseNativeImage(RenderingResourceIdentifier iden
     MESSAGE_CHECK(success, "NativeImage released before being cached.");
 }
 
-void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, FontPlatformDataAttributes platformData, std::optional<RenderingResourceIdentifier> fontCustomPlatformDataIdentifier)
+void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 {
     ASSERT(!RunLoop::isMain());
-
-    RefPtr<FontCustomPlatformData> customPlatformData = nullptr;
-    if (fontCustomPlatformDataIdentifier) {
-        customPlatformData = m_remoteResourceCache.cachedFontCustomPlatformData(*fontCustomPlatformDataIdentifier);
-        MESSAGE_CHECK(customPlatformData, "CacheFont without caching custom data");
-    }
-
-    FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData.get());
-
-    Ref<Font> font = Font::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
-
     m_remoteResourceCache.cacheFont(WTFMove(font));
 }
 
@@ -428,23 +417,6 @@ void RemoteRenderingBackend::releaseFont(WebCore::RenderingResourceIdentifier id
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.releaseFont(identifier);
     MESSAGE_CHECK(success, "Font released before being cached.");
-}
-
-void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&& fontCustomPlatformSerializedData)
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto customPlatformData = FontCustomPlatformData::tryMakeFromSerializationData(WTFMove(fontCustomPlatformSerializedData), shouldUseLockdownFontParser());
-    MESSAGE_CHECK(customPlatformData.has_value(), "cacheFontCustomPlatformData couldn't deserialize FontCustomPlatformData");
-
-    m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData.value()));
-}
-
-void RemoteRenderingBackend::releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier identifier)
-{
-    assertIsCurrent(workQueue());
-    bool success = m_remoteResourceCache.releaseFontCustomPlatformData(identifier);
-    MESSAGE_CHECK(success, "FontCustomPlatformData released before being cached.");
 }
 
 void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RemoteGradientIdentifier identifier)

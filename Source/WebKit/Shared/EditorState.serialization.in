@@ -136,3 +136,86 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
     bool enclosingLayerUsesContentsLayer;
 #endif
 };
+
+[Nested] enum class WebCore::FontAttributes::SubscriptOrSuperscript : uint8_t {
+    None,
+    Subscript,
+    Superscript
+};
+
+[Nested] enum class WebCore::FontAttributes::HorizontalAlignment : uint8_t {
+    Left,
+    Center,
+    Right,
+    Justify,
+    Natural
+};
+
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::NoneData {
+};
+
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::StringData {
+    AtomString identifier;
+};
+
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::CounterStyleData {
+    AtomString identifier;
+};
+
+header: <WebCore/StyleListStyleType.h>
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType {
+    Variant<WebCore::Style::ListStyleType::NoneData, WebCore::Style::ListStyleType::StringData, WebCore::Style::ListStyleType::CounterStyleData> ipcData()
+};
+
+header: <WebCore/FontAttributes.h>
+[CustomHeader] struct WebCore::TextList {
+    WebCore::Style::ListStyleType styleType;
+    int startingItemNumber
+    bool ordered
+};
+
+struct WebCore::FontShadow {
+    WebCore::Color color;
+    WebCore::FloatSize offset;
+    double blurRadius;
+};
+
+[CustomHeader] struct WebCore::FontAttributes {
+    RefPtr<WebCore::Font> font
+    WebCore::Color backgroundColor
+    WebCore::Color foregroundColor
+    WebCore::FontShadow fontShadow
+    WebCore::FontAttributes::SubscriptOrSuperscript subscriptOrSuperscript
+    WebCore::FontAttributes::HorizontalAlignment horizontalAlignment
+    Vector<WebCore::TextList> textLists
+    bool hasUnderline
+    bool hasStrikeThrough
+    bool hasMultipleFonts
+};
+
+header: <WebCore/FontAttributeChanges.h>
+enum class WebCore::VerticalAlignChange : uint8_t {
+    Superscript,
+    Baseline,
+    Subscript
+};
+
+header: <WebCore/FontAttributeChanges.h>
+[CustomHeader] class WebCore::FontChanges {
+    String m_fontName;
+    String m_fontFamily;
+    std::optional<double> m_fontSize;
+    [Validator='!*m_fontSize || !*m_fontSizeDelta'] std::optional<double> m_fontSizeDelta;
+    std::optional<bool> m_bold;
+    std::optional<bool> m_italic;
+};
+
+class WebCore::FontAttributeChanges {
+    std::optional<WebCore::VerticalAlignChange> m_verticalAlign;
+    std::optional<WebCore::Color> m_backgroundColor;
+    std::optional<WebCore::Color> m_foregroundColor;
+    std::optional<WebCore::FontShadow> m_shadow;
+    std::optional<bool> m_strikeThrough;
+    std::optional<bool> m_underline;
+    WebCore::FontChanges m_fontChanges;
+};

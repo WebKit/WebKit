@@ -425,11 +425,6 @@ void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier
     send(Messages::RemoteRenderingBackend::ReleaseNativeImage(identifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformDataAttributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
-{
-    send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));
-}
-
 void RemoteRenderingBackendProxy::releaseFont(RenderingResourceIdentifier identifier)
 {
     if (!m_connection)
@@ -437,17 +432,9 @@ void RemoteRenderingBackendProxy::releaseFont(RenderingResourceIdentifier identi
     send(Messages::RemoteRenderingBackend::ReleaseFont(identifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
+void RemoteRenderingBackendProxy::cacheFont(const Ref<WebCore::Font>& font)
 {
-    Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
-    send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(data->serializedData()));
-}
-
-void RemoteRenderingBackendProxy::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
-{
-    if (!m_connection)
-        return;
-    send(Messages::RemoteRenderingBackend::ReleaseFontCustomPlatformData(identifier));
+    send(Messages::RemoteRenderingBackend::CacheFont(font));
 }
 
 void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient, RemoteGradientIdentifier identifier)

@@ -1090,7 +1090,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::FillLightMode': ['<WebCore/FillLightMode.h>'],
         'WebCore::FirstPartyWebsiteDataRemovalMode': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::FontChanges': ['<WebCore/FontAttributeChanges.h>'],
-        'WebCore::FontPlatformDataAttributes': ['<WebCore/FontPlatformData.h>'],
         'WebCore::FontCustomPlatformSerializedData': ['<WebCore/FontCustomPlatformData.h>'],
         'WebCore::FontSmoothingMode': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::FoundElementInRemoteFrame': ['<WebCore/FocusControllerTypes.h>'],

@@ -68,10 +68,6 @@ public:
     bool releaseFont(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::Font> cachedFont(WebCore::RenderingResourceIdentifier) const;
 
-    void cacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData>&&);
-    bool releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
-    RefPtr<WebCore::FontCustomPlatformData> cachedFontCustomPlatformData(WebCore::RenderingResourceIdentifier) const;
-
     bool cacheDisplayList(RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>);
     RefPtr<const WebCore::DisplayList::DisplayList> cachedDisplayList(RemoteDisplayListIdentifier) const;
     bool releaseDisplayList(RemoteDisplayListIdentifier);
@@ -85,7 +81,6 @@ private:
     HashMap<RemoteGradientIdentifier, Ref<WebCore::Gradient>> m_gradients;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
-    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
     HashMap<RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>> m_displayLists;
 };
 

@@ -104,22 +104,6 @@ RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identif
     return m_fonts.get(identifier);
 }
 
-void RemoteResourceCache::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
-{
-    auto identifier = customPlatformData->m_renderingResourceIdentifier;
-    m_fontCustomPlatformDatas.add(identifier, WTFMove(customPlatformData));
-}
-
-bool RemoteResourceCache::releaseFontCustomPlatformData(RenderingResourceIdentifier identifier)
-{
-    return m_fontCustomPlatformDatas.remove(identifier);
-}
-
-RefPtr<FontCustomPlatformData> RemoteResourceCache::cachedFontCustomPlatformData(RenderingResourceIdentifier identifier) const
-{
-    return m_fontCustomPlatformDatas.get(identifier);
-}
-
 bool RemoteResourceCache::cacheDisplayList(RemoteDisplayListIdentifier identifier, Ref<const DisplayList::DisplayList> displayList)
 {
     return m_displayLists.add(identifier, displayList).isNewEntry;
@@ -147,7 +131,6 @@ void RemoteResourceCache::releaseMemory()
     m_gradients.clear();
     m_filters.clear();
     m_fonts.clear();
-    m_fontCustomPlatformDatas.clear();
     m_displayLists.clear();
 }
 

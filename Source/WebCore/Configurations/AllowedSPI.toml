@@ -71,5 +71,5 @@ selectors = [
 request = "rdar://161241270"
 cleanup = "rdar://161241477"
 symbols = [
-    "CTFontDescriptorCreateMatchingFontDescriptorsWithOptions",
+    "CTFontGetUIFontType",
 ]

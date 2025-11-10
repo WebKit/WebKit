@@ -111,10 +111,8 @@ public:
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(const RemoteNativeImageProxy&);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
-    void cacheFont(const WebCore::Font::Attributes&, const WebCore::FontPlatformDataAttributes&, std::optional<WebCore::RenderingResourceIdentifier>);
+    void cacheFont(const Ref<WebCore::Font>&);
     void releaseFont(WebCore::RenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
-    void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);
