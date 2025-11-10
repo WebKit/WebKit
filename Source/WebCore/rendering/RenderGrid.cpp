@@ -1104,7 +1104,34 @@ bool RenderGrid::isMasonry(Style::GridTrackSizingDirection direction) const
         return parentGrid->isMasonry(direction);
     if (style().display() != DisplayType::Masonry && style().display() != DisplayType::InlineMasonry)
         return false;
-    return (direction == Style::GridTrackSizingDirection::Columns) == style().gridAutoFlow().isColumn();
+
+    // Determine masonry axis based on item-direction property
+    auto itemDir = style().itemDirection();
+    bool masonryIsRowAxis;
+
+    if (itemDir == ItemDirection::Auto) {
+        // Auto computes based on grid-template-rows and grid-template-columns
+        bool hasRows = !style().gridTemplateRows().list.isEmpty();
+        bool hasColumns = !style().gridTemplateColumns().list.isEmpty();
+        // If rows are defined and columns are not, rows are the GRID axis,
+        // so columns are the MASONRY axis
+        // If columns are defined and rows are not, columns are the GRID axis,
+        // so rows are the MASONRY axis
+        // Otherwise (neither or both defined), default to rows being masonry (inline axis)
+        masonryIsRowAxis = !(hasRows && !hasColumns);
+    } else {
+        // item-direction: row/row-reverse => items flow horizontally
+        //   - rows are the GRID axis (define with grid-template-rows)
+        //   - columns are the MASONRY axis (grow dynamically)
+        //   - so rows are NOT masonry axis
+        // item-direction: column/column-reverse => items flow vertically
+        //   - columns are the GRID axis (define with grid-template-columns)
+        //   - rows are the MASONRY axis (grow dynamically)
+        //   - so rows ARE masonry axis
+        masonryIsRowAxis = (itemDir == ItemDirection::Column || itemDir == ItemDirection::ColumnReverse);
+    }
+
+    return (direction == Style::GridTrackSizingDirection::Rows) == masonryIsRowAxis;
 }
 
 // Masonry Spec Section 2.3.1 repeat(auto-fit)

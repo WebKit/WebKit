@@ -10059,6 +10059,27 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-auto-flow"
             }
         },
+        "item-direction": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [
+                "auto",
+                "row",
+                "column",
+                "row-reverse",
+                "column-reverse"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "item-track"
+                ],
+                "parser-grammar": "auto | row | column | row-reverse | column-reverse"
+            },
+            "specification": {
+                "category": "css-grid",
+                "url": "https://drafts.csswg.org/css-grid-3/#propdef-item-direction"
+            }
+        },
         "hyphenate-character": {
             "animation-type": "discrete",
             "inherited": true,

@@ -413,6 +413,14 @@ enum class FlexWrap : uint8_t {
     Reverse
 };
 
+enum class ItemDirection : uint8_t {
+    Auto,
+    Row,
+    Column,
+    RowReverse,
+    ColumnReverse
+};
+
 enum class ItemPosition : uint8_t {
     Legacy,
     Auto,

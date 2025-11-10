@@ -2200,6 +2200,12 @@ template<> constexpr CSSBoxType fromCSSValueID(CSSValueID valueID)
     return CSSBoxType::BoxMissing;
 }
 
+#define TYPE ItemDirection
+#define FOR_EACH(CASE) CASE(Auto) CASE(Row) CASE(Column) CASE(RowReverse) CASE(ColumnReverse)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE ItemPosition
 #define FOR_EACH(CASE) CASE(Legacy) CASE(Auto) CASE(Normal) CASE(Stretch) CASE(Baseline) \
     CASE(LastBaseline) CASE(Center) CASE(Start) CASE(End) CASE(SelfStart) CASE(SelfEnd) \

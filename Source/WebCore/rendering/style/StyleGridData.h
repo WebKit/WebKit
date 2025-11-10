@@ -52,6 +52,7 @@ public:
 #endif
 
     Style::GridAutoFlow gridAutoFlow() const { return m_gridAutoFlow; }
+    ItemDirection itemDirection() const { return m_itemDirection; }
     const Style::GridTrackSizes& gridAutoColumns() const { return m_gridAutoColumns; }
     const Style::GridTrackSizes& gridAutoRows() const { return m_gridAutoRows; }
     const Style::GridTemplateAreas& gridTemplateAreas() { return m_gridTemplateAreas; }
@@ -62,6 +63,7 @@ private:
     friend class RenderStyle;
 
     Style::GridAutoFlow m_gridAutoFlow;
+    ItemDirection m_itemDirection { ItemDirection::Auto };
     Style::GridTrackSizes m_gridAutoColumns;
     Style::GridTrackSizes m_gridAutoRows;
     Style::GridTemplateAreas m_gridTemplateAreas;

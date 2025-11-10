@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x516
+  RenderBlock {HTML} at (0,0) size 800x516
+    RenderBody {BODY} at (8,8) size 784x500
+      RenderGrid {DIV} at (0,0) size 200x500
+        RenderBlock {DIV} at (0,0) size 100x200 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "1"
+        RenderBlock {DIV} at (110,180) size 100x100 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "2"
+        RenderBlock {DIV} at (0,480) size 100x100 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "3"
+        RenderBlock {DIV} at (0,360) size 100x50 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "4"
+        RenderBlock {DIV} at (110,0) size 100x100 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "5"
+        RenderBlock {DIV} at (0,300) size 100x50 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 8x18
+            text run at (0,0) width 8: "6"

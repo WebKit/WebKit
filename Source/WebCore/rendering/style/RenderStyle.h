@@ -964,6 +964,7 @@ public:
     inline const StyleSelfAlignmentData& justifySelf() const;
 
     inline Style::GridAutoFlow gridAutoFlow() const;
+    inline ItemDirection itemDirection() const;
     inline const Style::GridTrackSizes& gridAutoColumns() const;
     inline const Style::GridTrackSizes& gridAutoRows() const;
     inline const Style::GridTrackSizes& gridAutoList(Style::GridTrackSizingDirection) const;
@@ -1573,6 +1574,7 @@ public:
     inline void setBoxDecorationBreak(BoxDecorationBreak);
 
     inline void setGridAutoFlow(Style::GridAutoFlow);
+    inline void setItemDirection(ItemDirection);
     inline void setGridAutoColumns(Style::GridTrackSizes&&);
     inline void setGridAutoRows(Style::GridTrackSizes&&);
     inline void setGridTemplateAreas(Style::GridTemplateAreas&&);
@@ -2259,6 +2261,7 @@ public:
 #endif
 
     static constexpr Style::GridAutoFlow initialGridAutoFlow();
+    static constexpr ItemDirection initialItemDirection();
     static inline Style::GridTrackSizes initialGridAutoColumns();
     static inline Style::GridTrackSizes initialGridAutoRows();
     static inline Style::GridTemplateAreas initialGridTemplateAreas();
