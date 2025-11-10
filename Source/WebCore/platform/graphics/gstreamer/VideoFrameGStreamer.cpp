@@ -114,7 +114,7 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
     return ImageGStreamer::create(WTFMove(convertedSample));
 }
 
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
+RefPtr<VideoFrame> VideoFrame::createFromNativeImage(NativeImage& image)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from native image");

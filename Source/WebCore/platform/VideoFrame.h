@@ -76,7 +76,7 @@ class VideoFrame : public ThreadSafeRefCounted<VideoFrame> {
 public:
     virtual ~VideoFrame() = default;
 
-    static RefPtr<VideoFrame> fromNativeImage(NativeImage&);
+    static RefPtr<VideoFrame> createFromNativeImage(NativeImage&);
     static RefPtr<VideoFrame> createFromPixelBuffer(Ref<PixelBuffer>&&, PlatformVideoColorSpace&& = { });
     static RefPtr<VideoFrame> createNV12(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
     static RefPtr<VideoFrame> createRGBA(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);

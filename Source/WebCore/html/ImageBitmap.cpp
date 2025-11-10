@@ -981,6 +981,12 @@ RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
     return std::exchange(m_bitmap, nullptr);
 }
 
+RefPtr<NativeImage> ImageBitmap::copyNativeImage()
+{
+    return m_bitmap ? m_bitmap->copyNativeImage() : nullptr;
+}
+
+
 unsigned ImageBitmap::width() const
 {
     return m_bitmap ? m_bitmap->truncatedLogicalSize().width() : 0;

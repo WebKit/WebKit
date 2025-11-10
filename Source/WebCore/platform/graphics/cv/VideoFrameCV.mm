@@ -57,7 +57,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
+RefPtr<VideoFrame> VideoFrame::createFromNativeImage(NativeImage& image)
 {
     // FIXME: Set VideoFrame colorSpace.
     auto transferSession = ImageTransferSessionVT::create(kCVPixelFormatType_32ARGB, false);
@@ -576,16 +576,18 @@ static PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixe
     else if (PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() && safeCFEqual(pixelTransfer, PAL::kCMFormatDescriptionTransferFunction_sRGB))
         transfer = PlatformVideoTransferCharacteristics::Iec6196621;
 
-    std::optional<PlatformVideoMatrixCoefficients> matrix;
-    auto pixelMatrix = CVBufferGetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, nil);
-    if (safeCFEqual(pixelMatrix, PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020))
-        matrix = PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
-    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
-        matrix = PlatformVideoMatrixCoefficients::Bt709;
-    else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
-        matrix = PlatformVideoMatrixCoefficients::Smpte240m;
-
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    auto* pixelMatrix = CVBufferGetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, nil);
+    std::optional<PlatformVideoMatrixCoefficients> matrix;
+    if (pixelMatrix) {
+        if (safeCFEqual(pixelMatrix, PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020))
+            matrix = PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+        else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
+            matrix = PlatformVideoMatrixCoefficients::Bt709;
+        else if (safeCFEqual(pixelMatrix, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+            matrix = PlatformVideoMatrixCoefficients::Smpte240m;
+    } else if (pixelFormat == kCVPixelFormatType_32ARGB || pixelFormat == kCVPixelFormatType_32BGRA)
+        matrix = PlatformVideoMatrixCoefficients::Rgb;
     bool isFullRange = pixelFormat != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
 
     return { primaries, transfer, matrix, isFullRange };

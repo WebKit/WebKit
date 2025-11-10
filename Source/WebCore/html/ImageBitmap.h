@@ -54,6 +54,7 @@ class ImageData;
 class ImageBuffer;
 class IntRect;
 class IntSize;
+class NativeImage;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
@@ -129,6 +130,7 @@ public:
     ImageBuffer* buffer() const;
 
     RefPtr<ImageBuffer> takeImageBuffer();
+    RefPtr<NativeImage> copyNativeImage();
 
     unsigned width() const;
     unsigned height() const;

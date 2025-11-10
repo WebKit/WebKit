@@ -628,8 +628,10 @@ void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace& colorSpace, CV
         CVBufferSetAttachment(pixelBuffer, kCVImageBufferColorPrimariesKey, convertToCMColorPrimaries(*colorSpace.primaries), kCVAttachmentMode_ShouldPropagate);
     if (colorSpace.transfer)
         CVBufferSetAttachment(pixelBuffer, kCVImageBufferTransferFunctionKey, convertToCMTransferFunction(*colorSpace.transfer), kCVAttachmentMode_ShouldPropagate);
-    if (colorSpace.matrix)
-        CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, convertToCMYCbCRMatrix(*colorSpace.matrix), kCVAttachmentMode_ShouldPropagate);
+    if (colorSpace.matrix) {
+        if (auto matrix = convertToCMYCbCRMatrix(*colorSpace.matrix))
+            CVBufferSetAttachment(pixelBuffer, kCVImageBufferYCbCrMatrixKey, matrix, kCVAttachmentMode_ShouldPropagate);
+    }
 }
 
 PacketDurationParser::PacketDurationParser(const AudioInfo& info)
