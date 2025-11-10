@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2025 Igalia S.L.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,12 +70,9 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost)
     , m_sceneState(&m_layerTreeHost->sceneState())
     , m_flipY(m_surface->shouldPaintMirrored())
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
+    , m_didRenderFrameTimer(RunLoop::mainSingleton(), "ThreadedCompositor::DidRenderFrameTimer"_s, this, &ThreadedCompositor::didRenderFrameTimerFired)
 {
     ASSERT(RunLoop::isMain());
-
-    m_didCompositeRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::GraphicsCommit, [this] {
-        this->didCompositeRunLoopObserverFired();
-    });
 
     initializeFPSCounter();
 #if ENABLE(DAMAGE_TRACKING)
@@ -86,6 +83,10 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost)
     updateSceneAttributes(webPage.size(), webPage.deviceScaleFactor());
 
     m_surface->didCreateCompositingRunLoop(m_compositingRunLoop->runLoop());
+
+#if USE(GLIB_EVENT_LOOP)
+    m_didRenderFrameTimer.setPriority(RunLoopSourcePriority::RunLoopTimer - 1);
+#endif
 
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
         // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
@@ -115,7 +116,7 @@ void ThreadedCompositor::invalidate()
 {
     ASSERT(RunLoop::isMain());
     m_compositingRunLoop->stopUpdates();
-    m_didCompositeRunLoopObserver->invalidate();
+    m_didRenderFrameTimer.stop();
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
         if (!m_context || !m_context->makeContextCurrent())
             return;
@@ -322,11 +323,11 @@ void ThreadedCompositor::renderLayerTree()
 
     uint32_t compositionRequestID = m_compositionRequestID.load();
     m_compositionResponseID = compositionRequestID;
+    if (!m_didRenderFrameTimer.isActive())
+        m_didRenderFrameTimer.startOneShot(0_s);
 #if !HAVE(OS_SIGNPOST) && !USE(SYSPROF_CAPTURE)
     UNUSED_VARIABLE(compositionRequestID);
 #endif
-
-    m_didCompositeRunLoopObserver->schedule(&RunLoop::mainSingleton());
 
     WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionRequestID);
 
@@ -370,11 +371,10 @@ void ThreadedCompositor::frameComplete()
     m_compositingRunLoop->updateCompleted(stateLocker);
 }
 
-void ThreadedCompositor::didCompositeRunLoopObserverFired()
+void ThreadedCompositor::didRenderFrameTimerFired()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didComposite(m_compositionResponseID);
-    m_didCompositeRunLoopObserver->invalidate();
 }
 
 void ThreadedCompositor::updateSceneAttributes(const IntSize& size, float deviceScaleFactor)

@@ -29,37 +29,29 @@
 #if USE(GLIB_EVENT_LOOP)
 namespace WebCore {
 
-void RunLoopObserver::schedule(PlatformRunLoop runLoop, OptionSet<Activity> activities)
+void RunLoopObserver::schedule(PlatformRunLoop, OptionSet<Activity> activities)
 {
-    Locker lock { m_runLoopObserverLock };
     if (m_runLoopObserver)
         return;
 
-    if (!runLoop)
-        runLoop = RunLoop::currentSingleton();
-
-    m_runLoopObserver = ActivityObserver::create(runLoop.releaseNonNull(), static_cast<uint8_t>(m_order), activities, [this]() {
-        if (!isScheduled())
-            return ActivityObserver::NotifyResult::Destroyed;
+    m_runLoopObserver = ActivityObserver::create(static_cast<uint8_t>(m_order), activities, [this]() {
         runLoopObserverFired();
-        return isRepeating() ? ActivityObserver::NotifyResult::Continue : ActivityObserver::NotifyResult::Stop;
+        return isRepeating() ? ActivityObserver::ContinueObservation::Yes : ActivityObserver::ContinueObservation::No;
     });
 
-    m_runLoopObserver->start();
+    RunLoop::currentSingleton().observeActivity(*m_runLoopObserver);
 }
 
 void RunLoopObserver::invalidate()
 {
-    Locker lock { m_runLoopObserverLock };
     if (m_runLoopObserver) {
-        m_runLoopObserver->stop();
+        RunLoop::currentSingleton().unobserveActivity(*m_runLoopObserver);
         m_runLoopObserver = nullptr;
     }
 }
 
 bool RunLoopObserver::isScheduled() const
 {
-    Locker lock { m_runLoopObserverLock };
     return !!m_runLoopObserver;
 }
 

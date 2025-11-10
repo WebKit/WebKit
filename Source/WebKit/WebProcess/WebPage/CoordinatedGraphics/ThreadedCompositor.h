@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2025 Igalia S.L.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextureMapperDamageVisualizer.h>
 #include <atomic>
 #include <optional>
@@ -101,7 +100,7 @@ private:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&);
     void frameComplete();
 
-    void didCompositeRunLoopObserverFired();
+    void didRenderFrameTimerFired();
 
     void updateSceneAttributes(const WebCore::IntSize&, float deviceScaleFactor);
 
@@ -145,7 +144,7 @@ private:
 
     std::atomic<uint32_t> m_compositionRequestID { 0 };
     std::atomic<uint32_t> m_compositionResponseID { 0 };
-    std::unique_ptr<WebCore::RunLoopObserver> m_didCompositeRunLoopObserver;
+    RunLoop::Timer m_didRenderFrameTimer;
 };
 
 } // namespace WebKit

@@ -138,6 +138,9 @@ public:
 
     using EventObserver = Observer<void(Event, const String&)>;
     WTF_EXPORT_PRIVATE void observeEvent(const EventObserver&);
+
+    WTF_EXPORT_PRIVATE void observeActivity(const Ref<ActivityObserver>&);
+    WTF_EXPORT_PRIVATE void unobserveActivity(const Ref<ActivityObserver>&);
 #endif
 
 #if USE(GENERIC_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
@@ -326,10 +329,6 @@ private:
 
     enum class MayBlock { Yes, No };
     void runGLibMainLoopIteration(MayBlock);
-
-    friend class ActivityObserver;
-    WTF_EXPORT_PRIVATE void observeActivity(const Ref<ActivityObserver>&);
-    WTF_EXPORT_PRIVATE void unobserveActivity(const Ref<ActivityObserver>&);
 
     static GSourceFuncs s_runLoopSourceFunctions;
     GRefPtr<GMainContext> m_mainContext;

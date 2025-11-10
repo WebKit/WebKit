@@ -23,23 +23,17 @@
 
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
-#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 
 // Activity observers (used to implement WebCore::RunLoopObserver)
-class ActivityObserver : public ThreadSafeRefCounted<ActivityObserver> {
+class ActivityObserver : public RefCounted<ActivityObserver> {
     WTF_MAKE_TZONE_ALLOCATED(ActivityObserver);
 public:
-    enum class NotifyResult {
-        Continue,
-        Stop,
-        Destroyed
-    };
+    enum class ContinueObservation { Yes, No };
+    using Callback = Function<ContinueObservation()>;
 
-    using Callback = Function<NotifyResult()>;
-
-    static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+    static Ref<ActivityObserver> create(uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
     {
         return adoptRef(*new ActivityObserver(WTFMove(runLoop), order, activities, WTFMove(callback)));
     }
@@ -84,9 +78,8 @@ public:
     }
 
 private:
-    ActivityObserver(Ref<RunLoop>&& runLoop, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
-        : m_runLoop(WTFMove(runLoop))
-        , m_order(order)
+    ActivityObserver(uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+        : m_order(order)
         , m_activities(activities)
         , m_callback(WTFMove(callback))
     {
@@ -94,7 +87,6 @@ private:
     }
 
 private:
-    ThreadSafeWeakPtr<RunLoop> m_runLoop;
     uint8_t m_order { 0 };
     OptionSet<RunLoop::Activity> m_activities;
     mutable Lock m_callbackLock;
