@@ -1883,6 +1883,7 @@ inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 
 # Frame Targets are not supported in WK1.
 # FIXME: <https://webkit.org/b/299207> Add or rewrite tests to account for lack of frame targets in WK1.
+inspector/shadow-realm-console.html [ Skip ]
 inspector/unit-tests/target-manager.html [ Skip ]
 
 # WK1 Inspector cannot leverage InspectorAdditions runtime enabled features

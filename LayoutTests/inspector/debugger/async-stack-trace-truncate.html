@@ -112,7 +112,7 @@ function test()
             // Clear the console to release ownership of the logged stack trace.
             InspectorTest.log("Clearing console.")
             let consoleClearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
-            ConsoleAgent.clearMessages();
+            WI.mainFrameTarget.ConsoleAgent.clearMessages();
             await consoleClearedEvent;
 
             InspectorTest.log("Running GC.")

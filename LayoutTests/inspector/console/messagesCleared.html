@@ -17,7 +17,7 @@ function test()
             })
             .then(resolve, reject);
 
-            ConsoleAgent.clearMessages();
+            WI.mainFrameTarget.ConsoleAgent.clearMessages();
         }
     });
 

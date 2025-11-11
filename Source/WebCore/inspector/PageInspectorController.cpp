@@ -58,7 +58,6 @@
 #include "Page.h"
 #include "PageAuditAgent.h"
 #include "PageCanvasAgent.h"
-#include "PageConsoleAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebugger.h"
 #include "PageDebuggerAgent.h"
@@ -105,12 +104,6 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     , m_inspectorBackendClient(WTFMove(inspectorBackendClient))
 {
     ASSERT_ARG(inspectorBackendClient, m_inspectorBackendClient);
-
-    auto pageContext = pageAgentContext();
-
-    auto consoleAgent = makeUniqueRef<PageConsoleAgent>(pageContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
-    m_agents.append(WTFMove(consoleAgent));
 }
 
 PageInspectorController::~PageInspectorController()

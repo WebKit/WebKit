@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,19 +37,19 @@
 
 namespace WebCore {
 
-class PageConsoleAgent final : public WebConsoleAgent {
-    WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
-    WTF_MAKE_TZONE_ALLOCATED(PageConsoleAgent);
+class FrameConsoleAgent final : public WebConsoleAgent {
+    WTF_MAKE_NONCOPYABLE(FrameConsoleAgent);
+    WTF_MAKE_TZONE_ALLOCATED(FrameConsoleAgent);
 public:
-    PageConsoleAgent(PageAgentContext&);
-    ~PageConsoleAgent();
+    FrameConsoleAgent(FrameAgentContext&);
+    ~FrameConsoleAgent();
 
     // ConsoleBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>> getLoggingChannels();
     Inspector::Protocol::ErrorStringOr<void> setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource, Inspector::Protocol::Console::ChannelLevel);
 
 private:
-    WeakRef<Page> m_inspectedPage;
+    WeakRef<Frame> m_inspectedFrame;
 };
 
 } // namespace WebCore
