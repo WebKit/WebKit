@@ -355,7 +355,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
 
     case ArraySlice:
     case ArrayIncludes:
-    case ArrayIndexOf: {
+    case ArrayIndexOf:
+    case ArrayLastIndexOf: {
         // You could plausibly move this code around as long as you proved the
         // incoming array base structure is an original array at the hoisted location.
         // Instead of doing that extra work, we just conservatively return false.

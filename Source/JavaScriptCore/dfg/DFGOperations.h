@@ -408,6 +408,12 @@ JSC_DECLARE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStric
 JSC_DECLARE_JIT_OPERATION(operationArrayIndexOfValueInt32, UCPUStrictInt32, (JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationArrayIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly*, EncodedJSValue, int32_t));
 
+JSC_DECLARE_JIT_OPERATION(operationArrayLastIndexOfString, UCPUStrictInt32, (JSGlobalObject*, Butterfly*, JSString*, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationArrayLastIndexOfValueDouble, UCPUStrictInt32, (Butterfly*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationArrayLastIndexOfValueInt32OrContiguous, UCPUStrictInt32, (JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationArrayLastIndexOfValueInt32, UCPUStrictInt32, (JSGlobalObject*, Butterfly*, EncodedJSValue, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationArrayLastIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly*, EncodedJSValue, int32_t));
+
 JSC_DECLARE_JIT_OPERATION(operationSpreadFastArray, JSCell*, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSpreadGeneric, JSCell*, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObject*, void*, uint32_t));

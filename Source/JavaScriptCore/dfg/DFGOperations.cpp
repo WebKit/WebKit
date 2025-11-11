@@ -4304,6 +4304,168 @@ JSC_DEFINE_JIT_OPERATION(operationCopyOnWriteArrayIndexOfString, UCPUStrictInt32
     OPERATION_RETURN(scope, arrayIndexOfString(globalObject, butterfly, searchElement, index));
 }
 
+static ALWAYS_INLINE UCPUStrictInt32 arrayLastIndexOfString(JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index >= length)
+        index = length - 1;
+
+    for (; index >= 0; --index) {
+        JSValue value = data[index].get();
+        if (!value || !value.isString())
+            continue;
+        auto* string = asString(value);
+        if (string == searchElement)
+            return toUCPUStrictInt32(index);
+        if (string->equalInline(globalObject, searchElement)) {
+            scope.assertNoExceptionExceptTermination();
+            return toUCPUStrictInt32(index);
+        }
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return toUCPUStrictInt32(-1);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayLastIndexOfString, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, JSString* searchElement, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    OPERATION_RETURN(scope, arrayLastIndexOfString(globalObject, butterfly, searchElement, index));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayLastIndexOfValueInt32OrContiguous, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue searchElement = JSValue::decode(encodedValue);
+
+    if (searchElement.isString())
+        OPERATION_RETURN(scope, arrayLastIndexOfString(globalObject, butterfly, asString(searchElement), index));
+
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index < 0)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    if (index >= length)
+        index = length - 1;
+
+    if (searchElement.isObject()) {
+        for (; index >= 0; --index) {
+            JSValue value = data[index].get();
+            if (value == searchElement)
+                OPERATION_RETURN(scope, toUCPUStrictInt32(index));
+        }
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+    }
+
+    if (searchElement.isInt32()) {
+        for (; index >= 0; --index) {
+            JSValue value = data[index].get();
+            if (!value || !value.isNumber())
+                continue;
+            if (searchElement.asInt32() == value.asNumber())
+                OPERATION_RETURN(scope, toUCPUStrictInt32(index));
+        }
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+    }
+
+    for (; index >= 0; --index) {
+        JSValue value = data[index].get();
+        if (!value)
+            continue;
+        bool isEqual = JSValue::strictEqual(globalObject, searchElement, value);
+        OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+        if (isEqual)
+            OPERATION_RETURN(scope, toUCPUStrictInt32(index));
+    }
+    OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayLastIndexOfValueInt32, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index < 0)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    if (index >= length)
+        index = length - 1;
+
+    JSValue searchElement = JSValue::decode(encodedValue);
+
+    int32_t int32Value = 0;
+    if (searchElement.isInt32AsAnyInt())
+        int32Value = searchElement.asInt32AsAnyInt();
+    else if (!searchElement.isNumber() || searchElement.asNumber() != 0.0)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    EncodedJSValue encodedSearchElement = JSValue::encode(jsNumber(int32Value));
+    for (; index >= 0; --index) {
+        if (JSValue::encode(data[index].get()) == encodedSearchElement)
+            OPERATION_RETURN(scope, toUCPUStrictInt32(index));
+    }
+    OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayLastIndexOfValueDouble, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
+{
+    JSValue searchElement = JSValue::decode(encodedValue);
+
+    if (!searchElement.isNumber())
+        return toUCPUStrictInt32(-1);
+    double number = searchElement.asNumber();
+
+    int32_t length = butterfly->publicLength();
+    const double* data = butterfly->contiguousDouble().data();
+
+    if (index >= length)
+        index = length - 1;
+
+    for (; index >= 0; --index) {
+        // This comparison ignores NaN.
+        if (data[index] == number)
+            return toUCPUStrictInt32(index);
+    }
+    return toUCPUStrictInt32(-1);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayLastIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue searchElement, int32_t index))
+{
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index < 0)
+        return toUCPUStrictInt32(-1);
+
+    if (index >= length)
+        index = length - 1;
+
+    for (; index >= 0; --index) {
+        if (JSValue::encode(data[index].get()) == searchElement)
+            return toUCPUStrictInt32(index);
+    }
+    return toUCPUStrictInt32(-1);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
 {
     VM& vm = globalObject->vm();

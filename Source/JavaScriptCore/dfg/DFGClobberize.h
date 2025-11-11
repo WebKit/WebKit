@@ -173,6 +173,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case ArrayPop:
         case ArrayIncludes:
         case ArrayIndexOf:
+        case ArrayLastIndexOf:
         case HasIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -695,7 +696,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArrayIncludes:
-    case ArrayIndexOf: {
+    case ArrayIndexOf:
+    case ArrayLastIndexOf: {
         // FIXME: Should support a CSE rule.
         // https://bugs.webkit.org/show_bug.cgi?id=173173
         read(MiscFields);

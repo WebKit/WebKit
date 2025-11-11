@@ -1147,6 +1147,7 @@ private:
 
         case GetRestLength:
         case ArrayIndexOf:
+        case ArrayLastIndexOf:
         case RegExpSearch: {
             setPrediction(SpecInt32Only);
             break;
