@@ -371,8 +371,10 @@ private:
 
 
 #define WASM_VALIDATOR_FAIL_IF(condition, ...) do { \
-        if (condition) [[unlikely]] \
-            return validationFail(__VA_ARGS__); \
+        if constexpr (bytecodeValidationMode == BytecodeValidationMode::Validate) { \
+            if (condition) [[unlikely]] \
+                return validationFail(__VA_ARGS__); \
+        } \
     } while (0) \
 
     // FIXME add a macro as above for WASM_TRY_APPEND_TO_CONTROL_STACK https://bugs.webkit.org/show_bug.cgi?id=165862
