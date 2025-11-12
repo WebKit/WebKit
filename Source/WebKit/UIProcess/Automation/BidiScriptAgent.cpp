@@ -34,8 +34,8 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
-#include <wtf/TZoneMallocInlines.h>
 #include <cmath>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
@@ -43,7 +43,7 @@ namespace WebKit {
 using namespace Inspector;
 using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContext;
 
-static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> convertJSONToRemoteValue(const JSON::Value*);
+static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
 
@@ -55,7 +55,7 @@ BidiScriptAgent::BidiScriptAgent(WebAutomationSession& session, BackendDispatche
 
 BidiScriptAgent::~BidiScriptAgent() = default;
 
-static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> convertJSONToRemoteValue(const JSON::Value* jsonValue)
+static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value* jsonValue)
 {
     using namespace Inspector::Protocol::BidiScript;
 
@@ -114,7 +114,7 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> convertJSONToRemoteV
         if (auto array = object->getArray("value"_s)) {
             auto items = JSON::Array::create();
             for (size_t i = 0; i < array->length(); ++i)
-                items->pushObject(convertJSONToRemoteValue(array->get(i).ptr()).releaseNonNull());
+                items->pushObject(deserializeRemoteValue(array->get(i).ptr()).releaseNonNull());
             remoteValue->setValue(WTFMove(items));
         }
         return remoteValue;
@@ -148,7 +148,9 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> convertJSONToRemoteV
         return remoteValue;
     }
 
-    // Fallback
+    // FIXME: Implement remaining BiDi RemoteValue types: symbol, function, weakmap, weakset,
+    // error, proxy, promise, typedarray, arraybuffer, nodelist, htmlcollection, node, regexp, date, etc.
+    // Fallback to undefined for unhandled types.
     return out.setType(RemoteValueType::Undefined).release();
 }
 
@@ -288,11 +290,10 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
         // Proper validation should happen in the dispatcher/generator.
     }
 
-    // Validate serialization options if provided
+    int maxObjectDepth = 1;
     if (optionalSerializationOptions) {
         auto& serializationOptions = *optionalSerializationOptions;
 
-        // Validate maxDomDepth type and value
         if (auto maxDomDepthJSON = serializationOptions.getValue("maxDomDepth"_s)) {
             double maxDomDepthValue;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxDomDepthJSON->asDouble(maxDomDepthValue), InvalidParameter);
@@ -300,15 +301,14 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(maxDomDepthValue) != maxDomDepthValue, InvalidParameter);
         }
 
-        // Validate maxObjectDepth type and value
         if (auto maxObjectDepthJSON = serializationOptions.getValue("maxObjectDepth"_s)) {
             double maxObjectDepthValue;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxObjectDepthJSON->asDouble(maxObjectDepthValue), InvalidParameter);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(maxObjectDepthValue < 0, InvalidParameter);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(std::floor(maxObjectDepthValue) != maxObjectDepthValue, InvalidParameter);
+            maxObjectDepth = static_cast<int>(maxObjectDepthValue);
         }
 
-        // Validate includeShadowTree type and value
         if (auto includeShadowTreeJSON = serializationOptions.getValue("includeShadowTree"_s)) {
             String includeShadowTreeValue;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeJSON->asString(includeShadowTreeValue), InvalidParameter);
@@ -318,19 +318,9 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
     // userActivation is accepted but currently ignored.
 
-    // Extract maxObjectDepth from serializationOptions for BiDi
-    int maxObjectDepth = 1; // Default value
-    if (optionalSerializationOptions) {
-        if (auto maxObjectDepthJSON = optionalSerializationOptions->getValue("maxObjectDepth"_s)) {
-            double depthValue;
-            if (maxObjectDepthJSON->asDouble(depthValue) && depthValue >= 0 && std::floor(depthValue) == depthValue)
-                maxObjectDepth = static_cast<int>(depthValue);
-        }
-    }
+    std::optional<double> callbackTimeout = std::nullopt;
 
-    std::optional<double> callbackTimeout = std::nullopt; // Use default timeout
-
-    // W3C spec step 13: Use new BiDi-specific evaluation infrastructure
+    // W3C spec: Use new BiDi-specific evaluation infrastructure
     session->evaluateBidiScript(
         *browsingContext,
         emptyString(),
@@ -364,125 +354,11 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmId, cons
 
             if (!isOk) {
                 evalType = BidiScript::EvaluateResultType::Exception;
-
-                RefPtr<BidiScript::RemoteValue> exceptionRemote;
-                String exceptionMessage = "JavaScript exception occurred"_s;
-                unsigned topLine = 0;
-                unsigned topColumn = 0;
-
-                auto callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
-
-                if (auto exceptionValue = envelopeObj->getValue("e"_s)) {
-                    exceptionRemote = serializeAsRemoteValue(exceptionValue);
-
-                    if (auto exceptionObj = exceptionValue->asObject()) {
-                        auto message = exceptionObj->getString("message"_s);
-                        if (!message.isNull())
-                            exceptionMessage = message;
-
-                        auto stack = exceptionObj->getString("stack"_s);
-                        if (!stack.isNull()) {
-                            auto lines = stack.split(u'\n');
-                            for (auto& line : lines) {
-                                String trimmed = line.trim(deprecatedIsSpaceOrNewline);
-                                if (trimmed.isEmpty())
-                                    continue;
-
-                                String functionName;
-                                String urlPart;
-                                unsigned lineNumber = 0;
-                                unsigned columnNumber = 0;
-
-                                auto atIndex = trimmed.find(" at "_s);
-                                auto parenOpenIndex = trimmed.reverseFind('(');
-                                auto parenCloseIndex = trimmed.reverseFind(')');
-                                bool parsed = false;
-
-                                if (atIndex != notFound && parenOpenIndex != notFound && parenCloseIndex != notFound && parenOpenIndex < parenCloseIndex) {
-                                    functionName = trimmed.substring(atIndex + 4, parenOpenIndex - (atIndex + 4)).trim(deprecatedIsSpaceOrNewline);
-                                    urlPart = trimmed.substring(parenOpenIndex + 1, parenCloseIndex - parenOpenIndex - 1);
-                                    auto lastColon = urlPart.reverseFind(':');
-                                    if (lastColon != notFound) {
-                                        auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
-                                        if (secondLastColon != notFound) {
-                                            auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
-                                            auto colStr = urlPart.substring(lastColon + 1);
-                                            bool ok1 = false, ok2 = false;
-                                            if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
-                                                lineNumber = *parsedLine;
-                                                ok1 = true;
-                                            }
-                                            if (auto parsedCol = WTF::parseInteger<unsigned>(colStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
-                                                columnNumber = *parsedCol;
-                                                ok2 = true;
-                                            }
-                                            parsed = ok1 && ok2;
-                                        }
-                                    }
-                                }
-
-                                if (!parsed) {
-                                    auto atSign = trimmed.reverseFind('@');
-                                    if (atSign != notFound) {
-                                        functionName = trimmed.left(atSign).trim(deprecatedIsSpaceOrNewline);
-                                        urlPart = trimmed.substring(atSign + 1);
-                                        auto lastColon = urlPart.reverseFind(':');
-                                        if (lastColon != notFound) {
-                                            auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
-                                            if (secondLastColon != notFound) {
-                                                auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
-                                                auto colStr = urlPart.substring(lastColon + 1);
-                                                bool ok1 = false, ok2 = false;
-                                                if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
-                                                    lineNumber = *parsedLine;
-                                                    ok1 = true;
-                                                }
-                                                if (auto parsedCol = WTF::parseInteger<unsigned>(colStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
-                                                    columnNumber = *parsedCol;
-                                                    ok2 = true;
-                                                }
-                                                parsed = ok1 && ok2;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                auto frame = BidiScript::StackFrame::create()
-                                    .setLineNumber(parsed ? lineNumber : 0)
-                                    .setColumnNumber(parsed ? columnNumber : 0)
-                                    .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
-                                    .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
-                                    .release();
-                                if (!topLine && parsed)
-                                    topLine = lineNumber;
-                                if (!topColumn && parsed)
-                                    topColumn = columnNumber;
-                                callFrames->addItem(WTFMove(frame));
-                            }
-                        }
-                    }
-                } else {
-                    exceptionRemote = BidiScript::RemoteValue::create()
-                        .setType(BidiScript::RemoteValueType::String)
-                        .release();
-                    exceptionRemote->setValue(JSON::Value::create(String("Unknown exception"_s)));
-                }
-
-                auto stackTrace = BidiScript::StackTrace::create()
-                    .setCallFrames(WTFMove(callFrames))
-                    .release();
-
-                exceptionDetails = BidiScript::ExceptionDetails::create()
-                    .setLineNumber(static_cast<int>(topLine))
-                    .setColumnNumber(static_cast<int>(topColumn))
-                    .setText(exceptionMessage)
-                    .setException(exceptionRemote.releaseNonNull())
-                    .setStackTrace(WTFMove(stackTrace))
-                    .release();
+                exceptionDetails = buildExceptionDetailsFromExceptionValue(envelopeObj->getValue("e"_s));
             } else {
                 if (auto remoteValue = envelopeObj->getValue("remote"_s)) {
                     evalType = BidiScript::EvaluateResultType::Success;
-                    remote = convertJSONToRemoteValue(remoteValue.get());
+                    remote = deserializeRemoteValue(remoteValue.get());
                 } else {
                     evalType = BidiScript::EvaluateResultType::Exception;
 
@@ -555,6 +431,8 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmId, cons
     callback({ { evalType, realmId, WTFMove(remote), nullptr } });
 }
 
+// Implements the "serialize as a remote value" algorithm from the W3C WebDriver BiDi specification.
+// https://w3c.github.io/webdriver-bidi/#serialize-as-a-remote-value
 RefPtr<Inspector::Protocol::BidiScript::RemoteValue> BidiScriptAgent::serializeAsRemoteValue(RefPtr<JSON::Value> value)
 {
     using namespace Inspector::Protocol;
@@ -692,6 +570,134 @@ RefPtr<Inspector::Protocol::BidiScript::RemoteValue> BidiScriptAgent::serializeA
     return out.setType(BidiScript::RemoteValueType::Undefined).release();
 }
 
+BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String& stackTraceString)
+{
+    using namespace Inspector::Protocol;
+
+    ParsedStackTrace result;
+    result.callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
+
+    auto lines = stackTraceString.split(u'\n');
+    for (auto& line : lines) {
+        String trimmed = line.trim(deprecatedIsSpaceOrNewline);
+        if (trimmed.isEmpty())
+            continue;
+
+        String functionName;
+        String urlPart;
+        unsigned lineNumber = 0;
+        unsigned columnNumber = 0;
+
+        auto atIndex = trimmed.find(" at "_s);
+        auto parenOpenIndex = trimmed.reverseFind('(');
+        auto parenCloseIndex = trimmed.reverseFind(')');
+        bool parsed = false;
+
+        if (atIndex != notFound && parenOpenIndex != notFound && parenCloseIndex != notFound && parenOpenIndex < parenCloseIndex) {
+            functionName = trimmed.substring(atIndex + 4, parenOpenIndex - (atIndex + 4)).trim(deprecatedIsSpaceOrNewline);
+            urlPart = trimmed.substring(parenOpenIndex + 1, parenCloseIndex - parenOpenIndex - 1);
+            auto lastColon = urlPart.reverseFind(':');
+            if (lastColon != notFound) {
+                auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
+                if (secondLastColon != notFound) {
+                    auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
+                    auto colStr = urlPart.substring(lastColon + 1);
+                    bool ok1 = false, ok2 = false;
+                    if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
+                        lineNumber = *parsedLine;
+                        ok1 = true;
+                    }
+                    if (auto parsedCol = WTF::parseInteger<unsigned>(colStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
+                        columnNumber = *parsedCol;
+                        ok2 = true;
+                    }
+                    parsed = ok1 && ok2;
+                }
+            }
+        }
+
+        if (!parsed) {
+            auto atSign = trimmed.reverseFind('@');
+            if (atSign != notFound) {
+                functionName = trimmed.left(atSign).trim(deprecatedIsSpaceOrNewline);
+                urlPart = trimmed.substring(atSign + 1);
+                auto lastColon = urlPart.reverseFind(':');
+                if (lastColon != notFound) {
+                    auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
+                    if (secondLastColon != notFound) {
+                        auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
+                        auto colStr = urlPart.substring(lastColon + 1);
+                        bool ok1 = false, ok2 = false;
+                        if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
+                            lineNumber = *parsedLine;
+                            ok1 = true;
+                        }
+                        if (auto parsedCol = WTF::parseInteger<unsigned>(colStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
+                            columnNumber = *parsedCol;
+                            ok2 = true;
+                        }
+                        parsed = ok1 && ok2;
+                    }
+                }
+            }
+        }
+
+        auto frame = BidiScript::StackFrame::create()
+            .setLineNumber(parsed ? lineNumber : 0)
+            .setColumnNumber(parsed ? columnNumber : 0)
+            .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
+            .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
+            .release();
+        if (!result.topLineNumber && parsed)
+            result.topLineNumber = lineNumber;
+        if (!result.topColumnNumber && parsed)
+            result.topColumnNumber = columnNumber;
+        result.callFrames->addItem(WTFMove(frame));
+    }
+
+    return result;
+}
+
+RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExceptionDetailsFromExceptionValue(RefPtr<JSON::Value> exceptionValue)
+{
+    using namespace Inspector::Protocol;
+
+    RefPtr<BidiScript::RemoteValue> exceptionRemote;
+    String exceptionMessage = "JavaScript exception occurred"_s;
+    ParsedStackTrace parsedStack { .callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create() };
+
+    if (exceptionValue) {
+        exceptionRemote = serializeAsRemoteValue(exceptionValue);
+
+        if (auto exceptionObj = exceptionValue->asObject()) {
+            auto message = exceptionObj->getString("message"_s);
+            if (!message.isNull())
+                exceptionMessage = message;
+
+            auto stack = exceptionObj->getString("stack"_s);
+            if (!stack.isNull())
+                parsedStack = parseStackTrace(stack);
+        }
+    } else {
+        exceptionRemote = BidiScript::RemoteValue::create()
+            .setType(BidiScript::RemoteValueType::String)
+            .release();
+        exceptionRemote->setValue(JSON::Value::create(String("Unknown exception"_s)));
+    }
+
+    auto stackTrace = BidiScript::StackTrace::create()
+        .setCallFrames(WTFMove(parsedStack.callFrames))
+        .release();
+
+    return BidiScript::ExceptionDetails::create()
+        .setLineNumber(static_cast<int>(parsedStack.topLineNumber))
+        .setColumnNumber(static_cast<int>(parsedStack.topColumnNumber))
+        .setText(exceptionMessage)
+        .setException(exceptionRemote.releaseNonNull())
+        .setStackTrace(WTFMove(stackTrace))
+        .release();
+}
+
 // RealmRegistryStub implementation
 String BidiScriptAgent::RealmRegistryStub::realmIdForContext(const String& contextId) const
 {
@@ -704,7 +710,6 @@ std::optional<String> BidiScriptAgent::RealmRegistryStub::contextForRealmId(cons
         return realmId.substring(6);
     return std::nullopt;
 }
-
 
 } // namespace WebKit
 

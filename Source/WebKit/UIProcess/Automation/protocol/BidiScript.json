@@ -87,6 +87,8 @@
             "enum": [
                 "array",
                 "arraybuffer",
+                "bigint",
+                "boolean",
                 "date",
                 "error",
                 "function",
@@ -95,22 +97,20 @@
                 "map",
                 "node",
                 "nodelist",
+                "null",
+                "number",
                 "object",
                 "promise",
                 "proxy",
                 "regexp",
                 "set",
+                "string",
                 "symbol",
                 "typedarray",
+                "undefined",
                 "weakmap",
                 "weakset",
-                "window",
-                "bigint",
-                "boolean",
-                "null",
-                "number",
-                "string",
-                "undefined"
+                "window"
             ]
         },
         {
