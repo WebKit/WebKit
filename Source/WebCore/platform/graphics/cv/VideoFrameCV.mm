@@ -39,6 +39,7 @@
 #include <Accelerate/Accelerate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -57,6 +58,30 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+class FastBuffer final: public RefCounted<FastBuffer> {
+    WTF_MAKE_NONCOPYABLE(FastBuffer);
+public:
+
+    std::span<uint8_t> mutableSpan() { return m_span.mutableSpan(); }
+
+    static RefPtr<FastBuffer> tryCreateUninitialized(size_t sizeInBytes)
+    {
+        auto span = MallocSpan<uint8_t, FastMalloc>::tryMalloc(sizeInBytes);
+        if (!span)
+            return nullptr;
+
+        return adoptRef(*new FastBuffer(WTF::move(span)));
+    }
+
+protected:
+    explicit FastBuffer(MallocSpan<uint8_t, FastMalloc> &&span)
+        : m_span(WTF::move(span))
+    {
+    }
+
+    MallocSpan<uint8_t, FastMalloc> m_span;
+};
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {
@@ -104,6 +129,33 @@ static vImage_Buffer makeVImageBuffer8888(CVPixelBufferRef buffer)
         CVPixelBufferGetBytesPerRow(buffer));
 }
 
+static RetainPtr<CVPixelBufferRef> makeCVPixelBuffer8888(size_t width, size_t height, OSType pixelFormatType)
+{
+    RELEASE_ASSERT(pixelFormatType == kCVPixelFormatType_32ARGB || pixelFormatType == kCVPixelFormatType_32BGRA);
+
+    auto buffer = FastBuffer::tryCreateUninitialized(width * height * 4);
+    if (!buffer)
+        return nullptr;
+
+    auto releaseBuffer = [] (void* context, const void*) {
+        static_cast<FastBuffer*>(context)->deref();
+    };
+
+    CVPixelBufferRef pixelBufferRaw = nullptr;
+    const auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, pixelFormatType, buffer->mutableSpan().data(), width * 4, releaseBuffer, buffer.get(), nullptr, &pixelBufferRaw);
+
+    auto pixelBuffer = adoptCF(pixelBufferRaw);
+    if (!pixelBuffer)
+        return nullptr;
+
+    // The CVPixelBuffer now owns the buffer and will call `deref()` on it when it gets destroyed.
+    buffer->ref();
+
+    ASSERT_UNUSED(status, status == noErr);
+
+    return pixelBuffer;
+}
+
 RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, PlatformVideoColorSpace&& colorSpace)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
@@ -141,14 +193,9 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
 
 RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
-    CVPixelBufferRef rawPixelBuffer = nullptr;
+    RetainPtr pixelBuffer = makeCVPixelBuffer8888(width, height, kCVPixelFormatType_32ARGB);
 
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32ARGB, nullptr, &rawPixelBuffer);
-    if (status != noErr || !rawPixelBuffer)
-        return nullptr;
-    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+    auto status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
     if (status != noErr)
         return nullptr;
 
@@ -169,14 +216,9 @@ RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t 
 
 RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
 {
-    CVPixelBufferRef rawPixelBuffer = nullptr;
+    RetainPtr pixelBuffer = makeCVPixelBuffer8888(width, height, kCVPixelFormatType_32BGRA);
 
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, nullptr, &rawPixelBuffer);
-    if (status != noErr || !rawPixelBuffer)
-        return nullptr;
-    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
-
-    status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
+    auto status = CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0);
     if (status != noErr)
         return nullptr;
 
