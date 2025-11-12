@@ -227,7 +227,7 @@ private:
     void switchToBlock(ControlType&&, Stack&&);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do { \
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, what); \
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, what); \
         result = m_expressionStack.takeLast(); \
         m_context.didPopValueFromStack(result, "WasmFunctionParser.h " STRINGIZE_VALUE_OF(__LINE__) ""_s); \
     } while (0)
@@ -461,7 +461,7 @@ auto FunctionParser<Context>::parse() -> Result
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfLocals), "can't get Function's number of locals in group "_s, i);
         totalNumberOfLocals += numberOfLocals;
-        WASM_PARSER_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big "_s, totalNumberOfLocals, " maximum "_s, maxFunctionLocals);
+        WASM_VALIDATOR_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big "_s, totalNumberOfLocals, " maximum "_s, maxFunctionLocals);
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, typeOfLocal), "can't get Function local's type in group "_s, i);
         if (!isDefaultableType(typeOfLocal)) [[unlikely]]
             totalNonDefaultableLocals++;
@@ -715,7 +715,7 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
     uint32_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
+    WASM_VALIDATOR_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
@@ -737,7 +737,7 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
+    WASM_VALIDATOR_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
@@ -772,7 +772,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     uint32_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
@@ -794,7 +794,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
@@ -816,7 +816,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     TypedExpression pointer;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
@@ -841,7 +841,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     TypedExpression expected;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected"_s);
@@ -868,7 +868,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     TypedExpression value;
     TypedExpression timeout;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
@@ -894,7 +894,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     TypedExpression pointer;
     TypedExpression count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-    WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+    WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
@@ -913,7 +913,7 @@ auto FunctionParser<Context>::atomicFence(ExtAtomicOpType op) -> PartialResult
 {
     uint8_t flags;
     WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags"_s);
-    WASM_PARSER_FAIL_IF(flags != 0x0, "flags should be 0x0 but got "_s, flags);
+    WASM_VALIDATOR_FAIL_IF(flags != 0x0, "flags should be 0x0 but got "_s, flags);
     WASM_TRY_ADD_TO_CONTEXT(atomicFence(op, flags));
     return { };
 }
@@ -1537,7 +1537,7 @@ auto FunctionParser<Context>::parseFunctionIndex(FunctionSpaceIndex& resultIndex
 {
     uint32_t functionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse function index"_s);
-    WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index "_s, functionIndex, " exceeds function index space "_s, m_info.functionIndexSpaceSize());
+    WASM_VALIDATOR_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index "_s, functionIndex, " exceeds function index space "_s, m_info.functionIndexSpaceSize());
     resultIndex = FunctionSpaceIndex(functionIndex);
     return { };
 }
@@ -1562,7 +1562,7 @@ auto FunctionParser<Context>::parseBranchTarget(uint32_t& resultTarget, uint32_t
     // Take into account the unreachable blocks in the control stack that were not added because they were unrechable
     if (unreachableBlocks)
         controlStackSize += (unreachableBlocks - 1);
-    WASM_PARSER_FAIL_IF(target >= controlStackSize, "br / br_if's target "_s, target, " exceeds control stack size "_s, controlStackSize);
+    WASM_VALIDATOR_FAIL_IF(target >= controlStackSize, "br / br_if's target "_s, target, " exceeds control stack size "_s, controlStackSize);
 
     resultTarget = target;
     return { };
@@ -1578,8 +1578,8 @@ auto FunctionParser<Context>::parseDelegateTarget(uint32_t& resultTarget, uint32
     if (unreachableBlocks)
         controlStackSize += (unreachableBlocks - 1); // The first block is in the control stack already.
     controlStackSize -= 1; // delegate target does not include the current block.
-    WASM_PARSER_FAIL_IF(controlStackSize.hasOverflowed(), "invalid control stack size"_s);
-    WASM_PARSER_FAIL_IF(target >= controlStackSize.value(), "delegate target "_s, target, " exceeds control stack size "_s, controlStackSize.value());
+    WASM_VALIDATOR_FAIL_IF(controlStackSize.hasOverflowed(), "invalid control stack size"_s);
+    WASM_VALIDATOR_FAIL_IF(target >= controlStackSize.value(), "delegate target "_s, target, " exceeds control stack size "_s, controlStackSize.value());
     resultTarget = target;
     return { };
 }
@@ -1641,7 +1641,7 @@ auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImme
 {
     uint32_t sizeOfAnnotationVector;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(sizeOfAnnotationVector), "select can't parse the size of annotation vector"_s);
-    WASM_PARSER_FAIL_IF(sizeOfAnnotationVector != 1, "select invalid result arity for"_s);
+    WASM_VALIDATOR_FAIL_IF(sizeOfAnnotationVector != 1, "select invalid result arity for"_s);
 
     Type targetType;
     WASM_PARSER_FAIL_IF(!parseValueType(m_info, targetType), "select can't parse annotations"_s);
@@ -1656,7 +1656,7 @@ auto FunctionParser<Context>::parseMemoryFillImmediate() -> PartialResult
 {
     uint8_t auxiliaryByte;
     WASM_PARSER_FAIL_IF(!parseUInt8(auxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!auxiliaryByte, "auxiliary byte for memory.fill should be zero, but got "_s, auxiliaryByte);
+    WASM_VALIDATOR_FAIL_IF(!!auxiliaryByte, "auxiliary byte for memory.fill should be zero, but got "_s, auxiliaryByte);
     return { };
 }
 
@@ -1665,11 +1665,11 @@ auto FunctionParser<Context>::parseMemoryCopyImmediates() -> PartialResult
 {
     uint8_t firstAuxiliaryByte;
     WASM_PARSER_FAIL_IF(!parseUInt8(firstAuxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!firstAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, firstAuxiliaryByte);
+    WASM_VALIDATOR_FAIL_IF(!!firstAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, firstAuxiliaryByte);
 
     uint8_t secondAuxiliaryByte;
     WASM_PARSER_FAIL_IF(!parseUInt8(secondAuxiliaryByte), "can't parse auxiliary byte"_s);
-    WASM_PARSER_FAIL_IF(!!secondAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, secondAuxiliaryByte);
+    WASM_VALIDATOR_FAIL_IF(!!secondAuxiliaryByte, "auxiliary byte for memory.copy should be zero, but got "_s, secondAuxiliaryByte);
     return { };
 }
 
@@ -1681,7 +1681,7 @@ auto FunctionParser<Context>::parseMemoryInitImmediates(MemoryInitImmediates& re
 
     unsigned unused;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't parse unused"_s);
-    WASM_PARSER_FAIL_IF(!!unused, "memory.init invalid unsued byte"_s);
+    WASM_VALIDATOR_FAIL_IF(!!unused, "memory.init invalid unsued byte"_s);
 
     result.unused = unused;
     result.dataSegmentIndex = dataSegmentIndex;
@@ -1706,7 +1706,7 @@ auto FunctionParser<Context>::parseStructFieldIndex(uint32_t& structFieldIndex, 
 {
     uint32_t fieldIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldIndex), "can't get type index for "_s, operation);
-    WASM_PARSER_FAIL_IF(fieldIndex >= structType.fieldCount(), operation, " field immediate "_s, fieldIndex, " is out of bounds"_s);
+    WASM_VALIDATOR_FAIL_IF(fieldIndex >= structType.fieldCount(), operation, " field immediate "_s, fieldIndex, " is out of bounds"_s);
 
     structFieldIndex = fieldIndex;
     return { };
@@ -2782,7 +2782,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         case ExtGCOpType::BrOnCastFail: {
             auto opName = op == ExtGCOpType::BrOnCast ? "br_on_cast"_s : "br_on_cast_fail"_s;
             uint8_t flags;
-            WASM_VALIDATOR_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
+            WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
             bool hasNull1 = flags & 0x1;
             bool hasNull2 = flags & 0x2;
 
@@ -2806,7 +2806,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             // Manually pop the stack in order to avoid decreasing the stack size, as we will immediately put it back.
             TypedExpression ref;
-            WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, opName);
+            WASM_VALIDATOR_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in "_s, opName);
             ref = m_expressionStack.takeLast();
 
             WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), Type { hasNull1 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 }), opName, " to type "_s, ref.type(), " expected a reference type with source heaptype"_s);
@@ -2983,7 +2983,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         TypedExpression ref;
         // Pop the stack manually to avoid changing the stack size, because the branch needs the value with a different type.
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in br_on_non_null"_s);
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in br_on_non_null"_s);
         ref = m_expressionStack.takeLast();
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, ref.value());
         WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type "_s, ref.type(), " expected a reference type"_s);
@@ -3047,7 +3047,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
         pushLocalInitialized(index);
 
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack"_s);
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack"_s);
         TypedExpression value;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "tee_local"_s);
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local "_s, index, "_s, the number of locals is "_s, m_locals.size());
@@ -3163,9 +3163,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.tableCount(), "call_indirect is only valid when a table is defined or imported"_s);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index"_s);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index"_s);
-        WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
-        WASM_PARSER_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
-        WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref"_s);
+        WASM_VALIDATOR_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
+        WASM_VALIDATOR_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
+        WASM_VALIDATOR_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref"_s);
 
         const TypeDefinition& typeDefinition = m_info.typeSignatures[signatureIndex].get();
         WASM_VALIDATOR_FAIL_IF(!typeDefinition.expand().is<FunctionSignature>(), "invalid type index (not a function signature) for call_indirect, got ", signatureIndex);
@@ -3229,7 +3229,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get call_ref's signature index"_s);
         WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "call_ref index ", typeIndex, " is out of bounds");
 
-        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't call_ref on empty expression stack"_s);
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.isEmpty(), "can't call_ref on empty expression stack"_s);
 
         const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex];
         const TypeIndex calleeTypeIndex = typeDefinition.index();
@@ -3489,7 +3489,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             }
             WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionLabel), "can't read label of try_table catch at index "_s, i);
 
-            WASM_PARSER_FAIL_IF(exceptionLabel >= m_controlStack.size(), "try_table's catch target "_s, exceptionLabel, " exceeds control stack size "_s, m_controlStack.size());
+            WASM_VALIDATOR_FAIL_IF(exceptionLabel >= m_controlStack.size(), "try_table's catch target "_s, exceptionLabel, " exceeds control stack size "_s, m_controlStack.size());
 
             // Type checking
             targets.append({
@@ -3647,7 +3647,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTargetIndex), "can't get default target for br_table"_s);
-        WASM_PARSER_FAIL_IF(defaultTargetIndex >= m_controlStack.size(), "br_table's default target "_s, defaultTargetIndex, " exceeds control stack size "_s, m_controlStack.size());
+        WASM_VALIDATOR_FAIL_IF(defaultTargetIndex >= m_controlStack.size(), "br_table's default target "_s, defaultTargetIndex, " exceeds control stack size "_s, m_controlStack.size());
         ControlType& defaultTarget = m_controlStack[m_controlStack.size() - 1 - defaultTargetIndex].controlData;
 
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br_table condition"_s);
@@ -4264,7 +4264,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case ExtGCOpType::BrOnCastFail: {
             auto opName = op == ExtGCOpType::BrOnCast ? "br_on_cast"_s : "br_on_cast_fail"_s;
             uint8_t flags;
-            WASM_VALIDATOR_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
+            WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
             bool hasNull1 = flags & 0x1;
             bool hasNull2 = flags & 0x2;
 
@@ -4333,14 +4333,14 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             uint32_t alignment;
             uint32_t unused;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
-            WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
+            WASM_VALIDATOR_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
             WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
             break;
         }
         case ExtAtomicOpType::AtomicFence: {
             uint8_t flags;
             WASM_PARSER_FAIL_IF(!parseUInt8(flags), "can't get flags"_s);
-            WASM_PARSER_FAIL_IF(flags != 0x0, "flags should be 0x0 but got "_s, flags);
+            WASM_VALIDATOR_FAIL_IF(flags != 0x0, "flags should be 0x0 but got "_s, flags);
             break;
         }
         default:
