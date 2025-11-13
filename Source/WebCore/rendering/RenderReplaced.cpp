@@ -631,8 +631,8 @@ void RenderReplaced::computeAspectRatioAdjustedIntrinsicLogicalWidths(LayoutUnit
     auto computedAspectRatio = computeIntrinsicAspectRatio();
     auto computedIntrinsicLogicalWidth = minLogicalWidth;
 
-    if (auto fixedLogicalHeight = style.logicalHeight().tryFixed())
-        computedIntrinsicLogicalWidth = fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio;
+    if (!style.logicalHeight().isAuto())
+        computedIntrinsicLogicalWidth = computeLogicalHeightUsingGeneric(style.logicalHeight(), intrinsicLogicalHeight()).value_or(computedIntrinsicLogicalWidth);
 
     if (auto fixedLogicalMaxHeight = style.logicalMaxHeight().tryFixed())
         computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMaxHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio });

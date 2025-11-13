@@ -3530,6 +3530,11 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeLogicalH
         } else if constexpr (std::same_as<SizeType, Style::MaximumSize>) {
             if (!replaced->replacedMaxLogicalHeightComputesAsNone())
                 return replaced->computeReplacedLogicalHeightUsing(logicalHeight) + borderAndPaddingLogicalHeight();
+        } else if (auto percentLogicalHeight = logicalHeight.tryPercentage()) {
+            auto& containingBlockStyle = containingBlock()->style();
+            auto& containingBlockLogicalHeight = containingBlockStyle.logicalHeight();
+            if (auto fixedLogicalHeight = containingBlockLogicalHeight.tryFixed())
+                return Style::evaluate<LayoutUnit>(*percentLogicalHeight, LayoutUnit(fixedLogicalHeight->resolveZoom(containingBlockStyle.usedZoomForLength())));
         }
         return { };
     }
