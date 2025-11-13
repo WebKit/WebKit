@@ -123,6 +123,7 @@ public:
     using CallPatchpointData = std::tuple<B3::PatchpointValue*, RefPtr<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
     using WasmConstRefValue = Const64Value;
 
+    static constexpr BytecodeValidationMode bytecodeValidationMode = BytecodeValidationMode::Skip;
     static constexpr bool shouldFuseBranchCompare = false;
     static constexpr bool tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
