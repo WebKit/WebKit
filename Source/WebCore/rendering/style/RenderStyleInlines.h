@@ -178,6 +178,7 @@ inline const Style::Color& RenderStyle::caretColor() const { return m_rareInheri
 inline const Style::Clip& RenderStyle::clip() const { return m_nonInheritedData->rareData->clip; }
 inline const Style::ClipPath& RenderStyle::clipPath() const { return m_nonInheritedData->rareData->clipPath; }
 inline bool RenderStyle::collapseWhiteSpace() const { return collapseWhiteSpace(whiteSpaceCollapse()); }
+inline WhiteSpaceTrim RenderStyle::whiteSpaceTrim() const { return static_cast<WhiteSpaceTrim>(m_nonInheritedData->rareData->whiteSpaceTrim); }
 inline ColumnAxis RenderStyle::columnAxis() const { return static_cast<ColumnAxis>(m_nonInheritedData->miscData->multiCol->axis); }
 inline Style::ColumnCount RenderStyle::columnCount() const { return m_nonInheritedData->miscData->multiCol->count; }
 inline ColumnFill RenderStyle::columnFill() const { return static_cast<ColumnFill>(m_nonInheritedData->miscData->multiCol->fill); }
@@ -621,6 +622,7 @@ inline Style::ViewTransitionName RenderStyle::initialViewTransitionName() { retu
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
 inline const NameScope RenderStyle::initialTimelineScope() { return { }; }
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
+constexpr WhiteSpaceTrim RenderStyle::initialWhiteSpaceTrim() { return WhiteSpaceTrim::None; }
 constexpr Style::Widows RenderStyle::initialWidows() { return CSS::Keyword::Auto { }; }
 inline Style::WillChange RenderStyle::initialWillChange() { return CSS::Keyword::Auto { }; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }

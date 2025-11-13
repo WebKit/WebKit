@@ -1473,6 +1473,17 @@ TextStream& operator<<(TextStream& ts, WhiteSpaceCollapse whiteSpaceCollapse)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, WhiteSpaceTrim whiteSpaceTrim)
+{
+    switch (whiteSpaceTrim) {
+    case WhiteSpaceTrim::None: ts << "none"_s; break;
+    case WhiteSpaceTrim::DiscardBefore: ts << "discard-before"_s; break;
+    case WhiteSpaceTrim::DiscardAfter: ts << "discard-after"_s; break;
+    case WhiteSpaceTrim::DiscardInner: ts << "discard-inner"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
 {
     switch (wordBreak) {
