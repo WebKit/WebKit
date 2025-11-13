@@ -222,7 +222,6 @@ inline __attribute__((always_inline)) void pas_mte_tag_st2g_loop(uint8_t* begin,
     PAS_MTE_SET_TAG(begin);
 
     // Ensure begin is a multiple of 32 bytes from the end.
-    begin += size % 32;
 
     if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG) && begin < end)
         printf("[MTE]\t    Doing ST2G loop from %p to %p\n", begin, end);
