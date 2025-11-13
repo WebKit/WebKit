@@ -31,7 +31,6 @@
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
-#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -52,7 +51,7 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-enum class AvoidanceReason : uint32_t {
+enum class FlexAvoidanceReason : uint32_t {
     FeatureIsDisabled                   = 1U << 0,
     FlexBoxHasNonFixedHeightInMainAxis  = 1U << 1,
     FlexBoxNeedsBaseline                = 1U << 2,
@@ -90,14 +89,14 @@ enum class IncludeReasons : bool {
 
 #ifndef NDEBUG
 #define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
-        reasons.add(AvoidanceReason::reason); \
+        reasons.add(FlexAvoidanceReason::reason); \
         if (includeReasons == IncludeReasons::First) \
             return reasons; \
     }
 #else
 #define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         ASSERT_UNUSED(includeReasons, includeReasons == IncludeReasons::First); \
-        reasons.add(AvoidanceReason::reason); \
+        reasons.add(FlexAvoidanceReason::reason); \
         return reasons; \
     }
 #endif
@@ -107,9 +106,9 @@ static inline bool mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style
     return !style.isOverflowVisible() || !style.scrollbarGutter().isAuto();
 }
 
-static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
+static OptionSet<FlexAvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
 {
-    auto reasons = OptionSet<AvoidanceReason> { };
+    auto reasons = OptionSet<FlexAvoidanceReason> { };
 
     if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
         ADD_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
@@ -241,64 +240,64 @@ static Vector<const RenderFlexibleBox*> collectFlexBoxesForCurrentPage()
     return flexBoxes;
 }
 
-static void printReason(AvoidanceReason reason, TextStream& stream)
+static void printReason(FlexAvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
-    case AvoidanceReason::FeatureIsDisabled:
+    case FlexAvoidanceReason::FeatureIsDisabled:
         stream << "modern flex layout is disabled";
         break;
-    case AvoidanceReason::FlexBoxHasNonFixedHeightInMainAxis:
+    case FlexAvoidanceReason::FlexBoxHasNonFixedHeightInMainAxis:
         stream << "flex container has non-fixed height";
         break;
-    case AvoidanceReason::FlexBoxNeedsBaseline:
+    case FlexAvoidanceReason::FlexBoxNeedsBaseline:
         stream << "inline flex box needs baseline";
         break;
-    case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
+    case FlexAvoidanceReason::FlexBoxHasUnsupportedOverflow:
         stream << "flex box has non-hidden overflow";
         break;
-    case AvoidanceReason::FlexBoxHasUnsupportedTypeOfRenderer:
+    case FlexAvoidanceReason::FlexBoxHasUnsupportedTypeOfRenderer:
         stream << "flex box has unsupported flex item renderer e.g. fieldset";
         break;
-    case AvoidanceReason::FlexBoxHasMarginTrim:
+    case FlexAvoidanceReason::FlexBoxHasMarginTrim:
         stream << "flex box has non-initial margin-trim";
         break;
-    case AvoidanceReason::FlexBoxHasOutOfFlowChild:
+    case FlexAvoidanceReason::FlexBoxHasOutOfFlowChild:
         stream << "flex box has out-of-flow child";
         break;
-    case AvoidanceReason::FlexBoxHasSVGChild:
+    case FlexAvoidanceReason::FlexBoxHasSVGChild:
         stream << "flex box has svg child";
         break;
-    case AvoidanceReason::FlexBoxHasNestedFlex:
+    case FlexAvoidanceReason::FlexBoxHasNestedFlex:
         stream << "flex box has nested flex";
         break;
-    case AvoidanceReason::FlexItemHasNonFixedHeight:
+    case FlexAvoidanceReason::FlexItemHasNonFixedHeight:
         stream << "flex item has non-fixed height value";
         break;
-    case AvoidanceReason::FlexItemHasIntrinsicFlexBasis:
+    case FlexAvoidanceReason::FlexItemHasIntrinsicFlexBasis:
         stream << "flex item has intrinsic flex basis value (e.g. min-content";
         break;
-    case AvoidanceReason::FlexItemHasContainsSize:
+    case FlexAvoidanceReason::FlexItemHasContainsSize:
         stream << "flex item has contains: size";
         break;
-    case AvoidanceReason::FlexItemHasUnsupportedOverflow:
+    case FlexAvoidanceReason::FlexItemHasUnsupportedOverflow:
         stream << "flex item has non-hidden overflow";
         break;
-    case AvoidanceReason::FlexItemHasAspectRatio:
+    case FlexAvoidanceReason::FlexItemHasAspectRatio:
         stream << "flex item has aspect-ratio ";
         break;
-    case AvoidanceReason::FlexItemHasBaselineAlign:
+    case FlexAvoidanceReason::FlexItemHasBaselineAlign:
         stream << "flex item has (last)baseline align";
         break;
-    case AvoidanceReason::FlexBoxIsOutOfFlow:
+    case FlexAvoidanceReason::FlexBoxIsOutOfFlow:
         stream << "flex box is out-of-flow positioned";
         break;
-    case AvoidanceReason::FlexIsVertical:
+    case FlexAvoidanceReason::FlexIsVertical:
         stream << "flex box/item has vertical writing mode";
         break;
-    case AvoidanceReason::FlexWithNonInitialMinMaxHeight:
+    case FlexAvoidanceReason::FlexWithNonInitialMinMaxHeight:
         stream << "flex box/item has non-initial min/max height";
         break;
-    case AvoidanceReason::NoFlexLayoutIsNeeded:
+    case FlexAvoidanceReason::NoFlexLayoutIsNeeded:
         stream << "flex box has no inflow child";
         break;
     default:
@@ -306,7 +305,7 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     }
 }
 
-static void printReasons(OptionSet<AvoidanceReason> reasons, TextStream& stream)
+static void printReasons(OptionSet<FlexAvoidanceReason> reasons, TextStream& stream)
 {
     stream << " ";
     for (auto reason : reasons) {
