@@ -49,7 +49,7 @@ public:
     static Ref<ModelProcessModelPlayerManager> create();
     ~ModelProcessModelPlayerManager();
 
-    ModelProcessConnection& modelProcessConnection();
+    Ref<ModelProcessConnection> modelProcessConnection();
 
     Ref<ModelProcessModelPlayer> createModelProcessModelPlayer(WebPage&, WebCore::ModelPlayerClient&);
     void deleteModelProcessModelPlayer(WebCore::ModelPlayer&);

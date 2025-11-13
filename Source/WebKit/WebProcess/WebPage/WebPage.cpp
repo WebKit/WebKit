@@ -1498,12 +1498,12 @@ WebPage::~WebPage()
     WebStorageNamespaceProvider::decrementUseCount(sessionStorageNamespaceIdentifier());
 
 #if ENABLE(GPU_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+    if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->destroyVisibilityPropagationContextForPage(*this);
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+    if (RefPtr modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
         modelProcessConnection->destroyVisibilityPropagationContextForPage(*this);
 #endif // ENABLE(MODEL_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
 
@@ -1946,7 +1946,7 @@ void WebPage::close()
 
     WEBPAGE_RELEASE_LOG_FORWARDABLE(Loading, WEBPAGE_CLOSE);
 
-    if (auto networkProcessConnection = WebProcess::singleton().protectedNetworkProcessConnection())
+    if (RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
         networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::ClearPageSpecificData(m_identifier), 0);
 
     m_isClosed = true;
@@ -4878,10 +4878,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
 
     WebProcess::singleton().protectedParentProcessConnection()->setIgnoreInvalidMessageForTesting();
-    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+    if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #if ENABLE(MODEL_PROCESS)
-    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+    if (RefPtr modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
         modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif // ENABLE(MODEL_PROCESS)
 #endif // ENABLE(IPC_TESTING_API)
@@ -7794,7 +7794,7 @@ void WebPage::scheduleFullEditorStateUpdate()
 void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::optional<WebCore::FloatSize> sizeConstraint, uint64_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError>&&)>&& completionHandler)
 {
     URL url = request.url();
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::LoadImageForDecoding(WTFMove(request), m_webPageProxyIdentifier, maximumBytesFromNetwork), [completionHandler = WTFMove(completionHandler), sizeConstraint, url] (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&& result) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::LoadImageForDecoding(WTFMove(request), m_webPageProxyIdentifier, maximumBytesFromNetwork), [completionHandler = WTFMove(completionHandler), sizeConstraint, url] (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&& result) mutable {
         if (!result)
             return completionHandler(makeUnexpected(WTFMove(result.error())));
 
@@ -8285,12 +8285,12 @@ void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDo
         return;
     }
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier), WTFMove(completionHandler));
 }
 
 void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, HasOrShouldIgnoreUserGesture hasOrShouldIgnoreUserGesture, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasOrShouldIgnoreUserGesture), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasOrShouldIgnoreUserGesture), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
         if (result.wasGranted == StorageAccessWasGranted::Yes) {
             switch (result.scope) {
             case StorageAccessScope::PerFrame:
@@ -8311,12 +8311,12 @@ void WebPage::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStat
     if (!page)
         return completionHandler();
     auto lastAuthentication = page->lastAuthentication() ? std::optional(*page->lastAuthentication()) : std::nullopt;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLoginStatus(WTFMove(domain), loggedInStatus, lastAuthentication), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLoginStatus(WTFMove(domain), loggedInStatus, lastAuthentication), WTFMove(completionHandler));
 }
 
 void WebPage::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsLoggedIn(WTFMove(domain)), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsLoggedIn(WTFMove(domain)), WTFMove(completionHandler));
 }
 
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)
@@ -8758,7 +8758,7 @@ void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelSt
 #endif
 
 #if ENABLE(MODEL_PROCESS)
-    if (auto* modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
+    if (RefPtr modelProcessConnection = WebProcess::singleton().existingModelProcessConnection())
         modelProcessConnection->configureLoggingChannel(channelName, state, level);
 #endif
 
@@ -8843,7 +8843,7 @@ void WebPage::updateCORSDisablingPatterns(Vector<String>&& patterns)
 void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
 {
     // FIXME: We should probably have this mechanism done between UIProcess and NetworkProcess directly.
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -9526,7 +9526,7 @@ void WebPage::useRedirectionForCurrentNavigation(WebCore::ResourceResponse&& res
 
     if (RefPtr resourceLoader = loader->mainResourceLoader()) {
         WEBPAGE_RELEASE_LOG(Loading, "WebPage::useRedirectionForCurrentNavigation to network process");
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UseRedirectionForCurrentNavigation(*resourceLoader->identifier(), response), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::UseRedirectionForCurrentNavigation(*resourceLoader->identifier(), response), 0);
         return;
     }
 

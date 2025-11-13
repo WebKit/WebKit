@@ -79,7 +79,7 @@ void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin
 
 IPC::Connection& WebStorageConnection::connection()
 {
-    return WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 } // namespace WebKit

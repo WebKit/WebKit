@@ -1965,14 +1965,14 @@ RefPtr<JSIPCConnection> JSIPC::processTargetFromArgument(JSC::JSGlobalObject* gl
     }
 #if ENABLE(GPU_PROCESS)
     if (name == processTargetNameGPU) {
-        RefPtr connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        RefPtr connection = WebProcess::singleton().ensureGPUProcessConnection()->connection();
         if (!m_gpuConnection || &m_gpuConnection->connection() != connection)
             m_gpuConnection = JSIPCConnection::create(connection.releaseNonNull());
         return m_gpuConnection;
     }
 #endif
     if (name == processTargetNameNetworking) {
-        RefPtr connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        RefPtr connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         if (!m_networkConnection || &m_networkConnection->connection() != connection)
             m_networkConnection = JSIPCConnection::create(connection.releaseNonNull());
         return m_networkConnection;

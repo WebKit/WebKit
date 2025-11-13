@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCResolver);
 void LibWebRTCResolver::sendOnMainThread(Function<void(IPC::Connection&)>&& callback)
 {
     callOnMainRunLoop([callback = WTFMove(callback)]() {
-        Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         callback(networkProcessConnection);
     });
 }

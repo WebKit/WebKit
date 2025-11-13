@@ -52,14 +52,9 @@ WebMessagePortChannelProvider::~WebMessagePortChannelProvider()
     ASSERT_NOT_REACHED();
 }
 
-static inline IPC::Connection& networkProcessConnection()
+static inline Ref<IPC::Connection> networkProcessConnection()
 {
-    return WebProcess::singleton().ensureNetworkProcessConnection().connection();
-}
-
-static inline Ref<IPC::Connection> protectedNetworkProcessConnection()
-{
-    return networkProcessConnection();
+    return WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2, bool siteIsolationEnabled)
@@ -71,19 +66,19 @@ void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePor
         m_inProcessPortMessages.add(port2, Vector<MessageWithMessagePorts> { });
     }
 
-    protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::CreateNewMessagePortChannel { port1, port2 }, 0);
+    networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::CreateNewMessagePortChannel { port1, port2 }, 0);
 }
 
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     m_inProcessPortMessages.add(local, Vector<MessageWithMessagePorts> { });
 
-    protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
+    networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
-    protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
+    networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
 }
 
 void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::MessagePortIdentifier& port)
@@ -96,12 +91,12 @@ void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::Messa
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
     m_inProcessPortMessages.remove(port);
-    protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
+    networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 
 void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& completionHandler)
 {
-    protectedNetworkProcessConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTFMove(completionHandler), port](Vector<WebCore::MessageWithMessagePorts>&& messages, std::optional<MessageBatchIdentifier> messageBatchIdentifier) mutable {
+    networkProcessConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTFMove(completionHandler), port](Vector<WebCore::MessageWithMessagePorts>&& messages, std::optional<MessageBatchIdentifier> messageBatchIdentifier) mutable {
         if (!messageBatchIdentifier)
             return completionHandler({ }, [] { }); // IPC failure.
 
@@ -112,7 +107,7 @@ void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIden
             messages.appendVector(WTFMove(pendingMessages));
         }
         completionHandler(WTFMove(messages), [messageBatchIdentifier] {
-            protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::DidDeliverMessagePortMessages { *messageBatchIdentifier }, 0);
+            networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::DidDeliverMessagePortMessages { *messageBatchIdentifier }, 0);
         });
     }, 0);
 }
@@ -129,7 +124,7 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
     for (auto& port : message.transferredPorts)
         messagePortSentToRemote(port.first);
 
-    protectedNetworkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
+    networkProcessConnection()->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
 }
 
 } // namespace WebKit

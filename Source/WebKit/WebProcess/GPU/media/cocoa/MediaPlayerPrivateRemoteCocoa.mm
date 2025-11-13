@@ -67,7 +67,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (!videoFrame)
         return nullptr;
 
-    return WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
+    return WebProcess::singleton().ensureGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
 }
 
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()

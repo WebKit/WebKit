@@ -59,7 +59,7 @@ void WebRTCMonitor::startUpdating()
 {
     WEBRTC_RELEASE_LOG("StartUpdating - Asking network process to start updating");
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(), 0);
     ++m_clientCount;
 }
 
@@ -72,7 +72,7 @@ void WebRTCMonitor::stopUpdating()
         return;
 
     WEBRTC_RELEASE_LOG("StopUpdating - Asking network process to stop updating");
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkRTCMonitor::StopUpdating(), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkRTCMonitor::StopUpdating(), 0);
 }
 
 void WebRTCMonitor::networksChanged(Vector<RTCNetwork>&& networkList, RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6)

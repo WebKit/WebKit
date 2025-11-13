@@ -112,8 +112,8 @@ public:
 
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     std::optional<WebCore::MediaPlayerIdentifier> identifier() const final { return m_id; }
-    IPC::Connection& connection() const { return protectedManager()->gpuProcessConnection().connection(); }
-    Ref<IPC::Connection> protectedConnection() const { return protectedManager()->gpuProcessConnection().connection(); }
+    IPC::Connection& connection() const { return protectedManager()->gpuProcessConnection()->connection(); }
+    Ref<IPC::Connection> protectedConnection() const { return protectedManager()->gpuProcessConnection()->connection(); }
     RefPtr<WebCore::MediaPlayer> player() const { return m_player.get(); }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_readyState; }
@@ -497,7 +497,7 @@ private:
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
-    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protectedManager()->protectedGPUProcessConnection()->videoFrameObjectHeapProxy(); }
+    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protectedManager()->gpuProcessConnection()->videoFrameObjectHeapProxy(); }
     Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const { return videoFrameObjectHeapProxy(); }
 
     Ref<RemoteMediaPlayerManager> protectedManager() const;

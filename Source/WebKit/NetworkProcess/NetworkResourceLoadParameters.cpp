@@ -48,7 +48,7 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 
     if (request.url().protocolIsFile()) {
 #if HAVE(AUDIT_TOKEN)
-        if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {
+        if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection()->networkProcessAuditToken()) {
             if (auto handle = SandboxExtension::createHandleForReadByAuditToken(request.url().fileSystemPath(), *networkProcessAuditToken))
                 resourceSandboxExtension = WTFMove(*handle);
         } else

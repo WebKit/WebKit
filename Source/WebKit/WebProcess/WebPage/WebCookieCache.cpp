@@ -75,7 +75,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         if (!hasCacheForHost)
             WebProcess::singleton().protectedCookieJar()->addChangeListenerWithAccess(url, firstParty, frameID, pageID, webPageProxyID, *this);
 #endif
-        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
         if (!sendResult.succeeded())
             return { };
 

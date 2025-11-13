@@ -60,7 +60,7 @@ static bool sendMessage(WebPage* page, NOESCAPE const Function<bool(IPC::Connect
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
-        Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         return sendMessage(networkProcessConnection, WebProcess::singleton().sessionID().toUInt64());
     }
 #endif
@@ -158,7 +158,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(const Str
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS) && ENABLE(NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
-        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         auto origin = SecurityOriginData::fromURL(URL { originString });
         auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTFMove(origin)), WebProcess::singleton().sessionID().toUInt64());
         if (!result.succeeded())

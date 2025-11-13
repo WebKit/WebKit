@@ -83,7 +83,7 @@ void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableD
     if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !openerUrl.isAboutBlank()) {
-        Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.identifier(), openerDomain), 0);
+        Ref { WebProcess::singleton().ensureNetworkProcessConnection()->connection() }->send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPage.identifier(), openerDomain), 0);
         
         openerPage.addDomainWithPageLevelStorageAccess(openerDomain, domainInNeedOfStorageAccess);
 
@@ -115,7 +115,7 @@ void WebResourceLoadObserver::scheduleNotificationIfNeeded()
 void WebResourceLoadObserver::updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler)
 {
     m_notificationTimer.stop();
-    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
+    Ref { WebProcess::singleton().ensureNetworkProcessConnection()->connection() }->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
 }
 
 
@@ -398,7 +398,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
 
     // We notify right away in case of a user interaction instead of waiting the usual 5 seconds because we want
     // to update cookie blocking state as quickly as possible.
-    Ref { WebProcess::singleton().ensureNetworkProcessConnection().connection() }->send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(topFrameDomain), 0);
+    Ref { WebProcess::singleton().ensureNetworkProcessConnection()->connection() }->send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(topFrameDomain), 0);
 
 #if !RELEASE_LOG_DISABLED
     if (shouldLogUserInteraction) {

@@ -88,7 +88,7 @@ WebResourceLoader::~WebResourceLoader() = default;
 
 IPC::Connection* WebResourceLoader::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 uint64_t WebResourceLoader::messageSenderDestinationID() const

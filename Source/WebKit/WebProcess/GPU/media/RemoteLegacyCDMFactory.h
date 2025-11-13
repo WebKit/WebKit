@@ -69,7 +69,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    GPUProcessConnection& gpuProcessConnection();
+    Ref<GPUProcessConnection> gpuProcessConnection();
 
     void addSession(RemoteLegacyCDMSessionIdentifier, RemoteLegacyCDMSession&);
     void removeSession(RemoteLegacyCDMSessionIdentifier);

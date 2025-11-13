@@ -903,7 +903,7 @@ void WebProcess::registerURLSchemeAsDisplayIsolated(const String& urlScheme) con
 void WebProcess::registerURLSchemeAsCORSEnabled(const String& urlScheme)
 {
     LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(urlScheme);
-    ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled({ urlScheme }), 0);
+    ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled({ urlScheme }), 0);
 }
 
 void WebProcess::registerURLSchemeAsAlwaysRevalidated(const String& urlScheme) const
@@ -1340,7 +1340,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
     return connectionInfo;
 }
 
-NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
+Ref<NetworkProcessConnection> WebProcess::ensureNetworkProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(m_sessionID);
@@ -1356,7 +1356,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
-            protectedNetworkProcessConnection()->protectedServiceWorkerConnection()->registerServiceWorkerClients();
+            m_networkProcessConnection->protectedServiceWorkerConnection()->registerServiceWorkerClients();
 
 #if HAVE(LSDATABASECONTEXT)
         // On Mac, this needs to be called before NSApplication is being initialized.
@@ -1380,14 +1380,9 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     return *m_networkProcessConnection;
 }
 
-Ref<NetworkProcessConnection> WebProcess::ensureProtectedNetworkProcessConnection()
+RefPtr<NetworkProcessConnection> WebProcess::existingNetworkProcessConnection() const
 {
-    return ensureNetworkProcessConnection();
-}
-
-RefPtr<NetworkProcessConnection> WebProcess::protectedNetworkProcessConnection()
-{
-    return existingNetworkProcessConnection();
+    return m_networkProcessConnection;
 }
 
 void WebProcess::logDiagnosticMessageForNetworkProcessCrash()
@@ -1484,7 +1479,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 WebFileSystemStorageConnection& WebProcess::fileSystemStorageConnection()
 {
     if (!m_fileSystemStorageConnection)
-        m_fileSystemStorageConnection = WebFileSystemStorageConnection::create(Ref { ensureNetworkProcessConnection().connection() });
+        m_fileSystemStorageConnection = WebFileSystemStorageConnection::create(Ref { ensureNetworkProcessConnection()->connection() });
 
     return *m_fileSystemStorageConnection;
 }
@@ -1506,7 +1501,7 @@ Ref<WebLoaderStrategy> WebProcess::protectedWebLoaderStrategy()
 
 #if ENABLE(GPU_PROCESS)
 
-GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
+Ref<GPUProcessConnection> WebProcess::ensureGPUProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -1529,9 +1524,9 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     return *m_gpuProcessConnection;
 }
 
-Ref<GPUProcessConnection> WebProcess::ensureProtectedGPUProcessConnection()
+RefPtr<GPUProcessConnection> WebProcess::existingGPUProcessConnection() const
 {
-    return ensureGPUProcessConnection();
+    return m_gpuProcessConnection;
 }
 
 Seconds WebProcess::gpuProcessTimeoutDuration() const
@@ -1587,7 +1582,7 @@ AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTr
 
 #if ENABLE(MODEL_PROCESS)
 
-ModelProcessConnection& WebProcess::ensureModelProcessConnection()
+Ref<ModelProcessConnection> WebProcess::ensureModelProcessConnection()
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -1600,6 +1595,11 @@ ModelProcessConnection& WebProcess::ensureModelProcessConnection()
     }
 
     return *m_modelProcessConnection;
+}
+
+RefPtr<ModelProcessConnection> WebProcess::existingModelProcessConnection() const
+{
+    return m_modelProcessConnection;
 }
 
 void WebProcess::modelProcessConnectionClosed(ModelProcessConnection& connection)
@@ -2172,7 +2172,7 @@ void WebProcess::prefetchDNS(const String& hostname)
         return;
 
     if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
-        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
+        ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
     // The DNS prefetched hosts cache is only to avoid asking for the same hosts too many times
     // in a very short period of time, producing a lot of IPC traffic. So we clear this cache after
     // some time of no DNS requests.
@@ -2218,7 +2218,7 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
     // We are in the Remote Worker context process and the call below establishes our connection to the Network Process
     // by calling ensureNetworkProcessConnection. SWContextManager / SharedWorkerContextManager need to use the same underlying IPC::Connection as the
     // NetworkProcessConnection for synchronization purposes.
-    Ref ipcConnection = ensureNetworkProcessConnection().connection();
+    Ref ipcConnection = ensureNetworkProcessConnection()->connection();
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
         SWContextManager::singleton().setConnection(WebSWContextManagerConnection::create(WTFMove(ipcConnection), WTFMove(site), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
@@ -2233,7 +2233,7 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
 
 void WebProcess::registerServiceWorkerClients(CompletionHandler<void(bool)>&& completionHandler)
 {
-    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PingPongForServiceWorkers { }, WTFMove(completionHandler));
+    ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::PingPongForServiceWorkers { }, WTFMove(completionHandler));
 }
 
 void WebProcess::addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)
@@ -2365,7 +2365,7 @@ void WebProcess::setAppBadge(WebCore::Frame* frame, const WebCore::SecurityOrigi
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
         if (m_sessionID)
-            ensureNetworkProcessConnection().connection().send(Messages::NotificationManagerMessageHandler::SetAppBadge({ origin, badge }), m_sessionID->toUInt64());
+            ensureNetworkProcessConnection()->connection().send(Messages::NotificationManagerMessageHandler::SetAppBadge({ origin, badge }), m_sessionID->toUInt64());
         return;
     }
 #endif
@@ -2513,11 +2513,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 #if PLATFORM(COCOA)
     if (useGPUProcessForMedia) {
         SystemBatteryStatusTestingOverrides::singleton().setConfigurationChangedCallback([this, protectedThis = Ref { *this }] (bool forceUpdate) {
-            ensureProtectedGPUProcessConnection()->updateMediaConfiguration(forceUpdate);
+            ensureGPUProcessConnection()->updateMediaConfiguration(forceUpdate);
         });
 #if ENABLE(VP9)
         VP9TestingOverrides::singleton().setConfigurationChangedCallback([this, protectedThis = Ref { *this }] (bool forceUpdate) {
-            ensureProtectedGPUProcessConnection()->updateMediaConfiguration(forceUpdate);
+            ensureGPUProcessConnection()->updateMediaConfiguration(forceUpdate);
         });
 #endif
     } else {

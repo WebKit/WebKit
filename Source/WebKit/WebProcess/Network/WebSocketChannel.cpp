@@ -101,7 +101,7 @@ WebSocketChannel::~WebSocketChannel()
 
 IPC::Connection* WebSocketChannel::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 uint64_t WebSocketChannel::messageSenderDestinationID() const

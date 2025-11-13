@@ -53,7 +53,7 @@ RemoteWCLayerTreeHostProxy::~RemoteWCLayerTreeHostProxy()
 
 IPC::Connection* RemoteWCLayerTreeHostProxy::messageSenderConnection() const
 {
-    return &const_cast<RemoteWCLayerTreeHostProxy&>(*this).ensureGPUProcessConnection().connection();
+    return &const_cast<RemoteWCLayerTreeHostProxy&>(*this).ensureGPUProcessConnection()->connection();
 }
 
 GPUProcessConnection& RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection()

@@ -70,7 +70,7 @@ std::optional<IDBConnectionIdentifier> WebIDBConnectionToServer::identifier() co
 
 IPC::Connection* WebIDBConnectionToServer::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServer()

@@ -68,7 +68,7 @@ private:
     // WebCore::RemoteCommandListener
     void updateSupportedCommands() final;
 
-    GPUProcessConnection& ensureGPUProcessConnection();
+    Ref<GPUProcessConnection> ensureGPUProcessConnection();
 
     WebCore::RemoteCommandListener::RemoteCommandsSet m_currentCommands;
     bool m_currentSupportSeeking { false };

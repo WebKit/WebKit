@@ -66,7 +66,7 @@ void RemoteRealtimeMediaSource::createRemoteMediaSource()
 
         m_proxy.setAsReady();
         if (m_proxy.shouldCaptureInGPUProcess())
-            WebProcess::singleton().ensureProtectedGPUProcessConnection()->addClient(*this);
+            WebProcess::singleton().ensureGPUProcessConnection()->addClient(*this);
     }, m_proxy.shouldCaptureInGPUProcess() && m_manager->shouldUseGPUProcessRemoteFrames());
 }
 

@@ -74,7 +74,7 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(const We
 #if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
 RefPtr<AudioVideoRenderer> WebMediaStrategy::createAudioVideoRenderer(LoggerHelper* loggerHelper, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) const
 {
-    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, WebProcess::singleton().ensureProtectedGPUProcessConnection());
+    return AudioVideoRendererRemote::create(loggerHelper, mediaElementIdentifier, playerIdentifier, WebProcess::singleton().ensureGPUProcessConnection());
 }
 #endif
 
@@ -92,7 +92,7 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
 
             void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo, bool) final
             {
-                Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+                Ref connection = WebProcess::singleton().ensureGPUProcessConnection()->connection();
                 connection->send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);
             }
         };
@@ -124,7 +124,7 @@ void WebMediaStrategy::enableMockMediaSource()
     m_mockMediaSourceEnabled = true;
 #if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess) {
-        Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        Ref connection = WebProcess::singleton().ensureGPUProcessConnection()->connection();
         connection->send(Messages::GPUConnectionToWebProcess::EnableMockMediaSource { }, 0);
         return;
     }
@@ -137,7 +137,7 @@ void WebMediaStrategy::enableMockMediaSource()
 void WebMediaStrategy::nativeImageFromVideoFrame(const WebCore::VideoFrame& frame, CompletionHandler<void(std::optional<RefPtr<WebCore::NativeImage>>&&)>&& completionHandler)
 {
     // FIMXE: Move out of sync IPC.
-    completionHandler(WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(frame));
+    completionHandler(WebProcess::singleton().ensureGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(frame));
 }
 #endif
 

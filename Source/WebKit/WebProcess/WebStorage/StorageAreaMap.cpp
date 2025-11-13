@@ -108,7 +108,7 @@ void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceAre
         if (weakThis)
             weakThis->didSetItem(seed, key, hasError, WTFMove(allItems));
     };
-    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
     connection->sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
@@ -134,7 +134,7 @@ void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImp
         if (weakThis)
             weakThis->didRemoveItem(seed, key, hasError, WTFMove(allItems));
     };
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
 void StorageAreaMap::clear(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* sourceArea)
@@ -153,7 +153,7 @@ void StorageAreaMap::clear(WebCore::LocalFrame& sourceFrame, StorageAreaImpl* so
         if (weakThis)
             weakThis->didClear(seed);
     };
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), sourceFrame.document()->url().string()), WTFMove(callback));
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
 bool StorageAreaMap::contains(const String& key)
@@ -287,7 +287,7 @@ WebCore::ClientOrigin StorageAreaMap::clientOrigin() const
 void StorageAreaMap::sendConnectMessage(SendMode mode)
 {
     m_isWaitingForConnectReply = true;
-    Ref ipcConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    Ref ipcConnection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
     auto namespaceIdentifier = m_namespace->storageNamespaceID();
     auto origin = clientOrigin();
     auto type = computeStorageType();

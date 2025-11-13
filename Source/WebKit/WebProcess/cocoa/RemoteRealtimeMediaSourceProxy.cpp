@@ -48,7 +48,7 @@ static Ref<IPC::Connection> getSourceConnection(bool shouldCaptureInGPUProcess)
     ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
     if (shouldCaptureInGPUProcess)
-        return WebProcess::singleton().ensureGPUProcessConnection().connection();
+        return WebProcess::singleton().ensureGPUProcessConnection()->connection();
 #endif
     return *WebProcess::singleton().parentProcessConnection();
 }

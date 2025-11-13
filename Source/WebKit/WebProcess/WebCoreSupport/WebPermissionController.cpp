@@ -71,7 +71,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == WebCore::PermissionName::Notifications || descriptor.name == WebCore::PermissionName::Push)) {
-        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         auto notificationPermissionHandler = [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState pushPermissionState) mutable {
             auto state = [pushPermissionState]() -> WebCore::PermissionState {
                 switch (pushPermissionState) {
@@ -95,7 +95,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     }
 
     if (descriptor.name == WebCore::PermissionName::StorageAccess) {
-        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryStorageAccessPermission(WebCore::RegistrableDomain { origin.clientOrigin }, WebCore::RegistrableDomain { origin.topOrigin }, proxyIdentifier), WTFMove(completionHandler));
         return;
     }
@@ -155,7 +155,7 @@ void WebPermissionController::permissionChanged(WebCore::PermissionName permissi
 void WebPermissionController::addChangeListener(WebCore::PermissionName permissionName, const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain)
 {
     if (permissionName == WebCore::PermissionName::StorageAccess) {
-        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         networkProcess->send(Messages::NetworkConnectionToWebProcess::SubscribeToStorageAccessPermissionChanges(topFrameDomain, subFrameDomain), 0);
     }
 }
@@ -163,7 +163,7 @@ void WebPermissionController::addChangeListener(WebCore::PermissionName permissi
 void WebPermissionController::removeChangeListener(WebCore::PermissionName permissionName, const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain)
 {
     if (permissionName == WebCore::PermissionName::StorageAccess) {
-        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         networkProcess->send(Messages::NetworkConnectionToWebProcess::UnsubscribeFromStorageAccessPermissionChanges(topFrameDomain, subFrameDomain), 0);
     }
 }

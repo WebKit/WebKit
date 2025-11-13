@@ -283,12 +283,10 @@ public:
     Ref<WasmDebuggerDispatcher> protectedWasmDebuggerDispatcher() { return m_wasmDebuggerDispatcher; }
 #endif
 
-    NetworkProcessConnection& ensureNetworkProcessConnection();
-    Ref<NetworkProcessConnection> ensureProtectedNetworkProcessConnection();
+    Ref<NetworkProcessConnection> ensureNetworkProcessConnection();
+    RefPtr<NetworkProcessConnection> existingNetworkProcessConnection() const;
 
     void networkProcessConnectionClosed(NetworkProcessConnection*);
-    NetworkProcessConnection* existingNetworkProcessConnection() { return m_networkProcessConnection.get(); }
-    RefPtr<NetworkProcessConnection> protectedNetworkProcessConnection();
     WebLoaderStrategy& webLoaderStrategy();
     Ref<WebLoaderStrategy> protectedWebLoaderStrategy();
     WebFileSystemStorageConnection& fileSystemStorageConnection();
@@ -303,9 +301,8 @@ public:
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
 
 #if ENABLE(GPU_PROCESS)
-    GPUProcessConnection& ensureGPUProcessConnection();
-    Ref<GPUProcessConnection> ensureProtectedGPUProcessConnection();
-    GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+    Ref<GPUProcessConnection> ensureGPUProcessConnection();
+    RefPtr<GPUProcessConnection> existingGPUProcessConnection() const;
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
@@ -330,9 +327,9 @@ public:
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)
-    ModelProcessConnection& ensureModelProcessConnection();
+    Ref<ModelProcessConnection> ensureModelProcessConnection();
+    RefPtr<ModelProcessConnection> existingModelProcessConnection() const;
     void modelProcessConnectionClosed(ModelProcessConnection&);
-    ModelProcessConnection* existingModelProcessConnection() { return m_modelProcessConnection.get(); }
 #endif // ENABLE(MODEL_PROCESS)
 
 #if USE(LIBWEBRTC)

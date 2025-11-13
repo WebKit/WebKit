@@ -609,7 +609,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     WEBLOADERSTRATEGY_RELEASE_LOG_FORWARDABLE(WEBLOADERSTRATEGY_SCHEDULELOAD_RESOURCE_SCHEDULED_WITH_NETWORKPROCESS, static_cast<int>(resourceLoader.request().priority()), existingNetworkResourceLoadIdentifierToResume ? existingNetworkResourceLoadIdentifierToResume->toUInt64() : 0);
 
     loadParameters.isInitiatedByDedicatedWorker = resourceLoader.options().initiatorContext == InitiatorContext::Worker && std::holds_alternative<std::monostate>(resourceLoader.options().workerIdentifier);
-    if (WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(WTFMove(loadParameters), existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
+    if (WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(WTFMove(loadParameters), existingNetworkResourceLoadIdentifierToResume), 0) != IPC::Error::NoError) {
         WEBLOADERSTRATEGY_RELEASE_LOG_ERROR("scheduleLoad: Unable to schedule resource with the NetworkProcess (priority=%d)", static_cast<int>(resourceLoader.request().priority()));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.
@@ -866,7 +866,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(WTFMove(loadParameters)), 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(WTFMove(loadParameters)), 0);
     if (!sendResult.succeeded()) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: failed sending synchronous network process message %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
         if (page)
@@ -948,7 +948,7 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
     if (completionHandler)
         m_pingLoadCompletionHandlers.add(*loadParameters.identifier, WTFMove(completionHandler));
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing { WTFMove(loadParameters) }, 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::LoadPing { WTFMove(loadParameters) }, 0);
 }
 
 void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)
@@ -1025,7 +1025,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
 
     // FIXME: Use sendWithAsyncReply instead of preconnectionIdentifier
     // FIXME: don't use WebCore::ResourceLoaderIdentifier for a preconnection identifier, too. It should have its own type.
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreconnectTo(preconnectionIdentifier, WTFMove(parameters)), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::PreconnectTo(preconnectionIdentifier, WTFMove(parameters)), 0);
 }
 
 void WebLoaderStrategy::didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, ResourceError&& error)
@@ -1057,7 +1057,7 @@ void WebLoaderStrategy::isResourceLoadFinished(CachedResource& resource, Complet
         return;
     }
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(*resource.loader()->identifier()), WTFMove(callback), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(*resource.loader()->identifier()), WTFMove(callback), 0);
 }
 
 void WebLoaderStrategy::setOnLineState(bool isOnLine)
@@ -1072,26 +1072,26 @@ void WebLoaderStrategy::setOnLineState(bool isOnLine)
 
 void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCaptureExtraNetworkLoadMetricsEnabled(enabled), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection()->connection().send(Messages::NetworkConnectionToWebProcess::SetCaptureExtraNetworkLoadMetricsEnabled(enabled), 0);
 }
 
 ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, 0);
     auto [response] = sendResult.takeReplyOr(ResourceResponse { });
     return response;
 }
 
 Vector<NetworkTransactionInformation> WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, 0);
     auto [information] = sendResult.takeReplyOr(Vector<NetworkTransactionInformation> { });
     return information;
 }
 
 NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, 0);
     auto [networkMetrics] = sendResult.takeReplyOr(NetworkLoadMetrics { });
     return networkMetrics;
 }
@@ -1125,7 +1125,7 @@ bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& resp
 
 void WebLoaderStrategy::setResourceLoadSchedulingMode(WebCore::Page& page, WebCore::LoadSchedulingMode mode)
 {
-    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
     connection.send(Messages::NetworkConnectionToWebProcess::SetResourceLoadSchedulingMode(WebPage::fromCorePage(page)->identifier(), mode), 0);
 }
 
@@ -1135,7 +1135,7 @@ void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::Subresourc
         return *loader->identifier();
     });
 
-    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
     connection.send(Messages::NetworkConnectionToWebProcess::PrioritizeResourceLoads(identifiers), 0);
 }
 
