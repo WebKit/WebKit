@@ -24,59 +24,15 @@
 
 #pragma once
 
-#include "StyleCalculationTree.h"
-#include <wtf/StdLibExtras.h>
+#include "CSSCalcExecutor.h"
 
 namespace WebCore {
 namespace Style {
 namespace Calculation {
 
-// MARK: - forAllChildren
-
-// `forAllChildren` will call the provided `functor` on all direct children of the provided node. This will include values of type `Child`, `ChildOrNone` and `std::optional<Child>`.
-
-template<typename F, Leaf Op> void forAllChildren(const auto&, const F&)
+template<typename Op, typename... Args> double executeMathOperation(Args&&... args)
 {
-    // No children.
-}
-
-template<typename F, typename Op> void forAllChildren(const Op& root, const F& functor)
-{
-    struct Caller {
-        const F& functor;
-
-        void operator()(const Children& children)
-        {
-            for (auto& child : children)
-                functor(child);
-        }
-        void operator()(const std::optional<Child>& root)
-        {
-            functor(root);
-        }
-        void operator()(const ChildOrNone& root)
-        {
-            functor(root);
-        }
-        void operator()(const Child& root)
-        {
-            functor(root);
-        }
-        void operator()(const Random::Fixed& root)
-        {
-            functor(root);
-        }
-    };
-    auto caller = Caller { functor };
-    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);
-}
-
-template<typename F> void forAllChildren(const Child& root, const F& functor)
-{
-    WTF::switchOn(root,
-        [&](const Leaf auto&) { },
-        [&](const auto& root) { forAllChildren(*root, functor); }
-    );
+    return CSSCalc::executeOperation<Op::op>(std::forward<Args>(args)...);
 }
 
 } // namespace Calculation

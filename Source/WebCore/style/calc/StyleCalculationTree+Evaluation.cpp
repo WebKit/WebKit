@@ -25,7 +25,7 @@
 #include "config.h"
 #include "StyleCalculationTree+Evaluation.h"
 
-#include "CSSCalcExecutor.h"
+#include "StyleCalculationTree+Executor.h"
 #include "StyleCalculationTree.h"
 #include "StyleZoomPrimitives.h"
 #include <wtf/StdLibExtras.h>
@@ -47,14 +47,8 @@ static auto evaluate(const IndirectNode<Min>&, double percentResolutionLength, c
 static auto evaluate(const IndirectNode<Max>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<Hypot>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<Random>&, double percentResolutionLength, const ZoomFactor&) -> double;
-static auto evaluate(const IndirectNode<Blend>&, double percentResolutionLength, const ZoomFactor&) -> double;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, double percentResolutionLength, const ZoomFactor&) -> double;
-
-template<typename Op, typename... Args> static double executeMathOperation(Args&&... args)
-{
-    return CSSCalc::executeOperation<Op::op>(std::forward<Args>(args)...);
-}
 
 // MARK: Evaluation.
 
@@ -141,11 +135,6 @@ double evaluate(const IndirectNode<Random>& root, double percentResolutionLength
     auto step = evaluate(root->step, percentResolutionLength, usedZoom);
 
     return executeMathOperation<Random>(root->fixed.baseValue, min, max, step);
-}
-
-double evaluate(const IndirectNode<Blend>& root, double percentResolutionLength, const ZoomFactor& usedZoom)
-{
-    return (1.0 - root->progress) * evaluate(root->from, percentResolutionLength, usedZoom) + root->progress * evaluate(root->to, percentResolutionLength, usedZoom);
 }
 
 template<typename Op> double evaluate(const IndirectNode<Op>& root, double percentResolutionLength, const ZoomFactor& usedZoom)

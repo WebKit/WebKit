@@ -19498,6 +19498,8 @@
 		BCD9F1E82E24364200D1C3DF /* StyleGridTrackSizes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGridTrackSizes.h; sourceTree = "<group>"; };
 		BCD9F1EA2E24376600D1C3DF /* StyleGridTrackSizes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridTrackSizes.cpp; sourceTree = "<group>"; };
 		BCD9F2012E255F0000D1C3DF /* StyleGridTrackSizingDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleGridTrackSizingDirection.h; sourceTree = "<group>"; };
+		BCDA559B2EC64C8300F4EEAB /* StyleCalculationTree+NumericIdentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+NumericIdentity.h"; sourceTree = "<group>"; };
+		BCDA559C2EC6513300F4EEAB /* StyleCalculationTree+Executor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Executor.h"; sourceTree = "<group>"; };
 		BCDBD32A2C84C27500E6D96B /* CSSPropertyParserConsumer+Transform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+Transform.cpp"; sourceTree = "<group>"; };
 		BCDBD32B2C84C27500E6D96B /* CSSPropertyParserConsumer+Transform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Transform.h"; sourceTree = "<group>"; };
 		BCDC642427517B040038FB39 /* ColorInterpolation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorInterpolation.cpp; sourceTree = "<group>"; };
@@ -36247,6 +36249,8 @@
 				BC4630602E9B098600EA911F /* StyleCalculationTree+Copy.h */,
 				BC4630632E9B098600EA911F /* StyleCalculationTree+Evaluation.cpp */,
 				BC4630622E9B098600EA911F /* StyleCalculationTree+Evaluation.h */,
+				BCDA559C2EC6513300F4EEAB /* StyleCalculationTree+Executor.h */,
+				BCDA559B2EC64C8300F4EEAB /* StyleCalculationTree+NumericIdentity.h */,
 				BC4630642E9B098600EA911F /* StyleCalculationTree+Traversal.h */,
 				BC46305F2E9B098600EA911F /* StyleCalculationTree.cpp */,
 				BC46305E2E9B098600EA911F /* StyleCalculationTree.h */,

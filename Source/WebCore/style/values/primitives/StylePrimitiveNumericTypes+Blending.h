@@ -102,8 +102,13 @@ template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
         //    individually (as a <length>/<frequency>/<angle>/<time> and as a <percentage>, respectively)
 
         if (WTF::holdsAlternative<Calc>(from) || WTF::holdsAlternative<Calc>(to) || (from.index() != to.index())) {
-            if (context.compositeOperation != CompositeOperation::Replace)
-                return Calc { Calculation::add(copyCalculation(from), copyCalculation(to)) };
+            if (context.compositeOperation != CompositeOperation::Replace) {
+                if (auto result = Calculation::add(copyCalculation(from), copyCalculation(to)))
+                    return Calc { WTFMove(*result) };
+
+                // `Calculation::add` can fail if generates too deep a calculation tree. In that case, pick one of the input values based on context.progress.
+                return context.progress < 0.5 ? from : to;
+            }
 
             bool fromIsZero = from.isKnownZero();
             bool toIsZero = to.isKnownZero();
@@ -125,7 +130,11 @@ template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
                 return WebCore::Style::blend(get<Percentage>(from), Percentage(0_css_percentage), context);
             }
 
-            return Calc { Calculation::blend(copyCalculation(from), copyCalculation(to), context.progress) };
+            if (auto result = Calculation::blend(copyCalculation(from), copyCalculation(to), context.progress))
+                return Calc { WTFMove(*result) };
+
+            // `Calculation::blend` can fail if generates too deep a calculation tree. In that case, pick one of the input values based on context.progress.
+            return context.progress < 0.5 ? from : to;
         }
 
         if (!context.progress && context.isReplace())

@@ -338,7 +338,7 @@ template<auto R, typename V> auto reflect(const LengthPercentage<R, V>& value) -
                 return 100_css_percentage;
 
             // Turn this into a calc expression: `calc(100% - value)`.
-            return Calc { Calculation::subtract(Calculation::percentage(100), copyCalculation(value)) };
+            return Calc { Calculation::subtractAllowingAnyDepth(Calculation::percentage(100), copyCalculation(value)) };
         },
         [&](const Percentage& value) -> Result {
             // If `value` is a percentage, we can avoid the `calc` altogether.
@@ -346,7 +346,7 @@ template<auto R, typename V> auto reflect(const LengthPercentage<R, V>& value) -
         },
         [&](const Calc& value) -> Result {
             // Turn this into a calc expression: `calc(100% - value)`.
-            return Calc { Calculation::subtract(Calculation::percentage(100), copyCalculation(value)) };
+            return Calc { Calculation::subtractAllowingAnyDepth(Calculation::percentage(100), copyCalculation(value)) };
         }
     );
 }
@@ -385,7 +385,7 @@ template<auto aR, auto bR, typename V> auto reflectSum(const LengthPercentage<aR
             },
             [&](const auto& b) -> Result {
                 // Otherwise, turn this into a calc expression: `calc(100% - b)`.
-                return CalcResult { Calculation::subtract(Calculation::percentage(100), copyCalculation(b)) };
+                return CalcResult { Calculation::subtractAllowingAnyDepth(Calculation::percentage(100), copyCalculation(b)) };
             }
         );
     }
@@ -399,7 +399,7 @@ template<auto aR, auto bR, typename V> auto reflectSum(const LengthPercentage<aR
             },
             [&](const auto& a) -> Result {
                 // Otherwise, turn this into a calc expression: `calc(100% - a)`.
-                return CalcResult { Calculation::subtract(Calculation::percentage(100), copyCalculation(a)) };
+                return CalcResult { Calculation::subtractAllowingAnyDepth(Calculation::percentage(100), copyCalculation(a)) };
             }
         );
     }
@@ -409,7 +409,7 @@ template<auto aR, auto bR, typename V> auto reflectSum(const LengthPercentage<aR
         return 100_css_percentage - (get<PercentageA>(a).value + get<PercentageB>(b).value);
 
     // Otherwise, turn this into a calc expression: `calc(100% - (a + b))`.
-    return CalcResult { Calculation::subtract(Calculation::percentage(100), Calculation::add(copyCalculation(a), copyCalculation(b))) };
+    return CalcResult { Calculation::subtractAllowingAnyDepth(Calculation::percentage(100), Calculation::addAllowingAnyDepth(copyCalculation(a), copyCalculation(b))) };
 }
 
 } // namespace Style

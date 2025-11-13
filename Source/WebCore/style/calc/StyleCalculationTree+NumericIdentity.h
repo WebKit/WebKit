@@ -25,57 +25,45 @@
 #pragma once
 
 #include "StyleCalculationTree.h"
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 namespace Style {
 namespace Calculation {
 
-// MARK: - forAllChildren
+// MARK: - NumericIdentity
 
-// `forAllChildren` will call the provided `functor` on all direct children of the provided node. This will include values of type `Child`, `ChildOrNone` and `std::optional<Child>`.
+enum class NumericIdentity : uint8_t {
+    Number,
+    Percentage,
+    Dimension,
+};
+constexpr uint8_t numberOfNumericIdentityTypes = static_cast<uint8_t>(NumericIdentity::Dimension) + 1;
 
-template<typename F, Leaf Op> void forAllChildren(const auto&, const F&)
+constexpr NumericIdentity toNumericIdentity(const Number&)
 {
-    // No children.
+    return NumericIdentity::Number;
 }
 
-template<typename F, typename Op> void forAllChildren(const Op& root, const F& functor)
+constexpr NumericIdentity toNumericIdentity(const Percentage&)
 {
-    struct Caller {
-        const F& functor;
-
-        void operator()(const Children& children)
-        {
-            for (auto& child : children)
-                functor(child);
-        }
-        void operator()(const std::optional<Child>& root)
-        {
-            functor(root);
-        }
-        void operator()(const ChildOrNone& root)
-        {
-            functor(root);
-        }
-        void operator()(const Child& root)
-        {
-            functor(root);
-        }
-        void operator()(const Random::Fixed& root)
-        {
-            functor(root);
-        }
-    };
-    auto caller = Caller { functor };
-    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);
+    return NumericIdentity::Percentage;
 }
 
-template<typename F> void forAllChildren(const Child& root, const F& functor)
+constexpr NumericIdentity toNumericIdentity(const Dimension&)
 {
-    WTF::switchOn(root,
-        [&](const Leaf auto&) { },
-        [&](const auto& root) { forAllChildren(*root, functor); }
+    return NumericIdentity::Dimension;
+}
+
+constexpr bool isLength(NumericIdentity identity)
+{
+    return identity == NumericIdentity::Dimension;
+}
+
+inline bool isNumeric(const Child& root)
+{
+    return WTF::switchOn(root,
+        []<Numeric T>(const T&) { return true; },
+        [](const auto&) { return false; }
     );
 }
 
