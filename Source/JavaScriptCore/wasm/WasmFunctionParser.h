@@ -137,9 +137,39 @@ struct FunctionParserTypes {
 };
 
 template<typename Context>
-class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType, typename Context::CallType> {
+class FunctionParser : public Parser<void, Context::bytecodeValidationMode>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType, typename Context::CallType> {
     WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(FunctionParser);
 public:
+    using Parser<void, Context::bytecodeValidationMode>::bytecodeValidationMode;
+    using Parser<void, Context::bytecodeValidationMode>::fail;
+    using Parser<void, Context::bytecodeValidationMode>::parseVarUInt32;
+    using Parser<void, Context::bytecodeValidationMode>::parseVarUInt64;
+    using Parser<void, Context::bytecodeValidationMode>::parseVarInt32;
+    using Parser<void, Context::bytecodeValidationMode>::parseVarInt64;
+    using Parser<void, Context::bytecodeValidationMode>::parseUInt8;
+    using Parser<void, Context::bytecodeValidationMode>::parseUInt32;
+    using Parser<void, Context::bytecodeValidationMode>::parseUInt64;
+    using Parser<void, Context::bytecodeValidationMode>::parseInt7;
+    using Parser<void, Context::bytecodeValidationMode>::parseUInt7;
+    using Parser<void, Context::bytecodeValidationMode>::parseVarUInt1;
+    using Parser<void, Context::bytecodeValidationMode>::peekInt7;
+    using Parser<void, Context::bytecodeValidationMode>::peekUInt8;
+    using Parser<void, Context::bytecodeValidationMode>::peekVarUInt32;
+    using Parser<void, Context::bytecodeValidationMode>::parseImmByteArray16;
+    using Parser<void, Context::bytecodeValidationMode>::parseValueType;
+    using Parser<void, Context::bytecodeValidationMode>::parseRefType;
+    using Parser<void, Context::bytecodeValidationMode>::parseExternalKind;
+    using Parser<void, Context::bytecodeValidationMode>::parseHeapType;
+    using Parser<void, Context::bytecodeValidationMode>::consumeCharacter;
+    using Parser<void, Context::bytecodeValidationMode>::consumeString;
+    using Parser<void, Context::bytecodeValidationMode>::consumeUTF8String;
+    using Parser<void, Context::bytecodeValidationMode>::source;
+    using Parser<void, Context::bytecodeValidationMode>::offset;
+    using Parser<void, Context::bytecodeValidationMode>::m_offset;
+    using Parser<void, Context::bytecodeValidationMode>::m_typeInformation;
+    using Result = typename Parser<void, Context::bytecodeValidationMode>::Result;
+    using PartialResult = typename Parser<void, Context::bytecodeValidationMode>::PartialResult;
+    using UnexpectedResult = typename Parser<void, Context::bytecodeValidationMode>::UnexpectedResult;
     using CallType = typename FunctionParser::CallType;
     using ControlType = typename FunctionParser::ControlType;
     using ControlEntry = typename FunctionParser::ControlEntry;
@@ -427,7 +457,7 @@ static bool isTryOrCatch(ControlType& data)
 
 template<typename Context>
 FunctionParser<Context>::FunctionParser(Context& context, std::span<const uint8_t> function, const TypeDefinition& signature, const ModuleInformation& info)
-    : Parser(function)
+    : Parser<void, Context::bytecodeValidationMode>(function)
     , m_context(context)
     , m_signature(signature.expand())
     , m_info(info)

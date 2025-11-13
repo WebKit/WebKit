@@ -66,6 +66,8 @@ public:
     // Functions can have up to 1000000 instructions, so 32 bits is a sensible maximum number of stack items or locals.
     using LocalOrTempIndex = uint32_t;
 
+    static constexpr BytecodeValidationMode bytecodeValidationMode = BytecodeValidationMode::Skip;
+
     static constexpr unsigned LocalIndexBits = 21;
     static_assert(maxFunctionLocals < 1 << LocalIndexBits);
 
