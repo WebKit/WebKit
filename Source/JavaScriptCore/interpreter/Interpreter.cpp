@@ -648,9 +648,12 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
                 break;
             }
             }
-        } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction())
-            results.append(StackFrame(vm, owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
-        else
+        } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+            // FIXME: Remove this check if we set implementationVisibility of the async function wrapper to private
+            // https://bugs.webkit.org/show_bug.cgi?id=298509
+            if (!isAsyncFunctionWrapperParseMode(visitor->codeBlock()->unlinkedCodeBlock()->parseMode()))
+                results.append(StackFrame(vm, owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
+        } else
             results.append(StackFrame(vm, owner, visitor->callee().asCell()));
         return IterationStatus::Continue;
     });
