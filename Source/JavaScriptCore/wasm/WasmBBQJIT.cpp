@@ -4335,18 +4335,28 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const TypeDefin
 
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
     emitRestoreCalleeSaves();
+
+#if !CPU(ARM_THUMB2)
     auto preserved = callingConvention.argumentGPRs();
     if constexpr (isARM64E())
         preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
     ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
     GPRReg callerFramePointer = scratches.gpr(0);
     scratches.unbindPreserved();
+#endif
 
 #if CPU(X86_64)
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister), callerFramePointer);
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(0)));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP));
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(void*))));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(void*))));
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(2 * sizeof(void*))));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(2 * sizeof(void*))));
+#elif CPU(ARM64)
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
 #else
     UNUSED_PARAM(callerFramePointer);
@@ -4394,8 +4404,16 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const TypeDefin
 #endif
 
     // Fix SP and FP
+#if CPU(ARM_THUMB2)
+    m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP), wasmScratchGPR);
+    // Also fix LR.
+    m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP + Checked<int>(sizeof(void*))), MacroAssembler::linkRegister);
+    m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int32_t>(prologueStackPointerDelta())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+    m_jit.move(wasmScratchGPR, MacroAssembler::framePointerRegister);
+#else
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int32_t>(prologueStackPointerDelta())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(callerFramePointer, MacroAssembler::framePointerRegister);
+#endif
 
     // Nothing should refer to FP after this point.
 
@@ -4603,11 +4621,6 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     Vector<Location, 8> parameterLocations;
     parameterLocations.reserveInitialCapacity(arguments.size() + calleeArgument + isX86() * 2);
 
-    // It's ok if we clobber our Wasm::Callee at this point since we can't hit a GC safepoint / throw an exception until we've tail called into the callee.
-    // FIXME: We should just have addCallIndirect put this in the right place to begin with.
-    resolvedArguments.append(Value::pinned(TypeKind::I64, Location::fromStackArgument(CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0).offset)));
-    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(CallFrameSlot::callee * sizeof(Register))));
-
     // Save the old Frame Pointer for later and make sure the return address gets saved to its canonical location.
     emitRestoreCalleeSaves();
 #if CPU(X86_64)
@@ -4617,7 +4630,14 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(0)));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP));
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(void*))));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(void*))));
+    resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(2 * sizeof(void*))));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(2 * sizeof(void*))));
+#elif CPU(ARM64)
     auto preserved = callingConvention.argumentGPRs();
     preserved.add(importableFunction, IgnoreVectors);
     if constexpr (isARM64E())
@@ -4629,6 +4649,9 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
+
+    resolvedArguments.append(Value::pinned(TypeKind::I64, Location::fromStackArgument(CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0).offset)));
+    parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(CallFrameSlot::callee * sizeof(Register))));
 
     for (unsigned i = 0; i < arguments.size(); i ++) {
         if (arguments[i].value().isConst())
@@ -4674,7 +4697,13 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP), wasmScratchGPR);
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(wasmScratchGPR, MacroAssembler::framePointerRegister);
-#elif CPU(ARM64) || CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
+    m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP), wasmScratchGPR);
+    // Also fix LR.
+    m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP + Checked<int>(sizeof(void*))), MacroAssembler::linkRegister);
+    m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int32_t>(prologueStackPointerDelta())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+    m_jit.move(wasmScratchGPR, MacroAssembler::framePointerRegister);
+#elif CPU(ARM64)
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(CallerFrameAndPC))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(callerFramePointer, MacroAssembler::framePointerRegister);
 #else
