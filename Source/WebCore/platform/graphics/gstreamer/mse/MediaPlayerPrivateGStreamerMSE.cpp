@@ -235,10 +235,10 @@ void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
     if (!m_pipeline)
         return;
     GST_DEBUG_OBJECT(pipeline(), "Requested seek to %s", target.time.toString().utf8().data());
-    doSeek(target, m_playbackRate);
+    doSeek(target, m_playbackRate, GST_SEEK_FLAG_FLUSH);
 }
 
-bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate, bool isAsync)
+bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate, GstSeekFlags seekFlags, bool isAsync)
 {
     UNUSED_PARAM(isAsync);
     // This method should only be called outside of MediaPlayerPrivateGStreamerMSE by MediaPlayerPrivateGStreamer::setRate().
@@ -270,7 +270,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
         // the seek event, but since we're sending the event directly to the source element we need to take the
         // STATE_LOCK on the pipeline ourselves.
         auto locker = GstStateLocker(pipeline());
-        gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
+        gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
             GST_SEEK_TYPE_SET, toGstClockTime(target.time), GST_SEEK_TYPE_NONE, 0);
     }
     invalidateCachedPosition();

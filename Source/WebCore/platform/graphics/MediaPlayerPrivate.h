@@ -347,8 +347,6 @@ public:
 
     virtual void mediaPlayerWillBeDestroyed() { }
 
-    virtual void isLoopingChanged() { }
-
     virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
     bool shouldCheckHardwareSupport() const { return m_shouldCheckHardwareSupport; }
 

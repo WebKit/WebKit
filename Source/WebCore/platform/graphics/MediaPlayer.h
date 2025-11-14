@@ -739,7 +739,6 @@ public:
     void mediaEngineUpdated() { protectedClient()->mediaPlayerEngineUpdated(); }
     void resourceNotSupported() { protectedClient()->mediaPlayerResourceNotSupported(); }
     bool isLooping() const { return protectedClient()->mediaPlayerIsLooping(); }
-    void isLoopingChanged();
 
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;

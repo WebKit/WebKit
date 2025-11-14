@@ -185,7 +185,6 @@ public:
     unsigned droppedFrameCount() const final;
     void acceleratedRenderingStateChanged() final;
     bool performTaskAtTime(Function<void(const MediaTime&)>&&, const MediaTime&) override;
-    void isLoopingChanged() final;
     void audioOutputDeviceChanged() final;
 
     GstElement* pipeline() const { return m_pipeline.get(); }
@@ -345,9 +344,8 @@ protected:
     void ensureAudioSourceProvider();
     virtual void checkPlayingConsistency();
 
-    virtual bool doSeek(const SeekTarget& position, float rate, bool isAsync = false);
+    virtual bool doSeek(const SeekTarget& position, float rate, GstSeekFlags, bool isAsync = false);
     void invalidateCachedPosition() const;
-    void ensureSeekFlags();
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
 
@@ -446,7 +444,6 @@ protected:
 #endif
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    GstSeekFlags m_seekFlags;
     bool m_ignoreErrors { false };
     Atomic<unsigned> m_queuedSyncErrors { 0 };
 
@@ -682,8 +679,6 @@ private:
     void setupCodecProbe(GstElement*);
     Lock m_codecsLock;
     TrackIDHashMap<String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
-
-    bool isSeamlessSeekingEnabled() const { return m_seekFlags & GST_SEEK_FLAG_SEGMENT; }
 
     Ref<PlatformMediaResourceLoader> m_loader;
 
