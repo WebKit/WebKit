@@ -2641,6 +2641,237 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 }
+
+TEST(WebAuthenticationPanel, EncodeCTAPCreationWithLargeBlobSupport)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ parameters.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    // Set up largeBlob extension with support="preferred"
+    auto largeBlobInputs = adoptNS([[_WKAuthenticationExtensionsLargeBlobInputs alloc] init]);
+    [largeBlobInputs setSupport:@"preferred"];
+
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    [extensions setLargeBlob:largeBlobInputs.get()];
+    [options setExtensions:extensions.get()];
+
+    NSArray<NSString *> *authenticatorSupportedExtensions = @[ @"largeBlob" ];
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options:options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedExtensions:authenticatorSupportedExtensions];
+
+    // Verify the command includes largeBlob extension (key 6 with {"largeBlob": {"support": "preferred"}})
+    EXPECT_NOT_NULL(command);
+    EXPECT_GT([command length], 0u);
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPAssertionWithLargeBlobRead)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+
+    // Set up largeBlob extension with read=true
+    auto largeBlobInputs = adoptNS([[_WKAuthenticationExtensionsLargeBlobInputs alloc] init]);
+    [largeBlobInputs setRead:YES];
+
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    [extensions setLargeBlob:largeBlobInputs.get()];
+    [options setExtensions:extensions.get()];
+
+    NSArray<NSString *> *authenticatorSupportedExtensions = @[ @"largeBlob" ];
+    auto *command = [_WKWebAuthenticationPanel encodeGetAssertionCommandWithClientDataHash:nsHash.get() options:options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedExtensions:authenticatorSupportedExtensions];
+
+    // Verify the command includes largeBlob extension (key 4 with {"largeBlob": {"read": true}})
+    EXPECT_NOT_NULL(command);
+    EXPECT_GT([command length], 0u);
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPAssertionWithLargeBlobWrite)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+
+    auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
+
+    // Set up largeBlob extension with write data
+    auto largeBlobInputs = adoptNS([[_WKAuthenticationExtensionsLargeBlobInputs alloc] init]);
+    uint8_t testData[] = { 0x01, 0x02, 0x03, 0x04 };
+    auto nsTestData = adoptNS([[NSData alloc] initWithBytes:testData length:sizeof(testData)]);
+    [largeBlobInputs setWrite:nsTestData.get()];
+
+    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    [extensions setLargeBlob:largeBlobInputs.get()];
+    [options setExtensions:extensions.get()];
+
+    NSArray<NSString *> *authenticatorSupportedExtensions = @[ @"largeBlob" ];
+    auto *command = [_WKWebAuthenticationPanel encodeGetAssertionCommandWithClientDataHash:nsHash.get() options:options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedExtensions:authenticatorSupportedExtensions];
+
+    // Verify the command includes largeBlob extension (key 4 with {"largeBlob": {"write": <data>}})
+    EXPECT_NOT_NULL(command);
+    EXPECT_GT([command length], 0u);
+}
+
+TEST(WebAuthenticationPanel, MakeCredentialLargeBlobSupport)
+{
+    reset();
+
+    NSString *html = @"<input type='text' id='input'>"
+    "<script>"
+    "const testLargeBlobMakeCredentialMessageBase64 ="
+    "    'AKQBZnBhY2tlZAJYxEbMf7lnnVWy25CS4cjZ5eHQK3WA8LSBLHcJYuHkj1rYQQAA' +"
+    "    'AE74oBHzjApNFYAGFxEfntx9AEAoCK3O6P5OyXN6V/f+9nAga0NA2Cgp4V3mgSJ5' +"
+    "    'jOHLMDrmxp/S0rbD+aihru1C0aAN3BkiM6GNy5nSlDVqOgTgpQECAyYgASFYIEFb' +"
+    "    'he3RkNud6sgyraBGjlh1pzTlCZehQlL/b18HZ6WGIlggJgfUd/en9p5AIqMQbUni' +"
+    "    'nEeXdFLkvW0/zV5BpEjjNxADoAahaWxhcmdlQmxvYqFpc3VwcG9ydGVk9Q==';"
+    "if (window.internals) {"
+    "    internals.setMockWebAuthenticationConfiguration({"
+    "        hid: {"
+    "            payloadBase64: [testLargeBlobMakeCredentialMessageBase64]"
+    "        }"
+    "    });"
+    "    internals.withUserGesture(() => { input.focus(); });"
+    "}"
+    "const options = {"
+    "    publicKey: {"
+    "        rp: { name: 'localhost' },"
+    "        user: {"
+    "            name: 'John Appleseed',"
+    "            id: new Uint8Array(16),"
+    "            displayName: 'Appleseed'"
+    "        },"
+    "        challenge: new Uint8Array(16),"
+    "        pubKeyCredParams: [{ type: 'public-key', alg: -7 }],"
+    "        extensions: { largeBlob: { support: 'preferred' } },"
+    "        timeout: 100"
+    "    }"
+    "};"
+    "navigator.credentials.create(options).then(credential => {"
+    "    const result = credential.getClientExtensionResults();"
+    "    if (result.largeBlob && result.largeBlob.supported === true) {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('Succeeded!');"
+    "    } else {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('No largeBlob extension output');"
+    "    }"
+    "}, error => {"
+    "    window.webkit.messageHandlers.testHandler.postMessage(error.message);"
+    "});"
+    "</script>";
+
+    auto webView = setUpTestWebViewForTestAuthenticationPanel();
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView focus];
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://localhost:443"]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+
+TEST(WebAuthenticationPanel, GetAssertionLargeBlobRead)
+{
+    reset();
+
+    NSString *html = @"<input type='text' id='input'>"
+    "<script>"
+    "const testLargeBlobGetAssertionReadMessageBase64 ="
+    "    'AKQBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2' +"
+    "    'w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5' +"
+    "    'Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hIMEUCIQCSRRe64FaA' +"
+    "    'Hj8XRUHuw5VFVNPSBz5sXtTMx1MEaAkWWwgCIBii/r2gYcdjBP6v+ijbPDrrc4T9' +"
+    "    'gkKCdS+xXuuBvbgXCKFpbGFyZ2VCbG9ioWRibG9iRGRhdGE=';"
+    "if (window.internals) {"
+    "    internals.setMockWebAuthenticationConfiguration({"
+    "        hid: {"
+    "            payloadBase64: [testLargeBlobGetAssertionReadMessageBase64]"
+    "        }"
+    "    });"
+    "    internals.withUserGesture(() => { input.focus(); });"
+    "}"
+    "const options = {"
+    "    publicKey: {"
+    "        challenge: new Uint8Array(16),"
+    "        extensions: { largeBlob: { read: true } },"
+    "        timeout: 100"
+    "    }"
+    "};"
+    "navigator.credentials.get(options).then(credential => {"
+    "    const result = credential.getClientExtensionResults();"
+    "    if (result.largeBlob && result.largeBlob.blob) {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('Succeeded!');"
+    "    } else {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('No largeBlob blob data');"
+    "    }"
+    "}, error => {"
+    "    window.webkit.messageHandlers.testHandler.postMessage(error.message);"
+    "});"
+    "</script>";
+
+    auto webView = setUpTestWebViewForTestAuthenticationPanel();
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView focus];
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://localhost:443"]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+
+TEST(WebAuthenticationPanel, GetAssertionLargeBlobWrite)
+{
+    reset();
+
+    NSString *html = @"<input type='text' id='input'>"
+    "<script>"
+    "const testLargeBlobGetAssertionWriteMessageBase64 ="
+    "    'AKQBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2' +"
+    "    'w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5' +"
+    "    'Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hIMEUCIQCSRRe64FaA' +"
+    "    'Hj8XRUHuw5VFVNPSBz5sXtTMx1MEaAkWWwgCIBii/r2gYcdjBP6v+ijbPDrrc4T9' +"
+    "    'gkKCdS+xXuuBvbgXCKFpbGFyZ2VCbG9ioWd3cml0dGVu9Q==';"
+    "if (window.internals) {"
+    "    internals.setMockWebAuthenticationConfiguration({"
+    "        hid: {"
+    "            payloadBase64: [testLargeBlobGetAssertionWriteMessageBase64]"
+    "        }"
+    "    });"
+    "    internals.withUserGesture(() => { input.focus(); });"
+    "}"
+    "const testData = new Uint8Array([1, 2, 3, 4]);"
+    "const options = {"
+    "    publicKey: {"
+    "        challenge: new Uint8Array(16),"
+    "        extensions: { largeBlob: { write: testData } },"
+    "        timeout: 100"
+    "    }"
+    "};"
+    "navigator.credentials.get(options).then(credential => {"
+    "    const result = credential.getClientExtensionResults();"
+    "    if (result.largeBlob && result.largeBlob.written === true) {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('Succeeded!');"
+    "    } else {"
+    "        window.webkit.messageHandlers.testHandler.postMessage('largeBlob not written');"
+    "    }"
+    "}, error => {"
+    "    window.webkit.messageHandlers.testHandler.postMessage(error.message);"
+    "});"
+    "</script>";
+
+    auto webView = setUpTestWebViewForTestAuthenticationPanel();
+    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView focus];
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://localhost:443"]];
+    [webView waitForMessage:@"Succeeded!"];
+}
+
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namespace TestWebKitAPI

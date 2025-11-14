@@ -40,6 +40,7 @@ WK_CLASS_AVAILABLE(macos(11.0), ios(14.0))
 @property (nonatomic, readonly, copy) NSString *group;
 @property (nonatomic, readonly, copy) NSData *credentialID;
 @property (nonatomic, readonly, copy) NSString *accessGroup;
+@property (nonatomic, readonly, nullable, copy) NSData *largeBlob WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)setLAContext:(LAContext *)context WK_API_AVAILABLE(macos(12.0), ios(15.0));
 

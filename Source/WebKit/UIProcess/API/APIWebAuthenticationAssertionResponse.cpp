@@ -66,6 +66,16 @@ RefPtr<Data> WebAuthenticationAssertionResponse::credentialID() const
     return data;
 }
 
+RefPtr<Data> WebAuthenticationAssertionResponse::largeBlob() const
+{
+    RefPtr<API::Data> data;
+    if (RefPtr blob = m_response->largeBlob()) {
+        auto blobSpan = blob->span();
+        data = API::Data::createWithoutCopying(blobSpan, [blob = WTFMove(blob)] { });
+    }
+    return data;
+}
+
 } // namespace API
 
 #endif // ENABLE(WEB_AUTHN)

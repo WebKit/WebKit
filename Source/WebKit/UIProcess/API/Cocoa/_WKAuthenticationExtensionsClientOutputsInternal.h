@@ -29,9 +29,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface _WKAuthenticationExtensionsLargeBlobOutputs ()
+- (instancetype)initWithSupported:(BOOL)supported blob:(NSData * _Nullable)blob written:(BOOL)written;
+@end
+
 @interface _WKAuthenticationExtensionsClientOutputs ()
 
 - (instancetype)initWithAppid:(BOOL)appid;
+- (instancetype)initWithAppid:(BOOL)appid largeBlob:(_WKAuthenticationExtensionsLargeBlobOutputs * _Nullable)largeBlob WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

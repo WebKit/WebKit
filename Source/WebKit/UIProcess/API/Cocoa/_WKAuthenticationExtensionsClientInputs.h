@@ -31,10 +31,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKAuthenticationExtensionsLargeBlobInputs : NSObject
+@property (nullable, nonatomic, copy) NSString *support;
+@property (nonatomic) BOOL read;
+@property (nullable, nonatomic, copy) NSData *write;
+@end
+
 WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticationExtensionsClientInputs : NSObject
 
 @property (nullable, nonatomic, copy) NSString *appid;
+@property (nullable, nonatomic, strong) _WKAuthenticationExtensionsLargeBlobInputs *largeBlob WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

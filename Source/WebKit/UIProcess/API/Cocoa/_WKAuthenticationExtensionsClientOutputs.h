@@ -31,10 +31,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKAuthenticationExtensionsLargeBlobOutputs : NSObject
+@property (nonatomic, readonly) BOOL supported;
+@property (nullable, nonatomic, readonly, copy) NSData *blob;
+@property (nonatomic, readonly) BOOL written;
+@end
+
 WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticationExtensionsClientOutputs : NSObject
 
 @property (nonatomic, readonly) BOOL appid;
+@property (nullable, nonatomic, readonly, strong) _WKAuthenticationExtensionsLargeBlobOutputs *largeBlob WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
