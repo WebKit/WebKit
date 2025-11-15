@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,11 +146,13 @@ public:
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA, UseLosslessCompression = UseLosslessCompression::No);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromPool(IOSurfacePool&, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA, UseLosslessCompression = UseLosslessCompression::No);
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
     // If the colorSpace argument is non-null, it replaces any colorspace metadata on the surface.
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
+
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&, IOSurfacePool*);
 
@@ -242,8 +244,7 @@ public:
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
-    IOSurface(IntSize, const DestinationColorSpace&, Name, Format, UseLosslessCompression, bool& success);
-    IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
+    IOSurface(IntSize, std::optional<DestinationColorSpace>&&, Name, std::optional<UsedFormat>&&, RetainPtr<IOSurfaceRef>&&);
 
     void setColorSpaceProperty();
     void ensureColorSpace();
@@ -258,21 +259,18 @@ private:
 
     BitmapConfiguration bitmapConfiguration() const;
 
-    std::optional<UsedFormat> m_format;
-    std::optional<DestinationColorSpace> m_colorSpace;
     IntSize m_size;
-    size_t m_totalBytes;
+    std::optional<DestinationColorSpace> m_colorSpace;
+    Name m_name { Name::Default };
+    std::optional<UsedFormat> m_format;
+    RetainPtr<IOSurfaceRef> m_surface;
+
+    size_t m_totalBytes { 0 };
 #if HAVE(SUPPORT_HDR_DISPLAY)
     std::optional<float> m_contentEDRHeadroom;
 #endif
-
     ProcessIdentity m_resourceOwner;
-
-    RetainPtr<IOSurfaceRef> m_surface;
-
     static std::optional<IntSize> s_maximumSize;
-
-    Name m_name;
 
     WEBCORE_EXPORT friend WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
 };
