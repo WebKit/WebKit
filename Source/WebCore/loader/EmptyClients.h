@@ -74,7 +74,7 @@ class EmptyChromeClient : public ChromeClient {
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement) final { }
     void focusedFrameChanged(Frame*) final { }
 
-    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final { return nullptr; }
+    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&, std::optional<Ref<Document>> requester) final;
     void show() final { }
 
     bool canRunModal() const final { return false; }

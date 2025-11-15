@@ -260,7 +260,7 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction&)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction&, std::optional<Ref<Document>> requester)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;

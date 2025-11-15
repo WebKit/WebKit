@@ -463,8 +463,9 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         weakPage->addConsoleMessage(*sourceFrameID, MessageSource::Network, MessageLevel::Error, makeString("Can't handle MarketplaceKit link "_s, url.string(), " due to error: "_s, error));
     };
 
-    if (!action->shouldOpenExternalSchemes() || !action->isProcessingUserGesture() || action->isRedirect() || action->data().requesterTopOrigin.isNull()) {
-        RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with shouldOpenExternalSchemes: %d, isProcessingUserGesture: %d, isRedirect: %d, requesterTopOriginIsNull: %d", action->shouldOpenExternalSchemes(), action->isProcessingUserGesture(), action->isRedirect(), action->data().requesterTopOrigin.isNull());
+    std::optional<Ref<WebCore::SecurityOrigin>> requesterTopOrigin = action->data().requester ? std::optional { action->data().requester->topOrigin } : std::nullopt;
+    if (!action->shouldOpenExternalSchemes() || !action->isProcessingUserGesture() || action->isRedirect() || requesterTopOrigin) {
+        RELEASE_LOG_ERROR(Loading, "NavigationState: can't handle MarketplaceKit navigation with shouldOpenExternalSchemes: %d, isProcessingUserGesture: %d, isRedirect: %d, requesterTopOriginIsNull: %d", action->shouldOpenExternalSchemes(), action->isProcessingUserGesture(), action->isRedirect(), requesterTopOrigin.has_value());
 
         if (!action->isProcessingUserGesture())
             addConsoleError("must be activated via a user gesture"_s);
@@ -474,7 +475,7 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
         return;
     }
 
-    RetainPtr requesterTopOriginURL = action->data().requesterTopOrigin.toURL().createNSURL();
+    RetainPtr requesterTopOriginURL = requesterTopOrigin ? requesterTopOrigin->get().toURL().createNSURL() : nullptr;
     RetainPtr url = action->request().url().createNSURL();
 
     if (!requesterTopOriginURL || !url) {

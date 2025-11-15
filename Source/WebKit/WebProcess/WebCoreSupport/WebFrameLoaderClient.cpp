@@ -155,8 +155,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
         { },
-        requester.securityOrigin->data(),
-        requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
         navigationAction.sourceBackForwardItemIdentifier(),
         navigationAction.lockHistory(),
@@ -178,6 +176,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.originalRequest(),
         request,
         request.url().isValid() ? String() : request.url().string(),
+        requester,
     };
 }
 

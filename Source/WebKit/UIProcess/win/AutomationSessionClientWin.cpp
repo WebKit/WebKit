@@ -83,8 +83,6 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 false, /* isInitialFrameSrcLoad */
                 false, /* isContentExtensionRedirect */
                 { }, /* openedMainFrameName */
-                { }, /* requesterOrigin */
-                { }, /* requesterTopOrigin */
                 std::nullopt, /* targetBackForwardItemIdentifier */
                 std::nullopt, /* sourceBackForwardItemIdentifier */
                 WebCore::LockHistory::No, /* lockHistory */
@@ -102,7 +100,8 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 std::nullopt, /* navigationID */
                 { }, /* originalRequest */
                 { }, /* request */
-                { } /* invalidURLString */
+                { }, /* invalidURLString */
+                std::nullopt, /* requester */
             };
 
             auto userInitiatedActivity = API::UserInitiatedAction::create();

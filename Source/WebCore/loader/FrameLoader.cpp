@@ -4869,7 +4869,7 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
     NavigationAction action { request, NavigationType::Other };
     action.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    RefPtr page = oldPage->chrome().createWindow(openerFrame, openedMainFrameName, features, action);
+    RefPtr page = oldPage->chrome().createWindow(openerFrame, openedMainFrameName, features, action, std::nullopt);
     if (!page)
         return { nullptr, CreatedNewPage::No };
 

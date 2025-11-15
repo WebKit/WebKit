@@ -348,7 +348,7 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
     WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page->identifier());
 }
 
-RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction, std::optional<Ref<Document>> requester)
 {
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document())
@@ -387,8 +387,6 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
         openedMainFrameName,
-        { }, /* requesterOrigin */
-        { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
         std::nullopt, /* sourceBackForwardItemIdentifier */
         WebCore::LockHistory::No,
@@ -410,6 +408,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         originalRequest, /* originalRequest */
         originalRequest, /* request */
         originalRequest.url().isValid() ? String() : originalRequest.url().string(), /* invalidURLString */
+        requester ? NavigationRequester::from(requester.value().get()) : std::optional<NavigationRequester>(std::nullopt), /* requester */
     };
 
     auto sendResult = webProcess.protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page->identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });

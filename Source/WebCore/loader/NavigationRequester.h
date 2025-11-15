@@ -36,7 +36,7 @@ namespace WebCore {
 class Document;
 
 struct NavigationRequester {
-    static NavigationRequester from(Document&);
+    WEBCORE_EXPORT static NavigationRequester from(Document&);
 
     URL url;
     Ref<SecurityOrigin> securityOrigin;

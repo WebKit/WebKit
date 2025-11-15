@@ -615,6 +615,12 @@ RefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient
     return adoptRef(*new EmptySearchPopupMenu);
 }
 
+RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&, std::optional<Ref<Document>> requester)
+{
+    UNUSED_PARAM(requester);
+    return nullptr;
+}
+
 RefPtr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient&, const Color&)
 {
     return nullptr;

@@ -278,7 +278,7 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
 
-    RefPtr newPage = oldPage->chrome().createWindow(frame, { }, { }, { *frame.protectedDocument(), frameLoadRequest.resourceRequest(), frameLoadRequest.initiatedByMainFrame(), frameLoadRequest.isRequestFromClientOrUserInput() });
+    RefPtr newPage = oldPage->chrome().createWindow(frame, { }, { }, { *frame.protectedDocument(), frameLoadRequest.resourceRequest(), frameLoadRequest.initiatedByMainFrame(), frameLoadRequest.isRequestFromClientOrUserInput() }, std::nullopt);
     if (!newPage)
         return;
     newPage->chrome().show();

@@ -170,7 +170,7 @@ public:
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement);
     void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&, std::optional<Ref<Document>> requester);
     WEBCORE_EXPORT void show();
 
     bool canRunModal() const;
