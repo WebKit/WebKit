@@ -123,20 +123,12 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         if (orientation == ImageOrientation::Orientation::FromImage)
             orientation = currentFrameOrientation();
 
-#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
-        if (hasHDRContentForTesting() && options.dynamicRangeLimit() != PlatformDynamicRangeLimit::standard())
-            fillWithSolidColor(context, destinationRect, Color::green, options.compositeOperator());
-        else {
-#endif
-            auto headroom = options.headroom();
+        auto headroom = options.headroom();
 
-            if (headroom == Headroom::FromImage)
-                headroom = currentFrameHeadroom(shouldDecodeToHDR);
+        if (headroom == Headroom::FromImage)
+            headroom = currentFrameHeadroom(shouldDecodeToHDR);
 
-            context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
-#if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
-        }
-#endif
+        context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
     }
 
     if (auto observer = imageObserver())
@@ -150,10 +142,7 @@ void BitmapImage::drawPattern(GraphicsContext& context, const FloatRect& destina
     if (tileRect.isEmpty())
         return;
 
-    auto headroom = options.headroom();
-    if (headroom == Headroom::FromImage && hasHDRContentForTesting())
-        fillWithSolidColor(context, destinationRect, Color::gold, options.compositeOperator());
-    else if (context.drawLuminanceMask())
+    if (context.drawLuminanceMask())
         drawLuminanceMaskPattern(context, destinationRect, tileRect, transform, phase, spacing, options);
     else
         Image::drawPattern(context, destinationRect, tileRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });

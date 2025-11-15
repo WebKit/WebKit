@@ -20,52 +20,17 @@
 </style>
 <body>
     <div style="position: fixed; top: 10px; left: 10px;">
-        <div class="container">&nbsp;</div>
+        <div class="sdr container">&nbsp;</div>
     </div>
     <div style="position: fixed; top: 10px; left: 220px;">
-        <div class="container">&nbsp;</div>
+        <div class="hdr container">&nbsp;</div>
     </div>
     <div style="position: fixed; top: 10px; left: 430px;">
-        <div class="container">&nbsp;</div>
+        <div class="hdr-sdr container">&nbsp;</div>
     </div>
     <script>
-        if (window.internals && window.testRunner) {
-            internals.clearMemoryCache();
+        if (window.internals && window.testRunner)
             internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
-            testRunner.waitUntilDone();
-        }
-
-        let images = [];
-        let imageSources = ["resources/red-400x400.png", "resources/gainmap-red-green-1920x1920.jpg"];
-
-        function loadImages() {
-            return imageSources.map((imageSource) => {
-                return new Promise((resolve) => {
-                    let image = new Image;
-                    image.onload = (e) => {
-                        resolve({ width: image.width, height: image.height });
-                    };
-                    image.src = imageSource;
-                    images.push(image);             
-                });
-            });
-        }
- 
-        (async () => {
-            await Promise.all(loadImages());
-
-            if (window.internals)
-                internals.setHasHDRContentForTesting(images[1]);
-
-            const containerElements = document.querySelectorAll("div.container");
-
-            containerElements[0].classList.add("sdr");
-            containerElements[1].classList.add("hdr");
-            containerElements[2].classList.add("hdr-sdr");
-
-            if (window.testRunner)
-                testRunner.notifyDone();
-        })();
     </script>
 </body>
 </html>

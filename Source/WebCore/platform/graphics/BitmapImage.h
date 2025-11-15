@@ -91,7 +91,6 @@ public:
     bool isAsyncDecodingEnabledForTesting() const { return m_source->isAsyncDecodingEnabledForTesting(); }
     void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) { m_source->setClearDecoderAfterAsyncFrameRequestForTesting(enabled); }
-    void setHasHDRContentForTesting() { m_source->setHasHDRContentForTesting(); }
     unsigned decodeCountForTesting() const { return m_source->decodeCountForTesting(); }
     unsigned blankDrawCountForTesting() const { return m_source->blankDrawCountForTesting(); }
 
@@ -133,8 +132,6 @@ private:
     // Image methods
     bool isBitmapImage() const final { return true; }
     bool isAnimating() const final { return m_source->isAnimating(); }
-
-    bool hasHDRContentForTesting() const { return m_source->hasHDRContentForTesting(); }
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) final;
     void drawPattern(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;

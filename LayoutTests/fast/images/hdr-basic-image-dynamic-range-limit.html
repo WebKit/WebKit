@@ -22,33 +22,14 @@
 </style>
 <body>
     <div class="standard box">
-        <img class="image-box">
+        <img class="image-box" src="resources/gainmap-red-green-1920x1920.jpg">
     </div>
     <div class="no-limit box">
-        <img class="image-box">
+        <img class="image-box" src="resources/gainmap-red-green-1920x1920.jpg">
     </div>
     <script>
-        if (window.internals && window.testRunner) {
-            internals.clearMemoryCache();
+        if (window.internals && window.testRunner)
             internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
-            testRunner.waitUntilDone();
-        }
-
-        var image = new Image;
-        image.onload = (() => {
-            if (window.internals)
-                internals.setHasHDRContentForTesting(image);
-
-            const elements = document.querySelectorAll("img");
-
-            elements.forEach((element) => {
-                element.src = image.src;
-            });
-
-            if (window.testRunner)
-                testRunner.notifyDone();
-        });
-        image.src = "resources/gainmap-red-green-1920x1920.jpg";
     </script>
 </body>
 </html>
