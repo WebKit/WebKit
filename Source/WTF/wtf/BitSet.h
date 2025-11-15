@@ -20,11 +20,13 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SIMDHelpers.h>
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <string.h>
@@ -157,6 +159,9 @@ private:
     // and then casted to unsigned, meaning that set(31) when WordType is
     // a 64 bit unsigned int would give 0xffff8000
     static constexpr WordType one = 1;
+    static constexpr bool useSIMD = words >= 64;
+    using Vec = SIMD::VectorType<WordType>;
+    static constexpr size_t stride = SIMD::stride<WordType>;
 
     std::array<WordType, words> bits { };
 };
@@ -272,8 +277,23 @@ inline constexpr void BitSet<bitSetSize, WordType>::setAll()
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::invert()
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] = ~bits[i];
+    if constexpr (words == 1) {
+        bits[0] = ~bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec vec = SIMD::load(&bits[index]);
+            Vec notResult = SIMD::bitNot(vec);
+            SIMD::store(notResult, &bits[index]);
+        }
+
+        for (; index < words; ++index)
+            bits[index] = ~bits[index];
+    } else {
+        for (size_t i = 0; i < words; ++i)
+            bits[i] = ~bits[i];
+    }
+
     cleanseLastWord();
 }
 
@@ -324,49 +344,148 @@ inline constexpr size_t BitSet<bitSetSize, WordType>::count(size_t start) const
 template<size_t bitSetSize, typename WordType>
 inline constexpr bool BitSet<bitSetSize, WordType>::isEmpty() const
 {
-    for (size_t i = 0; i < words; ++i)
-        if (bits[i])
-            return false;
+    if constexpr (words == 1) {
+        return !bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec vec = SIMD::load(&bits[index]);
+            if (SIMD::isNonZero(vec))
+                return false;
+        }
+
+        for (; index < words; ++index) {
+            if (bits[index])
+                return false;
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            if (bits[i])
+                return false;
+        }
+    }
+
     return true;
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr bool BitSet<bitSetSize, WordType>::isFull() const
 {
-    for (size_t i = 0; i < words; ++i)
-        if (~bits[i]) {
+    if constexpr (words == 1) {
+        if (~bits[0]) {
             if constexpr (!!(bitSetSize % wordSize)) {
-                if (i == words - 1) {
-                    constexpr size_t remainingBits = bitSetSize % wordSize;
-                    constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;
-                    if ((bits[i] & mask) == mask)
-                        return true;
-                }
+                constexpr size_t remainingBits = bitSetSize % wordSize;
+                constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;
+                if ((bits[0] & mask) == mask)
+                    return true;
             }
             return false;
         }
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec vec = SIMD::load(&bits[index]);
+            Vec notResult = SIMD::bitNot(vec);
+            if (SIMD::isNonZero(notResult))
+                return false;
+        }
+
+        for (; index < words; ++index) {
+            if (~bits[index]) {
+                if constexpr (!!(bitSetSize % wordSize)) {
+                    if (index == words - 1) {
+                        constexpr size_t remainingBits = bitSetSize % wordSize;
+                        constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;
+                        if ((bits[index] & mask) == mask)
+                            return true;
+                    }
+                }
+                return false;
+            }
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            if (~bits[i]) {
+                if constexpr (!!(bitSetSize % wordSize)) {
+                    if (i == words - 1) {
+                        constexpr size_t remainingBits = bitSetSize % wordSize;
+                        constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;
+                        if ((bits[i] & mask) == mask)
+                            return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::merge(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] |= other.bits[i];
+    if constexpr (words == 1) {
+        bits[0] |= other.bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec result = SIMD::merge(first, second);
+            SIMD::store(result, &bits[index]);
+        }
+
+        for (; index < words; ++index)
+            bits[index] |= other.bits[index];
+    } else {
+        for (size_t i = 0; i < words; ++i)
+            bits[i] |= other.bits[i];
+    }
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::filter(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] &= other.bits[i];
+    if constexpr (words == 1) {
+        bits[0] &= other.bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec result = SIMD::bitAnd(first, second);
+            SIMD::store(result, &bits[index]);
+        }
+
+        for (; index < words; ++index)
+            bits[index] &= other.bits[index];
+    } else {
+        for (size_t i = 0; i < words; ++i)
+            bits[i] &= other.bits[i];
+    }
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::exclude(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] &= ~other.bits[i];
+    if constexpr (words == 1) {
+        bits[0] &= ~other.bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::bitNot(SIMD::load(&other.bits[index]));
+            Vec result = SIMD::bitAnd(first, second);
+            SIMD::store(result, &bits[index]);
+        }
+
+        for (; index < words; ++index)
+            bits[index] &= ~other.bits[index];
+    } else {
+        for (size_t i = 0; i < words; ++i)
+            bits[i] &= ~other.bits[i];
+    }
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -392,11 +511,35 @@ inline constexpr void BitSet<bitSetSize, WordType>::concurrentFilter(const BitSe
 template<size_t bitSetSize, typename WordType>
 inline constexpr bool BitSet<bitSetSize, WordType>::subsumes(const BitSet& other) const
 {
-    for (size_t i = 0; i < words; ++i) {
-        WordType myBits = bits[i];
-        WordType otherBits = other.bits[i];
+    if constexpr (words == 1) {
+        WordType myBits = bits[0];
+        WordType otherBits = other.bits[0];
         if ((myBits | otherBits) != myBits)
             return false;
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec orResult = SIMD::bitOr(first, second);
+            Vec equalResult = SIMD::equal(orResult, first);
+            if (SIMD::isNonZero(SIMD::bitNot(equalResult)))
+                return false;
+        }
+
+        for (; index < words; ++index) {
+            WordType myBits = bits[index];
+            WordType otherBits = other.bits[index];
+            if ((myBits | otherBits) != myBits)
+                return false;
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            WordType myBits = bits[i];
+            WordType otherBits = other.bits[i];
+            if ((myBits | otherBits) != myBits)
+                return false;
+        }
     }
     return true;
 }
@@ -440,18 +583,54 @@ inline constexpr size_t BitSet<bitSetSize, WordType>::findBit(size_t startIndex,
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::mergeAndClear(BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i) {
-        bits[i] |= other.bits[i];
-        other.bits[i] = 0;
+    if constexpr (words == 1) {
+        bits[0] |= other.bits[0];
+        other.bits[0] = 0;
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec result = SIMD::merge(first, second);
+            SIMD::store(result, &bits[index]);
+            SIMD::store(SIMD::zero<WordType>(), &other.bits[index]);
+        }
+
+        for (; index < words; ++index) {
+            bits[index] |= other.bits[index];
+            other.bits[index] = 0;
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            bits[i] |= other.bits[i];
+            other.bits[i] = 0;
+        }
     }
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::setAndClear(BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i) {
-        bits[i] = other.bits[i];
-        other.bits[i] = 0;
+    if constexpr (words == 1) {
+        bits[0] = other.bits[0];
+        other.bits[0] = 0;
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec second = SIMD::load(&other.bits[index]);
+            SIMD::store(second, &bits[index]);
+            SIMD::store(SIMD::zero<WordType>(), &other.bits[index]);
+        }
+
+        for (; index < words; ++index) {
+            bits[index] = other.bits[index];
+            other.bits[index] = 0;
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            bits[i] = other.bits[i];
+            other.bits[i] = 0;
+        }
     }
 }
 
@@ -485,32 +664,69 @@ inline void BitSet<bitSetSize, WordType>::setEachNthBit(size_t n, size_t start, 
 template<size_t bitSetSize, typename WordType>
 inline constexpr bool BitSet<bitSetSize, WordType>::operator==(const BitSet& other) const
 {
-    for (size_t i = 0; i < words; ++i) {
-        if (bits[i] != other.bits[i])
-            return false;
+    if constexpr (words == 1) {
+        if constexpr (!!(bitSetSize % wordSize)) {
+            constexpr size_t remainingBits = bitSetSize % wordSize;
+            constexpr WordType mask = (static_cast<WordType>(1) << remainingBits) - 1;
+            return (bits[0] & mask) == (other.bits[0] & mask);
+        } else
+            return bits[0] == other.bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec result = SIMD::equal(first, second);
+            if (SIMD::isNonZero(SIMD::bitNot(result)))
+                return false;
+        }
+
+        for (; index < words; ++index) {
+            if (bits[index] != other.bits[index])
+                return false;
+        }
+    } else {
+        for (size_t i = 0; i < words; ++i) {
+            if (bits[i] != other.bits[i])
+                return false;
+        }
     }
+
     return true;
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::operator|=(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] |= other.bits[i];
+    merge(other);
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::operator&=(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] &= other.bits[i];
+    filter(other);
 }
 
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::operator^=(const BitSet& other)
 {
-    for (size_t i = 0; i < words; ++i)
-        bits[i] ^= other.bits[i];
+    if constexpr (words == 1) {
+        bits[0] ^= other.bits[0];
+    } else if constexpr (useSIMD) {
+        size_t index = 0;
+        for (; index + stride <= words; index += stride) {
+            Vec first = SIMD::load(&bits[index]);
+            Vec second = SIMD::load(&other.bits[index]);
+            Vec result = SIMD::bitXor(first, second);
+            SIMD::store(result, &bits[index]);
+        }
+
+        for (; index < words; ++index)
+            bits[index] ^= other.bits[index];
+    } else {
+        for (size_t i = 0; i < words; ++i)
+            bits[i] ^= other.bits[i];
+    }
 }
 
 template<size_t bitSetSize, typename WordType>

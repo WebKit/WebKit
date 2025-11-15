@@ -24,7 +24,7 @@
  */
 
 // On Mac, you can build this like so:
-// xcrun clang++ -o LockSpeedTest Source/WTF/benchmarks/LockSpeedTest.cpp -O3 -W -ISource/WTF -ISource/WTF/icu -ISource/WTF/benchmarks -LWebKitBuild/Release -lWTF -framework Foundation -licucore -std=c++14 -fvisibility=hidden
+// xcrun clang++ -o LockSpeedTest Source/WTF/benchmarks/LockSpeedTest.cpp -O3 -W -ISource/WTF -ISource/WTF/icu -ISource/WTF/benchmarks -ISource/bmalloc -ISource/bmalloc/bmalloc -ISource/bmalloc/libpas/src/libpas -LWebKitBuild/Debug -lWTF -lbmalloc -lpas -framework Foundation -framework Security -licucore -std=c++23 -fvisibility=hidden -arch arm64e
 
 #include "config.h"
 
@@ -76,7 +76,8 @@ struct Benchmark {
     {
         std::unique_ptr<WithPadding<LockType>[]> locks = makeUniqueWithoutFastMallocCheck<WithPadding<LockType>[]>(numThreadGroups);
         std::unique_ptr<WithPadding<double>[]> words = makeUniqueWithoutFastMallocCheck<WithPadding<double>[]>(numThreadGroups);
-        std::unique_ptr<RefPtr<Thread>[]> threads = makeUniqueWithoutFastMallocCheck<RefPtr<Thread>[]>(numThreadGroups * numThreadsPerGroup);
+        Vector<RefPtr<Thread>> threads;
+        threads.reserveInitialCapacity(numThreadGroups * numThreadsPerGroup);
 
         std::atomic<bool> keepGoing = true;
 
@@ -89,7 +90,7 @@ struct Benchmark {
             words[threadGroupIndex].value = 0;
 
             for (unsigned threadIndex = numThreadsPerGroup; threadIndex--;) {
-                threads[threadGroupIndex * numThreadsPerGroup + threadIndex] = Thread::create(
+                threads.append(Thread::create(
                     "Benchmark thread"_s,
                     [threadGroupIndex, &locks, &words, &keepGoing, &numIterationsLock, &numIterations] () {
                         double localWord = 0;
@@ -110,15 +111,15 @@ struct Benchmark {
                         }
                         Locker locker { numIterationsLock };
                         numIterations += myNumIterations;
-                    });
+                    }));
             }
         }
 
         sleep(Seconds { secondsPerTest });
         keepGoing = false;
-    
-        for (unsigned threadIndex = numThreadGroups * numThreadsPerGroup; threadIndex--;)
-            threads[threadIndex]->waitForCompletion();
+
+        for (auto& thread : threads)
+            thread->waitForCompletion();
 
         MonotonicTime after = MonotonicTime::now();
     
