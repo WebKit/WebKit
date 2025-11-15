@@ -119,6 +119,7 @@ coords
 crossorigin
 cue
 cuebackground
+customelementregistry
 data
 datetime
 declare

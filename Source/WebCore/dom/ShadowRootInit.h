@@ -38,7 +38,7 @@ struct ShadowRootInit {
     bool clonable { false };
     bool serializable { false };
     SlotAssignmentMode slotAssignment { SlotAssignmentMode::Named };
-    RefPtr<CustomElementRegistry> customElementRegistry;
+    std::optional<RefPtr<CustomElementRegistry>> customElementRegistry;
     String referenceTarget;
 };
 

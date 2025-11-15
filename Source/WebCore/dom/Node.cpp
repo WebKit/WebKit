@@ -2222,9 +2222,18 @@ static ALWAYS_INLINE bool isDocumentEligibleForFastAdoption(Document& oldDocumen
         && oldDocument.inQuirksMode() == newDocument.inQuirksMode();
 }
 
+static ALWAYS_INLINE void adoptCustomElementRegistryIfNotExplicitlySet(ShadowRoot& shadowRoot, Document& newDocument)
+{
+    if (shadowRoot.hasScopedCustomElementRegistry() || !shadowRoot.usesNullCustomElementRegistry() || newDocument.usesNullCustomElementRegistry()) [[likely]]
+        return;
+    shadowRoot.clearUsesNullCustomElementRegistry();
+    shadowRoot.setCustomElementRegistry(newDocument.customElementRegistry());
+}
+
 inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
     ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
+    adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
     return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
@@ -2237,6 +2246,7 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Document& oldDocument, Document& newDocument)
 {
     ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
+    adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
@@ -2319,6 +2329,9 @@ void Node::moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDoc
     ASSERT(!transientMutationObserverRegistry());
     ASSERT(!oldDocument.numberOfIntersectionObservers());
 
+    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
+        clearUsesNullCustomElementRegistry();
+
     if (!hasTypeFlag(TypeFlag::HasDidMoveToNewDocument) && !hasEventTargetFlag(EventTargetFlag::HasLangAttr) && !hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr)
         && !isDefinedCustomElement())
         return;
@@ -2331,6 +2344,9 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
 {
     newDocument.incrementReferencingNodeCount();
     oldDocument.decrementReferencingNodeCount();
+
+    if (usesNullCustomElementRegistry() && !newDocument.usesNullCustomElementRegistry()) [[unlikely]]
+        clearUsesNullCustomElementRegistry();
 
     if (hasRareData()) {
         if (auto* nodeLists = rareData()->nodeLists())

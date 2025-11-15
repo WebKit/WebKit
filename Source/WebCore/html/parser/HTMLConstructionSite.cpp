@@ -833,13 +833,23 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     if (!element) [[unlikely]] {
         auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
-            if (!m_isParsingFragment)
-                return { nullptr, elementInterface, WTFMove(registry) };
-            ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
-            element = elementInterface->createElement(ownerDocument);
-            element->setIsCustomElementUpgradeCandidate();
-            element->enqueueToUpgrade(*elementInterface);
-        } else {
+            bool shouldUseNullCustomElementRegistry = false;
+            for (auto& attribute : token.attributes()) {
+                if (attribute.name() == HTMLNames::customelementregistryAttr) {
+                    shouldUseNullCustomElementRegistry = true;
+                    break;
+                }
+            }
+            if (!shouldUseNullCustomElementRegistry) {
+                if (!m_isParsingFragment)
+                    return { nullptr, elementInterface, WTFMove(registry) };
+                ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
+                element = elementInterface->createElement(ownerDocument);
+                element->setIsCustomElementUpgradeCandidate();
+                element->enqueueToUpgrade(*elementInterface);
+            }
+        }
+        if (!element) {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
             if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
@@ -847,7 +857,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
         }
-        if (!registry)
+        if (!registry && treeScope->rootNode().usesNullCustomElementRegistry())
             element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);

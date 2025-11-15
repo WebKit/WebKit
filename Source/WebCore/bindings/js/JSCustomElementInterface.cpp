@@ -76,6 +76,8 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement();
+    if (registry.isScoped())
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(element, registry);
 
     return element;
 }
@@ -91,6 +93,8 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     auto element = HTMLUnknownElement::create(name, document);
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement();
+    if (registry.isScoped())
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(element, registry);
 
     return element;
 }

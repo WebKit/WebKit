@@ -81,7 +81,7 @@ void CustomElementRegistry::didAssociateWithDocument(Document& document)
 static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface, CustomElementRegistry& registry)
 {
     for (RefPtr element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
-        if (element->isCustomElementUpgradeCandidate() && element->treeScope().customElementRegistry() == &registry && element->tagQName().matches(elementInterface.name()))
+        if (element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(*element) == &registry && element->tagQName().matches(elementInterface.name()))
             element->enqueueToUpgrade(elementInterface);
         if (RefPtr shadowRoot = element->shadowRoot()) {
             if (shadowRoot->mode() != ShadowRootMode::UserAgent)
