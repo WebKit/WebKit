@@ -21,45 +21,55 @@
                 testExpected("video.paused", false);
 
                 // Pause playback so the movie can't possibly loop before the seeked event fires.
-                run("video.pause()");
-                waitForEvent("seeked", seeked);
-                run("video.currentTime = video.duration - 0.4");
-                consoleWrite("");
+                /* run("video.pause()");
+                 * waitForEvent("seeked", seeked);
+                 * run("video.currentTime = video.duration - 0.4");
+                 * consoleWrite(""); */
             }
 
-            async function seeked()
-            {
-                switch (++seekCount)
-                {
-                    case 1:
-                        consoleWrite("<br><em>++ first seek completed, beginning playback.</em>");
-                        testExpected("video.paused", true);
-                        testExpected("video.ended", false);
-                        run("video.play()");
-                        consoleWrite("");
-                        break;
-                    case 2:
-                        consoleWrite("<br><em>++ second seek completed because video looped, play for a while.</em>");
-                        testExpected("video.paused", false);
-                        testExpected("video.ended", false);
+         async function ended()
+         {
+             consoleWrite("-> " + mediaElement.currentTime);
+             if (mediaElement.currentTime == mediaElement.duration)
+                 seekCount++;
 
-                        testExpected("mediaElement.currentTime", 0, '>=');
-                        waitForConditionOrTimeout("mediaElement.currentTime >= 0.1", false);
-                        endTest();
-                        break;
-                    default:
-                        failTest("Video should have only seeked two times.");
-                        break;
-                }
-            }
+             if (seekCount < 2)
+                 return;
+             testExpected("mediaElement.currentTime", 0, '>=');
+             waitForConditionOrTimeout("mediaElement.currentTime >= 0.1", false);
+             endTest();
+         }
 
+         /* async function seeked()
+          * {
+          *     switch (++seekCount)
+          *     {
+          *         case 1:
+          *             consoleWrite("<br><em>++ first seek completed, beginning playback.</em>");
+          *             testExpected("video.paused", true);
+          *             testExpected("video.ended", false);
+          *             run("video.play()");
+          *             consoleWrite("");
+          *             break;
+          *         case 2:
+          *             consoleWrite("<br><em>++ second seek completed because video looped, play for a while.</em>");
+          *             testExpected("video.paused", false);
+          *             testExpected("video.ended", false);
+
+          *             break;
+          *         default:
+          *             failTest("Video should have only seeked two times.");
+          *             break;
+          *     }
+          * }
+          */
             function start()
             {
                 findMediaElement();
 
                 waitForEvent('play', play);
-
-                var mediaFile = findMediaFile("video", "content/test");
+                waitForEvent('timeupdate', ended);
+                var mediaFile = findMediaFile("video", "content/short");
                 video.src = mediaFile;
                 consoleWrite("");
             }

@@ -3178,10 +3178,20 @@ void MediaPlayerPrivateGStreamer::recalculateDurationIfNeeded() const
 
 void MediaPlayerPrivateGStreamer::didEnd(bool resetCachedPosition)
 {
+    RefPtr player = m_player.get();
+    if (!player) [[unlikely]]
+        return;
+
     invalidateCachedPosition();
     GST_INFO_OBJECT(pipeline(), "Playback ended");
     m_isEndReached = true;
     recalculateDurationIfNeeded();
+
+    if (player->isLooping()) {
+        timeChanged(MediaTime::invalidTime());
+        //timeChanged(MediaTime::zeroTime());
+        return;
+    }
     if (resetCachedPosition && !isMediaStreamPlayer()) {
         // Synchronize position and duration values to not confuse the
         // HTMLMediaElement. In some cases like reverse playback the
@@ -3197,8 +3207,7 @@ void MediaPlayerPrivateGStreamer::didEnd(bool resetCachedPosition)
     // until we get the initial STREAMS_SELECTED message one more time.
     m_waitingForStreamsSelectedEvent = true;
 
-    RefPtr player = m_player.get();
-    if (player && !player->isLooping() && !isMediaSource()) {
+    if (!player->isLooping() && !isMediaSource()) {
         m_isPaused = true;
         changePipelineState(GST_STATE_PAUSED);
         m_didDownloadFinish = false;
