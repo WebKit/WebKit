@@ -72,8 +72,21 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
     if (primitiveValue->isValueID())
         return handleKeywordValue(state, primitiveValue->valueID());
 
-    if (evaluationTimeZoomEnabled(state))
-        return toStyleFromCSSValue<LineWidth::Length>(state, value);
+    if (evaluationTimeZoomEnabled(state)) {
+        auto result = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, LineWidth::Length::range.zoomOptions));
+
+        float deviceScaleFactor = state.document().deviceScaleFactor();
+        float resultInDevicePixels = result * deviceScaleFactor;
+        float snappedResult;
+
+        // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
+        if (resultInDevicePixels > 0.0f && resultInDevicePixels < 1.0f)
+            snappedResult = 1.0f / deviceScaleFactor;
+        else
+            snappedResult = floorf(resultInDevicePixels) / deviceScaleFactor;
+
+        return LineWidth::Length { CSS::clampToRange<LineWidth::Length::range, LineWidth::Length::ResolvedValueType>(snappedResult) };
+    }
 
     // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
 
@@ -99,8 +112,6 @@ void Serialize<LineWidth>::operator()(StringBuilder& builder, const CSS::Seriali
 
     if (auto minimumLineWidth = 1.0f / deviceScaleFactor; result > 0.0f && result < minimumLineWidth)
         result = minimumLineWidth;
-
-    result = floorToDevicePixel(result, deviceScaleFactor);
 
     CSS::serializationForCSS(builder, context, CSS::LengthRaw<> { CSS::LengthUnit::Px, result });
 }

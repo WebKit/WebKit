@@ -77,7 +77,7 @@ template<typename Result> struct Evaluation<LineWidth, Result> {
         if (auto minimumLineWidth = 1.0f / zoom.deviceScaleFactor; result > 0.0f && result < minimumLineWidth)
             return Result(minimumLineWidth);
 
-        return Result(floorToDevicePixel(result, zoom.deviceScaleFactor));
+        return Result(result);
     }
 };
 
