@@ -3176,13 +3176,13 @@ void MediaPlayerPrivateGStreamer::recalculateDurationIfNeeded() const
 
 }
 
-void MediaPlayerPrivateGStreamer::didEnd()
+void MediaPlayerPrivateGStreamer::didEnd(bool resetCachedPosition)
 {
     invalidateCachedPosition();
     GST_INFO_OBJECT(pipeline(), "Playback ended");
     m_isEndReached = true;
     recalculateDurationIfNeeded();
-    if (!isMediaStreamPlayer()) {
+    if (resetCachedPosition && !isMediaStreamPlayer()) {
         // Synchronize position and duration values to not confuse the
         // HTMLMediaElement. In some cases like reverse playback the
         // position is not always reported as 0 for instance.
@@ -3440,7 +3440,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
             if (!mediaPlayer || !mediaPlayer->isLooping())
                 return;
             GST_DEBUG_OBJECT(player->pipeline(), "Handling segment-done message");
-            player->didEnd();
+            player->didEnd(false);
         });
     }), this);
 

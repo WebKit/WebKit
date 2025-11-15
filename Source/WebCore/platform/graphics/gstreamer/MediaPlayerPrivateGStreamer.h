@@ -364,7 +364,7 @@ protected:
     bool isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn) const;
     bool isPipelineWaitingPreroll() const;
 
-    void didEnd();
+    void didEnd(bool resetCachedPosition = true);
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;

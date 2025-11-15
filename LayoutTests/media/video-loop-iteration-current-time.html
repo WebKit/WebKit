@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var seekCount = 0;
+            var playCount = 0;
+
+            function play()
+            {
+                if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+                    setTimeout(play, 100);
+                    return;
+                }
+
+                if (++playCount > 1)
+                    return;
+
+                consoleWrite("<br><em>++ seek to near the end.</em>");
+                testExpected("video.paused", false);
+
+                // Pause playback so the movie can't possibly loop before the seeked event fires.
+                run("video.pause()");
+                waitForEvent("seeked", seeked);
+                run("video.currentTime = video.duration - 0.4");
+                consoleWrite("");
+            }
+
+            async function seeked()
+            {
+                switch (++seekCount)
+                {
+                    case 1:
+                        consoleWrite("<br><em>++ first seek completed, beginning playback.</em>");
+                        testExpected("video.paused", true);
+                        testExpected("video.ended", false);
+                        run("video.play()");
+                        consoleWrite("");
+                        break;
+                    case 2:
+                        consoleWrite("<br><em>++ second seek completed because video looped, play for a while.</em>");
+                        testExpected("video.paused", false);
+                        testExpected("video.ended", false);
+
+                        testExpected("mediaElement.currentTime", 0, '>=');
+                        waitForConditionOrTimeout("mediaElement.currentTime >= 0.1", false);
+                        endTest();
+                        break;
+                    default:
+                        failTest("Video should have only seeked two times.");
+                        break;
+                }
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent('play', play);
+
+                var mediaFile = findMediaFile("video", "content/test");
+                video.src = mediaFile;
+                consoleWrite("");
+            }
+        </script>
+    </head>
+    <body>
+        <video controls autoplay loop></video>
+        <p>This test plays a looping video to the end, waits the seek back to beginning, let it play for 100 milli-seconds and check the reported currentTime is not zero.
+        </p>
+        <script>start()</script>
+    </body>
+</html>

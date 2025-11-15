@@ -1,0 +1,28 @@
+
+This test plays a looping video to the end, waits the seek back to beginning, let it play for 100 milli-seconds and check the reported currentTime is not zero.
+
+
+EVENT(play)
+
+++ seek to near the end.
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+RUN(video.currentTime = video.duration - 0.4)
+
+EVENT(seeked)
+
+++ first seek completed, beginning playback.
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EVENT(play)
+EVENT(seeked)
+
+++ second seek completed because video looped, play for a while.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+EXPECTED (mediaElement.currentTime >= '0') OK
+EXPECTED (mediaElement.currentTime >= 0.1) OK
+END OF TEST
+
