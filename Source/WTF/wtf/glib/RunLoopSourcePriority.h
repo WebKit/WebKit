@@ -84,8 +84,8 @@ enum RunLoopSourcePriority {
     JavascriptTimer = 10,
     MainThreadSharedTimer = 10,
 
-    LayerFlushTimer = 0,
-    DisplayRefreshMonitorTimer = 0,
+    LayerFlushTimer = 20,
+    DisplayRefreshMonitorTimer = 20,
 
     CompositingThreadUpdateTimer = 0,
 
