@@ -77,7 +77,21 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     loadPtr(MacroAssembler::Address(src, JSString::offsetOfValue()), dst);
     failures.append(branchIfRopeStringImpl(dst));
     failures.append(branch32(NotEqual, MacroAssembler::Address(dst, StringImpl::lengthMemoryOffset()), TrustedImm32(1)));
+
+
+
+    // NEW: dst, regT1
+    auto oldPath = branchTest32(Zero, Address(dst, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(dst, regT1);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), regT1);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(MacroAssembler::Address(dst, StringImpl::dataOffset()), regT1);
+    // END OLD:
+    newPathEnd.link(this);
+
+
 
     auto is16Bit = branchTest32(Zero, Address(dst, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
     load8(MacroAssembler::Address(regT1, 0), dst);

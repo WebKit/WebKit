@@ -621,7 +621,23 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
     JSInterfaceJIT::JumpList cont8Bit;
     // Load the string flags
     jit.load32(JSInterfaceJIT::Address(stringGPR, StringImpl::flagsOffset()), scratchGPR);
+
+
+    // NEW: stringGPR, stringGPR
+    auto oldPath = jit.branchTest32(
+        JSInterfaceJIT::Zero,
+        JSInterfaceJIT::Address(stringGPR, StringImpl::flagsOffset()),
+        JSInterfaceJIT::TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    jit.move(stringGPR, stringGPR);
+    jit.addPtr(JSInterfaceJIT::TrustedImmPtr(StringImpl::dataOffset()), stringGPR);
+    auto newPathEnd = jit.jump();
+    oldPath.link(&jit);
+    // OLD:
     jit.loadPtr(JSInterfaceJIT::Address(stringGPR, StringImpl::dataOffset()), stringGPR);
+    // END OLD:
+    newPathEnd.link(&jit);
+
+
     auto is16Bit = jit.branchTest32(JSInterfaceJIT::Zero, scratchGPR, JSInterfaceJIT::TrustedImm32(StringImpl::flagIs8Bit()));
     jit.load8(JSInterfaceJIT::BaseIndex(stringGPR, indexGPR, JSInterfaceJIT::TimesOne, 0), stringGPR);
     cont8Bit.append(jit.jump());
@@ -672,7 +688,23 @@ static void stringCharLoad(SpecializedThunkJIT& jit)
     SpecializedThunkJIT::JumpList cont8Bit;
     // Load the string flags
     jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::flagsOffset()), SpecializedThunkJIT::regT2);
+
+
+    // NEW:
+    auto oldPath = jit.branchTest32(
+        JSInterfaceJIT::Zero,
+        JSInterfaceJIT::Address(SpecializedThunkJIT::regT0, StringImpl::flagsOffset()),
+        JSInterfaceJIT::TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    jit.move(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0);
+    jit.addPtr(JSInterfaceJIT::TrustedImmPtr(StringImpl::dataOffset()), SpecializedThunkJIT::regT0);
+    auto newPathEnd = jit.jump();
+    oldPath.link(&jit);
+    // OLD:
     jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::dataOffset()), SpecializedThunkJIT::regT0);
+    // END OLD:
+    newPathEnd.link(&jit);
+    
+
     is16Bit.append(jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT2, MacroAssembler::TrustedImm32(StringImpl::flagIs8Bit())));
     jit.load8(MacroAssembler::BaseIndex(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1, MacroAssembler::TimesOne, 0), SpecializedThunkJIT::regT0);
     cont8Bit.append(jit.jump());
@@ -796,7 +828,23 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(V
     // Load the character
     CCallHelpers::JumpList done;
     // Load the string flags
+
+
+    // NEW:
+    auto oldPath = jit.branchTest32(
+        JSInterfaceJIT::Zero,
+        JSInterfaceJIT::Address(SpecializedThunkJIT::regT0, StringImpl::flagsOffset()),
+        JSInterfaceJIT::TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    jit.move(GPRInfo::regT0, GPRInfo::regT2);
+    jit.addPtr(JSInterfaceJIT::TrustedImmPtr(StringImpl::dataOffset()), GPRInfo::regT2);
+    auto newPathEnd = jit.jump();
+    oldPath.link(&jit);
+    // OLD:
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, StringImpl::dataOffset()), GPRInfo::regT2);
+    // END OLD:
+    newPathEnd.link(&jit);
+
+
     auto is16Bit = jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(GPRInfo::regT0, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIs8Bit()));
     jit.load8(CCallHelpers::BaseIndex(GPRInfo::regT2, GPRInfo::regT1, CCallHelpers::TimesOne, 0), GPRInfo::regT0);
     done.append(jit.jump());

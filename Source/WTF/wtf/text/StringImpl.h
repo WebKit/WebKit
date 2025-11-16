@@ -150,8 +150,8 @@ class STRING_IMPL_ALIGNMENT StringImplShape  {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
+    static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImplShape, m_data); }
 
-protected:
     StringImplShape(unsigned refCount, std::span<const Latin1Character>, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, std::span<const char16_t>, unsigned hashAndFlags);
 
@@ -159,17 +159,64 @@ protected:
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
+    // The bottom 6 bits in the hash are flags, but reserve 8 bits since StringHash only has 24 bits anyway.
+    static constexpr const unsigned s_flagCount = 8;
+
+    static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;
+    static_assert(s_flagCount <= StringHasher::flagCount, "StringHasher reserves enough bits for StringImpl flags");
+    static constexpr const unsigned s_flagStringKindCount = 4;
+
+    static constexpr const unsigned s_hashZeroValue = 0;
+    static constexpr const unsigned s_hashFlagStringKindIsAtom = 1u << (s_flagStringKindCount);
+    static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
+    static constexpr const unsigned s_hashFlagStringHasInlineBuffer = 1u << (s_flagStringKindCount + 2);
+    static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtom | s_hashFlagStringKindIsSymbol;
+    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 3;
+    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
+    static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
+
+    enum StringKind {
+        StringNormal = 0u, // non-symbol, non-atomic
+        StringAtom = s_hashFlagStringKindIsAtom, // non-symbol, atomic
+        StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
+        StringWithInlineBuffer = s_hashFlagStringHasInlineBuffer, // non-symbol, non-atomic, contiguous
+    };
+
+    enum BufferOwnership {
+        BufferInternal,
+        BufferOwned,
+        BufferSubstring,
+        BufferExternal
+    };
+    constexpr BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    constexpr bool isExternal() const { return bufferOwnership() == BufferExternal; }
+    constexpr bool isSubString() const { return bufferOwnership() == BufferSubstring; }
+    constexpr bool isInternal() const { return bufferOwnership() == BufferInternal; }
+    constexpr bool isBufferInline() const { return m_hashAndFlags & s_hashFlagStringHasInlineBuffer; }
+
+    constexpr auto dataLatin1() const { return isBufferInline() ? m_spaceLatin1 : m_data.latin1; }
+    constexpr auto dataC8() const { return isBufferInline() ? m_space8 : m_data.char8; }
+    constexpr auto dataC16() const { return isBufferInline() ? m_space16 : m_data.char16; }
+
     std::atomic<unsigned> m_refCount;
     unsigned m_length;
-    union {
-        const Latin1Character* m_data8;
-        const char16_t* m_data16;
-        // It seems that reinterpret_cast prevents constexpr's compile time initialization in VC++.
-        // These are needed to avoid reinterpret_cast.
-        const char* m_data8Char;
-        const char16_t* m_data16Char;
-    };
     mutable unsigned m_hashAndFlags;
+
+    // A pointer union is required for constexpr usage - reinterpret_cast<> is illegal
+    // in constexpr contexts due UB concerns; plain unions don't have this limitation
+    // because the compiler tracks the type they were initialized with.
+    typedef union {
+        const Latin1Character* const latin1;
+        const char* const char8;
+        const char16_t* const char16;
+    } PointerUnion;
+
+    union {
+        PointerUnion m_data;
+        char m_space8[1];
+        Latin1Character m_spaceLatin1[1];
+        char16_t m_space16[1];        
+    };
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -205,41 +252,26 @@ class StringImpl : private StringImplShape, public NoVirtualDestructorBase {
     friend WTF_EXPORT_PRIVATE bool equal(const StringImpl&, const StringImpl&);
 
 public:
-    enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
-
     // Prefer using isValidLength over MaxLength when the character type is known.
     template<typename> static constexpr bool isValidLength(size_t);
 
-    static constexpr unsigned MaxLength = StringImplShape::MaxLength;
-
-    // The bottom 6 bits in the hash are flags, but reserve 8 bits since StringHash only has 24 bits anyway.
-    static constexpr const unsigned s_flagCount = 8;
+    using StringImplShape::BufferOwnership;
+    using StringImplShape::BufferInternal;
+    using StringImplShape::BufferOwned;
+    using StringImplShape::BufferSubstring;
+    using StringImplShape::BufferExternal;
+    using StringImplShape::MaxLength;
+    using StringImplShape::s_flagCount;
 
 private:
-    static constexpr const unsigned s_flagMask = (1u << s_flagCount) - 1;
-    static_assert(s_flagCount <= StringHasher::flagCount, "StringHasher reserves enough bits for StringImpl flags");
-    static constexpr const unsigned s_flagStringKindCount = 4;
-
-    static constexpr const unsigned s_hashZeroValue = 0;
-    static constexpr const unsigned s_hashFlagStringKindIsAtom = 1u << (s_flagStringKindCount);
-    static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
-    static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtom | s_hashFlagStringKindIsSymbol;
-    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 3;
-    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
-    static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
-
-    enum StringKind {
-        StringNormal = 0u, // non-symbol, non-atomic
-        StringAtom = s_hashFlagStringKindIsAtom, // non-symbol, atomic
-        StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
-    };
 
     // Create a normal 8-bit string with internal storage (BufferInternal).
     enum Force8Bit { Force8BitConstructor };
-    StringImpl(unsigned length, Force8Bit);
+    enum InlineBufferTag { InlineBuffer };
+    StringImpl(unsigned length, Force8Bit, InlineBufferTag);
 
     // Create a normal 16-bit string with internal storage (BufferInternal).
-    explicit StringImpl(unsigned length);
+    explicit StringImpl(unsigned length, InlineBufferTag);
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned).
     template<typename Malloc> explicit StringImpl(MallocSpan<Latin1Character, Malloc>);
@@ -304,7 +336,8 @@ public:
     static constexpr unsigned flagIsAtom() { return s_hashFlagStringKindIsAtom; }
     static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
     static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
-    static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
+    using StringImplShape::dataOffset;
+
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
     static Ref<StringImpl> adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&&);
@@ -317,8 +350,8 @@ public:
     bool isEmpty() const { return !m_length; }
 
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
-    ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
-    ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
+    ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return unsafeMakeSpan(dataLatin1(), length()); }
+    ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT(!is8Bit() || isEmpty()); return unsafeMakeSpan(dataC16(), length()); }
 
     template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
@@ -331,9 +364,10 @@ public:
     bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
     
-    bool isExternal() const { return bufferOwnership() == BufferExternal; }
-
-    bool isSubString() const { return bufferOwnership() == BufferSubstring; }
+    using StringImplShape::bufferOwnership;
+    using StringImplShape::isExternal;
+    using StringImplShape::isSubString;
+    using StringImplShape::isInternal;
 
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const Latin1Character> characters);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(std::span<const char16_t> characters, ConversionMode = LenientConversion);
@@ -389,7 +423,7 @@ public:
         //
         // 1. m_length is only set on construction and never mutated thereafter.
         //
-        // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
+        // 2. m_data.latin1 and m_data.char16 are only set on construction and never mutated thereafter.
         //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
         //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
         //
@@ -528,8 +562,6 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
-
     template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
 protected:
@@ -546,6 +578,7 @@ protected:
 private:
     template<typename> static size_t allocationSize(Checked<size_t> tailElementCount);
     template<typename> static constexpr size_t tailOffset();
+    template<typename> static constexpr size_t bufferOffset();
 
     WTF_EXPORT_PRIVATE size_t find(std::span<const Latin1Character>, size_t start);
     WTF_EXPORT_PRIVATE size_t reverseFind(std::span<const Latin1Character>, size_t start);
@@ -553,6 +586,9 @@ private:
     bool requiresCopy() const;
     template<typename T> const T* tailPointer() const;
     template<typename T> T* tailPointer();
+    template<typename T> const T* bufferPointer() const;
+    template<typename T> T* bufferPointer();
+
     StringImpl* const& substringBuffer() const;
     StringImpl*& substringBuffer();
 
@@ -680,12 +716,12 @@ template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<Latin1Character>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length, Force8BitConstructor });
+    return adoptRef(*new (NotNull, &string) StringImpl { length, Force8BitConstructor, InlineBuffer });
 }
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<char16_t>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length });
+    return adoptRef(*new (NotNull, &string) StringImpl { length, InlineBuffer });
 }
 
 template<> ALWAYS_INLINE std::span<const Latin1Character> StringImpl::span<Latin1Character>() const
@@ -880,8 +916,8 @@ inline bool deprecatedIsNotSpaceOrNewline(char16_t character)
 inline StringImplShape::StringImplShape(unsigned refCount, std::span<const Latin1Character> data, unsigned hashAndFlags)
     : m_refCount(refCount)
     , m_length(data.size())
-    , m_data8(data.data())
     , m_hashAndFlags(hashAndFlags)
+    , m_data{.latin1 = data.data()}
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -889,8 +925,8 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const Latin
 inline StringImplShape::StringImplShape(unsigned refCount, std::span<const char16_t> data, unsigned hashAndFlags)
     : m_refCount(refCount)
     , m_length(data.size())
-    , m_data16(data.data())
     , m_hashAndFlags(hashAndFlags)
+    , m_data{.char16 = data.data()}
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -898,8 +934,8 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const char1
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
     : m_refCount(refCount)
     , m_length(length)
-    , m_data8Char(characters)
     , m_hashAndFlags(hashAndFlags)
+    , m_data{.char8 = characters}
 {
     RELEASE_ASSERT(length <= MaxLength);
 }
@@ -907,8 +943,8 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
     : m_refCount(refCount)
     , m_length(length)
-    , m_data16Char(characters)
     , m_hashAndFlags(hashAndFlags)
+    , m_data{.char16 = characters}
 {
     RELEASE_ASSERT(length <= MaxLength);
 }
@@ -960,19 +996,19 @@ template<bool isSpecialCharacter(char16_t)> inline bool StringImpl::containsOnly
     return WTF::containsOnly<isSpecialCharacter>(span16());
 }
 
-inline StringImpl::StringImpl(unsigned length, Force8Bit)
-    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(tailPointer<Latin1Character>(), length), s_hashFlag8BitBuffer | StringNormal | BufferInternal)
+inline StringImpl::StringImpl(unsigned length, Force8Bit, InlineBufferTag)
+    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(bufferPointer<Latin1Character>(), length), s_hashFlag8BitBuffer | StringWithInlineBuffer | BufferInternal)
 {
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
 }
 
-inline StringImpl::StringImpl(unsigned length)
-    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(tailPointer<char16_t>(), length), s_hashZeroValue | StringNormal | BufferInternal)
+inline StringImpl::StringImpl(unsigned length, InlineBufferTag)
+    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(bufferPointer<char16_t>(), length), s_hashZeroValue | StringWithInlineBuffer | BufferInternal)
 {
-    ASSERT(m_data16);
+    ASSERT(dataC16());
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
@@ -994,7 +1030,7 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocSpan<Latin1Character, Malloc> characters)
     : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
@@ -1003,7 +1039,7 @@ inline StringImpl::StringImpl(MallocSpan<Latin1Character, Malloc> characters)
 inline StringImpl::StringImpl(std::span<const char16_t> characters, ConstructWithoutCopyingTag)
     : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringNormal | BufferInternal)
 {
-    ASSERT(m_data16);
+    ASSERT(dataC16());
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
@@ -1012,7 +1048,7 @@ inline StringImpl::StringImpl(std::span<const char16_t> characters, ConstructWit
 inline StringImpl::StringImpl(std::span<const Latin1Character> characters, ConstructWithoutCopyingTag)
     : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringNormal | BufferInternal)
 {
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
@@ -1022,7 +1058,7 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocSpan<char16_t, Malloc> characters)
     : StringImplShape(s_refCountIncrement, toStringImplMallocSpan(WTFMove(characters)).leakSpan(), s_hashZeroValue | StringNormal | BufferOwned)
 {
-    ASSERT(m_data16);
+    ASSERT(dataC16());
     ASSERT(m_length);
 
     STRING_STATS_ADD_16BIT_STRING(m_length);
@@ -1032,7 +1068,7 @@ inline StringImpl::StringImpl(std::span<const Latin1Character> characters, Ref<S
     : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringNormal | BufferSubstring)
 {
     ASSERT(is8Bit());
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     ASSERT(m_length);
     ASSERT(base->bufferOwnership() != BufferSubstring);
 
@@ -1045,7 +1081,7 @@ inline StringImpl::StringImpl(std::span<const char16_t> characters, Ref<StringIm
     : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringNormal | BufferSubstring)
 {
     ASSERT(!is8Bit());
-    ASSERT(m_data16);
+    ASSERT(dataC16());
     ASSERT(m_length);
     ASSERT(base->bufferOwnership() != BufferSubstring);
 
@@ -1062,7 +1098,7 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
         return *empty();
 
     // Copying the thing would save more memory sometimes, largely due to the size of pointer.
-    size_t substringSize = allocationSize<StringImpl*>(1);
+    size_t substringSize = sizeof(StringImpl) + sizeof(StringImpl*);
     if (rep.is8Bit()) {
         if (substringSize >= allocationSize<Latin1Character>(length))
             return create(rep.span8().subspan(offset, length));
@@ -1100,7 +1136,7 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
         output = { };
         return nullptr;
     }
-    output = unsafeMakeSpan(result->tailPointer<CharacterType>(), length);
+    output = unsafeMakeSpan(result->bufferPointer<CharacterType>(), length);
 
     return constructInternal<CharacterType>(*result, length);
 }
@@ -1216,7 +1252,7 @@ inline StringImpl::StringImpl(CreateSymbolTag, std::span<const Latin1Character> 
     : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
     ASSERT(is8Bit());
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
 }
 
@@ -1224,7 +1260,7 @@ inline StringImpl::StringImpl(CreateSymbolTag, std::span<const char16_t> charact
     : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
 {
     ASSERT(!is8Bit());
-    ASSERT(m_data16);
+    ASSERT(dataC16());
     STRING_STATS_ADD_16BIT_STRING2(m_length, true);
 }
 
@@ -1232,13 +1268,14 @@ inline StringImpl::StringImpl(CreateSymbolTag)
     : StringImplShape(s_refCountIncrement, empty()->span8(), s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
     ASSERT(is8Bit());
-    ASSERT(m_data8);
+    ASSERT(dataLatin1());
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
 }
 
-template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> tailElementCount)
+template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> nCharacters)
 {
-    return tailOffset<T>() + tailElementCount * sizeof(T);
+    size_t sizeWithInlineString = tailOffset<T>() + nCharacters * sizeof(T);
+    return sizeWithInlineString > sizeof(StringImpl) ? sizeWithInlineString : sizeof(StringImpl);
 }
 
 template<typename CharacterType>
@@ -1251,17 +1288,17 @@ inline constexpr bool StringImpl::isValidLength(size_t length)
 
 template<typename T> constexpr size_t StringImpl::tailOffset()
 {
-    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
+    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_data) + sizeof(StringImpl::m_data));
+}
+
+template<typename T> constexpr size_t StringImpl::bufferOffset()
+{
+    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_data));
 }
 
 inline bool StringImpl::requiresCopy() const
 {
-    if (bufferOwnership() != BufferInternal)
-        return true;
-
-    if (is8Bit())
-        return m_data8 == tailPointer<Latin1Character>();
-    return m_data16 == tailPointer<char16_t>();
+    return (bufferOwnership() != BufferInternal) || isBufferInline();
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1273,6 +1310,16 @@ template<typename T> inline const T* StringImpl::tailPointer() const
 template<typename T> inline T* StringImpl::tailPointer()
 {
     return reinterpret_cast_ptr<T*>(reinterpret_cast<uint8_t*>(this) + tailOffset<T>());
+}
+
+template<typename T> inline const T* StringImpl::bufferPointer() const
+{
+    return reinterpret_cast_ptr<const T*>(reinterpret_cast<const uint8_t*>(this) + bufferOffset<T>());
+}
+
+template<typename T> inline T* StringImpl::bufferPointer()
+{
+    return reinterpret_cast_ptr<T*>(reinterpret_cast<uint8_t*>(this) + bufferOffset<T>());
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

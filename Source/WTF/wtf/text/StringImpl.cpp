@@ -136,13 +136,13 @@ StringImpl::~StringImpl()
     case BufferInternal:
         break;
     case BufferOwned:
-        // We use m_data8, but since it is a union with m_data16 this works either way.
-        ASSERT(m_data8);
-        StringImplMalloc::free(const_cast<Latin1Character*>(m_data8));
+        // We use m_data.latin1, but since it is a union with m_data.char16 this works either way.
+        ASSERT(m_data.latin1);
+        StringImplMalloc::free(const_cast<Latin1Character*>(m_data.latin1));
         break;
     case BufferExternal: {
         auto* external = static_cast<ExternalStringImpl*>(this);
-        external->freeExternalBuffer(const_cast<Latin1Character*>(m_data8), sizeInBytes());
+        external->freeExternalBuffer(const_cast<Latin1Character*>(m_data.latin1), sizeInBytes());
         external->m_free.~ExternalStringImplFreeFunction();
         break;
     }
@@ -192,7 +192,7 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
         CRASH();
 
     SUPPRESS_UNCOUNTED_LOCAL StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
-    data = unsafeMakeSpan(string->tailPointer<CharacterType>(), length);
+    data = unsafeMakeSpan(string->bufferPointer<CharacterType>(), length);
     return constructInternal<CharacterType>(*string, length);
 }
 
@@ -228,7 +228,7 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
     if (!string)
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
-    data = string->tailPointer<CharacterType>();
+    data = string->bufferPointer<CharacterType>();
     return constructInternal<CharacterType>(*string, length);
 }
 
@@ -424,13 +424,13 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToLower(data16.data(), length, m_data16, m_length, "", &status);
+    int32_t realLength = u_strToLower(data16.data(), length, m_data.char16, m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newImpl;
 
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16.data(), realLength, m_data16, m_length, "", &status);
+    u_strToLower(data16.data(), realLength, m_data.char16, m_length, "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;

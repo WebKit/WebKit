@@ -1327,7 +1327,22 @@ void JIT::emit_op_switch_char(const JSInstruction* currentInstruction)
     loadPtr(Address(jsRegT10.payloadGPR(), JSString::offsetOfValue()), regT4);
     auto isRope = branchIfRopeStringImpl(regT4);
     addJump(branch32(NotEqual, Address(regT4, StringImpl::lengthMemoryOffset()), TrustedImm32(1)), defaultOffset);
+
+
+
+    // NEW: regT4, regT5
+    auto oldPath = branchTest32(Zero, Address(regT4, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(regT4, regT5);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), regT5);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(Address(regT4, StringImpl::dataOffset()), regT5);
+    // END OLD:
+    newPathEnd.link(this);
+
+
+
     auto is8Bit = branchTest32(NonZero, Address(regT4, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
     load16(Address(regT5), regT5);
     auto loaded = jump();

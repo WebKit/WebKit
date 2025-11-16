@@ -127,7 +127,7 @@ class WTFStringImplPrinter(StringPrinter):
 
     def to_string(self):
         if self.is_8bit():
-            return lstring_to_string(self.val['m_data8'], self.get_length())
+            return lstring_to_string(self.val['m_data.latin1'], self.get_length())
         return ustring_to_string(self.val['m_data16'], self.get_length())
 
     def is_8bit(self):
