@@ -47,6 +47,11 @@ WKPageConfigurationRef WKPageConfigurationCreate()
     return toAPILeakingRef(API::PageConfiguration::create());
 }
 
+WKPageConfigurationRef WKPageConfigurationCopy(WKPageConfigurationRef configuration)
+{
+    return toAPI(toImpl(configuration)->copy().leakRef());
+}
+
 WKContextRef WKPageConfigurationGetContext(WKPageConfigurationRef configuration)
 {
     return toAPI(toProtectedImpl(configuration)->protectedProcessPool().get());
