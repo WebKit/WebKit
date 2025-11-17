@@ -418,9 +418,6 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
     }
 
     m_numberOfStoppedVMs.exchangeSub(1);
-
-    // If we get here, we're either transitioning to RunOne or Running mode.
-    RELEASE_ASSERT(!m_targetVM || m_targetVM == &vm);
 }
 
 void VMManager::notifyVMConstruction(VM& vm)
