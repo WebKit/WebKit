@@ -574,8 +574,7 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
 {
     using namespace Inspector::Protocol;
 
-    ParsedStackTrace result;
-    result.callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
+    ParsedStackTrace result { .callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create() };
 
     auto lines = stackTraceString.split(u'\n');
     for (auto& line : lines) {
