@@ -35,7 +35,7 @@ class WebKit::WebEvent {
     WTF::UUID authorizationToken();
 };
 
-enum class WebKit::WebEventType : uint8_t {
+enum class WebKit::WebEventType : uint32_t {
     MouseDown,
     MouseUp,
     MouseMove,

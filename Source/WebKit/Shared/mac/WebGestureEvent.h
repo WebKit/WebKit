@@ -56,7 +56,7 @@ public:
 
     float gestureScale() const { return m_gestureScale; }
     float gestureRotation() const { return m_gestureRotation; }
-    
+
 private:
     bool isGestureEventType(WebEventType) const;
 

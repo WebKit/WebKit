@@ -357,6 +357,7 @@ public:
 
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<NativeWebGestureEvent> gestureEventQueue;
+    unsigned droppedGestureEventCount { 0 };
 #endif
 
 #if ENABLE(META_VIEWPORT)

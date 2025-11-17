@@ -27,36 +27,36 @@
 
 namespace WebKit {
 
-enum class WebEventType : uint8_t {
+enum class WebEventType : uint32_t {
     // WebMouseEvent
-    MouseDown,
-    MouseUp,
-    MouseMove,
-    MouseForceChanged,
-    MouseForceDown,
-    MouseForceUp,
+    MouseDown           = 1 << 0,
+    MouseUp             = 1 << 1,
+    MouseMove           = 1 << 2,
+    MouseForceChanged   = 1 << 3,
+    MouseForceDown      = 1 << 4,
+    MouseForceUp        = 1 << 5,
 
     // WebWheelEvent
-    Wheel,
+    Wheel               = 1 << 6,
 
     // WebKeyboardEvent
-    KeyDown,
-    KeyUp,
-    RawKeyDown,
-    Char,
+    KeyDown             = 1 << 7,
+    KeyUp               = 1 << 8,
+    RawKeyDown          = 1 << 9,
+    Char                = 1 << 10,
 
 #if ENABLE(TOUCH_EVENTS)
     // WebTouchEvent
-    TouchStart,
-    TouchMove,
-    TouchEnd,
-    TouchCancel,
+    TouchStart          = 1 << 11,
+    TouchMove           = 1 << 12,
+    TouchEnd            = 1 << 13,
+    TouchCancel         = 1 << 14,
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-    GestureStart,
-    GestureChange,
-    GestureEnd,
+    GestureStart        = 1 << 15,
+    GestureChange       = 1 << 16,
+    GestureEnd          = 1 << 17
 #endif
 };
 
