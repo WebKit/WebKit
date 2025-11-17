@@ -51,6 +51,11 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "FrameTreeNodeData.h"
+#endif
+
 namespace API {
 class Array;
 }

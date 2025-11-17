@@ -89,6 +89,14 @@
 #include "WasmDebuggerDebuggable.h"
 #endif
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "WebCompiledContentRuleListData.h"
+#include "WebPermissionControllerProxy.h"
+#include "WebPushMessage.h"
+#include "WebsiteData.h"
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;

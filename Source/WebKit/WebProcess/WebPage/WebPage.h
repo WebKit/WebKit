@@ -137,6 +137,11 @@ OBJC_CLASS PDFSelection;
 OBJC_CLASS WKAccessibilityWebPageObject;
 #endif
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "FrameTreeNodeData.h"
+#endif
+
 #define ENABLE_VIEWPORT_RESIZING PLATFORM(IOS_FAMILY)
 
 namespace WTF {

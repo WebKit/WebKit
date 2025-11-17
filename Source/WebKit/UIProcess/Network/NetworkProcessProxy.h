@@ -54,6 +54,11 @@
 #include <wtf/OSObjectPtr.h>
 #endif
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "APICustomProtocolManagerClient.h"
+#endif
+
 namespace IPC {
 class FormDataReference;
 }

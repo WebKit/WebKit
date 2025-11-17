@@ -34,6 +34,12 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "WebBackForwardCacheEntry.h"
+#include <WebCore/FrameIdentifier.h>
+#endif
+
 namespace WebKit {
 
 class BrowsingContextGroup;

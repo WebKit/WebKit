@@ -46,6 +46,11 @@
 #include <WebCore/ContentFilterUnblockHandler.h>
 #endif
 
+#ifdef __swift__
+// FIXME - workaround for rdar://152495753
+#include "FrameTreeNodeData.h"
+#endif
+
 namespace API {
 class Data;
 class Navigation;
