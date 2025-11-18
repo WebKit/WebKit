@@ -53,7 +53,8 @@
 
 PAS_IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage")
 
-#define PAS_MTE_TAG_MASK 0x0f00000000000000ull
+#define PAS_MTE_TAG_SHIFT 56
+#define PAS_MTE_TAG_MASK (0x0full << PAS_MTE_TAG_SHIFT)
 #define PAS_MTE_CANONICAL_MASK ((0x1ull << 48) - 1)
 
 #if __has_include(<malloc_private.h>)
@@ -194,6 +195,14 @@ enum pas_mte_tag_constraint {
   pas_mte_odd_tag = 0x5555,
   pas_mte_nonzero_even_tag = 0xaaab,
 };
+
+typedef enum pas_mte_tag_constraint pas_mte_tag_constraint;
+typedef enum pas_mte_tag_constraint __pas_mte_tag_constraint;
+
+inline __attribute__((always_inline)) pas_mte_tag_constraint pas_mte_exclude_tag(pas_mte_tag_constraint base, uint8_t tag_value_to_exclude)
+{
+    return (pas_mte_tag_constraint)(base & ~(1 << tag_value_to_exclude));
+}
 
 PAS_IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 
@@ -479,6 +488,42 @@ PAS_IGNORE_WARNINGS_END
 #define PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config) 0
 #endif
 
+/*
+ * The foolproof way to get the mtag for a memory location is via the
+ * `ldg` instruction. However, this is particularly expensive, so when
+ * possible we prefer to use our knowledge of libpas' tagging policies
+ * to deduce when the tag must be zero and in that case skip the ldg.
+ * Really, the point here is to avoid calling ldg
+ *  - For bump-allocations in segregated pages (the hottest alloc-path)
+ *  - When MTE is runtime-disabled (e.g. in most WebContent processes)
+ *  - For allocations that are never MTE-tagged
+ *
+ * This function should thus not be used for asserts of otherwise
+ * used to catch 'unexpected behavior'.
+ */
+PAS_ALWAYS_INLINE uint8_t
+pas_mte_infer_or_load_previous_tag(uintptr_t ptr, pas_allocation_mode mode, pas_allocation_initiality initiality, bool is_known_medium)
+{
+    // If tagging is generally disabled, bail out
+    if (!PAS_MTE_SHOULD_STORE_TAG || !PAS_USE_MTE)
+        return 0;
+    // If this could be a compact allocation, then it must be allocated in a
+    // canonically tagged page, so bail out
+    if (mode == pas_always_compact_allocation_mode
+        || mode == pas_maybe_compact_allocation_mode)
+        return 0;
+    // If tagging is disabled for medium objects and this object is known-medium, bail out
+    if (is_known_medium && !PAS_MTE_MEDIUM_TAGGING_ENABLED)
+        return 0;
+    // If we know this is the first allocation in this slot,
+    // assume zero-tag and bail out
+    if (initiality == pas_initial_allocation)
+        return 0;
+    // Only actually ldg if necessary
+    PAS_MTE_GET_MTAG(ptr);
+    return (ptr >> PAS_MTE_TAG_SHIFT);
+}
+
 // Tagging is what actually applies an PAS_MTE tag to an allocation. If the
 // pas_allocation_mode passed to this macro is compact, we zero the upper
 // bits of the pointer and tag the object with a zero tag. Otherwise, we
@@ -486,30 +531,43 @@ PAS_IGNORE_WARNINGS_END
 // invoked with a size that's a multiple of 16, and it's really important
 // that the size passed be the allocation size of the object, not the
 // actual size.
-#define PAS_MTE_TAG_REGION(ptr, size, mode, is_allocator_homogeneous, is_known_medium) do { \
-        if (PAS_MTE_SHOULD_STORE_TAG) { \
-            if (mode != pas_non_compact_allocation_mode) \
-                ptr &= ~PAS_MTE_TAG_MASK; \
-            else { \
-                if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) && is_allocator_homogeneous == pas_mte_homogeneous_allocator) { \
-                    if ((((uintptr_t)ptr & PAS_MTE_CANONICAL_MASK) / size) & 0x1) \
-                        PAS_MTE_CREATE_RANDOM_TAG(ptr, pas_mte_odd_tag); \
-                    else \
-                        PAS_MTE_CREATE_RANDOM_TAG(ptr, pas_mte_nonzero_even_tag); \
-                } else \
-                    PAS_MTE_CREATE_RANDOM_TAG(ptr, pas_mte_any_nonzero_tag); \
-            } \
-            if (mode != pas_always_compact_allocation_mode) { \
-                TAG_REGION_FROM_POINTER(ptr, size, is_known_medium); \
-                if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) \
-                    && PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT) \
-                    && is_allocator_homogeneous == pas_mte_homogeneous_allocator) { \
-                    ASSERT_PRIOR_TAG_IS_DISJOINT(ptr); \
-                    ASSERT_PRIOR_TAG_IS_DISJOINT(ptr + size); \
-                } \
-            } \
-        } \
-    } while (0)
+PAS_ALWAYS_INLINE uintptr_t
+pas_mte_tag_region(
+    uintptr_t ptr,
+    size_t size,
+    pas_allocation_mode mode,
+    pas_allocator_homogeneity homogeneity,
+    bool is_known_medium,
+    uint8_t previous_tag)
+{
+    if (PAS_MTE_SHOULD_STORE_TAG) {
+        if (mode != pas_non_compact_allocation_mode)
+            ptr &= ~PAS_MTE_TAG_MASK;
+        else {
+            pas_mte_tag_constraint valid_tags;
+            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) && homogeneity == pas_mte_homogeneous_allocator) {
+                if ((((uintptr_t)ptr & PAS_MTE_CANONICAL_MASK) / size) & 0x1)
+                    valid_tags = pas_mte_odd_tag;
+                else
+                    valid_tags = pas_mte_nonzero_even_tag;
+            } else
+                valid_tags = pas_mte_any_nonzero_tag;
+            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_PREVIOUS_TAG_EXCLUSION))
+                valid_tags = pas_mte_exclude_tag(valid_tags, previous_tag);
+            PAS_MTE_CREATE_RANDOM_TAG(ptr, valid_tags);
+        }
+        if (mode != pas_always_compact_allocation_mode) {
+            TAG_REGION_FROM_POINTER(ptr, size, is_known_medium);
+            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
+                && PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)
+                && homogeneity == pas_mte_homogeneous_allocator) {
+                ASSERT_PRIOR_TAG_IS_DISJOINT(ptr);
+                ASSERT_PRIOR_TAG_IS_DISJOINT(ptr + size);
+            }
+        }
+    }
+    return ptr;
+}
 
 /*
  * MTE can be used to protect against both spatial (e.g. out-of-bounds) and
@@ -588,7 +646,8 @@ pas_mte_maybe_tag_allocated_region(
             const char* qualifier = (initiality == pas_initial_allocation) ? "First" : "Maybe first";
             printf("[MTE]\t%s time tagging region: alloc-tagging %zu bytes from %p to %p\n", qualifier, size, (uint8_t*)begin, (uint8_t*)begin + size);
         }
-        PAS_MTE_TAG_REGION(begin, size, mode, homogeneity, is_known_medium);
+        uint8_t previous_tag = pas_mte_infer_or_load_previous_tag(begin, mode, initiality, is_known_medium);
+        begin = pas_mte_tag_region(begin, size, mode, homogeneity, is_known_medium, previous_tag);
     }
     return begin;
 }
@@ -612,8 +671,10 @@ pas_mte_retag_freed_region_if_tagged(
      * In the future it would be better to pipe the information through
      * so that we can save the LDG, but that will require moving the
      * source-of-truth out of the local allocator. */
-    if (tag)
-        PAS_MTE_TAG_REGION(begin, size, pas_non_compact_allocation_mode, homogeneity, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config));
+    if (tag) {
+        tag >>= PAS_MTE_TAG_SHIFT;
+        begin = pas_mte_tag_region(begin, size, pas_non_compact_allocation_mode, homogeneity, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config), tag);
+    }
     return begin;
 }
 
