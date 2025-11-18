@@ -158,6 +158,12 @@ public:
         return result;
     }
 
+#ifdef __swift__
+    T* _Nonnull take() const SWIFT_RETURNS_RETAINED {
+        return &copyRef().leakRef();
+    }
+#endif
+
 private:
     friend Ref adoptRef<T>(T&);
     template<typename X, typename Y, typename Z> friend class Ref;
