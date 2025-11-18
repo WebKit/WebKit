@@ -34,6 +34,7 @@
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/NavigationRequester.h>
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ReferrerPolicy.h>
@@ -94,6 +95,7 @@ struct LoadParameters {
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion { 0 };
+    std::optional<WebCore::NavigationRequester> requester;
 };
 
 } // namespace WebKit

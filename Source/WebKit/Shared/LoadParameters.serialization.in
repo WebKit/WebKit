@@ -61,4 +61,5 @@ enum class WebCore::LockBackForwardList : bool;
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion;
+    std::optional<WebCore::NavigationRequester> requester;
 };

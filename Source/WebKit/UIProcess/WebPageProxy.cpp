@@ -2189,6 +2189,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(url);
     loadParameters.requiredCookiesVersion = protectedWebsiteDataStore()->cookiesVersion();
     loadParameters.originatingFrame = navigation.lastNavigationAction() ? std::optional(navigation.lastNavigationAction()->originatingFrameInfoData) : std::nullopt;
+    if (navigation.lastNavigationAction())
+        loadParameters.requester = navigation.lastNavigationAction()->requester;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (protectedPreferences()->iFrameResourceMonitoringEnabled())
@@ -5171,6 +5173,9 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.ownerPermissionsPolicy = navigation->ownerPermissionsPolicy();
             loadParameters.isPerformingHTTPFallback = navigationAction->data().isPerformingHTTPFallback;
             loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
+            if (navigation->lastNavigationAction())
+                loadParameters.requester = navigation->lastNavigationAction()->requester;
+
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTFMove(loadParameters)), webPageIDInProcess(processNavigatingTo));
         }
 
@@ -5442,6 +5447,8 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.ownerPermissionsPolicy = navigation.ownerPermissionsPolicy();
         loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
         loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
+        if (navigation.lastNavigationAction())
+            loadParameters.requester = navigation.lastNavigationAction()->requester;
 
         if (navigation.isInitialFrameSrcLoad())
             frame.setIsPendingInitialHistoryItem(true);
@@ -9025,7 +9032,8 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         if (privateClickMeasurement)
             newPage->internals().privateClickMeasurement = { { WTFMove(*privateClickMeasurement), { }, { } } };
 
-        if (navigationDataForNewProcess && !openedBlobURL) {
+        bool isBlobURLOpenedInSiteIsolation = openedBlobURL && protectedPreferences()->siteIsolationEnabled();
+        if (navigationDataForNewProcess && (isBlobURLOpenedInSiteIsolation || !openedBlobURL)) {
             bool isRequestFromClientOrUserInput = navigationDataForNewProcess->isRequestFromClientOrUserInput;
 
             reply(std::nullopt, std::nullopt);

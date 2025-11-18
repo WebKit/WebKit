@@ -46,6 +46,7 @@
 #include <WebCore/LinkIcon.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -544,6 +545,9 @@ public:
 
     WEBCORE_EXPORT void setNewResultingClientId(ScriptExecutionContextIdentifier);
 
+    std::optional<NavigationRequester> crossSiteRequester() const { return m_crossSiteRequester; }
+    void setCrossSiteRequester(NavigationRequester& crossSiteRequester) { m_crossSiteRequester = crossSiteRequester; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&);
 
@@ -771,6 +775,8 @@ private:
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
     WebpagePreferences m_preferences;
+    // The triggering action's requester should take precendence. This is used for site-isolation situations that require a cross-site requester.
+    std::optional<NavigationRequester> m_crossSiteRequester;
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
 

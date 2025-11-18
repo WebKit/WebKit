@@ -81,7 +81,6 @@
 #include "MemoryCache.h"
 #include "MixedContentChecker.h"
 #include "NavigationNavigationType.h"
-#include "NavigationRequester.h"
 #include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
 #include "NetworkStorageSession.h"

@@ -23,6 +23,7 @@
 
 #include <WebCore/Cursor.h>
 #include <WebCore/DisabledAdaptations.h>
+#include <WebCore/Document.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/ImageBufferFormat.h>
@@ -170,7 +171,7 @@ public:
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement);
     void focusedFrameChanged(Frame*);
 
-    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&);
+    WEBCORE_EXPORT RefPtr<Page> createWindow(LocalFrame&, const String& openedMainFrameName, const WindowFeatures&, const NavigationAction&, const std::optional<Ref<Document>> requester = std::nullopt);
     WEBCORE_EXPORT void show();
 
     bool canRunModal() const;

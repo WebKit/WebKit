@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+
+<script>
+description("Tests opening a blob from a cross-site iframe");
+jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data === "finish test" && window.testRunner)
+        testPassed("Received event " + event.data);
+        finishJSTest();
+});
+
+</script>
+<body>
+    <iframe src="http://127.0.0.1:8000/site-isolation/resources/window-open-blob-url.html"  width="600px" height="400px" frameborder=3></iframe>
+</body>
