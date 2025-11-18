@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "FindInPageUtilities.h"
+#import "Utilities.h"
+#import <WebKit/WKWebViewPrivate.h>
 
 #if HAVE(UIFINDINTERACTION)
 

@@ -118,6 +118,7 @@ Tests/WebKitCocoa/EditorStateTests.mm @nonARC
 Tests/WebKitCocoa/ElementTargetingTests.mm @nonARC
 Tests/WebKitCocoa/ElementTextPreview.mm @nonARC
 Tests/WebKitCocoa/EnhancedSecurity.mm @nonARC
+Tests/WebKitCocoa/EnhancedSecurityPolicies.mm @nonARC
 Tests/WebKitCocoa/EventAttribution.mm @nonARC
 Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm @nonARC
 Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm @nonARC

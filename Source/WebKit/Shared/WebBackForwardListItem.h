@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "EnhancedSecurity.h"
 #include "SessionState.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataStore.h"
@@ -102,6 +103,9 @@ public:
 
     String loggingString();
 
+    void setEnhancedSecurity(EnhancedSecurity state) { m_enhancedSecurity = state; }
+    EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
+
 private:
     WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, BrowsingContextGroup*);
 
@@ -124,6 +128,7 @@ private:
     RefPtr<ViewSnapshot> m_snapshot;
 #endif
     bool m_isRemoteFrameNavigation { false };
+    EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
 } SWIFT_SHARED_REFERENCE(refBackForwardListItem, derefBackForwardListItem);
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

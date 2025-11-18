@@ -199,6 +199,9 @@ public:
 
     void setPendingSharedProcess(WebKit::FrameProcess&);
 
+    void setSiteHasStorage(const WTF::URL&, bool);
+    bool currentRequestSiteHasStorage() const { return m_siteHasStorage; }
+
 private:
     Navigation(WebCore::ProcessIdentifier);
     Navigation(WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
@@ -229,6 +232,7 @@ private:
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
     bool m_safeBrowsingCheckTimedOut : 1 { false };
+    bool m_siteHasStorage : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };

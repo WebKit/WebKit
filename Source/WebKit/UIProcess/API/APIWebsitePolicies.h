@@ -113,8 +113,9 @@ public:
     WebCore::AllowsContentJavaScript allowsContentJavaScript() const { return m_data.allowsContentJavaScript; }
     void setAllowsContentJavaScript(WebCore::AllowsContentJavaScript allows) { m_data.allowsContentJavaScript = allows; }
 
-    bool enhancedSecurityEnabled() const { return m_enhancedSecurityEnabled; }
-    void setEnhancedSecurityEnabled(bool enabled) { m_enhancedSecurityEnabled = enabled; }
+    bool enhancedSecurityEnabled() const { return m_enhancedSecurityEnabled.value_or(false); }
+    void setEnhancedSecurityEnabled(std::optional<bool> enabled) { m_enhancedSecurityEnabled = enabled; }
+    bool isEnhancedSecurityExplicitlySet() const { return !!m_enhancedSecurityEnabled; }
 
     bool lockdownModeEnabled() const;
     void setLockdownModeEnabled(std::optional<bool> enabled) { m_lockdownModeEnabled = enabled; }
@@ -173,7 +174,7 @@ private:
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     std::optional<bool> m_lockdownModeEnabled;
-    bool m_enhancedSecurityEnabled { false };
+    std::optional<bool> m_enhancedSecurityEnabled;
 #if PLATFORM(COCOA)
     const std::unique_ptr<WebKit::LockdownModeObserver> m_lockdownModeObserver;
 #endif

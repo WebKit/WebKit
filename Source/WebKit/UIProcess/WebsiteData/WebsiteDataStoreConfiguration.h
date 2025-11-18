@@ -261,6 +261,9 @@ public:
     void setAdditionalDomainsWithUserInteractionForTesting(String&& domains) { m_additionalDomainsWithUserInteractionForTesting = WTFMove(domains); }
     const String& additionalDomainsWithUserInteractionForTesting() const { return m_additionalDomainsWithUserInteractionForTesting; }
 
+    const String& enhancedSecurityDirectory() const { return m_directories.enhancedSecurityDirectory; }
+    void setEnhancedSecurityDirectory(String&& directory) { m_directories.enhancedSecurityDirectory = WTFMove(directory); }
+
     struct Directories {
         String alternativeServicesDirectory;
         String cacheStorageDirectory;
@@ -287,6 +290,7 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
         String resourceMonitorThrottlerDirectory;
 #endif
+        String enhancedSecurityDirectory;
         Directories isolatedCopy() const&;
         Directories isolatedCopy() &&;
     };

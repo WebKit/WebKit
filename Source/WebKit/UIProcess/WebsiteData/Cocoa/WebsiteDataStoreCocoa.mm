@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -555,6 +555,14 @@ String WebsiteDataStore::defaultResourceMonitorThrottlerDirectory(const String& 
 }
 #endif
 
+String WebsiteDataStore::defaultEnhancedSecurityDirectory(const String& baseDirectory)
+{
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "EnhancedSecurity"_s);
+
+    return websiteDataDirectoryFileSystemRepresentation("EnhancedSecurity"_s, { }, ShouldCreateDirectory::No);
+}
+
 String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
     static NeverDestroyed<RetainPtr<NSURL>> tempURL = [] {
@@ -1075,6 +1083,61 @@ HashSet<WebCore::RegistrableDomain> WebsiteDataStore::platformAdditionalDomainsW
     }
 
     return result;
+}
+
+EnhancedSecuritySitesHolder& WebsiteDataStore::enhancedSecuritySitesHolder()
+{
+    ASSERT(isPersistent());
+
+    if (!m_enhancedSecuritySites)
+        lazyInitialize(m_enhancedSecuritySites, EnhancedSecuritySitesHolder::create(resolvedDirectories().enhancedSecurityDirectory));
+
+    return *m_enhancedSecuritySites;
+}
+
+void WebsiteDataStore::trackEnhancedSecurityForDomain(WebCore::RegistrableDomain&& domain, EnhancedSecurity reason)
+{
+    if (!isPersistent())
+        return;
+
+    enhancedSecuritySitesHolder().trackEnhancedSecurityForDomain(WTFMove(domain), reason);
+}
+
+void WebsiteDataStore::fetchEnhancedSecurityOnlyDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    if (!isPersistent())
+        return completionHandler({ });
+
+    enhancedSecuritySitesHolder().fetchEnhancedSecurityOnlyDomains(WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::fetchAllEnhancedSecuritySites(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    if (!isPersistent())
+        return completionHandler({ });
+
+    enhancedSecuritySitesHolder().fetchAllEnhancedSecuritySites(WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::removeEnhancedSecuritySites(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
+{
+    if (!isPersistent())
+        return completionHandler();
+
+    Vector<WebCore::RegistrableDomain> sites;
+
+    for (auto& origin : origins)
+        sites.append(WebCore::RegistrableDomain(origin));
+
+    enhancedSecuritySitesHolder().deleteSites(sites, WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::removeAllEnhancedSecuritySites(CompletionHandler<void()>&& completionHandler)
+{
+    if (!isPersistent())
+        return completionHandler();
+
+    enhancedSecuritySitesHolder().deleteAllSites(WTFMove(completionHandler));
 }
 
 }

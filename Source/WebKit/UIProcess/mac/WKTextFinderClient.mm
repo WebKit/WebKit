@@ -42,6 +42,7 @@
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 // FIXME: Implement scrollFindMatchToVisible.

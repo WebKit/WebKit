@@ -882,6 +882,16 @@ void NetworkProcessProxy::clearUserInteraction(PAL::SessionID sessionID, const R
     sendWithAsyncReply(Messages::NetworkProcess::ClearUserInteraction(sessionID, resourceDomain), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::hasLocalStorageOrCookies(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(false);
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::HasLocalStorageOrCookies(sessionID, resourceDomain), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::hasLocalStorage(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {

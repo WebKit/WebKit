@@ -27,6 +27,7 @@
 
 #include "ContextMenuContextData.h"
 #include "EditorState.h"
+#include "EnhancedSecurityTracking.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "HiddenPageThrottlingAutoIncreasesCounter.h"
 #include "LayerTreeContext.h"
@@ -442,6 +443,8 @@ public:
 #endif
 
     std::optional<TextManipulationParameters> textManipulationParameters;
+
+    EnhancedSecurityTracking enhancedSecurityTracker;
 
     explicit Internals(WebPageProxy&);
 

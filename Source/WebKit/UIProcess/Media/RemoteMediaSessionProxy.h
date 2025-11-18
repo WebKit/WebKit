@@ -28,6 +28,8 @@
 #include "UIProcess/Media/RemoteMediaSessionManagerProxy.h"
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
+#include "RemoteMediaSessionClientProxy.h"
+#include "RemoteMediaSessionManagerProxy.h"
 #include "RemoteMediaSessionState.h"
 #include <WebCore/PlatformMediaSession.h>
 

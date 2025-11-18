@@ -57,6 +57,7 @@ NSString * const _WKWebsiteDataTypeAdClickAttributions = @"_WKWebsiteDataTypeAdC
 NSString * const _WKWebsiteDataTypePrivateClickMeasurements = @"_WKWebsiteDataTypePrivateClickMeasurements";
 NSString * const _WKWebsiteDataTypeAlternativeServices = @"_WKWebsiteDataTypeAlternativeServices";
 NSString * const _WKWebsiteDataTypeFileSystem = WKWebsiteDataTypeFileSystem;
+NSString* const _WKWebsiteDataTypeEnhancedSecuritySites = @"_WKWebsiteDataTypeEnhancedSecuritySites";
 
 @implementation WKWebsiteDataRecord
 
@@ -116,6 +117,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
     if ([dataTypes containsObject:WKWebsiteDataTypeScreenTime])
         [array addObject:@"Screen Time"];
 #endif
+    if ([dataTypes containsObject:_WKWebsiteDataTypeEnhancedSecuritySites])
+        [array addObject:@"Enhanced Security Sites"];
 
     return [array componentsJoinedByString:@", "];
 }
