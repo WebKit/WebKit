@@ -262,7 +262,7 @@ bool waitForCondition(std::function<bool()> predicate, Seconds timeout)
 void setupTestEnvironment(DebugServer*& debugServer, ExecutionHandler*& executionHandler)
 {
     WTF::initializeMainThread();
-    Options::setOptions("--enableWasmDebugger=true");
+    Options::setOptions("--enableWasmDebugger=true --verboseWasmDebugger=true");
 
     debugServer = &DebugServer::singleton();
     bool started = debugServer->startRWI([](const String& packet) {

@@ -54,7 +54,7 @@ using JSC::Wasm::DebugServer;
 using JSC::Wasm::ExecutionHandler;
 using TestScripts::TestScript;
 
-constexpr bool verboseLogging = false;
+constexpr bool verboseLogging = true;
 constexpr double defaultTimeoutSeconds = 5.0;
 
 extern std::atomic<unsigned> replyCount;
