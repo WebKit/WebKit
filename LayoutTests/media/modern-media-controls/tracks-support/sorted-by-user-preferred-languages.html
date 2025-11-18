@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width">
 <script src="../resources/media-controls-utils.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/counting.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" autoplay controls muted playsinline>
     <track src="../../lorem-ipsum.vtt" kind="descriptions" srclang="en" label="Descriptions">
@@ -27,7 +27,7 @@ window.jsTestIsAsync = true;
 description(`This test checks that tracks are sorted based on the user's preferred languages.`);
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
+var shadowRoot;
 
 window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
 window.internals.setCaptionDisplayMode("manual"); // Show all tracks.
@@ -35,6 +35,7 @@ window.internals.setCaptionDisplayMode("manual"); // Show all tracks.
 media.addEventListener("play", () => {
     media.pause();
 
+    shadowRoot = window.internals.shadowRoot(media);
     shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
         shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
             debug("Tapping tracks button...");
@@ -53,5 +54,4 @@ media.addEventListener("play", () => {
 });
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

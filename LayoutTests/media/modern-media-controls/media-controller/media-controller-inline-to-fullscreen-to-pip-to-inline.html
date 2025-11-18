@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 320px; height: 240px;" controls autoplay></video>
 <div id="shadow"></div>
@@ -15,53 +15,66 @@ if (window.internals) {
 }
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
+var shadowRoot;
+
+function ensureShadowRoot()
+{
+    if (shadowRoot)
+        return;
+    shadowRoot = window.internals.shadowRoot(media);
+}
 
 media.addEventListener("play", () => {
-    debug("");
-    shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
-    debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+        ensureShadowRoot();
+        debug("");
+        shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+        debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
 
-    media.pause();
-    window.requestAnimationFrame(() => clickOnElement(shadowRoot.querySelector("button.fullscreen")));
+        media.pause();
+        window.requestAnimationFrame(() => clickOnElement(shadowRoot.querySelector("button.fullscreen")));
+    });
 });
 
-media.addEventListener("webkitpresentationmodechanged", async () => {
-    debug("");
-    debug(`Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = ${media.webkitPresentationMode}.`);
-
-    if (window.internals) {
-        await new Promise((resolve, reject) => {
-            setTimeout(reject, 2000);
-            shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", resolve);
-        });
-    }
-
-    switch (media.webkitPresentationMode) {
-    case "fullscreen":
-        window.requestAnimationFrame(() => {
-            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
-
-            debug("");
-            debug("We enter picture-in-picture by clicking on the matching button.");
-            clickOnElement(shadowRoot.querySelector("button.pip"));
-        });
-        break;
-    case "picture-in-picture":
+media.addEventListener("webkitpresentationmodechanged", () => {
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", async () => {
+        ensureShadowRoot();
         debug("");
-        debug("We exit picture-in-picture.");
-        window.setTimeout(() => media.webkitSetPresentationMode("inline"));
-        break;
-    case "inline":
-        window.requestAnimationFrame(() => {
-            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+        debug(`Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = ${media.webkitPresentationMode}.`);
 
+        if (window.internals) {
+            await new Promise((resolve, reject) => {
+                setTimeout(reject, 2000);
+                shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", resolve);
+            });
+        }
+
+        switch (media.webkitPresentationMode) {
+        case "fullscreen":
+            window.requestAnimationFrame(() => {
+                shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
+
+                debug("");
+                debug("We enter picture-in-picture by clicking on the matching button.");
+                clickOnElement(shadowRoot.querySelector("button.pip"));
+            });
+            break;
+        case "picture-in-picture":
             debug("");
-            media.remove();
-            finishJSTest();
-        });
-        break;
-    }
+            debug("We exit picture-in-picture.");
+            window.setTimeout(() => media.webkitSetPresentationMode("inline"));
+            break;
+        case "inline":
+            window.requestAnimationFrame(() => {
+                shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+                debug("");
+                media.remove();
+                finishJSTest();
+            });
+            break;
+        }
+    });
 });
 
 function clickOnElement(element)
@@ -73,5 +86,4 @@ function clickOnElement(element)
 }
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

@@ -25,15 +25,18 @@
     <div>
         <video controls autoplay></video>
     </div>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script type="text/javascript">
+        jsTestIsAsync = true;
 
         const media = document.querySelector("video");
-        const shadowRoot = window.internals.shadowRoot(media);
-        const mediaControls = shadowRoot.querySelector(".media-controls");
-        shouldBeEqualToString("mediaControls.style.width", "560px"); // width - (2 * border)
-        shouldBeEqualToString("mediaControls.style.height", "260px"); // height - (2 * border)
-        
+        var mediaControls;
+        shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+            mediaControls = window.internals.shadowRoot(media).querySelector('.media-controls');
+            shouldBeEqualToString("mediaControls.style.width", "560px"); // width - (2 * border)
+            shouldBeEqualToString("mediaControls.style.height", "260px"); // height - (2 * border)
+            finishJSTest();
+        });
+
     </script>
-    <script src="../../../resources/js-test-post.js"></script>
 </body>

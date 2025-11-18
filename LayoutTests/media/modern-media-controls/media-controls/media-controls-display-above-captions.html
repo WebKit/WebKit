@@ -1,17 +1,25 @@
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/CC+Subtitles.mov" controls></video>
 <script type="text/javascript">
+jsTestIsAsync = true;
 
 description("Testing that the media controls container is above the captions container.");
 
-const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media); 
-const container = shadowRoot.querySelector(".media-controls-container");
-shouldBe("container.childElementCount", "2");
-shouldBeEqualToString("container.firstElementChild.getAttribute('useragentpart')", "-webkit-media-text-track-container");
-shouldBeTrue("container.lastElementChild.classList.contains('media-controls')");
+var media;
+var shadowRoot;
+var container;
 
+window.addEventListener("load", () => {
+    media = document.querySelector("video");
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+        shadowRoot = window.internals.shadowRoot(media);
+        container = shadowRoot.querySelector(".media-controls-container");
+        shouldBe("container.childElementCount", "2");
+        shouldBeEqualToString("container.firstElementChild.getAttribute('useragentpart')", "-webkit-media-text-track-container");
+        shouldBeTrue("container.lastElementChild.classList.contains('media-controls')");
+        finishJSTest();
+    });
+});
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

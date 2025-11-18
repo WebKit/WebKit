@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
 <script type="text/javascript">
@@ -9,31 +9,34 @@ window.jsTestIsAsync = true;
 description("Testing the <code>MediaController</code> resizing behavior.");
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
-const mediaControls = shadowRoot.lastElementChild.lastElementChild;
+var shadowRoot;
+var mediaControls;
 
-debug("Checking initial size");
-shouldBeEqualToString("mediaControls.style.width", "320px");
-shouldBeEqualToString("mediaControls.style.height", "240px");
+shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+    shadowRoot = window.internals.shadowRoot(media);
+    mediaControls = shadowRoot.lastElementChild.lastElementChild;
 
-function testResize() {
-    shouldBeEqualToString("mediaControls.style.width", "400px");
-    shouldBeEqualToString("mediaControls.style.height", "300px");
-    shadowRoot.removeEventListener("resize", testResize);
-    setTimeout(() => {
-        debug("");
-        media.remove();
-        finishJSTest();
-    });
-}
+    debug("Checking initial size");
+    shouldBeEqualToString("mediaControls.style.width", "320px");
+    shouldBeEqualToString("mediaControls.style.height", "240px");
 
-shadowRoot.addEventListener("resize", testResize);
+    function testResize() {
+        shouldBeEqualToString("mediaControls.style.width", "400px");
+        shouldBeEqualToString("mediaControls.style.height", "300px");
+        shadowRoot.removeEventListener("resize", testResize);
+        setTimeout(() => {
+            debug("");
+            media.remove();
+            finishJSTest();
+        });
+    }
 
-debug("");
-debug("Resizing to 400x300");
-media.style.width = "400px";
-media.style.height = "300px";
+    shadowRoot.addEventListener("resize", testResize);
 
+    debug("");
+    debug("Resizing to 400x300");
+    media.style.width = "400px";
+    media.style.height = "300px";
+});
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

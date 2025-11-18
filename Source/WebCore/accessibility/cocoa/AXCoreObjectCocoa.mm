@@ -481,6 +481,9 @@ bool AXCoreObject::isEmptyGroup()
     if (isRemoteFrame()) [[unlikely]]
         return false;
 
+    if (isVideo() || role() == AccessibilityRole::Audio)
+        return false;
+
     return [rolePlatformString().createNSString() isEqual:NSAccessibilityGroupRole]
         && !firstUnignoredChild()
         && ![renderWidgetChildren(*this) count];

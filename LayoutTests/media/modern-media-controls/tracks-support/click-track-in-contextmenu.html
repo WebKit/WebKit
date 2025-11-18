@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width">
 <script src="../resources/media-controls-utils.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline></video>
 <script type="text/javascript">
@@ -12,7 +12,7 @@ window.jsTestIsAsync = true;
 description("Clicking on a track in the tracks contextmenu.");
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
+var shadowRoot;
 
 window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
 
@@ -21,6 +21,7 @@ let selectedTrack = null;
 media.addEventListener("play", () => {
     media.pause();
 
+    shadowRoot = window.internals.shadowRoot(media);
     dumpAudioTracksEnabledState();
 
     media.audioTracks.addEventListener("change", handleAudioTracksChange);
@@ -86,5 +87,4 @@ function dumpAudioTracksEnabledState()
 }
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

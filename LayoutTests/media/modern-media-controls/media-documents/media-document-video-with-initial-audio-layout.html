@@ -1,4 +1,4 @@
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <iframe src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 <script type="text/javascript">
@@ -8,25 +8,27 @@ description("Testing that a media document initially starts with an audio layout
 window.jsTestIsAsync = true;
 
 let media;
+const iframe = document.querySelector("iframe");
 
-(function runTestIfReady() {
-    const iframe = document.querySelector("iframe");
+// We're using internals.queueTask here so that we can be sure we are running before the rAF callback
+// that will modify the element to toggle the 'audio' class. Since the controls are added asynchronously
+// we end up racing with the rAF task when using standard Web APIs.
+(function waitForVideo() {
     media = iframe.contentDocument.querySelector("video");
-
     if (!media) {
-        setTimeout(runTestIfReady);
+        internals.queueTask("DOMManipulation", waitForVideo);
         return;
     }
 
-    // Media initially is laid out as an audio element but then becomes a video.
-    shouldBeTrue("media.classList.contains('audio')");
-    shouldBecomeEqual("media.classList.contains('video')", "true", () => {
-        debug("");
-        iframe.remove();
-        finishJSTest();
+    internals.queueTask("DOMManipulation", () => {
+        shouldBeTrue("media.classList.contains('audio')");
+        shouldBecomeEqual("media.classList.contains('video')", "true", () => {
+            debug("");
+            iframe.remove();
+            finishJSTest();
+        });
     });
 })();
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

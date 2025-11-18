@@ -3,6 +3,7 @@ Testing the controls bar reappears when the mouse enters the media.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media) became different from null
 PASS !!shadowRoot.querySelector('.media-controls') became true
 
 Video started playing, controls bar should become visible by default.
