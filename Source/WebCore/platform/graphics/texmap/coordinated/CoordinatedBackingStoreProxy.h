@@ -145,6 +145,7 @@ private:
     IntSize m_tileSize;
     float m_coverAreaMultiplier { 2 };
     bool m_pendingTileCreation { false };
+    bool m_isPendingTileCreationUpdate { false };
     IntRect m_contentsRect;
     IntRect m_visibleRect;
     IntRect m_coverRect;
