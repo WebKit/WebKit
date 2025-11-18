@@ -31,6 +31,7 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include "ExecutionHandlerTest.h"
 #include "InitializeThreading.h"
 #include "Options.h"
 #include "TestUtilities.h"
@@ -46,9 +47,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 using namespace JSC;
 using namespace JSC::Wasm;
 
-// Test counters for VirtualAddress tests
-static int testsRun = 0;
-static int testsPassed = 0;
+// Test counter for VirtualAddress tests (assertion-based, crash on failure)
 static int testsFailed = 0;
 
 static void testWASMVirtualAddressConstants()
@@ -292,7 +291,6 @@ static int runAllTests()
     dataLogLn("Starting WASM Debugger Test Suite");
     dataLogLn("===============================================");
 
-    // VirtualAddress infrastructure tests
     dataLogLn("\n--- VirtualAddress Infrastructure Tests ---");
     testWASMVirtualAddressConstants();
     testWASMVirtualAddressEncoding();
@@ -302,18 +300,20 @@ static int runAllTests()
     testWASMVirtualAddressHashTraits();
     testWASMVirtualAddressOperators();
 
-    // WASM Debug Info Tests (in separate file)
     dataLogLn("\n--- WASM Debug Info Tests ---");
     int debugInfoTestsFailed = testWasmDebugInfo();
 
-    // Summary combining both test suites
+    dataLogLn("\n--- WASM Debugger Execution Handler Tests ---");
+    int executionHandlerTestsFailed = testExecutionHandler();
+
     dataLogLn("===============================================");
     dataLogLn("Combined Test Results:");
-    dataLogLn("  VirtualAddress Tests - Passed: ", testsPassed, " / ", testsRun);
+    dataLogLn("  VirtualAddress Tests - PASSED (assertion-based)");
     dataLogLn("  WASM Debug Info Tests - See detailed results above");
-    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) = ", testsFailed + debugInfoTestsFailed);
+    dataLogLn("  WASM Debugger Stress Tests - See detailed results above");
+    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) + ", executionHandlerTestsFailed, " (Stress) = ", testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed);
 
-    int totalFailures = testsFailed + debugInfoTestsFailed;
+    int totalFailures = testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed;
     if (!totalFailures) {
         dataLogLn("All tests PASSED!");
         dataLogLn("WASM debugger infrastructure is working correctly");
@@ -340,6 +340,7 @@ int main(int argc, char** argv)
     WTF::disableCRTDebugAssertDialog();
 #endif
 
+    JSC::Config::configureForTesting();
     JSC::initialize();
     JSC::Options::setOption("enableWasmDebugger=true");
     return runAllTests();

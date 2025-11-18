@@ -106,7 +106,9 @@ struct Config {
     using ShellTimeoutCheckCallback = void (*)(VM&);
     ShellTimeoutCheckCallback JSC_CONFIG_METHOD(shellTimeoutCheckCallback);
 
-    StopTheWorldCallback JSC_CONFIG_METHOD(wasmDebuggerStopTheWorld);
+    StopTheWorldCallback JSC_CONFIG_METHOD(wasmDebuggerOnStop);
+    using PostResumeCallback = void (*)();
+    PostResumeCallback JSC_CONFIG_METHOD(wasmDebuggerOnResume);
     StopTheWorldCallback JSC_CONFIG_METHOD(memoryDebuggerStopTheWorld);
 
     struct {

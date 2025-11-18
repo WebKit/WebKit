@@ -357,7 +357,7 @@ class SwiftWasmTestCase(BaseTestCase):
     def stepTest(self):
         self.send_lldb_command_or_raise("b processNumber")
 
-        # TODO: Step over - Current Swift LLDB is problematic with step over
+        # FIXME: Step over - Current Swift LLDB is problematic with step over
 
         # Step Into
         self.send_lldb_command_or_raise(
@@ -1427,3 +1427,75 @@ class TryTableTestCase(BaseTestCase):
         self.send_lldb_command_or_raise(
             "br del -f", patterns=["All breakpoints removed. (1 breakpoint)"]
         )
+
+
+class SystemCallTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise("resources/wasm/system-call.js")
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Try table test failed: {e}")
+
+    def stepTest(self):
+        self.send_lldb_command_or_raise("si", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        self.send_lldb_command_or_raise("s", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        self.send_lldb_command_or_raise("n", patterns=[])
+        self.send_lldb_command_or_raise("process interrupt")
+
+        # FIXME: `dis` hangs LLDB when stop in the system call.
+
+
+class MultiVMSameModuleSameFunctionTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise(
+            "resources/wasm/multi-vm-same-module-same-func.js"
+        )
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Try table test failed: {e}")
+
+    def stepTest(self):
+        # FIXME: Add tests when thread select is full supported
+        return
+
+
+class MultiVMSameModuleDifferentFunctionsTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise(
+            "resources/wasm/multi-vm-same-module-different-funcs.js"
+        )
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Try table test failed: {e}")
+
+    def stepTest(self):
+        # FIXME: Add tests when thread select is full supported
+        return

@@ -4403,7 +4403,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 
 #if ENABLE(WEBASSEMBLY)
             if (Options::enableWasmDebugger()) [[unlikely]]
-                Wasm::DebugServer::singleton().start(&vm);
+                Wasm::DebugServer::singleton().start();
 #endif
 
             func(vm, globalObject, success);

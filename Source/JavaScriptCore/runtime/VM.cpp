@@ -132,6 +132,7 @@
 #include "VMManager.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
+#include "WasmDebugServerUtilities.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -1884,5 +1885,16 @@ void VM::DrainMicrotaskDelayScope::decrement()
         m_vm->drainMicrotasks();
     }
 }
+
+#if ENABLE(WEBASSEMBLY)
+
+Wasm::DebugState* VM::debugState()
+{
+    if (!m_debugState)
+        m_debugState = makeUnique<Wasm::DebugState>();
+    return m_debugState.get();
+}
+
+#endif
 
 } // namespace JSC

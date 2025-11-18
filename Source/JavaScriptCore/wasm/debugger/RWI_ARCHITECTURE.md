@@ -213,12 +213,8 @@ Unlike Web Inspector which initializes/tears down controllers per page, WebAssem
 
 ### Stop-the-World Design
 
-WebAssembly debugging is designed with a **stop-the-world** pause model:
-- When LLDB hits a Wasm breakpoint, the VM that hit the breakpoint pauses execution
-- **Design Intent**: Stop ALL VMs in the process (main thread + all worker threads) for comprehensive debugging
-- **Current Implementation**: Only stops the single VM that hit the breakpoint (multi-VM support not yet implemented)
-- This matches standard native debugging behavior (LLDB/GDB debugging C++ code)
-- Provides consistent state inspection guarantees during pause
+WebAssembly debugging uses a **stop-the-world** pause model:
+- When LLDB requests an interrupt or hits a breakpoint, ALL VMs in the process stop execution (main thread + all worker threads)
 
 ### Asymmetric Interaction with JavaScript Debugger
 

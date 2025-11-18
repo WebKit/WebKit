@@ -178,6 +178,14 @@ namespace DOMJIT {
 class Signature;
 }
 
+#if ENABLE(WEBASSEMBLY)
+class JSWebAssemblyInstance;
+namespace Wasm {
+class IPIntCallee;
+struct DebugState;
+}
+#endif
+
 struct EntryFrame;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VM);
@@ -1108,14 +1116,8 @@ public:
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
-    bool isWasmStopWorldActive() { return m_isWasmStopWorldActive; }
-    void setIsWasmStopWorldActive(bool isWasmStopWorldActive) { m_isWasmStopWorldActive = isWasmStopWorldActive; }
-
 #if ENABLE(WEBASSEMBLY)
-    bool takeStepIntoWasmCall() { return m_stepIntoEvent.take(Wasm::StepIntoEvent::StepIntoCall); }
-    void setStepIntoWasmCall() { m_stepIntoEvent.set(Wasm::StepIntoEvent::StepIntoCall); }
-    bool takeStepIntoWasmThrow() { return m_stepIntoEvent.take(Wasm::StepIntoEvent::StepIntoThrow); }
-    void setStepIntoWasmThrow() { m_stepIntoEvent.set(Wasm::StepIntoEvent::StepIntoThrow); }
+    JS_EXPORT_PRIVATE Wasm::DebugState* debugState();
 #endif
 
 private:
@@ -1240,10 +1242,9 @@ private:
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
     bool m_isDebuggerHookInjected { false };
-    bool m_isWasmStopWorldActive { false };
 
 #if ENABLE(WEBASSEMBLY)
-    Wasm::StepIntoEvent m_stepIntoEvent;
+    std::unique_ptr<Wasm::DebugState> m_debugState;
 #endif
 
     Lock m_loopHintExecutionCountLock;

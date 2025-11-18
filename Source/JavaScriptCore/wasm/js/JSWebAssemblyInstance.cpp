@@ -181,6 +181,9 @@ JSWebAssemblyInstance::~JSWebAssemblyInstance()
         m_anchor->tearDown();
         m_anchor = nullptr;
     }
+
+    if (Options::enableWasmDebugger()) [[unlikely]]
+        Wasm::DebugServer::singleton().untrackInstance(this);
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)

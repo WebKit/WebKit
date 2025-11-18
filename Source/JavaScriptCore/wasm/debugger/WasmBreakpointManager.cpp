@@ -45,8 +45,21 @@ BreakpointManager::~BreakpointManager()
     clearAllBreakpoints();
 }
 
+bool BreakpointManager::hasBreakpoints()
+{
+    Locker locker { m_lock };
+    return !m_breakpoints.isEmpty();
+}
+
+bool BreakpointManager::hasOneTimeBreakpoints()
+{
+    Locker locker { m_lock };
+    return !m_oneTimeBreakpoints.isEmpty();
+}
+
 void BreakpointManager::setBreakpoint(VirtualAddress address, Breakpoint&& breakpoint)
 {
+    Locker locker { m_lock };
     breakpoint.patchBreakpoint();
     dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] setBreakpoint ", breakpoint, " at moduleAddress:", address);
     if (breakpoint.isOneTimeBreakpoint())
@@ -56,32 +69,42 @@ void BreakpointManager::setBreakpoint(VirtualAddress address, Breakpoint&& break
 
 Breakpoint* BreakpointManager::findBreakpoint(VirtualAddress address)
 {
+    Locker locker { m_lock };
     if (auto it = m_breakpoints.find(address); it != m_breakpoints.end())
         return &it->value;
     return nullptr;
 }
 
-bool BreakpointManager::removeBreakpoint(VirtualAddress address)
+bool BreakpointManager::removeBreakpointImpl(VirtualAddress address)
 {
     auto it = m_breakpoints.find(address);
     RELEASE_ASSERT(it != m_breakpoints.end());
-    Breakpoint& breakpoint = it->value;
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Removing ", breakpoint, " at ", address, " m_breakpoints.size()=", m_breakpoints.size());
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Removing breakpoint ", it->value, " at ", address);
     it->value.restorePatch();
     m_breakpoints.remove(it);
     return true;
 }
 
+bool BreakpointManager::removeBreakpoint(VirtualAddress address)
+{
+    Locker locker { m_lock };
+    bool removed = removeBreakpointImpl(address);
+    RELEASE_ASSERT(removed);
+    return true;
+}
+
 void BreakpointManager::clearAllOneTimeBreakpoints()
 {
+    Locker locker { m_lock };
     for (VirtualAddress address : m_oneTimeBreakpoints)
-        removeBreakpoint(address);
+        removeBreakpointImpl(address);
     m_oneTimeBreakpoints.clear();
     dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Cleared all one-time breakpoints");
 }
 
 void BreakpointManager::clearAllBreakpoints()
 {
+    Locker locker { m_lock };
     for (auto& [_, breakpoint] : m_breakpoints)
         breakpoint.restorePatch();
     m_breakpoints.clear();

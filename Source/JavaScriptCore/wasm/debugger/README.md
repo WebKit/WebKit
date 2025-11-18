@@ -5,6 +5,7 @@ A comprehensive debugging solution that enables LLDB debugging of WebAssembly co
 > **Related Documentation:**
 > - **This document**: JSC debug server implementation (both Standalone and RWI modes)
 > - **[RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md)**: WebKit integration architecture (RWI mode details)
+> - **[Debugger-Mutator-Protocol.md](./Debugger-Mutator-Protocol.md)**: Thread synchronization protocol and control flow diagrams
 
 ## What is this project?
 
@@ -188,11 +189,6 @@ See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions
 
 ## Known Issues and Future Improvements
 
-### Multi-VM Debugging Support
-
-- **Issue**: Current implementation only stops a single VM when hitting breakpoints
-- **Location**: `WasmExecutionHandler.cpp:65-66`
-- **Solution**: When ANY VM hits a WebAssembly breakpoint, stop ALL execution across ALL VMs in the process for comprehensive debugging
 
 ### WASM Stack Value Type Support
 
@@ -225,6 +221,11 @@ See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions
 - **Issue**: LLDB is not notified when new modules are loaded or unloaded
 - **Location**: `WasmDebugServer.cpp:472, 484`
 - **Solution**: Implement proper LLDB notifications for dynamic module loading/unloading
+
+### Multi-Thread Display in LLDB
+
+- **Issue**: Thread select and stop reply protocol handlers need improvement to correctly display multi-VM data in LLDB
+- **Current Status**: Multi-VM stop-the-world is implemented, but thread information may not display correctly in LLDB UI
 
 ## Protocol References
 

@@ -88,9 +88,12 @@ if (DEVELOPER_MODE)
 
         ../wasm/debugger/tests/BinaryTests.cpp
         ../wasm/debugger/tests/ControlFlowTests.cpp
+        ../wasm/debugger/tests/ExecutionHandlerTest.cpp
+        ../wasm/debugger/tests/ExecutionHandlerTestSupport.cpp
         ../wasm/debugger/tests/ExtGCTests.cpp
         ../wasm/debugger/tests/MemoryTests.cpp
         ../wasm/debugger/tests/SpecialTests.cpp
+        ../wasm/debugger/tests/TestScripts.cpp
         ../wasm/debugger/tests/TestUtilities.cpp
         ../wasm/debugger/tests/UnaryTests.cpp
     )

@@ -40,8 +40,10 @@
 #include "Options.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
+#include "VMManager.h"
 #include "VMTraps.h"
 #include "WasmCapabilities.h"
+#include "WasmExecutionHandler.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmThunks.h"
 #include <mutex>
@@ -142,8 +144,13 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
         if (Wasm::isSupported() || !Options::usePollingTraps()) {
             if (!Options::usePollingTraps())
                 VMTraps::initializeSignals();
-            if (Wasm::isSupported())
+            if (Wasm::isSupported()) {
                 Wasm::prepareSignalingMemory();
+#if ENABLE(WEBASSEMBLY)
+                VMManager::setWasmDebuggerOnStop(Wasm::wasmDebuggerOnStopCallback);
+                VMManager::setWasmDebuggerOnResume(Wasm::wasmDebuggerOnResumeCallback);
+#endif
+            }
         }
 
         assertInvariants();

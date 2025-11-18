@@ -25,53 +25,46 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
+#include <functional>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Seconds.h>
 
 namespace JSC {
-
-class CallFrame;
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-
+class VM;
 namespace Wasm {
+class DebugServer;
+class ExecutionHandler;
+}
+}
 
-class IPIntCallee;
-class ModuleManager;
+namespace WTF {
+class Thread;
+}
 
-class BreakpointManager {
-    WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
+namespace TestScripts {
+struct TestScript;
+}
 
-public:
-    JS_EXPORT_PRIVATE BreakpointManager() = default;
-    JS_EXPORT_PRIVATE ~BreakpointManager();
+namespace ExecutionHandlerTestSupport {
 
-    JS_EXPORT_PRIVATE bool hasBreakpoints();
-    JS_EXPORT_PRIVATE bool hasOneTimeBreakpoints();
+using JSC::VM;
+using JSC::Wasm::DebugServer;
+using JSC::Wasm::ExecutionHandler;
+using TestScripts::TestScript;
 
-    JS_EXPORT_PRIVATE Breakpoint* findBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void setBreakpoint(VirtualAddress, Breakpoint&&);
-    JS_EXPORT_PRIVATE bool removeBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void clearAllOneTimeBreakpoints();
-    JS_EXPORT_PRIVATE void clearAllBreakpoints();
+constexpr bool verboseLogging = false;
+constexpr double defaultTimeoutSeconds = 5.0;
 
-private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
+extern std::atomic<unsigned> replyCount;
 
-    mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
-};
+bool waitForCondition(std::function<bool()> predicate, Seconds timeout = Seconds(defaultTimeoutSeconds));
+void setupTestEnvironment(DebugServer*&, ExecutionHandler*&);
+void workerThreadTask(const String&);
 
-} // namespace Wasm
-} // namespace JSC
+inline unsigned getReplyCount() { return replyCount.load(); }
 
-#endif // ENABLE(WEBASSEMBLY)
+} // namespace ExecutionHandlerTestSupport
+
+#endif // ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)

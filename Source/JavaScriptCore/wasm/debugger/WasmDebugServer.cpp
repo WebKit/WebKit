@@ -35,6 +35,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSWebAssemblyModule.h"
 #include "Options.h"
 #include "VM.h"
+#include "VMManager.h"
 #include "WasmBreakpointManager.h"
 #include "WasmExecutionHandler.h"
 #include "WasmIPIntSlowPaths.h"
@@ -67,24 +68,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 namespace Wasm {
 
-static inline StringView getErrorReply(ProtocolError error)
-{
-    switch (error) {
-    case ProtocolError::InvalidPacket:
-        return "E01"_s;
-    case ProtocolError::InvalidAddress:
-        return "E02"_s;
-    case ProtocolError::InvalidRegister:
-        return "E03"_s;
-    case ProtocolError::MemoryError:
-        return "E04"_s;
-    case ProtocolError::UnknownCommand:
-        return "E05"_s;
-    default:
-        return "E00"_s;
-    }
-}
-
 DebugServer& DebugServer::singleton()
 {
     static NeverDestroyed<DebugServer> instance;
@@ -97,7 +80,7 @@ DebugServer::DebugServer()
 {
 }
 
-bool DebugServer::start(VM* vm)
+bool DebugServer::start()
 {
     if (isState(State::Running) || isState(State::Starting)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Server already running or is starting");
@@ -111,10 +94,8 @@ bool DebugServer::start(VM* vm)
 
     RELEASE_ASSERT(isSocketValid(m_serverSocket));
 
-    m_vm = vm;
-    m_moduleManager = makeUnique<ModuleManager>(*vm);
-    m_breakpointManager = makeUnique<BreakpointManager>();
-    m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager, *m_breakpointManager);
+    m_moduleManager = makeUnique<ModuleManager>();
+    m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager);
 
     startAcceptThread();
 
@@ -123,7 +104,7 @@ bool DebugServer::start(VM* vm)
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
-bool DebugServer::startRWI(VM* vm, Function<bool(const String&)>&& rwiResponseHandler)
+bool DebugServer::startRWI(Function<bool(const String&)>&& rwiResponseHandler)
 {
     if (isState(State::Running) || isState(State::Starting)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Server already running or is starting");
@@ -132,10 +113,8 @@ bool DebugServer::startRWI(VM* vm, Function<bool(const String&)>&& rwiResponseHa
 
     setState(State::Starting);
 
-    m_vm = vm;
-    m_moduleManager = makeUnique<ModuleManager>(*vm);
-    m_breakpointManager = makeUnique<BreakpointManager>();
-    m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager, *m_breakpointManager);
+    m_moduleManager = makeUnique<ModuleManager>();
+    m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager);
     m_rwiResponseHandler = WTFMove(rwiResponseHandler);
 
     // RWI mode: No thread creation needed!
@@ -212,16 +191,12 @@ void DebugServer::resetAll()
     closeSocket(m_clientSocket);
     m_acceptThread = nullptr;
 
-    m_vm = nullptr;
-    m_debugServerThreadId = std::nullopt;
-
     m_noAckMode = false;
     m_queryHandler = nullptr;
     m_memoryHandler = nullptr;
     m_executionHandler = nullptr;
 
     m_moduleManager = nullptr;
-    m_breakpointManager = nullptr;
 
 #if ENABLE(REMOTE_INSPECTOR)
     m_rwiResponseHandler = nullptr;
@@ -230,7 +205,7 @@ void DebugServer::resetAll()
 
 bool DebugServer::needToHandleBreakpoints() const
 {
-    return isConnected() && m_breakpointManager && m_breakpointManager->hasBreakpoints();
+    return isConnected() && execution().hasBreakpoints();
 }
 
 union SocketAddress {
@@ -293,7 +268,7 @@ bool DebugServer::createAndBindServerSocket()
 void DebugServer::startAcceptThread()
 {
     m_acceptThread = WTF::Thread::create("WasmDebugServer", [this]() {
-        m_debugServerThreadId = Thread::currentSingleton().uid();
+        m_executionHandler->setDebugServerThreadId(Thread::currentSingleton().uid());
 
         while (isState(State::Running)) {
             dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Waiting for client connections...");
@@ -327,7 +302,6 @@ void DebugServer::reset()
 {
     // Reset to the init state without stopping the debug server.
     m_executionHandler->reset();
-    m_breakpointManager->clearAllBreakpoints();
     closeSocket(m_clientSocket);
     m_noAckMode = false;
 }
@@ -367,7 +341,7 @@ void DebugServer::handleRawPacket(StringView rawPacket)
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (isRWIMode())
-        m_debugServerThreadId = Thread::currentSingleton().uid();
+        m_executionHandler->setDebugServerThreadId(Thread::currentSingleton().uid());
 #endif
 
     // Handle single-byte control characters
@@ -453,12 +427,7 @@ void DebugServer::handlePacket(StringView packet)
     case 'k':
     case 'D':
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Kill/detach request");
-#if ENABLE(REMOTE_INSPECTOR)
-        if (isRWIMode())
-            reset();
-        else
-#endif
-            closeSocket(m_clientSocket);
+        reset();
         break;
     default:
         sendReplyNotSupported(packet);
@@ -511,26 +480,25 @@ void DebugServer::handleThreadManagement(StringView packet)
     char operation = packet[1];
     StringView threadSpec = packet.substring(2);
 
-    auto reply = [&]() {
-        if (threadSpec == "-1" || threadSpec == "0" || threadSpec == "1") {
-            // -1 = all threads, 0 = any thread, 1 = thread 1
-            // All are valid for our single-threaded WebAssembly context
-            sendReplyOK();
-        } else
-            sendErrorReply(ProtocolError::InvalidAddress);
-    };
-
     switch (operation) {
     case 'c': {
         // Hc<thread-id>: Set thread for step and continue operations
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Hc (set continue thread): ", threadSpec);
-        reply();
+
+        if (threadSpec == "-1" || threadSpec == "0") {
+            // -1 = all threads, 0 = any thread, 1 = thread 1
+            // All are valid for our single-threaded WebAssembly context
+            sendReplyOK();
+        } else {
+            execution().switchTarget(parseHex(threadSpec));
+            sendReplyOK();
+        }
         break;
     }
     case 'g': {
         // Hg<thread-id>: Set thread for other operations (register access, etc.)
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Hg (set general thread): ", threadSpec);
-        reply();
+        sendErrorReply(ProtocolError::InvalidAddress);
         break;
     }
     default:
@@ -551,6 +519,14 @@ void DebugServer::trackInstance(JSWebAssemblyInstance* instance)
     }
 }
 
+void DebugServer::untrackInstance(JSWebAssemblyInstance* instance)
+{
+    if (!m_moduleManager)
+        return;
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Untracking WebAssembly instance: ", RawPointer(instance));
+    m_moduleManager->unregisterInstance(instance);
+}
+
 void DebugServer::trackModule(Module& module)
 {
     if (!m_moduleManager)
@@ -569,56 +545,6 @@ void DebugServer::untrackModule(Module& module)
         return;
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Untracking WebAssembly module: ", RawPointer(&module));
     m_moduleManager->unregisterModule(module);
-}
-
-bool DebugServer::stopCode(CallFrame* callFrame, JSWebAssemblyInstance* instance, IPIntCallee* callee, uint8_t* pc, uint8_t* mc, IPInt::IPIntLocal* locals, IPInt::IPIntStackEntry* stack) { return m_executionHandler->stopCode(callFrame, instance, callee, pc, mc, locals, stack); }
-
-void DebugServer::setInterruptBreakpoint(JSWebAssemblyInstance* instance, IPIntCallee* callee) { return m_executionHandler->setBreakpointAtEntry(instance, callee, Breakpoint::Type::Interrupt); }
-
-void DebugServer::setStepIntoBreakpointForCall(VM& vm, CalleeBits boxedCallee, JSWebAssemblyInstance* instance)
-{
-    if (!vm.takeStepIntoWasmCall())
-        return;
-
-    if (!instance)
-        return;
-    if (!boxedCallee.isNativeCallee())
-        return;
-    RefPtr wasmCallee = uncheckedDowncast<Wasm::Callee>(boxedCallee.asNativeCallee());
-    if (wasmCallee->compilationMode() != Wasm::CompilationMode::IPIntMode)
-        return;
-
-    m_executionHandler->setBreakpointAtEntry(instance, uncheckedDowncast<IPIntCallee>(wasmCallee.get()), Breakpoint::Type::Step);
-}
-
-void DebugServer::setStepIntoBreakpointForThrow(VM& vm, JSWebAssemblyInstance* instance)
-{
-    RELEASE_ASSERT(instance);
-
-    if (!vm.takeStepIntoWasmThrow())
-        return;
-
-    if (!vm.callFrameForCatch)
-        return;
-    if (!vm.callFrameForCatch->callee().isNativeCallee())
-        return;
-    RefPtr wasmCallee = uncheckedDowncast<Wasm::Callee>(vm.callFrameForCatch->callee().asNativeCallee());
-    if (wasmCallee->compilationMode() != Wasm::CompilationMode::IPIntMode)
-        return;
-
-    RefPtr catchCallee = uncheckedDowncast<IPIntCallee>(wasmCallee.get());
-    ASSERT(std::holds_alternative<uintptr_t>(vm.targetInterpreterPCForThrow));
-    uintptr_t handlerOffset = std::get<uintptr_t>(vm.targetInterpreterPCForThrow);
-    const uint8_t* handlerPC = catchCallee->bytecode() + handlerOffset;
-
-    if (*handlerPC == static_cast<uint8_t>(Wasm::OpType::TryTable) && vm.targetInterpreterMetadataPCForThrow) {
-        const uint8_t* metadataPtr = catchCallee->metadata() + vm.targetInterpreterMetadataPCForThrow;
-        metadataPtr += sizeof(IPInt::CatchMetadata);
-        const IPInt::BlockMetadata* blockMetadata = reinterpret_cast<const IPInt::BlockMetadata*>(metadataPtr);
-        handlerPC = handlerPC + blockMetadata->deltaPC;
-    }
-
-    m_executionHandler->setBreakpointAtPC(instance, catchCallee->functionIndex(), Breakpoint::Type::Step, handlerPC);
 }
 
 bool DebugServer::isConnected() const

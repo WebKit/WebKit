@@ -2281,8 +2281,11 @@
 		FFD49E742E276CA10083E383 /* WasmMemoryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5E2E276CA10083E383 /* WasmMemoryHandler.h */; };
 		FFE21FE52CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE21FE32CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h */; };
 		FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFE88B9E2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */; };
 		FFF3373F2BCDF1240070D04B /* JSCBytecodeCacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF4D5A32CE304CD006EA634 /* DeferredWorkTimerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFFAF8CB2EC97B2B00042238 /* TestScripts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */; };
+		FFFAF8CE2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -6347,9 +6350,15 @@
 		FFE21FE32CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGLoopUnrollingPhase.h; path = dfg/DFGLoopUnrollingPhase.h; sourceTree = "<group>"; };
 		FFE21FE42CC1BE1800DEC268 /* DFGLoopUnrollingPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLoopUnrollingPhase.cpp; path = dfg/DFGLoopUnrollingPhase.cpp; sourceTree = "<group>"; };
 		FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmVirtualAddress.h; sourceTree = "<group>"; };
+		FFE88B9C2EC96CA700C9F5E2 /* ExecutionHandlerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExecutionHandlerTest.h; sourceTree = "<group>"; };
+		FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionHandlerTest.cpp; sourceTree = "<group>"; };
 		FFF3373D2BCDF1240070D04B /* JSCBytecodeCacheVersion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCBytecodeCacheVersion.cpp; sourceTree = "<group>"; };
 		FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCBytecodeCacheVersion.h; sourceTree = "<group>"; };
 		FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredWorkTimerInlines.h; sourceTree = "<group>"; };
+		FFFAF8C92EC97B2B00042238 /* TestScripts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestScripts.h; sourceTree = "<group>"; };
+		FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestScripts.cpp; sourceTree = "<group>"; };
+		FFFAF8CC2EC9A7C000042238 /* ExecutionHandlerTestSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExecutionHandlerTestSupport.h; sourceTree = "<group>"; };
+		FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionHandlerTestSupport.cpp; sourceTree = "<group>"; };
 		FFFAFBE02E6ABDCB006BFA2E /* WasmVirtualAddress.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmVirtualAddress.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -10534,9 +10543,15 @@
 			children = (
 				FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */,
 				FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */,
+				FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */,
+				FFE88B9C2EC96CA700C9F5E2 /* ExecutionHandlerTest.h */,
+				FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */,
+				FFFAF8CC2EC9A7C000042238 /* ExecutionHandlerTestSupport.h */,
 				FF1344652EB3F2A600940C00 /* ExtGCTests.cpp */,
 				FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */,
 				FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */,
+				FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */,
+				FFFAF8C92EC97B2B00042238 /* TestScripts.h */,
 				FF18EBC42EA5C73E00185CFA /* TestUtilities.cpp */,
 				FFA2E0252EA16F37006661A3 /* TestUtilities.h */,
 				FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */,
@@ -13782,9 +13797,12 @@
 			files = (
 				FFA2E02D2EA16F37006661A3 /* BinaryTests.cpp in Sources */,
 				FFA2E02A2EA16F37006661A3 /* ControlFlowTests.cpp in Sources */,
+				FFE88B9E2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp in Sources */,
+				FFFAF8CE2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp in Sources */,
 				FF1344662EB3F2A600940C00 /* ExtGCTests.cpp in Sources */,
 				FFA2E02E2EA16F37006661A3 /* MemoryTests.cpp in Sources */,
 				FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */,
+				FFFAF8CB2EC97B2B00042238 /* TestScripts.cpp in Sources */,
 				FF18EBC52EA5C73E00185CFA /* TestUtilities.cpp in Sources */,
 				FF0F569A2E3348CA002A232A /* testwasmdebugger.cpp in Sources */,
 				FFA2E02F2EA16F37006661A3 /* UnaryTests.cpp in Sources */,

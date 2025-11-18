@@ -27,51 +27,29 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
+#include <span>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Seconds.h>
+#include <wtf/text/ASCIILiteral.h>
 
-namespace JSC {
+namespace TestScripts {
 
-class CallFrame;
-class JSWebAssemblyInstance;
-class JSWebAssemblyModule;
-
-namespace Wasm {
-
-class IPIntCallee;
-class ModuleManager;
-
-class BreakpointManager {
-    WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
-
-public:
-    JS_EXPORT_PRIVATE BreakpointManager() = default;
-    JS_EXPORT_PRIVATE ~BreakpointManager();
-
-    JS_EXPORT_PRIVATE bool hasBreakpoints();
-    JS_EXPORT_PRIVATE bool hasOneTimeBreakpoints();
-
-    JS_EXPORT_PRIVATE Breakpoint* findBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void setBreakpoint(VirtualAddress, Breakpoint&&);
-    JS_EXPORT_PRIVATE bool removeBreakpoint(VirtualAddress);
-    JS_EXPORT_PRIVATE void clearAllOneTimeBreakpoints();
-    JS_EXPORT_PRIVATE void clearAllBreakpoints();
-
-private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
-
-    mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
+// Test script metadata
+struct TestScript {
+    ASCIILiteral name;
+    ASCIILiteral description;
+    String (*scriptGenerator)(); // Function pointer to generate script
+    unsigned expectedVMs;
+    unsigned expectedFunctions; // For breakpoint tests
 };
 
-} // namespace Wasm
-} // namespace JSC
+// Script generators
+String multiVMSameModuleDifferentFunction();
+String multiVMSameModuleSameFunction();
+
+// Get all registered test scripts
+std::span<const TestScript> getTestScripts();
+
+} // namespace TestScripts
 
 #endif // ENABLE(WEBASSEMBLY)

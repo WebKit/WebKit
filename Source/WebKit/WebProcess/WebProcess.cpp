@@ -729,13 +729,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
 #if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
     if (JSC::Options::enableWasmDebugger()) [[unlikely]] {
-        if (JSC::VM* vm = WebCore::commonVMOrNull()) {
-            bool success = JSC::Wasm::DebugServer::singleton().startRWI(vm, [](const String& response) {
-                return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWasmDebuggerResponse(response), 0);
-            });
-            if (!success)
-                WEBPROCESS_RELEASE_LOG_ERROR(Inspector, "Failed to start WasmDebugServer in RWI mode");
-        }
+        bool success = JSC::Wasm::DebugServer::singleton().startRWI([](const String& response) {
+            return WebKit::WebProcess::singleton().send(Messages::WebProcessProxy::SendWasmDebuggerResponse(response), 0);
+        });
+        if (!success)
+            WEBPROCESS_RELEASE_LOG_ERROR(Inspector, "Failed to start WasmDebugServer in RWI mode");
     }
 #endif
 

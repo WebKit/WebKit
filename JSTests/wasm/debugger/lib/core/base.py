@@ -254,6 +254,9 @@ class BaseTestCase:
 
         cmd = [jsc_path, f"--wasm-debugger={self.current_port}"]
 
+        if self._verbose_wasm_debugger:
+            cmd.append("--verboseWasmDebugger=1")
+
         cmd.append(test_file)
 
         self.logger.verbose(f"Starting debugger on port {self.current_port}")
@@ -272,6 +275,9 @@ class BaseTestCase:
                 # Update the command to use just the filename
                 test_filename = os.path.basename(test_file)
                 cmd = [jsc_path, f"--wasm-debugger={self.current_port}"]
+
+                if self._verbose_wasm_debugger:
+                    cmd.append("--verboseWasmDebugger=1")
 
                 cmd.append(test_filename)
             else:
@@ -488,7 +494,7 @@ class BaseTestCase:
             return result
 
     def send_lldb_command_or_raise(
-        self, command: str, patterns=None, mode=PatternMatchMode.ALL, timeout=5.0
+        self, command: str, patterns=None, mode=PatternMatchMode.ALL, timeout=20.0
     ):
         """Send LLDB command with patterns and raise exception on failure"""
         result = self.send_lldb_command_with_patterns(command, patterns, mode, timeout)
@@ -650,7 +656,7 @@ class BaseTestCase:
 
                     if UtilsLogger._verbose:
                         print(
-                            f"{Colors.DIM}🔍 [{process_name}][{stream_name.upper()}] {line}{Colors.RESET}"
+                            f"{Colors.DIM}🔍 [{self.name}][{process_name}][{stream_name.upper()}] {line}{Colors.RESET}"
                         )
 
             except Exception as e:

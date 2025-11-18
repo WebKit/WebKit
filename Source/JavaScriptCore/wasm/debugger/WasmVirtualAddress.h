@@ -135,7 +135,7 @@ public:
 
     operator uint64_t() const { return m_value; }
 
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:
     static uint64_t encode(Type type, uint32_t id, uint32_t offset)

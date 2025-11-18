@@ -140,12 +140,18 @@ auto VMManager::info() -> Info
     info.numberOfActiveVMs = manager.m_numberOfActiveVMs;
     info.numberOfStoppedVMs = manager.m_numberOfStoppedVMs.loadRelaxed();
     info.worldMode = manager.m_worldMode;
+    info.targetVM = manager.m_targetVM;
     return info;
 }
 
-void VMManager::setWasmDebuggerCallback(StopTheWorldCallback callback)
+void VMManager::setWasmDebuggerOnStop(StopTheWorldCallback callback)
 {
-    g_jscConfig.wasmDebuggerStopTheWorld = callback;
+    g_jscConfig.wasmDebuggerOnStop = callback;
+}
+
+void VMManager::setWasmDebuggerOnResume(PostResumeCallback callback)
+{
+    g_jscConfig.wasmDebuggerOnResume = callback;
 }
 
 void VMManager::setMemoryDebuggerCallback(StopTheWorldCallback callback)
@@ -383,7 +389,7 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
         case StopReason::GC:
             RELEASE_ASSERT_NOT_REACHED();
         case StopReason::WasmDebugger:
-            status = g_jscConfig.wasmDebuggerStopTheWorld(vm, event);
+            status = g_jscConfig.wasmDebuggerOnStop(vm, event);
             break;
         case StopReason::MemoryDebugger:
             status = g_jscConfig.memoryDebuggerStopTheWorld(vm, event);
@@ -401,6 +407,8 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
             // Same reason for why it's safe to set m_useRunOneMode here.
             auto requestBits = static_cast<StopRequestBits>(m_currentStopReason);
             m_pendingStopRequestBits.exchangeAnd(~requestBits);
+            if (m_currentStopReason == StopReason::WasmDebugger)
+                m_needsWasmDebuggerOnResume.store(true);
             m_currentStopReason = StopReason::None;
 
             // targetVM not being specified means that we should not change m_useRunOneMode.
@@ -417,10 +425,14 @@ void VMManager::notifyVMStop(VM& vm, StopTheWorldEvent event)
         }
     }
 
-    m_numberOfStoppedVMs.exchangeSub(1);
+    auto previousCount = m_numberOfStoppedVMs.exchangeSub(1);
 
     // If we get here, we're either transitioning to RunOne or Running mode.
     RELEASE_ASSERT(!m_targetVM || m_targetVM == &vm);
+
+    // Call post-resume callback once when last VM exits and all VMs are running.
+    if (previousCount == 1 && m_needsWasmDebuggerOnResume.exchange(false))
+        g_jscConfig.wasmDebuggerOnResume();
 }
 
 void VMManager::notifyVMConstruction(VM& vm)

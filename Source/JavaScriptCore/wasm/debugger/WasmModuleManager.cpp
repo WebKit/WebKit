@@ -53,15 +53,10 @@ namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleManager);
 
-ModuleManager::ModuleManager(VM& vm)
-    : m_instanceIdToInstance(vm)
-{
-}
-
-ModuleManager::~ModuleManager() = default;
 
 uint32_t ModuleManager::registerModule(Module& module)
 {
+    Locker locker { m_lock };
     uint32_t moduleId = m_nextModuleId++;
     m_moduleIdToModule.set(moduleId, &module);
     const auto& moduleInfo = module.moduleInformation();
@@ -72,6 +67,7 @@ uint32_t ModuleManager::registerModule(Module& module)
 
 void ModuleManager::unregisterModule(Module& module)
 {
+    Locker locker { m_lock };
     uint32_t moduleId = module.debugId();
     m_moduleIdToModule.remove(moduleId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][unregisterModule] - unregistered module with debug ID: ", moduleId);
@@ -79,6 +75,7 @@ void ModuleManager::unregisterModule(Module& module)
 
 uint32_t ModuleManager::registerInstance(JSWebAssemblyInstance* jsInstance)
 {
+    Locker locker { m_lock };
     uint32_t instanceId = m_nextInstanceId++;
     m_instanceIdToInstance.set(instanceId, jsInstance);
     jsInstance->setDebugId(instanceId);
@@ -86,8 +83,18 @@ uint32_t ModuleManager::registerInstance(JSWebAssemblyInstance* jsInstance)
     return instanceId;
 }
 
+uint32_t ModuleManager::unregisterInstance(JSWebAssemblyInstance* jsInstance)
+{
+    Locker locker { m_lock };
+    uint32_t instanceId = jsInstance->debugId();
+    m_instanceIdToInstance.remove(instanceId);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][unregisterInstance] - unregistered instance with ID: ", instanceId, " for module ID: ", jsInstance->module().debugId());
+    return instanceId;
+}
+
 Module* ModuleManager::module(uint32_t moduleId) const
 {
+    Locker locker { m_lock };
     auto itr = m_moduleIdToModule.find(moduleId);
     if (itr == m_moduleIdToModule.end()) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][module] - module not found for ID: ", moduleId);
@@ -98,6 +105,7 @@ Module* ModuleManager::module(uint32_t moduleId) const
 
 JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId) const
 {
+    Locker locker { m_lock };
     auto* result = m_instanceIdToInstance.get(instanceId);
     if (!result) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][jsInstance] - instance not found for ID: ", instanceId);
@@ -106,8 +114,17 @@ JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId) const
     return result;
 }
 
+static String generateModuleName(VirtualAddress address, const RefPtr<Module>&)
+{
+    // FIXME: Maybe we should generate a more meaningful name?
+    String moduleName = WTF::makeString("wasm_module_0x"_s, address.hex(), ".wasm"_s);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateModuleName] Using fallback address-based name: ", moduleName);
+    return moduleName;
+}
+
 String ModuleManager::generateLibrariesXML() const
 {
+    Locker locker { m_lock };
     StringBuilder xml;
     xml.append("<?xml version=\"1.0\"?>\n"_s);
     xml.append("<library-list>\n"_s);
@@ -141,15 +158,11 @@ String ModuleManager::generateLibrariesXML() const
     return result;
 }
 
-String ModuleManager::generateModuleName(VirtualAddress address, const RefPtr<Module>&) const
+uint32_t ModuleManager::nextInstanceId() const
 {
-    // FIXME: Maybe we should generate a more meaningful name?
-    String fallbackName = WTF::makeString("wasm_module_0x"_s, address.hex(), ".wasm"_s);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][generateModuleName] Using fallback address-based name: ", fallbackName);
-    return fallbackName;
+    Locker locker { m_lock };
+    return m_nextInstanceId;
 }
-
-uint32_t ModuleManager::nextInstanceId() const { return m_nextInstanceId; }
 
 }
 } // namespace JSC::Wasm
