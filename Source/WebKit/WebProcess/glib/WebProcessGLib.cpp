@@ -141,6 +141,20 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     addSupplementWithoutRefCountedCheck<SystemSettingsManager>();
 }
 
+static inline void initializeSharedDisplay(std::unique_ptr<PlatformDisplay>&& display)
+{
+    PlatformDisplay::setSharedDisplay(WTFMove(display));
+
+#if USE(SKIA)
+    if (ProcessCapabilities::canUseAcceleratedBuffers()) {
+        if (!PlatformDisplay::sharedDisplay().tryEnsureSkiaGLContext()) {
+            WTFLogAlways("Could not create Skia GL context: falling back to CPU rendering...");
+            ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+        }
+    }
+#endif
+}
+
 void WebProcess::initializePlatformDisplayIfNeeded() const
 {
     if (PlatformDisplay::sharedDisplayIfExists())
@@ -157,7 +171,7 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 #endif
         if (!disabled) {
             if (auto device = DRMDeviceManager::singleton().mainGBMDevice(DRMDeviceManager::NodeType::Render)) {
-                PlatformDisplay::setSharedDisplay(PlatformDisplayGBM::create(device->device()));
+                initializeSharedDisplay(PlatformDisplayGBM::create(device->device()));
                 return;
             }
         }
@@ -166,19 +180,19 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 
 #if OS(ANDROID)
     if (auto display = PlatformDisplayAndroid::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        initializeSharedDisplay(WTFMove(display));
         return;
     }
 #endif
 
     if (auto display = PlatformDisplaySurfaceless::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        initializeSharedDisplay(WTFMove(display));
         return;
     }
 
 #if PLATFORM(GTK) || OS(ANDROID)
     if (auto display = PlatformDisplayDefault::create()) {
-        PlatformDisplay::setSharedDisplay(WTFMove(display));
+        initializeSharedDisplay(WTFMove(display));
         return;
     }
 #endif
@@ -212,7 +226,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
             auto& implementationLibraryName = parameters.implementationLibraryName;
             if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != '\0')
                 wpe_loader_init(parameters.implementationLibraryName.data());
-            PlatformDisplay::setSharedDisplay(PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
+            initializeSharedDisplay(PlatformDisplayLibWPE::create(parameters.hostClientFileDescriptor.release()));
         } else
             initializePlatformDisplayIfNeeded();
     }

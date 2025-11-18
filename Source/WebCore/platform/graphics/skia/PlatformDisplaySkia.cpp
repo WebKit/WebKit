@@ -278,22 +278,27 @@ private:
 };
 #endif
 
-GLContext* PlatformDisplay::skiaGLContext()
+bool PlatformDisplay::tryEnsureSkiaGLContext()
 {
 #if PLATFORM(GTK) || PLATFORM(WPE) || (PLATFORM(PLAYSTATION) && !USE(COORDINATED_GRAPHICS))
     if (!s_skiaGLContext) {
         s_skiaGLContext = SkiaGLContext::create(*this);
         m_skiaGLContexts.add(*s_skiaGLContext);
     }
-    return s_skiaGLContext->skiaGLContext();
+    return !!s_skiaGLContext->skiaGLContext();
 #else
     // The PlayStation OpenGL implementation does not dispatch to the context bound to
     // the current thread so Skia cannot use OpenGL with coordinated graphics.
-    return nullptr;
+    return false;
 #endif
 }
 
-GrDirectContext* PlatformDisplay::skiaGrContext()
+GLContext* PlatformDisplay::skiaGLContext() const
+{
+    return s_skiaGLContext ? s_skiaGLContext->skiaGLContext() : nullptr;
+}
+
+GrDirectContext* PlatformDisplay::skiaGrContext() const
 {
     RELEASE_ASSERT(s_skiaGLContext);
     return s_skiaGLContext->skiaGrContext();

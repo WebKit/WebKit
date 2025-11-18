@@ -51,10 +51,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaPaintingEngine);
 
 // Note:
-// If WEBKIT_SKIA_ENABLE_CPU_RENDERING is unset, we will allocate a GPU-only worker pool with WEBKIT_SKIA_GPU_PAINTING_THREADS threads (default: 1).
+// If WEBKIT_SKIA_ENABLE_CPU_RENDERING is unset, we will allocate a GPU-only worker pool with WEBKIT_SKIA_GPU_PAINTING_THREADS threads.
 // If WEBKIT_SKIA_ENABLE_CPU_RENDERING is unset, and WEBKIT_SKIA_GPU_PAINTING_THREADS is set to 0, we will use GPU rendering on main thread.
 //
-// If WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set, we will allocate a CPU-only worker pool with WEBKIT_SKIA_CPU_PAINTING_THREADS threads (default: nCores/2).
+// If WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set, we will allocate a CPU-only worker pool with WEBKIT_SKIA_CPU_PAINTING_THREADS threads.
 // if WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set, and WEBKIT_SKIA_CPU_PAINTING_THREADS is set to 0, we will use CPU rendering on main thread.
 
 SkiaPaintingEngine::SkiaPaintingEngine()
@@ -77,11 +77,6 @@ SkiaPaintingEngine::~SkiaPaintingEngine() = default;
 std::unique_ptr<SkiaPaintingEngine> SkiaPaintingEngine::create()
 {
     return makeUnique<SkiaPaintingEngine>();
-}
-
-static bool canPerformAcceleratedRendering()
-{
-    return ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext();
 }
 
 void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, GraphicsContext& context, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const
@@ -123,8 +118,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayer& layer,
 {
     // ### Synchronous rendering on main thread ###
     ASSERT(!useThreadedRendering());
-
-    auto renderingMode = canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto renderingMode = ProcessCapabilities::canUseAcceleratedBuffers() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     auto buffer = createBuffer(renderingMode, dirtyRect.size(), contentsOpaque);
     buffer->beginPainting();
@@ -149,9 +143,7 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayer& layer, 
 {
     // ### Asynchronous rendering on worker threads ###
     ASSERT(useThreadedRendering());
-    ASSERT(m_workerPool);
-
-    auto renderingMode = canPerformAcceleratedRendering() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto renderingMode = ProcessCapabilities::canUseAcceleratedBuffers() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     WTFBeginSignpost(this, RecordTile);
     SkPictureRecorder pictureRecorder;
@@ -171,11 +163,16 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const RefPtr<SkiaRecording
     // ### Asynchronous rendering on worker threads ###
     ASSERT(useThreadedRendering());
 
-    auto renderingMode = recording->renderingMode();
-    auto buffer = createBuffer(renderingMode, dirtyRect.size(), recording->contentsOpaque());
+    auto buffer = createBuffer(recording->renderingMode(), dirtyRect.size(), recording->contentsOpaque());
     buffer->beginPainting();
 
     m_workerPool->postTask([buffer = Ref { buffer }, dirtyRect, recording = RefPtr { recording }]() mutable {
+        // Ensure the worker thread has a valid Skia GL context
+        if (recording->renderingMode() == RenderingMode::Accelerated) {
+            bool hasValidSkiaGLContext = PlatformDisplay::sharedDisplay().tryEnsureSkiaGLContext();
+            ASSERT_UNUSED(hasValidSkiaGLContext, hasValidSkiaGLContext);
+        }
+
         auto* canvas = buffer->canvas();
         if (!canvas) {
             buffer->completePainting();
@@ -233,10 +230,6 @@ unsigned SkiaPaintingEngine::numberOfGPUPaintingThreads()
     static unsigned numberOfThreads = 0;
 
     std::call_once(onceFlag, [] {
-        // If WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 is set in the environment, no GPU painting is used.
-        if (!ProcessCapabilities::canUseAcceleratedBuffers())
-            return;
-
         // By default, use 2 GPU worker threads if there are four or more CPU cores, otherwise use 1 thread only.
         numberOfThreads = WTF::numberOfProcessorCores() >= 4 ? 2 : 1;
 
