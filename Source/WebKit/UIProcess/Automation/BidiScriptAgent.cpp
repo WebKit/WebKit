@@ -641,17 +641,16 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             }
         }
 
-        auto frame = BidiScript::StackFrame::create()
-            .setLineNumber(parsed ? lineNumber : 0)
-            .setColumnNumber(parsed ? columnNumber : 0)
-            .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
-            .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
-            .release();
         if (!result.topLineNumber && parsed)
             result.topLineNumber = lineNumber;
         if (!result.topColumnNumber && parsed)
             result.topColumnNumber = columnNumber;
-        result.callFrames->addItem(WTFMove(frame));
+        result.callFrames->addItem(BidiScript::StackFrame::create()
+            .setLineNumber(parsed ? lineNumber : 0)
+            .setColumnNumber(parsed ? columnNumber : 0)
+            .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
+            .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
+            .release());
     }
 
     return result;
