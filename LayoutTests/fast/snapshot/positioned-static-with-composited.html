@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#box {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    color: black;
+    position: relative;
+}
+#secondBox {
+    width: 100px;
+    height: 100px;
+    background-color: gold;
+    color: black;
+}
+.dropdown {
+    background-color: rebeccapurple;
+    position: absolute;
+    top: 100%;
+    left: 20px;
+}
+</style>
+<script type="text/javascript" src="../../resources/snapshot-helper.js"></script>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-950" />
+</head>
+<body>
+    <div id="box" style="transform: translateZ(0);">
+        Is this included?
+        <div class="dropdown">am I also included in the snapshot?</div>
+    </div>
+    <div id="secondBox">Am I included too?</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+async function main() {
+    if (!window.internals) {
+        console.log('FAIL: window.internals is not available');
+        return;
+    }
+    
+    const box = document.getElementById('box');
+    const secondBox = document.getElementById('secondBox');
+
+    const canvas = await SnapshotHelper.takeSnapshot(box);
+
+    box.remove();
+    secondBox.remove();
+
+    document.body.appendChild(canvas);
+
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+
+window.addEventListener('load', main, false);
+</script>
+</body>
+</html>
