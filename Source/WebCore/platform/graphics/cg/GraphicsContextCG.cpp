@@ -1124,9 +1124,10 @@ void GraphicsContextCG::clearCGDropShadow()
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
 void GraphicsContextCG::setCGGaussianBlur(const GraphicsGaussianBlur& gaussianBlur, bool shadowsIgnoreTransforms)
 {
-    CGContextRef context = platformContext();
+    if (gaussianBlur.radius.isEmpty())
+        return;
 
-    ASSERT(gaussianBlur.radius.width() == gaussianBlur.radius.height());
+    CGContextRef context = platformContext();
 
     CGAffineTransform userToBaseCTM = getUserToBaseCTM(context);
     CGFloat blurRadius = scaledBlurRadius(gaussianBlur.radius.width(), userToBaseCTM, shadowsIgnoreTransforms);

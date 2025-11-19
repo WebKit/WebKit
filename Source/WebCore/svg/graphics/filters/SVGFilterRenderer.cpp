@@ -24,6 +24,7 @@
 #include "SVGFilterRenderer.h"
 
 #include "ElementChildIteratorInlines.h"
+#include "FEColorMatrix.h"
 #include "FilterResults.h"
 #include "GeometryUtilities.h"
 #include "SVGFilterEffectGraph.h"
@@ -258,8 +259,17 @@ OptionSet<FilterRenderingMode> SVGFilterRenderer::supportedFilterRenderingModes(
 {
     OptionSet<FilterRenderingMode> modes = allFilterRenderingModes;
 
-    for (auto& effect : m_effects)
+    for (auto& term : m_expression) {
+        auto& effect = m_effects[term.index];
+        if (effect->operatingColorSpace() == DestinationColorSpace::LinearSRGB())
+            modes.remove(FilterRenderingMode::GraphicsContext);
+        // FIXME: Use GraphicsStyle to draw FECOLORMATRIX_TYPE_MATRIX filters.
+        if (RefPtr colorMatrix = dynamicDowncast<FEColorMatrix>(effect)) {
+            if (colorMatrix->type() == ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX)
+                modes.remove(FilterRenderingMode::GraphicsContext);
+        }
         modes = modes & effect->supportedFilterRenderingModes(preferredFilterRenderingModes);
+    }
 
     ASSERT(modes);
     return modes;

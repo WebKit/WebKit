@@ -1,11 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <defs>
 <filter id="blur">
+<feGaussianBlur stdDeviation="3"/>
+</filter>
+<filter id="blur-duplicate">
 <feGaussianBlur stdDeviation="3" edgeMode="duplicate"/>
 </filter>
+<clipPath id="clip">
+<rect x="20" y="20" width="140" height="140"/>
+</clipPath>
 </defs>
-<g filter="url(#blur)">
-<rect x="20" y="20" width="140" height="140" fill="green"/>
+<g filter="url(#blur)" clip-path="url(#clip)">
+<rect x="10" y="10" width="160" height="160" fill="green"/>
+<g filter="url(#blur-duplicate)">
 <rect x="40" y="40" width="100" height="100" fill="blue"/>
+</g>
 </g>
 </svg>

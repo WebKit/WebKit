@@ -144,7 +144,8 @@ OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes(Optio
     modes.add(FilterRenderingMode::Accelerated);
 #endif
 #if USE(CG)
-    if (m_stdX == m_stdY)
+    // FIXME: Use GraphicsStyle to draw transparent shadows.
+    if (m_stdX == m_stdY && m_shadowOpacity == 1)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes & preferredFilterRenderingModes;
