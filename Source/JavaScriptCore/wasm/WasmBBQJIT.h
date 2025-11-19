@@ -2007,12 +2007,14 @@ public:
     BranchFoldResult WARN_UNUSED_RETURN tryFoldFusedBranchCompare(OpType, ExpressionType);
     Jump WARN_UNUSED_RETURN emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
     BranchFoldResult WARN_UNUSED_RETURN tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
-    Jump WARN_UNUSED_RETURN emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
+    Jump WARN_UNUSED_RETURN emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location, bool branchIfTrue = false);
 
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, Stack&);
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, Stack&);
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedSelectCompare(OpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addFusedSelectCompare(OpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
 
     // Flush a value to its canonical slot.
     void flushValue(Value value);
