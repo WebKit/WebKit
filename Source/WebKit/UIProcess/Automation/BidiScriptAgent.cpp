@@ -113,8 +113,10 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
         auto remoteValue = out.setType(RemoteValueType::Array).release();
         if (auto array = object->getArray("value"_s)) {
             auto items = JSON::Array::create();
-            for (size_t i = 0; i < array->length(); ++i)
-                items->pushObject(deserializeRemoteValue(array->get(i).ptr()).releaseNonNull());
+            for (size_t i = 0; i < array->length(); ++i) {
+                auto item = deserializeRemoteValue(array->get(i).ptr());
+                items->pushObject(item.releaseNonNull());
+            }
             remoteValue->setValue(WTFMove(items));
         }
         return remoteValue;
@@ -183,8 +185,9 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
                 auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
                     .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
                     .release();
+                auto emptyCallFrames = JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create();
                 auto stackTrace = Inspector::Protocol::BidiScript::StackTrace::create()
-                    .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
+                    .setCallFrames(WTFMove(emptyCallFrames))
                     .release();
                 auto exceptionDetails = Inspector::Protocol::BidiScript::ExceptionDetails::create()
                     .setText(stringResult.error().right("JavaScriptError;"_s.length()))
@@ -645,12 +648,13 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             result.topLineNumber = lineNumber;
         if (!result.topColumnNumber && parsed)
             result.topColumnNumber = columnNumber;
-        result.callFrames->addItem(BidiScript::StackFrame::create()
+        auto frame = BidiScript::StackFrame::create()
             .setLineNumber(parsed ? lineNumber : 0)
             .setColumnNumber(parsed ? columnNumber : 0)
             .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
             .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
-            .release());
+            .release();
+        result.callFrames->addItem(WTFMove(frame));
     }
 
     return result;
@@ -712,4 +716,3 @@ std::optional<String> BidiScriptAgent::RealmRegistryStub::contextForRealmId(cons
 } // namespace WebKit
 
 #endif // ENABLE(WEBDRIVER_BIDI)
-
