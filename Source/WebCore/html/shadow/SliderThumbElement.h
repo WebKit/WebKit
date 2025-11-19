@@ -88,9 +88,8 @@ private:
     void handleTouchMove(TouchEvent&);
     void handleTouchEndAndCancel(TouchEvent&);
 
-    bool shouldAcceptTouchEvents();
     void registerForTouchEvents();
-    void unregisterForTouchEvents();
+    void unregisterForTouchEvents(EventHandlerRemovalReason = EventHandlerRemovalReason::Other);
 #endif
 
     bool m_inDragMode { false };

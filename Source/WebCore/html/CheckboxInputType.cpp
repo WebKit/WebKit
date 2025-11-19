@@ -320,6 +320,11 @@ void CheckboxInputType::disabledStateChanged()
         stopSwitchAnimation(SwitchAnimationType::Held);
         stopSwitchPointerTracking();
     }
+
+#if ENABLE(TOUCH_EVENTS)
+    if (isSwitch())
+        protectedElement()->updateTouchEventHandler();
+#endif
 }
 
 void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasCheckedByJavaScript)

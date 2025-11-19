@@ -1175,8 +1175,10 @@ void InputType::createShadowSubtreeIfNeeded()
 bool InputType::hasTouchEventHandler() const
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
-    if (isSwitch())
-        return true;
+    if (isSwitch()) {
+        ASSERT(element());
+        return !protectedElement()->isDisabledFormControl();
+    }
 #else
     if (isRangeControl())
         return true;
