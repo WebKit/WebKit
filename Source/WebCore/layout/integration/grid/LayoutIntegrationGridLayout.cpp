@@ -40,21 +40,6 @@ namespace WebCore {
 
 namespace LayoutIntegration {
 
-GridLayout::GridLayout(RenderGrid& renderGrid)
-    : m_gridBox(BoxTreeUpdater { renderGrid }.build())
-    , m_layoutState(renderGrid.view().layoutState())
-{
-}
-
-void GridLayout::updateFormattingContextGeometries()
-{
-    auto boxGeometryUpdater = BoxGeometryUpdater { layoutState(), gridBox() };
-    CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
-
-    boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
-    boxGeometryUpdater.setFormattingContextContentGeometry(CheckedRef { layoutState() }->geometryForBox(gridBox()).contentBoxWidth(), { });
-}
-
 static inline Layout::GridFormattingContext::GridLayoutConstraints constraintsForGridContent(const Layout::ElementBox& gridContainer)
 {
     CheckedRef gridContainerRenderer = downcast<RenderGrid>(*gridContainer.rendererForIntegration());
@@ -70,6 +55,21 @@ static inline Layout::GridFormattingContext::GridLayoutConstraints constraintsFo
         .inlineAxisAvailableSpace = availableInlineSpace,
         .blockAxisAvailableSpace = availableBlockSpace
     };
+}
+
+GridLayout::GridLayout(RenderGrid& renderGrid)
+    : m_gridBox(BoxTreeUpdater { renderGrid }.build())
+    , m_layoutState(renderGrid.view().layoutState())
+{
+}
+
+void GridLayout::updateFormattingContextGeometries()
+{
+    auto boxGeometryUpdater = BoxGeometryUpdater { layoutState(), gridBox() };
+    CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
+
+    boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
+    boxGeometryUpdater.setFormattingContextContentGeometry(CheckedRef { layoutState() }->geometryForBox(gridBox()).contentBoxWidth(), { });
 }
 
 void GridLayout::updateGridItemRenderers()

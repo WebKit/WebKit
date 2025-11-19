@@ -45,46 +45,46 @@ enum class ReasonCollectionMode : bool {
 };
 
 enum class GridAvoidanceReason : uint64_t {
-    GridHasNonFixedWidth = 1LLU << 0,
-    GridHasNonFixedHeight = 1LLU << 1,
-    GridHasVerticalWritingMode = 1LLU << 2,
-    GridHasMarginTrim = 1LLU << 3,
-    GridIsNotInBFC = 1LLU << 4,
-    GridNeedsBaseline = 1LLU << 5,
-    GridHasOutOfFlowChild = 1LLU << 6,
-    GridHasNonVisibleOverflow = 1LLU << 7,
-    GridHasUnsupportedRenderer = 1LLU << 8,
-    GridIsEmpty = 1LLU << 9,
-    GridHasNonInitialMinWidth = 1LLU << 10,
-    GridHasNonInitialMaxWidth = 1LLU << 11,
-    GridHasNonInitialMinHeight = 1LLU << 12,
-    GridHasNonInitialMaxHeight = 1LLU << 13,
-    GridHasNonZeroMinWidth = 1LLU << 14,
-    GridHasGridTemplateAreas = 1LLU << 15,
-    GridHasNonInitialGridAutoFlow = 1LLU << 16,
-    GridHasGaps = 1LLU << 17,
-    GridIsOutOfFlow = 1LLU << 18,
-    GridHasContainsSize = 1LLU << 19,
-    GridHasUnsupportedGridTemplateColumns = 1LLU << 20,
-    GridHasUnsupportedGridTemplateRows = 1LLU << 21,
-    GridItemHasNonFixedWidth = 1LLU << 22,
-    GridItemHasNonFixedHeight = 1LLU << 23,
-    GridItemHasNonInitialMaxWidth = 1LLU << 24,
-    GridItemHasNonZeroMinHeight = 1LLU << 25,
-    GridItemHasNonInitialMaxHeight = 1LLU << 26,
-    GridItemHasBorder = 1LLU << 27,
-    GridItemHasPadding = 1LLU << 28,
-    GridItemHasMargin = 1LLU << 29,
-    GridItemHasVerticalWritingMode = 1LLU << 30,
-    GridItemHasAspectRatio = 1LLU << 31,
-    GridItemHasUnsupportedInlineAxisAlignment = 1LLU << 32,
-    GridItemHasUnsupportedBlockAxisAlignment = 1LLU << 33,
-    GridItemHasNonVisibleOverflow = 1LLU << 34,
-    GridItemHasContainsSize = 1LLU << 35,
-    GridItemHasUnsupportedColumnPlacement = 1LLU << 36,
-    GridItemHasUnsupportedRowPlacement = 1LLU << 37,
-    NotAGrid = 1LLU << 38,
-    GridFormattingContextIntegrationDisabled = 1LLU << 39,
+    GridHasNonFixedWidth                        = 1LLU << 0,
+    GridHasNonFixedHeight                       = 1LLU << 1,
+    GridHasVerticalWritingMode                  = 1LLU << 2,
+    GridHasMarginTrim                           = 1LLU << 3,
+    // Unused                                   = 1LLU << 4,
+    GridNeedsBaseline                           = 1LLU << 5,
+    GridHasOutOfFlowChild                       = 1LLU << 6,
+    GridHasNonVisibleOverflow                   = 1LLU << 7,
+    GridHasUnsupportedRenderer                  = 1LLU << 8,
+    GridIsEmpty                                 = 1LLU << 9,
+    GridHasNonInitialMinWidth                   = 1LLU << 10,
+    GridHasNonInitialMaxWidth                   = 1LLU << 11,
+    GridHasNonInitialMinHeight                  = 1LLU << 12,
+    GridHasNonInitialMaxHeight                  = 1LLU << 13,
+    GridHasNonZeroMinWidth                      = 1LLU << 14,
+    GridHasGridTemplateAreas                    = 1LLU << 15,
+    GridHasNonInitialGridAutoFlow               = 1LLU << 16,
+    GridHasGaps                                 = 1LLU << 17,
+    GridIsOutOfFlow                             = 1LLU << 18,
+    GridHasContainsSize                         = 1LLU << 19,
+    GridHasUnsupportedGridTemplateColumns       = 1LLU << 20,
+    GridHasUnsupportedGridTemplateRows          = 1LLU << 21,
+    GridItemHasNonFixedWidth                    = 1LLU << 22,
+    GridItemHasNonFixedHeight                   = 1LLU << 23,
+    GridItemHasNonInitialMaxWidth               = 1LLU << 24,
+    GridItemHasNonZeroMinHeight                 = 1LLU << 25,
+    GridItemHasNonInitialMaxHeight              = 1LLU << 26,
+    GridItemHasBorder                           = 1LLU << 27,
+    GridItemHasPadding                          = 1LLU << 28,
+    GridItemHasMargin                           = 1LLU << 29,
+    GridItemHasVerticalWritingMode              = 1LLU << 30,
+    GridItemHasAspectRatio                      = 1LLU << 31,
+    GridItemHasUnsupportedInlineAxisAlignment   = 1LLU << 32,
+    GridItemHasUnsupportedBlockAxisAlignment    = 1LLU << 33,
+    GridItemHasNonVisibleOverflow               = 1LLU << 34,
+    GridItemHasContainsSize                     = 1LLU << 35,
+    GridItemHasUnsupportedColumnPlacement       = 1LLU << 36,
+    GridItemHasUnsupportedRowPlacement          = 1LLU << 37,
+    NotAGrid                                    = 1LLU << 38,
+    GridFormattingContextIntegrationDisabled    = 1LLU << 39,
 };
 
 #ifndef NDEBUG
@@ -145,19 +145,6 @@ static OptionSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid
 
     if (!renderGridStyle->gridTemplateAreas().isNone())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasGridTemplateAreas, reasons, reasonCollectionMode);
-
-    auto isInBFC = [&] {
-        for (CheckedPtr containingBlock = renderGrid.containingBlock(); containingBlock && !is<RenderView>(*containingBlock); containingBlock = containingBlock->containingBlock()) {
-            if (containingBlock->style().display() != DisplayType::Block)
-                return false;
-            if (containingBlock->createsNewFormattingContext())
-                return true;
-        }
-        return true;
-    };
-
-    if (!isInBFC())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridIsNotInBFC, reasons, reasonCollectionMode);
 
     auto& gridTemplateColumns = renderGridStyle->gridTemplateColumns();
     auto& gridTemplateColumnsTrackList = gridTemplateColumns.list;
@@ -385,9 +372,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasMarginTrim:
         stream << "grid has margin-trim";
-        break;
-    case GridAvoidanceReason::GridIsNotInBFC:
-        stream << "grid is not in BFC";
         break;
     case GridAvoidanceReason::GridNeedsBaseline:
         stream << "inline grid needs baseline";
