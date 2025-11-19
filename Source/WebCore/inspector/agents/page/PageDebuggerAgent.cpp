@@ -68,7 +68,7 @@ PageDebuggerAgent::~PageDebuggerAgent() = default;
 
 bool PageDebuggerAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledPageDebuggerAgent() == this && WebDebuggerAgent::enabled();
+    return m_instrumentingAgents->enabledPageDebuggerAgent() == this && WebDebuggerAgent::enabled();
 }
 
 Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> PageDebuggerAgent::evaluateOnCallFrame(const Inspector::Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
@@ -83,14 +83,14 @@ Inspector::Protocol::ErrorStringOr<std::tuple<Ref<Inspector::Protocol::Runtime::
 
 void PageDebuggerAgent::internalEnable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageDebuggerAgent(this);
+    m_instrumentingAgents->setEnabledPageDebuggerAgent(this);
 
     WebDebuggerAgent::internalEnable();
 }
 
 void PageDebuggerAgent::internalDisable(bool isBeingDestroyed)
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledPageDebuggerAgent(nullptr);
+    m_instrumentingAgents->setEnabledPageDebuggerAgent(nullptr);
 
     WebDebuggerAgent::internalDisable(isBeingDestroyed);
 }

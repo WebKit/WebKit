@@ -143,19 +143,19 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::setInstruments(
 
 bool InspectorTimelineAgent::enabled() const
 {
-    return Ref { m_instrumentingAgents.get() }->enabledTimelineAgent() == this;
+    return m_instrumentingAgents->enabledTimelineAgent() == this;
 }
 
 void InspectorTimelineAgent::internalEnable()
 {
     ASSERT(!enabled());
 
-    Ref { m_instrumentingAgents.get() }->setEnabledTimelineAgent(this);
+    m_instrumentingAgents->setEnabledTimelineAgent(this);
 }
 
 void InspectorTimelineAgent::internalDisable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledTimelineAgent(nullptr);
+    m_instrumentingAgents->setEnabledTimelineAgent(nullptr);
 
     stop();
 
@@ -164,7 +164,7 @@ void InspectorTimelineAgent::internalDisable()
 
 bool InspectorTimelineAgent::tracking() const
 {
-    return Ref { m_instrumentingAgents.get() }->trackingTimelineAgent() == this;
+    return m_instrumentingAgents->trackingTimelineAgent() == this;
 }
 
 void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
@@ -176,7 +176,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
     else
         m_maxCallStackDepth = 5;
 
-    Ref { m_instrumentingAgents.get() }->setTrackingTimelineAgent(this);
+    m_instrumentingAgents->setTrackingTimelineAgent(this);
 
     m_environment.debugger()->addObserver(*this);
 
@@ -185,7 +185,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
 
 void InspectorTimelineAgent::internalStop()
 {
-    Ref { m_instrumentingAgents.get() }->setTrackingTimelineAgent(nullptr);
+    m_instrumentingAgents->setTrackingTimelineAgent(nullptr);
 
     m_environment.debugger()->removeObserver(*this, true);
 
@@ -223,7 +223,7 @@ void InspectorTimelineAgent::startFromConsole(const String& title)
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
             auto recordTitle = record.data->getString("title"_s);
             if (recordTitle == title) {
-                if (auto* consoleAgent = Ref { m_instrumentingAgents.get() } -> webConsoleAgent()) {
+                if (auto* consoleAgent = m_instrumentingAgents -> webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
                     String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
                     consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
@@ -258,7 +258,7 @@ void InspectorTimelineAgent::stopFromConsole(const String& title)
         }
     }
 
-    if (auto* consoleAgent = Ref { m_instrumentingAgents.get() }->webConsoleAgent()) {
+    if (auto* consoleAgent = m_instrumentingAgents->webConsoleAgent()) {
         // FIXME: Send an enum to the frontend for localization?
         String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" does not exist"_s);
         consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
@@ -356,7 +356,7 @@ void InspectorTimelineAgent::didEnqueueFirstContentfulPaint()
 void InspectorTimelineAgent::didEnqueueLargestContentfulPaint(Element* element, unsigned area)
 {
     Inspector::Protocol::DOM::NodeId nodeID = 0;
-    if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent())
+    if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent())
         nodeID = domAgent->pushNodeToFrontend(element);
 
     appendRecord(TimelineRecordFactory::createLargestContentfulPaintData(nodeID, area), TimelineRecordType::LargestContentfulPaint, false);
@@ -367,7 +367,7 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     ASSERT(!tracking());
 
     // Disable breakpoints during programmatic capture.
-    if (auto* webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent()) {
+    if (auto* webDebuggerAgent = m_instrumentingAgents->enabledWebDebuggerAgent()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = webDebuggerAgent->breakpointsActive();
         if (m_programmaticCaptureRestoreBreakpointActiveValue)
             webDebuggerAgent->setBreakpointsActive(false);
@@ -390,7 +390,7 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
 
     // Re-enable breakpoints if they were enabled.
     if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-        if (auto* webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
+        if (auto* webDebuggerAgent = m_instrumentingAgents->enabledWebDebuggerAgent())
             webDebuggerAgent->setBreakpointsActive(true);
     }
 }
@@ -430,7 +430,7 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
-    if (auto* scriptProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentScriptProfilerAgent()) {
+    if (auto* scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent()) {
         if (state == InstrumentState::Start)
             scriptProfilerAgent->startTracking(true);
         else
@@ -440,7 +440,7 @@ void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState stat
 
 void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
-    if (auto* heapAgent = Ref { m_instrumentingAgents.get() }->persistentWebHeapAgent()) {
+    if (auto* heapAgent = m_instrumentingAgents->persistentWebHeapAgent()) {
         if (state == InstrumentState::Start) {
             if (shouldStartHeapInstrument())
                 heapAgent->startTracking();
@@ -452,7 +452,7 @@ void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
-    if (auto* cpuProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentCPUProfilerAgent()) {
+    if (auto* cpuProfilerAgent = m_instrumentingAgents->persistentCPUProfilerAgent()) {
         if (state == InstrumentState::Start)
             cpuProfilerAgent->startTracking();
         else
@@ -466,7 +466,7 @@ void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
-    if (auto* memoryAgent = Ref { m_instrumentingAgents.get() }->persistentMemoryAgent()) {
+    if (auto* memoryAgent = m_instrumentingAgents->persistentMemoryAgent()) {
         if (state == InstrumentState::Start)
             memoryAgent->startTracking();
         else
@@ -490,7 +490,7 @@ void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
 
 void InspectorTimelineAgent::toggleAnimationInstrument(InstrumentState state)
 {
-    if (auto* animationAgent = Ref { m_instrumentingAgents.get() }->persistentAnimationAgent()) {
+    if (auto* animationAgent = m_instrumentingAgents->persistentAnimationAgent()) {
         if (state == InstrumentState::Start)
             animationAgent->startTracking();
         else

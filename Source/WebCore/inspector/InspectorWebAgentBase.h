@@ -31,6 +31,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/WorkerOrWorkletGlobalScope.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -86,7 +87,7 @@ protected:
     {
     }
 
-    WeakRef<InstrumentingAgents> m_instrumentingAgents;
+    const CheckedRef<InstrumentingAgents> m_instrumentingAgents;
     Inspector::InspectorEnvironment& m_environment;
 };
     

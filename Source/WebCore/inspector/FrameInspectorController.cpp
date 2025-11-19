@@ -93,7 +93,7 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
     };
     WebAgentContext webContext = {
         baseContext,
-        m_instrumentingAgents.get()
+        m_instrumentingAgents
     };
     return {
         webContext,
@@ -110,7 +110,7 @@ void FrameInspectorController::createLazyAgents()
 
     m_injectedScriptManager->connect();
     if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
+        commandLineAPIHost->init(m_instrumentingAgents);
 }
 
 void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
@@ -129,7 +129,7 @@ void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& front
 
     if (connectedFirstFrontend) {
         m_agents.didCreateFrontendAndBackend();
-        InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+        InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents);
     }
 }
 
@@ -140,7 +140,7 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
 
     bool disconnectedLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectedLastFrontend) {
-        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents);
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
         m_injectedScriptManager->discardInjectedScripts();
     }
@@ -154,7 +154,7 @@ void FrameInspectorController::inspectedFrameDestroyed()
     for (unsigned i = 0; i < m_frontendRouter->frontendCount(); ++i)
         InspectorInstrumentation::frontendDeleted();
 
-    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents);
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
     m_injectedScriptManager->disconnect();

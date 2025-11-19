@@ -118,8 +118,8 @@ public:
     InspectorBackendClient* inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
-    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
-    Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents; }
+    Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher; }
 
     Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();
@@ -142,7 +142,7 @@ private:
     void createLazyAgents();
 
     WeakRef<Page> m_page;
-    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const UniqueRef<InstrumentingAgents> m_instrumentingAgents;
     const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;

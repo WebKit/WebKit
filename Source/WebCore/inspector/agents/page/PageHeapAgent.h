@@ -28,8 +28,8 @@
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "WebHeapAgent.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ public:
     void mainFrameNavigated();
 
 private:
-    WeakRef<InstrumentingAgents> m_instrumentingAgents;
+    const CheckedRef<InstrumentingAgents> m_instrumentingAgents;
 };
 
 } // namespace WebCore

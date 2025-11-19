@@ -32,10 +32,11 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorEnvironment.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace Inspector {
 class InspectorAgent;
@@ -139,12 +140,13 @@ class WebHeapAgent;
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline) \
     DEFINE_TRACKING_INSPECTOR_AGENT(macro, Timeline_Page) \
 
-class InstrumentingAgents : public WTF::RefCountedAndCanMakeWeakPtr<InstrumentingAgents> {
+class InstrumentingAgents : public CanMakeCheckedPtr<InstrumentingAgents> {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
     WTF_MAKE_TZONE_ALLOCATED(InstrumentingAgents);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InstrumentingAgents);
 public:
-    static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&);
-    static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&, InstrumentingAgents& fallbackAgents);
+    static UniqueRef<InstrumentingAgents> create(Inspector::InspectorEnvironment&);
+    static UniqueRef<InstrumentingAgents> create(Inspector::InspectorEnvironment&, InstrumentingAgents& fallbackAgents);
 
     ~InstrumentingAgents() = default;
     void reset();
@@ -159,10 +161,11 @@ FOR_EACH_INSPECTOR_AGENT(DECLARE_GETTER_SETTER_FOR_INSPECTOR_AGENT)
 #undef DECLARE_GETTER_SETTER_FOR_INSPECTOR_AGENT
 
 private:
+    template<typename T, class... Args> friend WTF::UniqueRef<T> WTF::makeUniqueRefWithoutFastMallocCheck(Args&&...);
     InstrumentingAgents(Inspector::InspectorEnvironment&, InstrumentingAgents* fallbackAgents);
 
     Inspector::InspectorEnvironment& m_environment;
-    const WeakPtr<InstrumentingAgents> m_fallbackAgents;
+    const InstrumentingAgents* m_fallbackAgents;
 
 #define DECLARE_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT(Class, Name, Getter, Setter) \
     Class* m_##Getter##Name { nullptr }; \

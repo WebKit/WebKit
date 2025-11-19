@@ -320,13 +320,12 @@ void InspectorCSSAgent::reset()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::enable()
 {
-    Ref agents = m_instrumentingAgents.get();
-    if (agents->enabledCSSAgent() == this)
+    if (m_instrumentingAgents->enabledCSSAgent() == this)
         return { };
 
-    agents->setEnabledCSSAgent(this);
+    m_instrumentingAgents->setEnabledCSSAgent(this);
 
-    if (auto* domAgent = agents->persistentDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent()) {
         for (auto* document : domAgent->documents())
             activeStyleSheetsUpdated(*document);
     }
@@ -336,7 +335,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::enable()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::disable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledCSSAgent(nullptr);
+    m_instrumentingAgents->setEnabledCSSAgent(nullptr);
 
     reset();
 
@@ -403,7 +402,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return false;
 
@@ -644,7 +643,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
 void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& result)
 {
     Vector<CSSStyleSheet*> cssStyleSheets;
-    if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
+    if (auto* domAgent = m_instrumentingAgents->persistentDOMAgent()) {
         for (auto* document : domAgent->documents())
             collectAllDocumentStyleSheets(*document, cssStyleSheets);
     }
@@ -710,7 +709,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setStyleSheetText(co
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -732,7 +731,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSStyle>> Insp
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -754,7 +753,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -780,7 +779,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> Insp
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -800,7 +799,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> Inspe
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* pageAgent = Ref { m_instrumentingAgents.get() }->enabledPageAgent();
+    auto* pageAgent = m_instrumentingAgents->enabledPageAgent();
     if (!pageAgent)
         return makeUnexpected("Page domain must be enabled"_s);
 
@@ -868,7 +867,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (!inspectorStyleSheet)
         return makeUnexpected(errorString);
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -953,7 +952,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -1151,8 +1150,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::setLayoutContextType
     m_layoutContextTypeChangedMode = mode;
     
     if (mode == Inspector::Protocol::CSS::LayoutContextTypeChangedMode::All) {
-        Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+        auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
         if (!domAgent)
             return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -1199,8 +1197,7 @@ void InspectorCSSAgent::nodeHasLayoutFlagsChange(Node& node)
 
 void InspectorCSSAgent::nodesWithPendingLayoutFlagsChangeDispatchTimerFired()
 {
-    Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent)
         return;
 
@@ -1230,7 +1227,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 {
     return m_nodeToInspectorStyleSheet.ensure(&element, [this, &element] {
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(Ref { m_instrumentingAgents.get() }->enabledPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
+        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents->enabledPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
         return inspectorStyleSheet;
     }).iterator->value;
@@ -1238,8 +1235,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 
 Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
-    Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return nullptr;
@@ -1250,8 +1246,7 @@ Element* InspectorCSSAgent::elementForId(Inspector::Protocol::ErrorString& error
 
 Node* InspectorCSSAgent::nodeForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)
 {
-    Ref agents = m_instrumentingAgents.get();
-    auto* domAgent = agents->persistentDOMAgent();
+    auto* domAgent = m_instrumentingAgents->persistentDOMAgent();
     if (!domAgent) {
         errorString = "DOM domain must be enabled"_s;
         return nullptr;
@@ -1275,7 +1270,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     if (!inspectorStyleSheet) {
         String id = String::number(m_lastStyleSheetId++);
         Document* document = styleSheet->ownerDocument();
-        inspectorStyleSheet = InspectorStyleSheet::create(Ref { m_instrumentingAgents.get() }->enabledPageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
+        inspectorStyleSheet = InspectorStyleSheet::create(m_instrumentingAgents->enabledPageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);
         if (m_creatingViaInspectorStyleSheet) {

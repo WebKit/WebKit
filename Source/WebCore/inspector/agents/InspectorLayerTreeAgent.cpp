@@ -81,14 +81,14 @@ void InspectorLayerTreeAgent::reset()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::enable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledLayerTreeAgent(this);
+    m_instrumentingAgents->setEnabledLayerTreeAgent(this);
 
     return { };
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorLayerTreeAgent::disable()
 {
-    Ref { m_instrumentingAgents.get() }->setEnabledLayerTreeAgent(nullptr);
+    m_instrumentingAgents->setEnabledLayerTreeAgent(nullptr);
 
     reset();
 
@@ -117,7 +117,7 @@ void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement& pseudoElemen
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::LayerTree::Layer>>> InspectorLayerTreeAgent::layersForNode(Inspector::Protocol::DOM::NodeId nodeId)
 {
-    auto* node = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()->nodeForId(nodeId);
+    auto* node = m_instrumentingAgents->persistentDOMAgent()->nodeForId(nodeId);
     if (!node)
         return makeUnexpected("Missing node for given nodeId"_s);
 
@@ -221,8 +221,7 @@ Inspector::Protocol::DOM::NodeId InspectorLayerTreeAgent::idForNode(Node* node)
     if (!node)
         return 0;
 
-    Ref agents = m_instrumentingAgents.get();
-    InspectorDOMAgent* domAgent = agents->persistentDOMAgent();
+    InspectorDOMAgent* domAgent = m_instrumentingAgents->persistentDOMAgent();
     
     auto nodeId = domAgent->boundNodeId(node);
     if (!nodeId) {

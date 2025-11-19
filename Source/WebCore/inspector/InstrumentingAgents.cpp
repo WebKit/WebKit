@@ -36,14 +36,14 @@ namespace WebCore {
 
 using namespace Inspector;
 
-Ref<InstrumentingAgents> InstrumentingAgents::create(Inspector::InspectorEnvironment& environment)
+UniqueRef<InstrumentingAgents> InstrumentingAgents::create(Inspector::InspectorEnvironment& environment)
 {
-    return adoptRef(*new InstrumentingAgents(environment, nullptr));
+    return makeUniqueRef<InstrumentingAgents>(environment, nullptr);
 }
 
-Ref<InstrumentingAgents> InstrumentingAgents::create(Inspector::InspectorEnvironment& environment, InstrumentingAgents& fallbackAgents)
+UniqueRef<InstrumentingAgents> InstrumentingAgents::create(Inspector::InspectorEnvironment& environment, InstrumentingAgents& fallbackAgents)
 {
-    return adoptRef(*new InstrumentingAgents(environment, &fallbackAgents));
+    return makeUniqueRef<InstrumentingAgents>(environment, &fallbackAgents);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InstrumentingAgents);
@@ -71,8 +71,8 @@ Class* InstrumentingAgents::Getter##Name() const \
 { \
     if (m_##Getter##Name) \
         return m_##Getter##Name; \
-    if (RefPtr fallbackAgents = m_fallbackAgents.get()) \
-        return fallbackAgents->Getter##Name(); \
+    if (m_fallbackAgents) \
+        return m_fallbackAgents->Getter##Name(); \
     return nullptr; \
 } \
 void InstrumentingAgents::set##Setter##Name(Class* agent) \
