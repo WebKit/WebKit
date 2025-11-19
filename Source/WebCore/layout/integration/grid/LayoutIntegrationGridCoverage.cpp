@@ -53,7 +53,7 @@ enum class GridAvoidanceReason : uint64_t {
     GridNeedsBaseline                           = 1LLU << 5,
     GridHasOutOfFlowChild                       = 1LLU << 6,
     GridHasNonVisibleOverflow                   = 1LLU << 7,
-    GridHasUnsupportedRenderer                  = 1LLU << 8,
+    // Unused                                   = 1LLU << 8,
     GridIsEmpty                                 = 1LLU << 9,
     GridHasNonInitialMinWidth                   = 1LLU << 10,
     GridHasNonInitialMaxWidth                   = 1LLU << 11,
@@ -235,9 +235,6 @@ static OptionSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid
     auto linesFromGridTemplateColumnsCount = gridTemplateColumns.sizes.size() + 1;
     auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
-        if (!gridItem->isRenderBlockFlow())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridHasUnsupportedRenderer, reasons, reasonCollectionMode);
-
         CheckedRef gridItemStyle = gridItem->style();
 
         if (!gridItemStyle->width().isFixed())
@@ -381,9 +378,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasNonVisibleOverflow:
         stream << "grid has non-visible overflow";
-        break;
-    case GridAvoidanceReason::GridHasUnsupportedRenderer:
-        stream << "grid has unsupported renderer";
         break;
     case GridAvoidanceReason::GridIsEmpty:
         stream << "grid is empty";
