@@ -56,11 +56,6 @@ namespace Greedy {
 // Experiments
 static constexpr bool eagerGroupsExhaustiveSearch = false;
 
-// Quickly filters out short ranges from live range splitting consideration.
-static constexpr size_t splitMinRangeSize = 8;
-
-static constexpr unsigned spillCostSizeBias = 50000;
-
 static constexpr float unspillableCost = std::numeric_limits<float>::infinity();
 static constexpr float fastTmpSpillCost = std::numeric_limits<float>::max();
 static constexpr float maxSpillableSpillCost = std::numeric_limits<float>::max();
@@ -78,13 +73,16 @@ static bool verbose() { return Options::airGreedyRegAllocVerbose(); }
 
 // Terminology / core data-structures:
 //
-// Point: a position within the IR stream. There are two points associated with each
-// instruction: early and late. The early point for an instruction occurs immediately
+// Point: a position within the IR stream. There are four points associated with each
+// instruction, see PointOffsets. The early point for an instruction occurs immediately
 // before the instruction and the late occurs immediately following. Early use/defs
 // for that instruction are modeled as occurring at the early point whereas late use/defs
 // are modeled as occurring at the late point. The late point for an instruction and
 // early point for the subsequent instruction are distinct in order to avoid false
-// conflicts, e.g. when a late use is followed by an early def.
+// conflicts, e.g. when a late use is followed by an early def. Two "gap" points, Pre & Post,
+// exist for each instruction to allow distinguishing e.g. a Tmp being live into a block from
+// a Tmp becoming live due to an early def by the first instruction of the block
+// (and sinilarly for block exits and late use).
 //
 // Interval: contiguous set of points, represented by a half open interval [begin, end).
 //
@@ -127,6 +125,20 @@ static bool verbose() { return Options::airGreedyRegAllocVerbose(); }
 
 using Point = uint32_t;
 using Interval = WTF::Range<Point>;
+
+enum PointOffsets {
+    Pre = 0,
+    Early = 1,
+    // Inst lives between the Early and Late points.
+    Late = 2,
+    Post = 3,
+    PointsPerInst
+};
+
+// Quickly filters out short ranges from live range splitting consideration.
+static constexpr size_t splitMinRangeSize = 4 * PointOffsets::PointsPerInst;
+
+static constexpr unsigned spillCostSizeBias = 25000 * PointOffsets::PointsPerInst;
 
 class LiveRange {
 public:
@@ -677,8 +689,6 @@ public:
     }
 
 private:
-    static constexpr Point pointsPerInst = 2;
-
     template<Bank bank>
     void dumpRegRanges(PrintStream& out) const
     {
@@ -707,11 +717,10 @@ private:
                 m_tailPoints[i] = tailPosition;
                 continue;
             }
-            // Two points per instruction: early and late.
-            tailPosition = headPosition + 2 * block->size() - 1;
+            tailPosition = headPosition + block->size() * PointOffsets::PointsPerInst - 1;
             m_blockToHeadPoint[block] = headPosition;
             m_tailPoints[i] = tailPosition;
-            headPosition += block->size() * pointsPerInst;
+            headPosition += block->size() * PointOffsets::PointsPerInst;
         }
     }
 
@@ -732,49 +741,47 @@ private:
 
     Point positionOfTail(BasicBlock* block)
     {
-        return positionOfHead(block) + block->size() * pointsPerInst - 1;
+        return positionOfHead(block) + block->size() * PointOffsets::PointsPerInst - 1;
     }
 
     static size_t instIndex(Point positionOfHead, Point point)
     {
-        return (point - positionOfHead) / pointsPerInst;
+        return (point - positionOfHead) / PointOffsets::PointsPerInst;
+    }
+
+    static Point positionOfEarly(Point positionOfHead, unsigned instIndex)
+    {
+        ASSERT(!(positionOfHead % PointOffsets::PointsPerInst));
+        return positionOfHead + instIndex * PointOffsets::PointsPerInst + PointOffsets::Early;
+    }
+
+    static Point positionOfLate(Point positionOfHead, unsigned instIndex)
+    {
+        ASSERT(!(positionOfHead % PointOffsets::PointsPerInst));
+        return positionOfHead + instIndex * PointOffsets::PointsPerInst + PointOffsets::Late;
     }
 
     static Point positionOfEarly(Interval interval)
     {
-        static_assert(!(pointsPerInst & (pointsPerInst - 1)));
-        return interval.begin() & ~static_cast<Point>(pointsPerInst - 1);
+        static_assert(!(PointOffsets::PointsPerInst & (PointOffsets::PointsPerInst - 1)));
+        return (interval.begin() & ~(PointOffsets::PointsPerInst - 1)) + PointOffsets::Early;
     }
 
     static Interval earlyInterval(Point positionOfEarly)
     {
-        ASSERT(!(positionOfEarly % pointsPerInst));
+        ASSERT((positionOfEarly % PointOffsets::PointsPerInst) == PointOffsets::Early);
         return Interval(positionOfEarly);
     }
 
     static Interval lateInterval(Point positionOfEarly)
     {
-        ASSERT(!(positionOfEarly % pointsPerInst));
-        return Interval(positionOfEarly + 1);
+        ASSERT((positionOfEarly % PointOffsets::PointsPerInst) == PointOffsets::Early);
+        return Interval(positionOfEarly + (PointOffsets::Late - PointOffsets::Early));
     }
 
     static Interval earlyAndLateInterval(Point positionOfEarly)
     {
         return earlyInterval(positionOfEarly) | lateInterval(positionOfEarly);
-    }
-
-    static Interval interval(Point positionOfEarly, Arg::Timing timing)
-    {
-        switch (timing) {
-        case Arg::OnlyEarly:
-            return earlyInterval(positionOfEarly);
-        case Arg::OnlyLate:
-            return lateInterval(positionOfEarly);
-        case Arg::EarlyAndLate:
-            return earlyAndLateInterval(positionOfEarly);
-        }
-        ASSERT_NOT_REACHED();
-        return Interval();
     }
 
     static Interval intervalForSpill(Point positionOfEarly, Arg::Role role)
@@ -1045,8 +1052,8 @@ private:
 
             for (unsigned instIndex = block->size(); instIndex--;) {
                 Inst& inst = block->at(instIndex);
-                Point positionOfEarly = positionOfHead + instIndex * pointsPerInst;
-                Point positionOfLate = positionOfEarly + 1;
+                Point positionOfEarly = this->positionOfEarly(positionOfHead, instIndex);
+                Point positionOfLate = this->positionOfLate(positionOfHead, instIndex);
 
                 lateUses.shrink(0);
                 lateDefs.shrink(0);
@@ -1305,7 +1312,7 @@ private:
             tmpData.useDefCost = useDefCost;
 
             if (cannotSpillInPlace.contains(tmp)
-                && tmpData.liveRange.intervals().size() == 1 && tmpData.liveRange.size() <= pointsPerInst) {
+                && tmpData.liveRange.intervals().size() == 1 && tmpData.liveRange.size() <= PointOffsets::PointsPerInst) {
                 tmpData.spillability = TmpData::Spillability::Unspillable;
                 m_stats[bank].numUnspillableTmps++;
             }
@@ -1823,7 +1830,7 @@ private:
             Point positionOfHead = this->positionOfHead(block);
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
-                unsigned indexOfEarly = positionOfHead + instIndex * 2;
+                unsigned indexOfEarly = positionOfEarly(positionOfHead, instIndex);
 
                 // The TmpWidth analysis will say that a Move only stores 32 bits into the destination,
                 // if the source only had 32 bits worth of non-zero bits. Same for the source: it will
