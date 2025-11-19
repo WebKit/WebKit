@@ -25,6 +25,8 @@
  
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsLargeBlobInputsJSON {
     DOMString support;
     boolean read;
@@ -33,6 +35,8 @@
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsPRFValuesJSON {
     required DOMString first;
     DOMString second;
@@ -40,6 +44,8 @@
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsPRFInputsJSON {
     AuthenticationExtensionsPRFValuesJSON eval;
     record<USVString, AuthenticationExtensionsPRFValuesJSON> evalByCredential;
@@ -47,6 +53,8 @@
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsClientInputsJSON {
     DOMString appid;
     boolean credProps;

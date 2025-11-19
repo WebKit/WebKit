@@ -35,6 +35,7 @@
 #endif // ENABLE(WEB_AUTHN)
 
 namespace WebCore {
+struct PublicKeyCredentialRequestOptionsJSON;
 
 struct PublicKeyCredentialRequestOptions {
 #if ENABLE(WEB_AUTHN)
@@ -46,6 +47,8 @@ struct PublicKeyCredentialRequestOptions {
     WEBCORE_EXPORT UserVerificationRequirement userVerification() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
     std::optional<AuthenticatorAttachment> authenticatorAttachment { }; // Not serialized over IPC.
+
+    PublicKeyCredentialRequestOptionsJSON toJSON() const;
 #endif // ENABLE(WEB_AUTHN)
 };
 

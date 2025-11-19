@@ -488,6 +488,7 @@ WI.contentLoaded = function()
         WI.NetworkTabContentView,
         WI.SourcesTabContentView,
         WI.TimelineTabContentView,
+        WI.AuthenticationTabContentView,
         WI.StorageTabContentView,
         WI.GraphicsTabContentView,
         WI.LayersTabContentView,
@@ -1239,6 +1240,14 @@ WI.showTimelineTab = function(options = {})
         tabContentView = new WI.TimelineTabContentView;
     WI.tabBrowser.showTabForContentView(tabContentView, options);
 };
+
+WI.showAuthenticationTab = function()
+{
+    var tabContentView = WI.tabBrowser.bestTabContentViewForClass(WI.AuthenticationTabContentView);
+    if (!tabContentView)
+        tabContentView = new WI.AuthenticationTabContentView;
+    WI.tabBrowser.showTabForContentView(tabContentView, {});
+}
 
 WI.isShowingTimelineTab = function()
 {

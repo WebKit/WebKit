@@ -33,10 +33,13 @@
 
 namespace WebCore {
 
+struct PublicKeyCredentialDescriptorJSON;
+
 struct PublicKeyCredentialDescriptor {
     PublicKeyCredentialType type;
     BufferSource id;
     Vector<String> transports;
+    PublicKeyCredentialDescriptorJSON toJSON() const;
 };
 
 } // namespace WebCore

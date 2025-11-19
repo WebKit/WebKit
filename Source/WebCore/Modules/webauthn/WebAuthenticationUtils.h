@@ -34,8 +34,72 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
+
+struct ParsedCOSEKey {
+    int keyType; // 1=OKP, 2=EC2, 3=RSA, 4=Symmetric, 5=HSS-LMS
+    std::optional<int> algorithm; // COSE alg identifier (e.g., -7=ES256, -257=RS256)
+    std::optional<int> curve; // COSE curve identifier (e.g., 1=P-256, 6=Ed25519)
+    std::optional<String> keyId; // base64
+    std::optional<Vector<int>> keyOps; // array of key operation identifiers
+    std::optional<String> baseIV; // base64
+
+    // EC2/OKP keys (keyType 1, 2)
+    std::optional<String> x; // base64 - x-coordinate
+    std::optional<String> y; // base64 - y-coordinate (EC2 only)
+    std::optional<String> d; // base64 - private key
+
+    // RSA keys (keyType 3)
+    std::optional<String> n; // base64 - modulus
+    std::optional<String> e; // base64 - exponent
+    std::optional<String> p; // base64 - first prime factor
+    std::optional<String> q; // base64 - second prime factor
+    std::optional<String> dP; // base64 - first factor CRT exponent
+    std::optional<String> dQ; // base64 - second factor CRT exponent
+    std::optional<String> qInv; // base64 - first CRT coefficient
+
+    // Symmetric keys (keyType 4) and HSS-LMS (keyType 5)
+    std::optional<String> keyValue; // base64
+    std::optional<int> lmsType; // HSS-LMS type
+    std::optional<int> lmotsType; // HSS-LMS OTS type
+
+    String rawCBOR; // base64 - original CBOR bytes
+
+    WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
+};
+
+struct ParsedAuthenticatorData {
+    struct Flags {
+        bool userPresent; // bit 0 (UP)
+        bool rfu1; // bit 1 (reserved)
+        bool userVerified; // bit 2 (UV)
+        bool backupEligible; // bit 3 (BE)
+        bool backupState; // bit 4 (BS)
+        bool rfu2; // bit 5 (reserved)
+        bool attestedCredentialDataIncluded; // bit 6 (AT)
+        bool extensionDataIncluded; // bit 7 (ED)
+    };
+
+    String rpIdHash; // base64 (32 bytes)
+    Flags flags;
+    uint32_t signCount;
+
+    // Attested credential data (if AT flag set)
+    std::optional<String> aaguid; // base64 (16 bytes)
+    std::optional<String> credentialId; // base64 (variable length)
+    std::optional<ParsedCOSEKey> credentialPublicKey; // parsed COSE key + raw CBOR
+
+    // Extensions (if ED flag set)
+    std::optional<Ref<JSON::Value>> extensions; // parsed CBOR map as JSON
+    std::optional<String> extensionsRaw; // base64 - raw CBOR bytes
+
+    WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
+};
+
+// Parse authenticator data binary structure into structured format
+WEBCORE_EXPORT std::optional<ParsedAuthenticatorData> parseAuthenticatorData(const Vector<uint8_t>& authData);
 
 // Produce a SHA-256 hash of the given RP ID.
 WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(const String& rpId);

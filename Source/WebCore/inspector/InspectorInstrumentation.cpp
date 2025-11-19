@@ -838,6 +838,18 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
     }
 }
 
+void InspectorInstrumentation::frameDidStartWebAuthenticationOperationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, const String& ceremonyId, Ref<JSON::Object>&& request, Ref<Inspector::ScriptCallStack>&& initiatorStackTrace)
+{
+    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
+        inspectorPageAgent->frameDidStartWebAuthenticationOperation(frame, ceremonyId, WTFMove(request), WTFMove(initiatorStackTrace));
+}
+
+void InspectorInstrumentation::frameDidFinishWebAuthenticationOperationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, const String& ceremonyId, Ref<JSON::Object>&& response)
+{
+    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
+        inspectorPageAgent->frameDidFinishWebAuthenticationOperation(frame, ceremonyId, WTFMove(response));
+}
+
 void InspectorInstrumentation::accessibilitySettingsDidChangeImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())

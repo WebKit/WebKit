@@ -28,18 +28,57 @@
 namespace COSE {
 
 // See RFC 8152 - CBOR Object Signing and Encryption <https://tools.ietf.org/html/rfc8152>
-// Labels
-const int64_t alg = 3;
-const int64_t crv = -1;
-const int64_t kty = 1;
-const int64_t x = -2;
-const int64_t y = -3;
+// See RFC 9052 - CBOR Object Signing and Encryption <https://tools.ietf.org/html/rfc9052>
+// Common Parameter Labels
+// https://www.iana.org/assignments/cose/cose.xhtml#key-common-parameters
+const int64_t kty = 1; // Key Type
+const int64_t kid = 2; // Key ID
+const int64_t alg = 3; // Algorithm
+const int64_t keyOps = 4; // Key Operations
+const int64_t baseIV = 5; // Base IV
 
-// Values
-const int64_t EC2 = 2;
+// Elliptic Curve Parameter Labels (EC2/OKP)
+// https://www.iana.org/assignments/cose/cose.xhtml#key-type-parameters
+const int64_t crv = -1; // Curve
+const int64_t x = -2; // x-coordinate
+const int64_t y = -3; // y-coordinate
+const int64_t d = -4; // Private key (EC2/OKP)
+
+// RSA Key Parameter Labels
+// https://www.iana.org/assignments/cose/cose.xhtml#key-type-parameters
+const int64_t n = -1; // Modulus
+const int64_t e = -2; // Exponent
+const int64_t rsaD = -3; // Private exponent (RSA)
+const int64_t p = -4; // First prime factor
+const int64_t q = -5; // Second prime factor
+const int64_t dP = -6; // First factor CRT exponent
+const int64_t dQ = -7; // Second factor CRT exponent
+const int64_t qInv = -8; // First CRT coefficient
+
+// Symmetric Key Parameter Labels
+const int64_t k = -1; // Key Value
+
+// HSS-LMS Key Parameter Labels
+// https://www.iana.org/assignments/cose/cose.xhtml#key-type-parameters
+const int64_t pub = -1; // Public key for HSS/LMS hash-based digital signature
+const int64_t lmsType = -1; // LMS type (same label as pub, context-dependent)
+const int64_t lmotsType = -2; // LMOTS type
+const int64_t publicKey = -3; // Public key (for some key types)
+
+// Key Type Values (kty)
+// https://www.iana.org/assignments/cose/cose.xhtml#key-type
+const int64_t OKP = 1; // Octet Key Pair
+const int64_t EC2 = 2; // Elliptic Curve Keys w/ x- and y-coordinate pair
+const int64_t RSA = 3; // RSA Key
+const int64_t Symmetric = 4; // Symmetric Keys
+const int64_t HSSLMS = 5; // HSS-LMS
+
+// Algorithm Values
 const int64_t ES256 = -7;
 const int64_t RS256 = -257;
 const int64_t ECDH256 = -25;
+
+// Curve Values
 const int64_t P_256 = 1;
 
 } // namespace COSE
@@ -115,10 +154,13 @@ enum class Scope {
 
 // https://www.w3.org/TR/webauthn-2/#authenticator-data
 constexpr uint8_t userPresenceFlag = 0b00000001;
+constexpr uint8_t reservedFlag1 = 0b00000010;
 constexpr uint8_t userVerifiedFlag = 0b00000100;
-constexpr uint8_t attestedCredentialDataIncludedFlag = 0b01000000;
 // https://github.com/w3c/webauthn/pull/1695
 constexpr uint8_t backupEligibilityFlag = 0b00001000;
 constexpr uint8_t backupStateFlag = 0b00010000;
+constexpr uint8_t reservedFlag2 = 0b00100000;
+constexpr uint8_t attestedCredentialDataIncludedFlag = 0b01000000;
+constexpr uint8_t extensionDataIncludedFlag = 0b10000000;
 
 } // namespace WebAuthn

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef DOMString Base64URLString;
+.authentication-ceremony-details,
+.authentication-ceremony-request,
+.authentication-ceremony-response {
+    overflow-y: auto;
+}
 
-[
-    Conditional=WEB_AUTHN,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-] dictionary PublicKeyCredentialUserEntityJSON {
-    required Base64URLString id;
-    required DOMString              name;
-    required DOMString displayName;
-};
+.authentication-ceremony-details .details-section,
+.authentication-ceremony-request .details-section,
+.authentication-ceremony-response .details-section {
+    padding: 12px 20px 0 20px;
+}
+

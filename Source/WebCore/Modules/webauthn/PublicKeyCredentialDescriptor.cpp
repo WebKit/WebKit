@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef DOMString Base64URLString;
+#include "config.h"
+#include "PublicKeyCredentialDescriptor.h"
 
-[
-    Conditional=WEB_AUTHN,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
-] dictionary PublicKeyCredentialUserEntityJSON {
-    required Base64URLString id;
-    required DOMString              name;
-    required DOMString displayName;
-};
+#if ENABLE(WEB_AUTHN)
+
+#include "BufferSource.h"
+#include "JSAuthenticatorTransport.h"
+#include "JSPublicKeyCredentialType.h"
+#include "PublicKeyCredentialDescriptorJSON.h"
+#include <wtf/text/Base64.h>
+
+namespace WebCore {
+
+PublicKeyCredentialDescriptorJSON PublicKeyCredentialDescriptor::toJSON() const
+{
+    PublicKeyCredentialDescriptorJSON value;
+    value.type = convertEnumerationToString(this->type);
+    value.id = base64EncodeToString(this->id.span());
+    value.transports = this->transports;
+    return value;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

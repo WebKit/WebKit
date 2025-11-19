@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,70 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.PageObserver = class PageObserver extends InspectorBackend.Dispatcher
+
+WI.AuthenticationTabContentView = class AuthenticationTabContentView extends WI.TabContentView
 {
-    // Events defined by the "Page" domain.
-
-    domContentEventFired(timestamp)
+    constructor()
     {
-        WI.timelineManager.pageDOMContentLoadedEventFired(timestamp);
+        super(WI.AuthenticationTabContentView.tabInfo());
+
+        this._authenticationTableContentView = new WI.AuthenticationTableContentView;
+
+        this._contentBrowser = new WI.ContentBrowser(null, this, {hideBackForwardButtons: true, disableFindBanner: true});
+        this._contentBrowser.showContentView(this._authenticationTableContentView);
+
+        this.addSubview(this._contentBrowser);
     }
 
-    loadEventFired(timestamp)
+    // Static
+
+    static tabInfo()
     {
-        WI.timelineManager.pageLoadEventFired(timestamp);
+        return {
+            identifier: WI.AuthenticationTabContentView.Type,
+            image: "Images/Key.svg",
+            displayName: WI.UIString("Web Authentication", "Web Authentication Tab Name", "Name of Web Authentication Tab"),
+        };
     }
 
-    frameNavigated(frame, loaderId)
+    static isTabAllowed()
     {
-        WI.networkManager.frameDidNavigate(frame, loaderId);
+        return InspectorBackend.hasDomain("Page");
     }
 
-    frameDetached(frameId)
+    // Public
+
+    get contentBrowser() { return this._contentBrowser; }
+
+    get type()
     {
-        WI.networkManager.frameDidDetach(frameId);
+        return WI.AuthenticationTabContentView.Type;
     }
 
-    // COMPATIBILITY (macOS 13, iOS 16.0): `Page.defaultAppearanceDidChange` was removed in favor of `Page.defaultUserPreferencesDidChange`
-    defaultAppearanceDidChange(appearance)
+    attached()
     {
-        WI.cssManager.defaultAppearanceDidChange(appearance);
+        super.attached();
     }
 
-    defaultUserPreferencesDidChange(userPreferences)
+    detached()
     {
-        WI.cssManager.defaultUserPreferencesDidChange(userPreferences);
+        super.detached();
     }
 
-    frameDidStartWebAuthenticationOperation(ceremonyId, frameId, request, initiator)
+    closed()
     {
-        WI.networkManager.frameDidStartWebAuthenticationOperation(ceremonyId, frameId, request, initiator);
+        super.closed();
     }
 
-    frameDidFinishWebAuthenticationOperation(ceremonyId, frameId, response)
+    get supportsSplitContentBrowser()
     {
-        WI.networkManager.frameDidFinishWebAuthenticationOperation(ceremonyId, frameId, response);
+        return true;
+    }
+
+    get canHandleFindEvent()
+    {
+        return false;
     }
 };
+
+WI.AuthenticationTabContentView.Type = "authentication";

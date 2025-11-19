@@ -28,9 +28,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticationExtensionsClientInputsJSON.h"
 #include "BufferSource.h"
 #include "CBORReader.h"
 #include "CBORWriter.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -98,6 +100,35 @@ Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
     ASSERT(clientInputs);
 
     return *clientInputs;
+}
+
+AuthenticationExtensionsClientInputsJSON AuthenticationExtensionsClientInputs::toJSON() const
+{
+    AuthenticationExtensionsClientInputsJSON value;
+    value.appid = this->appid;
+    value.credProps = this->credProps;
+    if (this->largeBlob) {
+        AuthenticationExtensionsClientInputsJSON::LargeBlobInputsJSON largeBlob {
+            this->largeBlob->support,
+            this->largeBlob->read,
+            { },
+        };
+        if (this->largeBlob->write)
+            largeBlob.write = base64EncodeToString(this->largeBlob->write->span());
+        value.largeBlob = largeBlob;
+    }
+    if (this->prf) {
+        value.prf = { };
+        if (this->prf->eval) {
+            value.prf->eval = {
+                base64EncodeToString(this->prf->eval->first.span()),
+                { },
+            };
+            if (this->prf->eval->second)
+                value.prf->eval->second = base64EncodeToString(this->prf->eval->second->span());
+        }
+    }
+    return value;
 }
 
 } // namespace WebCore

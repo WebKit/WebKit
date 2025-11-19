@@ -244,6 +244,8 @@ public:
     static void frameStartedLoading(LocalFrame&);
     static void frameStoppedLoading(LocalFrame&);
     static void didCompleteRenderingFrame(LocalFrame&);
+    static void frameDidStartWebAuthenticationOperation(LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& request, Ref<Inspector::ScriptCallStack>&& initiatorStackTrace);
+    static void frameDidFinishWebAuthenticationOperation(LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& response);
     static void accessibilitySettingsDidChange(Page&);
 #if ENABLE(DARK_MODE_CSS)
     static void defaultAppearanceDidChange(Page&);
@@ -461,6 +463,8 @@ private:
     static void frameStartedLoadingImpl(InstrumentingAgents&, LocalFrame&);
     static void didCompleteRenderingFrameImpl(InstrumentingAgents&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, LocalFrame&);
+    static void frameDidStartWebAuthenticationOperationImpl(InstrumentingAgents&, LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& request, Ref<Inspector::ScriptCallStack>&& initiatorStackTrace);
+    static void frameDidFinishWebAuthenticationOperationImpl(InstrumentingAgents&, LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& response);
     static void accessibilitySettingsDidChangeImpl(InstrumentingAgents&);
 #if ENABLE(DARK_MODE_CSS)
     static void defaultAppearanceDidChangeImpl(InstrumentingAgents&);
@@ -1280,6 +1284,18 @@ inline void InspectorInstrumentation::frameStoppedLoading(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     frameStoppedLoadingImpl(instrumentingAgents(frame), frame);
+}
+
+inline void InspectorInstrumentation::frameDidStartWebAuthenticationOperation(LocalFrame& frame, const String& ceremonyId, Ref<JSON::Object>&& request, Ref<Inspector::ScriptCallStack>&& initiatorStackTrace)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    frameDidStartWebAuthenticationOperationImpl(instrumentingAgents(frame), frame, ceremonyId, WTFMove(request), WTFMove(initiatorStackTrace));
+}
+
+inline void InspectorInstrumentation::frameDidFinishWebAuthenticationOperation(LocalFrame& frame, const String& ceremonyId, Ref<JSON::Object>&& response)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    frameDidFinishWebAuthenticationOperationImpl(instrumentingAgents(frame), frame, ceremonyId, WTFMove(response));
 }
 
 inline void InspectorInstrumentation::accessibilitySettingsDidChange(Page& page)

@@ -34,9 +34,12 @@
 
 namespace WebCore {
 
+struct PublicKeyCredentialUserEntityJSON;
+
 struct PublicKeyCredentialUserEntity : public PublicKeyCredentialEntity {
     BufferSource id;
     String displayName;
+    PublicKeyCredentialUserEntityJSON toJSON() const;
 };
 
 }

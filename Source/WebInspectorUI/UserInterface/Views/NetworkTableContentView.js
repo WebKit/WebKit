@@ -2647,6 +2647,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._positionDetailView();
     }
 
+    _positionDetailView()
+    {
+        if (!this._detailView)
+            return;
+
+        let side = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
+        this._detailView.element.style[side] = this._nameColumn.width + "px";
+        this._table.scrollContainer.style.width = this._nameColumn.width + "px";
+    }
+
     _tableWaterfallColumnDidChangeWidth(event)
     {
         this._table.reloadVisibleColumnCells(this._waterfallColumn);

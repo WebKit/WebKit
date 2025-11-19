@@ -38,10 +38,16 @@
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
 #include "FrameDestructionObserverInlines.h"
+#include "InspectorInstrumentation.h"
+#include "FrameInlines.h"
+#include "JSAuthenticationResponseJSON.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSPublicKeyCredentialCreationOptionsJSON.h"
+#include "JSPublicKeyCredentialRequestOptionsJSON.h"
+#include "JSRegistrationResponseJSON.h"
 #include "LoginStatus.h"
 #include "Page.h"
 #include "PermissionsPolicy.h"
@@ -53,9 +59,14 @@
 #include "UnknownCredentialOptions.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScriptBase.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <JavaScriptCore/JSObject.h>
 
 namespace WebCore {
 
@@ -115,6 +126,41 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
     return std::pair { WebAuthn::Scope::CrossOrigin, crossOriginParent };
 }
 
+static RefPtr<JSON::Object> toInspectorJSON(JSDOMGlobalObject& globalObject, auto&& options)
+{
+    auto requestJSONObject = convertDictionaryToJS(globalObject, globalObject, options.toJSON());
+    return Inspector::toInspectorValue(&globalObject, requestJSONObject)->asObject();
+}
+
+static RefPtr<JSON::Object> toInspectorJSON(JSDOMGlobalObject& globalObject, PublicKeyCredential& credential)
+{
+    JSC::JSObject* responseJSONObject;
+    WTF::switchOn(credential.toJSON(), [&](RegistrationResponseJSON response) {
+        responseJSONObject = convertDictionaryToJS(globalObject, globalObject, response);
+    }, [&](AuthenticationResponseJSON response) {
+        responseJSONObject = convertDictionaryToJS(globalObject, globalObject, response);
+    });
+    auto jsonObject = Inspector::toInspectorValue(&globalObject, responseJSONObject)->asObject();
+
+    // Add parsed authenticator data for inspector
+    auto* response = credential.response();
+    RefPtr<ArrayBuffer> authData;
+    if (is<AuthenticatorAttestationResponse>(response))
+        authData = downcast<AuthenticatorAttestationResponse>(*response).getAuthenticatorData();
+    else if (is<AuthenticatorAssertionResponse>(response))
+        authData = downcast<AuthenticatorAssertionResponse>(*response).authenticatorData();
+
+    if (authData) {
+        auto authDataSpan = authData->span();
+        Vector<uint8_t> authDataBytes;
+        authDataBytes.append(authDataSpan);
+        if (auto parsed = parseAuthenticatorData(authDataBytes))
+            jsonObject->setObject("parsedAuthenticatorData"_s, parsed->toJSONObject());
+    }
+
+    return jsonObject;
+}
+
 } // namespace AuthenticatorCoordinatorInternal
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
@@ -145,6 +191,8 @@ void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinato
 void AuthenticatorCoordinator::create(const Document& document, CredentialCreationOptions&& createOptions, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
+
+    auto initiatorStackTrace = Inspector::createScriptCallStack(document.globalObject(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
 
     const auto& callerOrigin = document.securityOrigin();
     auto* frame = document.frame();
@@ -242,14 +290,27 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    auto requestJSON = toInspectorJSON(globalObject, *createOptions.publicKey);
+
+    auto ceremonyId = Inspector::IdentifiersFactory::createIdentifier();
+    InspectorInstrumentation::frameDidStartWebAuthenticationOperation(*frame, ceremonyId, requestJSON.releaseNonNull(), initiatorStackTrace.copyRef());
+
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal), requestJSON = WTFMove(requestJSON), weakDocument = WeakPtr { document }, initiatorStackTrace = WTFMove(initiatorStackTrace), ceremonyId] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
+            auto publicKeyCredential = PublicKeyCredential::create(response.releaseNonNull());
+            RefPtr document = weakDocument.get();
+            if (RefPtr frame = document ? document->frame() : nullptr) {
+                auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document->globalObject());
+                auto responseJSON = toInspectorJSON(globalObject, publicKeyCredential.get());
+                InspectorInstrumentation::frameDidFinishWebAuthenticationOperation(*frame, ceremonyId, responseJSON.releaseNonNull());
+            }
+            promise.resolve(publicKeyCredential.ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
@@ -275,6 +336,8 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
+
+    auto initiatorStackTrace = Inspector::createScriptCallStack(document.globalObject(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
 
     auto& callerOrigin = document.securityOrigin();
     RefPtr frame = document.frame();
@@ -361,16 +424,37 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    auto requestJSON = toInspectorJSON(globalObject, *requestOptions.publicKey);
+
+    auto ceremonyId = Inspector::IdentifiersFactory::createIdentifier();
+    InspectorInstrumentation::frameDidStartWebAuthenticationOperation(*frame, ceremonyId, requestJSON.releaseNonNull(), initiatorStackTrace.copyRef());
+
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise),
+        requestJSON = WTFMove(requestJSON),
+        abortSignal = WTFMove(requestOptions.signal), weakFrame = WeakPtr { frame }, weakDocument = WeakPtr { document }
+        , initiatorStackTrace = WTFMove(initiatorStackTrace), ceremonyId
+    ] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+        RefPtr document = weakDocument.get();
+        if (!document)
+            return;
+        RefPtr page = document->page();
+        if (!page)
+            return;
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            if (RefPtr page = weakPage.get())
-                page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
-            promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
+            page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
+            auto publicKeyCredential = PublicKeyCredential::create(response.releaseNonNull());
+            if (RefPtr frame = weakFrame.get()) {
+                auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document->globalObject());
+                auto responseJSON = toInspectorJSON(globalObject, publicKeyCredential.get());
+                InspectorInstrumentation::frameDidFinishWebAuthenticationOperation(*frame, ceremonyId, responseJSON.releaseNonNull());
+            }
+            promise.resolve(publicKeyCredential.ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
