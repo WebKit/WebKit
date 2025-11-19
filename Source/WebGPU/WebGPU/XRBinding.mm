@@ -26,6 +26,8 @@
 #import "config.h"
 #import "XRBinding.h"
 
+#if ENABLE(WEBXR_LAYERS)
+
 #import "APIConversions.h"
 #import "Device.h"
 #import <wtf/CheckedArithmetic.h>
@@ -86,3 +88,4 @@ WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectio
     return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(binding)->getViewSubImage(WebGPU::protectedFromAPI(layer)));
 }
 
+#endif // ENABLE(WEBXR_LAYERS

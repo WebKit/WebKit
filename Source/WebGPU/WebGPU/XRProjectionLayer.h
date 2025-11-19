@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBXR_LAYERS)
+
 #import <utility>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -90,3 +92,5 @@ private:
 };
 
 } // namespace WebGPU
+
+#endif // ENABLE(WEBXR_LAYERS)

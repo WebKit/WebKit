@@ -181,7 +181,9 @@ void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor
     });
 }
 
+#if ENABLE(WEBXR_LAYERS)
 WGPUBool wgpuAdapterXRCompatible(WGPUAdapter adapter)
 {
     return WebGPU::protectedFromAPI(adapter)->isXRCompatible();
 }
+#endif // ENABLE(WEBXR_LAYERS)

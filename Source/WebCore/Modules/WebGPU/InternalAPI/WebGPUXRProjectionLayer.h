@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBXR_LAYERS)
+
 #include <WebCore/WebGPUTextureFormat.h>
 #include <WebCore/WebGPUTextureUsage.h>
 #include <WebCore/WebGPUXREye.h>
@@ -95,3 +97,5 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+#endif

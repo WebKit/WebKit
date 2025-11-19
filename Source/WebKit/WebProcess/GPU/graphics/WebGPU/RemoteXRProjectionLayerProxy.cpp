@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteXRProjectionLayerProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteGPUProxy.h"
 #include "RemoteXRProjectionLayerMessages.h"
@@ -118,4 +118,4 @@ void RemoteXRProjectionLayerProxy::setDeltaPose(WebCore::WebXRRigidTransform*)
 
 } // namespace WebKit::WebGPU
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

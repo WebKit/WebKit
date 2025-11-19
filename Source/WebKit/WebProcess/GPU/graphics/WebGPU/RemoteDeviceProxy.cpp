@@ -115,6 +115,7 @@ void RemoteDeviceProxy::destroy()
     UNUSED_PARAM(sendResult);
 }
 
+#if ENABLE(WEBXR_LAYERS)
 RefPtr<WebCore::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
 {
     auto identifier = WebGPUIdentifier::generate();
@@ -124,6 +125,7 @@ RefPtr<WebCore::WebGPU::XRBinding> RemoteDeviceProxy::createXRBinding()
 
     return RemoteXRBindingProxy::create(*this, m_convertToBackingContext, identifier);
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 RefPtr<WebCore::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const WebCore::WebGPU::BufferDescriptor& descriptor)
 {

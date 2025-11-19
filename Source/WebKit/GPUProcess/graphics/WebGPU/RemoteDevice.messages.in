@@ -31,7 +31,9 @@
 messages -> RemoteDevice Stream {
     void Destroy()
     void Destruct()
+#if ENABLE(WEBXR_LAYERS)
     void CreateXRBinding(WebKit::WebGPUIdentifier identifier)
+#endif
     void CreateBuffer(WebKit::WebGPU::BufferDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateTexture(WebKit::WebGPU::TextureDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void CreateSampler(WebKit::WebGPU::SamplerDescriptor descriptor, WebKit::WebGPUIdentifier identifier)

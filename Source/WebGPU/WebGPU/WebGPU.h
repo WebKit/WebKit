@@ -124,10 +124,12 @@ typedef struct WGPUSurfaceImpl* WGPUSurface WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUSwapChainImpl* WGPUSwapChain WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUTextureImpl* WGPUTexture WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUTextureViewImpl* WGPUTextureView WGPU_OBJECT_ATTRIBUTE;
+#if ENABLE(WEBXR_LAYERS)
 typedef struct WGPUXRBindingImpl* WGPUXRBinding WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUXRSubImageImpl* WGPUXRSubImage WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUXRProjectionLayerImpl* WGPUXRProjectionLayer WGPU_OBJECT_ATTRIBUTE;
 typedef struct WGPUXRViewImpl* WGPUXRView WGPU_OBJECT_ATTRIBUTE;
+#endif // ENABLE(WEBXR_LAYERS)
 
 // Structure forward declarations
 struct WGPUAdapterProperties;
@@ -1865,6 +1867,8 @@ WGPU_EXPORT WGPUBool wgpuShaderModuleIsValid(WGPUShaderModule shaderModule) WGPU
 WGPU_EXPORT WGPUBool wgpuTextureIsValid(WGPUTexture texture) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView) WGPU_FUNCTION_ATTRIBUTE;
 
+#if ENABLE(WEBXR_LAYERS)
+
 // XRBinding functions
 WGPU_EXPORT void wgpuXRBindingReference(WGPUXRBinding binding) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuXRBindingRelease(WGPUXRBinding binding) WGPU_FUNCTION_ATTRIBUTE;
@@ -1884,6 +1888,8 @@ WGPU_EXPORT WGPUBool wgpuXRProjectionLayerIsValid(WGPUXRProjectionLayer binding)
 WGPU_EXPORT void wgpuXRViewReference(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuXRViewRelease(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUBool wgpuXRViewIsValid(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

@@ -132,10 +132,12 @@ public:
     void addObject(WebGPUIdentifier, RemoteShaderModule&);
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
+#if ENABLE(WEBXR_LAYERS)
     void addObject(WebGPUIdentifier, RemoteXRBinding&);
     void addObject(WebGPUIdentifier, RemoteXRSubImage&);
     void addObject(WebGPUIdentifier, RemoteXRProjectionLayer&);
     void addObject(WebGPUIdentifier, RemoteXRView&);
+#endif // ENABLE(WEBXR_LAYERS)
 
     void removeObject(WebGPUIdentifier);
 
@@ -164,10 +166,12 @@ public:
     WeakPtr<WebCore::WebGPU::ShaderModule> convertShaderModuleFromBacking(WebGPUIdentifier) final;
     WeakPtr<WebCore::WebGPU::Texture> convertTextureFromBacking(WebGPUIdentifier) final;
     WeakPtr<WebCore::WebGPU::TextureView> convertTextureViewFromBacking(WebGPUIdentifier) final;
+#if ENABLE(WEBXR_LAYERS)
     WeakPtr<WebCore::WebGPU::XRBinding> convertXRBindingFromBacking(WebGPUIdentifier) final;
     WeakPtr<WebCore::WebGPU::XRSubImage> convertXRSubImageFromBacking(WebGPUIdentifier) final;
     WeakPtr<WebCore::WebGPU::XRProjectionLayer> convertXRProjectionLayerFromBacking(WebGPUIdentifier) final;
     WeakPtr<WebCore::WebGPU::XRView> createXRViewFromBacking(WebGPUIdentifier) final;
+#endif // ENABLE(WEBXR_LAYERS)
 
     struct ExistsAndValid {
         bool exists { false };
@@ -201,11 +205,14 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>,
+        IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
+#if ENABLE(WEBXR_LAYERS)
+        ,
         IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>
+#endif // ENABLE(WEBXR_LAYERS)
     >;
 
     HashMap<WebGPUIdentifier, Object> m_objects;

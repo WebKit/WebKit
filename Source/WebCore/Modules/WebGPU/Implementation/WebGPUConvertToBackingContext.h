@@ -172,10 +172,12 @@ public:
     virtual WGPUSurface convertToBacking(const PresentationContext&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
+#if ENABLE(WEBXR_LAYERS)
     virtual WGPUXRBinding convertToBacking(const XRBinding&) = 0;
     virtual WGPUXRProjectionLayer convertToBacking(const XRProjectionLayer&) = 0;
     virtual WGPUXRSubImage convertToBacking(const XRSubImage&) = 0;
     virtual WGPUXRView convertToBacking(const XRView&) = 0;
+#endif // ENABLE(WEBXR_LAYERS)
 };
 
 } // namespace WebCore::WebGPU

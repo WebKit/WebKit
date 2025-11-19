@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBXR_LAYERS)
+
 #include <WebCore/WebGPUXREye.h>
 #include <WebCore/WebGPUXRProjectionLayer.h>
 #include <WebCore/WebGPUXRSubImage.h>
@@ -65,3 +67,5 @@ private:
 };
 
 } // namespace WebCore::WebGPU
+
+#endif // ENABLE(WEBXR_LAYERS)

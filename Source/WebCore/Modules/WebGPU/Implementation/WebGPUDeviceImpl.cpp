@@ -101,10 +101,14 @@ void DeviceImpl::destroy()
     wgpuDeviceDestroy(m_backing.get());
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 RefPtr<XRBinding> DeviceImpl::createXRBinding()
 {
     return XRBindingImpl::create(adoptWebGPU(wgpuDeviceCreateXRBinding(m_backing.get())), m_convertToBackingContext);
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 RefPtr<Buffer> DeviceImpl::createBuffer(const BufferDescriptor& descriptor)
 {

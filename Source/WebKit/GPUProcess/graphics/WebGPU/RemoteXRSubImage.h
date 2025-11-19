@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
@@ -109,4 +109,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

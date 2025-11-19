@@ -108,7 +108,9 @@ public:
 
     virtual void destroy() = 0;
 
+#if ENABLE(WEBXR_LAYERS)
     virtual RefPtr<XRBinding> createXRBinding() = 0;
+#endif
     virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual RefPtr<Texture> createTexture(const TextureDescriptor&) = 0;
     virtual RefPtr<Sampler> createSampler(const SamplerDescriptor&) = 0;

@@ -388,6 +388,8 @@ WGPUBool wgpuTextureViewIsValid(WGPUTextureView textureView)
     return WebGPU::protectedFromAPI(textureView)->isValid();
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 WGPUBool wgpuXRBindingIsValid(WGPUXRBinding binding)
 {
     return WebGPU::protectedFromAPI(binding)->isValid();
@@ -407,6 +409,8 @@ WGPUBool wgpuXRViewIsValid(WGPUXRView view)
 {
     return WebGPU::protectedFromAPI(view)->isValid();
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 WGPUDDMesh wgpuDDMeshCreate(WGPUInstance instance, const WGPUDDCreateMeshDescriptor* descriptor)
 {

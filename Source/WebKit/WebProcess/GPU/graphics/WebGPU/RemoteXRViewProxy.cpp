@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteXRViewProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteGPUProxy.h"
 #include "RemoteXRViewMessages.h"
@@ -53,4 +53,4 @@ RemoteXRViewProxy::~RemoteXRViewProxy()
 
 } // namespace WebKit::WebGPU
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

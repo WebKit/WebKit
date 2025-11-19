@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebGPUXRSubImageImpl.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#if HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)
 
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
@@ -279,4 +279,4 @@ RefPtr<Texture> XRSubImageImpl::motionVectorTexture()
 
 } // namespace WebCore::WebGPU
 
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+#endif // HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "XRView.h"
 
+#if ENABLE(WEBXR_LAYERS)
+
 #import "APIConversions.h"
 #import "Device.h"
 #import <wtf/CheckedArithmetic.h>
@@ -70,3 +72,5 @@ void wgpuXRViewRelease(WGPUXRView binding)
 {
     WebGPU::fromAPI(binding).deref();
 }
+
+#endif // ENABLE(WEBXR_LAYERS)

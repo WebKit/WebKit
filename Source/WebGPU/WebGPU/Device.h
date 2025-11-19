@@ -116,9 +116,11 @@ public:
 
     Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
     Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
+#if ENABLE(WEBXR_LAYERS)
     Ref<XRBinding> createXRBinding();
     Ref<XRSubImage> createXRSubImage();
     Ref<XRView> createXRView();
+#endif
     Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     std::pair<Ref<ComputePipeline>, NSString*> createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync = false);
@@ -222,9 +224,11 @@ public:
         simd::float4x3 colorSpaceConversionMatrix;
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
+#if ENABLE(WEBXR_LAYERS)
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
     RefPtr<XRSubImage> getXRViewSubImage() const;
     id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
+#endif
     const std::optional<const MachSendRight> webProcessID() const;
 #if CPU(X86_64)
     bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
@@ -299,8 +303,9 @@ private:
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
+#if ENABLE(WEBXR_LAYERS)
     RefPtr<XRSubImage> m_xrSubImage;
-
+#endif
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };
     bool m_destroyed { false };

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "XRSubImage.h"
 
+#if ENABLE(WEBXR_LAYERS)
+
 #import "APIConversions.h"
 #import "Device.h"
 #import "Texture.h"
@@ -176,3 +178,5 @@ WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage)
 {
     return WebGPU::protectedFromAPI(subImage)->depthTexture();
 }
+
+#endif // ENABLE(WEBXR_LAYERS)

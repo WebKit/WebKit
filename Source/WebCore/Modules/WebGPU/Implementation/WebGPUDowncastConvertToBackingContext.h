@@ -66,10 +66,12 @@ public:
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
     CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) final;
+#if ENABLE(WEBXR_LAYERS)
     WGPUXRBinding convertToBacking(const XRBinding&) final;
     WGPUXRProjectionLayer convertToBacking(const XRProjectionLayer&) final;
     WGPUXRSubImage convertToBacking(const XRSubImage&) final;
     WGPUXRView convertToBacking(const XRView&) final;
+#endif // ENABLE(WEBXR_LAYERS)
 
 private:
     DowncastConvertToBackingContext() = default;

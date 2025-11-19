@@ -83,7 +83,9 @@ private:
 
     void destroy() final;
 
+#if ENABLE(WEBXR_LAYERS)
     RefPtr<WebCore::WebGPU::XRBinding> createXRBinding() final;
+#endif
     RefPtr<WebCore::WebGPU::Buffer> createBuffer(const WebCore::WebGPU::BufferDescriptor&) final;
     RefPtr<WebCore::WebGPU::Texture> createTexture(const WebCore::WebGPU::TextureDescriptor&) final;
     RefPtr<WebCore::WebGPU::Sampler> createSampler(const WebCore::WebGPU::SamplerDescriptor&) final;

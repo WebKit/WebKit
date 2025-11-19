@@ -111,7 +111,9 @@ public:
 
     void destroy(ScriptExecutionContext&);
 
+#if ENABLE(WEBXR_LAYERS)
     RefPtr<WebGPU::XRBinding> createXRBinding(const WebXRSession&);
+#endif
     ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
     ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
     std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;

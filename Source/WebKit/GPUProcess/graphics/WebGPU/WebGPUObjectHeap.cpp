@@ -239,6 +239,7 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteTextureView& textu
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
+#if ENABLE(WEBXR_LAYERS)
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRBinding& xrBinding)
 {
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding> { Ref { xrBinding } } });
@@ -262,6 +263,7 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteXRView& view)
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteXRView> { Ref { view } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 void ObjectHeap::removeObject(WebGPUIdentifier identifier)
 {
@@ -458,6 +460,7 @@ WeakPtr<WebCore::WebGPU::TextureView> ObjectHeap::convertTextureViewFromBacking(
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value)->backing();
 }
 
+#if ENABLE(WEBXR_LAYERS)
 WeakPtr<WebCore::WebGPU::XRBinding> ObjectHeap::convertXRBindingFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
@@ -489,6 +492,7 @@ WeakPtr<WebCore::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUIdent
         return nullptr;
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value)->backing();
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPU::GPU& gpu, WebGPUIdentifier identifier) const
 {

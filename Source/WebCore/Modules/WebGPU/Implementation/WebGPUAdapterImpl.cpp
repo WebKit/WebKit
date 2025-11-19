@@ -307,7 +307,11 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
 
 bool AdapterImpl::xrCompatible()
 {
+#if ENABLE(WEBXR_LAYERS)
     return wgpuAdapterXRCompatible(m_backing.get());
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore::WebGPU

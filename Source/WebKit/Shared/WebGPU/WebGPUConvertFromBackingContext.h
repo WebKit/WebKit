@@ -311,10 +311,12 @@ public:
     virtual WeakPtr<WebCore::WebGPU::PresentationContext> convertPresentationContextFromBacking(WebGPUIdentifier) = 0;
     virtual WeakPtr<WebCore::WebGPU::Texture> convertTextureFromBacking(WebGPUIdentifier) = 0;
     virtual WeakPtr<WebCore::WebGPU::TextureView> convertTextureViewFromBacking(WebGPUIdentifier) = 0;
+#if ENABLE(WEBXR_LAYERS)
     virtual WeakPtr<WebCore::WebGPU::XRBinding> convertXRBindingFromBacking(WebGPUIdentifier) = 0;
     virtual WeakPtr<WebCore::WebGPU::XRProjectionLayer> convertXRProjectionLayerFromBacking(WebGPUIdentifier) = 0;
     virtual WeakPtr<WebCore::WebGPU::XRSubImage> convertXRSubImageFromBacking(WebGPUIdentifier) = 0;
     virtual WeakPtr<WebCore::WebGPU::XRView> createXRViewFromBacking(WebGPUIdentifier) = 0;
+#endif // ENABLE(WEBXR_LAYERS)
 };
 
 } // namespace WebKit::WebGPU

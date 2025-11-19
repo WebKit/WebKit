@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
@@ -111,4 +111,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRProjectionLayerProxy)
     static bool isType(const WebCore::WebGPU::XRProjectionLayer& projectionLayer) { return projectionLayer.isRemoteXRProjectionLayerProxy(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

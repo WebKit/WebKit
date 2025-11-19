@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteXRSubImage.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteGPU.h"
@@ -112,4 +112,4 @@ void RemoteXRSubImage::stopListeningForIPC()
 
 #undef MESSAGE_CHECK
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

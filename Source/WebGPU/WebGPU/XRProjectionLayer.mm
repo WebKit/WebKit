@@ -26,6 +26,8 @@
 #import "config.h"
 #import "XRProjectionLayer.h"
 
+#if ENABLE(WEBXR_LAYERS)
+
 #import "APIConversions.h"
 #import "Device.h"
 #import "MetalSPI.h"
@@ -214,3 +216,5 @@ void wgpuXRProjectionLayerStartFrame(WGPUXRProjectionLayer layer, size_t frameIn
 {
     WebGPU::protectedFromAPI(layer)->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex, screenWidth, screenHeight, WTFMove(horizontalSamplesLeft), WTFMove(horizontalSamplesRight), WTFMove(verticalSamples));
 }
+
+#endif // ENABLE(WEBXR_LAYERS)

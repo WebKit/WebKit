@@ -378,6 +378,7 @@ bool RemoteGPUProxy::isValid(const WebCore::WebGPU::TextureView&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+#if ENABLE(WEBXR_LAYERS)
 bool RemoteGPUProxy::isValid(const WebCore::WebGPU::XRBinding&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -394,6 +395,7 @@ bool RemoteGPUProxy::isValid(const WebCore::WebGPU::XRView&) const
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 } // namespace WebKit
 

@@ -73,8 +73,10 @@
 #include "JSGPUUncapturedErrorEvent.h"
 #include "JSGPUValidationError.h"
 #include "RequestAnimationFrameCallback.h"
+#if ENABLE(WEBXR_LAYERS)
 #include "WebGPUXRBinding.h"
 #include "XRGPUBinding.h"
+#endif
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -159,10 +161,14 @@ GPUDevice::LostPromise& GPUDevice::lost()
     return m_lostPromise;
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 RefPtr<WebGPU::XRBinding> GPUDevice::createXRBinding(const WebXRSession&)
 {
     return m_backing->createXRBinding();
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {

@@ -135,11 +135,12 @@ private:
     bool isValid(const ShaderModule&) const final;
     bool isValid(const Texture&) const final;
     bool isValid(const TextureView&) const final;
+#if ENABLE(WEBXR_LAYERS)
     bool isValid(const XRBinding&) const final;
     bool isValid(const XRSubImage&) const final;
     bool isValid(const XRProjectionLayer&) const final;
     bool isValid(const XRView&) const final;
-
+#endif // ENABLE(WEBXR_LAYERS)
     WebGPUPtr<WGPUInstance> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<DDModel::ConvertToBackingContext> m_modelConvertToBackingContext;

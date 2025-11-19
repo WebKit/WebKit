@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebGPUXRProjectionLayerImpl.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#if HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)
 
 #include "PlatformXR.h"
 #include "WebGPUConvertToBackingContext.h"
@@ -119,4 +119,4 @@ void XRProjectionLayerImpl::endFrame()
 
 } // namespace WebCore::WebGPU
 
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+#endif // HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)

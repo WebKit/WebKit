@@ -147,10 +147,12 @@ private:
     bool isValid(const WebCore::WebGPU::ShaderModule&) const final;
     bool isValid(const WebCore::WebGPU::Texture&) const final;
     bool isValid(const WebCore::WebGPU::TextureView&) const final;
+#if ENABLE(WEBXR_LAYERS)
     bool isValid(const WebCore::WebGPU::XRBinding&) const final;
     bool isValid(const WebCore::WebGPU::XRSubImage&) const final;
     bool isValid(const WebCore::WebGPU::XRProjectionLayer&) const final;
     bool isValid(const WebCore::WebGPU::XRView&) const final;
+#endif // ENABLE(WEBXR_LAYERS)
 
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();

@@ -304,10 +304,12 @@ public:
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) = 0;
+#if ENABLE(WEBXR_LAYERS)
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRBinding&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRProjectionLayer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRSubImage&) = 0;
     virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::XRView&) = 0;
+#endif // ENABLE(WEBXR_LAYERS)
 };
 
 } // namespace WebKit::WebGPU

@@ -187,6 +187,7 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore
     return downcast<RemoteTextureViewProxy>(textureView).backing();
 }
 
+#if ENABLE(WEBXR_LAYERS)
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::WebGPU::XRBinding& xrBinding)
 {
     return downcast<RemoteXRBindingProxy>(xrBinding).backing();
@@ -206,6 +207,7 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore
 {
     return downcast<RemoteXRViewProxy>(view).backing();
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 } // namespace WebKit::WebGPU
 

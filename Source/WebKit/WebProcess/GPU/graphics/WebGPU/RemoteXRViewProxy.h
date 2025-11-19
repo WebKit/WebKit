@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
@@ -97,4 +97,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRViewProxy)
     static bool isType(const WebCore::WebGPU::XRView& view) { return view.isRemoteXRViewProxy(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

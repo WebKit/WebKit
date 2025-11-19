@@ -303,6 +303,8 @@ bool GPUImpl::isValid(const TextureView& textureView) const
     return wgpuTextureViewIsValid(wgpuTextureView);
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 bool GPUImpl::isValid(const XRBinding& binding) const
 {
     WGPUXRBinding wgpuBinding = m_convertToBackingContext.get().convertToBacking(binding);
@@ -326,6 +328,8 @@ bool GPUImpl::isValid(const XRView& view) const
     WGPUXRView wgpuView = m_convertToBackingContext.get().convertToBacking(view);
     return wgpuXRViewIsValid(wgpuView);
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 } // namespace WebCore::WebGPU
 

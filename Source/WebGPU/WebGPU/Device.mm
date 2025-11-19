@@ -301,7 +301,9 @@ static uint32_t computeAppleGPUFamily(id<MTLDevice> device)
 Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&& capabilities, Adapter& adapter)
     : m_device(device)
     , m_defaultQueue(Queue::create(defaultQueue, adapter, *this))
+#if ENABLE(WEBXR_LAYERS)
     , m_xrSubImage(XRSubImage::create(*this))
+#endif
     , m_capabilities(WTFMove(capabilities))
     , m_adapter(adapter)
     , m_instance(adapter.weakInstance())
@@ -392,6 +394,8 @@ Device::~Device()
     }
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 RefPtr<XRSubImage> Device::getXRViewSubImage(XRProjectionLayer& projectionLayer)
 {
     RefPtr { m_xrSubImage }->update(projectionLayer);
@@ -412,6 +416,8 @@ id<MTLTexture> Device::getXRViewSubImageDepthTexture() const
 
     return nil;
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 void Device::makeInvalid()
 {
@@ -1111,10 +1117,12 @@ WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGP
     return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(device)->createBindGroupLayout(*descriptor));
 }
 
+#if ENABLE(WEBXR_LAYERS)
 WGPUXRBinding wgpuDeviceCreateXRBinding(WGPUDevice device)
 {
     return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(device)->createXRBinding());
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)
 {

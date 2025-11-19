@@ -52,10 +52,12 @@
 #include "WebGPUShaderModuleImpl.h"
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
+#if ENABLE(WEBXR_LAYERS)
 #include "WebGPUXRBindingImpl.h"
 #include "WebGPUXRProjectionLayerImpl.h"
 #include "WebGPUXRSubImageImpl.h"
 #include "WebGPUXRViewImpl.h"
+#endif // ENABLE(WEBXR_LAYERS)
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore::WebGPU {
@@ -182,6 +184,8 @@ CompositorIntegrationImpl& DowncastConvertToBackingContext::convertToBacking(Com
     return static_cast<CompositorIntegrationImpl&>(compositorIntegration);
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 WGPUXRBinding DowncastConvertToBackingContext::convertToBacking(const XRBinding& xrBinding)
 {
     return static_cast<const XRBindingImpl&>(xrBinding).backing();
@@ -201,6 +205,8 @@ WGPUXRView DowncastConvertToBackingContext::convertToBacking(const XRView& xrVie
 {
     return static_cast<const XRViewImpl&>(xrView).backing();
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 } // namespace WebCore::WebGPU
 

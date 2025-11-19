@@ -127,6 +127,7 @@ void RemoteDevice::destruct()
     protectedObjectHeap()->removeObject(m_identifier);
 }
 
+#if ENABLE(WEBXR_LAYERS)
 void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
@@ -134,6 +135,7 @@ void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
     auto remoteBinding = RemoteXRBinding::create(*m_gpuConnectionToWebProcess.get(), *binding, objectHeap, protectedGPU(), m_streamConnection.copyRef(), identifier);
     objectHeap->addObject(identifier, remoteBinding);
 }
+#endif // ENABLE(WEBXR_LAYERS)
 
 void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebGPUIdentifier identifier)
 {

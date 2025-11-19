@@ -1112,6 +1112,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment!.loadAction = loadAction(loadOp: attachment.depthLoadOp)
                 mtlAttachment!.storeAction = storeAction(storeOp: attachment.depthStoreOp)
 
+                #if ENABLE_WEBXR_LAYERS
                 if mtlDescriptor.rasterizationRateMap != nil && metalDepthStencilTexture?.sampleCount ?? 1 > 1 {
                     if let depthTexture = m_device.ptr().getXRViewSubImageDepthTexture() {
                         mtlAttachment?.resolveTexture = depthTexture
@@ -1119,7 +1120,7 @@ extension WebGPU.CommandEncoder {
                         mtlAttachment?.resolveSlice = Int(compositorTextureSlice)
                     }
                 }
-
+                #endif // ENABLE_WEBXR_LAYERS
                 if mtlAttachment!.loadAction == MTLLoadAction.load && mtlAttachment!.storeAction == MTLStoreAction.dontCare && !textureView.previouslyCleared() {
                     depthStencilAttachmentToClear = mtlAttachment!.texture
                     depthAttachmentToClear = mtlAttachment!.texture != nil

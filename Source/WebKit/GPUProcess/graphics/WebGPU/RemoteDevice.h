@@ -123,7 +123,9 @@ private:
     void destroy();
     void destruct();
 
+#if ENABLE(WEBXR_LAYERS)
     void createXRBinding(WebGPUIdentifier);
+#endif
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);

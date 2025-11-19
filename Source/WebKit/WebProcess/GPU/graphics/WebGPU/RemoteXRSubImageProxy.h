@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
@@ -100,4 +100,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRSubImageProxy)
     static bool isType(const WebCore::WebGPU::XRSubImage& image) { return image.isRemoteXRSubImageProxy(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

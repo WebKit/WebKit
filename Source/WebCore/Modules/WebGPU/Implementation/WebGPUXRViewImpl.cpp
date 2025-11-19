@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebGPUXRViewImpl.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#if HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)
 
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
@@ -45,4 +45,4 @@ XRViewImpl::~XRViewImpl() = default;
 
 } // namespace WebCore::WebGPU
 
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+#endif // HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)

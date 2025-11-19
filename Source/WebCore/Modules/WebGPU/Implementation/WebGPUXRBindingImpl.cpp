@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebGPUXRBindingImpl.h"
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#if HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)
 
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
@@ -75,4 +75,4 @@ TextureFormat XRBindingImpl::getPreferredColorFormat()
 
 } // namespace WebCore::WebGPU
 
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+#endif // HAVE(WEBGPU_IMPLEMENTATION) && ENABLE(WEBXR_LAYERS)

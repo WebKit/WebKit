@@ -716,6 +716,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
             mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
 
+#if ENABLE(WEBXR_LAYERS)
             if (mtlDescriptor.rasterizationRateMap && metalDepthStencilTexture.sampleCount > 1) {
                 if (auto xrSubImage = m_device->getXRViewSubImage()) {
                     if (RefPtr depthTexture = xrSubImage->depthTexture()) {
@@ -725,6 +726,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
                     }
                 }
             }
+#else
+            UNUSED_PARAM(compositorTextureSlice);
+#endif // ENABLE(WEBXR_LAYERS)
 
             if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
                 depthStencilAttachmentToClear = mtlAttachment.texture;

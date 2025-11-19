@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteXRBindingProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)
 
 #include "RemoteDeviceProxy.h"
 #include "RemoteGPUProxy.h"
@@ -90,4 +90,4 @@ WebCore::WebGPU::TextureFormat RemoteXRBindingProxy::getPreferredColorFormat()
 
 } // namespace WebKit::WebGPU
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBXR_LAYERS)

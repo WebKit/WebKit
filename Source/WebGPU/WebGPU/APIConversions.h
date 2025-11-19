@@ -181,6 +181,8 @@ inline TextureView& fromAPI(WGPUTextureView textureView)
     return static_cast<TextureView&>(*textureView);
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 inline XRBinding& fromAPI(WGPUXRBinding binding)
 {
     return static_cast<XRBinding&>(*binding);
@@ -200,6 +202,8 @@ inline XRView& fromAPI(WGPUXRView view)
 {
     return static_cast<XRView&>(*view);
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 inline String fromAPI(const char* string)
 {
@@ -336,6 +340,8 @@ inline Ref<TextureView> protectedFromAPI(WGPUTextureView textureView)
     return static_cast<TextureView&>(*textureView);
 }
 
+#if ENABLE(WEBXR_LAYERS)
+
 inline Ref<XRBinding> protectedFromAPI(WGPUXRBinding binding)
 {
     return static_cast<XRBinding&>(*binding);
@@ -355,6 +361,8 @@ inline Ref<XRView> protectedFromAPI(WGPUXRView view)
 {
     return static_cast<XRView&>(*view);
 }
+
+#endif // ENABLE(WEBXR_LAYERS)
 
 template<typename R, typename... Args>
 inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
