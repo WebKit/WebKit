@@ -83,7 +83,7 @@ ASCIILiteral RemoteLegacyCDMFactory::supplementName()
     return "RemoteLegacyCDMFactory"_s;
 }
 
-GPUProcessConnection& RemoteLegacyCDMFactory::gpuProcessConnection()
+Ref<GPUProcessConnection> RemoteLegacyCDMFactory::gpuProcessConnection()
 {
     return WebProcess::singleton().ensureGPUProcessConnection();
 }
@@ -94,7 +94,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
     if (foundInCache != m_supportsKeySystemCache.end())
         return foundInCache->value;
 
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), { });
+    auto sendResult = gpuProcessConnection()->connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), { });
     auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemCache.set(keySystem, supported);
     return supported;
@@ -107,7 +107,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(const String& keySyste
     if (foundInCache != m_supportsKeySystemAndMimeTypeCache.end())
         return foundInCache->value;
 
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), { });
+    auto sendResult = gpuProcessConnection()->connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), { });
     auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemAndMimeTypeCache.set(key, supported);
     return supported;
@@ -134,17 +134,17 @@ void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identif
     ASSERT(!m_sessions.contains(identifier));
     m_sessions.set(identifier, WeakPtr { session });
 
-    gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64(), session);
+    gpuProcessConnection()->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64(), session);
 }
 
 void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
     ASSERT(m_sessions.contains(identifier));
     RefPtr session = m_sessions.get(identifier).get();
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTFMove(session)] {
+    gpuProcessConnection()->connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTFMove(session)] {
         ASSERT(protectedThis->m_sessions.contains(identifier));
         protectedThis->m_sessions.remove(identifier);
-        protectedThis->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64());
+        protectedThis->gpuProcessConnection()->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64());
         UNUSED_PARAM(session);
     }, { });
 }

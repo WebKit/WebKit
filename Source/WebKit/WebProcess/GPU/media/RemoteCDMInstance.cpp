@@ -51,7 +51,7 @@ RemoteCDMInstance::RemoteCDMInstance(WeakPtr<RemoteCDMFactory>&& factory, Remote
     , m_configuration(WTFMove(configuration))
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64(), *this);
+        factory->gpuProcessConnection()->messageReceiverMap().addMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64(), *this);
 }
 
 RemoteCDMInstance::~RemoteCDMInstance()
@@ -61,7 +61,7 @@ RemoteCDMInstance::~RemoteCDMInstance()
         return;
 
     factory->removeInstance(m_identifier);
-    factory->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
+    factory->gpuProcessConnection()->messageReceiverMap().removeMessageReceiver(Messages::RemoteCDMInstance::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
@@ -78,7 +78,7 @@ void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemC
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection()->connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::InitializeWithConfiguration(configuration, distinctiveIdentifiers, persistentState), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certificate, SuccessCallback&& callback)
@@ -89,13 +89,13 @@ void RemoteCDMInstance::setServerCertificate(Ref<WebCore::SharedBuffer>&& certif
         return;
     }
 
-    factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
+    factory->gpuProcessConnection()->connection().sendWithAsyncReply(Messages::RemoteCDMInstanceProxy::SetServerCertificate(WTFMove(certificate)), WTFMove(callback), m_identifier);
 }
 
 void RemoteCDMInstance::setStorageDirectory(const String& directory)
 {
     if (RefPtr factory = m_factory.get())
-        factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
+        factory->gpuProcessConnection()->connection().send(Messages::RemoteCDMInstanceProxy::SetStorageDirectory(directory), m_identifier);
 }
 
 RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
@@ -110,7 +110,7 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
         logIdentifier = reinterpret_cast<uint64_t>(client->logIdentifier());
 #endif
 
-    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
+    auto sendResult = factory->gpuProcessConnection()->connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;

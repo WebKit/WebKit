@@ -39,7 +39,7 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
     if (!m_inMemoryStorageSession) {
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), NetworkStorageSession::IsInMemoryCookieStore::Yes);
 
-        auto acceptPolicy = WebProcess::singleton().ensureNetworkProcessConnection().cookieAcceptPolicy();
+        auto acceptPolicy = WebProcess::singleton().ensureNetworkProcessConnection()->cookieAcceptPolicy();
         m_inMemoryStorageSession->setCookieAcceptPolicy(acceptPolicy);
     }
     return *m_inMemoryStorageSession;

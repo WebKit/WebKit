@@ -55,7 +55,7 @@ Ref<IPC::Connection> WebCacheStorageConnection::connection()
 
     RefPtr<IPC::Connection> connection;
     callOnMainRunLoopAndWait([this, &connection]() mutable {
-        connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        connection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
         {
             Locker lock(m_connectionLock);
             m_connection = connection;

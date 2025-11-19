@@ -47,7 +47,7 @@ RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(F
     if (!WebProcess::singleton().mediaPlaybackEnabled())
         return nullptr;
 
-    auto sendResult = ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
+    auto sendResult = ensureGPUProcessConnection()->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
     auto [imageDecoderIdentifier] = sendResult.takeReplyOr(std::nullopt);
     if (!imageDecoderIdentifier)
         return nullptr;
@@ -87,16 +87,16 @@ void RemoteImageDecoderAVFManager::gpuProcessConnectionDidClose(GPUProcessConnec
     // FIXME: Do we need to do more when m_remoteImageDecoders is not empty to re-create them?
 }
 
-GPUProcessConnection& RemoteImageDecoderAVFManager::ensureGPUProcessConnection()
+Ref<GPUProcessConnection> RemoteImageDecoderAVFManager::ensureGPUProcessConnection()
 {
-    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
+    RefPtr<GPUProcessConnection> gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
         gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteImageDecoderAVFManager::messageReceiverName(), *this);
+        m_gpuProcessConnection = gpuProcessConnection;
     }
-    return *gpuProcessConnection.unsafeGet();
+    return *gpuProcessConnection;
 }
 
 void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)

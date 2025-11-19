@@ -48,7 +48,7 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, ConvertToBackingC
 #if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
     RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
     callOnMainRunLoopAndWait([&videoFrameObjectHeapProxy] {
-        videoFrameObjectHeapProxy = WebProcess::singleton().ensureProtectedGPUProcessConnection()->videoFrameObjectHeapProxy();
+        videoFrameObjectHeapProxy = WebProcess::singleton().ensureGPUProcessConnection()->videoFrameObjectHeapProxy();
     });
 
     m_videoFrameObjectHeapProxy = videoFrameObjectHeapProxy;

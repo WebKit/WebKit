@@ -61,7 +61,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    GPUProcessConnection& gpuProcessConnection();
+    Ref<GPUProcessConnection> gpuProcessConnection();
 
     void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
 

@@ -1015,7 +1015,7 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 {
     m_mediaEnvironment = mediaEnvironment;
-    if (auto gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+    if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->setMediaEnvironment(identifier(), mediaEnvironment);
 }
 #endif

@@ -65,7 +65,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    GPUProcessConnection& gpuProcessConnection();
+    Ref<GPUProcessConnection> gpuProcessConnection();
 
     void registerFactory(Vector<WeakRef<WebCore::CDMFactory>>&);
 

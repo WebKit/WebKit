@@ -51,23 +51,21 @@ ModelProcessModelPlayerManager::ModelProcessModelPlayerManager() = default;
 
 ModelProcessModelPlayerManager::~ModelProcessModelPlayerManager() = default;
 
-ModelProcessConnection& ModelProcessModelPlayerManager::modelProcessConnection()
+Ref<ModelProcessConnection> ModelProcessModelPlayerManager::modelProcessConnection()
 {
-    RefPtr modelProcessConnection = m_modelProcessConnection.get();
+    Ref<ModelProcessConnection> modelProcessConnection = m_modelProcessConnection.get();
     if (!modelProcessConnection) {
         modelProcessConnection = WebProcess::singleton().ensureModelProcessConnection();
         m_modelProcessConnection = modelProcessConnection;
-        modelProcessConnection = WebProcess::singleton().ensureModelProcessConnection();
         modelProcessConnection->addClient(*this);
     }
-
-    return *modelProcessConnection.unsafeGet();
+    return *modelProcessConnection;
 }
 
 Ref<ModelProcessModelPlayer> ModelProcessModelPlayerManager::createModelProcessModelPlayer(WebPage& page, WebCore::ModelPlayerClient& client)
 {
     auto identifier = WebCore::ModelPlayerIdentifier::generate();
-    modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::CreateModelPlayer(identifier), 0);
+    modelProcessConnection()->connection().send(Messages::ModelProcessModelPlayerManagerProxy::CreateModelPlayer(identifier), 0);
 
     auto player = ModelProcessModelPlayer::create(identifier, page, client);
     if (page.shouldDisableModelLoadDelaysForTesting())
@@ -88,7 +86,7 @@ void ModelProcessModelPlayerManager::deleteModelProcessModelPlayer(WebCore::Mode
     m_players.take(identifier);
     if (previousPlayerCount && !m_players.size())
         WebProcess::singleton().send(Messages::WebProcessPool::StoppedPlayingModels(), 0);
-    modelProcessConnection().connection().send(Messages::ModelProcessModelPlayerManagerProxy::DeleteModelPlayer(identifier), 0);
+    modelProcessConnection()->connection().send(Messages::ModelProcessModelPlayerManagerProxy::DeleteModelPlayer(identifier), 0);
 }
 
 void ModelProcessModelPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)

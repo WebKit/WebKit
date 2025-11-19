@@ -52,7 +52,7 @@ WebSocketProvider::~WebSocketProvider() = default;
 
 WebSocketProvider::WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
     : m_webPageProxyID(webPageProxyID)
-    , m_networkProcessConnection(WebProcess::singleton().ensureNetworkProcessConnection().connection()) { }
+    , m_networkProcessConnection(WebProcess::singleton().ensureNetworkProcessConnection()->connection()) { }
 
 std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client, const URL& url, const WebCore::WebTransportOptions& options)
 {
@@ -69,7 +69,7 @@ std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>>
             WorkQueue::mainSingleton().dispatchSync([protectedThis = Ref { *this }] {
                 ASSERT(RunLoop::isMain());
                 Locker locker { protectedThis->m_networkProcessConnectionLock };
-                protectedThis->m_networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+                protectedThis->m_networkProcessConnection = WebProcess::singleton().ensureNetworkProcessConnection()->connection();
             });
             connection = getConnection();
         }
@@ -81,7 +81,7 @@ std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebTransportSessionPromise>>
 
     Ref document = downcast<Document>(context);
     ASSERT(RunLoop::isMain());
-    auto [session, promise] = WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, options, m_webPageProxyID, document->clientOrigin());
+    auto [session, promise] = WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection()->connection(), client, url, options, m_webPageProxyID, document->clientOrigin());
     return { WTFMove(session), WTFMove(promise) };
 }
 

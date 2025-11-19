@@ -52,7 +52,7 @@ WebSharedWorkerObjectConnection::~WebSharedWorkerObjectConnection()
 
 IPC::Connection* WebSharedWorkerObjectConnection::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 void WebSharedWorkerObjectConnection::requestSharedWorker(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, const WebCore::WorkerOptions& workerOptions)

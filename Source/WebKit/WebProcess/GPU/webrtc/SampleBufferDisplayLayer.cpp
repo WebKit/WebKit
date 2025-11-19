@@ -48,7 +48,7 @@ Ref<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDispl
 
 SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManager& manager, WebCore::SampleBufferDisplayLayerClient& client)
     : WebCore::SampleBufferDisplayLayer(client)
-    , m_gpuProcessConnection(&WebProcess::singleton().ensureGPUProcessConnection())
+    , m_gpuProcessConnection(WebProcess::singleton().ensureGPUProcessConnection())
     , m_manager(manager)
     , m_connection(m_gpuProcessConnection.get()->connection())
 {

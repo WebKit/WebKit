@@ -83,7 +83,7 @@ WebSWClientConnection::~WebSWClientConnection()
 
 IPC::Connection* WebSWClientConnection::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 }
 
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
@@ -525,7 +525,7 @@ Ref<WebSWClientConnection::AddRoutePromise> WebSWClientConnection::addRoutes(Ser
             return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::TypeError, "Internal error"_s });
         }
     };
-    return WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithPromisedReply<PromiseConverter>(Messages::WebSWServerConnection::AddRoutes { identifier, routes });
+    return WebProcess::singleton().ensureNetworkProcessConnection()->connection().sendWithPromisedReply<PromiseConverter>(Messages::WebSWServerConnection::AddRoutes { identifier, routes });
 }
 
 } // namespace WebKit

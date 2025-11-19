@@ -150,7 +150,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
 
 RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
 {
-    Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    Ref connection = WebProcess::singleton().ensureGPUProcessConnection()->connection();
 
     if (m_sharedVideoFrameWriter.isDisabled())
         m_sharedVideoFrameWriter = { };

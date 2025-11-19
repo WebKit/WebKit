@@ -166,7 +166,7 @@ void WebPaymentCoordinator::cancelPaymentSession()
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    return &WebProcess::singleton().ensureNetworkProcessConnection()->connection();
 #else
     return WebProcess::singleton().parentProcessConnection();
 #endif

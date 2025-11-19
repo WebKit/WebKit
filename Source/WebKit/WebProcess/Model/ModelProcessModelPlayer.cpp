@@ -72,13 +72,13 @@ ModelProcessModelPlayer::~ModelProcessModelPlayer()
 template<typename T>
 ALWAYS_INLINE void ModelProcessModelPlayer::send(T&& message)
 {
-    WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection().connection().send(std::forward<T>(message), m_id);
+    WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection()->connection().send(std::forward<T>(message), m_id);
 }
 
 template<typename T, typename C>
 ALWAYS_INLINE void ModelProcessModelPlayer::sendWithAsyncReply(T&& message, C&& completionHandler)
 {
-    WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection().connection().sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_id);
+    WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection()->connection().sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_id);
 }
 
 bool ModelProcessModelPlayer::modelProcessEnabled() const

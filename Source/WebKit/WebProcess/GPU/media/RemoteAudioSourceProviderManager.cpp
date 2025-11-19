@@ -71,7 +71,7 @@ void RemoteAudioSourceProviderManager::setConnection(RefPtr<IPC::Connection>&& c
 void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider>&& provider)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(WebProcess::singleton().ensureGPUProcessConnection().connection());
+    setConnection(WebProcess::singleton().ensureGPUProcessConnection()->connection());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, provider = WTFMove(provider)]() mutable {
         auto identifier = provider->identifier();
