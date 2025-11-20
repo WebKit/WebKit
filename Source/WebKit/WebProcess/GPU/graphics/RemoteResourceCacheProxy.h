@@ -66,7 +66,6 @@ public:
     void recordFontUse(WebCore::Font&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
-    void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
     RemoteDisplayListIdentifier recordDisplayListUse(const WebCore::DisplayList::DisplayList&);
     void didPaintLayers();
 
@@ -97,7 +96,6 @@ private:
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
     void releaseFonts();
-    void releaseFontCustomPlatformDatas();
 
     struct NativeImageEntry {
         RefPtr<WebCore::ShareableBitmap> bitmap; // Reused across GPUP crashes, held through the associated NativeImage lifetime.
@@ -113,7 +111,6 @@ private:
 
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
     FontHashMap m_fonts;
-    FontHashMap m_fontCustomPlatformDatas;
 
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
     unsigned m_numberOfFontCustomPlatformDatasUsedInCurrentRenderingUpdate { 0 };

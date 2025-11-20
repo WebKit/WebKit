@@ -147,7 +147,7 @@ std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOr
 
             return std::nullopt;
         },
-        [&] (FontPlatformSerializedCreationData& d) -> std::optional<FontPlatformData> {
+        [&] (CustomFontCreationData& d) -> std::optional<FontPlatformData> {
             auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
             if (RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection))
                 return FontPlatformData(size, WTFMove(orientation), WTFMove(widthVariant), WTFMove(textRenderingMode), syntheticBold, syntheticOblique, WTFMove(fontCustomPlatformData));
@@ -160,7 +160,7 @@ std::optional<FontPlatformData> FontPlatformData::fromIPCData(float size, FontOr
 FontPlatformData::IPCData FontPlatformData::toIPCData() const
 {
     if (auto* data = creationData())
-        return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, data->itemInCollection };
+        return CustomFontCreationData { { data->fontFaceData->span() }, data->itemInCollection };
 
     return FontPlatformSerializedData { m_font.getTypeface()->serialize() };
 }

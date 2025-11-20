@@ -387,8 +387,8 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return value;
     }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const AttributedString::FontWrapper& font) -> RetainPtr<id> {
-        return (__bridge PlatformFont *)font.font->ctFont();
+    }, [] (const InstalledFont& font) -> RetainPtr<id> {
+        return (__bridge PlatformFont *)font.toCTFont().get();
     }, [] (const AttributedString::ColorFromPlatformColor& value) -> RetainPtr<id> {
         return cocoaColor(value.color);
     }, [] (const AttributedString::ColorFromCGColor& value) -> RetainPtr<id> {
@@ -741,7 +741,7 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
         return { { textAttachment } };
     }
     if ([value isKindOfClass:PlatformFontClass])
-        return { { AttributedString::FontWrapper { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
+        return { { *Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize]))->toSerializableInstalledFont() } };
     if ([value isKindOfClass:PlatformColorClass])
         return { { AttributedString::ColorFromPlatformColor { colorFromCocoaColor((PlatformColor *)value) } } };
     if (value) {
@@ -789,61 +789,6 @@ AttributedString AttributedString::fromNSAttributedStringAndDocumentAttributes(R
     if (dictionary)
         result.documentAttributes = extractDictionary(dictionary.get(), tableIDs, tableBlockIDs, listIDs);
     return { WTFMove(result) };
-}
-
-std::optional<AttributedString::FontWrapper> AttributedString::FontWrapper::createFromIPCData(const String& postScriptName, double pointSize, const CTFontDescriptorOptions& fontDescriptorOptions, const std::optional<WebCore::FontPlatformSerializedAttributes>& fontSerializedAttributes)
-{
-    RetainPtr font = [&] -> RetainPtr<CTFontRef> {
-        RetainPtr<CTFontDescriptorRef> fontDescriptor;
-        if (fontSerializedAttributes)
-            fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions(fontSerializedAttributes->toCFDictionary().get(), fontDescriptorOptions));
-        else
-            fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(postScriptName.createCFString().get(), pointSize));
-
-        RetainPtr matched = adoptCF(CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(fontDescriptor.get(), NULL, kCTFontDescriptorMatchingOptionIncludeHiddenFonts));
-        if (!matched || !CFArrayGetCount(matched.get()))
-            return { };
-
-        RetainPtr matchedDescriptor = dynamic_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matched.get(), 0));
-        RetainPtr matchedFont = adoptCF(CTFontCreateWithFontDescriptor(matchedDescriptor.get(), pointSize, NULL));
-
-        if (String(adoptCF(CTFontCopyPostScriptName(matchedFont.get())).get()) != postScriptName)
-            return { };
-
-        return matchedFont;
-    }();
-
-    if (!font)
-        font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, pointSize, nil));
-
-    return { { Font::create(FontPlatformData(font.get(), pointSize)) } };
-}
-
-String AttributedString::FontWrapper::postScriptName() const
-{
-    RetainPtr ctFont = font->ctFont();
-    return String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get());
-}
-
-double AttributedString::FontWrapper::pointSize() const
-{
-    RetainPtr ctFont = font->ctFont();
-    return CTFontGetSize(ctFont.get());
-}
-
-CTFontDescriptorOptions AttributedString::FontWrapper::fontDescriptorOptions() const
-{
-    RetainPtr ctFont = font->ctFont();
-    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont.get()));
-    return CTFontDescriptorGetOptions(fontDescriptor.get());
-}
-
-std::optional<WebCore::FontPlatformSerializedAttributes> AttributedString::FontWrapper::fontSerializedAttributes() const
-{
-    RetainPtr ctFont = font->ctFont();
-    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont.get()));
-    RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
-    return FontPlatformSerializedAttributes::fromCF(attributes.get());
 }
 
 }

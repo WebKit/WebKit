@@ -110,7 +110,6 @@ public:
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, IsInterstitial = IsInterstitial::No, Visibility = Visibility::Visible, IsOrientationFallback = IsOrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
     WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
     WEBCORE_EXPORT static Ref<Font> create(WebCore::FontInternalAttributes&&, WebCore::FontPlatformData&&);
-
     WEBCORE_EXPORT ~Font();
 
     static Ref<Font> createSystemFallbackFontPlaceholder() { return adoptRef(*new Font(IsSystemFallbackFontPlaceholder::Yes)); }
@@ -259,7 +258,12 @@ public:
     std::optional<BitVector> findOTSVGGlyphs(std::span<const GlyphBufferGlyph>) const;
 
     bool hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph>) const;
-
+#if USE(CORE_TEXT)
+    using IPCFontData = Variant<WebCore::InstalledFont, WebCore::CustomFontCreationData>;
+    WEBCORE_EXPORT static std::optional<Ref<Font>> fromIPCData(const WebCore::FontInternalAttributes&, IPCFontData&&);
+    WEBCORE_EXPORT IPCFontData toSerializableFont() const;
+    WEBCORE_EXPORT std::optional<InstalledFont> toSerializableInstalledFont() const;
+#endif
 #if PLATFORM(WIN)
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif
@@ -269,6 +273,7 @@ public:
 
     using Attributes = FontInternalAttributes;
     const Attributes& attributes() const { return m_attributes; }
+    void setAttributes(Attributes attributes) { m_attributes = attributes; }
 
     ColorGlyphType colorGlyphType(Glyph) const;
 

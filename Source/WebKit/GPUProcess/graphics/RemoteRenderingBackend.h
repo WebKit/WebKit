@@ -166,10 +166,8 @@ private:
     void releaseGradient(RemoteGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);
     void releaseFilter(WebCore::RenderingResourceIdentifier);
-    void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformDataAttributes, std::optional<WebCore::RenderingResourceIdentifier>);
+    void cacheFont(Ref<WebCore::Font>&&);
     void releaseFont(WebCore::RenderingResourceIdentifier);
-    void cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&&);
-    void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
     void releaseMemory();
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<std::pair<ImageBufferSetIdentifier, OptionSet<BufferInSetType>>>&, bool forcePurge);

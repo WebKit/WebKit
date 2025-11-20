@@ -39,13 +39,14 @@ void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data
 {
 #if USE(APPKIT)
     CheckedPtr popupClient = m_popupClient;
-    // FIXME: font will be nil here for custom fonts, we should fix that.
-    RetainPtr font = popupClient->menuStyle().checkedFont()->primaryFont()->ctFont();
-    if (!font)
-        return;
+    std::optional<InstalledFont> font = popupClient->menuStyle().checkedFont()->primaryFont()->toSerializableInstalledFont();
+    if (!font) {
+        double pointSize = popupClient->menuStyle().checkedFont()->primaryFont()->platformData().size();
+        font = Font::create(FontPlatformData(bridge_cast([NSFont menuFontOfSize:pointSize]), pointSize))->toSerializableInstalledFont();
+    }
+    ASSERT(font);
 
-    data.postScriptName = font ? String(adoptCF(CTFontCopyPostScriptName(font.get())).get()) : String();
-    data.pointSize = font ? CTFontGetSize(font.get()) : 0.0;
+    data.font = *font;
     data.shouldPopOver = popupClient->shouldPopOver();
     data.hideArrows = !popupClient->menuStyle().hasDefaultAppearance();
     data.menuSize = popupClient->menuStyle().menuSize();

@@ -110,15 +110,10 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    auto scaledFontSize = data.pointSize * pageScaleFactor;
-    
-    RetainPtr descriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(data.postScriptName.createCFString().get(), scaledFontSize));
-    RetainPtr matched = adoptCF(CTFontDescriptorCreateMatchingFontDescriptorsWithOptions(descriptor.get(), NULL, kCTFontDescriptorMatchingOptionIncludeHiddenFonts));
-
-    if (matched && CFArrayGetCount(matched.get())) {
-        RetainPtr matchedDescriptor = dynamic_cf_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matched.get(), 0));
-        font = adoptCF(CTFontCreateWithFontDescriptor(matchedDescriptor.get(), scaledFontSize, NULL));
-    }
+    PlatformPopupMenuData mutableData = data;
+    auto scaledFontSize = mutableData.font.metadata.pointSize * pageScaleFactor;
+    mutableData.font.metadata.pointSize = scaledFontSize;
+    font = mutableData.font.toCTFont();
 
     // font will be nil when using a custom font. However, we should still
     // honor the font size, matching other browsers.
