@@ -34,8 +34,8 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (role)
             this.element.setAttribute("role", role);
 
-        this.element.addEventListener("keydown", this._keyDown.bind(this), false);
-        this.element.addEventListener("mousedown", this._mouseDown.bind(this), true);
+        this.element.addEventListener("keydown", this._keyDown.bindWeak(this));
+        this.element.addEventListener("mousedown", this._mouseDown.bindWeak(this), {capture: true});
 
         this._role = role;
         this._sizesToFit = sizesToFit || false;
@@ -43,13 +43,13 @@ WI.NavigationBar = class NavigationBar extends WI.View
         this._navigationItems = [];
         this._selectedNavigationItem = null;
 
-        this._mouseMovedEventListener = this._mouseMoved.bind(this);
-        this._mouseUpEventListener = this._mouseUp.bind(this);
-
         if (navigationItems) {
             for (var i = 0; i < navigationItems.length; ++i)
                 this.addNavigationItem(navigationItems[i]);
         }
+
+        this._mouseMovedEventListener = null;
+        this._mouseUpEventListener = null;
     }
 
     // Public
@@ -304,9 +304,12 @@ WI.NavigationBar = class NavigationBar extends WI.View
             && this._previousSelectedNavigationItem === this.selectedNavigationItem)
             return;
 
+        this._mouseMovedEventListener ||= this._mouseMoved.bindWeak(this);
+        this._mouseUpEventListener ||= this._mouseUp.bindWeak(this);
+
         // Register these listeners on the document so we can track the mouse if it leaves the navigation bar.
-        document.addEventListener("mousemove", this._mouseMovedEventListener, false);
-        document.addEventListener("mouseup", this._mouseUpEventListener, false);
+        document.addEventListener("mousemove", this._mouseMovedEventListener);
+        document.addEventListener("mouseup", this._mouseUpEventListener);
     }
 
     _mouseMoved(event)
@@ -352,8 +355,8 @@ WI.NavigationBar = class NavigationBar extends WI.View
 
         this._mouseIsDown = false;
 
-        document.removeEventListener("mousemove", this._mouseMovedEventListener, false);
-        document.removeEventListener("mouseup", this._mouseUpEventListener, false);
+        document.removeEventListener("mousemove", this._mouseMovedEventListener);
+        document.removeEventListener("mouseup", this._mouseUpEventListener);
 
         // Dispatch the selected event here since the selectedNavigationItem setter surpresses it
         // while the mouse is down to prevent sending it while scrubbing the bar.

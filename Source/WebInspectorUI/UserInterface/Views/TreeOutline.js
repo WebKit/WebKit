@@ -35,7 +35,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this.element = document.createElement("ol");
         this.element.classList.add(WI.TreeOutline.ElementStyleClassName);
         this.element.role = "tree";
-        this.element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
+        this.element.addEventListener("contextmenu", this._handleContextmenu.bindWeak(this));
 
         this.children = [];
         this._childrenListNode = this.element;
@@ -72,8 +72,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedBottomSpacer = null;
 
         this._childrenListNode.tabIndex = 0;
-        this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
-        this._childrenListNode.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bindWeak(this), {capture: true});
+        this._childrenListNode.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
 
         WI.TreeOutline._generateStyleRulesIfNeeded();
 
@@ -684,11 +684,11 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         console.assert(!isNaN(treeItemHeight));
         console.assert(!this.virtualized);
 
-        let boundUpdateVirtualizedElements = (focusedTreeElement) => {
+        let updateVirtualizedElements = (focusedTreeElement) => {
             this._updateVirtualizedElements(focusedTreeElement);
         };
 
-        this._virtualizedDebouncer = new Debouncer(boundUpdateVirtualizedElements);
+        this._virtualizedDebouncer = new Debouncer(updateVirtualizedElements);
         this._virtualizedVisibleTreeElements = new Set;
         this._virtualizedAttachedTreeElements = new Set;
         this._virtualizedScrollContainer = scrollContainer;
@@ -700,7 +700,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedBottomSpacer = document.createElement("div");
         this._virtualizedBottomSpacer.classList.add("virtualized-spacer");
 
-        let throttler = new Throttler(boundUpdateVirtualizedElements, 1000 / 16);
+        let throttler = new Throttler(updateVirtualizedElements.bindWeak(this), 1_000 / 16);
         this._virtualizedScrollContainer.addEventListener("scroll", (event) => {
             throttler.fire();
         });

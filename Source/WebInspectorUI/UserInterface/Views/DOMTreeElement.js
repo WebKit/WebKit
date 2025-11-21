@@ -41,7 +41,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._breakpointStatus = WI.DOMTreeElement.BreakpointStatus.None;
         this._animatingHighlight = false;
         this._shouldHighlightAfterReveal = false;
-        this._boundHighlightAnimationEnd = this._highlightAnimationEnd.bind(this);
         this._subtreeBreakpointTreeElements = null;
 
         this._showGoToArrow = false;
@@ -56,6 +55,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this._ignoreSingleTextChild = false;
         this._forceUpdateTitle = false;
+
+        this._boundHighlightAnimationEnd = null;
     }
 
     // Static
@@ -173,16 +174,13 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._bouncyHighlightElement.style.left = (highlightElementRect.left - treeOutlineRect.left) + "px";
         this.title.appendChild(this._bouncyHighlightElement);
 
-        function animationEnded()
-        {
+        this._bouncyHighlightElement.addEventListener("animationend", bindWeak(function(event) {
             if (!this._bouncyHighlightElement)
                 return;
 
             this._bouncyHighlightElement.remove();
             this._bouncyHighlightElement = null;
-        }
-
-        this._bouncyHighlightElement.addEventListener("animationend", animationEnded.bind(this));
+        }, this));
     }
 
     _updateSearchHighlight(show)
@@ -432,7 +430,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (this.editable) {
             this.listItemElement.draggable = true;
-            this.listItemElement.addEventListener("dragstart", this);
+            this.listItemElement.addEventListener("dragstart", bindWeak(function(event) {
+                if (this._editing)
+                    event.preventDefault();
+            }, this));
         }
 
         WI.settings.enabledDOMTreeBadgeTypes.addEventListener(WI.Setting.Event.Changed, this._handleShownDOMTreeBadgesChanged, this);
@@ -621,7 +622,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 this.insertChild(item, targetButtonIndex);
                 this.expandAllButtonElement = button;
                 this.expandAllButtonElement.__treeElement = item;
-                this.expandAllButtonElement.addEventListener("click", this.handleLoadAllChildren.bind(this), false);
+                this.expandAllButtonElement.addEventListener("click", this.handleLoadAllChildren.bindWeak(this));
             } else if (!this.expandAllButtonElement.__treeElement.parent)
                 this.insertChild(this.expandAllButtonElement.__treeElement, targetButtonIndex);
 
@@ -700,7 +701,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this.updateSelectionArea();
 
+        this._boundHighlightAnimationEnd ||= this._highlightAnimationEnd.bindWeak(this);
         listItemElement.addEventListener("animationend", this._boundHighlightAnimationEnd);
+
         listItemElement.classList.add(WI.DOMTreeElement.HighlightStyleClassName);
     }
 
@@ -1492,11 +1495,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (this._showGoToArrow && node.nodeType() === Node.ELEMENT_NODE && willRenderCloseTagInline === isClosingTag) {
             let goToArrowElement = parentElement.appendChild(WI.createGoToArrowButton());
             goToArrowElement.title = WI.UIString("Reveal in Elements Tab");
-            goToArrowElement.addEventListener("click", (event) => {
+            goToArrowElement.addEventListener("click", bindWeak(function(event) {
                 WI.domManager.inspectElement(this.representedObject.id, {
                     initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
                 });
-            });
+            }, this));
         }
     }
 
@@ -1920,12 +1923,12 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             existing.element.style.removeProperty("animation-delay");
         }
 
-        existing.listener = (event) => {
+        existing.listener = bindWeak(function(event) {
             element.classList.remove("node-state-changed");
             element.style.removeProperty("animation-delay");
 
             this._recentlyModifiedAttributes.delete(key);
-        };
+        }, this);
 
         element.classList.remove("node-state-changed");
         element.style.removeProperty("animation-delay");
@@ -1967,12 +1970,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
     }
 
-    handleEvent(event)
-    {
-        if (event.type === "dragstart" && this._editing)
-            event.preventDefault();
-    }
-
     _subtreeBreakpointChanged(treeElement)
     {
         if (treeElement.hasBreakpoint) {
@@ -2006,8 +2003,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (!this._statusImageElement) {
             this._statusImageElement = WI.ImageUtilities.useSVGSymbol("Images/DOMBreakpoint.svg", "status-image");
             this._statusImageElement.classList.add("breakpoint");
-            this._statusImageElement.addEventListener("click", this._statusImageClicked.bind(this));
-            this._statusImageElement.addEventListener("contextmenu", this._statusImageContextmenu.bind(this));
+            this._statusImageElement.addEventListener("click", this._statusImageClicked.bindWeak(this));
+            this._statusImageElement.addEventListener("contextmenu", this._statusImageContextmenu.bindWeak(this));
             this._statusImageElement.addEventListener("mousedown", (event) => { event.stopPropagation(); });
         }
 
@@ -2073,34 +2070,34 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         switch (badgeType) {
         case WI.DOMTreeElement.BadgeType.Scrollable:
             text = WI.UIString("Scroll", "Title for a badge applied to DOM nodes that are a scrollable container.");
-            handleClick = this._handleScrollableBadgeClicked.bind(this);
+            handleClick = this._handleScrollableBadgeClicked.bindWeak(this);
             break;
 
         case WI.DOMTreeElement.BadgeType.Flex:
             console.assert(!this._elementForBadgeType.has(WI.DOMTreeElement.BadgeType.Grid));
             text = WI.unlocalizedString("flex");
-            handleClick = this._layoutBadgeClicked.bind(this);
+            handleClick = this._layoutBadgeClicked.bindWeak(this);
             break;
 
         case WI.DOMTreeElement.BadgeType.Grid:
             console.assert(!this._elementForBadgeType.has(WI.DOMTreeElement.BadgeType.Flex));
             text = WI.unlocalizedString("grid");
-            handleClick = this._layoutBadgeClicked.bind(this);
+            handleClick = this._layoutBadgeClicked.bindWeak(this);
             break;
 
         case WI.DOMTreeElement.BadgeType.Event:
             text = WI.UIString("Event");
-            handleClick = this._handleEventBadgeClicked.bind(this);
+            handleClick = this._handleEventBadgeClicked.bindWeak(this);
             break;
 
         case WI.DOMTreeElement.BadgeType.SlotAssigned:
             text = WI.UIString("Slotted", "Title for a badge applied to a node that is assigned to a HTMLSlotElement.");
-            handleClick = this._handleSlotAssignedBadgeClicked.bind(this);
+            handleClick = this._handleSlotAssignedBadgeClicked.bindWeak(this);
             break;
 
         case WI.DOMTreeElement.BadgeType.SlotFilled:
             text = WI.UIString("Assigned", "Title for a badge applied to HTMLSlotElement that have assigned nodes.");
-            handleClick = this._handleSlotFilledBadgeClicked.bind(this);
+            handleClick = this._handleSlotFilledBadgeClicked.bindWeak(this);
             break;
         }
 
@@ -2109,7 +2106,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         badgeElement.textContent = text;
         if (handleClick) {
             badgeElement.addEventListener("click", handleClick, true);
-            badgeElement.addEventListener("dblclick", this._handleBadgeDoubleClicked, true);
+            badgeElement.addEventListener("dblclick", (event) => { event.stop(); }, {capture: true});
         }
         this._elementForBadgeType.set(badgeType, badgeElement);
     }
@@ -2290,11 +2287,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     _handleScrollableBadgeClicked(event)
     {
         this.representedObject.scrollIntoView();
-    }
-
-    _handleBadgeDoubleClicked(event)
-    {
-        event.stop();
     }
 
     _updateBadges()

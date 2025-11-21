@@ -153,9 +153,9 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         this.status = document.createElement("input");
         this.status.type = "checkbox";
         this.status.checked = !this._localResourceOverride.disabled;
-        this.status.addEventListener("change", (event) => {
+        this.status.addEventListener("change", bindWeak(function(event) {
             this._localResourceOverride.disabled = !event.target.checked;
-        });
+        }, this));
     }
 
     _handleLocalResourceOverrideDisabledChanged(event)

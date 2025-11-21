@@ -44,12 +44,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this.messagesElement.classList.add("console-messages");
         this.messagesElement.tabIndex = 0;
         this.messagesElement.setAttribute("role", "log");
-        this.messagesElement.addEventListener("mousedown", this._mousedown.bind(this));
-        this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
-        this.messagesElement.addEventListener("keypress", this._keyPress.bind(this));
-        this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
-        this.messagesElement.addEventListener("dragover", this._handleDragOver.bind(this));
-        this.messagesElement.addEventListener("drop", this._handleDrop.bind(this));
+        this.messagesElement.addEventListener("mousedown", this._mousedown.bindWeak(this));
+        this.messagesElement.addEventListener("keydown", this._keyDown.bindWeak(this));
+        this.messagesElement.addEventListener("keypress", this._keyPress.bindWeak(this));
+        this.messagesElement.addEventListener("dragstart", this._ondragstart.bindWeak(this), {capture: true});
+        this.messagesElement.addEventListener("dragover", this._handleDragOver.bindWeak(this));
+        this.messagesElement.addEventListener("drop", this._handleDrop.bindWeak(this));
         this.element.appendChild(this.messagesElement);
 
         this.prompt = WI.quickConsole.prompt;
@@ -72,7 +72,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._otherFiltersNavigationItem = new WI.NavigationItem("console-other-filters-button", "button");
         this._otherFiltersNavigationItem.tooltip = WI.UIString("Other filter options\u2026");
         this._otherFiltersNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-        WI.addMouseDownContextMenuHandlers(this._otherFiltersNavigationItem.element, this._handleOtherFiltersNavigationItemContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._otherFiltersNavigationItem.element, this._handleOtherFiltersNavigationItemContextMenu.bindWeak(this));
         this._updateOtherFiltersNavigationItemState();
         this._otherFiltersNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "glyph"));
 
@@ -136,7 +136,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._showConsoleTabNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._showConsoleTabNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showConsoleTab, this);
 
-        this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
+        this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bindWeak(this));
 
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SessionStarted, this._sessionStarted, this);
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, this._messageAdded, this);
@@ -146,6 +146,9 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         WI.Frame.addEventListener(WI.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
 
         WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearLogOnNavigateSettingChanged, this);
+
+        this._boundMousemove = null;
+        this._boundMouseup = null;
     }
 
     // Public
@@ -602,8 +605,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._mouseDownCommandKey = event.metaKey;
         this._mouseMoveIsRowSelection = false;
 
-        window.addEventListener("mousemove", this);
-        window.addEventListener("mouseup", this);
+        this._boundMousemove ||= this._mousemove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundMousemove);
+
+        this._boundMouseup ||= this._mouseup.bindWeak(this);
+        window.addEventListener("mouseup", this._boundMouseup);
     }
 
     _targetInMessageCanBeSelected(target, message)
@@ -658,8 +664,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _mouseup(event)
     {
-        window.removeEventListener("mousemove", this);
-        window.removeEventListener("mouseup", this);
+        window.removeEventListener("mousemove", this._boundMousemove);
+        window.removeEventListener("mouseup", this._boundMouseup);
 
         var selection = window.getSelection();
         var wrapper = event.target.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
@@ -718,18 +724,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
                 this.prompt.focus();
             });
-        }
-    }
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mousemove":
-            this._mousemove(event);
-            break;
-        case "mouseup":
-            this._mouseup(event);
-            break;
         }
     }
 
@@ -1323,20 +1317,20 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
             let clearFiltersButtonElement = this._hiddenMessagesBannerElement.appendChild(document.createElement("button"));
             clearFiltersButtonElement.textContent = WI.UIString("Clear Filters");
-            clearFiltersButtonElement.addEventListener("click", (event) => {
+            clearFiltersButtonElement.addEventListener("click", bindWeak(function(event) {
                 this._findBanner.clearAndBlur();
                 this._scopeBar.resetToDefault();
                 this._messageSourceBar?.resetToDefault();
                 console.assert(!this._immediatelyHiddenMessages.size);
 
                 this._hiddenMessagesBannerElement.remove();
-            });
+            }, this));
 
             let dismissBannerIconElement = this._hiddenMessagesBannerElement.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Close.svg", "dismiss", WI.UIString("Dismiss")));
-            dismissBannerIconElement.addEventListener("click", (event) => {
+            dismissBannerIconElement.addEventListener("click", bindWeak(function(event) {
                 this._immediatelyHiddenMessages.clear();
                 this._hiddenMessagesBannerElement.remove();
-            });
+            }, this));
         }
 
         if (this.element.firstChild !== this._hiddenMessagesBannerElement)

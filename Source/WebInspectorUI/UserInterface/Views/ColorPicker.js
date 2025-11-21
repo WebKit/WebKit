@@ -47,7 +47,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         this._colorInputsContainerElement = document.createElement("div");
         this._colorInputsContainerElement.classList.add("color-inputs");
-        this._colorInputsContainerElement.addEventListener("input", this._handleColorInputsContainerInput.bind(this));
+        this._colorInputsContainerElement.addEventListener("input", this._handleColorInputsContainerInput.bindWeak(this));
 
         this._element = document.createElement("div");
         this._element.classList.add("color-picker");
@@ -65,7 +65,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         if (InspectorFrontendHost.canPickColorFromScreen()) {
             let pickColorElement = WI.ImageUtilities.useSVGSymbol("Images/Pipette.svg", "pick-color-from-screen", WI.UIString("Pick color from screen", "Color picker view tooltip for picking a color from the screen."));
             pickColorElement.role = "button";
-            pickColorElement.addEventListener("click", async (event) => {
+            pickColorElement.addEventListener("click", bindWeak(async function(event) {
                 pickColorElement.classList.add("active");
                 let pickedColor = await WI.ColorPicker.pickColorFromScreen({
                     suggestedFormat: this.color.format,
@@ -79,7 +79,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
                 this.color = pickedColor;
                 this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
-            });
+            }, this));
 
             colorInputsWrapperElement.appendChild(pickColorElement);
         }
@@ -102,9 +102,9 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             for (let variable of sortedColorVariables) {
                 let computedColor = WI.Color.fromString(variable.value)
                 let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, computedColor, {readOnly: true, tooltip: variable.name});
-                swatch.element.addEventListener("click", (event) => {
+                swatch.element.addEventListener("click", bindWeak(function(event) {
                     this._updateColorForVariable(computedColor, variable.name);
-                });
+                }, this));
                 variableColorSwatchesListElement.appendChild(document.createElement("li")).appendChild(swatch.element);
             }
         }

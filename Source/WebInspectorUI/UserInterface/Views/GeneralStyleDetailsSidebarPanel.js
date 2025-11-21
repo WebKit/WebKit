@@ -134,13 +134,13 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
             this._addClassContainer = this._classListContainer.createChild("div", "new-class");
             this._addClassContainer.title = WI.UIString("Add a Class");
-            this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bind(this));
+            this._addClassContainer.addEventListener("click", this._addClassContainerClicked.bindWeak(this));
 
             this._addClassInput = this._addClassContainer.createChild("input", "class-name-input");
             this._addClassInput.spellcheck = false;
             this._addClassInput.setAttribute("placeholder", WI.UIString("Add New Class"));
-            this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bind(this));
-            this._addClassInput.addEventListener("blur", this._addClassInputBlur.bind(this));
+            this._addClassInput.addEventListener("keypress", this._addClassInputKeyPressed.bindWeak(this));
+            this._addClassInput.addEventListener("blur", this._addClassInputBlur.bindWeak(this));
         }
 
         if (this._forcedPseudoClassContainerToggledSetting) {
@@ -154,7 +154,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
                 let labelElement = this._forcedPseudoClassContainer.appendChild(document.createElement("label"));
 
                 let checkboxElement = labelElement.appendChild(document.createElement("input"));
-                checkboxElement.addEventListener("change", this._forcedPseudoClassCheckboxChanged.bind(this, pseudoClass));
+                checkboxElement.addEventListener("change", this._forcedPseudoClassCheckboxChanged.bindWeak(this, pseudoClass));
                 checkboxElement.type = "checkbox";
                 this._checkboxForForcedPseudoClass.set(pseudoClass, checkboxElement);
 
@@ -166,13 +166,13 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
         let newRuleButton = optionsContainer.createChild("img", "new-rule");
         newRuleButton.title = WI.UIString("Add new rule");
-        newRuleButton.addEventListener("click", this._newRuleButtonClicked.bind(this));
-        newRuleButton.addEventListener("contextmenu", this._newRuleButtonContextMenu.bind(this));
+        newRuleButton.addEventListener("click", this._newRuleButtonClicked.bindWeak(this));
+        newRuleButton.addEventListener("contextmenu", this._newRuleButtonContextMenu.bindWeak(this));
 
         if (typeof this._panel.filterDidChange === "function") {
             this._filterBar = new WI.FilterBar;
             this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
-            this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
+            this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bindWeak(this));
             this.contentView.element.classList.add("has-filter-bar");
 
             optionsContainer.appendChild(this._filterBar.element);
@@ -182,7 +182,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             this._classListToggleButton = optionsContainer.createChild("button", "toggle class-list");
             this._classListToggleButton.textContent = WI.UIString("Classes");
             this._classListToggleButton.title = WI.UIString("Toggle Classes");
-            this._classListToggleButton.addEventListener("click", this._classListToggleButtonClicked.bind(this));
+            this._classListToggleButton.addEventListener("click", this._classListToggleButtonClicked.bindWeak(this));
 
             this._updateClassListContainer();
         }
@@ -192,7 +192,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             this._forcedPseudoClassToggleButton.className = "toggle forced-pseudo-class";
             this._forcedPseudoClassToggleButton.textContent = WI.UIString("Pseudo", "Pseudo @ Styles details sidebar panel", "Label for button that shows controls for toggling CSS pseudo-classes on the selected element.");
             this._forcedPseudoClassToggleButton.title = WI.UIString("Toggle Pseudo Classes");
-            this._forcedPseudoClassToggleButton.addEventListener("click", this._forcedPseudoClassToggleButtonClicked.bind(this));
+            this._forcedPseudoClassToggleButton.addEventListener("click", this._forcedPseudoClassToggleButtonClicked.bindWeak(this));
 
             this._updateForcedPseudoClassContainer();
         }
@@ -394,10 +394,10 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             event.dataTransfer.effectAllowed = "copy";
         });
 
-        let classNameToggleChanged = (event) => {
+        let classNameToggleChanged = bindWeak(function(event) {
             this.domNode.toggleClass(className, classNameToggle.checked);
             classToggledMap.set(className, classNameToggle.checked);
-        };
+        }, this);
 
         classNameToggle.addEventListener("click", classNameToggleChanged);
         classNameTitle.addEventListener("click", (event) => {

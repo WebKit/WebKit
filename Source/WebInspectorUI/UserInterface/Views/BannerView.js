@@ -35,12 +35,12 @@ WI.BannerView = class BannerView extends WI.View
         if (actionButtonMessage) {
             let actionButtonElement = this.element.appendChild(document.createElement("button"));
             actionButtonElement.textContent = actionButtonMessage;
-            actionButtonElement.addEventListener("click", this._handleActionButtonClicked.bind(this));
+            actionButtonElement.addEventListener("click", this._handleActionButtonClicked.bindWeak(this));
         }
 
         if (showDismissButton) {
             let dismissButtonElement = this.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Close.svg", "dismiss", WI.UIString("Dismiss", "Dismiss @ Banner View", "Tooltip for the dismiss button in banner views.")));
-            dismissButtonElement.addEventListener("click", this._handleDismissButtonClicked.bind(this));
+            dismissButtonElement.addEventListener("click", this._handleDismissButtonClicked.bindWeak(this));
         }
     }
 

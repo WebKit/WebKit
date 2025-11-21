@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("FunctionUtilities");
+
+    suite.addTestCase({
+        name: "Function.prototype.bindWeak",
+        test() {
+            let thisObject = {bar: 42};
+
+            function foo(bindArg1, bindArg2, callArg1, callArg2) {
+                InspectorTest.expectEqual(this, thisObject, "Should provide this.");
+                InspectorTest.expectEqual(bindArg1, "bind1", "Should provide bind arg 1.");
+                InspectorTest.expectEqual(bindArg2, "bind2", "Should provide bind arg 2.");
+                InspectorTest.expectEqual(callArg1, "call1", "Should provide call arg 1.");
+                InspectorTest.expectEqual(callArg2, "call2", "Should provide call arg 2.");
+                return "called";
+            }
+
+            InspectorTest.log("Calling prototype method...");
+            let fooBindWeakPrototype = foo.bindWeak(thisObject, "bind1", "bind2");
+            InspectorTest.expectEqual(fooBindWeakPrototype("call1", "call2"), "called", "Should call function.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Calling standalone method...");
+            let fooBindWeakDirect = bindWeak(foo, thisObject, "bind1", "bind2");
+            InspectorTest.expectEqual(fooBindWeakDirect("call1", "call2"), "called", "Should call function.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Simulating GC...");
+            let deref = WeakRef.prototype.deref;
+            WeakRef.prototype.deref = () => undefined;
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Calling prototype method...");
+            InspectorTest.expectEqual(fooBindWeakPrototype("call1", "call2"), undefined, "Should not call function.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Calling standalone method...");
+            InspectorTest.expectEqual(fooBindWeakDirect("call1", "call2"), undefined, "Should not call function.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Restoring state...");
+            WeakRef.prototype.deref = deref;
+
+            return true;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Testing all extra methods added to Function or its prototype.</p>
+</body>
+</html>

@@ -211,14 +211,14 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         if (!this._knownCells.has(cell)) {
             this._knownCells.add(cell);
 
-            cell.addEventListener("dblclick", (event) => {
+            cell.addEventListener("dblclick", bindWeak(function(event) {
                 if (column.identifier === "size") {
                     InspectorFrontendHost.beep();
                     return;
                 }
 
                 this._showCookiePopover(cell, cookie, column.identifier);
-            });
+            }, this));
         }
 
         return cell;
@@ -328,7 +328,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
         this.addSubview(this._table);
 
-        this._table.element.addEventListener("keydown", this._handleTableKeyDown.bind(this));
+        this._table.element.addEventListener("keydown", this._handleTableKeyDown.bindWeak(this));
 
         this._reloadCookies();
     }
@@ -568,9 +568,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             if (!this._emptyFilterResultsMessageElement) {
                 let buttonElement = document.createElement("button");
                 buttonElement.textContent = WI.UIString("Clear Filters");
-                buttonElement.addEventListener("click", (event) => {
+                buttonElement.addEventListener("click", bindWeak(function(event) {
                     this._filterBarNavigationItem.filterBar.clear();
-                });
+                }, this));
 
                 this._emptyFilterResultsMessageElement = WI.createMessageTextView(WI.UIString("No Filter Results"));
                 this._emptyFilterResultsMessageElement.appendChild(buttonElement);

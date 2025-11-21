@@ -46,18 +46,18 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._inputField.spellcheck = false;
         this._inputField.setAttribute("results", 5);
         this._inputField.setAttribute("autosave", "inspector-search");
-        this._inputField.addEventListener("keydown", this._inputFieldKeyDown.bind(this), false);
+        this._inputField.addEventListener("keydown", this._inputFieldKeyDown.bindWeak(this));
         this._inputFieldInputThrottler = new Throttler(this._inputFieldInput.bind(this), 250);
-        this._inputField.addEventListener("input", (event) => {
+        this._inputField.addEventListener("input", bindWeak(function(event) {
             this._inputFieldInputThrottler.fire(event);
-        }, false);
+        }, this));
         this.element.appendChild(this._inputField);
 
         this._previousResultButton = document.createElement("button");
         this._previousResultButton.classList.add("segmented", "previous-result");
         this._previousResultButton.disabled = true;
         this._previousResultButton.title = WI.UIString("Find Previous (%s)").format(WI.findPreviousKeyboardShortcut.displayName);
-        this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
+        this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bindWeak(this));
         this.element.appendChild(this._previousResultButton);
 
         let previousResultButtonGlyphElement = document.createElement("div");
@@ -68,7 +68,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._nextResultButton.classList.add("segmented", "next-result");
         this._nextResultButton.disabled = true;
         this._nextResultButton.title = WI.UIString("Find Next (%s)").format(WI.findNextKeyboardShortcut.displayName);
-        this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
+        this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bindWeak(this));
         this.element.appendChild(this._nextResultButton);
 
         let nextResultButtonGlyphElement = document.createElement("div");
@@ -81,7 +81,7 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         } else {
             let doneButtonElement = document.createElement("button");
             doneButtonElement.textContent = WI.UIString("Done");
-            doneButtonElement.addEventListener("click", this._doneButtonClicked.bind(this));
+            doneButtonElement.addEventListener("click", this._doneButtonClicked.bindWeak(this));
             this.element.appendChild(doneButtonElement);
             this._hideKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this.hide.bind(this), this.element);
         }

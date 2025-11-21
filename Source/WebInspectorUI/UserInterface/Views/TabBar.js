@@ -30,7 +30,7 @@ WI.TabBar = class TabBar extends WI.View
         super(element);
 
         this.element.classList.add("tab-bar");
-        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this.element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
 
         this.element.createChild("div", "border top");
 
@@ -41,9 +41,9 @@ WI.TabBar = class TabBar extends WI.View
         this._tabContainer = this.element.appendChild(document.createElement("div"));
         this._tabContainer.className = "tabs";
         this._tabContainer.setAttribute("role", "tablist");
-        this._tabContainer.addEventListener("mousedown", this._handleTabContainerMouseDown.bind(this));
-        this._tabContainer.addEventListener("mouseleave", this._handleTabContainerMouseLeave.bind(this));
-        this._tabContainer.addEventListener("contextmenu", this._handleTabContainerContextMenu.bind(this));
+        this._tabContainer.addEventListener("mousedown", this._handleTabContainerMouseDown.bindWeak(this));
+        this._tabContainer.addEventListener("mouseleave", this._handleTabContainerMouseLeave.bindWeak(this));
+        this._tabContainer.addEventListener("contextmenu", this._handleTabContainerContextMenu.bindWeak(this));
 
         const navigationBarAfterElement = null;
         this._navigationBarAfter = new WI.NavigationBar(navigationBarAfterElement, {sizesToFit: true});
@@ -713,12 +713,12 @@ WI.TabBar = class TabBar extends WI.View
 
         this._mouseDownPageX = event.pageX;
 
-        this._mouseMovedEventListener = this._handleMouseMoved.bind(this);
-        this._mouseUpEventListener = this._handleMouseUp.bind(this);
+        this._mouseMovedEventListener ||= this._handleMouseMoved.bindWeak(this);
+        this._mouseUpEventListener ||= this._handleMouseUp.bindWeak(this);
 
         // Register these listeners on the document so we can track the mouse if it leaves the tab bar.
-        document.addEventListener("mousemove", this._mouseMovedEventListener, true);
-        document.addEventListener("mouseup", this._mouseUpEventListener, true);
+        document.addEventListener("mousemove", this._mouseMovedEventListener, {capture: true});
+        document.addEventListener("mouseup", this._mouseUpEventListener, {capture: true});
 
         event.preventDefault();
         event.stopPropagation();
@@ -896,11 +896,8 @@ WI.TabBar = class TabBar extends WI.View
         this._mouseDownPageX = NaN;
         this._mouseOffset = undefined;
 
-        document.removeEventListener("mousemove", this._mouseMovedEventListener, true);
-        document.removeEventListener("mouseup", this._mouseUpEventListener, true);
-
-        this._mouseMovedEventListener = null;
-        this._mouseUpEventListener = null;
+        document.removeEventListener("mousemove", this._mouseMovedEventListener, {capture: true});
+        document.removeEventListener("mouseup", this._mouseUpEventListener, {capture: true});
 
         event.preventDefault();
         event.stopPropagation();

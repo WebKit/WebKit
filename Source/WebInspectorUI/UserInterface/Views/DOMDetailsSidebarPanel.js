@@ -29,7 +29,7 @@ WI.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WI.DetailsSideb
     {
         super(identifier, displayName, dontCreateNavigationItem);
 
-        this.element.addEventListener("click", this._mouseWasClicked.bind(this), true);
+        this.element.addEventListener("click", this._mouseWasClicked.bindWeak(this), {capture: true});
 
         this._domNode = null;
     }

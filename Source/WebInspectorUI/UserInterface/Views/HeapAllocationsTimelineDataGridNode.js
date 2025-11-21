@@ -73,9 +73,9 @@ WI.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimelineDataGridNo
 
             if (this._heapAllocationsView && !this.heapSnapshot.invalid) {
                 var goToButton = fragment.appendChild(WI.createGoToArrowButton());
-                goToButton.addEventListener("click", (event) => {
+                goToButton.addEventListener("click", bindWeak(function(event) {
                     this._heapAllocationsView.showHeapSnapshotTimelineRecord(this.record);
-                });
+                }, this));
             }
 
             return fragment;

@@ -75,13 +75,13 @@ WI.GradientEditor = class GradientEditor extends WI.Object
             option.value = type;
             option.text = this._gradientTypes[type].label;
         }
-        this._gradientTypePicker.addEventListener("change", this._gradientTypeChanged.bind(this));
+        this._gradientTypePicker.addEventListener("change", this._gradientTypeChanged.bindWeak(this));
 
         let angleContainerElement = this._element.appendChild(document.createElement("div"));
         angleContainerElement.classList.add("gradient-angle");
         angleContainerElement.append(WI.UIString("Angle"));
 
-        let boundAngleValueChanged = this._angleValueChanged.bind(this);
+        let boundAngleValueChanged = this._angleValueChanged.bindWeak(this);
 
         this._angleSliderElement = angleContainerElement.appendChild(document.createElement("input"));
         this._angleSliderElement.type = "range";
@@ -92,7 +92,7 @@ WI.GradientEditor = class GradientEditor extends WI.Object
         this._angleInputElement.addEventListener("input", boundAngleValueChanged);
 
         this._angleUnitsSelectElement = angleContainerElement.appendChild(document.createElement("select"));
-        this._angleUnitsSelectElement.addEventListener("change", this._angleUnitsChanged.bind(this));
+        this._angleUnitsSelectElement.addEventListener("change", this._angleUnitsChanged.bindWeak(this));
 
         const angleUnitsData = [
             {name: WI.Gradient.AngleUnits.DEG, min: 0, max: 360, step: 1},

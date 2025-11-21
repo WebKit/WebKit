@@ -108,7 +108,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             this.expand();
         else if (this._message.type === WI.ConsoleMessage.MessageType.Image) {
             this._element.classList.add("console-image");
-            this._element.addEventListener("contextmenu", this._handleContextMenu.bind(this));
+            this._element.addEventListener("contextmenu", this._handleContextMenu.bindWeak(this));
         }
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BlackboxChanged, this._handleDebuggerBlackboxChanged, this);
@@ -378,7 +378,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                                 img.height = img.height / window.devicePixelRatio;
                             element.appendChild(img);
                         });
-                        img.addEventListener("error", (event) => {
+                        img.addEventListener("error", bindWeak(function(event) {
                             this._element.setAttribute("data-labelprefix", WI.UIString("Error: "));
                             this._element.classList.add("console-error-level");
                             this._element.classList.remove("console-log-level");
@@ -393,7 +393,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                             if (this._extraParameters)
                                 args.pushAll(this._extraParameters);
                             this._appendFormattedArguments(element, args);
-                        });
+                        }, this));
                     }
                     return;
                 }
@@ -1063,8 +1063,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         this._element.classList.add("expandable");
 
-        this._boundClickHandler = this.toggle.bind(this);
-        this._messageBodyElement.addEventListener("click", this._boundClickHandler);
+        this._messageBodyElement.addEventListener("click", this.toggle.bindWeak(this));
     }
 
     _handleContextMenu(event)

@@ -122,9 +122,9 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         this._allowsTimeRangeSelection = x;
 
         if (x) {
-            this._clickEventListener = this._handleClick.bind(this);
-            this._doubleClickEventListener = this._handleDoubleClick.bind(this);
-            this._mouseDownEventListener = this._handleMouseDown.bind(this);
+            this._clickEventListener = this._handleClick.bindWeak(this);
+            this._doubleClickEventListener = this._handleDoubleClick.bindWeak(this);
+            this._mouseDownEventListener = this._handleMouseDown.bindWeak(this);
             this.element.addEventListener("click", this._clickEventListener);
             this.element.addEventListener("dblclick", this._doubleClickEventListener);
             this.element.addEventListener("mousedown", this._mouseDownEventListener);
@@ -140,12 +140,12 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
             this._leftSelectionHandleElement = document.createElement("div");
             this._leftSelectionHandleElement.classList.add("selection-handle");
             this._leftSelectionHandleElement.classList.add("left");
-            this._leftSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
+            this._leftSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bindWeak(this));
 
             this._rightSelectionHandleElement = document.createElement("div");
             this._rightSelectionHandleElement.classList.add("selection-handle");
             this._rightSelectionHandleElement.classList.add("right");
-            this._rightSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
+            this._rightSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bindWeak(this));
 
             this._selectionDragElement = document.createElement("div");
             this._selectionDragElement.classList.add("selection-drag");
@@ -816,8 +816,8 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         this._mousePassedMicroMovementTest = false;
         this._mouseStartX = event.pageX;
 
-        this._mouseMoveEventListener = this._handleMouseMove.bind(this);
-        this._mouseUpEventListener = this._handleMouseUp.bind(this);
+        this._mouseMoveEventListener ||= this._handleMouseMove.bindWeak(this);
+        this._mouseUpEventListener ||= this._handleMouseUp.bindWeak(this);
 
         // Register these listeners on the document so we can track the mouse if it leaves the ruler.
         document.addEventListener("mousemove", this._mouseMoveEventListener);
@@ -917,8 +917,6 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         document.removeEventListener("mousemove", this._mouseMoveEventListener);
         document.removeEventListener("mouseup", this._mouseUpEventListener);
 
-        delete this._mouseMoveEventListener;
-        delete this._mouseUpEventListener;
         delete this._mouseDownPosition;
         delete this._lastMousePosition;
         delete this._selectionIsMove;
@@ -943,8 +941,8 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         else
             this._mouseDownPosition = event.pageX - this.element.totalOffsetLeft;
 
-        this._selectionHandleMouseMoveEventListener = this._handleSelectionHandleMouseMove.bind(this);
-        this._selectionHandleMouseUpEventListener = this._handleSelectionHandleMouseUp.bind(this);
+        this._selectionHandleMouseMoveEventListener ||= this._handleSelectionHandleMouseMove.bindWeak(this);
+        this._selectionHandleMouseUpEventListener ||= this._handleSelectionHandleMouseUp.bindWeak(this);
 
         // Register these listeners on the document so we can track the mouse if it leaves the ruler.
         document.addEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
@@ -1004,8 +1002,6 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         document.removeEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
         document.removeEventListener("mouseup", this._selectionHandleMouseUpEventListener);
 
-        delete this._selectionHandleMouseMoveEventListener;
-        delete this._selectionHandleMouseUpEventListener;
         delete this._dragHandleIsStartTime;
         delete this._mouseDownPosition;
 

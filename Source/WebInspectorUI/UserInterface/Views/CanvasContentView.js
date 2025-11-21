@@ -123,7 +123,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             let canvasElementButtonNavigationItem = new WI.ButtonNavigationItem("canvas-element", WI.UIString("Canvas Element"), "Images/Markup.svg", 16, 16);
             canvasElementButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            WI.addMouseDownContextMenuHandlers(canvasElementButtonNavigationItem.element, this._populateCanvasElementButtonContextMenu.bind(this));
+            WI.addMouseDownContextMenuHandlers(canvasElementButtonNavigationItem.element, this._populateCanvasElementButtonContextMenu.bindWeak(this));
             navigationBar.addNavigationItem(canvasElementButtonNavigationItem);
 
             navigationBar.addNavigationItem(this._refreshButtonNavigationItem);
@@ -144,12 +144,12 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this._viewShaderButton = document.createElement("img");
             this._viewShaderButton.classList.add("view-shader");
             this._viewShaderButton.title = WI.UIString("View Shader");
-            WI.addMouseDownContextMenuHandlers(this._viewShaderButton, this._populateViewShaderButtonContextMenu.bind(this));
+            WI.addMouseDownContextMenuHandlers(this._viewShaderButton, this._populateViewShaderButtonContextMenu.bindWeak(this));
 
             this._viewRecordingButton = document.createElement("img");
             this._viewRecordingButton.classList.add("view-recording");
             this._viewRecordingButton.title = WI.UIString("View Recording");
-            WI.addMouseDownContextMenuHandlers(this._viewRecordingButton, this._populateViewRecordingButtonContextMenu.bind(this));
+            WI.addMouseDownContextMenuHandlers(this._viewRecordingButton, this._populateViewRecordingButtonContextMenu.bindWeak(this));
 
             this._updateViewRelatedItems();
 
@@ -184,7 +184,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             if (!this._previewImageElement) {
                 this._previewImageElement = document.createElement("img");
-                this._previewImageElement.addEventListener("error", this._showError.bind(this));
+                this._previewImageElement.addEventListener("error", this._showError.bindWeak(this));
             }
 
             this._previewImageElement.src = this._pendingContent;

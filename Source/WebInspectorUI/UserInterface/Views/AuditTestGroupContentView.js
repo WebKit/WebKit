@@ -68,12 +68,12 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         let addTestCaseButtonElement = actionsDataElement.appendChild(document.createElement("button"));
         addTestCaseButtonElement.disabled = !this.representedObject.editable;
         addTestCaseButtonElement.textContent = WI.UIString("Add Test Case", "Add Test Case @ Audit Tab - Group", "Text of button to add a new audit test case to the currently shown audit group.");
-        addTestCaseButtonElement.addEventListener("click", (event) => {
+        addTestCaseButtonElement.addEventListener("click", bindWeak(function(event) {
             console.assert(WI.auditManager.editing);
 
             let popover = new WI.CreateAuditPopover(this);
             popover.show(addTestCaseButtonElement, [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X, WI.RectEdge.MIN_X]);
-        });
+        }, this));
 
         return controlsTableElement;
     }

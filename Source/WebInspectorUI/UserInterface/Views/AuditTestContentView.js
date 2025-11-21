@@ -139,11 +139,11 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         if (this.representedObject.editable) {
             this._nameElement.spellcheck = false;
 
-            this._nameElement.addEventListener("keydown", (event) => {
+            this._nameElement.addEventListener("keydown", bindWeak(function(event) {
                 this._handleEditorKeydown(event, this._descriptionElement);
-            });
+            }, this));
 
-            this._nameElement.addEventListener("input", (event) => {
+            this._nameElement.addEventListener("input", bindWeak(function(event) {
                 console.assert(WI.auditManager.editing);
 
                 let name = this._nameElement.textContent;
@@ -152,7 +152,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                     this._nameElement.removeChildren();
                 }
                 this.representedObject.name = name;
-            });
+            }, this));
         }
 
         return this._nameElement;
@@ -169,11 +169,11 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         if (this.representedObject.editable) {
             this._descriptionElement.spellcheck = false;
 
-            this._descriptionElement.addEventListener("keydown", (event) => {
+            this._descriptionElement.addEventListener("keydown", bindWeak(function(event) {
                 this._handleEditorKeydown(event, this._supportsInputElement);
-            });
+            }, this));
 
-            this._descriptionElement.addEventListener("input", (event) => {
+            this._descriptionElement.addEventListener("input", bindWeak(function(event) {
                 console.assert(WI.auditManager.editing);
 
                 let description = this._descriptionElement.textContent;
@@ -182,7 +182,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                     this._descriptionElement.removeChildren();
                 }
                 this.representedObject.description = description;
-            });
+            }, this));
         }
 
         return this._descriptionElement;
@@ -214,9 +214,9 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             this._supportsInputElement.value = this.representedObject.supports;
 
         if (this.representedObject.editable) {
-            this._supportsInputElement.addEventListener("keydown", (event) => {
+            this._supportsInputElement.addEventListener("keydown", bindWeak(function(event) {
                 this._handleEditorKeydown(event, this._setupEditorElement);
-            });
+            }, this));
         }
 
         this._supportsWarningElement = supportsDataElement.appendChild(document.createElement("span"));
@@ -235,11 +235,11 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         }
 
         if (this.representedObject.editable) {
-            this._supportsInputElement.addEventListener("input", (event) => {
+            this._supportsInputElement.addEventListener("input", bindWeak(function(event) {
                 this.representedObject.supports = parseInt(this._supportsInputElement.value);
 
                 this._updateSupportsInputState();
-            });
+            }, this));
         }
 
         return controlsTableElement;
@@ -435,10 +435,10 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
             let buttonElement = this.placeholderElement.appendChild(document.createElement("button"));
             buttonElement.textContent = WI.UIString("Clear Filters");
-            buttonElement.addEventListener("click", () => {
+            buttonElement.addEventListener("click", bindWeak(function() {
                 this.resetFilter();
                 this.needsLayout();
-            });
+            }, this));
 
             this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.createLinkElement());
         }

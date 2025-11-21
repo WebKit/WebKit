@@ -72,7 +72,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
 
         let animationTargetButtonNavigationItem = new WI.ButtonNavigationItem("animation-target", WI.UIString("Animation Target"), "Images/Markup.svg", 16, 16);
         animationTargetButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        WI.addMouseDownContextMenuHandlers(animationTargetButtonNavigationItem.element, this._populateAnimationTargetButtonContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(animationTargetButtonNavigationItem.element, this._populateAnimationTargetButtonContextMenu.bindWeak(this));
         navigationBar.addNavigationItem(animationTargetButtonNavigationItem);
 
         headerElement.append(navigationBar.element);

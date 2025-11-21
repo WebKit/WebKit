@@ -43,9 +43,9 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
         this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
         this.status.className = "status-image";
-        this.status.addEventListener("mousedown", this._statusImageElementMouseDown.bind(this));
-        this.status.addEventListener("click", this._statusImageElementClicked.bind(this));
-        this.status.addEventListener("dblclick", this._handleStatusImageElementDoubleClicked.bind(this));
+        this.status.addEventListener("mousedown", this._statusImageElementMouseDown.bindWeak(this));
+        this.status.addEventListener("click", this._statusImageElementClicked.bindWeak(this));
+        this.status.addEventListener("dblclick", this._handleStatusImageElementDoubleClicked.bindWeak(this));
 
         this.updateStatus();
 

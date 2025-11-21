@@ -42,7 +42,7 @@ WI.MultiSidebar = class MultiSidebar extends WI.Sidebar
 
         this._requiredMinimumWidthForMultipleSidebars = 0;
 
-        window.addEventListener("resize", this._handleWindowResize.bind(this));
+        window.addEventListener("resize", this._handleWindowResize.bindWeak(this));
     }
 
     // Public

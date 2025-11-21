@@ -222,7 +222,7 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
             button.textContent = WI.UIString("Show full certificate");
 
             let errorElement = null;
-            button.addEventListener("click", (event) => {
+            button.addEventListener("click", bindWeak(function(event) {
                 this._resource.showCertificate()
                 .then(() => {
                     if (errorElement) {
@@ -235,7 +235,7 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
                         errorElement = WI.ImageUtilities.useSVGSymbol("Images/Error.svg", "error", error);
                     button.insertAdjacentElement("afterend", errorElement);
                 });
-            });
+            }, this));
 
             let pairElement = this._certificateSection.appendKeyValuePair(button);
             pairElement.classList.add("show-certificate");
@@ -276,12 +276,12 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
 
             let showMorePair = this._certificateSection.appendKeyValuePair(key, showMoreElement, className);
 
-            showMoreElement.addEventListener("click", (event) => {
+            showMoreElement.addEventListener("click", bindWeak(function(event) {
                 showMorePair.remove();
 
                 for (let i = initialCount; i < values.length; ++i)
                     this._certificateSection.appendKeyValuePair(key, values[i], className);
-            }, {once: true});
+            }, this), {once: true});
         };
         appendList(WI.UIString("DNS"), certificate.dnsNames, "dns-name");
         appendList(WI.UIString("IP"), certificate.ipAddresses, "ip-address");
@@ -322,8 +322,8 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
         if (!this._bouncyHighlightElement) {
             this._bouncyHighlightElement = document.createElement("div");
             this._bouncyHighlightElement.className = "bouncy-highlight";
-            this._bouncyHighlightElement.addEventListener("animationend", (event) => {
-                this._bouncyHighlightElement.remove();
+            this._bouncyHighlightElement.addEventListener("animationend", function(event) {
+                this.remove();
             });
         }
 

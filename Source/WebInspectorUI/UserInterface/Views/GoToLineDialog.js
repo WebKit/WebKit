@@ -40,37 +40,16 @@ WI.GoToLineDialog = class GoToLineDialog extends WI.Dialog
 
         this._clearIcon = field.appendChild(document.createElement("img"));
 
-        this._input.addEventListener("input", this);
-        this._input.addEventListener("keydown", this);
-        this._input.addEventListener("blur", this);
-        this._clearIcon.addEventListener("mousedown", this);
-        this._clearIcon.addEventListener("click", this);
+        this._input.addEventListener("input", this._handleInputEvent.bindWeak(this));
+        this._input.addEventListener("keydown", this._handleKeydownEvent.bindWeak(this));
+        this._input.addEventListener("blur", this._handleBlurEvent.bindWeak(this));
+        this._clearIcon.addEventListener("mousedown", this._handleMousedownEvent.bindWeak(this));
+        this._clearIcon.addEventListener("click", this._handleClickEvent.bindWeak(this));
 
         this._dismissing = false;
     }
 
     // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "input":
-            this._handleInputEvent(event);
-            break;
-        case "keydown":
-            this._handleKeydownEvent(event);
-            break;
-        case "blur":
-            this._handleBlurEvent(event);
-            break;
-        case "mousedown":
-            this._handleMousedownEvent(event);
-            break;
-        case "click":
-            this._handleClickEvent(event);
-            break;
-        }
-    }
 
     didPresentDialog()
     {

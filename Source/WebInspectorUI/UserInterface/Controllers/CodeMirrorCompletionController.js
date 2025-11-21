@@ -48,21 +48,21 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         this._suggestionsView = new WI.CompletionSuggestionsView(this);
 
         this._keyMap = {
-            "Up": this._handleUpKey.bind(this),
-            "Down": this._handleDownKey.bind(this),
-            "Right": this._handleRightOrEnterKey.bind(this),
-            "Esc": this._handleEscapeKey.bind(this),
-            "Enter": this._handleRightOrEnterKey.bind(this),
-            "Tab": this._handleTabKey.bind(this),
-            "Cmd-A": this._handleHideKey.bind(this),
-            "Cmd-Z": this._handleHideKey.bind(this),
-            "Shift-Cmd-Z": this._handleHideKey.bind(this),
-            "Cmd-Y": this._handleHideKey.bind(this)
+            "Up": this._handleUpKey.bindWeak(this),
+            "Down": this._handleDownKey.bindWeak(this),
+            "Right": this._handleRightOrEnterKey.bindWeak(this),
+            "Esc": this._handleEscapeKey.bindWeak(this),
+            "Enter": this._handleRightOrEnterKey.bindWeak(this),
+            "Tab": this._handleTabKey.bindWeak(this),
+            "Cmd-A": this._handleHideKey.bindWeak(this),
+            "Cmd-Z": this._handleHideKey.bindWeak(this),
+            "Shift-Cmd-Z": this._handleHideKey.bindWeak(this),
+            "Cmd-Y": this._handleHideKey.bindWeak(this)
         };
 
-        this._handleChangeListener = this._handleChange.bind(this);
-        this._handleCursorActivityListener = this._handleCursorActivity.bind(this);
-        this._handleHideActionListener = this._handleHideAction.bind(this);
+        this._handleChangeListener = this._handleChange.bindWeak(this);
+        this._handleCursorActivityListener = this._handleCursorActivity.bindWeak(this);
+        this._handleHideActionListener = this._handleHideAction.bindWeak(this);
 
         this._codeMirror.addKeyMap(this._keyMap);
 
@@ -277,13 +277,13 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         container.classList.add(WI.CodeMirrorCompletionController.CompletionHintStyleClassName);
         container.textContent = text;
 
-        container.addEventListener("mousedown", (event) => {
+        container.addEventListener("mousedown", bindWeak(function(event) {
             event.preventDefault();
             this._commitCompletionHint();
 
             // The clicked hint marker causes the editor to loose focus. Restore it so the user can keep typing.
             setTimeout(() => { this._codeMirror.focus(); }, 0);
-        });
+        }, this));
 
         this._completionHintMarker = this._codeMirror.setUniqueBookmark(position, {widget: container, insertLeft: true});
     }

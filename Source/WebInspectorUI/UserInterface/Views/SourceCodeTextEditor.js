@@ -880,7 +880,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         let widgetElement = widget.widgetElement;
         widgetElement.classList.add("line-indicator-widget", "thread-widget", "inline");
-        widgetElement.addEventListener("click", this._handleThreadIndicatorWidgetClick.bind(this, widget, lineNumber));
+        widgetElement.addEventListener("click", this._handleThreadIndicatorWidgetClick.bindWeak(this, widget, lineNumber));
 
         this._threadWidgetMap.set(lineNumber, widget);
 
@@ -1184,7 +1184,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         var widgetElement = widget.widgetElement;
         widgetElement.classList.add("line-indicator-widget", "issue-widget", "inline");
-        widgetElement.addEventListener("click", this._handleWidgetClick.bind(this, widget, lineNumber));
+        widgetElement.addEventListener("click", this._handleWidgetClick.bindWeak(this, widget, lineNumber));
 
         this._widgetMap.set(lineNumber, widget);
 
@@ -1974,8 +1974,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         if (!this._popover) {
             this._popover = new WI.Popover(this);
-            this._popover.element.addEventListener("mouseover", this._popoverMouseover.bind(this));
-            this._popover.element.addEventListener("mouseout", this._popoverMouseout.bind(this));
+            this._popover.element.addEventListener("mouseover", this._popoverMouseover.bindWeak(this));
+            this._popover.element.addEventListener("mouseout", this._popoverMouseout.bindWeak(this));
         }
 
         this._popover.presentNewContentWithFrame(content, bounds.pad(5), [WI.RectEdge.MIN_Y, WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X]);
@@ -2345,7 +2345,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     _createTypeTokenScrollEventHandler()
     {
         let timeoutIdentifier = null;
-        let scrollHandler = () => {
+        return bindWeak(function() {
             if (timeoutIdentifier)
                 clearTimeout(timeoutIdentifier);
             else {
@@ -2358,15 +2358,13 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 if (this._typeTokenAnnotator)
                     this._typeTokenAnnotator.resume();
             }, WI.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
-        };
-
-        return scrollHandler;
+        }, this);
     }
 
     _createControlFlowScrollEventHandler()
     {
         let timeoutIdentifier = null;
-        let scrollHandler = () => {
+        return bindWeak(function() {
             if (timeoutIdentifier)
                 clearTimeout(timeoutIdentifier);
             else if (this._basicBlockAnnotator)
@@ -2377,9 +2375,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 if (this._basicBlockAnnotator)
                     this._basicBlockAnnotator.resume();
             }, WI.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
-        };
-
-        return scrollHandler;
+        }, this);
     }
 
     _logCleared(event)

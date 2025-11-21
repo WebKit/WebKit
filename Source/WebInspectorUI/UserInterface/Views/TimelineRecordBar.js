@@ -34,7 +34,7 @@ WI.TimelineRecordBar = class TimelineRecordBar extends WI.Object
         this._element = document.createElement("div");
         this._element.classList.add("timeline-record-bar");
         this._element[WI.TimelineRecordBar.ElementReferenceSymbol] = this;
-        this._element.addEventListener("click", this._handleClick.bind(this));
+        this._element.addEventListener("click", this._handleClick.bindWeak(this));
 
         this.renderMode = renderMode;
         this.records = records;

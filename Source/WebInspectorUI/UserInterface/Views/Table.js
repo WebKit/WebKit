@@ -46,19 +46,19 @@ WI.Table = class Table extends WI.View
 
         this.element.classList.add("table", identifier);
         this.element.tabIndex = 0;
-        this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this.element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
 
         this._headerElement = this.element.appendChild(document.createElement("div"));
         this._headerElement.className = "header";
 
-        let scrollHandler = this._handleScroll.bind(this);
+        let scrollHandler = this._handleScroll.bindWeak(this);
         this._scrollContainerElement = this.element.appendChild(document.createElement("div"));
         this._scrollContainerElement.className = "data-container";
         this._scrollContainerElement.addEventListener("scroll", scrollHandler);
         this._scrollContainerElement.addEventListener("mousewheel", scrollHandler);
-        this._scrollContainerElement.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._scrollContainerElement.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
         if (this._delegate.tableCellContextMenuClicked)
-            this._scrollContainerElement.addEventListener("contextmenu", this._handleContextMenu.bind(this));
+            this._scrollContainerElement.addEventListener("contextmenu", this._handleContextMenu.bindWeak(this));
 
         this._topSpacerElement = this._scrollContainerElement.appendChild(document.createElement("div"));
         this._topSpacerElement.className = "spacer";
@@ -112,6 +112,9 @@ WI.Table = class Table extends WI.View
         this._bottomSpacerHeight = NaN;
         this._visibleRowIndexStart = NaN;
         this._visibleRowIndexEnd = NaN;
+
+        this._boundHandleRowMouseEnter = null;
+        this._boundHandleRowMouseLeave = null;
 
         console.assert(this._dataSource.tableNumberOfRows, "Table data source must implement tableNumberOfRows.");
         console.assert(this._dataSource.tableIndexForRepresentedObject, "Table data source must implement tableIndexForRepresentedObject.");
@@ -814,10 +817,10 @@ WI.Table = class Table extends WI.View
             cell.classList.add("align-" + column.align);
         if (column.sortable) {
             cell.classList.add("sortable");
-            cell.addEventListener("click", this._handleHeaderCellClicked.bind(this, column));
+            cell.addEventListener("click", this._handleHeaderCellClicked.bindWeak(this, column));
         }
 
-        cell.addEventListener("contextmenu", this._handleHeaderContextMenu.bind(this, column));
+        cell.addEventListener("contextmenu", this._handleHeaderContextMenu.bindWeak(this, column));
 
         return cell;
     }
@@ -852,8 +855,8 @@ WI.Table = class Table extends WI.View
         this._styleRow(row);
 
         if (this._delegate.tableRowHovered) {
-            this._boundHandleRowMouseEnter ??= this._handleRowMouseEnter.bind(this);
-            this._boundHandleRowMouseLeave ??= this._handleRowMouseLeave.bind(this);
+            this._boundHandleRowMouseEnter ||= this._handleRowMouseEnter.bindWeak(this);
+            this._boundHandleRowMouseLeave ||= this._handleRowMouseLeave.bindWeak(this);
 
             row.addEventListener("mouseenter", this._boundHandleRowMouseEnter);
             row.addEventListener("mouseleave", this._boundHandleRowMouseLeave);

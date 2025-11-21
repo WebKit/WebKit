@@ -166,7 +166,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
             if (shouldRoundValue)
                 element.title = value;
-            element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
+            element.addEventListener("dblclick", this._startEditing.bindWeak(this, element, name, propertyName, style));
             return element;
         }
 
@@ -262,7 +262,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             let boxElement = document.createElement("div");
             boxElement.classList.add("box", name);
             boxElement._name = name;
-            boxElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, name === "position" ? "all" : name), false);
+            boxElement.addEventListener("mouseover", this._highlightDOMNode.bindWeak(this, true, name === "position" ? "all" : name));
             this._boxElements.push(boxElement);
 
             if (name === "content") {
@@ -336,7 +336,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
         }
 
         metricsElement.appendChild(this._outermostBox);
-        metricsElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, false, ""), false);
+        metricsElement.addEventListener("mouseover", this._highlightDOMNode.bindWeak(this, false, ""));
 
         this.hideEmptyMessage();
         this.element.appendChild(metricsElement);
@@ -353,7 +353,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             targetElement.textContent = targetElement.title;
 
         var context = {box, styleProperty};
-        var boundKeyDown = this._handleKeyDown.bind(this, context, styleProperty);
+        let boundKeyDown = this._handleKeyDown.bindWeak(this, context, styleProperty);
         context.keyDownHandler = boundKeyDown;
         targetElement.addEventListener("keydown", boundKeyDown, false);
 

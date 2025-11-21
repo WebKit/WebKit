@@ -61,19 +61,19 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!this._readOnly) {
             property.addEventListener(WI.CSSProperty.Event.ModifiedChanged, this.updateStatus, this);
 
-            this._element.addEventListener("blur", (event) => {
+            this._element.addEventListener("blur", bindWeak(function(event) {
                 // Keep selection after tabbing out of Web Inspector window and back.
                 if (document.activeElement === this._element)
                     return;
 
                 if (this._delegate.spreadsheetStylePropertyBlur)
                     this._delegate.spreadsheetStylePropertyBlur(event, this);
-            });
+            }, this));
 
-            this._element.addEventListener("mouseenter", (event) => {
+            this._element.addEventListener("mouseenter", bindWeak(function(event) {
                 if (this._delegate.spreadsheetStylePropertyMouseEnter)
                     this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
-            });
+            }, this));
 
             new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Slash, () => {
                 this._toggle();
@@ -168,11 +168,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._checkboxElement.type = "checkbox";
             this._checkboxElement.checked = this._property.enabled;
             this._checkboxElement.tabIndex = -1;
-            this._checkboxElement.addEventListener("click", (event) => {
+            this._checkboxElement.addEventListener("click", bindWeak(function(event) {
                 event.stopPropagation();
                 this._toggle();
                 console.assert(this._checkboxElement.checked === this._property.enabled);
-            });
+            }, this));
         }
 
         this._contentElement = this.element.appendChild(document.createElement("span"));
@@ -198,13 +198,13 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._isEditable() && this._property.enabled) {
             this._nameElement.tabIndex = 0;
-            this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bind(this));
-            this._nameElement.addEventListener("paste", this._handleNamePaste.bind(this));
+            this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bindWeak(this));
+            this._nameElement.addEventListener("paste", this._handleNamePaste.bindWeak(this));
 
             this._nameTextField = new WI.SpreadsheetTextField(this, this._nameElement, this._nameCompletionDataProvider.bind(this));
 
             this._valueElement.tabIndex = 0;
-            this._valueElement.addEventListener("beforeinput", this._handleValueBeforeInput.bind(this));
+            this._valueElement.addEventListener("beforeinput", this._handleValueBeforeInput.bindWeak(this));
 
             this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
         }
@@ -234,7 +234,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             let ownerRule = effectiveProperty ? effectiveProperty.ownerStyle.ownerRule : null;
 
             let arrowElement = this._contentElement.appendChild(WI.createGoToArrowButton());
-            arrowElement.addEventListener("click", (event) => {
+            arrowElement.addEventListener("click", bindWeak(function(event) {
                 if (!effectiveProperty || !ownerRule || !event.altKey) {
                     if (this._delegate.spreadsheetStylePropertyShowProperty)
                         this._delegate.spreadsheetStylePropertyShowProperty(this, this._property);
@@ -247,7 +247,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     ignoreNetworkTab: true,
                     ignoreSearchTab: true,
                 });
-            });
+            }, this));
 
             if (effectiveProperty && ownerRule)
                 arrowElement.title = WI.UIString("Option-click to show source");
@@ -283,11 +283,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     this._jumpToEffectivePropertyButton.dataset.value = this._property.overridingProperty.rawValue;
                     this._element.append(this._jumpToEffectivePropertyButton);
 
-                    this._jumpToEffectivePropertyButton.addEventListener("click", (event) => {
+                    this._jumpToEffectivePropertyButton.addEventListener("click", bindWeak(function(event) {
                         console.assert(this._property.overridingProperty);
                         event.stop();
                         this._delegate.spreadsheetStylePropertySelectByProperty(this._property.overridingProperty);
-                    });
+                    }, this));
                 }
             }
 
@@ -535,7 +535,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 span.textContent = token.value.truncateMiddle(maxValueLength);
 
                 if (token.type && token.type.includes("link"))
-                    span.addEventListener("contextmenu", this._handleLinkContextMenu.bind(this, token));
+                    span.addEventListener("contextmenu", this._handleLinkContextMenu.bindWeak(this, token));
 
                 return span;
             }
@@ -569,7 +569,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._cssDocumentationButton = this._contentElement.appendChild(document.createElement("button"));
         this._cssDocumentationButton.className = "css-documentation-button";
         this._cssDocumentationButton.title = WI.UIString("Click to show documentation", "Click to show documentation @ CSS Documentation Button", "Tooltip to show purpose of the CSS documentation button");
-        this._cssDocumentationButton.addEventListener("mousedown", this._handleCSSDocumentationButtonClicked.bind(this));
+        this._cssDocumentationButton.addEventListener("mousedown", this._handleCSSDocumentationButtonClicked.bindWeak(this));
     }
 
     _handleCSSDocumentationButtonClicked(event)
@@ -980,10 +980,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                             let arrowElement = WI.createGoToArrowButton();
                             arrowElement.classList.add("select-variable-property");
                             arrowElement.title = WI.UIString("Go to variable");
-                            arrowElement.addEventListener("click", (event) => {
+                            arrowElement.addEventListener("click", bindWeak(function(event) {
                                 event.stop();
                                 this._delegate.spreadsheetStylePropertySelectByProperty(effectiveVariableProperty);
-                            });
+                            }, this));
                             contents.push(arrowElement);
                         }
                     }
@@ -1101,7 +1101,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _setupJumpToSymbol(element)
     {
-        element.addEventListener("mousedown", (event) => {
+        element.addEventListener("mousedown", bindWeak(function(event) {
             if (event.button !== 0)
                 return;
 
@@ -1126,7 +1126,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             };
             let sourceCode = sourceCodeLocation.sourceCode;
             WI.showSourceCodeLocation(sourceCode.createSourceCodeLocation(range.startLine, range.startColumn), options);
-        });
+        }, this));
     }
 
     _handleLinkContextMenu(token, event)

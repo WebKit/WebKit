@@ -89,7 +89,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
 
         let addBlackboxButton = addBlackboxCell.appendChild(document.createElement("button"));
         addBlackboxButton.textContent = WI.UIString("Add Pattern");
-        addBlackboxButton.addEventListener("click", (event) => {
+        addBlackboxButton.addEventListener("click", bindWeak(function(event) {
             for (let [regex, codeMirror] of this._blackboxPatternCodeMirrorMap) {
                 if (!regex) {
                     codeMirror.focus();
@@ -98,7 +98,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
             }
 
             this._addRow(null);
-        });
+        }, this));
 
         let individualBlackboxExplanationElement = this.element.insertBefore(document.createElement("p"), this.element.lastChild);
         let blackboxIconElement = WI.ImageUtilities.useSVGSymbol("Images/Hide.svg#currentColor", "toggle-script-blackbox", WI.UIString("Ignore script when debugging"));
@@ -155,7 +155,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
         removeBlackboxBodyCell.classList.add("remove-blackbox");
 
         let removeBlackboxButton = removeBlackboxBodyCell.appendChild(WI.ImageUtilities.useSVGSymbol("Images/NavigationItemTrash.svg", "remove-blackbox-button", WI.UIString("Delete Blackbox")));
-        removeBlackboxButton.addEventListener("click", (event) => {
+        removeBlackboxButton.addEventListener("click", bindWeak(function(event) {
             if (regex)
                 WI.debuggerManager.setShouldBlackboxPattern(regex, false);
             regex = null;
@@ -166,9 +166,9 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
 
             if (!this._tableBody.children.length)
                 this._addRow(null);
-        });
+        }, this));
 
-        let update = () => {
+        let update = bindWeak(function() {
             let url = urlCodeMirror.getValue();
 
             if (regex) {
@@ -186,7 +186,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
 
             console.assert(regex || !this._blackboxPatternCodeMirrorMap.has(regex));
             this._blackboxPatternCodeMirrorMap.set(regex, urlCodeMirror);
-        };
+        }, this);
         urlCodeMirror.addKeyMap({
             "Enter": update,
             "Esc": update,

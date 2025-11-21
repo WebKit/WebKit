@@ -112,8 +112,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._selectorElement = document.createElement("span");
         this._selectorElement.classList.add("selector");
-        this._selectorElement.addEventListener("mouseenter", this._highlightNodesWithSelector.bind(this));
-        this._selectorElement.addEventListener("mouseleave", this._hideDOMNodeHighlight.bind(this));
+        this._selectorElement.addEventListener("mouseenter", this._highlightNodesWithSelector.bindWeak(this));
+        this._selectorElement.addEventListener("mouseleave", this._hideDOMNodeHighlight.bindWeak(this));
         this._headerElement.append(this._selectorElement);
 
         this._openBrace = document.createElement("span");
@@ -147,10 +147,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         else if (!this._style.ownerRule)
             this._element.classList.add("selector-locked");
 
-        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this.element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
 
         if (this._style.editable) {
-            this.element.addEventListener("click", this._handleClick.bind(this));
+            this.element.addEventListener("click", this._handleClick.bindWeak(this));
 
             if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
                 new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
@@ -426,7 +426,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (!this._iconElement) {
             this._iconElement = document.createElement("img");
             this._iconElement.classList.add("icon");
-            WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
+            WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bindWeak(this));
         }
         this._selectorElement.appendChild(this._iconElement);
 
@@ -526,7 +526,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             document.activeElement.blur();
 
         // Prevent name/value fields from editing when properties selected.
-        window.addEventListener("click", this._handleWindowClick.bind(this), {capture: true, once: true});
+        window.addEventListener("click", this._handleWindowClick.bindWeak(this), {capture: true, once: true});
 
         let propertyIndex = parseInt(propertyElement.dataset.propertyIndex);
         if (event.shiftKey && this._propertiesEditor.hasSelectedProperties())
@@ -534,8 +534,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         else {
             this._propertiesEditor.deselectProperties();
             this._mouseDownPoint = WI.Point.fromEvent(event);
-            if (!this._boundHandleWindowMouseMove)
-                this._boundHandleWindowMouseMove = this._handleWindowMouseMove.bind(this);
+            this._boundHandleWindowMouseMove ||= this._handleWindowMouseMove.bindWeak(this);
             window.addEventListener("mousemove", this._boundHandleWindowMouseMove);
         }
 

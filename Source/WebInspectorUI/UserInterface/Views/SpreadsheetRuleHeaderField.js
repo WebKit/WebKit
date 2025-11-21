@@ -33,10 +33,10 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         this._element = element;
         this._element.classList.add("spreadsheet-rule-header-field");
 
-        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
-        this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
-        this._element.addEventListener("blur", this._handleBlur.bind(this));
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
+        this._element.addEventListener("mouseup", this._handleMouseUp.bindWeak(this));
+        this._element.addEventListener("blur", this._handleBlur.bindWeak(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
 
         this._editing = false;
         this._valueBeforeEditing = "";

@@ -122,7 +122,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
         }
 
         getterElement.title = WI.UIString("Invoke getter");
-        getterElement.addEventListener("click", (event) => {
+        getterElement.addEventListener("click", bindWeak(function(event) {
             event.stopPropagation();
             var lastNonPrototypeObject = this._propertyPath.lastNonPrototypeObject;
             var getterObject = this._property.get;
@@ -132,7 +132,7 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
                 if (this.invokedGetter && typeof this.invokedGetter === "function")
                     this.invokedGetter();
             });
-        });
+        }, this));
 
         return getterElement;
     }

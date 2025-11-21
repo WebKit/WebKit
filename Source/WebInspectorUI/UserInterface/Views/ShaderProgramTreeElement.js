@@ -36,7 +36,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
             this._disabledImageElement = document.createElement("img");
             this._disabledImageElement.title = WI.UIString("Disable Program");
-            this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bind(this));
+            this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bindWeak(this));
             this.status = this._disabledImageElement;
         }
     }
@@ -51,8 +51,8 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
             this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
-            this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
-            this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+            this.element.addEventListener("mouseover", this._handleMouseOver.bindWeak(this));
+            this.element.addEventListener("mouseout", this._handleMouseOut.bindWeak(this));
         }
     }
 

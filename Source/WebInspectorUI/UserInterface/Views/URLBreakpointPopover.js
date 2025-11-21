@@ -61,10 +61,10 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
         createOption(WI.UIString("Matching"), WI.URLBreakpoint.Type.RegularExpression);
 
         this._typeSelectElement.value = WI.URLBreakpoint.Type.Text;
-        this._typeSelectElement.addEventListener("change", (event) => {
+        this._typeSelectElement.addEventListener("change", bindWeak(function(event) {
             this._updateEditor();
             this._urlCodeMirror.focus();
-        });
+        }, this));
 
         typeLabelElement.setAttribute("for", this._typeSelectElement.id);
 

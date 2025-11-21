@@ -76,12 +76,12 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
                 }, {once: true});
                 imageElement.src = record.imageData;
 
-                imageElement.addEventListener("click", (event) => {
+                imageElement.addEventListener("click", bindWeak(function(event) {
                     // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
                     event.__timelineRecordClickEventHandled = true;
 
                     this.selectedRecord = record;
-                });
+                }, this));
 
                 return imageElement;
             }));

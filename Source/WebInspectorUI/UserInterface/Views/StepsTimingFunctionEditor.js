@@ -56,7 +56,7 @@ WI.StepsTimingFunctionEditor = class StepsTimingFunctionEditor extends WI.Object
         this._previewContainer = this._element.appendChild(document.createElement("div"))
         this._previewContainer.classList.add("preview");
         this._previewContainer.title = WI.UIString("Restart animation");
-        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
+        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bindWeak(this));
 
         this._previewElement = this._previewContainer.appendChild(document.createElement("div"));
 
@@ -76,7 +76,7 @@ WI.StepsTimingFunctionEditor = class StepsTimingFunctionEditor extends WI.Object
         parameterEditorsContainer.classList.add("parameter-editors");
 
         this._typeSelectElement = parameterEditorsContainer.appendChild(document.createElement("select"));
-        this._typeSelectElement.addEventListener("change", this._handleTypeSelectElementChanged.bind(this));
+        this._typeSelectElement.addEventListener("change", this._handleTypeSelectElementChanged.bindWeak(this));
 
         let createTypeSelectOption = (type, label) => {
             let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
@@ -93,7 +93,7 @@ WI.StepsTimingFunctionEditor = class StepsTimingFunctionEditor extends WI.Object
         this._countInputElement = parameterEditorsContainer.appendChild(document.createElement("input"));
         this._countInputElement.type = "number";
         this._countInputElement.min = 1;
-        this._countInputElement.addEventListener("input", this._handleCountInputElementInput.bind(this));
+        this._countInputElement.addEventListener("input", this._handleCountInputElementInput.bindWeak(this));
     }
 
     // Public

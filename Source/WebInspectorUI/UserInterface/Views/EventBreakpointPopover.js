@@ -114,9 +114,9 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
             this._isRegexCheckboxElement = isRegexLabel.appendChild(document.createElement("input"));
             this._isRegexCheckboxElement.type = "checkbox";
             this._isRegexCheckboxElement.checked = false;
-            this._isRegexCheckboxElement.addEventListener("change", (event) => {
+            this._isRegexCheckboxElement.addEventListener("change", bindWeak(function(event) {
                 this._updateDOMEventNameCodeMirrorMode();
-            });
+            }, this));
             this._updateDOMEventNameCodeMirrorMode();
 
             isRegexLabel.append(WI.UIString("Regular Expression"));

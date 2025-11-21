@@ -238,7 +238,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
     {
         var currentDisplay;
 
-        function updateDisplayString(showAlternativeLocation, forceUpdate)
+        function updateDisplayString(showAlternativeLocation, forceUpdate, event)
         {
             if (!forceUpdate && currentDisplay === showAlternativeLocation)
                 return;
@@ -266,10 +266,10 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
                 updateDisplayString.call(this, currentDisplay, true);
         }, this);
 
-        var boundMouseOverOrMove = mouseOverOrMove.bind(this);
+        let boundMouseOverOrMove = mouseOverOrMove.bindWeak(this);
         element.addEventListener("mouseover", boundMouseOverOrMove);
         element.addEventListener("mousemove", boundMouseOverOrMove);
-        element.addEventListener("mouseout", (event) => { updateDisplayString.call(this, false); });
+        element.addEventListener("mouseout", updateDisplayString.bindWeak(this, false, false));
     }
 
     // Protected

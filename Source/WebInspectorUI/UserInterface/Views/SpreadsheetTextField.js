@@ -34,12 +34,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
         this._element.classList.add("spreadsheet-text-field");
 
-        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
-        this._element.addEventListener("click", this._handleClick.bind(this));
-        this._element.addEventListener("blur", this._handleBlur.bind(this));
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
-        this._element.addEventListener("keyup", this._handleKeyUp.bind(this));
-        this._element.addEventListener("input", this._handleInput.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this), {capture: true});
+        this._element.addEventListener("click", this._handleClick.bindWeak(this));
+        this._element.addEventListener("blur", this._handleBlur.bindWeak(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
+        this._element.addEventListener("keyup", this._handleKeyUp.bindWeak(this));
+        this._element.addEventListener("input", this._handleInput.bindWeak(this));
 
         this._editing = false;
         this._preventDiscardingCompletionsOnKeyUp = false;

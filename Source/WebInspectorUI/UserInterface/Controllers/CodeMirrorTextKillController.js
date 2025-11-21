@@ -36,22 +36,22 @@ WI.CodeMirrorTextKillController = class CodeMirrorTextKillController extends WI.
         this._nextKillStartsNewSequence = true;
         this._shouldPrependToKillRing = false;
 
-        this._handleTextChangeListener = this._handleTextChange.bind(this);
-        this._handleEditorBlurListener = this._handleEditorBlur.bind(this);
-        this._handleSelectionOrCaretChangeListener = this._handleSelectionOrCaretChange.bind(this);
+        this._handleTextChangeListener = this._handleTextChange.bindWeak(this);
+        this._handleEditorBlurListener = this._handleEditorBlur.bindWeak(this);
+        this._handleSelectionOrCaretChangeListener = this._handleSelectionOrCaretChange.bindWeak(this);
 
         // FIXME: these keybindings match CodeMirror's default keymap for OS X.
         // They should probably be altered for Windows / Linux someday.
         this._codeMirror.addKeyMap({
             // Overrides for the 'emacsy' keymap.
-            "Ctrl-K": this._handleTextKillCommand.bind(this, "killLine", false),
-            "Alt-D": this._handleTextKillCommand.bind(this, "delWordAfter", false),
+            "Ctrl-K": this._handleTextKillCommand.bindWeak(this, "killLine", false),
+            "Alt-D": this._handleTextKillCommand.bindWeak(this, "delWordAfter", false),
             // Overrides for the 'macDefault' keymap.
-            "Alt-Delete": this._handleTextKillCommand.bind(this, "delGroupAfter", false),
-            "Cmd-Backspace": this._handleTextKillCommand.bind(this, "delWrappedLineLeft", true),
-            "Cmd-Delete": this._handleTextKillCommand.bind(this, "delWrappedLineRight", false),
-            "Alt-Backspace": this._handleTextKillCommand.bind(this, "delGroupBefore", true),
-            "Ctrl-Alt-Backspace": this._handleTextKillCommand.bind(this, "delGroupAfter", false),
+            "Alt-Delete": this._handleTextKillCommand.bindWeak(this, "delGroupAfter", false),
+            "Cmd-Backspace": this._handleTextKillCommand.bindWeak(this, "delWrappedLineLeft", true),
+            "Cmd-Delete": this._handleTextKillCommand.bindWeak(this, "delWrappedLineRight", false),
+            "Alt-Backspace": this._handleTextKillCommand.bindWeak(this, "delGroupBefore", true),
+            "Ctrl-Alt-Backspace": this._handleTextKillCommand.bindWeak(this, "delGroupAfter", false),
         });
     }
 

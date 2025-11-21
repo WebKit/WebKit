@@ -45,17 +45,20 @@ WI.GestureController = class GestureController
 
         this._supportsScale = supportsScale || false;
         if (this._supportsScale) {
-            container.addEventListener("wheel", this._handleWheel.bind(this));
-            container.addEventListener("gesturestart", this._handleGestureStart.bind(this));
-            container.addEventListener("gesturechange", this._handleGestureChange.bind(this));
-            container.addEventListener("gestureend", this._handleGestureEnd.bind(this));
+            container.addEventListener("wheel", this._handleWheel.bindWeak(this));
+            container.addEventListener("gesturestart", this._handleGestureStart.bindWeak(this));
+            container.addEventListener("gesturechange", this._handleGestureChange.bindWeak(this));
+            container.addEventListener("gestureend", this._handleGestureEnd.bindWeak(this));
         }
 
         this._supportsTranslate = supportsTranslate || false;
         if (this._supportsTranslate) {
             console.assert(!container.draggable, "cannot have both a translate gesture and dragging");
-            container.addEventListener("mousedown", this._handleMouseDown.bind(this));
+            container.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
         }
+
+        this._boundHandleMouseMove = null;
+        this._boundHandleMouseUp = null;
     }
 
     // Public
@@ -214,12 +217,10 @@ WI.GestureController = class GestureController
             y: event.pageY,
         };
 
-        console.assert(!this._boundHandleMouseMove);
-        this._boundHandleMouseMove = this._handleMouseMove.bind(this);
+        this._boundHandleMouseMove ||= this._handleMouseMove.bindWeak(this);
         window.addEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
 
-        console.assert(!this._boundHandleMouseUp);
-        this._boundHandleMouseUp = this._handleMouseUp.bind(this);
+        this._boundHandleMouseUp ||= this._handleMouseUp.bindWeak(this);
         window.addEventListener("mouseup", this._boundHandleMouseUp, {capture: true});
     }
 
@@ -234,10 +235,7 @@ WI.GestureController = class GestureController
     _handleMouseUp(event)
     {
         window.removeEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
-        this._boundHandleMouseMove = null;
-
         window.removeEventListener("mouseup", this._boundHandleMouseUp, {capture: true});
-        this._boundHandleMouseUp = null;
 
         this._translateInteractionStartTranslate = null;
         this._translateInteractionStartPosition = null;

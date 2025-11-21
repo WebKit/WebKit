@@ -76,7 +76,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this.element.className = "data-grid";
         this.element.tabIndex = 0;
-        this.element.addEventListener("keydown", this._keyDown.bind(this), false);
+        this.element.addEventListener("keydown", this._keyDown.bindWeak(this));
         this.element.copyHandler = this;
 
         this._headerWrapperElement = document.createElement("div");
@@ -89,13 +89,13 @@ WI.DataGrid = class DataGrid extends WI.View
         this._headerTableColumnGroupElement = this._headerTableElement.createChild("colgroup");
         this._headerTableBodyElement = this._headerTableElement.createChild("tbody");
         this._headerTableRowElement = this._headerTableBodyElement.createChild("tr");
-        this._headerTableRowElement.addEventListener("contextmenu", this._contextMenuInHeader.bind(this), true);
+        this._headerTableRowElement.addEventListener("contextmenu", this._contextMenuInHeader.bindWeak(this), {capture: true});
         this._headerTableCellElements = new Map;
 
         this._scrollContainerElement = document.createElement("div");
         this._scrollContainerElement.className = "data-container";
 
-        this._scrollListener = () => this._noteScrollPositionChanged();
+        this._scrollListener = this._noteScrollPositionChanged.bindWeak(this);
         this._updateScrollListeners();
 
         this._topDataTableMarginElement = this._scrollContainerElement.createChild("div");
@@ -104,14 +104,14 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this._bottomDataTableMarginElement = this._scrollContainerElement.createChild("div");
 
-        this._dataTableElement.addEventListener("mousedown", this._mouseDownInDataTable.bind(this));
-        this._dataTableElement.addEventListener("click", this._clickInDataTable.bind(this));
-        this._dataTableElement.addEventListener("contextmenu", this._contextMenuInDataTable.bind(this), true);
+        this._dataTableElement.addEventListener("mousedown", this._mouseDownInDataTable.bindWeak(this));
+        this._dataTableElement.addEventListener("click", this._clickInDataTable.bindWeak(this));
+        this._dataTableElement.addEventListener("contextmenu", this._contextMenuInDataTable.bindWeak(this), {capture: true});
 
         // FIXME: Add a createCallback which is different from editCallback and has different
         // behavior when creating a new node.
         if (afterEditCallback) {
-            this._dataTableElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
+            this._dataTableElement.addEventListener("dblclick", this._ondblclick.bindWeak(this));
             this._beforeEditCallback = beforeEditCallback;
             this._afterEditCallback = afterEditCallback;
         }
@@ -813,7 +813,7 @@ WI.DataGrid = class DataGrid extends WI.View
         }
 
         if (column["sortable"]) {
-            headerCellElement.addEventListener("click", this._headerCellClicked.bind(this));
+            headerCellElement.addEventListener("click", this._headerCellClicked.bindWeak(this));
             headerCellElement.classList.add(WI.DataGrid.SortableColumnStyleClassName);
         }
 
@@ -830,9 +830,9 @@ WI.DataGrid = class DataGrid extends WI.View
 
             var collapseDiv = headerCellElement.createChild("div", "collapser-button");
             collapseDiv.title = this._collapserButtonCollapseColumnsToolTip();
-            collapseDiv.addEventListener("mouseover", this._mouseoverColumnCollapser.bind(this));
-            collapseDiv.addEventListener("mouseout", this._mouseoutColumnCollapser.bind(this));
-            collapseDiv.addEventListener("click", this._clickInColumnCollapser.bind(this));
+            collapseDiv.addEventListener("mouseover", this._mouseoverColumnCollapser.bindWeak(this));
+            collapseDiv.addEventListener("mouseout", this._mouseoutColumnCollapser.bindWeak(this));
+            collapseDiv.addEventListener("click", this._clickInColumnCollapser.bindWeak(this));
 
             headerCellElement.collapsesGroup = column["collapsesGroup"];
             headerCellElement.classList.add("collapser");

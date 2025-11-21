@@ -135,7 +135,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             let toggleCheckboxElement = toggleLabelElement.appendChild(document.createElement("input"));
             toggleCheckboxElement.type = "checkbox";
             toggleCheckboxElement.checked = !this._breakpoint.disabled;
-            toggleCheckboxElement.addEventListener("change", this._handleEnabledCheckboxChange.bind(this));
+            toggleCheckboxElement.addEventListener("change", this._handleEnabledCheckboxChange.bindWeak(this));
 
             toggleLabelElement.appendChild(document.createTextNode(this._breakpoint.displayName));
         }
@@ -173,9 +173,9 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
                 "Esc": () => { this.dismiss(); },
             });
 
-            this._conditionCodeMirror.on("beforeChange", this._handleConditionCodeMirrorBeforeChange.bind(this));
+            this._conditionCodeMirror.on("beforeChange", this._handleConditionCodeMirrorBeforeChange.bindWeak(this));
             if (this._breakpoint)
-                this._conditionCodeMirror.on("change", this._handleConditionCodeMirrorChange.bind(this));
+                this._conditionCodeMirror.on("change", this._handleConditionCodeMirrorChange.bindWeak(this));
 
             let completionController = new WI.CodeMirrorCompletionController(this.codeMirrorCompletionControllerMode, this._conditionCodeMirror, this);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
@@ -190,7 +190,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             this._ignoreCountInputElement.type = "number";
             this._ignoreCountInputElement.min = 0;
             this._ignoreCountInputElement.value = this._breakpoint?.ignoreCount || 0;
-            this._ignoreCountInputElement.addEventListener("change", this._handleIgnoreCountInputChange.bind(this));
+            this._ignoreCountInputElement.addEventListener("change", this._handleIgnoreCountInputChange.bindWeak(this));
 
             this._ignoreCountText = ignoreCountContentFragment.appendChild(document.createElement("label"));
             this._updateIgnoreCountText();
@@ -227,7 +227,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             this._autoContinueCheckboxElement.id = "edit-breakpoint-popover-auto-continue";
             this._autoContinueCheckboxElement.type = "checkbox";
             this._autoContinueCheckboxElement.checked = this._breakpoint?.autoContinue || false;
-            this._autoContinueCheckboxElement.addEventListener("change", this._handleAutoContinueCheckboxChange.bind(this));
+            this._autoContinueCheckboxElement.addEventListener("change", this._handleAutoContinueCheckboxChange.bindWeak(this));
 
             let optionsCheckboxLabel = optionsDocumentFragment.appendChild(document.createElement("label"));
             optionsCheckboxLabel.textContent = WI.UIString("Automatically continue after evaluating");
@@ -401,7 +401,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
         let addActionButton = this._actionsContainerElement.appendChild(document.createElement("button"));
         addActionButton.textContent = WI.UIString("Add Action");
-        addActionButton.addEventListener("click", this._handleAddActionButtonClick.bind(this));
+        addActionButton.addEventListener("click", this._handleAddActionButtonClick.bindWeak(this));
     }
 
     _insertBreakpointActionView(breakpointActionView, index = this._actionViews.length)

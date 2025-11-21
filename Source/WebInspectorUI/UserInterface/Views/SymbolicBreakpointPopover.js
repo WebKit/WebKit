@@ -58,10 +58,12 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
             matchBrackets: true,
             scrollbarStyle: null,
         });
+
+        let boundDismiss = this.dismiss.bindWeak(this);
         this._symbolCodeMirror.addKeyMap({
-            "Enter": () => { this.dismiss(); },
-            "Shift-Enter": () => { this.dismiss(); },
-            "Esc": () => { this.dismiss(); },
+            "Enter": boundDismiss,
+            "Shift-Enter": boundDismiss,
+            "Esc": boundDismiss,
         });
 
         let symbolInputElement = this._symbolCodeMirror.getInputField();
@@ -84,9 +86,9 @@ WI.SymbolicBreakpointPopover = class SymbolicBreakpointPopover extends WI.Breakp
         this._isRegexCheckboxElement = isRegexLabel.appendChild(document.createElement("input"));
         this._isRegexCheckboxElement.type = "checkbox";
         this._isRegexCheckboxElement.checked = false;
-        this._isRegexCheckboxElement.addEventListener("change", (event) => {
+        this._isRegexCheckboxElement.addEventListener("change", bindWeak(function(event) {
             this._updateSymbolCodeMirrorMode();
-        });
+        }, this));
         this._updateSymbolCodeMirrorMode();
 
         isRegexLabel.append(WI.UIString("Regular Expression"));

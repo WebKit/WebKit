@@ -104,12 +104,12 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
                 glyphElement.tabIndex = 0;
                 this._element.append(glyphElement);
                 glyphElement.classList.toggle("rotate-left", shouldRotate);
-                glyphElement.addEventListener("click", () => {
+                glyphElement.addEventListener("click", bindWeak(function(event) {
                     this._removePreviouslySelected();
                     this._alignment.text = value;
                     this._updateSelected();
                     this.dispatchEventToListeners(WI.AlignmentEditor.Event.ValueChanged, {alignment: this._alignment});
-                });
+                }, this));
                 this._valueToGlyphElement.set(value, glyphElement);
             }
         } else

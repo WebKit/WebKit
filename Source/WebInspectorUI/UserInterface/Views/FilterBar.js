@@ -39,12 +39,12 @@ WI.FilterBar = class FilterBar extends WI.Object
         this._inputField.placeholder = WI.UIString("Filter");
         this._inputField.spellcheck = false;
         this._handleFilterInputThrottler = new Throttler(this._handleFilterInput.bind(this), 250);
-        this._inputField.addEventListener("input", (event) => {
+        this._inputField.addEventListener("input", bindWeak(function(event) {
             if (this._inputField.value)
                 this._handleFilterInputThrottler.fire(event);
             else
                 this._handleFilterInputThrottler.force(event);
-        });
+        }, this));
         this._element.appendChild(this._inputField);
 
         this._filtersNavigationBar = new WI.NavigationBar;

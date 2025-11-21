@@ -87,7 +87,7 @@ WI.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelineOverviewG
             if (!imageElement) {
                 imageElement = record[WI.HeapAllocationsTimelineOverviewGraph.RecordElementAssociationSymbol] = document.createElement("img");
                 imageElement.classList.add("snapshot");
-                imageElement.addEventListener("click", (event) => {
+                imageElement.addEventListener("click", bindWeak(function(event) {
                     if (record.heapSnapshot.invalid)
                         return;
 
@@ -95,7 +95,7 @@ WI.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelineOverviewG
                     event.__timelineRecordClickEventHandled = true;
 
                     this.selectedRecord = record;
-                });
+                }, this));
             }
 
             imageElement.style.setProperty(WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left", `${x}px`);

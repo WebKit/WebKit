@@ -39,7 +39,7 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
 
         this._drawerHeightSetting = new WI.Setting("console-drawer-height", 150);
 
-        this.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
+        this.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bindWeak(this));
 
         this._toggleDrawerButton = new WI.ToggleButtonNavigationItem("toggle-drawer", WI.UIString("Hide Console"), WI.UIString("Show Console"), "Images/HideConsoleDrawer.svg", "Images/ShowConsoleDrawer.svg");
 

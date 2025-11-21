@@ -111,7 +111,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 break;
             }
 
-            this._swatchElement.addEventListener("click", this._swatchElementClicked.bind(this));
+            this._swatchElement.addEventListener("click", this._swatchElementClicked.bindWeak(this));
         }
 
         this._swatchInnerElement = this._swatchElement.createChild("span");
@@ -124,7 +124,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         this._delegate = delegate || null;
         this._tooltip = tooltip || "";
         if (this._allowChangingColorFormats())
-            this._swatchElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
+            this._swatchElement.addEventListener("contextmenu", this._handleContextMenuEvent.bindWeak(this));
 
         this._updateSwatch();
     }
@@ -404,10 +404,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 mode: "css",
                 readOnly: true,
             });
-            this._valueEditor.codeMirror.on("update", () => {
+            this._valueEditor.codeMirror.on("update", bindWeak(function() {
                 const shouldAnimate = false;
                 this._popover.update(shouldAnimate);
-            });
+            }, this));
             break;
         }
 

@@ -35,8 +35,8 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
             this._element.classList.add(className);
         this._element.textContent = label;
 
-        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
 
         this._id = id;
         this._label = label;

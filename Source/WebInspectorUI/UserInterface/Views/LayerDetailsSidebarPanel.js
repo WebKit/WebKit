@@ -118,8 +118,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Descending;
         this._dataGrid.createSettings("layer-details-sidebar-panel");
 
-        this._dataGrid.element.addEventListener("mousemove", this._dataGridMouseMove.bind(this));
-        this._dataGrid.element.addEventListener("mouseleave", this._dataGridMouseLeave.bind(this));
+        this._dataGrid.element.addEventListener("mousemove", this._dataGridMouseMove.bindWeak(this));
+        this._dataGrid.element.addEventListener("mouseleave", this._dataGridMouseLeave.bindWeak(this));
 
         // FIXME: We can't use virtualized rows until DataGrid is able to scroll them programmatically.
         //        See TreeElement#reveal -> TreeOutline#updateVirtualizedElements for an analogy.

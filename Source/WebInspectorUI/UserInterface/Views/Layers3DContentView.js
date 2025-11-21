@@ -170,8 +170,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._boundingBox = new THREE.Box3;
 
         this._raycaster = new THREE.Raycaster;
-        this._renderer.domElement.addEventListener("mousedown", this._canvasMouseDown.bind(this));
-        this._renderer.domElement.addEventListener("mouseup", this._canvasMouseUp.bind(this));
+        this._renderer.domElement.addEventListener("mousedown", this._canvasMouseDown.bindWeak(this));
+        this._renderer.domElement.addEventListener("mouseup", this._canvasMouseUp.bindWeak(this));
 
         this.element.appendChild(this._renderer.domElement);
 

@@ -41,11 +41,11 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
         this._clearIconElement = fieldElement.appendChild(document.createElement("img"));
 
-        this._inputElement.addEventListener("keydown", this._handleKeydownEvent.bind(this));
-        this._inputElement.addEventListener("keyup", this._handleKeyupEvent.bind(this));
-        this._inputElement.addEventListener("blur", this._handleBlurEvent.bind(this));
-        this._clearIconElement.addEventListener("mousedown", this._handleMousedownEvent.bind(this));
-        this._clearIconElement.addEventListener("click", this._handleClickEvent.bind(this));
+        this._inputElement.addEventListener("keydown", this._handleKeydownEvent.bindWeak(this));
+        this._inputElement.addEventListener("keyup", this._handleKeyupEvent.bindWeak(this));
+        this._inputElement.addEventListener("blur", this._handleBlurEvent.bindWeak(this));
+        this._clearIconElement.addEventListener("mousedown", this._handleMousedownEvent.bindWeak(this));
+        this._clearIconElement.addEventListener("click", this._handleClickEvent.bindWeak(this));
 
         this._treeOutline = new WI.TreeOutline;
         this._treeOutline.allowsRepeatSelection = true;
@@ -53,7 +53,9 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         this._treeOutline.large = true;
 
         this._treeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
-        this._treeOutline.element.addEventListener("focus", () => { this._inputElement.focus(); });
+        this._treeOutline.element.addEventListener("focus", bindWeak(function(event) {
+            this._inputElement.focus();
+        }, this));
 
         let scrollContainer = this.element.appendChild(document.createElement("div"));
         scrollContainer.className = "scroll-container";

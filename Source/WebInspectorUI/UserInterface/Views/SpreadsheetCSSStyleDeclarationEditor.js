@@ -60,22 +60,22 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         if (!this._style)
             return;
 
-        this.element.addEventListener("focus", () => {
+        this.element.addEventListener("focus", bindWeak(function(event) {
             if (!this._suppressBlur)
                 this.focused = true;
-        }, true);
+        }, this), {capture: true});
 
-        this.element.addEventListener("blur", (event) => {
+        this.element.addEventListener("blur", bindWeak(function(event) {
             let focusedElement = event.relatedTarget;
             if (focusedElement && this.element.contains(focusedElement))
                 return;
 
             this.focused = false;
-        }, true);
+        }, this), {capture: true});
 
-        this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
-        this.element.addEventListener("cut", this._handleCut.bind(this));
-        this.element.addEventListener("copy", this._handleCopy.bind(this));
+        this.element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
+        this.element.addEventListener("cut", this._handleCut.bindWeak(this));
+        this.element.addEventListener("copy", this._handleCopy.bindWeak(this));
     }
 
     layout()
@@ -119,14 +119,14 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             let label = this._hiddenUnusedVariables.size > 1 ? labelPlural : labelSingular;
 
             showHiddenVariablesButtonElement.textContent = label.format(this._hiddenUnusedVariables.size);
-            showHiddenVariablesButtonElement.addEventListener("click", (event) => {
+            showHiddenVariablesButtonElement.addEventListener("click", bindWeak(function(event) {
                 if (event.altKey) {
                     this._setAllPropertyVisibilityMode(WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.ShowAll);
                     return;
                 }
 
                 this.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.ShowAll;
-            });
+            }, this));
         }
 
         if (propertyViewPendingStartEditing) {

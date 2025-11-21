@@ -40,7 +40,7 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
         this._element.classList.add("error-object");
         var previewElement = WI.FormattedValue.createElementForError(this._object);
         this._element.append(previewElement);
-        previewElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
+        previewElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bindWeak(this));
 
         this._outlineElement = this._element.appendChild(document.createElement("div"));
         this._outlineElement.className = "content";

@@ -30,7 +30,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         super(timelineOverview);
 
         this.element.classList.add("rendering-frame");
-        this.element.addEventListener("click", this._mouseClicked.bind(this));
+        this.element.addEventListener("click", this._mouseClicked.bindWeak(this));
 
         this._renderingFrameTimeline = timeline;
         this._renderingFrameTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);

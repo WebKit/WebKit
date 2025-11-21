@@ -415,24 +415,24 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
                     let pauseButton = this._recordingProcessingOptionsContainer.appendChild(document.createElement("button"));
                     pauseButton.textContent = WI.UIString("Pause Processing");
-                    pauseButton.addEventListener("click", (event) => {
+                    pauseButton.addEventListener("click", bindWeak(function(event) {
                         this._recording.stopProcessing();
 
                         spinner.element.remove();
                         pauseButton.remove();
                         createResumeButton();
-                    });
+                    }, this));
                 };
 
                 let createResumeButton = () => {
                     let resumeButton = this._recordingProcessingOptionsContainer.appendChild(document.createElement("button"));
                     resumeButton.textContent = WI.UIString("Resume Processing");
-                    resumeButton.addEventListener("click", (event) => {
+                    resumeButton.addEventListener("click", bindWeak(function(event) {
                         this._recording.startProcessing();
 
                         resumeButton.remove();
                         createPauseButton();
-                    });
+                    }, this));
                 };
 
                 if (this._recording.processing)

@@ -212,7 +212,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
             showUserAgentInput();
         }
 
-        userAgentValueSelect.addEventListener("change", () => {
+        userAgentValueSelect.addEventListener("change", bindWeak(function(event) {
             let value = userAgentValueSelect.value;
             if (value === WI.OverrideDeviceSettingsPopover.OtherValue) {
                 showUserAgentInput();
@@ -227,7 +227,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
 
                 WI.deviceSettingsManager.overrideUserAgent(value);
             }
-        });
+        }, this));
 
         return fragment;
     }

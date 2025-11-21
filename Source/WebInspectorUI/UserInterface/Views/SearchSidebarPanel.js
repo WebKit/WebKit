@@ -42,8 +42,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement = this._inputContainer.appendChild(document.createElement("input"));
         this._inputElement.type = "search";
         this._inputElement.spellcheck = false;
-        this._inputElement.addEventListener("change", this._searchFieldChanged.bind(this));
-        this._inputElement.addEventListener("input", this._searchFieldInput.bind(this));
+        this._inputElement.addEventListener("change", this._searchFieldChanged.bindWeak(this));
+        this._inputElement.addEventListener("input", this._searchFieldInput.bindWeak(this));
         this._inputElement.setAttribute("results", 5);
         this._inputElement.setAttribute("autosave", "inspector-search-autosave");
         this._inputElement.setAttribute("placeholder", WI.UIString("Search Resource Content"));
@@ -468,10 +468,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
             let performSearchLink = this._changedBanner.appendChild(document.createElement("a"));
             performSearchLink.textContent = WI.UIString("Search Again");
-            performSearchLink.addEventListener("click", () => {
+            performSearchLink.addEventListener("click", bindWeak(function(event) {
                 const performSearch = true;
                 this.focusSearchField(performSearch);
-            });
+            }, this));
         }
 
         this.element.appendChild(this._changedBanner);

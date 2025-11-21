@@ -214,7 +214,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         breakpointNavigationBarWrapper.appendChild(breakpointNavigationBar.element);
 
         this._createBreakpointButton = new WI.ButtonNavigationItem("create-breakpoint", WI.UIString("Create Breakpoint"), "Images/Plus13.svg", 13, 13);
-        WI.addMouseDownContextMenuHandlers(this._createBreakpointButton.element, this._populateCreateBreakpointContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._createBreakpointButton.element, this._populateCreateBreakpointContextMenu.bindWeak(this));
         breakpointNavigationBar.addNavigationItem(this._createBreakpointButton);
 
         let breakpointsGroup = new WI.DetailsSectionGroup([breakpointsRow]);
@@ -235,7 +235,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         localOverrideNavigationBarWrapper.appendChild(localOverrideNavigationBar.element);
 
         this._createLocalOverrideButton = new WI.ButtonNavigationItem("create-local-override", WI.UIString("Create Local Override"), "Images/Plus13.svg", 13, 13);
-        WI.addMouseDownContextMenuHandlers(this._createLocalOverrideButton.element, this._populateCreateLocalOverrideContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._createLocalOverrideButton.element, this._populateCreateLocalOverrideContextMenu.bindWeak(this));
         localOverrideNavigationBar.addNavigationItem(this._createLocalOverrideButton);
 
         let localOverridesGroup = new WI.DetailsSectionGroup([this._localOverridesRow]);
@@ -296,7 +296,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let createResourceNavigationBar = new WI.NavigationBar;
 
             let createResourceButtonNavigationItem = new WI.ButtonNavigationItem("create-resource", WI.UIString("Create Resource"), "Images/Plus15.svg", 15, 15);
-            WI.addMouseDownContextMenuHandlers(createResourceButtonNavigationItem.element, this._populateCreateResourceContextMenu.bind(this));
+            WI.addMouseDownContextMenuHandlers(createResourceButtonNavigationItem.element, this._populateCreateResourceContextMenu.bindWeak(this));
             createResourceNavigationBar.addNavigationItem(createResourceButtonNavigationItem);
 
             this.filterBar.element.insertBefore(createResourceNavigationBar.element, this.filterBar.element.firstChild);

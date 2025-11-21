@@ -34,14 +34,14 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
     {
         super(selectable);
 
-        this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
-        this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
-        this.element.addEventListener("mouseout", this._onmouseout.bind(this), false);
-        this.element.addEventListener("dragstart", this._ondragstart.bind(this), false);
-        this.element.addEventListener("dragover", this._ondragover.bind(this), false);
-        this.element.addEventListener("dragleave", this._ondragleave.bind(this), false);
-        this.element.addEventListener("drop", this._ondrop.bind(this), false);
-        this.element.addEventListener("dragend", this._ondragend.bind(this), false);
+        this.element.addEventListener("mousedown", this._onmousedown.bindWeak(this));
+        this.element.addEventListener("mousemove", this._onmousemove.bindWeak(this));
+        this.element.addEventListener("mouseout", this._onmouseout.bindWeak(this));
+        this.element.addEventListener("dragstart", this._ondragstart.bindWeak(this));
+        this.element.addEventListener("dragover", this._ondragover.bindWeak(this));
+        this.element.addEventListener("dragleave", this._ondragleave.bindWeak(this));
+        this.element.addEventListener("drop", this._ondrop.bindWeak(this));
+        this.element.addEventListener("dragend", this._ondragend.bindWeak(this));
 
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
         this.element.dir = "ltr";

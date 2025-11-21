@@ -42,6 +42,8 @@ WI.DropZoneView = class DropZoneView extends WI.View
         this._activelyHandlingDrag = false;
 
         this.element.classList.add("drop-zone");
+
+        this._boundHandleDragEnter = null;
     }
 
     // Public
@@ -60,8 +62,7 @@ WI.DropZoneView = class DropZoneView extends WI.View
         if (this._targetElement === element)
             return;
 
-        if (!this._boundHandleDragEnter)
-            this._boundHandleDragEnter = this._handleDragEnter.bind(this);
+        this._boundHandleDragEnter ||= this._handleDragEnter.bindWeak(this);
 
         if (this._targetElement)
             this._targetElement.removeEventListener("dragenter", this._boundHandleDragEnter);
@@ -85,9 +86,9 @@ WI.DropZoneView = class DropZoneView extends WI.View
 
         console.assert(this._targetElement);
 
-        this.element.addEventListener("dragover", this._handleDragOver.bind(this));
-        this.element.addEventListener("dragleave", this._handleDragLeave.bind(this));
-        this.element.addEventListener("drop", this._handleDrop.bind(this));
+        this.element.addEventListener("dragover", this._handleDragOver.bindWeak(this));
+        this.element.addEventListener("dragleave", this._handleDragLeave.bindWeak(this));
+        this.element.addEventListener("drop", this._handleDrop.bindWeak(this));
     }
 
     // Private

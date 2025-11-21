@@ -49,7 +49,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this._graphsContainerView = new WI.View;
         this._graphsContainerView.element.classList.add("graphs-container");
-        this._graphsContainerView.element.addEventListener("click", this._handleGraphsContainerClick.bind(this));
+        this._graphsContainerView.element.addEventListener("click", this._handleGraphsContainerClick.bindWeak(this));
         this.addSubview(this._graphsContainerView);
 
         this._selectedTimelineRecord = null;
@@ -79,8 +79,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._timelineRuler = new WI.TimelineRuler;
         this._timelineRuler.allowsClippedLabels = true;
         this._timelineRuler.allowsTimeRangeSelection = true;
-        this._timelineRuler.element.addEventListener("mousedown", this._timelineRulerMouseDown.bind(this));
-        this._timelineRuler.element.addEventListener("click", this._timelineRulerMouseClicked.bind(this));
+        this._timelineRuler.element.addEventListener("mousedown", this._timelineRulerMouseDown.bindWeak(this));
+        this._timelineRuler.element.addEventListener("click", this._timelineRulerMouseClicked.bindWeak(this));
         this._timelineRuler.addEventListener(WI.TimelineRuler.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
         this.addSubview(this._timelineRuler);
 
@@ -89,7 +89,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this._scrollContainerElement = document.createElement("div");
         this._scrollContainerElement.classList.add("scroll-container");
-        this._scrollContainerElement.addEventListener("scroll", this._handleScrollEvent.bind(this));
+        this._scrollContainerElement.addEventListener("scroll", this._handleScrollEvent.bindWeak(this));
         this.element.appendChild(this._scrollContainerElement);
 
         this._scrollWidthSizer = document.createElement("div");
@@ -936,10 +936,10 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             this._handleGestureChangeEventListener = null;
             this._handleGestureEndEventListener = null;
         } else {
-            this._handleWheelEventListener = this._handleWheelEvent.bind(this);
-            this._handleGestureStartEventListener = this._handleGestureStart.bind(this);
-            this._handleGestureChangeEventListener = this._handleGestureChange.bind(this);
-            this._handleGestureEndEventListener = this._handleGestureEnd.bind(this);
+            this._handleWheelEventListener = this._handleWheelEvent.bindWeak(this);
+            this._handleGestureStartEventListener = this._handleGestureStart.bindWeak(this);
+            this._handleGestureChangeEventListener = this._handleGestureChange.bindWeak(this);
+            this._handleGestureEndEventListener = this._handleGestureEnd.bindWeak(this);
             this.element.addEventListener("wheel", this._handleWheelEventListener);
             this.element.addEventListener("gesturestart", this._handleGestureStartEventListener);
             this.element.addEventListener("gesturechange", this._handleGestureChangeEventListener);

@@ -1,0 +1,31 @@
+Testing all extra methods added to Function or its prototype.
+
+
+== Running test suite: FunctionUtilities
+-- Running test case: Function.prototype.bindWeak
+Calling prototype method...
+PASS: Should provide this.
+PASS: Should provide bind arg 1.
+PASS: Should provide bind arg 2.
+PASS: Should provide call arg 1.
+PASS: Should provide call arg 2.
+PASS: Should call function.
+
+Calling standalone method...
+PASS: Should provide this.
+PASS: Should provide bind arg 1.
+PASS: Should provide bind arg 2.
+PASS: Should provide call arg 1.
+PASS: Should provide call arg 2.
+PASS: Should call function.
+
+Simulating GC...
+
+Calling prototype method...
+PASS: Should not call function.
+
+Calling standalone method...
+PASS: Should not call function.
+
+Restoring state...
+

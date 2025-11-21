@@ -34,9 +34,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._updateContentOverflowShadowVisibilityDebouncer = new Debouncer(() => {
             this._updateContentOverflowShadowVisibility();
         });
-        this._boundUpdateContentOverflowShadowVisibilitySoon = (event) => {
+        this._boundUpdateContentOverflowShadowVisibilitySoon = bindWeak(function(event) {
             this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
-        };
+        }, this);
 
         this.contentView.element.addEventListener("scroll", this._boundUpdateContentOverflowShadowVisibilitySoon);
 
@@ -570,9 +570,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         let buttonElement = message.appendChild(document.createElement("button"));
         buttonElement.textContent = WI.UIString("Clear Filters");
-        buttonElement.addEventListener("click", () => {
+        buttonElement.addEventListener("click", bindWeak(function(event) {
             this.resetFilter();
-        });
+        }, this));
 
         // All top level tree elements are hidden, so filtering hid everything. Show a message.
         this.showEmptyContentPlaceholder(message, treeOutline);

@@ -29,9 +29,12 @@ WI.SpringTimingFunctionEditor = class SpringTimingFunctionEditor extends WI.Obje
     {
         super();
 
-        let boundResetPreviewAnimation = (event) => {
-            this._resetPreviewAnimation(event);
-        };
+        let boundResetPreviewAnimation = this._resetPreviewAnimation.bindWeak(this);
+        let boundHandleNumberSliderInput = this._handleNumberSliderInput.bindWeak(this);
+        let boundHandleNumberSliderMousedown = this._handleNumberSliderMousedown.bindWeak(this);
+        let boundHandleNumberSliderMouseup = this._handleNumberSliderMouseup.bindWeak(this);
+        let boundHandleNumberInputInput = this._handleNumberInputInput.bindWeak(this);
+        let boundHandleNumberInputKeydown = this._handleNumberInputKeydown.bindWeak(this);
 
         this._element = document.createElement("div");
         this._element.classList.add("spring-timing-function-editor");
@@ -58,15 +61,15 @@ WI.SpringTimingFunctionEditor = class SpringTimingFunctionEditor extends WI.Obje
             let sliderKey = `_${id}Slider`;
             this[sliderKey] = row.createChild("input");
             this[sliderKey].type = "range";
-            this[sliderKey].addEventListener("input", this._handleNumberSliderInput.bind(this));
-            this[sliderKey].addEventListener("mousedown", this._handleNumberSliderMousedown.bind(this));
-            this[sliderKey].addEventListener("mouseup", this._handleNumberSliderMouseup.bind(this));
+            this[sliderKey].addEventListener("input", boundHandleNumberSliderInput);
+            this[sliderKey].addEventListener("mousedown", boundHandleNumberSliderMousedown);
+            this[sliderKey].addEventListener("mouseup", boundHandleNumberSliderMouseup);
 
             let inputKey = `_${id}Input`;
             this[inputKey] = row.createChild("input");
             this[inputKey].type = "number";
-            this[inputKey].addEventListener("input", this._handleNumberInputInput.bind(this));
-            this[inputKey].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
+            this[inputKey].addEventListener("input", boundHandleNumberInputInput);
+            this[inputKey].addEventListener("keydown", boundHandleNumberInputKeydown);
         }
 
         createInputsForParameter.call(this, "mass", WI.UIString("Mass"));

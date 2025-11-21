@@ -48,8 +48,8 @@ WI.EditableDataGridNode = class EditableDataGridNode extends WI.DataGridNode
         let inputElement = document.createElement("input");
         inputElement.spellcheck = false;
         inputElement.value = content;
-        inputElement.addEventListener("keypress", this._handleKeyPress.bind(this, columnIdentifier));
-        inputElement.addEventListener("blur", this._handleBlur.bind(this, columnIdentifier));
+        inputElement.addEventListener("keypress", this._handleKeyPress.bindWeak(this, columnIdentifier));
+        inputElement.addEventListener("blur", this._handleBlur.bindWeak(this, columnIdentifier));
         return inputElement;
     }
 

@@ -168,7 +168,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._sliderValueElement.className = "slider-value";
 
         this._sliderElement = sliderContainer.appendChild(document.createElement("input"));
-        this._sliderElement.addEventListener("input", this._sliderChanged.bind(this));
+        this._sliderElement.addEventListener("input", this._sliderChanged.bindWeak(this));
         this._sliderElement.type = "range";
         this._sliderElement.min = 0;
         this._sliderElement.max = 0;
@@ -241,13 +241,13 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _generateContentCanvas2D(index)
     {
-        let imageLoad = (event) => {
+        let imageLoad = bindWeak(function(event) {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
             this._generateContentCanvas2D(index);
-        };
+        }, this);
 
         let initialState = this.representedObject.initialState;
         if (initialState.content && !this._initialContent) {
@@ -431,13 +431,13 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _generateContentFromSnapshot(index)
     {
-        let imageLoad = (event) => {
+        let imageLoad = bindWeak(function(event) {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
             this._generateContentFromSnapshot(index);
-        };
+        }, this);
 
         let initialState = this.representedObject.initialState;
         if (initialState.content && !this._initialContent) {

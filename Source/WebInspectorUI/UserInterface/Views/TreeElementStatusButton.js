@@ -33,7 +33,7 @@ WI.TreeElementStatusButton = class TreeElementStatusButton extends WI.Object
 
         this._element = element;
         this._element.classList.add("status-button");
-        this._element.addEventListener("click", this._clicked.bind(this));
+        this._element.addEventListener("click", this._clicked.bindWeak(this));
     }
 
     // Public
