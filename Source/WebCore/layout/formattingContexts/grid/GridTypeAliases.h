@@ -25,6 +25,11 @@
 
 #pragma once
 
+namespace WTF {
+template <typename T>
+class Range;
+}
+
 namespace WebCore {
 
 class LayoutUnit;
@@ -44,6 +49,7 @@ using GridCell = Vector<UnplacedGridItem, 1>;
 using GridItemRects = Vector<GridItemRect>;
 using GridMatrix = Vector<Vector<GridCell>>;
 using PlacedGridItems = Vector<PlacedGridItem>;
+using PlacedGridItemSpanList = Vector<WTF::Range<size_t>>;
 using TrackSizes = Vector<LayoutUnit>;
 using TrackSizingFunctionsList = Vector<TrackSizingFunctions>;
 using UnsizedTracks = Vector<UnsizedTrack>;

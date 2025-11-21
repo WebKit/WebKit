@@ -39,6 +39,7 @@
 #include "TrackSizingFunctions.h"
 #include "UnplacedGridItem.h"
 #include "UsedTrackSizes.h"
+#include <wtf/Range.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -249,13 +250,21 @@ TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t implicitGridTra
 
 // https://www.w3.org/TR/css-grid-1/#algo-grid-sizing
 UsedTrackSizes GridLayout::performGridSizingAlgorithm(const PlacedGridItems& placedGridItems,
-    const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList)
+    const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const
 {
-    // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
-    auto columnSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, columnTrackSizingFunctionsList);
+    auto& integrationUtils = formattingContext().integrationUtils();
 
+    // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
+    auto columnSpanList = placedGridItems.map([](const PlacedGridItem& gridItem) {
+        return WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
+    });
+    auto columnSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, columnSpanList, columnTrackSizingFunctionsList, integrationUtils);
+
+    auto rowSpanList = placedGridItems.map([](const PlacedGridItem& gridItem) {
+        return WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
+    });
     // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
-    auto rowSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, rowTrackSizingFunctionsList);
+    auto rowSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, rowSpanList, rowTrackSizingFunctionsList, integrationUtils);
 
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid

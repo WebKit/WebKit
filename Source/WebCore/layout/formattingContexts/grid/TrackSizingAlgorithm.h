@@ -32,9 +32,11 @@ namespace WebCore {
 
 namespace Layout {
 
+class IntegrationUtils;
+
 class TrackSizingAlgorithm {
 public:
-    static TrackSizes sizeTracks(const PlacedGridItems&, const TrackSizingFunctionsList&);
+    static TrackSizes sizeTracks(const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingFunctionsList&, const IntegrationUtils&);
 
 private:
 
