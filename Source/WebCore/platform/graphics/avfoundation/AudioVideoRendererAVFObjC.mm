@@ -1247,7 +1247,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoRenderer(WebSampleBufferV
         destroyVideoRenderer();
     }
 
-    RefPtr videoRenderer = VideoMediaSampleRenderer::create(renderer);
+    RefPtr videoRenderer = VideoMediaSampleRenderer::create(renderer, logger(), logIdentifier());
     m_videoRenderer = videoRenderer;
 
     videoRenderer->setPreferences(m_preferences);
