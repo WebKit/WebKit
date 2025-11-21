@@ -30,7 +30,7 @@
     DispatchedTo=WebContent
 ]
 messages -> AudioVideoRendererRemoteMessageReceiver {
-    RequestMediaDataWhenReady(WebCore::SamplesRendererTrackIdentifier identifier)
+    ReadyForMoreMediaData(WebCore::SamplesRendererTrackIdentifier identifier)
     FirstFrameAvailable(struct WebKit::RemoteAudioVideoRendererState state)
     HasAvailableVideoFrame(MediaTime time, double clockTime, struct WebKit::RemoteAudioVideoRendererState state)
     RequiresFlushToResume(struct WebKit::RemoteAudioVideoRendererState state)

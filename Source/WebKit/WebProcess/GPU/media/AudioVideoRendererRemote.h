@@ -90,7 +90,7 @@ public:
         void stallTimeReached(MediaTime, RemoteAudioVideoRendererState);
         void taskTimeReached(MediaTime, RemoteAudioVideoRendererState);
         void errorOccurred(WebCore::PlatformMediaError);
-        void requestMediaDataWhenReady(WebCore::SamplesRendererTrackIdentifier);
+        void readyForMoreMediaData(WebCore::SamplesRendererTrackIdentifier);
         void stateUpdate(RemoteAudioVideoRendererState);
 
 #if PLATFORM(COCOA)
@@ -219,16 +219,20 @@ private:
     bool isGPURunning() const { return !m_shutdown; }
 
     void updateCacheState(const RemoteAudioVideoRendererState&);
-    class ReadyForMoreData {
+    class ReadyForMoreDataState {
     public:
         static constexpr size_t kMaxPendingSample = 20;
-        bool isReadyForMoreData() const { return m_pendingSamples < kMaxPendingSample; }
-        void reset() { m_pendingSamples = 0; }
+        bool isReadyForMoreData() const { return m_pendingSamples < kMaxPendingSample && m_remoteReadyForMoreData; }
+        void setRemoteReadyForMoreData(bool ready) { m_remoteReadyForMoreData = ready; }
         void sampleEnqueued() { m_pendingSamples++; }
+        void sampleReceived() { m_pendingSamples--; }
+        size_t pendingSamples() const { return m_pendingSamples; }
     private:
         size_t m_pendingSamples { 0 };
+        bool m_remoteReadyForMoreData { true };
     };
-    ReadyForMoreData& readyForMoreData(TrackIdentifier);
+    ReadyForMoreDataState& readyForMoreDataState(TrackIdentifier);
+    void resolveRequestMediaDataWhenReadyIfNeeded(TrackIdentifier);
 
     const ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     const Ref<MessageReceiver> m_receiver;
@@ -252,7 +256,7 @@ private:
     MediaTime m_performTaskAtTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void(const MediaTime&, WebCore::FloatSize)> m_videoLayerSizeChangedCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
-    HashMap<TrackIdentifier, ReadyForMoreData> m_readyForMoreData WTF_GUARDED_BY_LOCK(m_lock);
+    HashMap<TrackIdentifier, ReadyForMoreDataState> m_readyForMoreDataStates WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<TrackIdentifier, Function<void(TrackIdentifier)>> m_requestMediaDataWhenReadyDataCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     HashMap<TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>> m_trackNeedsReenqueuingCallbacks WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 

@@ -40,7 +40,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     AddTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, enum:uint8_t WebCore::TrackInfoTrackType type) -> (Expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result) Synchronous
     RemoveTrack(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 
-    EnqueueSample(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock block, std::optional<MediaTime> upcomingMinimumTime);
+    EnqueueSample(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock block, std::optional<MediaTime> upcomingMinimumTime) -> (bool readyForMoreData);
     RequestMediaDataWhenReady(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
     StopRequestingMediaData(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::SamplesRendererTrackIdentifier trackIdentifier)
 

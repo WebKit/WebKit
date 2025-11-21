@@ -1024,10 +1024,6 @@ void MediaPlayerPrivateWebM::notifyClientWhenReadyForMoreSamples(TrackID trackId
 
 bool MediaPlayerPrivateWebM::isReadyForMoreSamples(TrackID trackId)
 {
-    if (isEnabledVideoTrackID(trackId)) {
-        if (m_layerRequiresFlush)
-            return false;
-    }
     auto trackIdentifier = maybeTrackIdentifierFor(trackId);
     return trackIdentifier && m_renderer->isReadyForMoreSamples(*trackIdentifier);
 }
@@ -1094,6 +1090,8 @@ void MediaPlayerPrivateWebM::provideMediaData(TrackBuffer& trackBuffer, TrackID 
         return;
 
     if (trackBuffer.needsReenqueueing())
+        return;
+    if (isEnabledVideoTrackID(trackId) && m_layerRequiresFlush)
         return;
 
     unsigned enqueuedSamples = 0;

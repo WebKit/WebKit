@@ -244,17 +244,23 @@ void RemoteAudioVideoRendererProxyManager::requestMediaDataWhenReady(RemoteAudio
         return;
     renderer->requestMediaDataWhenReady(trackIdentifier, [identifier, weakThis = WeakPtr { *this }](auto trackIdentifier) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_renderers.contains(identifier))
-            protectedThis->m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::RequestMediaDataWhenReady(trackIdentifier), identifier);
+            protectedThis->m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::ReadyForMoreMediaData(trackIdentifier), identifier);
     });
 }
 
-void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock&& samplesBlock, std::optional<MediaTime> minimumPresentationTime)
+void RemoteAudioVideoRendererProxyManager::enqueueSample(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier, WebCore::MediaSamplesBlock&& samplesBlock, std::optional<MediaTime> minimumPresentationTime, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr renderer = rendererFor(identifier);
-    if (!renderer)
+    if (!renderer) {
+        completionHandler(false);
         return;
-    if (RefPtr mediaSample = samplesBlock.toMediaSample())
+    }
+    if (RefPtr mediaSample = samplesBlock.toMediaSample()) {
         renderer->enqueueSample(trackIdentifier, mediaSample.releaseNonNull());
+        completionHandler(renderer->isReadyForMoreSamples(trackIdentifier));
+        return;
+    }
+    completionHandler(false);
 }
 
 void RemoteAudioVideoRendererProxyManager::stopRequestingMediaData(RemoteAudioVideoRendererIdentifier identifier, TrackIdentifier trackIdentifier)
