@@ -59,6 +59,10 @@ class LocalFrame;
 class Page;
 class RenderObject;
 class FragmentedSharedBuffer;
+struct PublicKeyCredentialRequestOptionsJSON;
+struct PublicKeyCredentialCreationOptionsJSON;
+struct RegistrationResponseJSON;
+struct AuthenticationResponseJSON;
 
 class InspectorPageAgent final : public InspectorAgentBase, public Inspector::PageBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorPageAgent);
@@ -106,6 +110,8 @@ public:
     void frameNavigated(LocalFrame&);
     void frameDetached(LocalFrame&);
     void loaderDetachedFromFrame(DocumentLoader&);
+    void frameDidStartWebAuthenticationOperation(LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& request, Ref<Inspector::ScriptCallStack>&&);
+    void frameDidFinishWebAuthenticationOperation(LocalFrame&, const String& ceremonyId, Ref<JSON::Object>&& response);
     void accessibilitySettingsDidChange();
     void defaultUserPreferencesDidChange();
 #if ENABLE(DARK_MODE_CSS)
@@ -146,6 +152,9 @@ private:
     WeakHashMap<Frame, String> m_frameToIdentifier;
     MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
+
+    HashSet<String> m_webAuthenticationCeremonies;
+
     String m_userAgentOverride;
     AtomString m_emulatedMedia;
     String m_bootstrapScript;

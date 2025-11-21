@@ -354,6 +354,56 @@
             ]
         },
         {
+            "name": "frameDidStartWebAuthenticationOperation",
+            "description": "Fired when the frame starts a web authentication operation.",
+            "targetTypes": ["page"],
+            "parameters": [
+                {
+                    "name": "ceremonyId",
+                    "type": "string",
+                    "description": "Unique identifier for this authentication ceremony."
+                },
+                {
+                    "name": "frameId",
+                    "$ref": "Network.FrameId",
+                    "description": "Id of the frame that has started a web authentication operation."
+                },
+                {
+                    "name": "request",
+                    "type": "object",
+                    "description": "The JSON representation of the request for a web authentication operation."
+                },
+                {
+                    "name": "initiator",
+                    "$ref": "Network.Initiator",
+                    "optional": true,
+                    "description": "Information about the request initiator."
+                }
+            ]
+        },
+        {
+            "name": "frameDidFinishWebAuthenticationOperation",
+            "description": "Fired when the frame finishes a web authentication operation.",
+            "targetTypes": ["page"],
+            "parameters": [
+                {
+                    "name": "ceremonyId",
+                    "type": "string",
+                    "description": "Unique identifier for this authentication ceremony."
+                },
+                {
+                    "name": "frameId",
+                    "$ref": "Network.FrameId",
+                    "description": "Id of the frame that has finished a web authentication operation."
+                },
+                {
+                    "name": "response",
+                    "type": "object",
+                    "description": "The JSON representation of the response for a web authentication operation."
+                }
+            ]
+        },
+        {
             "name": "defaultUserPreferencesDidChange",
             "description": "Fired when the default value of a user preference changes at the system level.",
             "targetTypes": ["page"],

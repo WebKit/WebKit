@@ -39,11 +39,13 @@
 #include <WebCore/ResidentKeyRequirement.h>
 #include <WebCore/UserVerificationRequirement.h>
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 #endif // ENABLE(WEB_AUTHN)
 
 namespace WebCore {
 
 enum class AuthenticatorAttachment : uint8_t;
+struct PublicKeyCredentialCreationOptionsJSON;
 
 struct PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
@@ -59,6 +61,7 @@ struct PublicKeyCredentialCreationOptions {
     String attestationString { "none"_s };
     WEBCORE_EXPORT AttestationConveyancePreference attestation() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
+    PublicKeyCredentialCreationOptionsJSON toJSON() const;
 #endif // ENABLE(WEB_AUTHN)
 };
 

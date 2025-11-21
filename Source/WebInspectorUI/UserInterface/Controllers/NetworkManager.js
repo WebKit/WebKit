@@ -603,6 +603,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     // PageObserver
 
+    frameDidStartWebAuthenticationOperation(ceremonyId, frameId, request, initiator)
+    {
+        let frame = this.frameForIdentifier(frameId);
+        frame.didStartWebAuthenticationOperation(ceremonyId, request, initiator);
+    }
+
+    frameDidFinishWebAuthenticationOperation(ceremonyId, frameId, response)
+    {
+        let frame = this.frameForIdentifier(frameId);
+        frame.didFinishWebAuthenticationOperation(ceremonyId, response);
+    }
+
     frameDidNavigate(framePayload)
     {
         // Ignore this while waiting for the whole frame/resource tree.

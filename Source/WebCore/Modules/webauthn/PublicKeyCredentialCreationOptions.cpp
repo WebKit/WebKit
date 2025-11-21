@@ -28,7 +28,12 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "BufferSource.h"
 #include "JSAttestationConveyancePreference.h"
+#include "JSPublicKeyCredentialCreationOptionsJSON.h"
+#include "JSPublicKeyCredentialType.h"
+#include "PublicKeyCredentialDescriptorJSON.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -38,6 +43,25 @@ AttestationConveyancePreference PublicKeyCredentialCreationOptions::attestation(
         return *parsed;
     // Default value if string is invalid/unknown
     return AttestationConveyancePreference::None;
+}
+
+PublicKeyCredentialCreationOptionsJSON PublicKeyCredentialCreationOptions::toJSON() const
+{
+    PublicKeyCredentialCreationOptionsJSON value;
+    value.rp = this->rp;
+    value.user = this->user.toJSON();
+    value.challenge = base64EncodeToString(this->challenge.span());
+    value.pubKeyCredParams = this->pubKeyCredParams;
+    value.timeout = this->timeout;
+    value.excludeCredentials = this->excludeCredentials.map([](auto& cred) {
+        return cred.toJSON();
+    });
+    value.authenticatorSelection = this->authenticatorSelection;
+    value.attestation = this->attestationString;
+    if (this->extensions)
+        value.extensions = this->extensions->toJSON();
+
+    return value;
 }
 
 } // namespace WebCore

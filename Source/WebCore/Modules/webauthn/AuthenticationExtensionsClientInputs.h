@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+struct AuthenticationExtensionsClientInputsJSON;
+
 struct AuthenticationExtensionsClientInputs {
     struct LargeBlobInputs {
         String support;
@@ -56,6 +58,7 @@ struct AuthenticationExtensionsClientInputs {
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<AuthenticationExtensionsClientInputs::PRFInputs> prf;
 
+    AuthenticationExtensionsClientInputsJSON toJSON() const;
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(std::span<const uint8_t>);
 };

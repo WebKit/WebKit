@@ -1816,6 +1816,215 @@ localizedStrings["Timeline Recording Import Error: %s"] = "Timeline Recording Im
 localizedStrings["Timelines Tab Name"] = "Timelines";
 /* Category label for experimental settings related to the Timelines Tab. */
 localizedStrings["Timelines: @ Experimental Settings"] = "Timelines:";
+
+/* Name of Authentication Tab */
+localizedStrings["Authentication Tab Name"] = "Authentication";
+localizedStrings["Allowed Credentials"] = "Allowed Credentials";
+localizedStrings["Attachment"] = "Attachment";
+localizedStrings["Attestation"] = "Attestation";
+localizedStrings["Attestation Object"] = "Attestation Object";
+localizedStrings["Authenticator"] = "Authenticator";
+localizedStrings["Authenticator Attachment"] = "Authenticator Attachment";
+localizedStrings["Authenticator Data"] = "Authenticator Data";
+localizedStrings["Authenticator Response"] = "Authenticator Response";
+localizedStrings["Authenticator Selection"] = "Authenticator Selection";
+localizedStrings["Challenge"] = "Challenge";
+localizedStrings["Client Data JSON"] = "Client Data JSON";
+localizedStrings["Client Extension Results"] = "Client Extension Results";
+localizedStrings["Close detail view"] = "Close detail view";
+localizedStrings["Copy Request as JSON"] = "Copy Request as JSON";
+localizedStrings["Copy Response as JSON"] = "Copy Response as JSON";
+localizedStrings["Credential Creation"] = "Credential Creation";
+localizedStrings["Credential ID"] = "Credential ID";
+localizedStrings["Credential Type"] = "Credential Type";
+localizedStrings["Details"] = "Details";
+localizedStrings["Display Name"] = "Display Name";
+localizedStrings["Extensions"] = "Extensions";
+localizedStrings["Public Key (raw)"] = "Public Key (raw)";
+localizedStrings["Public Key Algorithm"] = "Public Key Algorithm";
+localizedStrings["RP Name"] = "RP Name";
+localizedStrings["Relying Party"] = "Relying Party";
+localizedStrings["Relying Party ID"] = "Relying Party ID";
+localizedStrings["Relying Party Name"] = "Relying Party Name";
+localizedStrings["Request"] = "Request";
+localizedStrings["Request Overview"] = "Request Overview";
+localizedStrings["Resident Key"] = "Resident Key";
+localizedStrings["Response"] = "Response";
+localizedStrings["Response Overview"] = "Response Overview";
+localizedStrings["Signature"] = "Signature";
+localizedStrings["Summary"] = "Summary";
+localizedStrings["Supported Algorithms"] = "Supported Algorithms";
+localizedStrings["Timeout"] = "Timeout";
+localizedStrings["User Handle"] = "User Handle";
+localizedStrings["User ID"] = "User ID";
+localizedStrings["User Information"] = "User Information";
+localizedStrings["User Name"] = "User Name";
+localizedStrings["User Verification"] = "User Verification";
+
+/* Source location section title in authentication ceremony details */
+localizedStrings["Source Location"] = "Source Location";
+/* Label for the source location where a WebAuthn operation was initiated */
+localizedStrings["Initiated from"] = "Initiated from";
+
+/* Authentication ceremony types */
+localizedStrings["Authentication Assertion"] = "Authentication Assertion";
+localizedStrings["Ceremony"] = "Ceremony";
+localizedStrings["Creation"] = "Creation";
+localizedStrings["Assertion"] = "Assertion";
+
+/* Authenticator attachment types */
+localizedStrings["Platform (Touch ID, Face ID, Windows Hello)"] = "Platform (Touch ID, Face ID, Windows Hello)";
+localizedStrings["Cross-Platform (USB, NFC, Bluetooth)"] = "Cross-Platform (USB, NFC, Bluetooth)";
+localizedStrings["Cross-Platform"] = "Cross-Platform";
+localizedStrings["Platform"] = "Platform";
+
+/* Request parameters section */
+localizedStrings["Request Parameters"] = "Request Parameters";
+
+/* Algorithm names */
+localizedStrings["Unknown Algorithm"] = "Unknown Algorithm";
+
+/* Ceremony types */
+localizedStrings["Ceremony Type"] = "Ceremony Type";
+
+/* Client Data JSON parsing */
+localizedStrings["Client Data JSON (Raw)"] = "Client Data JSON (Raw)";
+
+/* Base64 context menu options */
+localizedStrings["Copy as Base64"] = "Copy as Base64";
+localizedStrings["Copy as Base64URL"] = "Copy as Base64URL";
+localizedStrings["Copy as Hex"] = "Copy as Hex";
+localizedStrings["Copy as JSON"] = "Copy as JSON";
+localizedStrings["Save as File"] = "Save as File";
+localizedStrings["Right-click to copy in different formats"] = "Right-click to copy in different formats";
+
+/* Authenticator data parsing */
+localizedStrings["Authenticator Data (Raw)"] = "Authenticator Data (Raw)";
+localizedStrings["Parsed Authenticator Data"] = "Parsed Authenticator Data";
+localizedStrings["RP ID Hash"] = "RP ID Hash";
+localizedStrings["Flags"] = "Flags";
+localizedStrings["User Present"] = "User Present";
+localizedStrings["User Verified"] = "User Verified";
+localizedStrings["Attested Credential Data"] = "Attested Credential Data";
+localizedStrings["Extension Data"] = "Extension Data";
+localizedStrings["Signature Counter"] = "Signature Counter";
+localizedStrings["AAGUID"] = "AAGUID";
+localizedStrings["Credential Public Key (CBOR)"] = "Credential Public Key (CBOR)";
+
+/* Common values */
+localizedStrings["N/A"] = "N/A";
+localizedStrings["Unknown"] = "Unknown";
+localizedStrings["Not specified"] = "Not specified";
+
+/* Credential format strings */
+localizedStrings["Credential %d ID"] = "Credential %d ID";
+localizedStrings["Credential %d Type"] = "Credential %d Type";
+localizedStrings["Credential %d Transports"] = "Credential %d Transports";
+
+/* Credential public key parsing */
+localizedStrings["Credential Public Key"] = "Credential Public Key";
+localizedStrings["Key Type"] = "Key Type";
+localizedStrings["Algorithm"] = "Algorithm";
+localizedStrings["Curve"] = "Curve";
+localizedStrings["X Coordinate"] = "X Coordinate";
+localizedStrings["Y Coordinate"] = "Y Coordinate";
+localizedStrings["D Value"] = "D Value";
+localizedStrings["Modulus"] = "Modulus";
+localizedStrings["Exponent"] = "Exponent";
+localizedStrings["Key Value"] = "Key Value";
+localizedStrings["Key ID"] = "Key ID";
+localizedStrings["Key Operations"] = "Key Operations";
+localizedStrings["Base IV"] = "Base IV";
+localizedStrings["LMS Type"] = "LMS Type";
+localizedStrings["LMOTS Type"] = "LMOTS Type";
+localizedStrings["Public Key (Raw CBOR)"] = "Public Key (Raw CBOR)";
+
+/* Additional CBOR parsing labels */
+localizedStrings["RSA Modulus (n)"] = "RSA Modulus (n)";
+localizedStrings["RSA Exponent (e)"] = "RSA Exponent (e)";
+localizedStrings["User Present (UP)"] = "User Present (UP)";
+localizedStrings["Reserved for Future Use 1 (RFU1)"] = "Reserved for Future Use 1 (RFU1)";
+localizedStrings["User Verified (UV)"] = "User Verified (UV)";
+localizedStrings["Backup Eligible (BE)"] = "Backup Eligible (BE)";
+localizedStrings["Backup State (BS)"] = "Backup State (BS)";
+localizedStrings["Reserved for Future Use 2 (RFU2)"] = "Reserved for Future Use 2 (RFU2)";
+localizedStrings["Attested Credential Data Included (AT)"] = "Attested Credential Data Included (AT)";
+localizedStrings["Extension Data Included (ED)"] = "Extension Data Included (ED)";
+localizedStrings["Extensions (Raw CBOR)"] = "Extensions (Raw CBOR)";
+localizedStrings["Extension: %s"] = "Extension: %s";
+
+/* WebAuthn extension interpretations */
+localizedStrings["App ID used"] = "App ID used";
+localizedStrings["App ID not used"] = "App ID not used";
+localizedStrings["App ID exclusion applied"] = "App ID exclusion applied";
+localizedStrings["App ID exclusion not applied"] = "App ID exclusion not applied";
+localizedStrings["No properties"] = "No properties";
+localizedStrings["No large blob data"] = "No large blob data";
+localizedStrings["HMAC Secret extension"] = "HMAC Secret extension";
+localizedStrings["HMAC Secret supported"] = "HMAC Secret supported";
+localizedStrings["HMAC Secret not supported"] = "HMAC Secret not supported";
+localizedStrings["User verification optional"] = "User verification optional";
+localizedStrings["User verification optional with credential ID list"] = "User verification optional with credential ID list";
+localizedStrings["User verification required"] = "User verification required";
+localizedStrings["Credential protection enforced"] = "Credential protection enforced";
+localizedStrings["Credential protection not enforced"] = "Credential protection not enforced";
+
+/* User verification methods */
+localizedStrings["Presence"] = "Presence";
+localizedStrings["Fingerprint"] = "Fingerprint";
+localizedStrings["Passcode"] = "Passcode";
+localizedStrings["Voiceprint"] = "Voiceprint";
+localizedStrings["Faceprint"] = "Faceprint";
+localizedStrings["Location"] = "Location";
+localizedStrings["Eyeprint"] = "Eyeprint";
+localizedStrings["Pattern"] = "Pattern";
+localizedStrings["Handprint"] = "Handprint";
+localizedStrings["None"] = "None";
+localizedStrings["All"] = "All";
+
+/* Key protection types */
+localizedStrings["Software"] = "Software";
+localizedStrings["Hardware"] = "Hardware";
+localizedStrings["TEE"] = "TEE";
+localizedStrings["Secure Element"] = "Secure Element";
+localizedStrings["Remote Handle"] = "Remote Handle";
+localizedStrings["On Chip"] = "On Chip";
+
+/* COSE key types */
+localizedStrings["OKP (Octet Key Pair)"] = "OKP (Octet Key Pair)";
+localizedStrings["EC2 (Elliptic Curve)"] = "EC2 (Elliptic Curve)";
+localizedStrings["RSA"] = "RSA";
+localizedStrings["Symmetric"] = "Symmetric";
+localizedStrings["HSS-LMS"] = "HSS-LMS";
+
+/* Elliptic curves */
+localizedStrings["P-256"] = "P-256";
+localizedStrings["P-384"] = "P-384";
+localizedStrings["P-521"] = "P-521";
+localizedStrings["X25519"] = "X25519";
+localizedStrings["X448"] = "X448";
+localizedStrings["Ed25519"] = "Ed25519";
+localizedStrings["Ed448"] = "Ed448";
+localizedStrings["secp256k1"] = "secp256k1";
+
+/* Algorithm names for CBOR parsing */
+localizedStrings["ES256 (ECDSA w/ SHA-256)"] = "ES256 (ECDSA w/ SHA-256)";
+localizedStrings["ES384 (ECDSA w/ SHA-384)"] = "ES384 (ECDSA w/ SHA-384)";
+localizedStrings["ES512 (ECDSA w/ SHA-512)"] = "ES512 (ECDSA w/ SHA-512)";
+localizedStrings["EdDSA"] = "EdDSA";
+localizedStrings["RS256 (RSASSA-PKCS1-v1_5 w/ SHA-256)"] = "RS256 (RSASSA-PKCS1-v1_5 w/ SHA-256)";
+localizedStrings["RS384 (RSASSA-PKCS1-v1_5 w/ SHA-384)"] = "RS384 (RSASSA-PKCS1-v1_5 w/ SHA-384)";
+localizedStrings["RS512 (RSASSA-PKCS1-v1_5 w/ SHA-512)"] = "RS512 (RSASSA-PKCS1-v1_5 w/ SHA-512)";
+localizedStrings["PS256 (RSASSA-PSS w/ SHA-256)"] = "PS256 (RSASSA-PSS w/ SHA-256)";
+localizedStrings["PS384 (RSASSA-PSS w/ SHA-384)"] = "PS384 (RSASSA-PSS w/ SHA-384)";
+localizedStrings["PS512 (RSASSA-PSS w/ SHA-512)"] = "PS512 (RSASSA-PSS w/ SHA-512)";
+
+/* RP ID hash validation results */
+localizedStrings["matches current site"] = "matches current site";
+localizedStrings["does not match current site"] = "does not match current site";
+localizedStrings["matches %s"] = "matches %s";
+localizedStrings["does not match %s"] = "does not match %s";
+
 /* Text indicating that the local override will block the network activity with an timeout error. */
 localizedStrings["Timeout @ Local Override Type"] = "Timeout";
 localizedStrings["Timer %d Fired"] = "Timer %d Fired";
@@ -2133,3 +2342,6 @@ localizedStrings["unsupported version"] = "unsupported version";
 localizedStrings["value"] = "value";
 /* Placeholder text in an editable field for the value of a HTTP header */
 localizedStrings["value @ Local Override Popover New Headers Data Grid Item"] = "value";
+
+/* Name of Web Authentication Tab */
+localizedStrings["Web Authentication Tab Name"] = "Web Authentication";

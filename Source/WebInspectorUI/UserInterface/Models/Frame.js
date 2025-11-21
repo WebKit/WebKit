@@ -108,6 +108,35 @@ WI.Frame = class Frame extends WI.Object
         this.dispatchEventToListeners(WI.Frame.Event.ProvisionalLoadStarted);
     }
 
+    didStartWebAuthenticationOperation(ceremonyId, request, initiator)
+    {
+        let initiatorStackTrace = null;
+        let initiatorSourceCodeLocation = null;
+        let initiatorNode = null;
+
+        if (initiator) {
+            initiatorStackTrace = WI.networkManager._initiatorStackTraceFromPayload(initiator);
+            initiatorSourceCodeLocation = WI.networkManager._initiatorSourceCodeLocationFromPayload(initiator);
+            initiatorNode = WI.networkManager._initiatorNodeFromPayload(initiator);
+        }
+
+        this.dispatchEventToListeners(WI.Frame.Event.DidStartWebAuthenticationOperation, {
+            "ceremonyId": ceremonyId,
+            "request": request,
+            "initiatorStackTrace": initiatorStackTrace,
+            "initiatorSourceCodeLocation": initiatorSourceCodeLocation,
+            "initiatorNode": initiatorNode,
+        });
+    }
+
+    didFinishWebAuthenticationOperation(ceremonyId, response)
+    {
+        this.dispatchEventToListeners(WI.Frame.Event.DidFinishWebAuthenticationOperation, {
+            "ceremonyId": ceremonyId,
+            "response": response,
+        });
+    }
+
     commitProvisionalLoad(securityOrigin)
     {
         console.assert(this._provisionalMainResource);
@@ -504,7 +533,9 @@ WI.Frame.Event = {
     AllChildFramesRemoved: "frame-all-child-frames-removed",
     PageExecutionContextChanged: "frame-page-execution-context-changed",
     ExecutionContextAdded: "frame-execution-context-added",
-    ExecutionContextsCleared: "frame-execution-contexts-cleared"
+    ExecutionContextsCleared: "frame-execution-contexts-cleared",
+    DidStartWebAuthenticationOperation: "frame-did-start-web-authentication-operation",
+    DidFinishWebAuthenticationOperation: "frame-did-finish-web-authentication-operation"
 };
 
 WI.Frame.TypeIdentifier = "Frame";
