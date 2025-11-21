@@ -26,11 +26,23 @@
 #import "config.h"
 #import "_WKAuthenticationExtensionsClientInputs.h"
 
+@implementation _WKAuthenticationExtensionsLargeBlobInputs
+
+- (void)dealloc
+{
+    SUPPRESS_UNRETAINED_ARG [_support release];
+    SUPPRESS_UNRETAINED_ARG [_write release];
+    [super dealloc];
+}
+
+@end
+
 @implementation _WKAuthenticationExtensionsClientInputs
 
 - (void)dealloc
 {
     SUPPRESS_UNRETAINED_ARG [_appid release];
+    SUPPRESS_UNRETAINED_ARG [_largeBlob release];
     [super dealloc];
 }
 

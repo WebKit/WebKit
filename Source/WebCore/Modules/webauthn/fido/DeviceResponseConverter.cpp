@@ -103,12 +103,12 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         return nullptr;
     const auto& responseMap = decodedMap->getMap();
 
-    auto it = responseMap.find(CBOR(1));
+    auto it = responseMap.find(CBOR(kCtapMakeCredentialResponseFormatKey));
     if (it == responseMap.end() || !it->second.isString())
         return nullptr;
     auto format = it->second.clone();
 
-    it = responseMap.find(CBOR(2));
+    it = responseMap.find(CBOR(kCtapMakeCredentialResponseAuthDataKey));
     if (it == responseMap.end() || !it->second.isByteString())
         return nullptr;
     auto authenticatorData = it->second.clone();
@@ -117,10 +117,20 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
     if (credentialId.isEmpty())
         return nullptr;
 
-    it = responseMap.find(CBOR(3));
+    it = responseMap.find(CBOR(kCtapMakeCredentialResponseAttStmtKey));
     if (it == responseMap.end() || !it->second.isMap())
         return nullptr;
     auto attStmt = it->second.clone();
+
+    // Check for unsigned extension outputs (key 0x06)
+    std::optional<AuthenticationExtensionsClientOutputs> extensions;
+    it = responseMap.find(CBOR(kCtapMakeCredentialResponseUnsignedExtensionOutputsKey));
+    if (it != responseMap.end() && it->second.isMap()) {
+        // Convert the CBOR map to bytes and parse it
+        auto extensionsCBOR = cbor::CBORWriter::write(it->second);
+        if (extensionsCBOR)
+            extensions = AuthenticationExtensionsClientOutputs::fromCBOR(*extensionsCBOR);
+    }
 
     std::optional<Vector<uint8_t>> attestationObject;
     if (attestation == AttestationConveyancePreference::None) {
@@ -136,7 +146,10 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
     }
 
-    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject, attachment, WTFMove(transports));
+    auto response = AuthenticatorAttestationResponse::create(credentialId, *attestationObject, attachment, WTFMove(transports));
+    if (extensions)
+        response->setExtensions(WTFMove(*extensions));
+    return response;
 }
 
 RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment)
@@ -146,7 +159,7 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         return nullptr;
     const auto& responseMap = decodedMap->getMap();
 
-    auto it = responseMap.find(CBOR(1));
+    auto it = responseMap.find(CBOR(kCtapGetAssertionResponseCredentialKey));
     if (it == responseMap.end() || !it->second.isMap())
         return nullptr;
     auto& credential = it->second.getMap();
@@ -155,18 +168,18 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         return nullptr;
     auto& credentialId = itr->second.getByteString();
 
-    it = responseMap.find(CBOR(2));
+    it = responseMap.find(CBOR(kCtapGetAssertionResponseAuthDataKey));
     if (it == responseMap.end() || !it->second.isByteString())
         return nullptr;
     auto& authData = it->second.getByteString();
 
-    it = responseMap.find(CBOR(3));
+    it = responseMap.find(CBOR(kCtapGetAssertionResponseSignatureKey));
     if (it == responseMap.end() || !it->second.isByteString())
         return nullptr;
     auto& signature = it->second.getByteString();
 
     RefPtr<AuthenticatorAssertionResponse> response;
-    it = responseMap.find(CBOR(4));
+    it = responseMap.find(CBOR(kCtapGetAssertionResponseUserKey));
     if (it != responseMap.end() && it->second.isMap()) {
         auto& user = it->second.getMap();
         auto itr = user.find(CBOR(kEntityIdMapKey));
@@ -192,9 +205,20 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, { }, attachment);
     }
 
-    it = responseMap.find(CBOR(5));
+    it = responseMap.find(CBOR(kCtapGetAssertionResponseNumberOfCredentialsKey));
     if (it != responseMap.end() && it->second.isUnsigned())
         response->setNumberOfCredentials(it->second.getUnsigned());
+
+    // Check for unsigned extension outputs (key 0x08)
+    it = responseMap.find(CBOR(kCtapGetAssertionResponseUnsignedExtensionOutputsKey));
+    if (it != responseMap.end() && it->second.isMap()) {
+        // Convert the CBOR map to bytes and parse it
+        auto extensionsCBOR = cbor::CBORWriter::write(it->second);
+        if (extensionsCBOR) {
+            if (auto extensions = AuthenticationExtensionsClientOutputs::fromCBOR(*extensionsCBOR))
+                response->setExtensions(WTFMove(*extensions));
+        }
+    }
 
     return response;
 }

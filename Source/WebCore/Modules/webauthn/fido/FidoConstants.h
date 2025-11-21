@@ -297,6 +297,20 @@ constexpr int64_t kCtapGetAssertionRequestOptionsKey = 5;
 constexpr int64_t kCtapGetAssertionPinUvAuthParamKey = 6;
 constexpr int64_t kCtapGetAssertionPinUvAuthProtocolKey = 7;
 
+// CTAP2 authenticatorMakeCredential response keys
+constexpr int64_t kCtapMakeCredentialResponseFormatKey = 1;
+constexpr int64_t kCtapMakeCredentialResponseAuthDataKey = 2;
+constexpr int64_t kCtapMakeCredentialResponseAttStmtKey = 3;
+constexpr int64_t kCtapMakeCredentialResponseUnsignedExtensionOutputsKey = 6;
+
+// CTAP2 authenticatorGetAssertion response keys
+constexpr int64_t kCtapGetAssertionResponseCredentialKey = 1;
+constexpr int64_t kCtapGetAssertionResponseAuthDataKey = 2;
+constexpr int64_t kCtapGetAssertionResponseSignatureKey = 3;
+constexpr int64_t kCtapGetAssertionResponseUserKey = 4;
+constexpr int64_t kCtapGetAssertionResponseNumberOfCredentialsKey = 5;
+constexpr int64_t kCtapGetAssertionResponseUnsignedExtensionOutputsKey = 8;
+
 constexpr int64_t kCtapAuthenticatorGetInfoVersionsKey = 0x01;
 constexpr int64_t kCtapAuthenticatorGetInfoExtensionsKey = 0x02;
 constexpr int64_t kCtapAuthenticatorGetInfoAAGUIDKey = 0x03;

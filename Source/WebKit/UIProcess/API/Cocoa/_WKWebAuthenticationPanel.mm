@@ -973,6 +973,18 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
     WebCore::AuthenticationExtensionsClientInputs result;
     result.appid = extensions.appid;
 
+    if (extensions.largeBlob) {
+        WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs largeBlob;
+        largeBlob.support = extensions.largeBlob.support;
+        if (extensions.largeBlob.read)
+            largeBlob.read = extensions.largeBlob.read;
+        if (extensions.largeBlob.write) {
+            RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(span(extensions.largeBlob.write));
+            largeBlob.write = WebCore::BufferSource(WTFMove(buffer));
+        }
+        result.largeBlob = largeBlob;
+    }
+
     return result;
 }
 

@@ -26,6 +26,27 @@
 #import "config.h"
 #import "_WKAuthenticationExtensionsClientOutputs.h"
 
+@implementation _WKAuthenticationExtensionsLargeBlobOutputs
+
+- (instancetype)initWithSupported:(BOOL)supported blob:(NSData *)blob written:(BOOL)written
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _supported = supported;
+    _blob = [blob copy];
+    _written = written;
+    return self;
+}
+
+- (void)dealloc
+{
+    SUPPRESS_UNRETAINED_ARG [_blob release];
+    [super dealloc];
+}
+
+@end
+
 @implementation _WKAuthenticationExtensionsClientOutputs
 
 - (instancetype)initWithAppid:(BOOL)appid
@@ -35,6 +56,22 @@
 
     _appid = appid;
     return self;
+}
+
+- (instancetype)initWithAppid:(BOOL)appid largeBlob:(_WKAuthenticationExtensionsLargeBlobOutputs *)largeBlob
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _appid = appid;
+    _largeBlob = [largeBlob retain];
+    return self;
+}
+
+- (void)dealloc
+{
+    SUPPRESS_UNRETAINED_ARG [_largeBlob release];
+    [super dealloc];
 }
 
 @end

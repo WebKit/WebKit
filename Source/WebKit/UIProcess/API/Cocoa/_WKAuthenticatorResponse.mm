@@ -27,7 +27,10 @@
 #import "_WKAuthenticatorResponseInternal.h"
 
 #import "_WKAuthenticationExtensionsClientOutputs.h"
+#import "_WKAuthenticationExtensionsClientOutputsInternal.h"
+#import <WebCore/AuthenticationExtensionsClientOutputs.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKAuthenticatorResponse {
     RetainPtr<_WKAuthenticationExtensionsClientOutputs> _extensions;
@@ -69,6 +72,30 @@
 
 - (_WKAuthenticationExtensionsClientOutputs *)extensions
 {
+    if (!_extensions && _extensionOutputsCBOR) {
+        // Parse CBOR to create extensions object
+        auto extensionOutputs = WebCore::AuthenticationExtensionsClientOutputs::fromCBOR(makeVector(_extensionOutputsCBOR));
+        if (extensionOutputs) {
+            // Only create the Cocoa extensions object if there are actual extension values
+            bool hasExtensions = extensionOutputs->appid.has_value() || extensionOutputs->largeBlob.has_value();
+            if (!hasExtensions)
+                return nil;
+
+            RetainPtr<_WKAuthenticationExtensionsLargeBlobOutputs> largeBlobOutputs;
+
+            if (extensionOutputs->largeBlob) {
+                BOOL supported = extensionOutputs->largeBlob->supported.value_or(false);
+                RetainPtr<NSData> blob;
+                if (extensionOutputs->largeBlob->blob)
+                    blob = adoptNS([[NSData alloc] initWithBytes:extensionOutputs->largeBlob->blob->data() length:extensionOutputs->largeBlob->blob->byteLength()]);
+                BOOL written = extensionOutputs->largeBlob->written.value_or(false);
+
+                largeBlobOutputs = adoptNS([[_WKAuthenticationExtensionsLargeBlobOutputs alloc] initWithSupported:supported blob:blob.get() written:written]);
+            }
+
+            _extensions = adoptNS([[_WKAuthenticationExtensionsClientOutputs alloc] initWithAppid:extensionOutputs->appid.value_or(false) largeBlob:largeBlobOutputs.get()]);
+        }
+    }
     return _extensions.get();
 }
 

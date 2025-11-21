@@ -87,6 +87,11 @@ static Ref<API::WebAuthenticationAssertionResponse> protectedResponse(_WKWebAuth
     return _response->accessGroup().createNSString().autorelease();
 }
 
+- (NSData *)largeBlob
+{
+    return wrapper(protectedResponse(self)->largeBlob()).autorelease();
+}
+
 #endif // ENABLE(WEB_AUTHN)
 
 - (void)setLAContext:(LAContext *)context

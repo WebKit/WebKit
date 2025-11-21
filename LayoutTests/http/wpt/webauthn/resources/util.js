@@ -146,6 +146,25 @@ const testAssertionMessageApduBase64 =
 const testCcidNoUidBase64 = "aIE=";
 const testCcidValidUidBase64 = "CH+d1ZAA";
 const testCreateMessageFullKeyStoreBase64 = "KA==";
+const testLargeBlobMakeCredentialMessageBase64 =
+    "AKQBZnBhY2tlZAJYxEbMf7lnnVWy25CS4cjZ5eHQK3WA8LSBLHcJYuHkj1rYQQAA" +
+    "AE74oBHzjApNFYAGFxEfntx9AEAoCK3O6P5OyXN6V/f+9nAga0NA2Cgp4V3mgSJ5" +
+    "jOHLMDrmxp/S0rbD+aihru1C0aAN3BkiM6GNy5nSlDVqOgTgpQECAyYgASFYIEFb" +
+    "he3RkNud6sgyraBGjlh1pzTlCZehQlL/b18HZ6WGIlggJgfUd/en9p5AIqMQbUni" +
+    "nEeXdFLkvW0/zV5BpEjjNxADoAahaWxhcmdlQmxvYqFpc3VwcG9ydGVk9Q==";
+const testLargeBlobGetAssertionReadMessageBase64 =
+    "AKQBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hIMEUCIQCSRRe64FaA" +
+    "Hj8XRUHuw5VFVNPSBz5sXtTMx1MEaAkWWwgCIBii/r2gYcdjBP6v+ijbPDrrc4T9" +
+    "gkKCdS+xXuuBvbgXCKFpbGFyZ2VCbG9ioWRibG9iRGRhdGE=";
+const testLargeBlobGetAssertionWriteMessageBase64 =
+    "AKQBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hIMEUCIQCSRRe64FaA" +
+    "Hj8XRUHuw5VFVNPSBz5sXtTMx1MEaAkWWwgCIBii/r2gYcdjBP6v+ijbPDrrc4T9" +
+    "gkKCdS+xXuuBvbgXCKFpbGFyZ2VCbG9ioWd3cml0dGVu9Q==";
+
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 

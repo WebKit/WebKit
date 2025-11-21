@@ -46,6 +46,7 @@ public:
     const WTF::String& group() const { return m_response->group(); }
     RefPtr<Data> credentialID() const;
     const WTF::String& accessGroup() const { return m_response->accessGroup(); }
+    RefPtr<Data> largeBlob() const;
 
     void setLAContext(LAContext *context) { m_response->setLAContext(context); }
 
