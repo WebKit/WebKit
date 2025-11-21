@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test-pre.js"></script>
 <style>
 body { margin: 0; padding: 0 }
 </style>
@@ -10,7 +10,7 @@ body { margin: 0; padding: 0 }
 <div id="test" contenteditable></div>
 <p id="console"></p>
 <script type="text/javascript">
-    description("When inserting dictated text, range of text that has alternative text is attached as DictationAlternatives marker.");
+    description("Editing text that has DictationAlternatives marker whould cause the marker to be removed.");
 
     var console_messages = document.createElement("ol");
     
@@ -32,6 +32,7 @@ body { margin: 0; padding: 0 }
             var dictatedString = textInputController.makeDictatedString("this is a text", "test", 10, 4);
             document.execCommand("SelectAll");
             textInputController.insertText(dictatedString);
+            textInputController.doCommand("deleteBackward:");
 
             var markedText = "";
             if (window.internals) {
@@ -41,7 +42,7 @@ body { margin: 0; padding: 0 }
                     markedText = marked.toString();
             }
 
-            shouldBeEqualToString("markedText", "text");
+            shouldBeEqualToString("markedText", "");
             document.write("TEST COMPLETE");
 
         } catch (ex) {

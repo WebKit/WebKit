@@ -328,12 +328,6 @@ webkit.org/b/81833 fast/events/drag-and-drop-link-into-focused-contenteditable.h
 fast/forms/file/file-input-reset-validation.html [ Failure ]
 fast/forms/file/file-input-empty-validation.html [ Failure ]
 
-# Missing functionality of textInputController
-# https://bugs.webkit.org/show_bug.cgi?id=89401
-editing/mac/input/insert-dictated-text.html
-editing/mac/input/crash-for-empty-text-alternative.html
-editing/mac/input/edit-dictated-text-with-alternative.html
-
 # This test times out on Mac WK2 every time.
 webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]
 
@@ -654,27 +648,6 @@ webkit.org/b/139828 svg/animations/animateMotion-additive-2d.svg [ Pass ImageOnl
 
 ########################################
 ### START OF (4) Features that are not supported in WebKit2 and likely never will be
-
-# WebKitTestRunner needs textInputController
-# <https://bugs.webkit.org/show_bug.cgi?id=42337>
-editing/mac/input/5576619.html
-editing/mac/input/bold-node.html
-editing/mac/input/caret-primary-bidi.html
-editing/mac/input/firstrectforcharacterrange-caret-in-br.html
-editing/mac/input/firstrectforcharacterrange-plain.html
-editing/mac/input/firstrectforcharacterrange-styled.html
-editing/mac/input/firstrectforcharacterrange-vertical.html
-editing/mac/input/hangul-enter-confirms-and-sends-keypress.html
-editing/mac/input/insert-delete-smp-symbol.html
-editing/mac/input/kotoeri-enter-to-confirm-and-newline.html
-editing/mac/input/range-for-empty-document.html
-editing/mac/input/replace-invalid-range.html
-editing/mac/input/secure-input.html
-editing/mac/input/text-input-controller.html
-editing/mac/input/text-input-controller-no-editable-no-crash.html
-editing/mac/input/wrapped-line-char-rect.html
-editing/mac/input/NSBackgroundColor-transparent.html
-editing/mac/selection/25228.html
 
 # WebKitTestRunner needs testRunner.setCallCloseOnWebViews
 # http://webkit.org/b/46714
