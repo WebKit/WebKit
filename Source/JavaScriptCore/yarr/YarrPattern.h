@@ -756,6 +756,20 @@ struct YarrPattern {
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
     String m_atom;
 
+    struct TagInfo {
+        struct Tag {
+            char data[16];
+            uint8_t length;
+        };
+
+        uint8_t count { 0 };
+        uint8_t minTagLength { 0 };
+        Tag tags[8];
+    };
+    std::optional<TagInfo> m_tagInfo;
+
+    const std::optional<TagInfo>& tagInfo() const { return m_tagInfo; }
+
 private:
     ErrorCode compile(StringView patternString);
 

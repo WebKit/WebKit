@@ -33,6 +33,7 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <limits>
+#include <wtf/ASCIICType.h>
 #include <wtf/BitSet.h>
 #include <wtf/DataLog.h>
 #include <wtf/StackCheck.h>
@@ -2186,10 +2187,10 @@ public:
             return;
         if (m_pattern.eitherUnicode())
             return;
-        if (m_pattern.ignoreCase())
-            return;
 
         auto tryExtractAtom = [&]() -> bool {
+            if (m_pattern.ignoreCase())
+                return false;
             if (m_pattern.m_containsBOL)
                 return false;
             PatternDisjunction* disjunction = m_pattern.m_body;
@@ -2226,6 +2227,8 @@ public:
         };
 
         auto tryExtractSpaces = [&]() -> bool {
+            if (m_pattern.ignoreCase())
+                return false;
             PatternDisjunction* disjunction = m_pattern.m_body;
             auto& alternatives = disjunction->m_alternatives;
             if (alternatives.size() != 1)
@@ -2354,6 +2357,8 @@ public:
 
             if (alternatives.size() != 2)
                 return false;
+            if (m_pattern.ignoreCase())
+                return false;
 
             auto isCROptionalLF = [](PatternAlternative* alternative) -> bool {
                 if (alternative->m_terms.size() != 2)
@@ -2413,6 +2418,85 @@ public:
             return false;
         };
 
+        auto tryExtractHTMLTags = [&]() -> bool {
+            // Detect pattern: /<tag1|<tag2|...|<tagN with 2-8 alternatives (case-sensitive or insensitive)
+            // Each alternative must be '<' followed by alphanumeric tag name
+            constexpr size_t MAX_HTML_TAG_ARITY = 8;
+
+            PatternDisjunction* disjunction = m_pattern.m_body;
+            auto& alternatives = disjunction->m_alternatives;
+
+            if (alternatives.size() < 2 || alternatives.size() > MAX_HTML_TAG_ARITY)
+                return false;
+
+            Vector<String> tags;
+
+            for (auto& alternative : alternatives) {
+                auto& terms = alternative->m_terms;
+
+                if (terms.isEmpty())
+                    return false;
+
+                if (terms[0].type != PatternTerm::Type::PatternCharacter)
+                    return false;
+                if (terms[0].quantityType != QuantifierType::FixedCount)
+                    return false;
+                if (terms[0].quantityMinCount != 1 || terms[0].quantityMaxCount != 1)
+                    return false;
+                if (terms[0].patternCharacter != '<')
+                    return false;
+                if (terms.size() < 2)
+                    return false;
+
+                StringBuilder tagBuilder;
+                for (size_t i = 1; i < terms.size(); ++i) {
+                    auto& term = terms[i];
+                    if (term.type != PatternTerm::Type::PatternCharacter)
+                        return false;
+                    if (term.quantityType != QuantifierType::FixedCount)
+                        return false;
+                    if (term.quantityMinCount != 1 || term.quantityMaxCount != 1)
+                        return false;
+
+                    char32_t ch = term.patternCharacter;
+
+                    if (!isASCIIAlphanumeric(ch))
+                        return false;
+
+                    ch = toASCIILower(ch);
+                    tagBuilder.append(static_cast<char>(ch));
+                }
+
+                String tag = tagBuilder.toString();
+                if (tag.isEmpty())
+                    return false;
+                if (tag.length() > 16)
+                    return false;
+
+                tags.append(tag);
+            }
+
+            YarrPattern::TagInfo info;
+            info.count = static_cast<uint8_t>(tags.size());
+            info.minTagLength = UINT8_MAX;
+
+            for (size_t i = 0; i < tags.size(); ++i) {
+                const String& tag = tags[i];
+                uint8_t tagLength = static_cast<uint8_t>(tag.length());
+                info.tags[i].length = tagLength;
+
+                for (size_t j = 0; j < tagLength && j < 16; ++j)
+                    info.tags[i].data[j] = tag[j];
+
+                if (tagLength < info.minTagLength)
+                    info.minTagLength = tagLength;
+            }
+
+            m_pattern.m_tagInfo = info;
+            m_pattern.m_specificPattern = SpecificPattern::HTMLTags;
+            return true;
+        };
+
         if (tryExtractAtom())
             return;
 
@@ -2420,6 +2504,9 @@ public:
             return;
 
         if (tryExtractNewlines())
+            return;
+
+        if (tryExtractHTMLTags())
             return;
     }
 

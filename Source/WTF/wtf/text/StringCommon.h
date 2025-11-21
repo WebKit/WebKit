@@ -1448,12 +1448,82 @@ inline NewlinePosition findNextNewline(std::span<const CharacterType> span, size
     return { startPosition + pos, 1 };
 }
 
+template<uint8_t TagCount, typename CharacterType, typename TagType>
+inline bool containsHTMLTag(std::span<const CharacterType> span, const TagType* tags, uint8_t minTagLength, bool ignoreCase)
+{
+    // Check if string contains any of the specified HTML tags
+    // Used to optimize RegExp test() for patterns like /<tag1|<tag2|.../[i]
+
+    if (span.size() < 1u + minTagLength)
+        return false;
+
+    using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
+
+    auto ltVector = SIMD::splat<UnsignedType>('<');
+
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, ltVector);
+        return SIMD::findFirstNonZeroIndex(mask);
+    };
+
+    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
+        return current == '<';
+    };
+
+    constexpr size_t threshold = 32;
+    size_t position = 0;
+
+    while (position < span.size()) {
+        auto searchSpan = span.subspan(position);
+        auto* ptr = SIMD::find<CharacterType, threshold>(searchSpan, vectorMatch, scalarMatch);
+
+        if (ptr == searchSpan.data() + searchSpan.size())
+            return false;
+
+        size_t ltPos = ptr - searchSpan.data();
+        auto remainingSpan = searchSpan.subspan(ltPos + 1);
+
+        for (uint8_t i = 0; i < TagCount; ++i) {
+            const auto& tag = tags[i];
+            uint8_t len = tag.length;
+
+            if (remainingSpan.size() < len)
+                continue;
+
+            bool match = true;
+            if (ignoreCase) {
+                for (uint8_t j = 0; j < len; ++j) {
+                    if (toASCIILower(remainingSpan[j]) != tag.data[j]) {
+                        match = false;
+                        break;
+                    }
+                }
+            } else {
+                for (uint8_t j = 0; j < len; ++j) {
+                    if (remainingSpan[j] != tag.data[j]) {
+                        match = false;
+                        break;
+                    }
+                }
+            }
+
+            if (match)
+                return true;
+        }
+
+        position += ltPos + 1;
+    }
+
+    return false;
+}
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 }
 
 using WTF::charactersContain;
 using WTF::contains;
+using WTF::containsHTMLTag;
 using WTF::containsIgnoringASCIICase;
 using WTF::endsWith;
 using WTF::endsWithLettersIgnoringASCIICase;

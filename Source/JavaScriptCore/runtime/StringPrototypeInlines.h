@@ -1108,6 +1108,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
     case Yarr::SpecificPattern::LeadingSpacesStar:
     case Yarr::SpecificPattern::Atom:
     case Yarr::SpecificPattern::Newlines:
+    case Yarr::SpecificPattern::HTMLTags:
     case Yarr::SpecificPattern::None:
         break;
     }
@@ -1292,6 +1293,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
         }
         case Yarr::SpecificPattern::Atom:
         case Yarr::SpecificPattern::Newlines:
+        case Yarr::SpecificPattern::HTMLTags:
         case Yarr::SpecificPattern::None:
             break;
         }

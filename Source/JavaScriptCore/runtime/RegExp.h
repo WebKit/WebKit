@@ -170,6 +170,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool hasValidAtom() const { return !m_atom.isNull(); }
     const String& atom() const { return m_atom; }
     Yarr::SpecificPattern specificPattern() const { return m_specificPattern; }
+    const std::optional<Yarr::YarrPattern::TagInfo>& tagInfo() const { return m_tagInfo; }
 
 private:
     friend class RegExpCache;
@@ -219,6 +220,7 @@ private:
 
     String m_patternString;
     String m_atom;
+    std::optional<Yarr::YarrPattern::TagInfo> m_tagInfo;
     RegExpState m_state { NotCompiled };
     Yarr::SpecificPattern m_specificPattern { Yarr::SpecificPattern::None };
     OptionSet<Yarr::Flags> m_flags;

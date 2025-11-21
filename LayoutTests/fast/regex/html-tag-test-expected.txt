@@ -1,0 +1,39 @@
+This test checks the SIMD-optimized HTML tag pattern for correctness
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS htmlTagPattern.test("<script>alert(1)</script>") is true
+PASS htmlTagPattern.test("<SCRIPT>code</SCRIPT>") is true
+PASS htmlTagPattern.test("<style>css</style>") is true
+PASS htmlTagPattern.test("<STYLE>CSS</STYLE>") is true
+PASS htmlTagPattern.test("<link rel=\"stylesheet\">") is true
+PASS htmlTagPattern.test("<LINK href=\"file\">") is true
+PASS htmlTagPattern.test("<sCrIpT>mixed case</sCrIpT>") is true
+PASS htmlTagPattern.test("Just plain text") is false
+PASS htmlTagPattern.test("<div><span>") is false
+PASS htmlTagPattern.test("script without bracket") is false
+PASS htmlTagPattern.test("") is false
+PASS htmlTagPatternCaseSensitive.test("<script>code</script>") is true
+PASS htmlTagPatternCaseSensitive.test("<style>css</style>") is true
+PASS htmlTagPatternCaseSensitive.test("<link>") is true
+PASS htmlTagPatternCaseSensitive.test("<SCRIPT>") is false
+PASS htmlTagPatternCaseSensitive.test("<STYLE>") is false
+PASS htmlTagPatternCaseSensitive.test("<LINK>") is false
+PASS htmlTagPattern.test("<script>at start") is true
+PASS htmlTagPattern.test("at end<script>") is true
+PASS htmlTagPattern.test("in<script>middle") is true
+PASS htmlTagPattern.test(longStringWithTag) is true
+PASS htmlTagPattern.test(longStringNoMatch) is false
+PASS pattern8Tags.test("<div>") is true
+PASS pattern8Tags.test("<li>") is true
+PASS pattern8Tags.test("<h1>") is false
+PASS patternAlphanumeric.test("<h2test>") is true
+PASS patternAlphanumeric.test("<h2>") is false
+PASS patternLongTag.test("<script>") is true
+PASS patternLongTag.test("<verylongtagnameover16chars>") is true
+PASS patternLongTag.test("<style>") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

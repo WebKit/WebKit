@@ -156,6 +156,68 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncTest, (JSGlobalObject* globalObject, Cal
             return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
         auto strValue = str->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
+
+        // Fast path for HTML tag pattern: /<tag1|<tag2|.../[i]
+        if (regExp->regExp()->specificPattern() == Yarr::SpecificPattern::HTMLTags) {
+            const auto& tagInfoOpt = regExp->regExp()->tagInfo();
+            if (tagInfoOpt) {
+                const auto& tagInfo = *tagInfoOpt;
+                bool ignoreCase = regExp->regExp()->ignoreCase();
+
+                bool found = false;
+
+                switch (tagInfo.count) {
+                case 2:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<2>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<2>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 3:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<3>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<3>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 4:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<4>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<4>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 5:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<5>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<5>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 6:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<6>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<6>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 7:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<7>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<7>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                case 8:
+                    if (strValue->is8Bit())
+                        found = WTF::containsHTMLTag<8>(strValue->span8(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    else
+                        found = WTF::containsHTMLTag<8>(strValue->span16(), tagInfo.tags, tagInfo.minTagLength, ignoreCase);
+                    break;
+                default:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+
+                return JSValue::encode(jsBoolean(found));
+            }
+        }
+
         if (!strValue->isNull() && regExp->getLastIndex().isNumber()) [[likely]]
             RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(regExp->test(globalObject, str))));
     }

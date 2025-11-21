@@ -83,6 +83,7 @@ enum class SpecificPattern : uint8_t {
     TrailingSpacesStar,
     TrailingSpacesPlus,
     Newlines,
+    HTMLTags,
 };
 
 struct BytecodePattern;
