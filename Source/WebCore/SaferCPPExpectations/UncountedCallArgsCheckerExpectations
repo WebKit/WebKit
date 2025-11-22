@@ -81,7 +81,6 @@ Modules/webdatabase/LocalDOMWindowWebDatabase.cpp
 Modules/webdatabase/SQLStatement.cpp
 Modules/webdatabase/SQLTransaction.cpp
 Modules/webdatabase/SQLTransactionBackend.cpp
-Modules/webdatabase/SQLTransactionCoordinator.cpp
 Modules/webtransport/WebTransport.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
@@ -872,7 +871,6 @@ style/values/transforms/StyleTranslate.cpp
 style/values/will-change/StyleWillChange.h
 svg/SVGAElement.cpp
 svg/SVGAElement.h
-svg/SVGAltGlyphElement.cpp
 svg/SVGCircleElement.cpp
 svg/SVGCircleElement.h
 svg/SVGClipPathElement.cpp

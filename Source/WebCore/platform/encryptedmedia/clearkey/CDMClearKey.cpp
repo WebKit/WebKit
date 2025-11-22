@@ -461,11 +461,8 @@ void CDMInstanceSessionClearKey::requestLicense(LicenseType, KeyGroupingStrategy
         initData = extractKeyIdFromWebMInitData(initData.get());
 
     callOnMainThread(
-        [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback), initData = WTFMove(initData)]() mutable {
-            if (!weakThis)
-                return;
-
-            callback(WTFMove(initData), m_sessionID, false, Succeeded);
+        [sessionID = m_sessionID, callback = WTFMove(callback), initData = WTFMove(initData)]() mutable {
+            callback(WTFMove(initData), sessionID, false, Succeeded);
         });
 }
 

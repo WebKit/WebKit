@@ -9,7 +9,6 @@ Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/paymentrequest/PaymentRequest.cpp
 Modules/push-api/PushDatabase.cpp
-Modules/webaudio/AudioWorkletThread.cpp
 Modules/webaudio/OfflineAudioContext.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
@@ -25,7 +24,6 @@ animation/KeyframeEffect.cpp
 bindings/js/JSDOMPromiseDeferred.cpp
 contentextensions/ContentExtensionsBackend.cpp
 crypto/SubtleCrypto.cpp
-css/CSSPendingSubstitutionValue.cpp
 css/CSSValue.cpp
 css/CSSVariableReferenceValue.cpp
 dom/ContentVisibilityDocumentState.cpp
@@ -48,14 +46,12 @@ page/writing-tools/WritingToolsController.mm
 platform/ScrollableArea.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/encryptedmedia/CDMProxy.cpp
-platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/graphics/ShadowBlur.cpp
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
 [ iOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-platform/graphics/filters/FilterOperation.cpp
 [ iOS ] platform/ios/DragImageIOS.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp

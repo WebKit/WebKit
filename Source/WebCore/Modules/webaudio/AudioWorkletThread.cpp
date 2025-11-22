@@ -69,7 +69,7 @@ WorkerDebuggerProxy* AudioWorkletThread::workerDebuggerProxy() const
 
 Ref<Thread> AudioWorkletThread::createThread()
 {
-    return Thread::create("WebCore: AudioWorklet"_s, [this] {
+    return Thread::create("WebCore: AudioWorklet"_s, [this, weakThis = ThreadSafeWeakPtr { *this }] {
         workerOrWorkletThread();
     }, ThreadType::Audio, m_parameters.isAudioContextRealTime ? Thread::QOS::UserInteractive : Thread::QOS::Default);
 }

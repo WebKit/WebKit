@@ -123,8 +123,8 @@ void SQLTransactionCoordinator::shutdown()
         // Clean up transactions that have reached "lockAcquired":
         // Transaction phase 4 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
-        if (info.activeWriteTransaction)
-            info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
+        if (RefPtr transaction = info.activeWriteTransaction)
+            transaction->notifyDatabaseThreadIsShuttingDown();
         for (auto& transaction : info.activeReadTransactions)
             transaction->notifyDatabaseThreadIsShuttingDown();
 

@@ -46,7 +46,7 @@ uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float);
 template<typename T> T convertByteAlphaTo(uint8_t);
 template<typename T> T convertFloatAlphaTo(float);
 
-template<typename ColorType, typename Functor> auto colorByModifingEachNonAlphaComponent(const ColorType&, Functor&&);
+template<typename ColorType, typename Functor> auto colorByModifingEachNonAlphaComponent(const ColorType&, NOESCAPE Functor&&);
 
 template<typename ColorType> constexpr auto colorWithOverriddenAlpha(const ColorType&, uint8_t overrideAlpha);
 template<typename ColorType> auto colorWithOverriddenAlpha(const ColorType&, float overrideAlpha);
@@ -119,7 +119,7 @@ template<> inline float convertFloatAlphaTo<float>(float value)
     return clampedAlpha(value);
 }
 
-template<typename ColorType, typename Functor> auto colorByModifingEachNonAlphaComponent(const ColorType& color, Functor&& functor)
+template<typename ColorType, typename Functor> auto colorByModifingEachNonAlphaComponent(const ColorType& color, NOESCAPE Functor&& functor)
 {
     auto components = asColorComponents(color.resolved());
     auto copy = components;
