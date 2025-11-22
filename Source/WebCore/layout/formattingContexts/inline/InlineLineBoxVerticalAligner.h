@@ -65,7 +65,7 @@ private:
     const InlineLayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    CheckedRef<const InlineFormattingContext> m_inlineFormattingContext;
 };
 
 }

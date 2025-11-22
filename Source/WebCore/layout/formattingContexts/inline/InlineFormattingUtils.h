@@ -27,13 +27,13 @@
 
 #include "InlineLine.h"
 #include "InlineLineBuilder.h"
+#include <WebCore/InlineFormattingContext.h>
 #include <WebCore/InlineLineTypes.h>
 
 namespace WebCore {
 namespace Layout {
 
 class FloatingContext;
-class InlineFormattingContext;
 class InlineLevelBox;
 
 class InlineFormattingUtils {
@@ -82,7 +82,7 @@ private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    CheckedRef<const InlineFormattingContext> m_inlineFormattingContext;
 };
 
 }

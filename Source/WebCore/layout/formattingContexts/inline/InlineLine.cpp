@@ -690,7 +690,7 @@ bool Line::hasTrailingForcedLineBreak(const RunList& runs)
 
 const InlineFormattingContext& Line::formattingContext() const
 {
-    return m_inlineFormattingContext;
+    return m_inlineFormattingContext.get();
 }
 
 Line::TrimmableTrailingContent::TrimmableTrailingContent(RunList& runs)
@@ -947,7 +947,7 @@ InlineLayoutUnit Line::Run::removeTrailingWhitespace()
         auto endPosition = m_textContent->start + m_textContent->length;
         RELEASE_ASSERT(startPosition < endPosition - trailingTrimmableContentLength);
         if (inlineTextBox.content()[endPosition - 1] == space)
-            trimmedWidth = TextUtil::trailingWhitespaceWidth(inlineTextBox, m_style.fontCascade(), startPosition, endPosition);
+            trimmedWidth = TextUtil::trailingWhitespaceWidth(inlineTextBox, m_style->fontCascade(), startPosition, endPosition);
     }
     m_textContent->length -= trailingTrimmableContentLength;
     m_trailingWhitespace = { };
@@ -981,12 +981,12 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
 
 bool Line::Run::hasTextCombine() const
 {
-    return m_style.hasTextCombine();
+    return m_style->hasTextCombine();
 }
 
 InlineLayoutUnit Line::Run::letterSpacing() const
 {
-    return m_style.usedLetterSpacing();
+    return m_style->usedLetterSpacing();
 }
 
 }

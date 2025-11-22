@@ -91,7 +91,7 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(InlineFormattingContext
     , m_lineBox(lineBox)
     , m_displayLine(displayLine)
 {
-    auto& initialContainingBlockGeometry = m_formattingContext.geometryForBox(FormattingContext::initialContainingBlock(root()), InlineFormattingContext::EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth);
+    auto& initialContainingBlockGeometry = m_formattingContext->geometryForBox(FormattingContext::initialContainingBlock(root()), InlineFormattingContext::EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth);
     m_initialContaingBlockSize = ceiledIntSize(LayoutSize { initialContainingBlockGeometry.contentBoxWidth(), initialContainingBlockGeometry.contentBoxHeight() });
 }
 

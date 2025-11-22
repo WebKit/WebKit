@@ -27,6 +27,7 @@
 
 #include "FormattingContext.h"
 #include <WebCore/LayoutElementBox.h>
+#include <WebCore/LayoutState.h>
 #include <WebCore/PlacedFloats.h>
 #include <wtf/TZoneMalloc.h>
 

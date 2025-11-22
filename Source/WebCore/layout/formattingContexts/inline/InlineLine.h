@@ -201,8 +201,8 @@ public:
         InlineLayoutUnit removeTrailingLetterSpacing();
 
         Type m_type { Type::Text };
-        const Box* m_layoutBox { nullptr };
-        const RenderStyle& m_style;
+        const CheckedPtr<const Box> m_layoutBox;
+        const CheckedRef<const RenderStyle> m_style;
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
         InlineDisplay::Box::Expansion m_expansion;
@@ -310,7 +310,7 @@ private:
         std::optional<TrailingContent> m_trailingContent { };
     };
 
-    const InlineFormattingContext& m_inlineFormattingContext;
+    const CheckedRef<const InlineFormattingContext> m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
     HangingContent m_hangingContent;
@@ -389,7 +389,7 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 inline TextDirection Line::Run::inlineDirection() const
 {
-    return m_style.writingMode().bidiDirection();
+    return m_style->writingMode().bidiDirection();
 }
 
 }

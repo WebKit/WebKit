@@ -29,6 +29,7 @@
 #include <WebCore/InlineLayoutState.h>
 #include "InlineLineBuilder.h"
 #include <WebCore/TextUtil.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 namespace Layout {
@@ -70,7 +71,7 @@ private:
     const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    CheckedRef<const InlineFormattingContext> m_inlineFormattingContext;
     LineLayoutResult& m_lineLayoutResult;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     bool m_lineHasNonLineSpanningRubyContent { false };

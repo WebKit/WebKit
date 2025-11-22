@@ -32,6 +32,7 @@
 #include <WebCore/InlineLayoutState.h>
 #include <WebCore/InlineQuirks.h>
 #include <WebCore/LayoutIntegrationUtils.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -54,8 +55,9 @@ struct InlineLayoutResult {
 
 // This class implements the layout logic for inline formatting context.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
-class InlineFormattingContext {
+class InlineFormattingContext : public CanMakeCheckedPtr<InlineFormattingContext> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineFormattingContext);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InlineFormattingContext);
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 

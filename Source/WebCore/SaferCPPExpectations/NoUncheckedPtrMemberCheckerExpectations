@@ -17,7 +17,6 @@ layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineFormattingUtils.cpp
 layout/formattingContexts/inline/InlineItem.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
-layout/formattingContexts/inline/InlineLine.h
 layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.h
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.h

@@ -372,13 +372,13 @@ void LineLayout::updateOverflow()
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.placedFloats(), { } };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
+    auto inlineFormattingContext = makeUnique<Layout::InlineFormattingContext>(rootLayoutBox(), layoutState(), parentBlockLayoutState);
     if (m_lineDamage)
         m_inlineContentCache.resetMinimumMaximumContentSizes();
     // FIXME: This is where we need to switch between minimum and maximum box geometries.
     // Currently we only support content where min == max.
     m_boxGeometryUpdater.setFormattingContextContentGeometry({ }, Layout::IntrinsicWidthMode::Minimum);
-    auto [minimumContentSize, maximumContentSize] = inlineFormattingContext.minimumMaximumContentSize(m_lineDamage.get());
+    auto [minimumContentSize, maximumContentSize] = inlineFormattingContext->minimumMaximumContentSize(m_lineDamage.get());
     return { minimumContentSize, maximumContentSize };
 }
 
@@ -483,18 +483,18 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
+    auto inlineFormattingContext = makeUnique<Layout::InlineFormattingContext>(rootLayoutBox(), layoutState(), parentBlockLayoutState);
     // Temporary, integration only.
-    inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
+    inlineFormattingContext->layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
 
-    auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
-    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTFMove(layoutResult)) };
+    auto layoutResult = inlineFormattingContext->layout(inlineContentConstraints(), m_lineDamage.get());
+    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext->layoutState(), WTFMove(layoutResult)) };
 
     m_lineDamage = { };
 
     auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout);
 
-    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), layoutResult.didDiscardContent);
+    updateRenderTreePositions(adjustments, inlineFormattingContext->layoutState(), layoutResult.didDiscardContent);
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.

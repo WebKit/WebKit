@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include <WebCore/InlineFormattingContext.h>
 #include <WebCore/InlineLineBox.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 namespace Layout {
 
-class InlineFormattingContext;
 class LineBox;
 
 class InlineQuirks {
@@ -50,7 +51,7 @@ private:
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
 
 private:
-    const InlineFormattingContext& m_inlineFormattingContext;
+    const CheckedRef<const InlineFormattingContext> m_inlineFormattingContext;
 };
 
 }

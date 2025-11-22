@@ -28,6 +28,7 @@
 #include "InlineFormattingContext.h"
 #include "InlineLineBuilder.h"
 #include <WebCore/LayoutUnits.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Range.h>
 
 namespace WebCore {
@@ -85,13 +86,13 @@ private:
     const LineBox& lineBox() const { return m_lineBox; }
     size_t lineIndex() const { return lineBox().lineIndex(); }
     const ConstraintsForInlineContent& constraints() const { return m_constraints; }
-    const ElementBox& root() const { return m_formattingContext.root(); }
+    const ElementBox& root() const { return m_formattingContext->root(); }
     const RenderStyle& rootStyle() const { return lineIndex() ? root().style() : root().firstLineStyle(); }
     InlineFormattingContext& formattingContext() { return m_formattingContext; }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
 
 private:
-    InlineFormattingContext& m_formattingContext;
+    CheckedRef<InlineFormattingContext> m_formattingContext;
     const ConstraintsForInlineContent& m_constraints;
     const LineBox& m_lineBox;
     const InlineDisplay::Line& m_displayLine;
