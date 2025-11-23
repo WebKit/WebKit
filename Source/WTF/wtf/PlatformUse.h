@@ -438,7 +438,7 @@
 
 // EWS only
 #undef USE_COMPRESSED_HEAP
-#define USE_COMPRESSED_HEAP 1
+#define USE_COMPRESSED_HEAP 0
 
 #if !defined(USE_COMPRESSED_HEAP)
 /* Change run-jsc-stress-tests too. */
@@ -447,5 +447,4 @@
 
 #if defined(__cplusplus)
 constexpr bool useCompressedHeap = USE_COMPRESSED_HEAP;
-static_assert(useCompressedHeap);
 #endif

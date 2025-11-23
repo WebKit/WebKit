@@ -151,7 +151,6 @@ macro unimplementedCompressedHeap()
     if UseCompressedHeap
         break
     else
-        error
     end
 end
 
@@ -171,7 +170,9 @@ macro makeInt32(r)
         restoreStateAfterCCall()
         move r1, r
     else
-        orq NumberTag, r
+    if JSVALUE64
+        orq TagNumber, r
+    end
     end
 end
 
