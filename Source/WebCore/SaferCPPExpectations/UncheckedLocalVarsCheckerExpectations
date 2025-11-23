@@ -339,7 +339,6 @@ rendering/RenderGrid.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResourceStyleImage.cpp
 rendering/RenderInline.cpp
-rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp

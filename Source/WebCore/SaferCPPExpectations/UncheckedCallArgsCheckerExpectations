@@ -505,7 +505,6 @@ rendering/RenderImageResource.cpp
 rendering/RenderImageResourceStyleImage.cpp
 rendering/RenderImageResourceStyleImage.h
 rendering/RenderInline.cpp
-rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

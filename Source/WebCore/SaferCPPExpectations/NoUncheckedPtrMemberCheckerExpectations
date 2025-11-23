@@ -52,7 +52,6 @@ rendering/RenderDescendantIterator.h
 rendering/RenderFlexibleBox.cpp
 rendering/RenderFragmentContainer.h
 rendering/RenderGeometryMap.h
-rendering/RenderIterator.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h

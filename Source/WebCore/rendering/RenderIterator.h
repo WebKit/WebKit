@@ -27,6 +27,7 @@
 #pragma once
 
 #include "RenderElement.h"
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
@@ -52,7 +53,7 @@ public:
     RenderIterator& traverseAncestor();
 
 private:
-    const RenderElement* m_root;
+    CheckedPtr<const RenderElement> m_root;
     T* m_current;
 };
 
@@ -76,7 +77,7 @@ public:
     RenderConstIterator& traverseAncestor();
 
 private:
-    const RenderElement* m_root;
+    CheckedPtr<const RenderElement> m_root;
     const T* m_current;
 };
 
@@ -96,7 +97,7 @@ public:
     RenderPostOrderIterator& traverseNext();
 
 private:
-    const RenderElement* m_root;
+    CheckedPtr<const RenderElement> m_root;
     T* m_current;
 };
 
@@ -116,7 +117,7 @@ public:
     RenderPostOrderConstIterator& traverseNext();
 
 private:
-    const RenderElement* m_root;
+    CheckedPtr<const RenderElement> m_root;
     const T* m_current;
 };
 
@@ -320,7 +321,7 @@ template <typename T>
 inline RenderIterator<T>& RenderIterator<T>::traverseNext()
 {
     ASSERT(m_current);
-    m_current = RenderTraversal::next<T>(*m_current, m_root);
+    m_current = RenderTraversal::next<T>(*m_current, m_root.get());
     return *this;
 }
 
@@ -328,7 +329,7 @@ template <typename T>
 inline RenderIterator<T>& RenderIterator<T>::traverseNextSkippingChildren()
 {
     ASSERT(m_current);
-    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root.get());
     return *this;
 }
 
@@ -344,7 +345,7 @@ template <typename T>
 inline RenderIterator<T>& RenderIterator<T>::traverseAncestor()
 {
     ASSERT(m_current);
-    ASSERT(m_current != m_root);
+    ASSERT(m_current != m_root.get());
     m_current = RenderTraversal::findAncestorOfType<T>(*m_current);
     return *this;
 }
@@ -398,7 +399,7 @@ template <typename T>
 inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNext()
 {
     ASSERT(m_current);
-    m_current = RenderTraversal::next<T>(*m_current, m_root);
+    m_current = RenderTraversal::next<T>(*m_current, m_root.get());
     return *this;
 }
 
@@ -406,7 +407,7 @@ template <typename T>
 inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNextSkippingChildren()
 {
     ASSERT(m_current);
-    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root.get());
     return *this;
 }
 
@@ -423,7 +424,7 @@ template <typename T>
 inline RenderConstIterator<T>& RenderConstIterator<T>::traverseAncestor()
 {
     ASSERT(m_current);
-    ASSERT(m_current != m_root);
+    ASSERT(m_current != m_root.get());
     m_current = RenderTraversal::findAncestorOfType<const T>(*m_current);
     return *this;
 }
@@ -469,7 +470,7 @@ template <typename T>
 inline RenderPostOrderIterator<T>& RenderPostOrderIterator<T>::traverseNext()
 {
     ASSERT(m_current);
-    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root);
+    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root.get());
     return *this;
 }
 
@@ -514,7 +515,7 @@ template <typename T>
 inline RenderPostOrderConstIterator<T>& RenderPostOrderConstIterator<T>::traverseNext()
 {
     ASSERT(m_current);
-    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root);
+    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root.get());
     return *this;
 }
 
