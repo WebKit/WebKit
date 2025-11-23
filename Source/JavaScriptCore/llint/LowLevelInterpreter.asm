@@ -188,9 +188,11 @@ macro unboxHeapInt32(r)
         .isInt:
         loadi constexpr (JSHeapInt32::offsetOfValue())[r], r
     else
+if JSVALUE64
         bqaeq r, numberTag, .isInt
         break
         .isInt:
+end
     end
 end
 
