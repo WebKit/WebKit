@@ -24,5 +24,6 @@
  */
 
 [
+    Conditional=VIDEO,
     GenerateIsReachable=ImplScriptExecutionContext
 ] callback MockCaptionDisplaySettingsClientCallback = Promise<undefined> (HTMLMediaElement element, ResolvedCaptionDisplaySettingsOptions options);
