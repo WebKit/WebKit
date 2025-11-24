@@ -186,6 +186,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::caLayerTreeAsText() const
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _caLayerTreeAsText]));
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::caLayerTreeAsTextForLayerWithID(uint64_t layerID) const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _caLayerTreeAsTextForLayerWithID:layerID]));
+}
+
 JSObjectRef UIScriptControllerCocoa::propertiesOfLayerWithID(uint64_t layerID) const
 {
     RetainPtr jsValue = [JSValue valueWithObject:[webView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]];

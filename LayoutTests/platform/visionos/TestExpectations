@@ -151,11 +151,6 @@ webkit.org/b/302410 imported/w3c/web-platform-tests/webxr/xrViewerPose_secondary
 webkit.org/b/302409 imported/w3c/web-platform-tests/webxr/xrView_visibility_mask_change.https.html [ Skip ]
 
 # webkit.org/b/288683 REGRESSION(291033@main): Broke visionOS layout tests
-interaction-region/guard-crash.html [ Failure ]
-interaction-region/interaction-layers-culling-layer-type-change.html [ Failure ]
-interaction-region/interaction-layers-culling.html [ Failure ]
-interaction-region/layer-tree-shape-reset.html [ Failure ]
-interaction-region/layer-tree.html [ Failure ]
 platform/visionos/transforms/separated-image-animated.html [ Failure ]
 platform/visionos/transforms/separated-image-downgrade-content.html [ Failure ]
 platform/visionos/transforms/separated-image-downgrade-tiled.html [ Failure ]
@@ -183,12 +178,6 @@ fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
 fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
 fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
-
-# webkit.org/b/300929 REGRESSION(297559@main): interaction-region/form-control-refresh/date-native-interaction-region.html does not pass on visionOS
-interaction-region/form-control-refresh/date-native-interaction-region.html [ Failure ]
-
-# webkit.org/b/300933 REGRESSION(visionOS 26): interaction-region/overlay.html started failing
-interaction-region/overlay.html [ Failure ]
 
 ### END OF Triaged failures
 ###################################################################################################

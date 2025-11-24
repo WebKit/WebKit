@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
     .shape {
         float: left;
         background: blue;
@@ -50,6 +53,8 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     await UIHelper.animationFrame();
     await UIHelper.ensureStablePresentationUpdate();
 
@@ -59,8 +64,8 @@ window.onload = async function () {
     await UIHelper.animationFrame();
     await UIHelper.ensureStablePresentationUpdate();
 
-    results.textContent = await UIHelper.getCALayerTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };

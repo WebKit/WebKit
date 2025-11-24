@@ -11,18 +11,18 @@
         (rect (0,0) width=1600 height=2092)
 
       (interaction regions [
-        (interaction (0,0) width=86 height=22)
-        (cornerRadius 5.00)
+        (interaction (0,0) width=83 height=22)
+        (cornerRadius 11.00)
         (useContinuousCorners 1),
-        (interaction (0,44) width=242 height=66)
-        (cornerRadius 15.00)
+        (interaction (0,44) width=237 height=66)
+        (cornerRadius 33.00)
         (useContinuousCorners 1),
-        (interaction (-1,21) width=88 height=24)
-        (cornerRadius 5.00)
-        (clipPath move to (87,12), add line to (4.10,22.60), add curve to (2.83,22.12) (1.84,21.12) (1.37,19.84), add curve to (1,18.66) (1,17.56) (1,15.36), add line to (1,8.64), add curve to (1,6.44) (1,5.34) (1.37,4.16), add curve to (1.84,2.88) (2.83,1.88) (4.10,1.40), close subpath),
-        (interaction (-3,107) width=248 height=72)
-        (cornerRadius 15.00)
-        (clipPath move to (245,36), add line to (12.16,67.75), add curve to (8.43,66.30) (5.50,63.30) (4.12,59.53), add curve to (3,55.97) (3,52.67) (3,46.07), add line to (3,25.93), add curve to (3,19.33) (3,16.03) (4.12,12.47), add curve to (5.50,8.70) (8.43,5.70) (12.16,4.25), close subpath)])
+        (interaction (-1,21) width=85 height=24)
+        (cornerRadius 11.00)
+        (clipPath move to (84,12), add line to (7.76,22.10), add curve to (5.00,21.04) (2.84,18.82) (1.78,16.07), add curve to (1.27,14.78) (1,13.39) (1,12), add curve to (1,10.61) (1.27,9.22) (1.78,7.93), add curve to (2.88,5.18) (5.01,2.99) (7.77,1.90), close subpath),
+        (interaction (-3,107) width=243 height=72)
+        (cornerRadius 33.00)
+        (clipPath move to (240,36), add line to (23.04,66.21), add curve to (14.88,62.99) (8.48,56.37) (5.34,48.21), add curve to (3.80,44.33) (3,40.18) (3,36), add curve to (3,31.82) (3.80,27.67) (5.34,23.79), add curve to (8.59,15.63) (14.90,9.11) (23.06,5.79), close subpath)])
       )
     )
   )

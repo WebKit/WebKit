@@ -2015,6 +2015,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static getCALayerTreeForCompositedElement(element)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const layerID = window.internals?.layerIDForElement(element);
+        const script = `uiController.uiScriptComplete(uiController.caLayerTreeAsTextForLayerWithID(${layerID}))`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, resolve);
+        });
+    }
+
     static remoteAnimationStackForElement(element)
     {
         if (!this.isWebKit2() || !element)

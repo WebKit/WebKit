@@ -54,6 +54,9 @@ struct WKAppPrivacyReportTestingData {
 
 @property (nonatomic, readonly) NSString *_caLayerTreeAsText;
 
+- (NSString *)_caLayerTreeAsTextForLayerWithID:(unsigned long long)layerID;
+- (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer;
+
 - (NSDictionary<NSString *, id> *)_propertiesOfLayerWithID:(unsigned long long)layerID;
 - (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID isVertical:(bool)isVertical;
 

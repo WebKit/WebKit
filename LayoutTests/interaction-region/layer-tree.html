@@ -2,6 +2,10 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
+
     iframe {
         width: 300px;
         height: 200px;
@@ -107,6 +111,8 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     // Resizing - reuses the layer while maintaining its position in the sublayers array.
     await UIHelper.animationFrame();
     document.getElementById("resized").style.width = "200px";
@@ -121,8 +127,8 @@ window.onload = async function () {
     document.getElementById("to-hide").style.display = "none";
 
     await UIHelper.ensureStablePresentationUpdate();
-    results.textContent = await UIHelper.getCALayerTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };
