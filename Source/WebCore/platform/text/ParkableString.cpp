@@ -1,23 +1,48 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "config.h"
 #include "ParkableString.h"
 
 #if ENABLE(PARKABLE_STRINGS)
 
 #include "ParkableStringManager.h"
-#include <wtf/WorkQueue.h>
-#include <wtf/RunLoop.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HexNumber.h>
+#include <wtf/MainThread.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ThreadingPrimitives.h>
+#include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/Vector.h>
-#include <wtf/MainThread.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/MakeString.h>
-#include <wtf/HexNumber.h>
-#include <wtf/MonotonicTime.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/StdLibExtras.h>
 
 // Direct zlib compression/decompression
 #include <zlib.h>
@@ -32,7 +57,7 @@ namespace WebCore {
 
 // ===== Utilities =====
 
-enum class ParkingAction { Parked, Unparked};
+enum class ParkingAction { Parked, Unparked };
 
 // Records timing statistics for parking operations.
 static void recordStatistics(size_t size, Seconds duration, ParkingAction action)
@@ -46,7 +71,6 @@ static void recordStatistics(size_t size, Seconds duration, ParkingAction action
             UNUSED_PARAM(microseconds);
         }
         break;
-        
     case ParkingAction::Unparked:
         if (size > 0 && duration > 0_s) {
             double decompressionRateMBps = (size / (1024.0 * 1024.0)) / duration.seconds();
@@ -55,22 +79,22 @@ static void recordStatistics(size_t size, Seconds duration, ParkingAction action
             UNUSED_PARAM(microseconds);
         }
         break;
-        
     }
-    
     // TODO: Integrate with WebKit's histogram system
 }
 
 // Helper class to measure elapsed time
 class ElapsedTimer {
 public:
-    ElapsedTimer() : m_startTime(MonotonicTime::now()) { }
-    
-    Seconds elapsed() const 
-    { 
+    ElapsedTimer()
+        : m_startTime(MonotonicTime::now())
+    { }
+
+    Seconds elapsed() const
+    {
         return MonotonicTime::now() - m_startTime;
     }
-    
+
 private:
     MonotonicTime m_startTime;
 };
@@ -93,7 +117,7 @@ static void asanPoisonString(const String& string)
     // triggering a poisoned memory access.
     if (string.impl() && string.impl()->isAtom())
         return;
-        
+
     if (string.is8Bit()) {
         auto span = string.span8();
         __asan_poison_memory_region(span.data(), span.size() * sizeof(LChar));
@@ -112,7 +136,7 @@ static void asanUnpoisonString(const String& string)
 #if ASAN_ENABLED
     if (string.isNull())
         return;
-        
+
     if (string.is8Bit()) {
         auto span = string.span8();
         __asan_unpoison_memory_region(span.data(), span.size() * sizeof(LChar));
@@ -132,18 +156,14 @@ static void asanUnpoisonString(const String& string)
 struct BackgroundTaskParams final {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(BackgroundTaskParams);
 public:
-    BackgroundTaskParams(
-        RefPtr<ParkableStringImpl> string,
-        std::span<const uint8_t> data, 
-        ParkableStringImpl::ParkingMode parkingMode,
-        Ref<RunLoop> callbackRunLoop)
+    BackgroundTaskParams(RefPtr<ParkableStringImpl> string, std::span<const uint8_t> data, ParkableStringImpl::ParkingMode parkingMode, Ref<RunLoop> callbackRunLoop)
         : string(WTFMove(string))
-        , data(data) 
+        , data(data)
         , parkingMode(parkingMode)
-        , callbackRunLoop(WTFMove(callbackRunLoop)) {}
-    
-    ~BackgroundTaskParams() {}
-    
+        , callbackRunLoop(WTFMove(callbackRunLoop)) { }
+
+    ~BackgroundTaskParams() { }
+
     const RefPtr<ParkableStringImpl> string;
     std::span<const uint8_t> data;
     ParkableStringImpl::ParkingMode parkingMode;
@@ -157,9 +177,9 @@ std::unique_ptr<ParkableStringImpl::SecureDigest> ParkableStringImpl::hashString
 {
     if (!string)
         return nullptr;
-    
+
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    
+
     if (string->is8Bit()) {
         auto span = string->span8();
         cryptoDigest->addBytes(byteCast<uint8_t>(span));
@@ -170,7 +190,7 @@ std::unique_ptr<ParkableStringImpl::SecureDigest> ParkableStringImpl::hashString
             cryptoDigest->addBytes(std::span<const uint8_t>(bytes, 2));
         }
     }
-    
+
     // Include encoding information to differentiate 8-bit vs 16-bit strings with same byte content
     uint8_t encodingByte = string->is8Bit() ? 1 : 0;
     cryptoDigest->addBytes(std::span<const uint8_t>(&encodingByte, 1));
@@ -184,7 +204,7 @@ std::unique_ptr<ParkableStringImpl::SecureDigest> ParkableStringImpl::hashString
 
 // Minimum string size to consider for parking (10KB)
 constexpr size_t kMinimumSizeForParking = 10 * 1024;
-    
+
 // ParkableMetadata constructor
 ParkableStringImpl::ParkableMetadata::ParkableMetadata(WTF::String string, std::unique_ptr<SecureDigest> digest)
     : lock()
@@ -231,7 +251,7 @@ ParkableStringImpl::~ParkableStringImpl()
         return;
     // There is nothing thread-hostile in this method, but the current design should only reach this path through the main thread
     assertOnValidThread();
-    ASSERT(lockDepthForTesting() == 0);
+    ASSERT(!lockDepthForTesting());
     asanUnpoisonString(m_string);
     // Cannot destroy while parking is in progress, as the object is kept alive by the background task
     ASSERT(!m_metadata->backgroundTaskInProgress);
@@ -254,10 +274,9 @@ size_t ParkableStringImpl::sizeInBytes() const
 
 bool ParkableStringImpl::isParked() const
 {
-    if (!mayBeParked()) {
+    if (!mayBeParked())
         return false;
-    }
-        
+
     Locker locker { m_metadata->lock };
     bool result = m_metadata->state == State::Parked;
     return result;
@@ -267,7 +286,7 @@ bool ParkableStringImpl::isCompressionFailed() const
 {
     if (!mayBeParked())
         return false;
-        
+
     Locker locker { m_metadata->lock };
     return m_metadata->compressionFailed;
 }
@@ -276,7 +295,7 @@ ParkableStringImpl::State ParkableStringImpl::currentState() const
 {
     if (!mayBeParked())
         return State::Unparked;
-        
+
     Locker locker { m_metadata->lock };
     return m_metadata->state;
 }
@@ -285,7 +304,7 @@ ParkableStringImpl::Age ParkableStringImpl::currentAge() const
 {
     if (!mayBeParked())
         return Age::Young;
-        
+
     Locker locker { m_metadata->lock };
     return m_metadata->age;
 }
@@ -294,7 +313,7 @@ bool ParkableStringImpl::hasCompressedData() const
 {
     if (!mayBeParked())
         return false;
-        
+
     Locker locker { m_metadata->lock };
     return !!m_metadata->compressedData;
 }
@@ -311,7 +330,7 @@ size_t ParkableStringImpl::compressedSize() const
 {
     if (!mayBeParked())
         return 0;
-        
+
     Locker locker { m_metadata->lock };
     return m_metadata->compressedData ? m_metadata->compressedData->size() : 0;
 }
@@ -322,9 +341,9 @@ size_t ParkableStringImpl::compressedSize() const
 // Returns a String object containing the string content
 String ParkableStringImpl::toString()
 {
-    if (!mayBeParked()) {
+    if (!mayBeParked())
         return m_string;
-    }
+
     Locker locker { m_metadata->lock };
     makeYoung();
     asanUnpoisonString(m_string);
@@ -344,7 +363,7 @@ void ParkableStringImpl::lock()
 {
     if (!mayBeParked())
         return;
-        
+
     Locker locker { m_metadata->lock };
     ++m_metadata->lockCount;
     makeYoung();
@@ -354,11 +373,11 @@ void ParkableStringImpl::unlock()
 {
     if (!mayBeParked())
         return;
-        
+
     Locker locker { m_metadata->lock };
     ASSERT(m_metadata->lockCount > 0);
     --m_metadata->lockCount;
-    
+
 #if ASAN_ENABLED && ASSERT_ENABLED
     // There are no external references to the data, nobody should touch the data.
     //
@@ -369,9 +388,8 @@ void ParkableStringImpl::unlock()
     //
     // Checking the owning thread first as |currentStatus()| can only be called
     // from the owning thread. (Chrome-style per-string thread management)
-    if (isOnOwningThread() && currentStatus() == Status::UnreferencedExternally) {
+    if (isOnOwningThread() && currentStatus() == Status::UnreferencedExternally)
         asanPoisonString(m_string);
-    }
 #endif // ASAN_ENABLED && ASSERT_ENABLED
 }
 
@@ -379,7 +397,7 @@ void ParkableStringImpl::lockWithoutMakingYoung()
 {
     if (!mayBeParked())
         return;
-        
+
     Locker locker { m_metadata->lock };
     ++m_metadata->lockCount;
 }
@@ -389,8 +407,8 @@ void ParkableStringImpl::lockWithoutMakingYoung()
 // Checks if the string can be parked immediately
 bool ParkableStringImpl::canParkNow() const
 {
-    return currentStatus() == Status::UnreferencedExternally 
-        && m_metadata->age != Age::Young 
+    return currentStatus() == Status::UnreferencedExternally
+        && m_metadata->age != Age::Young
         && !m_metadata->compressionFailed;
 }
 
@@ -398,21 +416,21 @@ ParkableStringImpl::Status ParkableStringImpl::currentStatus() const
 {
     ASSERT(isOnOwningThread());
     ASSERT(mayBeParked());
-    
+
     // Can park iff:
     // - |this| is not locked.
     // - There are no external reference to |string_|. Since |this| holds a reference to |string_|, it must be the only one.
-    if (m_metadata->lockCount != 0)
+    if (m_metadata->lockCount)
         return Status::Locked;
-    
+
     // Can be null if it is compressed.
     if (m_string.isNull())
         return Status::UnreferencedExternally;
-        
+
     RefPtr stringImpl = m_string.impl();
     if (!stringImpl->hasOneRef())
         return Status::TooManyReferences;
-        
+
     return Status::UnreferencedExternally;
 }
 
@@ -438,37 +456,32 @@ void ParkableStringImpl::discardCompressedData()
 
 void ParkableStringImpl::unpark()
 {
-    if (m_metadata->state == State::Unparked) {
+    if (m_metadata->state == State::Unparked)
         return;
-    }
-    
+
     String result = unparkInternal();
-    
-    if (!result.isNull()) {
+
+    if (!result.isNull())
         m_string = result.impl();
-    }
 }
 
 bool ParkableStringImpl::park(ParkingMode mode)
 {
-    if (!mayBeParked()) {
+    if (!mayBeParked())
         return false;
-    }
-    
+
     Locker locker { m_metadata->lock };
-    
+
     assertOnValidThread();
-    
-    if (m_metadata->state == State::Parked) {
+
+    if (m_metadata->state == State::Parked)
         return true;
-    }
-    
+
     m_metadata->age = Age::Old;
-    
-    if (!canParkNow()) {
+
+    if (!canParkNow())
         return false;
-    }
-    
+
     return parkInternal(mode);
 }
 
@@ -480,44 +493,43 @@ ParkableStringImpl::AgeOrParkResult ParkableStringImpl::maybeParkString()
 
     assertOnValidThread();
     Locker locker { m_metadata->lock };
-    
+
     if (m_metadata->backgroundTaskInProgress)
         return AgeOrParkResult::SuccessOrTransientFailure;
-    
+
     // Handle already-parked strings
     if (isParkedNoLock()) {
-        if (m_metadata->age == Age::VeryOld) {
-            // bool ok = parkInternal(ParkingMode::ToDisk);
-            // if (!ok)
-            //     return AgeOrParkResult::NonTransientFailure;
-        } else {
+        if (m_metadata->age != Age::VeryOld)
             ageString();
-        }
+        // else {
+        //     bool ok = parkInternal(ParkingMode::ToDisk);
+        //     if (!ok)
+        //         return AgeOrParkResult::NonTransientFailure;
+        // }
         return AgeOrParkResult::SuccessOrTransientFailure;
     }
-    
+
     // Handle unparked strings
     Status status = currentStatus();
     Age age = m_metadata->age;
-    
+
     if (age == Age::Young) {
         // Age Young strings if they're unreferenced, but don't park them yet
         if (status == Status::UnreferencedExternally)
             ageString();
     } else if (m_metadata->age == Age::Old) {
-        if (!canParkNow()) {
+        if (!canParkNow())
             return AgeOrParkResult::NonTransientFailure;
-        }
-        
+
         ParkingMode mode = ParkingMode::CompressOnly;
-        
+
         bool ok = parkInternal(mode);
         if (!ok)
             return AgeOrParkResult::NonTransientFailure;
-            
+
         return AgeOrParkResult::SuccessOrTransientFailure;
     }
-    
+
     // External references to a string can be long-lived, cannot provide a progress guarantee for this string.
     return status == Status::TooManyReferences
         ? AgeOrParkResult::NonTransientFailure
@@ -530,73 +542,63 @@ bool ParkableStringImpl::parkInternal(ParkingMode mode)
     ASSERT(m_metadata->state == State::Unparked || m_metadata->state == State::Parked);
     ASSERT(m_metadata->age != Age::Young);
     ASSERT(canParkNow());
-    
-    if (m_metadata->backgroundTaskInProgress) {
+
+    if (m_metadata->backgroundTaskInProgress)
         return true;
-    }
-    
+
     switch (mode) {
     case ParkingMode::SynchronousOnly:
-        if (m_metadata->compressedData) {
+        if (m_metadata->compressedData)
             discardUncompressedData();
-        } else {
+        else
             return false;
-        }
         break;
-        
     case ParkingMode::CompressOnly:
-        if (m_metadata->compressedData) {
-            // Synchronous parking using cached compressed data
-            discardUncompressedData();
-        } else {
+        if (m_metadata->compressedData)
+            discardUncompressedData(); // Synchronous parking using cached compressed data
+        else
             scheduleCompressionTask(mode);
-        }
         break;
     }
-    
+
     return true;
 }
 
 // Internal unparking implementation that decompresses from memory
 String ParkableStringImpl::unparkInternal()
 {
-    if (m_metadata->state == State::Parked) {
+    if (m_metadata->state == State::Parked)
         return unparkFromCompressed();
-    }
-    
+
     return String();
 }
 
 // Unparks a string from compressed data stored in memory
 String ParkableStringImpl::unparkFromCompressed()
 {
-    if (m_metadata->state != State::Parked) {
+    if (m_metadata->state != State::Parked)
         return String();
-    }
-    
-    if (!m_metadata->compressedData) {
+
+    if (!m_metadata->compressedData)
         return String();
-    }
-    
+
     ElapsedTimer timer;
-    
+
     auto result = decompressData(*m_metadata->compressedData, m_metadata->is8Bit, m_metadata->length);
-    
-    if (!result.has_value()) {
+
+    if (!result.has_value())
         return String();
-    }
-    
+
     String decompressedString = result.value();
     Seconds elapsed = timer.elapsed();
-    
+
     recordStatistics(decompressedString.sizeInBytes(), elapsed, ParkingAction::Unparked);
-    
+
     // Change state to unparked, but keep compressed data for fast re-parking
     m_metadata->state = State::Unparked;
-    
+
     ParkableStringManager::instance().completeUnpark(this, elapsed);
 
-    
     asanUnpoisonString(m_string);
     return decompressedString;
 }
@@ -608,11 +610,11 @@ String ParkableStringImpl::unparkFromCompressed()
 void ParkableStringImpl::scheduleCompressionTask(ParkingMode mode)
 {
     ASSERT(!m_metadata->backgroundTaskInProgress);
-    
+
     // |string_|'s data should not be touched except in the compression task.
     asanPoisonString(m_string);
     m_metadata->backgroundTaskInProgress = true;
-    
+
     std::span<const uint8_t> dataSpan;
     RefPtr stringImpl = m_string.impl();
     if (stringImpl) {
@@ -624,14 +626,14 @@ void ParkableStringImpl::scheduleCompressionTask(ParkingMode mode)
             dataSpan = spanReinterpretCast<const uint8_t>(chars);
         }
     }
-    
+
     auto params = makeUnique<BackgroundTaskParams>(
         RefPtr<ParkableStringImpl>(this),
         dataSpan,
         mode,
         RunLoop::currentSingleton()
     );
-    
+
     auto& manager = ParkableStringManager::instance();
     manager.workQueue().dispatch([params = WTFMove(params)]() mutable {
         compressInBackground(WTFMove(params));
@@ -663,19 +665,18 @@ void ParkableStringImpl::compressInBackground(std::unique_ptr<BackgroundTaskPara
     asanUnpoisonString(stringPtr->m_string);
 
     std::unique_ptr<Vector<uint8_t>> compressedData = nullptr;
-    
-    if (!params->data.empty()) {
+
+    if (!params->data.empty())
         compressedData = compressData(params->data);
-    }
 
 #if ASAN_ENABLED
     stringPtr->unlock();
 #endif
-    
+
     Seconds elapsed = timer.elapsed();
-    
+
     recordStatistics(params->data.size(), elapsed, ParkingAction::Parked);
-    
+
     // Complete compression on owning thread
     params->callbackRunLoop->dispatch([parkableString = params->string, params = WTFMove(params), compressedData = WTFMove(compressedData), elapsed]() mutable {
         parkableString->onCompressionCompleteOnMainThread(WTFMove(params), WTFMove(compressedData), elapsed);
@@ -689,23 +690,22 @@ void ParkableStringImpl::onCompressionCompleteOnMainThread(std::unique_ptr<Backg
 {
     if (!mayBeParked())
         return;
-    
+
     ASSERT(m_metadata->backgroundTaskInProgress);
     Locker locker { m_metadata->lock };
     ASSERT(m_metadata->state == State::Unparked);
-    
+
     m_metadata->backgroundTaskInProgress = false;
-            
+
     // Always keep the compressed data. Compression is expensive, so even if the
     // uncompressed representation cannot be discarded now, avoid compressing
     // multiple times. This will allow synchronous parking next time.
     ASSERT(!m_metadata->compressedData);
-    if (compressedData) {
+    if (compressedData)
         m_metadata->compressedData = WTFMove(compressedData);
-    } else {
+    else
         m_metadata->compressionFailed = true;
-    }
-    
+
     // Between |park()| and now, things may have happened:
     // 1. |toString()| or
     // 2. |lock()| may have been called.
@@ -713,16 +713,16 @@ void ParkableStringImpl::onCompressionCompleteOnMainThread(std::unique_ptr<Backg
     // Both of these will make the string young again, and if so we don't
     // discard the compressed representation yet.
     bool canParkNow = this->canParkNow();
-    
+
     if (canParkNow && m_metadata->compressedData) {
         // Discard uncompressed but keep compressed
         discardUncompressedData();
-        params->data = {}; // Clear uncompressed data copy
+        params->data = { }; // Clear uncompressed data copy
     } else {
         // If the string can not be parked immediately, cancel parking but keep compressed data for next time
         m_metadata->state = State::Unparked;
     }
-    
+
     // Record the time no matter whether the string was parked or not, as the parking cost was paid.
     ParkableStringManager::instance().recordParkingThreadTime(parkingThreadTime);
 }
@@ -733,14 +733,13 @@ void ParkableStringImpl::onCompressionCompleteOnMainThread(std::unique_ptr<Backg
 #if PLATFORM(COCOA)
 std::unique_ptr<Vector<uint8_t>> ParkableStringImpl::compressDataWithAppleCompression(std::span<const uint8_t> data)
 {
-    if (data.empty()) {
+    if (data.empty())
         return nullptr;
-    }
-    
+
     // Allocate destination buffer with capacity equal to source size
     auto outputData = makeUnique<Vector<uint8_t>>();
     outputData->resize(data.size());
-    
+
     auto startTime = MonotonicTime::now();
     size_t compressedSize = compression_encode_buffer(
         outputData->mutableSpan().data(), outputData->size(),
@@ -748,83 +747,79 @@ std::unique_ptr<Vector<uint8_t>> ParkableStringImpl::compressDataWithAppleCompre
         nullptr, COMPRESSION_LZFSE);
     auto endTime = MonotonicTime::now();
     auto compressionTime = endTime - startTime;
-    
+
     outputData->resize(compressedSize);
-    
+
     // Check compression effectiveness (at least 20% reduction)
-    if (outputData->size() >= data.size() * 0.8) {
+    if (outputData->size() >= data.size() * 0.8)
         return nullptr;
-    }
-    
+
     double compressionRatio = (100.0 * outputData->size()) / data.size();
     UNUSED_PARAM(compressionTime);
     UNUSED_PARAM(compressionRatio);
-    
+
     return outputData;
 }
 #endif
 
 std::unique_ptr<Vector<uint8_t>> ParkableStringImpl::compressDataWithZlib(std::span<const uint8_t> data)
 {
-    if (data.empty()) {
+    if (data.empty())
         return nullptr;
-    }
-    
+
     auto startTime = MonotonicTime::now();
-    
+
     z_stream stream = { };
-    
+
     // Initialize compression
     int result = deflateInit2(&stream, 5, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY);
-    if (result != Z_OK) {
+    if (result != Z_OK)
         return nullptr;
-    }
-    
+
     // Prepare input
     stream.next_in = const_cast<Bytef*>(data.data());
     stream.avail_in = data.size();
-    
+
     // Start with output buffer sized for good compression
     size_t outputCapacity = std::max(data.size(), static_cast<size_t>(16384));
     auto outputData = makeUnique<Vector<uint8_t>>();
     outputData->reserveInitialCapacity(outputCapacity);
-    
+
     int deflateResult;
     do {
         // Ensure we have output space
         size_t currentSize = outputData->size();
         outputData->resize(currentSize + 16384); // 16KB chunks
-        
+
         stream.next_out = &(*outputData)[currentSize];
         stream.avail_out = 16384;
-        
+
         deflateResult = deflate(&stream, Z_FINISH);
-        
+
         if (deflateResult != Z_OK && deflateResult != Z_STREAM_END) {
             deflateEnd(&stream);
             return nullptr;
         }
-        
+
         // Adjust result size to actual compressed data
         size_t compressedBytes = 16384 - stream.avail_out;
         outputData->resize(currentSize + compressedBytes);
-            
-    } while (deflateResult != Z_STREAM_END && stream.avail_out == 0);
-    
+
+    } while (deflateResult != Z_STREAM_END && !stream.avail_out);
+
     deflateEnd(&stream);
-    
+
     auto endTime = MonotonicTime::now();
     auto compressionTime = endTime - startTime;
-    
+
     // Check compression effectiveness (at least 20% reduction)
-    if (outputData->size() >= data.size() * 0.8) {
+    if (outputData->size() >= data.size() * 0.8)
         return nullptr;
-    }
-    
+
     double compressionRatio = (100.0 * outputData->size()) / data.size();
     UNUSED_PARAM(compressionTime);
     UNUSED_PARAM(compressionRatio);
-    
+
     return outputData;
 }
 
@@ -832,18 +827,16 @@ std::unique_ptr<Vector<uint8_t>> ParkableStringImpl::compressData(std::span<cons
 {
 #if PLATFORM(COCOA)
     auto result = compressDataWithAppleCompression(data);
-    if (result) {
+    if (result)
         return result;
-    }
 #endif
-    
+
     // Single zlib path for both COCOA fallback and non-COCOA primary compression
     auto zlibResult = compressDataWithZlib(data);
-    if (zlibResult) {
+    if (zlibResult)
         return zlibResult;
-    } else {
-        return nullptr;
-    }
+
+    return nullptr;
 }
 
 #if PLATFORM(COCOA)
@@ -851,46 +844,46 @@ std::optional<String> ParkableStringImpl::decompressDataWithAppleCompression(con
 {
     if (compressedData.isEmpty())
         return std::nullopt;
-    
+
     size_t expectedBytes = length * (is8Bit ? sizeof(LChar) : sizeof(UChar));
-    
+
     Vector<uint8_t> decompressedBytes;
     decompressedBytes.resize(expectedBytes);
-    
+
     size_t decompressedSize = compression_decode_buffer(
         decompressedBytes.mutableSpan().data(), decompressedBytes.size(),
         compressedData.span().data(), compressedData.size(),
         nullptr, COMPRESSION_LZFSE);
-    
-    if (decompressedSize == 0 || decompressedSize != expectedBytes) {
+
+    if (!decompressedSize || decompressedSize != expectedBytes)
         return std::nullopt;
-    }
-    
+
     auto decompressedSpan = decompressedBytes.span();
-    
     // Create string according to original format
     if (is8Bit) {
         auto stringImpl = StringImpl::create(byteCast<LChar>(decompressedSpan));
         return String(WTFMove(stringImpl));
-    } else {
-        // Verify even number of bytes for UChar
-        if (decompressedSpan.size() % sizeof(UChar) != 0)
-            return std::nullopt;
-        
-        // Convert bytes to UChar using safe buffer operations
-        Vector<UChar> ucharVector;
-        ucharVector.reserveInitialCapacity(length);
-        
-        for (size_t i = 0; i < length; ++i) {
-            size_t byteIndex = i * sizeof(UChar);
-            UChar ch = static_cast<UChar>(decompressedSpan[byteIndex]) | 
-                      (static_cast<UChar>(decompressedSpan[byteIndex + 1]) << 8);
-            ucharVector.append(ch);
-        }
-        
-        auto stringImpl = StringImpl::create(ucharVector.span());
-        return String(WTFMove(stringImpl));
     }
+
+    // Verify even number of bytes for UChar
+    if (decompressedSpan.size() % sizeof(UChar))
+        return std::nullopt;
+
+    // Convert bytes to UChar using safe buffer operations
+    Vector<UChar> ucharVector;
+    ucharVector.reserveInitialCapacity(length);
+
+    for (size_t i = 0; i < length; ++i) {
+        size_t byteIndex = i * sizeof(UChar);
+        UChar ch = static_cast<UChar>(
+            decompressedSpan[byteIndex])
+            | (static_cast<UChar>(decompressedSpan[byteIndex + 1]) << 8
+        );
+        ucharVector.append(ch);
+    }
+
+    auto stringImpl = StringImpl::create(ucharVector.span());
+    return String(WTFMove(stringImpl));
 }
 #endif
 
@@ -898,72 +891,73 @@ std::optional<String> ParkableStringImpl::decompressDataWithZlib(const Vector<ui
 {
     if (compressedData.isEmpty())
         return std::nullopt;
-    
+
     z_stream stream = { };
-    
+
     // Initialize decompression
     int result = inflateInit2(&stream, 15);
     if (result != Z_OK)
         return std::nullopt;
-    
+
     // Prepare input and output
     stream.next_in = const_cast<Bytef*>(compressedData.span().data());
     stream.avail_in = compressedData.size();
-    
+
     size_t expectedBytes = length * (is8Bit ? sizeof(LChar) : sizeof(UChar));
     Vector<uint8_t> decompressedBytes;
     decompressedBytes.reserveInitialCapacity(expectedBytes);
-    
+
     int inflateResult;
     do {
         size_t currentSize = decompressedBytes.size();
         decompressedBytes.resize(currentSize + 16384); // 16KB chunks
-        
+
         stream.next_out = &decompressedBytes[currentSize];
         stream.avail_out = 16384;
-        
+
         inflateResult = inflate(&stream, Z_NO_FLUSH);
-        
+
         if (inflateResult != Z_OK && inflateResult != Z_STREAM_END) {
             inflateEnd(&stream);
             return std::nullopt;
         }
-        
+
         // Adjust result size to actual decompressed data
         size_t decompressedChunkBytes = 16384 - stream.avail_out;
         decompressedBytes.resize(currentSize + decompressedChunkBytes);
-            
-    } while (inflateResult != Z_STREAM_END && stream.avail_out == 0);
-    
+
+    } while (inflateResult != Z_STREAM_END && !stream.avail_out);
+
     inflateEnd(&stream);
-    
+
     // Verify we got the expected amount of data
-    if (decompressedBytes.size() != expectedBytes) {
+    if (decompressedBytes.size() != expectedBytes)
         return std::nullopt;
-    }
-    
+
     auto decompressedSpan = decompressedBytes.span();
-    
+
     // Create string according to original format
     if (is8Bit) {
     auto stringImpl = StringImpl::create(byteCast<LChar>(decompressedSpan));
     return String(WTFMove(stringImpl));
     } else {
         // Verify even number of bytes for UChar
-        if (decompressedSpan.size() % sizeof(UChar) != 0)
+        if (decompressedSpan.size() % sizeof(UChar))
             return std::nullopt;
-        
+
         // Convert bytes to UChar using safe buffer operations
         Vector<UChar> ucharVector;
         ucharVector.reserveInitialCapacity(length);
-        
+
         for (size_t i = 0; i < length; ++i) {
             size_t byteIndex = i * sizeof(UChar);
-            UChar ch = static_cast<UChar>(decompressedSpan[byteIndex]) | 
-                      (static_cast<UChar>(decompressedSpan[byteIndex + 1]) << 8);
+            UChar ch = static_cast<UChar>(
+                decompressedSpan[byteIndex])
+                | (static_cast<UChar>(decompressedSpan[byteIndex + 1]) << 8
+            );
             ucharVector.append(ch);
         }
-        
+
         auto stringImpl = StringImpl::create(ucharVector.span());
         return String(WTFMove(stringImpl));
     }
@@ -976,7 +970,7 @@ std::optional<String> ParkableStringImpl::decompressData(const Vector<uint8_t>& 
     auto result = decompressDataWithAppleCompression(compressedData, is8Bit, length);
     if (result)
         return result;
-    
+
     // Fallback to zlib if Apple Compression fails
     return decompressDataWithZlib(compressedData, is8Bit, length);
 #else
@@ -996,13 +990,13 @@ void ParkableStringImpl::ageString()
 {
     if (!mayBeParked())
         return;
-    
+
     switch (m_metadata->age) {
     case Age::Young:
         m_metadata->age = Age::Old;
         break;
     case Age::Old:
-        //m_metadata->age = Age::VeryOld;
+        // m_metadata->age = Age::VeryOld;
         break;
     case Age::VeryOld:
         // VeryOld strings stay VeryOld and remain compressed in memory
@@ -1026,32 +1020,30 @@ void recordStringImplMemoryUsage(ParkableStringImpl::MemoryUsage* result, const 
 ParkableStringImpl::MemoryUsage ParkableStringImpl::memoryUsageForSnapshot() const
 {
     assertOnValidThread();
-    MemoryUsage result = {0, nullptr, 0};
-    
+    MemoryUsage result = { 0, nullptr, 0 };
+
     // Base size of ParkableStringImpl
     result.thisSize = sizeof(ParkableStringImpl);
-    
+
     if (!mayBeParked()) {
         // Non-parkable string: just include StringImpl
         recordStringImplMemoryUsage(&result, m_string.impl());
         return result;
     }
-    
+
     // Parkable string: add metadata overhead
     result.thisSize += sizeof(ParkableMetadata);
-    
+
     Locker locker { m_metadata->lock };
-    
+
     // Include StringImpl if currently unparked (in memory)
-    if (!isParkedNoLock()) {
+    if (!isParkedNoLock())
         recordStringImplMemoryUsage(&result, m_string.impl());
-    }
-    
+
     // Trust the compressed data pointer directly
-    if (m_metadata->compressedData) {
+    if (m_metadata->compressedData)
         result.thisSize += m_metadata->compressedData->size();
-    }
-    
+
     return result;
 }
 
@@ -1071,9 +1063,9 @@ ParkableString::ParkableString(RefPtr<StringImpl> string)
         m_impl = nullptr;
         return;
     }
-    
+
     bool isParkable = ParkableStringManager::shouldPark(*string);
-    
+
     if (isParkable) {
         // Use manager for parkable strings, which enables deduplication
         m_impl = ParkableStringManager::instance().add(WTFMove(string));
@@ -1183,7 +1175,6 @@ bool ParkableStringImpl::isParkedNoLock() const
     return m_metadata->state == State::Parked;
 }
 
-
 // Checks if the current thread is the owning thread for this string.
 bool ParkableStringImpl::isOnOwningThread() const
 {
@@ -1199,9 +1190,40 @@ int ParkableStringImpl::lockDepthForTesting() const
 {
     if (!mayBeParked())
         return 0; // Non-parkable strings are never locked
-        
+
     Locker locker { m_metadata->lock };
     return m_metadata->lockCount;
+}
+
+size_t ParkableStringImpl::length() const
+{
+    if (!mayBeParked())
+        return m_string.length();
+
+    return m_metadata->length;
+}
+
+bool ParkableStringImpl::is8Bit() const
+{
+    if (!mayBeParked())
+        return m_string.is8Bit();
+
+    return m_metadata->is8Bit;
+}
+
+bool ParkableStringImpl::mayBeParked() const
+{
+    return !!m_metadata;
+}
+
+const ParkableStringImpl::SecureDigest* digest() const
+{
+    return m_metadata ? m_metadata->digest.get() : nullptr;
+}
+
+void ParkableStringImpl::assertOnValidThread() const
+{
+    ASSERT(isOnOwningThread());
 }
 
 } // namespace WebCore

@@ -156,9 +156,8 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
 #if ENABLE(PARKABLE_STRINGS)
     // Ensure CSS is unparked before notifying clients to prevent timing issues during style parsing.
     // This forces any decompression to happen now rather than during the style system's access to sheetText().
-    if (!m_decodedSheetText.isNull()) {
+    if (!m_decodedSheetText.isNull())
         m_decodedSheetText.toString(); // Force decompression if parked
-    }
 #endif
 
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);

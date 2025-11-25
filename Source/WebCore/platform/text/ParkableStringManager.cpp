@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "config.h"
 #include "ParkableStringManager.h"
 
@@ -29,18 +54,18 @@ ParkableStringManager& ParkableStringManager::instance()
     return manager;
 }
 
-ParkableStringManager::ParkableStringManager() 
+ParkableStringManager::ParkableStringManager()
     : m_totalParkingThreadTime(0_s)
-    , m_totalUnparkingTime(0_s){}
+    , m_totalUnparkingTime(0_s) { }
 
 ParkableStringManager::~ParkableStringManager() = default;
 
 // Returns the centralized work queue for background operations.
 ConcurrentWorkQueue& ParkableStringManager::workQueue()
 {
-    if (!m_workQueue) {
+    if (!m_workQueue)
         m_workQueue = ConcurrentWorkQueue::create("org.webkit.ParkableStringManager.background"_s);
-    }
+
     return *m_workQueue;
 }
 
@@ -55,17 +80,17 @@ bool ParkableStringManager::shouldPark(const StringImpl& string)
 RefPtr<ParkableStringImpl> ParkableStringManager::add(RefPtr<StringImpl> string)
 {
     ASSERT(isMainThread());
-    
+
     if (!string)
         return nullptr;
 
     ASSERT(shouldPark(*string));
-    
+
     // Compute digest for deduplication
     auto digest = ParkableStringImpl::hashString(string.get());
     if (!digest)
         return nullptr;
-    
+
     return add(WTFMove(string), WTFMove(digest));
 }
 
@@ -76,31 +101,29 @@ RefPtr<ParkableStringImpl> ParkableStringManager::add(RefPtr<StringImpl> string,
     ASSERT(digest);
 
     Locker locker { m_lock };
-    
+
     // Check unparked strings first
     auto it = m_unparkedStrings.find(digest.get());
-    if (it != m_unparkedStrings.end()) {
+    if (it != m_unparkedStrings.end())
         return it->value;
-    }
-    
+
     // Check parked strings
     it = m_parkedStrings.find(digest.get());
-    if (it != m_parkedStrings.end()) {
+    if (it != m_parkedStrings.end())
         return it->value;
-    }
-    
+
     // No deduplication hit
     auto parkableString = ParkableStringImpl::makeParkable(WTFMove(string), WTFMove(digest));
-    
+
     auto insertResult = m_unparkedStrings.set(parkableString->digest(), parkableString.copyRef());
     ASSERT_UNUSED(insertResult, insertResult.isNewEntry);
-    
+
     // Release lock before scheduling aging task
     locker.unlockEarly();
-    
+
     // Schedule aging task for new string
     scheduleAgingTaskIfNeeded();
-    
+
     return parkableString;
 }
 
@@ -108,7 +131,7 @@ void ParkableStringManager::remove(ParkableStringImpl* string)
 {
     if (!string)
         return;
-    
+
     // If we're not on the main thread, post to main thread
     if (!isMainThread()) {
         RunLoop::mainSingleton().dispatch([this, protectedString = RefPtr<ParkableStringImpl>(string)]() {
@@ -116,7 +139,7 @@ void ParkableStringManager::remove(ParkableStringImpl* string)
         });
         return;
     }
-    
+
     removeOnMainThread(string);
 }
 
@@ -124,31 +147,29 @@ void ParkableStringManager::remove(ParkableStringImpl* string)
 void ParkableStringManager::removeOnMainThread(ParkableStringImpl* string)
 {
     ASSERT(isMainThread());
-    
+
     if (!string || !string->mayBeParked() || !string->digest())
         return;
-    
+
     const auto* digest = string->digest();
     StringMap* targetMap = nullptr;
-    
+
     // Determine which map contains the string based on its current state
     {
         Locker stringLocker { string->m_metadata->lock };
-        
-        if (string->isParkedNoLock()) {
+
+        if (string->isParkedNoLock())
             targetMap = &m_parkedStrings;
-        } else {
+        else
             targetMap = &m_unparkedStrings;
-        }
     }
-    
+
     // Remove from the determined map
     {
         Locker managerLocker { m_lock };
         auto it = targetMap->find(digest);
-        if (it != targetMap->end()) {
+        if (it != targetMap->end())
             targetMap->remove(it);
-        }
     }
 }
 
@@ -157,19 +178,19 @@ bool ParkableStringManager::moveString(ParkableStringImpl* string, StringMap* fr
 {
     ASSERT(string);
     ASSERT(string->digest());
-    
+
     const auto* digest = string->digest();
-    
+
     auto it = from->find(digest);
     if (it == from->end())
         return false;
-    
+
     RefPtr<ParkableStringImpl> stringRef = it->value;
     from->remove(it);
-    
+
     auto insertResult = to->set(digest, WTFMove(stringRef));
     ASSERT_UNUSED(insertResult, insertResult.isNewEntry);
-    
+
     return true;
 }
 
@@ -181,7 +202,7 @@ void ParkableStringManager::completeParked(ParkableStringImpl* string)
         onParked(string);
         return;
     }
-    
+
     // Post to main thread with retained reference
     callOnMainThread([protectedString = RefPtr<ParkableStringImpl>(string)]() {
         ParkableStringManager::instance().onParked(protectedString.get());
@@ -196,7 +217,7 @@ void ParkableStringManager::completeUnpark(ParkableStringImpl* string, Seconds e
         onUnparked(string);
         return;
     }
-    
+
     // Post to main thread with retained reference
     callOnMainThread([protectedString = RefPtr<ParkableStringImpl>(string), elapsed]() {
         auto& manager = ParkableStringManager::instance();
@@ -240,6 +261,7 @@ bool ParkableStringManager::isOnParkedMapForTesting(ParkableStringImpl* string)
 {
     if (!string || !string->digest())
         return false;
+
     return m_parkedStrings.contains(string->digest());
 }
 
@@ -255,16 +277,16 @@ void ParkableStringManager::resetForTesting()
 {
     m_unparkedStrings.clear();
     m_parkedStrings.clear();
-    
+
     m_totalParkingThreadTime = 0_s;
     m_totalUnparkingTime = 0_s;
     m_totalCompressions = 0;
     m_totalDecompressions = 0;
-    
+
     m_hasPendingAgingTask = false;
     m_firstStringAgingWasDelayed = false;
     m_rendererBackgrounded = false;
-    
+
     m_testModeEnabled = false;
 }
 
@@ -274,10 +296,10 @@ void ParkableStringManager::resetForTesting()
 void ParkableStringManager::fastForwardAgingForTesting()
 {
     ASSERT(isMainThread());
-    
+
     if (!m_testModeEnabled)
         return;
-    
+
     // Execute one aging cycle
     ageStringsAndPark();
 }
@@ -288,59 +310,58 @@ ParkableStringManager::MemoryStatistics ParkableStringManager::getMemoryStatisti
 {
     ASSERT(isMainThread());
     Locker locker { m_lock };
-    
+
     MemoryStatistics stats;
     stats.unparkedStrings = m_unparkedStrings.size();
     stats.parkedStrings = m_parkedStrings.size();
     stats.totalStrings = stats.unparkedStrings + stats.parkedStrings;
-    
+
     size_t totalCompressedBytes = 0;
     size_t totalUncompressedBytes = 0;
     size_t metadataBytes = 0;
-    
+
     // Calculate stats for both string maps
     auto calculateForMap = [&](const StringMap& map) {
         for (const auto& pair : map) {
             RefPtr string = pair.value;
             if (!string)
                 continue;
-                
+
             auto usage = string->memoryUsageForSnapshot();
             metadataBytes += usage.thisSize;
-            
+
             // For uncompressed size, use the logical string size
             totalUncompressedBytes += string->sizeInBytes();
-            
+
             if (string->hasCompressedData())
                 totalCompressedBytes += string->compressedSize();
         }
     };
-    
+
     calculateForMap(m_unparkedStrings);
     calculateForMap(m_parkedStrings);
-    
+
     stats.totalUncompressedSize = totalUncompressedBytes;
     stats.totalCompressedSize = totalCompressedBytes;
     stats.metadataOverhead = metadataBytes;
-    
+
     // Calculate compression ratio and savings
     if (totalUncompressedBytes > 0) {
         if (totalCompressedBytes > 0) {
             stats.averageCompressionRatio = static_cast<double>(totalCompressedBytes) / totalUncompressedBytes;
-            stats.compressionSavings = (totalUncompressedBytes > totalCompressedBytes) ? 
-                                     (totalUncompressedBytes - totalCompressedBytes) : 0;
+            stats.compressionSavings = (totalUncompressedBytes > totalCompressedBytes) ? (totalUncompressedBytes - totalCompressedBytes) : 0;
         } else {
             stats.averageCompressionRatio = 0.0;
             stats.compressionSavings = 0;
         }
     }
-    
+
     // Performance metrics
     stats.totalCompressions = m_totalCompressions;
     stats.totalDecompressions = m_totalDecompressions;
     stats.totalCompressionTime = m_totalParkingThreadTime;
     stats.totalDecompressionTime = m_totalUnparkingTime;
-    
+
     return stats;
 }
 
@@ -358,26 +379,26 @@ size_t ParkableStringManager::memoryFootprint() const
 void ParkableStringManager::scheduleAgingTaskIfNeeded()
 {
     ASSERT(isMainThread());
-    
+
     if (isPaused())
         return;
-    
+
     if (m_hasPendingAgingTask)
         return;
-    
+
     if (!hasPendingWork())
         return;
-    
+
     Seconds delay = agingInterval();
-    
+
     // Delay the first aging tick, since this renderer may be short-lived
     if (!m_firstStringAgingWasDelayed) {
         delay = kFirstParkingDelay;
         m_firstStringAgingWasDelayed = true;
     }
-    
+
     m_hasPendingAgingTask = true;
-    
+
     // Schedule the aging task with proper delay
     RunLoop::mainSingleton().dispatchAfter(delay, [this]() {
         ageStringsAndPark();
@@ -388,43 +409,40 @@ void ParkableStringManager::scheduleAgingTaskIfNeeded()
 void ParkableStringManager::ageStringsAndPark()
 {
     m_hasPendingAgingTask = false;
-    
+
     if (!m_testModeEnabled && isPaused())
         return;
-    
+
     // Get snapshots of all strings to process
     auto unparkedStrings = enumerateStrings(m_unparkedStrings);
     auto parkedStrings = enumerateStrings(m_parkedStrings);
-    
+
     bool canMakeProgress = false;
-    
+
     for (auto& string : unparkedStrings) {
         auto result = string->maybeParkString();
-        if (result == ParkableStringImpl::AgeOrParkResult::SuccessOrTransientFailure) {
+        if (result == ParkableStringImpl::AgeOrParkResult::SuccessOrTransientFailure)
             canMakeProgress = true;
-        }
     }
-    
+
     for (auto& string : parkedStrings) {
         auto result = string->maybeParkString();
-        if (result == ParkableStringImpl::AgeOrParkResult::SuccessOrTransientFailure) {
+        if (result == ParkableStringImpl::AgeOrParkResult::SuccessOrTransientFailure)
             canMakeProgress = true;
-        }
     }
-    
-  // Some strings will never be parkable because there are lasting external
-  // references to them. Don't endlessely reschedule the aging task if we are
-  // not making progress (that is, no new string was either aged or parked).
-  //
-  // This ensures that the tasks will stop getting scheduled, assuming that
-  // the renderer is otherwise idle. Note that we cannot use "idle" tasks as
-  // we need to age and park strings after the renderer becomes idle, meaning
-  // that this has to run when the idle tasks are not. As a consequence, it
-  // is important to make sure that this will not reschedule tasks forever.
+
+    // Some strings will never be parkable because there are lasting external
+    // references to them. Don't endlessely reschedule the aging task if we are
+    // not making progress (that is, no new string was either aged or parked).
+    //
+    // This ensures that the tasks will stop getting scheduled, assuming that
+    // the renderer is otherwise idle. Note that we cannot use "idle" tasks as
+    // we need to age and park strings after the renderer becomes idle, meaning
+    // that this has to run when the idle tasks are not. As a consequence, it
+    // is important to make sure that this will not reschedule tasks forever.
     bool reschedule = hasPendingWork() && canMakeProgress;
-    if (reschedule) {
+    if (reschedule)
         scheduleAgingTaskIfNeeded();
-    }
 }
 
 // Parks all unparked strings with the specified mode.
@@ -445,13 +463,12 @@ void ParkableStringManager::parkAll(ParkableStringImpl::ParkingMode mode)
 void ParkableStringManager::setRendererBackgrounded(bool backgrounded)
 {
     ASSERT(isMainThread());
-    
+
     bool wasPaused = isPaused();
     m_rendererBackgrounded = backgrounded;
-    
-    if (wasPaused && !isPaused() && hasPendingWork()) {
+
+    if (wasPaused && !isPaused() && hasPendingWork())
         scheduleAgingTaskIfNeeded();
-    }
 }
 
 // Handles memory pressure by immediately parking all strings.
@@ -468,12 +485,12 @@ Vector<ParkableStringImpl*> ParkableStringManager::enumerateStrings(const String
 {
     Vector<ParkableStringImpl*> result;
     result.reserveInitialCapacity(strings.size());
-    
+
     for (const auto& pair : strings) {
         if (pair.value)
             result.append(pair.value.get());
     }
-    
+
     return result;
 }
 
@@ -491,11 +508,35 @@ bool ParkableStringManager::isPaused() const
     // In test mode, never pause (allow controlled execution)
     if (m_testModeEnabled)
         return false;
-    
+
     // For now, always allow aging to enable automatic compression demonstrations
     return false;
 }
 
+void ParkableStringManager::recordParkingThreadTime(Seconds time)
+{
+    m_totalParkingThreadTime += time;
+}
+
+void ParkableStringManager::recordUnparkingTime(Seconds time)
+{
+    m_totalUnparkingTime += time;
+}
+
+void ParkableStringManager::recordCompression()
+{
+    ++m_totalCompressions;
+}
+
+void ParkableStringManager::recordDecompression()
+{
+    ++m_totalDecompressions;
+}
+
+void ParkableStringManager::setTestMode(bool enabled)
+{
+    m_testModeEnabled = enabled;
+}
 
 // Returns the interval between aging tasks.
 Seconds ParkableStringManager::agingInterval()
