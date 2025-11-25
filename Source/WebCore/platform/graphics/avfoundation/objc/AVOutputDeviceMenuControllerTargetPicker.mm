@@ -189,13 +189,14 @@ AVOutputContext * AVOutputDeviceMenuControllerTargetPicker::outputContext()
         return;
 
     callOnMainThread([self, protectedSelf = retainPtr(self), keyPath = retainPtr(keyPath)] {
-        if (!m_callback)
+        CheckedPtr callback = m_callback.get();
+        if (!callback)
             return;
 
         if ([keyPath isEqualToString:externalOutputDeviceAvailableKeyName])
-            m_callback->availableDevicesDidChange();
+            callback->availableDevicesDidChange();
         else if ([keyPath isEqualToString:externalOutputDevicePickedKeyName])
-            m_callback->currentDeviceDidChange();
+            callback->currentDeviceDidChange();
     });
 }
 @end
