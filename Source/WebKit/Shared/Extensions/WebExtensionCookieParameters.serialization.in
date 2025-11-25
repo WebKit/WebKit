@@ -30,7 +30,7 @@ struct WebKit::WebExtensionCookieParameters {
 [CustomHeader] struct WebKit::WebExtensionCookieFilterParameters {
     std::optional<String> name;
     std::optional<String> domain;
-    std::optional<String> path;
+    std::optional<URLPath> path;
     std::optional<bool> secure;
     std::optional<bool> session;
 };

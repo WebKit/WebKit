@@ -1566,6 +1566,106 @@ std::optional<WebCore::OpaqueTypeObject> ArgumentCoder<WebCore::OpaqueTypeObject
     };
 }
 
+void ArgumentCoder<ValdidatedStringUserStruct1>::encode(Encoder& encoder, const ValdidatedStringUserStruct1& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myString)>, WTF::String>);
+    struct ShouldBeSameSizeAsValdidatedStringUserStruct1 : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<ValdidatedStringUserStruct1>, false> {
+        WTF::String myString;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsValdidatedStringUserStruct1) == sizeof(ValdidatedStringUserStruct1));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(ValdidatedStringUserStruct1, myString)
+    >::value);
+
+    encoder << instance.myString;
+}
+
+std::optional<ValdidatedStringUserStruct1> ArgumentCoder<ValdidatedStringUserStruct1>::decode(Decoder& decoder)
+{
+    auto myString = decoder.decode<ValidatedString, WTF::String>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        ValdidatedStringUserStruct1 {
+            WTFMove(*myString)
+        }
+    };
+}
+
+void ArgumentCoder<ValdidatedStringUserStruct2>::encode(Encoder& encoder, const ValdidatedStringUserStruct2& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myString)>, WTF::String>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myStringVector)>, Vector<WTF::String>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myStringMap)>, HashMap<WTF::String, SomeObject>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myStringSet)>, HashSet<WTF::String>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.myOptionalString)>, std::optional<WTF::String>>);
+    struct ShouldBeSameSizeAsValdidatedStringUserStruct2 : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<ValdidatedStringUserStruct2>, false> {
+        WTF::String myString;
+        Vector<WTF::String> myStringVector;
+        HashMap<WTF::String, SomeObject> myStringMap;
+        HashSet<WTF::String> myStringSet;
+        std::optional<WTF::String> myOptionalString;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsValdidatedStringUserStruct2) == sizeof(ValdidatedStringUserStruct2));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(ValdidatedStringUserStruct2, myString)
+        , offsetof(ValdidatedStringUserStruct2, myStringVector)
+        , offsetof(ValdidatedStringUserStruct2, myStringMap)
+        , offsetof(ValdidatedStringUserStruct2, myStringSet)
+        , offsetof(ValdidatedStringUserStruct2, myOptionalString)
+    >::value);
+
+    encoder << instance.myString;
+    encoder << instance.myStringVector;
+    encoder << instance.myStringMap;
+    encoder << instance.myStringSet;
+    encoder << instance.myOptionalString;
+}
+
+std::optional<ValdidatedStringUserStruct2> ArgumentCoder<ValdidatedStringUserStruct2>::decode(Decoder& decoder)
+{
+    auto myString = decoder.decode<ValidatedString, WTF::String>();
+    auto myStringVector = decoder.decode<Vector<WTF::String>>();
+    for (auto& item : *myStringVector) {
+    if (!(item->validate()))
+        return std::nullopt;
+    }
+    auto myStringMap = decoder.decode<HashMap<WTF::String, SomeObject>>();
+    for (const auto& [key, value] : *myStringMap) {
+    if (!(key->validate()))
+        return std::nullopt;
+    }
+    auto myStringSet = decoder.decode<HashSet<WTF::String>>();
+    for (const auto& key : *myStringSet) {
+    if (!(key->validate()))
+        return std::nullopt;
+    }
+    auto myOptionalString = decoder.decode<std::optional<WTF::String>>();
+    if (!(**myOptionalString->validate()))
+        return std::nullopt;
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        ValdidatedStringUserStruct2 {
+            WTFMove(*myString),
+            WTFMove(*myStringVector),
+            WTFMove(*myStringMap),
+            WTFMove(*myStringSet),
+            WTFMove(*myOptionalString)
+        }
+    };
+}
+
+std::optional<WTF::String> ArgumentCoder<ValidatedString>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WTF::String>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    if (!(*result->validate()))
+        return std::nullopt;
+    return result;
+}
+
 } // namespace IPC
 
 namespace WTF {

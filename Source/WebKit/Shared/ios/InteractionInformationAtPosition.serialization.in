@@ -68,7 +68,7 @@ struct WebKit::InteractionInformationAtPosition {
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
-    String imageMIMEType;
+    MimeType imageMIMEType;
     String title;
     String idAttribute;
     WebCore::IntRect bounds;

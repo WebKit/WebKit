@@ -547,7 +547,7 @@ class WebCore::IDBResourceIdentifier {
 class WebCore::IDBValue {
     WebCore::ThreadSafeDataBuffer data()
     Vector<String> blobURLs()
-    Vector<String> blobFilePaths()
+    Vector<FilePath> blobFilePaths()
 };
 
 class WebCore::IDBOpenRequestData {
@@ -1318,7 +1318,7 @@ struct WebCore::RetrieveRecordsOptions {
 
 struct WebCore::ContactInfo {
     Vector<String> name;
-    Vector<String> email;
+    Vector<EmailAddress> email;
     Vector<String> tel;
 };
 
@@ -1645,12 +1645,12 @@ struct WebCore::PublicKeyCredentialRequestOptions {
 }
 
 class WebCore::Site {
-    String protocol()
+    URLScheme protocol()
     WebCore::RegistrableDomain domain()
 }
 
 struct WebCore::AudioConfiguration {
-    String contentType;
+    MimeType contentType;
     String channels;
     std::optional<uint64_t> bitrate;
     std::optional<uint32_t> samplerate;
@@ -1667,7 +1667,7 @@ struct WebCore::Cookie {
     String name;
     String value;
     String domain;
-    String path;
+    URLPath path;
     String partitionKey;
     double created;
     std::optional<double> expires;
@@ -2113,7 +2113,7 @@ enum class WebCore::MediaCaptureType : uint8_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct WebCore::SerializedAttachmentData {
     String identifier;
-    String mimeType;
+    MimeType mimeType;
     Ref<WebCore::SharedBuffer> data;
 };
 
@@ -2130,7 +2130,7 @@ header: <WebCore/FileChooser.h>
 [CustomHeader] struct WebCore::FileChooserSettings {
     bool allowsDirectories;
     bool allowsMultipleFiles;
-    Vector<String> acceptMIMETypes;
+    Vector<MimeType> acceptMIMETypes;
     Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
@@ -2689,7 +2689,7 @@ class WebCore::DragData {
     WebCore::IntPoint globalPosition();
 #if PLATFORM(COCOA)
     Vector<String> fileNames();
-    Vector<String> promisedFileMIMETypes();
+    Vector<MimeType> promisedFileMIMETypes();
 #endif
     OptionSet<WebCore::DragOperation> draggingSourceOperationMask();
     OptionSet<WebCore::DragApplicationFlags> flags();
@@ -3463,7 +3463,7 @@ enum class WebCore::WasPrivateRelayed : bool;
 
 [CustomHeader] struct WebCore::ResourceResponseData {
     URL url;
-    String mimeType;
+    MimeType mimeType;
     long long expectedContentLength;
     String textEncodingName;
     short httpStatusCode;
@@ -3487,11 +3487,11 @@ enum class WebCore::WasPrivateRelayed : bool;
 [RefCounted, CreateUsing=createWithData] class WebCore::ArchiveResource {
     Ref<WebCore::FragmentedSharedBuffer> protectedData();
     URL url();
-    String mimeType();
+    MimeType mimeType();
     String textEncoding();
     String frameName();
     WebCore::ResourceResponse response();
-    String relativeFilePath();
+    FilePath relativeFilePath();
 };
 
 [RefCounted, CreateUsing=create] class WebCore::LegacyWebArchive {
@@ -4192,7 +4192,7 @@ struct WebCore::SameSiteInfo {
 [RefCounted] class WebCore::SecurityOrigin {
     WebCore::SecurityOriginData m_data;
     String m_domain;
-    String m_filePath;
+    FilePath m_filePath;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;
@@ -4314,7 +4314,7 @@ enum class WebCore::CDMEncryptionScheme : bool;
 enum class WebCore::CDMKeyGroupingStrategy : bool;
 
 struct WebCore::CDMMediaCapability {
-    String contentType;
+    MimeType contentType;
     String robustness;
     std::optional<WebCore::CDMEncryptionScheme> encryptionScheme;
 };
@@ -5292,12 +5292,12 @@ enum class WebCore::RunningStatus : bool
 
 header: <WebCore/ServiceWorkerRoute.h>
 [CustomHeader] struct WebCore::ServiceWorkerRoutePattern {
-    String protocol;
+    URLScheme protocol;
     String username;
     String password;
-    String hostname;
+    Hostname hostname;
     String port;
-    String pathname;
+    URLPath pathname;
     String search;
     String hash;
 }
@@ -5402,8 +5402,8 @@ class WebCore::SecurityOriginData {
 };
 
 [Nested] class WebCore::SecurityOriginData::Tuple {
-    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
-    String host;
+    [Validator='!protocol->isHashTableDeletedValue()'] URLScheme protocol;
+    Hostname host;
     std::optional<uint16_t> port;
 };
 
@@ -5745,7 +5745,7 @@ header: <WebCore/RTCDataChannelHandler.h>
     std::optional<bool> ordered;
     std::optional<unsigned short> maxPacketLifeTime;
     std::optional<unsigned short> maxRetransmits;
-    String protocol;
+    URLScheme protocol;
     std::optional<bool> negotiated;
     std::optional<unsigned short> id;
     WebCore::RTCPriorityType priority;
@@ -5940,7 +5940,7 @@ enum class WebCore::LinkIconType : uint8_t {
 struct WebCore::LinkIcon {
     URL url;
     WebCore::LinkIconType type;
-    String mimeType;
+    MimeType mimeType;
     std::optional<unsigned> size;
     Vector<std::pair<String, String>> attributes;
 };
@@ -5990,7 +5990,7 @@ enum class WebCore::PasteboardItemPresentationStyle : uint8_t {
 };
 
 struct WebCore::PasteboardItemInfo {
-    Vector<String> pathsForFileUpload;
+    Vector<FilePath> pathsForFileUpload;
     Vector<String> platformTypesForFileUpload;
     Vector<String> platformTypesByFidelity;
     String suggestedFileName;
@@ -6070,7 +6070,7 @@ struct WebCore::ServiceWorkerJobDataIdentifier {
 struct WebCore::ServiceWorkerImportedScript {
     WebCore::ScriptBuffer script;
     URL responseURL;
-    String mimeType;
+    MimeType mimeType;
 };
 
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
@@ -6566,7 +6566,7 @@ header: <WebCore/CaretAnimator.h>
 #endif
 
 class WebCore::ProtectionSpace {
-    String host();
+    Hostname host();
     int port();
     WebCore::ProtectionSpace::ServerType serverType();
     String realm();
@@ -7113,7 +7113,7 @@ struct WebCore::CookieChangeSubscription {
 
 [RefCounted] class WebCore::Model {
     Ref<WebCore::SharedBuffer> data()
-    String mimeType()
+    MimeType mimeType()
     URL url()
 }
 
@@ -7283,7 +7283,7 @@ struct WebCore::RemoteUserInputEventData {
 
 struct WebCore::LinkDecorationFilteringData {
     WebCore::RegistrableDomain domain;
-    String path;
+    URLPath path;
     String linkDecoration;
 };
 
@@ -7376,7 +7376,7 @@ class WebCore::NetworkLoadMetrics {
     MonotonicTime responseEnd;
     MonotonicTime workerStart;
 
-    String protocol;
+    URLScheme protocol;
 
     uint16_t redirectCount;
 
@@ -7458,7 +7458,7 @@ struct WebCore::MediaUsageInfo {
 header: <WebCore/NowPlayingInfo.h>
 [CustomHeader] struct WebCore::NowPlayingInfoArtwork {
     String src;
-    String mimeType;
+    MimeType mimeType;
     RefPtr<WebCore::Image> image;
 }
 
@@ -7484,7 +7484,7 @@ struct WebCore::NowPlayingInfo {
 }
 
 struct WebCore::VideoConfiguration {
-    String contentType;
+    MimeType contentType;
     uint32_t width;
     uint32_t height;
     uint64_t bitrate;
@@ -9014,7 +9014,7 @@ header: <WebCore/ScriptTrackingPrivacyCategory.h>
 struct WebCore::ParentalControlsURLFilterParameters {
     URL urlToAllow;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
-    String configurationPath;
+    FilePath configurationPath;
 #endif
 };
 #endif

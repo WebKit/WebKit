@@ -1708,6 +1708,7 @@
 		84AF2C7C2952374800563FA5 /* module.private.modulemap in Copy Private Module Map */ = {isa = PBXBuildFile; fileRef = 843FD167295234DC00476A01 /* module.private.modulemap */; };
 		8644890B27B47020007A1C66 /* _WKSystemPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890A27B47020007A1C66 /* _WKSystemPreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8644890F27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */; };
+		864F7B442ED5F0CC001AC17F /* IPCValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 864F7B432ED5F0CC001AC17F /* IPCValidation.h */; };
 		866623F929C2248E0029405A /* WebAutocorrectionData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 866623F829C2248D0029405A /* WebAutocorrectionData.mm */; };
 		86760A6B28DB30DE00D07D06 /* GeneratedSerializers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */; };
 		86D1970929AE4E930083B077 /* NetworkProcessConnectionParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */; };
@@ -7083,6 +7084,7 @@
 		8644890A27B47020007A1C66 /* _WKSystemPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferences.h; sourceTree = "<group>"; };
 		8644890C27B47045007A1C66 /* _WKSystemPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSystemPreferences.mm; sourceTree = "<group>"; };
 		8644890E27B5CB43007A1C66 /* _WKSystemPreferencesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSystemPreferencesInternal.h; sourceTree = "<group>"; };
+		864F7B432ED5F0CC001AC17F /* IPCValidation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCValidation.h; sourceTree = "<group>"; };
 		8657EE3928EDB8C500FF9B40 /* Pasteboard.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Pasteboard.serialization.in; sourceTree = "<group>"; };
 		866623F829C2248D0029405A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
 		86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializers.mm; sourceTree = "<group>"; };
@@ -10603,6 +10605,7 @@
 				46CD8C442B059FF500360248 /* IPCSemaphore.serialization.in */,
 				7B9FC5AC28A3B440007570E7 /* IPCUtilities.cpp */,
 				7B9FC5AB28A3B440007570E7 /* IPCUtilities.h */,
+				864F7B432ED5F0CC001AC17F /* IPCValidation.h */,
 				9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */,
 				9B47908E253151CC00EC11AB /* JSIPCBinding.h */,
 				9B47908C25314D8300EC11AB /* MessageArgumentDescriptions.h */,
@@ -17856,6 +17859,7 @@
 				A73E66BD2AB107C3005FC327 /* IPCEvent.h in Headers */,
 				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */,
+				864F7B442ED5F0CC001AC17F /* IPCValidation.h in Headers */,
 				46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */,
 				46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,

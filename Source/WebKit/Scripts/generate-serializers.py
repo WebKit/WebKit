@@ -24,6 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import copy
+import itertools
 import os
 import re
 import sys
@@ -45,6 +46,7 @@ from webkit.opaque_ipc_types import is_opaque_type, opaque_ipc_types
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
 # WebKitPlatform - put serializer into a file built as part of WebKitPlatform
 # CustomEncoder - Only generate the decoder, not the encoder.
+# Validator - additional C++ to validate the value when decoding
 # WebKitSecureCodingClass - For webkit_secure_coding declarations that need a custom way of establishing the Obj-C class to instantiate (e.g. softlinked frameworks)
 # Wrapper - use a wrapper class to get members and to construct for an external type
 #
@@ -106,6 +108,7 @@ class SerializedType(object):
         self.disableMissingMemberCheck = False
         self.debug_decoding_failure = False
         self.generic_wrapper = None
+        self.type_validator = None
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -128,6 +131,11 @@ class SerializedType(object):
                         self.custom_secure_coding_class = value
                     elif key == 'Wrapper':
                         self.generic_wrapper = value
+                    elif key == 'Validator':
+                        match = re.search(r'\'(.*)\'', value)
+                        assert match
+                        if match:
+                            self.type_validator = match.groups()[0]
                     else:
                         raise Exception(f'Invalid attribute ({key}={value}) found on struct: {self.namespace}::{self.name}')
                 else:
@@ -211,6 +219,8 @@ class SerializedType(object):
         return 'isValidEnum'
 
     def can_assert_member_order_is_correct(self):
+        if isinstance(self, AliasType):
+            return False
         if self.disableMissingMemberCheck:
             return False
         for member in self.members:
@@ -490,6 +500,20 @@ class UsingStatement(object):
                     raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] AliasParam {self.name} {cleaned_line}")
 
 
+class AliasType(SerializedType):
+    def __init__(self, struct_or_class, namespace, name, condition, attributes, metadata):
+        SerializedType.__init__(self, struct_or_class, None, namespace, name, None, [], [], condition, attributes, [], metadata)
+        assert self.alias
+        assert self.type_validator
+
+
+class AliasType(SerializedType):
+    def __init__(self, struct_or_class, namespace, name, condition, attributes, metadata):
+        SerializedType.__init__(self, struct_or_class, None, namespace, name, None, [], [], condition, attributes, [], metadata)
+        assert self.alias
+        assert self.type_validator
+
+
 class ObjCWrappedType(object):
     def __init__(self, ns_type, wrapper, condition):
         self.ns_type = ns_type
@@ -560,11 +584,14 @@ def one_argument_coder_declaration(type, template_argument):
     if template_argument is not None:
         name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
     result.append(f'template<> struct ArgumentCoder<{name_with_template}> {{')
-    for encoder in type.encoders:
-        if type.rvalue:
-            result.append(f'    static void encode({encoder}&, {name_with_template}&&);')
-        else:
-            result.append(f'    static void encode({encoder}&, const {name_with_template}&);')
+    if not isinstance(type, AliasType):
+        for encoder in type.encoders:
+            if type.rvalue:
+                result.append(f'    static void encode({encoder}&, {name_with_template}&&);')
+            else:
+                result.append(f'    static void encode({encoder}&, const {name_with_template}&);')
+    else:
+        name_with_template = remove_alias_struct_or_class(type.alias)
     if type.return_ref:
         result.append(f'    static std::optional<Ref<{name_with_template}>> decode(Decoder&);')
     else:
@@ -595,7 +622,7 @@ def typenames(alias):
 
 
 def remove_template_parameters(alias):
-    match = re.search(r'(struct|class) ([^<]*)<', alias)
+    match = re.search(r'(struct|class) ([^<]*)', alias)
     assert match
     return match.groups()[1]
 
@@ -620,7 +647,7 @@ def get_alias_namespace(alias):
         return None
 
 
-def generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations):
+def generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations, alias_types):
     result = []
     result.append('')
     serialized_enums_by_namespace = dict()
@@ -633,7 +660,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
             serialized_enums_by_namespace[enum.namespace] += [enum, ]
         else:
             serialized_enums_by_namespace[enum.namespace] = [enum, ]
-    for type in serialized_types:
+    for type in itertools.chain(serialized_types, alias_types):
         for template in type.templates:
             if template.namespace in template_types_by_namespace:
                 template_types_by_namespace[template.namespace] += [template, ]
@@ -690,9 +717,12 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
                 if namespace is not None:
                     result.append(f'namespace {namespace} {{')
 
-                if namespace is None or get_alias_namespace(type.alias) is None or get_alias_namespace(type.alias) == type.namespace:
-                    result.append(f'template<{typenames(type.alias)}> {alias_struct_or_class(type.alias)} {remove_template_parameters(type.alias)};')
-                result.append(f'using {type.name} = {remove_alias_struct_or_class(type.alias)};')
+                if not len(type.serialized_members()):
+                    result.append(f'{alias_struct_or_class(type.alias)} {type.name} {{ }};')
+                else:
+                    if namespace is None or get_alias_namespace(type.alias) is None or get_alias_namespace(type.alias) == type.namespace:
+                        result.append(f'template<{typenames(type.alias)}> {alias_struct_or_class(type.alias)} {remove_template_parameters(type.alias)};')
+                    result.append(f'using {type.name} = {remove_alias_struct_or_class(type.alias)};')
 
                 if namespace is not None:
                     result.append('}')
@@ -701,7 +731,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
     return result
 
 
-def generate_header(serialized_types, serialized_enums, additional_forward_declarations):
+def generate_header(serialized_types, serialized_enums, additional_forward_declarations, alias_types):
     result = []
     result.append(_license_header)
     result.append('#pragma once')
@@ -717,7 +747,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('#endif')
     result.append('#endif')
 
-    result += generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations)
+    result += generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations, alias_types)
     result.append('')
     result.append('namespace IPC {')
     result.append('')
@@ -725,6 +755,7 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('class Encoder;')
     result.append('class StreamConnectionEncoder;')
     result = result + argument_coder_declarations(serialized_types, True, None)
+    result = result + argument_coder_declarations(alias_types, True, None)
     result.append('')
     result.append('} // namespace IPC\n')
     result.append('')
@@ -758,14 +789,84 @@ def resolve_inheritance(serialized_types):
     return result
 
 
-def check_type_members(type, checking_parent_class):
+def strip_container(potential_container):
+    match = re.search(r'Vector<(.*)>', potential_container)
+    if match:
+        return match.groups()[0]
+    match = re.search(r'std::optional<(.*)>', potential_container)
+    if match:
+        return match.groups()[0]
+    match = re.search(r'HashMap<(.*),', potential_container)
+    if match:
+        return match.groups()[0]
+    match = re.search(r'HashSet<(.*)>', potential_container)
+    if match:
+        return match.groups()[0]
+    return potential_container
+
+
+def find_alias(type_to_compare, alias_types, search_containers=False):
+    if search_containers:
+        type_to_compare = strip_container(type_to_compare)
+    return next((t for t in alias_types if t.name == type_to_compare), None)
+
+
+def replace_type(potential_container, target_type):
+    match = re.search(r'Vector<(.*)>', potential_container)
+    if match:
+        return f'Vector<{target_type}>'
+    match = re.search(r'std::optional<(.*)>', potential_container)
+    if match:
+        return f'std::optional<{target_type}>'
+    match = re.search(r'HashMap<(.*),', potential_container)
+    if match:
+        return f'HashMap<{target_type},' + potential_container.split(',')[1]
+    match = re.search(r'HashSet<(.*)>', potential_container)
+    if match:
+        return f'HashSet<{target_type}>'
+    return target_type
+
+
+def validate_container(container_name, potential_container, alias_types):
+    result = []
+    replacement = find_alias(potential_container, alias_types, True)
+    match = re.search(r'Vector<(.*)>', potential_container)
+    if match:
+        result.append(f'    for (auto& item : *{container_name}) {{')
+        result += generate_type_validation('item', replacement);
+        result.append(f'    }}')
+        return result
+    match = re.search(r'std::optional<(.*)>', potential_container)
+    if match:
+        result += generate_type_validation(f'**{container_name}', replacement);
+        return result
+    match = re.search(r'HashMap<(.*),', potential_container)
+    if match:
+        result.append(f'    for (const auto& [key, value] : *{container_name}) {{')
+        result += generate_type_validation('key', replacement);
+        result.append(f'    }}')
+        return result
+    match = re.search(r'HashSet<(.*)>', potential_container)
+    if match:
+        result.append(f'    for (const auto& key : *{container_name}) {{')
+        result += generate_type_validation('key', replacement);
+        result.append(f'    }}')
+        return result
+    print(potential_container)
+    assert False
+
+def check_type_members(type, checking_parent_class, alias_types):
     result = []
     if type.parent_class is not None:
-        result = check_type_members(type.parent_class, True)
+        result = check_type_members(type.parent_class, True, alias_types)
     for member in type.members:
         if member.condition is not None:
             result.append(f'#if {member.condition}')
-        result.append(f'    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.{member.name})>, {member.type}>);')
+        type_to_compare = member.type
+        found_alias_type = find_alias(type_to_compare, alias_types, True)
+        if found_alias_type:
+            type_to_compare = replace_type(type_to_compare, remove_alias_struct_or_class(found_alias_type.alias))
+        result.append(f'    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.{member.name})>, {type_to_compare}>);')
         if member.condition is not None:
             result.append('#endif')
     for member in type.dictionary_members:
@@ -777,7 +878,11 @@ def check_type_members(type, checking_parent_class):
             for member in type.members:
                 if member.condition is not None:
                     result.append(f'#if {member.condition}')
-                result.append(f'        {member.type} {member.name}{" : 1" if "BitField" in member.attributes else ""};')
+                type_to_compare = member.type
+                found_alias_type = find_alias(type_to_compare, alias_types, True)
+                if found_alias_type:
+                    type_to_compare = replace_type(type_to_compare, remove_alias_struct_or_class(found_alias_type.alias))
+                result.append(f'        {type_to_compare} {member.name}{" : 1" if "BitField" in member.attributes else ""};')
                 if member.condition is not None:
                     result.append('#endif')
             for member in type.dictionary_members:
@@ -832,6 +937,8 @@ def encode_cf_type(type):
 
 
 def encode_type(type):
+    if isinstance(type, AliasType):
+        assert False
     if type.cf_type is not None:
         return encode_cf_type(type)
     result = []
@@ -895,13 +1002,13 @@ def should_decode_ref(member, serialized_types):
     return False
 
 
-def decode_type(type, serialized_types):
+def decode_type(type, serialized_types, alias_types):
     if type.cf_type is not None:
         return decode_cf_type(type)
 
     result = []
     if type.parent_class is not None:
-        result = result + decode_type(type.parent_class, serialized_types)
+        result = result + decode_type(type.parent_class, serialized_types, alias_types)
 
     if type.members_are_subclasses:
         result.append(f'    auto type = decoder.decode<{type.subclass_enum_name()}>();')
@@ -915,6 +1022,9 @@ def decode_type(type, serialized_types):
 
     if type.debug_decoding_failure:
         result.append('    bool addedDecodingFailureIndex = false;')
+
+    if isinstance(type, AliasType):
+        result.append(f'    auto result = decoder.decode<{remove_alias_struct_or_class(type.alias)}>();')
 
     for i in range(len(type.serialized_members())):
         member = type.serialized_members()[i]
@@ -973,6 +1083,13 @@ def decode_type(type, serialized_types):
             assert len(decodable_classes) == 0
             if should_decode_ref(member, serialized_types):
                 result.append(f'    auto {sanitized_variable_name} = decoder.decode<Ref<{member.type}>>();')
+            elif find_alias(member.type, alias_types, False):
+                replacement_type = replace_type(member.type, remove_alias_struct_or_class(find_alias(member.type, alias_types, False).alias))
+                result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}, {replacement_type}>();')
+            elif find_alias(member.type, alias_types, True):
+                replacement_type = replace_type(member.type, remove_alias_struct_or_class(find_alias(member.type, alias_types, True).alias))
+                result.append(f'    auto {sanitized_variable_name} = decoder.decode<{replacement_type}>();')
+                result = result + validate_container(sanitized_variable_name, member.type, alias_types);
             else:
                 result.append(f'    auto {sanitized_variable_name} = decoder.decode<{member.type}>();')
             if 'EncodeRequestBody' in member.attributes:
@@ -1053,7 +1170,15 @@ def construct_type(type, specialization, indentation):
     return result
 
 
-def generate_one_impl(type, template_argument, serialized_types):
+def generate_type_validation(variable, type):
+    result = []
+    if type.type_validator:
+        result.append(f'    if (!({type.type_validator}))'.replace('$', variable))
+        result.append(f'        return std::nullopt;')
+    return result
+
+
+def generate_one_impl(type, template_argument, serialized_types, alias_types):
     result = []
     name_with_template = type.namespace_and_name()
     if template_argument is not None:
@@ -1083,6 +1208,8 @@ def generate_one_impl(type, template_argument, serialized_types):
         instanceArgName = 'instance' if type.generic_wrapper is None else 'passedInstance'
         if type.cf_type is not None:
             result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, {name_with_template} {instanceArgName})')
+        elif isinstance(type, AliasType):
+            continue
         elif type.rvalue:
             result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, {name_with_template}&& {instanceArgName})')
         else:
@@ -1094,7 +1221,7 @@ def generate_one_impl(type, template_argument, serialized_types):
             else:
                 result.append(f'    auto instance = {type.generic_wrapper}({instanceArgName});')
         if not type.members_are_subclasses and type.cf_type is None:
-            result = result + check_type_members(type, False)
+            result = result + check_type_members(type, False, alias_types)
         result = result + encode_type(type)
         if type.members_are_subclasses:
             result.append('    ASSERT_NOT_REACHED();')
@@ -1104,17 +1231,22 @@ def generate_one_impl(type, template_argument, serialized_types):
         result.append('')
     if type.cf_type is not None:
         result.append(f'std::optional<RetainPtr<{name_with_template}>> ArgumentCoder<RetainPtr<{name_with_template}>>::decode(Decoder& decoder)')
+    elif isinstance(type, AliasType):
+        result.append(f'std::optional<{remove_template_parameters(type.alias)}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     elif type.return_ref:
         result.append(f'std::optional<Ref<{name_with_template}>> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     else:
         result.append(f'std::optional<{name_with_template}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     result.append('{')
-    result = result + decode_type(type, serialized_types)
+    result = result + decode_type(type, serialized_types, alias_types)
     if type.cf_type is None:
         if not type.members_are_subclasses:
             result.append('    if (!decoder.isValid()) [[unlikely]]')
             result.append('        return std::nullopt;')
-            if type.populate_from_empty_constructor and not type.has_optional_tuple_bits():
+            if isinstance(type, AliasType):
+                result += generate_type_validation('*result', type)
+                result.append('    return result;')
+            elif type.populate_from_empty_constructor and not type.has_optional_tuple_bits():
                 result.append(f'    {name_with_template} result;')
                 for member in type.serialized_members():
                     if member.condition is not None:
@@ -1122,10 +1254,13 @@ def generate_one_impl(type, template_argument, serialized_types):
                     result.append(f'    result.{member.name} = WTFMove(*{member.name});')
                     if member.condition is not None:
                         result.append('#endif')
+                result += generate_type_validation('*result', type)
                 result.append('    return { WTFMove(result) };')
             elif type.has_optional_tuple_bits() and type.populate_from_empty_constructor:
+                result += generate_type_validation('*result', type)
                 result.append('    return { WTFMove(result) };')
             else:
+                result += generate_type_validation('*result', type)
                 result.append('    return {')
                 if template_argument:
                     result = result + construct_type(type, template_argument.specialization(), 2)
@@ -1143,7 +1278,7 @@ def generate_one_impl(type, template_argument, serialized_types):
     return result
 
 
-def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types):
+def generate_impl(serialized_types, serialized_enums, headers, generating_webkit_platform_impl, objc_wrapped_types, alias_types):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1214,14 +1349,14 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result = result + argument_coder_declarations(serialized_types, False, generating_webkit_platform_impl)
     result.append('')
 
-    for type in serialized_types:
+    for type in itertools.chain(serialized_types, alias_types):
         if type.webkit_platform != generating_webkit_platform_impl:
             continue
         if type.templates:
             for template in type.templates:
-                result.extend(generate_one_impl(type, template, serialized_types))
+                result.extend(generate_one_impl(type, template, serialized_types, alias_types))
         else:
-            result.extend(generate_one_impl(type, None, serialized_types))
+            result.extend(generate_one_impl(type, None, serialized_types, alias_types))
     result.append('} // namespace IPC')
     result.append('')
     result.append('namespace WTF {')
@@ -1413,7 +1548,7 @@ def output_sorted_headers(sorted_headers):
     return result
 
 
-def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types):
+def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types, alias_types):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -1480,6 +1615,16 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
         result.append('        } },')
         if using_statement.condition is not None:
             result.append('#endif')
+    for alias_type in alias_types:
+        if alias_type.condition is not None:
+            result.append(f'#if {alias_type.condition}')
+        result.append(f'        {{ "{alias_type.name}"_s, {{')
+        result.append(f'        {{')
+        result.append(f'            "{remove_template_parameters(alias_type.alias)}"_s')
+        result.append(f'            , "alias"_s }}')
+        result.append('        } },')
+        if alias_type.condition is not None:
+            result.append('#endif')
     result.append('    };')
     result.append('}')
     result.append('')
@@ -1542,6 +1687,7 @@ def parse_serialized_types(file):
     serialized_enums = []
     using_statements = []
     objc_wrapped_types = []
+    alias_types = []
     additional_forward_declarations = []
     headers = []
 
@@ -1646,6 +1792,10 @@ def parse_serialized_types(file):
                 headers.append(ConditionalHeader(header, type_condition, False, True))
             continue
 
+        match = re.search(r'\[(.*)\] (alias) (.*);', line)
+        if match:
+            alias_types.append(AliasType(match.groups()[1], namespace, match.groups()[2], type_condition, match.groups()[0], metadata))
+            continue
 
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
@@ -1770,7 +1920,7 @@ def parse_serialized_types(file):
                     dictionary_members.append(MemberVariable(member_type, member_name, member_condition, []))
                 else:
                     members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations, objc_wrapped_types]
+    return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations, objc_wrapped_types, alias_types]
 
 
 def generate_webkit_secure_coding_impl(serialized_types, headers):
@@ -2021,6 +2171,7 @@ def main(argv):
     serialized_enums = []
     using_statements = []
     objc_wrapped_types = []
+    alias_types = []
     headers = []
     header_set = set()
     header_set.add(ConditionalHeader('"FormDataReference.h"', None))
@@ -2028,7 +2179,7 @@ def main(argv):
     file_extension = argv[1]
     for i in range(2, len(argv)):
         with open(argv[i]) as file:
-            new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types = parse_serialized_types(file)
+            new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types, new_alias_types = parse_serialized_types(file)
             for type in new_types:
                 type.enforce_opaque_ipc_types_usage()
                 serialized_types.append(type)
@@ -2043,18 +2194,20 @@ def main(argv):
                 additional_forward_declarations_list.append(declaration)
             for objc_wrapped_type in new_objc_wrapped_types:
                 objc_wrapped_types.append(objc_wrapped_type)
+            for alias_type in new_alias_types:
+                alias_types.append(alias_type)
     headers = sorted(header_set)
 
     serialized_types = resolve_inheritance(serialized_types)
 
     with open('GeneratedSerializers.h', "w+") as output:
-        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list))
+        output.write(generate_header(serialized_types, serialized_enums, additional_forward_declarations_list, alias_types))
     with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, False, []))
+        output.write(generate_impl(serialized_types, serialized_enums, headers, False, [], alias_types))
     with open('WebKitPlatformGeneratedSerializers.%s' % file_extension, "w+") as output:
-        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types))
+        output.write(generate_impl(serialized_types, serialized_enums, headers, True, objc_wrapped_types, alias_types))
     with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
-        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types))
+        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements, objc_wrapped_types, alias_types))
     with open('GeneratedWebKitSecureCoding.h', "w+") as output:
         output.write(generate_webkit_secure_coding_header(serialized_types))
     with open('GeneratedWebKitSecureCoding.%s' % file_extension, "w+") as output:

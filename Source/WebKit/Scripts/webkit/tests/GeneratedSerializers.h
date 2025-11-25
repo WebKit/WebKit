@@ -131,6 +131,8 @@ struct RequestEncodedWithBodyRValue;
 #if USE(SKIA)
 class SkFooBar;
 #endif
+struct ValdidatedStringUserStruct1;
+struct ValdidatedStringUserStruct2;
 
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
@@ -148,6 +150,7 @@ using RemoteVideoFrameReference = IPC::ObjectIdentifierReference<RemoteVideoFram
 namespace WebKit {
 using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
 }
+class ValidatedString { };
 
 namespace IPC {
 
@@ -432,6 +435,20 @@ template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
 template<> struct ArgumentCoder<WebCore::OpaqueTypeObject> {
     static void encode(Encoder&, const WebCore::OpaqueTypeObject&);
     static std::optional<WebCore::OpaqueTypeObject> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<ValdidatedStringUserStruct1> {
+    static void encode(Encoder&, const ValdidatedStringUserStruct1&);
+    static std::optional<ValdidatedStringUserStruct1> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<ValdidatedStringUserStruct2> {
+    static void encode(Encoder&, const ValdidatedStringUserStruct2&);
+    static std::optional<ValdidatedStringUserStruct2> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<ValidatedString> {
+    static std::optional<WTF::String> decode(Decoder&);
 };
 
 } // namespace IPC

@@ -42,7 +42,7 @@ enum class WebKit::AllowsCellularAccess : bool;
     String hstsStorageDirectory;
     WebKit::SandboxExtensionHandle hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
-    String cookiePersistentStoragePath;
+    FilePath cookiePersistentStoragePath;
     WebKit::SoupCookiePersistentStorageType cookiePersistentStorageType;
     bool persistentCredentialStorageEnabled;
     bool ignoreTLSErrors;

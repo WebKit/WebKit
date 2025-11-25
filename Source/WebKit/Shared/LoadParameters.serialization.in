@@ -31,7 +31,7 @@ enum class WebCore::LockBackForwardList : bool;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;
     RefPtr<WebCore::SharedBuffer> data;
 
-    String MIMEType;
+    MimeType MIMEType;
     String encodingName;
     String baseURLString;
     String unreachableURLString;

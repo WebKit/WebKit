@@ -22,7 +22,7 @@
 
 [RValue, DebugDecodingFailure] struct WebKit::WebProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    String injectedBundlePath;
+    FilePath injectedBundlePath;
     WebKit::SandboxExtensionHandle injectedBundlePathExtensionHandle;
     Vector<WebKit::SandboxExtensionHandle> additionalSandboxExtensionHandles;
 
@@ -32,22 +32,22 @@
     Vector<WebKit::SandboxExtensionHandle> enableRemoteWebInspectorExtensionHandles;
 #endif
 
-    Vector<String> urlSchemesRegisteredAsEmptyDocument;
-    Vector<String> urlSchemesRegisteredAsSecure;
-    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
-    Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
-    Vector<String> urlSchemesRegisteredAsLocal;
+    Vector<URLScheme> urlSchemesRegisteredAsEmptyDocument;
+    Vector<URLScheme> urlSchemesRegisteredAsSecure;
+    Vector<URLScheme> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<URLScheme> urlSchemesForWhichDomainRelaxationIsForbidden;
+    Vector<URLScheme> urlSchemesRegisteredAsLocal;
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    Vector<String> urlSchemesRegisteredAsNoAccess;
+    Vector<URLScheme> urlSchemesRegisteredAsNoAccess;
 #endif
-    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
-    Vector<String> urlSchemesRegisteredAsCORSEnabled;
-    Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
-    Vector<String> urlSchemesRegisteredAsCachePartitioned;
-    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+    Vector<URLScheme> urlSchemesRegisteredAsDisplayIsolated;
+    Vector<URLScheme> urlSchemesRegisteredAsCORSEnabled;
+    Vector<URLScheme> urlSchemesRegisteredAsAlwaysRevalidated;
+    Vector<URLScheme> urlSchemesRegisteredAsCachePartitioned;
+    Vector<URLScheme> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-    Vector<String> urlSchemesRegisteredAsWebExtensions;
+    Vector<URLScheme> urlSchemesRegisteredAsWebExtensions;
 #endif
 
     Vector<String> fontAllowList;
@@ -94,7 +94,7 @@
     ProcessID presentingApplicationPID;
 
 #if PLATFORM(COCOA)
-    String uiProcessBundleResourcePath;
+    FilePath uiProcessBundleResourcePath;
     WebKit::SandboxExtensionHandle uiProcessBundleResourcePathExtensionHandle;
 
     bool shouldEnableJIT;
@@ -117,7 +117,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-    Vector<String> mediaMIMETypes;
+    Vector<MimeType> mediaMIMETypes;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))

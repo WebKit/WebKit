@@ -20,7 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-webkit_platform_headers: "StreamConnectionEncoder.h"
+webkit_platform_headers: "StreamConnectionEncoder.h" "IPCValidation.h"
+headers: "IPCValidation.h"
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidHostname($)'] alias Hostname;
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidMimeType($)'] alias MimeType;
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidURLScheme($)'] alias URLScheme;
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidFilePath($)'] alias FilePath;
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidURLPath($)'] alias URLPath;
+[WebKitPlatform, Alias=class WTF::String, Validator='IPC::Validation::isValidEmailAddress($)'] alias EmailAddress;
 
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::URL {
     String string()

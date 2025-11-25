@@ -27,7 +27,7 @@ secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
 
 [CustomHeader, WebKitPlatform] class WebKit::CoreIPCPKContact {
     std::optional<WebKit::CoreIPCPersonNameComponents> m_name;
-    String m_emailAddress;
+    EmailAddress m_emailAddress;
     std::optional<WebKit::CoreIPCCNPhoneNumber> m_phoneNumber;
     std::optional<WebKit::CoreIPCCNPostalAddress> m_postalAddress;
     String m_supplementarySublocality;

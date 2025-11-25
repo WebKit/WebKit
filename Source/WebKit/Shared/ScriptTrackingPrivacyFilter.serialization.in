@@ -22,7 +22,7 @@
 
 header: "ScriptTrackingPrivacyFilter.h"
 [CustomHeader] struct WebKit::ScriptTrackingPrivacyHost {
-    String hostName;
+    Hostname hostName;
     OptionSet<WebCore::ScriptTrackingPrivacyFlag> allowedCategories;
 }
 

@@ -262,7 +262,7 @@ header: <WebCore/DDImageAsset.h>
     uint32_t height;
     uint32_t bytesPerPixel;
     WebCore::DDModel::DDSemantic semantic;
-    String path;
+    FilePath path;
     String identifier;
 };
 

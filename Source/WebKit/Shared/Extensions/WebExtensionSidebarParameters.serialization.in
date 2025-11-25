@@ -26,7 +26,7 @@
 
 struct WebKit::WebExtensionSidebarParameters {
     bool enabled;
-    String panelPath;
+    FilePath panelPath;
     std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier;
 };
 
