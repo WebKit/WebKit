@@ -258,10 +258,6 @@
 #include "GamepadManager.h"
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-#include "DocumentImmersive.h"
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Page);
@@ -2276,12 +2272,6 @@ void Page::updateRendering()
     });
 #else
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    runProcessingStep(RenderingUpdateStep::Immersive, [] (Document& document) {
-        document.protectedImmersive()->dispatchPendingEvents();
-    });
 #endif
 
     runProcessingStep(RenderingUpdateStep::VideoFrameCallbacks, [] (Document& document) {
@@ -5076,9 +5066,6 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"_s; break;
     case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"_s; break;
     case RenderingUpdateStep::SnapshottedScrollOffsets: ts << "SnapshottedScrollOffsets"_s; break;
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    case RenderingUpdateStep::Immersive: ts << "Immersive"_s; break;
-#endif
     }
     return ts;
 }

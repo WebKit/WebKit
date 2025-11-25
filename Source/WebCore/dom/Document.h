@@ -289,10 +289,6 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-class DocumentImmersive;
-#endif
-
 struct ApplicationManifest;
 struct AriaNotifyOptions;
 struct BoundaryPoint;
@@ -1476,15 +1472,6 @@ public:
     WEBCORE_EXPORT Ref<const DocumentFullscreen> protectedFullscreen() const;
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    DocumentImmersive* immersiveIfExists() { return m_immersive.get(); }
-    const DocumentImmersive* immersiveIfExists() const { return m_immersive.get(); }
-    WEBCORE_EXPORT DocumentImmersive& immersive();
-    WEBCORE_EXPORT const DocumentImmersive& immersive() const;
-    WEBCORE_EXPORT Ref<DocumentImmersive> protectedImmersive();
-    WEBCORE_EXPORT Ref<const DocumentImmersive> protectedImmersive() const;
-#endif
-
 #if ENABLE(POINTER_LOCK)
     WEBCORE_EXPORT void exitPointerLock();
 #endif
@@ -2117,9 +2104,6 @@ private:
     ScriptRunner& ensureScriptRunner();
     ScriptModuleLoader& ensureModuleLoader();
     WEBCORE_EXPORT DocumentFullscreen& ensureFullscreen();
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    WEBCORE_EXPORT DocumentImmersive& ensureImmersive();
-#endif
     inline DocumentFontLoader& fontLoader();
     Ref<DocumentFontLoader> protectedFontLoader();
     DocumentFontLoader& ensureFontLoader();
@@ -2442,10 +2426,6 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     const std::unique_ptr<DocumentFullscreen> m_fullscreen;
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    const std::unique_ptr<DocumentImmersive> m_immersive;
 #endif
 
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;

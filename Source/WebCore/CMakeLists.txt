@@ -1184,7 +1184,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Document+CSSOMView.idl
     dom/Document+CaretPositionFromPoint.idl
     dom/Document+Fullscreen.idl
-    dom/Document+Immersive.idl
     dom/Document+HTML.idl
     dom/Document+HTMLObsolete.idl
     dom/Document+PageVisibility.idl

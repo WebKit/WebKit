@@ -54,10 +54,6 @@
 #include "DocumentOrShadowRootFullscreen.h"
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-#include "DocumentImmersive.h"
-#endif
-
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "WebVTTElement.h"
@@ -452,16 +448,6 @@ ALWAYS_INLINE bool matchesInWindowFullscreenPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesPictureInPicturePseudoClass(const Element& element)
 {
     return is<HTMLVideoElement>(element) && element.document().pictureInPictureElement() == &element;
-}
-
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-
-ALWAYS_INLINE bool matchesImmersivePseudoClass(const Element& element)
-{
-    auto* modelElement = dynamicDowncast<HTMLModelElement>(element);
-    return modelElement && modelElement->immersive();
 }
 
 #endif

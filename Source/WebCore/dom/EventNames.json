@@ -128,8 +128,6 @@
     "icecandidateerror": { },
     "iceconnectionstatechange": { },
     "icegatheringstatechange": { },
-    "immersivechange": { },
-    "immersiveerror": { },
     "inactive": { },
     "input": { "categories": ["EventTimingEligible"] },
     "inputsourceschange": { },

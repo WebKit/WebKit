@@ -922,8 +922,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTML.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTML.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTMLObsolete.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTMLObsolete.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Immersive.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Immersive.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PageVisibility.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PageVisibility.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PictureInPicture.cpp

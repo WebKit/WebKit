@@ -259,8 +259,6 @@ onfocusout
 onformdata
 onfullscreenchange
 onfullscreenerror
-onimmersivechange
-onimmersiveerror
 ongamepadconnected
 ongamepaddisconnected
 ongesturechange

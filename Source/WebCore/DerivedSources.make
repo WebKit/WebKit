@@ -1153,7 +1153,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Document+CSSOMView.idl \
     $(WebCore)/dom/Document+CaretPositionFromPoint.idl \
     $(WebCore)/dom/Document+Fullscreen.idl \
-    $(WebCore)/dom/Document+Immersive.idl \
     $(WebCore)/dom/Document+HTML.idl \
     $(WebCore)/dom/Document+HTMLObsolete.idl \
     $(WebCore)/dom/Document+PageVisibility.idl \

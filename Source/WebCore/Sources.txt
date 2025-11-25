@@ -1245,7 +1245,6 @@ dom/Document.cpp
 dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
 dom/DocumentFullscreen.cpp
-dom/DocumentImmersive.cpp
 dom/DocumentMarkerController.cpp
 dom/DocumentMediaElement.cpp
 dom/DocumentOrShadowRootFullscreen.cpp

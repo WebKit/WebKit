@@ -5589,7 +5589,6 @@
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA6C1530220B98CC0055CBFC /* JSValueInWrappedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CA7E9B4924361DC5004E89F6 /* ContentfulPaintChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */; };
-		CA9A7F732EBA5F3D008241C7 /* DocumentImmersive.h in Headers */ = {isa = PBXBuildFile; fileRef = CA9A7F712EBA5F1C008241C7 /* DocumentImmersive.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F910146441F000C245B0 /* CSSRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B0 /* CSSRatioValue.h */; };
 		CB38FD521CCF939400592A3F /* JSPerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD4E1CCF937E00592A3F /* JSPerformanceEntry.h */; };
 		CB38FD5B1CD2325B00592A3F /* JSPerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = CB38FD591CD2314500592A3F /* JSPerformanceResourceTiming.h */; };
@@ -19958,9 +19957,6 @@
 		CA6C1538220D1EB30055CBFC /* JSIDBCursorWithValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursorWithValueCustom.cpp; sourceTree = "<group>"; };
 		CA7E9B4724361DC5004E89F6 /* ContentfulPaintChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentfulPaintChecker.h; sourceTree = "<group>"; };
 		CA7E9B4824361DC5004E89F6 /* ContentfulPaintChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentfulPaintChecker.cpp; sourceTree = "<group>"; };
-		CA9A7F712EBA5F1C008241C7 /* DocumentImmersive.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = DocumentImmersive.h; sourceTree = "<group>"; };
-		CA9A7F722EBA5F1C008241C7 /* DocumentImmersive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentImmersive.cpp; sourceTree = "<group>"; };
-		CA9A7F752EBA6019008241C7 /* Document+Immersive.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Document+Immersive.idl"; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRatioValue.cpp; sourceTree = "<group>"; };
 		CAE9F90E146441F000C245B0 /* CSSRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSRatioValue.h; sourceTree = "<group>"; };
 		CB38FD4A1CCCF2DD00592A3F /* PerformanceEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceEntry.cpp; sourceTree = "<group>"; };
@@ -40735,7 +40731,6 @@
 				CD92F50F2260FFEE00F87BB3 /* Document+Fullscreen.idl */,
 				7C3A8AA32509461F008C477F /* Document+HTML.idl */,
 				7C3A8AA625094859008C477F /* Document+HTMLObsolete.idl */,
-				CA9A7F752EBA6019008241C7 /* Document+Immersive.idl */,
 				7C3A8AB425099F5A008C477F /* Document+PageVisibility.idl */,
 				7C3A8AB625099FFD008C477F /* Document+PointerLock.idl */,
 				7C3A8ABA2509A199008C477F /* Document+Selection.idl */,
@@ -40758,8 +40753,6 @@
 				1A494ED50A123F1A00FDAFC1 /* DocumentFragment.idl */,
 				CD92F5172261038200F87BB3 /* DocumentFullscreen.cpp */,
 				CD92F5162261038200F87BB3 /* DocumentFullscreen.h */,
-				CA9A7F722EBA5F1C008241C7 /* DocumentImmersive.cpp */,
-				CA9A7F712EBA5F1C008241C7 /* DocumentImmersive.h */,
 				CDEFDA0927122638005559A7 /* DocumentInlines.h */,
 				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
 				CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */,
@@ -43199,7 +43192,6 @@
 				A8185F4509765766005826D9 /* DocumentFontLoader.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragment.h in Headers */,
 				CD92F5182261038200F87BB3 /* DocumentFullscreen.h in Headers */,
-				CA9A7F732EBA5F3D008241C7 /* DocumentImmersive.h in Headers */,
 				CDEFDA0B27122638005559A7 /* DocumentInlines.h in Headers */,
 				656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */,
 				8A12E35D11FA33280025836A /* DocumentLoadTiming.h in Headers */,

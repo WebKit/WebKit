@@ -142,9 +142,6 @@
             "argument": "optional"
         },
         "hover": {},
-        "immersive": {
-            "conditional": "ENABLE(MODEL_ELEMENT_IMMERSIVE)"
-        },
         "in-range": {},
         "increment": {
             "comment": "For scrollbar styling.",

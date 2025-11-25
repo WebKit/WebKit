@@ -5543,23 +5543,6 @@ ModelElementEnabled:
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
-ModelElementImmersiveEnabled:
-  type: bool
-  status: testable
-  category: javascript
-  condition: ENABLE(MODEL_ELEMENT_IMMERSIVE)
-  humanReadableName: "Immersive <model> API"
-  humanReadableDescription: "Enable <model> element immersive API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-  disableInLockdownMode: true
-  sharedPreferenceForWebProcess: true
-
 ModelNoPortalAttributeEnabled:
   type: bool
   status: unstable

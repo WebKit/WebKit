@@ -28,7 +28,6 @@
 #include "config.h"
 #include "PseudoElement.h"
 
-#include "DocumentPage.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "RenderElement.h"

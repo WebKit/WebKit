@@ -146,11 +146,6 @@ public:
     void isMuted(IsMutedPromise&&);
     void setIsMuted(bool, DOMPromiseDeferred<void>&&);
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    bool immersive() const;
-    void requestImmersive(DOMPromiseDeferred<void>&&);
-#endif
-
     bool supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 

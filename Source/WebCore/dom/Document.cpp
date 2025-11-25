@@ -446,10 +446,6 @@
 #include "WebGL2RenderingContext.h"
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-#include "DocumentImmersive.h"
-#endif
-
 #define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 #define DOCUMENT_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 
@@ -730,9 +726,6 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #if ENABLE(FULLSCREEN_API)
     ASSERT(!m_fullscreen);
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    ASSERT(!m_immersive);
-#endif
     ASSERT(!m_fontSelector);
     ASSERT(!m_fontLoader);
     ASSERT(!m_undoManager);
@@ -920,9 +913,6 @@ void Document::removedLastRef()
 #if ENABLE(FULLSCREEN_API)
         fullscreen().clear();
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-        immersive().clear();
-#endif
         m_associatedFormControls.clear();
         m_pendingRenderTreeUpdate = { };
 
@@ -975,11 +965,6 @@ void Document::commonTeardown()
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr fullscreen = m_fullscreen.get())
         fullscreen->clearPendingEvents();
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    if (RefPtr immersive = m_immersive.get())
-        immersive->clearPendingEvents();
 #endif
 
     if (CheckedPtr svgExtensions = svgExtensionsIfExists())
@@ -1084,15 +1069,6 @@ DocumentFullscreen& Document::ensureFullscreen()
     ASSERT(m_constructionDidFinish);
     lazyInitialize(m_fullscreen, makeUniqueWithoutRefCountedCheck<DocumentFullscreen>(*this));
     return *m_fullscreen;
-}
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-DocumentImmersive& Document::ensureImmersive()
-{
-    ASSERT(m_constructionDidFinish);
-    lazyInitialize(m_immersive, makeUniqueWithoutRefCountedCheck<DocumentImmersive>(*this));
-    return *m_immersive;
 }
 #endif
 
@@ -9102,32 +9078,6 @@ Ref<DocumentFullscreen> Document::protectedFullscreen()
 Ref<const DocumentFullscreen> Document::protectedFullscreen() const
 {
     return fullscreen();
-}
-#endif
-
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-DocumentImmersive& Document::immersive()
-{
-    if (!m_immersive)
-        return ensureImmersive();
-    return *m_immersive;
-}
-
-const DocumentImmersive& Document::immersive() const
-{
-    if (!m_immersive)
-        return const_cast<Document&>(*this).ensureImmersive();
-    return *m_immersive;
-}
-
-Ref<DocumentImmersive> Document::protectedImmersive()
-{
-    return immersive();
-}
-
-Ref<const DocumentImmersive> Document::protectedImmersive() const
-{
-    return immersive();
 }
 #endif
 
