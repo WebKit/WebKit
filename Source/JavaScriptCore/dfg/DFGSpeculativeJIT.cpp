@@ -1872,9 +1872,6 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     // END OLD:
     newPathEnd.link(this);
 
-
-    
-    
     auto loopStart = label();
     auto loopDone = branch32(AboveOrEqual, indexGPR, lengthGPR);
     load8(BaseIndex(tempGPR, indexGPR, TimesOne), charGPR);
@@ -12765,15 +12762,14 @@ void SpeculativeJIT::emitSwitchCharStringJump(Node* node, SwitchData* data, GPRR
     loadPtr(Address(scratch, StringImpl::dataOffset()), value);
     // END OLD:
     newPathEnd1.link(this);
-    
-    
+
     Jump is8Bit = branchTest32(
         NonZero,
         Address(scratch, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit()));
     
     load16(Address(value), scratch);
-    
+
     Jump ready = jump();
     
     is8Bit.link(this);

@@ -152,8 +152,10 @@ public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
     static constexpr unsigned dataOffset() { return OBJECT_OFFSETOF(StringImplShape, m_data); }
 
+    enum InlineBufferTag { InlineBuffer };
     StringImplShape(unsigned refCount, std::span<const Latin1Character>, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, std::span<const char16_t>, unsigned hashAndFlags);
+    StringImplShape(unsigned refCount, unsigned length, unsigned hashAndFlags, InlineBufferTag);
 
     enum ConstructWithConstExprTag { ConstructWithConstExpr };
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
@@ -215,7 +217,7 @@ public:
         PointerUnion m_data;
         char m_space8[1];
         Latin1Character m_spaceLatin1[1];
-        char16_t m_space16[1];        
+        char16_t m_space16[1];
     };
 };
 
@@ -267,7 +269,8 @@ private:
 
     // Create a normal 8-bit string with internal storage (BufferInternal).
     enum Force8Bit { Force8BitConstructor };
-    enum InlineBufferTag { InlineBuffer };
+    using StringImplShape::InlineBufferTag;
+    using StringImplShape::InlineBuffer;
     StringImpl(unsigned length, Force8Bit, InlineBufferTag);
 
     // Create a normal 16-bit string with internal storage (BufferInternal).
@@ -917,7 +920,7 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const Latin
     : m_refCount(refCount)
     , m_length(data.size())
     , m_hashAndFlags(hashAndFlags)
-    , m_data{.latin1 = data.data()}
+    , m_data { .latin1 = data.data() }
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -926,16 +929,24 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const char1
     : m_refCount(refCount)
     , m_length(data.size())
     , m_hashAndFlags(hashAndFlags)
-    , m_data{.char16 = data.data()}
+    , m_data { .char16 = data.data() }
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
+}
+
+inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, unsigned hashAndFlags, InlineBufferTag)
+    : m_refCount(refCount)
+    , m_length(length)
+    , m_hashAndFlags(hashAndFlags)
+{
+    RELEASE_ASSERT(length <= MaxLength);
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
     : m_refCount(refCount)
     , m_length(length)
     , m_hashAndFlags(hashAndFlags)
-    , m_data{.char8 = characters}
+    , m_data { .char8 = characters }
 {
     RELEASE_ASSERT(length <= MaxLength);
 }
@@ -944,7 +955,7 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
     : m_refCount(refCount)
     , m_length(length)
     , m_hashAndFlags(hashAndFlags)
-    , m_data{.char16 = characters}
+    , m_data { .char16 = characters }
 {
     RELEASE_ASSERT(length <= MaxLength);
 }
@@ -997,7 +1008,7 @@ template<bool isSpecialCharacter(char16_t)> inline bool StringImpl::containsOnly
 }
 
 inline StringImpl::StringImpl(unsigned length, Force8Bit, InlineBufferTag)
-    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(bufferPointer<Latin1Character>(), length), s_hashFlag8BitBuffer | StringWithInlineBuffer | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, s_hashFlag8BitBuffer | StringWithInlineBuffer | BufferInternal, InlineBuffer)
 {
     ASSERT(dataLatin1());
     ASSERT(m_length);
@@ -1006,7 +1017,7 @@ inline StringImpl::StringImpl(unsigned length, Force8Bit, InlineBufferTag)
 }
 
 inline StringImpl::StringImpl(unsigned length, InlineBufferTag)
-    : StringImplShape(s_refCountIncrement, unsafeMakeSpan(bufferPointer<char16_t>(), length), s_hashZeroValue | StringWithInlineBuffer | BufferInternal)
+    : StringImplShape(s_refCountIncrement, length, s_hashZeroValue | StringWithInlineBuffer | BufferInternal, InlineBuffer)
 {
     ASSERT(dataC16());
     ASSERT(m_length);
@@ -1274,7 +1285,7 @@ inline StringImpl::StringImpl(CreateSymbolTag)
 
 template<typename T> inline size_t StringImpl::allocationSize(Checked<size_t> nCharacters)
 {
-    size_t sizeWithInlineString = tailOffset<T>() + nCharacters * sizeof(T);
+    size_t sizeWithInlineString = bufferOffset<T>() + nCharacters * sizeof(T);
     return sizeWithInlineString > sizeof(StringImpl) ? sizeWithInlineString : sizeof(StringImpl);
 }
 
