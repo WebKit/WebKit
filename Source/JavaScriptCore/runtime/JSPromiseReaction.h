@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSInternalFieldObjectImpl.h"
+#include "JSCell.h"
 
 namespace JSC {
 
@@ -47,14 +47,14 @@ public:
     static JSPromiseReaction* create(VM&, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next);
 
     JSValue promise() const { return m_promise.get(); }
-    JSValue onFulfilled() const { return m_onFulfilled.get(); }
-    JSValue onRejected() const { return m_onRejected.get(); }
+    JSValue onFulfilledOrEncodedTask() const { return m_onFulfilledOrEncodedTask.get(); }
+    JSValue onRejectedOrEncodedTask() const { return m_onRejectedOrEncodedTask.get(); }
     JSValue context() const { return m_context.get(); }
     JSPromiseReaction* next() const { return m_next.get(); }
 
     void setPromise(VM& vm, JSValue value) { m_promise.set(vm, this, value); }
-    void setOnFulfilled(VM& vm, JSValue value) { m_onFulfilled.set(vm, this, value); }
-    void setOnRejected(VM& vm, JSValue value) { m_onRejected.set(vm, this, value); }
+    void setOnFulfilledOrEncodedTask(VM& vm, JSValue value) { m_onFulfilledOrEncodedTask.set(vm, this, value); }
+    void setOnRejectedOrEncodedTask(VM& vm, JSValue value) { m_onRejectedOrEncodedTask.set(vm, this, value); }
     void setContext(VM& vm, JSValue value) { m_context.set(vm, this, value); }
     void setNext(VM& vm, JSPromiseReaction* value) { m_next.setMayBeNull(vm, this, value); }
 
@@ -62,16 +62,18 @@ private:
     JSPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next)
         : Base(vm, structure)
         , m_promise(promise, WriteBarrierEarlyInit)
-        , m_onFulfilled(onFulfilled, WriteBarrierEarlyInit)
-        , m_onRejected(onRejected, WriteBarrierEarlyInit)
+        , m_onFulfilledOrEncodedTask(onFulfilled, WriteBarrierEarlyInit)
+        , m_onRejectedOrEncodedTask(onRejected, WriteBarrierEarlyInit)
         , m_context(context, WriteBarrierEarlyInit)
         , m_next(next, WriteBarrierEarlyInit)
     {
     }
 
     WriteBarrier<Unknown> m_promise;
-    WriteBarrier<Unknown> m_onFulfilled;
-    WriteBarrier<Unknown> m_onRejected;
+    // If JSPromiseReaction does not have explicit handlers,
+    // these fields may contain InternalMicrotask encoded as an int32.
+    WriteBarrier<Unknown> m_onFulfilledOrEncodedTask;
+    WriteBarrier<Unknown> m_onRejectedOrEncodedTask;
     WriteBarrier<Unknown> m_context;
     WriteBarrier<JSPromiseReaction> m_next;
 };

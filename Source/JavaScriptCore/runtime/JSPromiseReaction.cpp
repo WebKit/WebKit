@@ -27,7 +27,6 @@
 #include "JSPromiseReaction.h"
 
 #include "JSCInlines.h"
-#include "JSInternalFieldObjectImplInlines.h"
 
 namespace JSC {
 
@@ -47,8 +46,8 @@ void JSPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);
-    visitor.append(thisObject->m_onFulfilled);
-    visitor.append(thisObject->m_onRejected);
+    visitor.append(thisObject->m_onFulfilledOrEncodedTask);
+    visitor.append(thisObject->m_onRejectedOrEncodedTask);
     visitor.append(thisObject->m_context);
     visitor.append(thisObject->m_next);
 }
