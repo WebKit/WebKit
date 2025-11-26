@@ -44,6 +44,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/SkImageGanesh.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/NumberOfCores.h>
+#include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -132,6 +133,11 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayerCoordina
     auto buffer = createBuffer(renderingMode, dirtyRect.size(), contentsOpaque);
     buffer->beginPainting();
 
+    auto exitFunction = makeScopeExit([&] {
+        buffer->completePainting();
+        platformLayer->didPaintTile();
+    });
+
     if (auto* canvas = buffer->canvas()) {
         WTFBeginSignpost(canvas, PaintTile, "Skia/%s, dirty region %ix%i+%i+%i", buffer->isBackedByOpenGL() ? "GPU" : "CPU", dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
         canvas->save();
@@ -143,9 +149,6 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paint(const GraphicsLayerCoordina
         canvas->restore();
         WTFEndSignpost(canvas, PaintTile);
     }
-
-    buffer->completePainting();
-    platformLayer->didPaintTile();
 
     return buffer;
 }
@@ -184,6 +187,10 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
     buffer->beginPainting();
 
     m_workerPool->postTask([platformLayer = WTFMove(platformLayer), buffer = Ref { buffer }, dirtyRect, recording = RefPtr { recording }]() mutable {
+        auto exitFunction = makeScopeExit([&] {
+            buffer->completePainting();
+            platformLayer->didPaintTile();
+        });
         if (auto* canvas = buffer->canvas()) {
             auto replayPicture = [](const sk_sp<SkPicture>& picture, SkCanvas* canvas, const IntRect& recordRect, const IntRect& paintRect) {
                 canvas->save();
@@ -204,9 +211,6 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::replay(const GraphicsLayerCoordin
                 replayPicture(recording->picture(), canvas, recording->recordRect(), dirtyRect);
             WTFEndSignpost(canvas, PaintTile);
         }
-
-        buffer->completePainting();
-        platformLayer->didPaintTile();
     });
 
     return buffer;
