@@ -76,7 +76,7 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
         return out.setType(RemoteValueType::Null).release();
 
     if (typeString == "boolean"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Boolean).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Boolean).release();
         if (auto booleanValue = object->getBoolean("value"_s))
             remoteValue->setValue(JSON::Value::create(*booleanValue));
         return remoteValue;
@@ -84,13 +84,13 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     }
     if (typeString == "string"_s) {
         String stringValue = object->getString("value"_s);
-        auto remoteValue = out.setType(RemoteValueType::String).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::String).release();
         remoteValue->setValue(JSON::Value::create(stringValue));
         return remoteValue;
 
     }
     if (typeString == "number"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Number).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Number).release();
         // Accept BOTH a number and a string (for NaN/Infinity/-0)
         if (auto numberDouble = object->getDouble("value"_s))
             remoteValue->setValue(JSON::Value::create(*numberDouble));
@@ -104,26 +104,27 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     }
     if (typeString == "bigint"_s) {
         String bigintString = object->getString("value"_s); // always stringified
-        auto remoteValue = out.setType(RemoteValueType::Bigint).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Bigint).release();
         remoteValue->setValue(JSON::Value::create(bigintString));
         return remoteValue;
 
     }
     if (typeString == "array"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Array).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Array).release();
         if (auto array = object->getArray("value"_s)) {
-            auto items = JSON::Array::create();
+            Ref<JSON::Array> items = JSON::Array::create();
             for (size_t i = 0; i < array->length(); ++i) {
                 auto item = deserializeRemoteValue(array->get(i).ptr());
                 items->pushObject(item.releaseNonNull());
             }
-            remoteValue->setValue(WTFMove(items));
+            auto movedItems = WTFMove(items);
+            remoteValue->setValue(movedItems);
         }
         return remoteValue;
 
     }
     if (typeString == "object"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Object).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Object).release();
         if (auto valueObject = object->getObject("value"_s))
             remoteValue->setValue(valueObject.releaseNonNull());
         else
@@ -132,19 +133,19 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
 
     }
     if (typeString == "window"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Window).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Window).release();
         if (auto value = object->getValue("value"_s))
             remoteValue->setValue(value.releaseNonNull());
         return remoteValue;
     }
     if (typeString == "map"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Map).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Map).release();
         if (auto array = object->getArray("value"_s))
             remoteValue->setValue(array.releaseNonNull());
         return remoteValue;
     }
     if (typeString == "set"_s) {
-        auto remoteValue = out.setType(RemoteValueType::Set).release();
+        RefPtr<RemoteValue> remoteValue = out.setType(RemoteValueType::Set).release();
         if (auto array = object->getArray("value"_s))
             remoteValue->setValue(array.releaseNonNull());
         return remoteValue;
@@ -185,17 +186,9 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
                 auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
                     .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
                     .release();
-                auto emptyCallFrames = JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create();
-                auto stackTrace = Inspector::Protocol::BidiScript::StackTrace::create()
-                    .setCallFrames(WTFMove(emptyCallFrames))
-                    .release();
-                auto exceptionDetails = Inspector::Protocol::BidiScript::ExceptionDetails::create()
-                    .setText(stringResult.error().right("JavaScriptError;"_s.length()))
-                    .setLineNumber(0)
-                    .setColumnNumber(0)
-                    .setException(WTFMove(exceptionValue))
-                    .setStackTrace(WTFMove(stackTrace))
-                    .release();
+                auto exceptionDetails = BidiScriptAgent::createExceptionDetails(
+                    stringResult.error().right("JavaScriptError;"_s.length()),
+                    WTFMove(exceptionValue));
 
                 callback({ { Inspector::Protocol::BidiScript::EvaluateResultType::Exception, "placeholder_realm"_s, nullptr, WTFMove(exceptionDetails) } });
                 return;
@@ -370,18 +363,7 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmId, cons
                         .release();
                     exceptionRemote->setValue(JSON::Value::create(String("Missing 'remote' in result envelope"_s)));
 
-                    auto emptyCallFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
-                    auto stackTrace = BidiScript::StackTrace::create()
-                        .setCallFrames(WTFMove(emptyCallFrames))
-                        .release();
-
-                    exceptionDetails = BidiScript::ExceptionDetails::create()
-                        .setLineNumber(0)
-                        .setColumnNumber(0)
-                        .setText("Malformed envelope result"_s)
-                        .setException(WTFMove(exceptionRemote))
-                        .setStackTrace(WTFMove(stackTrace))
-                        .release();
+                    exceptionDetails = createExceptionDetails("Malformed envelope result"_s, WTFMove(exceptionRemote));
                 }
             }
         } else {
@@ -392,18 +374,7 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmId, cons
                 .release();
             exceptionRemote->setValue(JSON::Value::create(String("Malformed envelope"_s)));
 
-            auto emptyCallFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
-            auto stackTrace = BidiScript::StackTrace::create()
-                .setCallFrames(WTFMove(emptyCallFrames))
-                .release();
-
-            exceptionDetails = BidiScript::ExceptionDetails::create()
-                .setLineNumber(0)
-                .setColumnNumber(0)
-                .setText("Malformed envelope result"_s)
-                .setException(WTFMove(exceptionRemote))
-                .setStackTrace(WTFMove(stackTrace))
-                .release();
+            exceptionDetails = createExceptionDetails("Malformed envelope result"_s, WTFMove(exceptionRemote));
         }
     }
 
@@ -414,18 +385,7 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmId, cons
                 .release();
             fallbackRemote->setValue(JSON::Value::create(String("Script evaluation failed"_s)));
 
-            auto emptyCallFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
-            auto stackTrace = BidiScript::StackTrace::create()
-                .setCallFrames(WTFMove(emptyCallFrames))
-                .release();
-
-            exceptionDetails = BidiScript::ExceptionDetails::create()
-                .setLineNumber(0)
-                .setColumnNumber(0)
-                .setText("JavaScript exception occurred"_s)
-                .setException(WTFMove(fallbackRemote))
-                .setStackTrace(WTFMove(stackTrace))
-                .release();
+            exceptionDetails = createExceptionDetails("JavaScript exception occurred"_s, WTFMove(fallbackRemote));
         }
         callback({ { evalType, realmId, nullptr, WTFMove(exceptionDetails) } });
         return;
@@ -602,8 +562,8 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             if (lastColon != notFound) {
                 auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
                 if (secondLastColon != notFound) {
-                    auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
-                    auto colStr = urlPart.substring(lastColon + 1);
+                    String lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
+                    String colStr = urlPart.substring(lastColon + 1);
                     bool ok1 = false, ok2 = false;
                     if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
                         lineNumber = *parsedLine;
@@ -627,8 +587,8 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
                 if (lastColon != notFound) {
                     auto secondLastColon = urlPart.reverseFind(':', lastColon - 1);
                     if (secondLastColon != notFound) {
-                        auto lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
-                        auto colStr = urlPart.substring(lastColon + 1);
+                        String lineStr = urlPart.substring(secondLastColon + 1, lastColon - secondLastColon - 1);
+                        String colStr = urlPart.substring(lastColon + 1);
                         bool ok1 = false, ok2 = false;
                         if (auto parsedLine = WTF::parseInteger<unsigned>(lineStr, 10, WTF::ParseIntegerWhitespacePolicy::Disallow)) {
                             lineNumber = *parsedLine;
@@ -648,13 +608,13 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             result.topLineNumber = lineNumber;
         if (!result.topColumnNumber && parsed)
             result.topColumnNumber = columnNumber;
-        auto frame = BidiScript::StackFrame::create()
+        RefPtr<BidiScript::StackFrame> frame = BidiScript::StackFrame::create()
             .setLineNumber(parsed ? lineNumber : 0)
             .setColumnNumber(parsed ? columnNumber : 0)
             .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
             .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
             .release();
-        result.callFrames->addItem(WTFMove(frame));
+        result.callFrames->addItem(WTFMove(frame).releaseNonNull());
     }
 
     return result;
@@ -672,11 +632,11 @@ RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::build
         exceptionRemote = serializeAsRemoteValue(exceptionValue);
 
         if (auto exceptionObj = exceptionValue->asObject()) {
-            auto message = exceptionObj->getString("message"_s);
+            String message = exceptionObj->getString("message"_s);
             if (!message.isNull())
                 exceptionMessage = message;
 
-            auto stack = exceptionObj->getString("stack"_s);
+            String stack = exceptionObj->getString("stack"_s);
             if (!stack.isNull())
                 parsedStack = parseStackTrace(stack);
         }
@@ -687,8 +647,9 @@ RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::build
         exceptionRemote->setValue(JSON::Value::create(String("Unknown exception"_s)));
     }
 
-    auto stackTrace = BidiScript::StackTrace::create()
-        .setCallFrames(WTFMove(parsedStack.callFrames))
+    Ref<JSON::ArrayOf<BidiScript::StackFrame>> callFrames = WTFMove(parsedStack.callFrames);
+    RefPtr<BidiScript::StackTrace> stackTrace = BidiScript::StackTrace::create()
+        .setCallFrames(WTFMove(callFrames))
         .release();
 
     return BidiScript::ExceptionDetails::create()
@@ -696,6 +657,30 @@ RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::build
         .setColumnNumber(static_cast<int>(parsedStack.topColumnNumber))
         .setText(exceptionMessage)
         .setException(exceptionRemote.releaseNonNull())
+        .setStackTrace(stackTrace.releaseNonNull())
+        .release();
+}
+
+Ref<Inspector::Protocol::BidiScript::StackTrace> BidiScriptAgent::createEmptyStackTrace()
+{
+    using namespace Inspector::Protocol;
+
+    Ref<JSON::ArrayOf<BidiScript::StackFrame>> emptyCallFrames = JSON::ArrayOf<BidiScript::StackFrame>::create();
+    return BidiScript::StackTrace::create()
+        .setCallFrames(WTFMove(emptyCallFrames))
+        .release();
+}
+
+RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::createExceptionDetails(const String& text, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>&& exceptionValue, unsigned lineNumber, unsigned columnNumber)
+{
+    using namespace Inspector::Protocol;
+
+    Ref<BidiScript::StackTrace> stackTrace = createEmptyStackTrace();
+    return BidiScript::ExceptionDetails::create()
+        .setLineNumber(lineNumber)
+        .setColumnNumber(columnNumber)
+        .setText(text)
+        .setException(WTFMove(exceptionValue).releaseNonNull())
         .setStackTrace(WTFMove(stackTrace))
         .release();
 }

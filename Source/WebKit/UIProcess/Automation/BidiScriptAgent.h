@@ -64,6 +64,9 @@ private:
     ParsedStackTrace parseStackTrace(const String& stackTraceString);
     RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> buildExceptionDetailsFromExceptionValue(RefPtr<JSON::Value> exceptionValue);
 
+    static Ref<Inspector::Protocol::BidiScript::StackTrace> createEmptyStackTrace();
+    static RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> createExceptionDetails(const String& text, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>&&, unsigned lineNumber = 0, unsigned columnNumber = 0);
+
     // Stubbed realm registry to decouple evaluate from fabricated ids.
     class RealmRegistryStub {
     public:
