@@ -13,3 +13,4 @@ layer at (0,0) size 800x600
               RenderInline {SPAN} at (0,19) size 75x18
                 RenderText {#text} at (0,19) size 75x18
                   text run at (0,0) width 75: "CONTENT"
+              RenderText {#text} at (0,0) size 0x0

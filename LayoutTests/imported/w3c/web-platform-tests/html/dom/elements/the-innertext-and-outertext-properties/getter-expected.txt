@@ -189,7 +189,7 @@ PASS <tt> gets no special treatment ("<div>123<tt>abc</tt>def")
 PASS <code> gets no special treatment ("<div>123<code>abc</code>def")
 PASS soft hyphen preserved ("<div>abc&shy;def")
 PASS soft hyphen preserved ("<div style='width:0'>abc&shy;def")
-FAIL Ignoring non-rendered table whitespace ("<div><table style='white-space:pre'>  <td>abc</td>  </table>") assert_equals: innerText expected "abc" but got "abc\n"
+FAIL Ignoring non-rendered table whitespace ("<div><table style='white-space:pre'>  <td>abc</td>  </table>") assert_equals: innerText expected "abc" but got "  \nabc\n"
 FAIL Tab-separated table cells ("<div><table><tr><td>abc<td>def</table>") assert_equals: innerText expected "abc\tdef" but got "abc\tdef\n"
 FAIL Tab-separated table cells including empty cells ("<div><table><tr><td>abc<td><td>def</table>") assert_equals: innerText expected "abc\t\tdef" but got "abc\t\tdef\n"
 FAIL Tab-separated table cells including trailing empty cells ("<div><table><tr><td>abc<td><td></table>") assert_equals: innerText expected "abc\t\t" but got "abc\t\t\n"

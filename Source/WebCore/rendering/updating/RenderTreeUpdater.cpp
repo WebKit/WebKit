@@ -570,12 +570,37 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
-    if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
+    auto* previousRenderer = renderingParent.previousChildRenderer;
+    if (parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
         return false;
+    if (parentRenderer.isRenderTable()) {
+        if (!previousRenderer)
+            return false;
+
+        // Suppress whitespace after table-internal or block-level elements.
+        if (previousRenderer->isRenderTableRow() || previousRenderer->isRenderTableSection() || previousRenderer->isRenderTableCol() || previousRenderer->isRenderTableCaption())
+            return false;
+
+        // Check if the element is a form control (input, button, etc.).
+        if (is<RenderElement>(*previousRenderer)) {
+            auto& renderElement = downcast<RenderElement>(*previousRenderer);
+            if (auto* element = renderElement.element()) {
+                if (element->hasTagName(HTMLNames::inputTag) || element->hasTagName(HTMLNames::buttonTag))
+                    return false;
+            }
+        }
+
+        // Preserve whitespace only for inline-block and inline-table.
+        auto display = previousRenderer->style().display();
+        if (display == DisplayType::InlineBlock || display == DisplayType::InlineTable)
+            return true; // Keep the whitespace
+
+        // Suppress whitespace for everything else.
+        return false;
+    }
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
-    auto* previousRenderer = renderingParent.previousChildRenderer;
     if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
         return false;
 
