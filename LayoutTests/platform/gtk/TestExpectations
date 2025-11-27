@@ -1089,7 +1089,6 @@ webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-obj
 webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screenx.html [ Failure ]
 webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-top.html [ Failure ]
 webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Failure ]
-webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Failure ]
 
 webkit.org/b/277401 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
 webkit.org/b/277402 fast/events/context-activated-by-key-event.html [ Failure ]
@@ -1643,3 +1642,5 @@ webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-2.ht
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-3.html [ Skip ]
 
 webkit.org/b/299944 http/wpt/mediarecorder/record-96KHz-long-mp4.html [ Skip ]
+
+webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Timeout Pass ]

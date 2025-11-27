@@ -2649,9 +2649,10 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure Crash ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/235885 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
+webkit.org/b/235885 fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection.html [ Crash Failure Pass ]
 webkit.org/b/235885 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html [ Failure ]
 webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
@@ -3761,7 +3762,7 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ Image
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/297177 media/media-source/media-source-init-segment-duration.html [ Failure ]
-webkit.org/b/297178 media/media-source/media-source-paint-stereo-to-canvas.html [ Failure ]
+webkit.org/b/297178 media/media-source/media-source-paint-stereo-to-canvas.html [ Failure Crash ]
 
 # Flaky failure
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Pass Failure ]
@@ -4495,7 +4496,7 @@ webkit.org/b/277255 fast/dynamic/layer-hit-test-crash.html [ Failure Pass ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
-webkit.org/b/292843 fast/dom/Window/open-window-min-size.html [ Timeout ]
+webkit.org/b/292843 fast/dom/Window/open-window-min-size.html [ Skip ] # Timeout, Crash.
 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Timeout Pass ]
@@ -4849,6 +4850,40 @@ webkit.org/b/302326 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure Ti
 webkit.org/b/298463 accessibility/crash-deleting-dynamically-updated-text-input.html [ Skip ]
 
 webkit.org/b/303124 media/media-source/media-source-changetype-vp8-vp9.html [ Failure ]
+
+http/tests/contentextensions/crash-xhr.html [ Crash Pass ]
+imported/w3c/web-platform-tests/IndexedDB/get-databases.any.worker.html [ Crash Pass ]
+imported/w3c/web-platform-tests/css/css-display/parsing/display-computed.html [ Crash Pass ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Crash Pass ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Crash Pass ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Crash Pass ]
+imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Crash Failure ]
+
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_annexb [ Skip ] # Timeout, Crash.
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.html?h264_avc [ Skip ] # Timeout, Crash.
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_avc [ Skip ] # Timeout, Crash.
+imported/w3c/web-platform-tests/webcodecs/video-encoder-rescaling.https.any.worker.html?h264_annexb [ Skip ] # Timeout, Crash.
+
+imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Crash Timeout Pass ]
+
+imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Crash Pass ]
+inspector/debugger/async-stack-trace-basic.html [ Skip ] # Timeout, Crash.
+inspector/debugger/async-stack-trace-truncate.html [ Skip ] # Timeout, Crash.
+
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-popover-exit-animation.html [ Skip ] # Crash.
+imported/w3c/web-platform-tests/selection/crashtests/selection-modify-per-word-in-table-header-group.html [ Skip ] # Crash.
+imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ] # Crash.
+
+fullscreen/exit-full-screen-video-crash.html [ Skip ] # Timeout.
+
+webkit.org/b/173419 fast/events/page-visibility-resize-event-order.html [ Skip ] # Timeout.
+
+[ Debug ] inspector/dom/getAccessibilityPropertiesForNode.html [ Skip ] # Timeout.
+[ Debug ] inspector/unit-tests/editing-support.html [ Skip ] # Timeout.
+[ Debug ] inspector/worker/debugger-pause-subworker.html [ Skip ] # Timeout.
+[ Debug ] media/video-timeupdate-reverse-play.html [ Skip ] # Timeout.
+
+webaudio/audiomix-bufferingpolicy.html [ Timeout Pass ]
 
 # End: Common failures between GTK and WPE.
 
