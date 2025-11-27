@@ -601,13 +601,14 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             result.topLineNumber = lineNumber;
         if (!result.topColumnNumber && parsed)
             result.topColumnNumber = columnNumber;
-        RefPtr<BidiScript::StackFrame> frame = BidiScript::StackFrame::create()
-            .setLineNumber(parsed ? lineNumber : 0)
-            .setColumnNumber(parsed ? columnNumber : 0)
-            .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
-            .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
-            .release();
-        result.callFrames->addItem(WTFMove(frame).releaseNonNull());
+        result.callFrames->addItem(
+            BidiScript::StackFrame::create()
+                .setLineNumber(parsed ? lineNumber : 0)
+                .setColumnNumber(parsed ? columnNumber : 0)
+                .setFunctionName(functionName.isEmpty() ? emptyString() : functionName)
+                .setUrl(urlPart.isEmpty() ? emptyString() : urlPart)
+                .release()
+        );
     }
 
     return result;
