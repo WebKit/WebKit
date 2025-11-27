@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderedDocumentMarker.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Hasher.h>
 #include <wtf/Platform.h>
@@ -35,7 +36,6 @@ namespace WebCore {
 
 class RenderBoxModelObject;
 class RenderText;
-class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 enum class DocumentMarkerType : uint32_t;
 
