@@ -94,6 +94,14 @@ public:
         return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
+#ifdef __swift__
+    Out operator()(In... in) const
+    {
+        // Likely to be called using Cell.pointee so needs to be const.
+        return (*(const_cast<CompletionHandler<Out(In...)>*>(this)))(std::forward<In>(in)...);
+    }
+#endif
+
 private:
     Function<Out(In...)> m_function;
     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_callThread;
