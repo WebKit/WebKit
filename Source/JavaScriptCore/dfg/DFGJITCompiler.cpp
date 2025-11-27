@@ -42,6 +42,7 @@
 #include "ProbeContext.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
+#include "VMInspector.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
@@ -55,7 +56,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_blockHeads(dfg.numBlocks())
     , m_pcToCodeOriginMapBuilder(dfg.m_vm)
 {
-    if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler) [[unlikely]]
+    if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler || Options::useTestingHelpers()) [[unlikely]]
         m_disassembler = makeUniqueWithoutFastMallocCheck<Disassembler>(dfg);
 #if ENABLE(FTL_JIT)
     m_jitCode->tierUpInLoopHierarchy = WTF::move(m_graph.m_plan.tierUpInLoopHierarchy());
@@ -370,6 +371,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 {
+    if (Options::useTestingHelpers()) [[unlikely]] {
+        StringPrintStream out;
+        m_disassembler->dump(out, linkBuffer);
+        VMInspector::storeDisassembly(linkBuffer.entrypoint<NoPtrTag>().dataLocation(), out.toString());
+    }
+
     if (shouldDumpDisassembly()) {
         m_disassembler->dump(linkBuffer);
         linkBuffer.didAlreadyDisassemble();

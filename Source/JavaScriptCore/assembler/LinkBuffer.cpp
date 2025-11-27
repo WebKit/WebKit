@@ -34,6 +34,7 @@
 #include "JITCode.h"
 #include "Options.h"
 #include "PerfLog.h"
+#include "VMInspector.h"
 #include "WasmCallee.h"
 #include "YarrJIT.h"
 #include <wtf/ScopedPrintStream.h>

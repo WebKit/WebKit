@@ -421,7 +421,7 @@ private:
 
 #define FINALIZE_CODE_IF(condition, linkBufferReference, resultPtrTag, simpleName, ...) \
     ([&]() { \
-        if ((condition) || JSC::Options::logJIT()) [[unlikely]] \
+        if ((condition) || JSC::Options::logJIT() || JSC::Options::useTestingHelpers()) [[unlikely]] \
             return (linkBufferReference).finalizeCodeWithDisassembly<resultPtrTag>((condition), simpleName, __VA_ARGS__); \
         return (linkBufferReference).finalizeCodeWithoutDisassembly<resultPtrTag>(simpleName); \
     }())

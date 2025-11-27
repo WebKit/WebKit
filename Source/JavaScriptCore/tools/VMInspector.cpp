@@ -640,4 +640,24 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+static HashMap<const void*, String>& disassemblyMap()
+{
+    static WTF::NeverDestroyed<HashMap<const void*, String>> disassemblyMap;
+    return disassemblyMap.get();
+}
+
+void VMInspector::storeDisassembly(const void* code, String disassembly)
+{
+    if (!Options::useTestingHelpers())
+        return;
+    disassemblyMap().set(code, disassembly);
+}
+
+String VMInspector::getDisassembly(const void* code)
+{
+    if (!Options::useTestingHelpers())
+        return { };
+    return disassemblyMap().get(code);
+}
+
 } // namespace JSC

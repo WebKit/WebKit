@@ -37,10 +37,10 @@ void NodeFlowProjection::dump(PrintStream& out) const
         return;
     }
     if (kind() == Primary) {
-        out.print(node());
+        node()->isInt32Constant() ? out.print("(=",node()->asInt32(),")") : out.print(node());
         return;
     }
-    out.print("shadow(", node(), ")");
+    node()->isInt32Constant() ? out.print("shadow(=", node()->asInt32(), ")") : out.print("shadow(", node(), ")");
 }
 
 } } // namespace JSC::DFG

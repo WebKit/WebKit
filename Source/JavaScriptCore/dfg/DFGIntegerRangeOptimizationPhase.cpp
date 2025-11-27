@@ -28,13 +28,17 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayConventions.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGBlockSet.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhase.h"
+#include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
+#include "Options.h"
+#include "SpeculatedType.h"
 
 namespace JSC { namespace DFG {
 
@@ -75,7 +79,10 @@ public:
         LessThan,
         Equal,
         NotEqual,
-        GreaterThan
+        GreaterThan,
+        // m_left > offset, but this fact relies on inferences about m_right
+        // We need to prune this relationship if m_right gets pruned.
+        ConditionallyGreaterThanConstant,
     };
 
     // Some relationships provide more information than others. When a relationship provides more
@@ -87,6 +94,7 @@ public:
             return 0;
         case LessThan:
         case GreaterThan:
+        case ConditionallyGreaterThanConstant:
             return 1;
         case NotEqual:
             return 2;
@@ -109,6 +117,8 @@ public:
             return NotEqual;
         case GreaterThan:
             return LessThan;
+        case ConditionallyGreaterThanConstant:
+            RELEASE_ASSERT_NOT_REACHED();
         }
         RELEASE_ASSERT_NOT_REACHED();
         return kind;
@@ -132,12 +142,19 @@ public:
         RELEASE_ASSERT(m_left);
         RELEASE_ASSERT(m_right);
         RELEASE_ASSERT(m_left != m_right);
+        RELEASE_ASSERT(m_kind != ConditionallyGreaterThanConstant || (!m_left->isConstant() && !m_right->isConstant()));
     }
     
     static Relationship safeCreate(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
     {
         if (!left.isStillValid() || !right.isStillValid() || left == right)
             return Relationship();
+        if (kind == ConditionallyGreaterThanConstant) {
+            if (left->isConstant())
+                return Relationship();
+            if (right->isConstant())
+                return Relationship(left, right, GreaterThan, 0);
+        }
         return Relationship(left, right, kind, offset);
     }
 
@@ -152,7 +169,7 @@ public:
     
     Relationship flipped() const
     {
-        if (!*this)
+        if (!*this || m_kind == ConditionallyGreaterThanConstant)
             return Relationship();
         
         // This should return Relationship() if -m_offset overflows. For example:
@@ -201,12 +218,14 @@ public:
             if (sumOverflows<int>(m_offset, 1))
                 return Relationship();
             return Relationship(m_left, m_right, LessThan, m_offset + 1);
+        case ConditionallyGreaterThanConstant:
+            return Relationship();
         }
         
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    bool isCanonical() const { return m_left < m_right; }
+    bool isCanonical() const { return m_left < m_right || m_kind == ConditionallyGreaterThanConstant; }
     
     Relationship canonical() const
     {
@@ -382,7 +401,7 @@ public:
         }
         
         ASSERT(sameNodesAs(other));
-        
+
         // This does some interesting permutations to reduce the amount of duplicate code. For
         // example:
         //
@@ -399,6 +418,16 @@ public:
         Relationship a = *this;
         Relationship b = other;
         bool needFlip = false;
+
+        if (a.m_kind == ConditionallyGreaterThanConstant || b.m_kind == ConditionallyGreaterThanConstant) {
+            if (a.m_kind != b.m_kind) {
+                // We cannot combine these.
+                functor(a);
+                functor(b);
+                return;
+            }
+            functor(a.mergeImpl(b));
+        }
         
         // Get rid of GreaterThan.
         if (a.m_kind == GreaterThan || b.m_kind == GreaterThan) {
@@ -494,6 +523,9 @@ public:
                 // Implement this in terms of NotEqual.filter(LessThan). 
                 return filterFlipped();
             }
+
+            if (other.m_kind == ConditionallyGreaterThanConstant)
+                return Relationship();
             
             ASSERT(other.m_kind == LessThan);
             // We have two claims:
@@ -522,6 +554,9 @@ public:
                 return Relationship(
                     m_left, m_right, LessThan, std::min(m_offset, other.m_offset));
             }
+
+            if (other.m_kind == ConditionallyGreaterThanConstant)
+                return Relationship();
             
             ASSERT(other.m_kind == GreaterThan);
             if (sumOverflows<int>(m_offset, -1))
@@ -533,6 +568,9 @@ public:
             
             return Relationship();
         }
+
+        if (m_kind == ConditionallyGreaterThanConstant)
+            return Relationship();
         
         ASSERT(m_kind == GreaterThan);
         return filterFlipped();
@@ -579,6 +617,7 @@ public:
             return *this;
             
         case NotEqual:
+        case ConditionallyGreaterThanConstant:
             RELEASE_ASSERT_NOT_REACHED();
             return Relationship();
         }
@@ -635,6 +674,11 @@ public:
             return;
         }
         
+        if (m_kind == ConditionallyGreaterThanConstant) {
+            out.print("{ ", m_right, " } |- ", m_left, " > ", m_offset);
+            return;
+        }
+
         out.print(m_left);
         switch (m_kind) {
         case LessThan:
@@ -648,6 +692,8 @@ public:
             break;
         case GreaterThan:
             out.print(">");
+            break;
+        case ConditionallyGreaterThanConstant:
             break;
         }
         out.print(m_right);
@@ -756,7 +802,13 @@ private:
 
             return Relationship();
         }
-        
+
+        if (m_kind == ConditionallyGreaterThanConstant) {
+            ASSERT(other.m_kind == ConditionallyGreaterThanConstant);
+            int bestOffset = std::max(m_offset, other.m_offset);
+            return Relationship(m_left, m_right, ConditionallyGreaterThanConstant, bestOffset);
+        }
+
         // The only thing left is Equal, since we would have gotten rid of the GreaterThan's.
         RELEASE_ASSERT(m_kind == Equal);
         
@@ -808,6 +860,7 @@ private:
         // Only deal with constant right.
         if (!m_right->isInt32Constant() || !other.m_right->isInt32Constant())
             return;
+        ASSERT(m_kind != ConditionallyGreaterThanConstant);
 
         // What follows is a fairly conservative merge. We could tune this phase to come up with
         // all possible inequalities between variables and constants, but we focus mainly on cheap
@@ -929,7 +982,12 @@ private:
                 
                 functor(other);
                 return;
-            } }
+            }
+
+            case ConditionallyGreaterThanConstant:
+                RELEASE_ASSERT_NOT_REACHED();
+                return;
+            }
 
             RELEASE_ASSERT_NOT_REACHED();
             return;
@@ -958,8 +1016,13 @@ private:
             case NotEqual: {
                 // We have a claim that @x < @c || @x != @d. This isn't interesting.
                 return;
-            } }
-            
+            }
+
+            case ConditionallyGreaterThanConstant:
+                RELEASE_ASSERT_NOT_REACHED();
+                return;
+            }
+
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
@@ -986,7 +1049,12 @@ private:
             case NotEqual: {
                 // Not interesting, see above.
                 return;
-            } }
+            }
+
+            case ConditionallyGreaterThanConstant:
+                RELEASE_ASSERT_NOT_REACHED();
+                return;
+            }
 
             RELEASE_ASSERT_NOT_REACHED();
             return;
@@ -996,7 +1064,12 @@ private:
             if (other.m_kind == Equal)
                 other.mergeConstantsImpl(*this, functor);
             return;
-        } }
+        }
+
+        case ConditionallyGreaterThanConstant:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
 
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1019,19 +1092,20 @@ public:
     {
     }
 
-    std::optional<std::tuple<int32_t, int32_t>> rangeFor(Node* node)
+    std::tuple<int32_t, int32_t> rangeFor(Node* node)
     {
         if (node->isInt32Constant()) {
             int32_t value = node->asInt32();
             return std::tuple { value, value };
         }
 
-        auto iter = m_relationships.find(node);
-        if (iter == m_relationships.end())
-            return std::nullopt;
-
         int32_t minValue = std::numeric_limits<int32_t>::min();
         int32_t maxValue = std::numeric_limits<int32_t>::max();
+
+        auto iter = m_relationships.find(node);
+        if (iter == m_relationships.end())
+            return std::tuple { minValue, maxValue };
+
         for (Relationship relationship : iter->value) {
             minValue = std::max(minValue, relationship.minValueOfLeft());
             maxValue = std::min(maxValue, relationship.maxValueOfLeft());
@@ -1042,8 +1116,12 @@ public:
     // Be careful: do not use this to infer a relationship that will not be pruned later,
     // otherwise it might break the inductive reasoning around phis/upsilons.
     // For example, if lhs > 0 => node(lhs) > 0, you can't add that relationship. Pruning
-    // relationships involving lhs won't prune this new relationship.
-    bool provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset = 0)
+    // relationships involving lhs won't prune this new relationship. If you need to do this,
+    // you can use ConditionallyGreaterThanConstant, which will get pruned.
+    // canUseConditionalInferences cannot be used if you will produce a new unconditional fact.
+    // Since this doesn't return the set of conditions used to infer the result, this basically means you
+    // should only use canUseConditionalInferences after the inductive reasoning is done (ex for removing a check).
+    bool provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset, bool canUseConditionalInferences)
     {
         auto iter = m_relationships.find(lhs);
         if (iter != m_relationships.end()) {
@@ -1052,19 +1130,76 @@ public:
                     && relationship.offset() >= minOffset
                     && relationship.kind() == Relationship::GreaterThan)
                         return true;
+                if (rhs->isInt32Constant() && relationship.minValueOfLeft() > rhs->asInt32() + minOffset)
+                    return true;
+                if (canUseConditionalInferences
+                    && relationship.left() == lhs
+                    && rhs->isInt32Constant()
+                    && relationship.offset() > rhs->asInt32() + minOffset
+                    && relationship.kind() == Relationship::ConditionallyGreaterThanConstant)
+                        return true;
             }
         }
         return false;
     }
 
-    bool provablyGreaterThanOrEqual(Node* lhs, Node* rhs)
+    // See note above
+    bool provablyLessThan(Node* lhs, Node* rhs, int32_t maxOffset, bool)
     {
-        return provablyGreaterThan(lhs, rhs, -1);
+        auto iter = m_relationships.find(lhs);
+        if (iter != m_relationships.end()) {
+            for (Relationship relationship : iter->value) {
+                if (relationship.right() == rhs
+                    && relationship.offset() <= maxOffset
+                    && relationship.kind() == Relationship::LessThan)
+                        return true;
+            }
+        }
+        return false;
     }
 
-    bool provablyNonNegative(Node* lhs)
+    // See note above
+    // @lhs + addend will not overflow if we can find (@lhs < m_zero + c) such that (c + addend) <= int32_max.
+    bool representableWithInt32(Node* lhs, int32_t addend)
     {
-        return provablyGreaterThanOrEqual(lhs, m_zero);
+        auto [_, maxValue] = rangeFor(lhs);
+        return static_cast<int64_t>(maxValue) + static_cast<int64_t>(addend) <= std::numeric_limits<int32_t>::max();
+    }
+
+    bool provablyGreaterThanOrEqual(Node* lhs, Node* rhs, bool canUseConditionalInferences = false)
+    {
+        return provablyGreaterThan(lhs, rhs, -1, canUseConditionalInferences);
+    }
+
+    bool provablyNonNegative(Node* lhs, bool canUseConditionalInferences = false)
+    {
+        return provablyGreaterThanOrEqual(lhs, m_zero, canUseConditionalInferences);
+    }
+
+    // In general, we don't want to store these extra relationships unless we think we might need them.
+    void expandedRangeFor(Node* lhs)
+    {
+        int64_t min = std::numeric_limits<int32_t>::min();
+        int64_t max = std::numeric_limits<int32_t>::max();
+        auto iter = m_relationships.find(lhs);
+        if (iter != m_relationships.end()) {
+            for (Relationship relationship : iter->value) {
+                auto [rmin, rmax] = rangeFor(relationship.right().node());
+                int64_t offset = relationship.offset();
+                if (relationship.kind() == Relationship::LessThan)
+                    max = std::min(max, rmax + offset);
+                if (relationship.kind() == Relationship::Equal)
+                    max = std::min(max, rmax + offset + 1);
+                if (relationship.kind() == Relationship::GreaterThan)
+                    min = std::max(min, rmin + offset);
+                if (relationship.kind() == Relationship::Equal)
+                    min = std::max(min, rmin + offset + 1);
+            }
+        }
+
+        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Expanded range for ", lhs, " is ", min, " to ", max);
+        setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::LessThan, max));
+        setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::GreaterThan, min));
     }
 
     bool run()
@@ -1197,8 +1332,7 @@ public:
                         invert = true;
                     }
                     
-                    auto extractRelationship = [&](Node* compare) -> Relationship {
-                        // FIXME: Handle CompareBelow and CompareBelowEq.
+                    auto extractTakenRelationship = [&](Node* compare) -> Relationship {
                         if (!compare || !compare->isBinaryUseKind(Int32Use))
                             return Relationship();
                         switch (compare->op()) {
@@ -1206,11 +1340,11 @@ public:
                         case CompareStrictEq:
                             return Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::Equal, 0);
+                                Relationship::Equal);
                         case CompareLess:
                             return Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::LessThan, 0);
+                                Relationship::LessThan);
                         case CompareLessEq:
                             return Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
@@ -1218,13 +1352,70 @@ public:
                         case CompareGreater:
                             return Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
-                                Relationship::GreaterThan, 0);
+                                Relationship::GreaterThan);
                         case CompareGreaterEq:
                             return Relationship::safeCreate(
                                 compare->child1().node(), compare->child2().node(),
                                 Relationship::GreaterThan, -1);
+                        case CompareBelow:
+                            // Consider a <u b (unsigned)
+                            if (provablyNonNegative(compare->child2().node())) {
+                                // a <u b, 0 <=s b => 0 <=s a <s b
+                                return Relationship::safeCreate(
+                                    compare->child1().node(), compare->child2().node(),
+                                    Relationship::LessThan);
+                            }
+                            return Relationship();
+                        case CompareBelowEq:
+                            if (provablyNonNegative(compare->child2().node())) {
+                                return Relationship::safeCreate(
+                                    compare->child1().node(), compare->child2().node(),
+                                    Relationship::LessThan, -1);
+                            }
+                            return Relationship();
                         default:
                             return Relationship();
+                        }
+                    };
+
+                    auto extractNotTakenRelationship = [&](Node* compare) -> Vector<Relationship, 1> {
+                        if (!compare || !compare->isBinaryUseKind(Int32Use))
+                            return { };
+                        switch (compare->op()) {
+                        case CompareEq:
+                        case CompareStrictEq:
+                        case CompareLess:
+                        case CompareLessEq:
+                        case CompareGreater:
+                        case CompareGreaterEq:
+                            return { extractTakenRelationship(compare).inverse() };
+                        case CompareBelow:
+                            if (provablyNonNegative(compare->child1().node())) {
+                                // !(a <u b), 0 <=s a => b <=s a, 0 <= b
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::LessThan, -1),
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::ConditionallyGreaterThanConstant, -1)
+                                };
+                            }
+                            return { };
+                        case CompareBelowEq:
+                            if (provablyNonNegative(compare->child1().node())) {
+                                return {
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::LessThan),
+                                    Relationship::safeCreate(
+                                        compare->child2().node(), compare->child1().node(),
+                                        Relationship::ConditionallyGreaterThanConstant, -1)
+                                };
+                            }
+                            return { };
+                        default:
+                            return { };
                         }
                     };
 
@@ -1246,20 +1437,20 @@ public:
                         auto [l, r] = extractBooleansFromBitwise(condition);
 
                         if (condition->op() == ArithBitAnd) {
-                            if (auto relationship = extractRelationship(l))
+                            if (auto relationship = extractTakenRelationship(l))
                                 relationshipForTrue.append(relationship);
-                            if (auto relationship = extractRelationship(r))
+                            if (auto relationship = extractTakenRelationship(r))
                                 relationshipForTrue.append(relationship);
                         } else if (condition->op() == ArithBitOr) {
-                            if (auto relationship = extractRelationship(l).inverse())
+                            for (auto relationship : extractNotTakenRelationship(l))
                                 relationshipForFalse.append(relationship);
-                            if (auto relationship = extractRelationship(r).inverse())
+                            for (auto relationship : extractNotTakenRelationship(r))
                                 relationshipForFalse.append(relationship);
                         }
                     } else {
-                        if (auto relationship = extractRelationship(condition))
+                        if (auto relationship = extractTakenRelationship(condition))
                             relationshipForTrue.append(relationship);
-                        if (auto relationship = extractRelationship(condition).inverse())
+                        for (auto relationship : extractNotTakenRelationship(condition))
                             relationshipForFalse.append(relationship);
                     }
 
@@ -1294,6 +1485,7 @@ public:
         
         // Now we transform the code based on the results computed in the previous loop.
         changed = false;
+        constexpr bool canUseConditionalInferences = true;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_relationships = m_relationshipsAtHead[block];
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -1308,11 +1500,7 @@ public:
                     if (node->child1().useKind() != Int32Use)
                         break;
 
-                    auto range = rangeFor(node->child1().node());
-                    if (!range)
-                        break;
-                    auto [minValue, maxValue] = range.value();
-
+                    auto [minValue, maxValue] = rangeFor(node->child1().node());
                     executeNode(block->at(nodeIndex));
 
                     if (minValue >= 0) {
@@ -1342,15 +1530,8 @@ public:
                     if (node->arithMode() != Arith::CheckOverflow)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1380,15 +1561,8 @@ public:
                     if (node->arithMode() != Arith::CheckOverflow)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1418,15 +1592,8 @@ public:
                     if (node->arithMode() != Arith::CheckOverflow && node->arithMode() != Arith::CheckOverflowAndNegativeZero)
                         break;
 
-                    auto leftRange = rangeFor(node->child1().node());
-                    if (!leftRange)
-                        break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
-
-                    auto rightRange = rangeFor(node->child2().node());
-                    if (!rightRange)
-                        break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [leftMinValue, leftMaxValue] = rangeFor(node->child1().node());
+                    auto [rightMinValue, rightMaxValue] = rangeFor(node->child2().node());
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1465,26 +1632,12 @@ public:
                     auto iter = m_relationships.find(node->child1().node());
                     if (iter == m_relationships.end())
                         break;
-                    
-                    bool nonNegative = false;
-                    bool lessThanLength = false;
-                    for (Relationship relationship : iter->value) {
-                        if (relationship.minValueOfLeft() >= 0)
-                            nonNegative = true;
-                        
-                        if (relationship.right() == node->child2().node()) {
-                            if (relationship.kind() == Relationship::Equal
-                                && relationship.offset() < 0)
-                                lessThanLength = true;
-                            
-                            if (relationship.kind() == Relationship::LessThan
-                                && relationship.offset() <= 0)
-                                lessThanLength = true;
-                        }
-                    }
+
+                    bool nonNegative = provablyNonNegative(node->child1().node(), canUseConditionalInferences);
+                    bool lessThanLength = provablyLessThan(node->child1().node(), node->child2().node(), 0, canUseConditionalInferences);
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "CheckInBounds ", node, " has: ", nonNegative, " ", lessThanLength);
-                    
+
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
                         if (Options::validateBoundsCheckElimination()) [[unlikely]] {
@@ -1573,18 +1726,20 @@ private:
             // handle the non-wrapping ones.
             if (!node->isBinaryUseKind(Int32Use))
                 break;
-            
-            // FIXME: We could handle the unchecked arithmetic case. We just do it don't right
-            // now.
-            if (node->arithMode() != Arith::CheckOverflow)
-                break;
-            
+
             // Handle add: @value + constant.
             if (!node->child2()->isInt32Constant())
                 break;
             
             int offset = node->child2()->asInt32();
-            
+
+            if (node->arithMode() != Arith::CheckOverflow) {
+                expandedRangeFor(node->child1().node());
+                if (!representableWithInt32(node->child1().node(), offset))
+                    break;
+                dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "ArithAdd found upper bound on ", node->child1().node());
+            }
+
             // We add a relationship for @add == @value + constant, and then we copy the
             // relationships for @value. This gives us a one-deep view of @value's existing
             // relationships, which matches the one-deep search in setRelationship().
@@ -1686,12 +1841,23 @@ private:
             break;
         }
 
+        // See ToLength below
+        case UInt32ToNumber: {
+            if (node->child1().useKind() != Int32Use)
+                break;
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            auto [minValue, maxValue] = rangeFor(node->child1().node());
+            if (minValue >= 0 && maxValue <= INT32_MAX)
+                setRelationship(Relationship(node, node->child1().node(), Relationship::Equal));
+            break;
+        }
+
         case ToLength: {
             if (node->child1().useKind() == UntypedUse)
                 break;
             // Consider b = ToLength(a)
-            // If a < 0, then b == 0; b >= a
-            // If a >= 0, then b = a; b >= a still
+            // If a < 0, then b == 0, b >= a
+            // If a >= 0, then b = a, b >= a still
             setRelationship(Relationship(node, node->child1().node(), Relationship::GreaterThan, -1));
             // Note that we cannot conclude that b == 0 because it won't get pruned.
             if (provablyNonNegative(node->child1().node()))

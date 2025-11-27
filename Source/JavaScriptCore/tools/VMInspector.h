@@ -70,6 +70,10 @@ public:
 #if USE(JSVALUE64)
     static bool verifyCell(VM&, JSCell*);
 #endif
+
+    // Testing helpers
+    JS_EXPORT_PRIVATE static String getDisassembly(const void*);
+    JS_EXPORT_PRIVATE static void storeDisassembly(const void*, String);
 };
 
 } // namespace JSC

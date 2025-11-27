@@ -642,6 +642,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, dumpIonGraph, false, Normal, nullptr) \
     v(OptionString, ionGraphDirectory, nullptr, Normal, "Directory to place IonGraph"_s) \
     v(Unsigned, markedBlockDumpInfoCount, 0, Normal, nullptr) /* FIXME: rdar://139998916 */ \
+    v(Bool, useTestingHelpers, 0, Restricted, "Helpers for writing unit tests") \
     \
     /* Feature Flags */\
     \

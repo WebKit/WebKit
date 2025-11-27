@@ -44,6 +44,7 @@
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ThunkGenerators.h"
+#include "VMInspector.h"
 #include <wtf/RecursableLambda.h>
 #include <wtf/SetForScope.h>
 
@@ -59,10 +60,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
 
-    if (shouldDumpDisassembly() || vm.m_perBytecodeProfiler)
+    if (shouldDumpDisassembly() || vm.m_perBytecodeProfiler || Options::useTestingHelpers())
         state.proc->code().setDisassembler(makeUniqueWithoutFastMallocCheck<B3::Air::Disassembler>());
 
-    if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !graph.compilation() && !state.proc->needsPCToOriginMap())
+    if (!shouldDumpDisassembly() && !verboseCompilationEnabled() && !Options::verboseValidationFailure() && !graph.compilation() && !state.proc->needsPCToOriginMap() && !Options::useTestingHelpers())
         graph.freeDFGIRAfterLowering();
 
     {
@@ -220,6 +221,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
     }
     state.jitCode->common.finalizeCatchEntrypoints(WTF::move(state.graph.m_catchEntrypoints));
 
+    if (Options::useTestingHelpers()) [[unlikely]] {
+        StringPrintStream out;
+        state.dumpDisassembly(out, *state.b3CodeLinkBuffer);
+        VMInspector::storeDisassembly(state.b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(entryLabel).dataLocation(), out.toString());
+    }
+
     if (shouldDumpDisassembly())
         state.dumpDisassembly(WTF::dataFile(), *state.b3CodeLinkBuffer);
 
@@ -293,4 +300,3 @@ void compile(State& state, Safepoint::Result& safepointResult)
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-

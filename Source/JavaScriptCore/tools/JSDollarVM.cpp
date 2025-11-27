@@ -2273,6 +2273,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpLineBreakData);
 static JSC_DECLARE_HOST_FUNCTION(functionWeakCreate);
+static JSC_DECLARE_HOST_FUNCTION(functionGetDFGDisassembly);
+static JSC_DECLARE_HOST_FUNCTION(functionGetFTLDisassembly);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -4345,6 +4347,34 @@ JSC_DEFINE_HOST_FUNCTION(functionWeakCreate, (JSGlobalObject* globalObject, Call
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionGetDFGDisassembly, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto fn = jsDynamicCast<JSFunction*>(callFrame->argument(0));
+    if (!fn)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+    auto* dfg = fn->jsExecutable()->codeBlockForCall();
+    if (dfg->jitType() != JITType::DFGJIT)
+        return throwVMTypeError(globalObject, scope, "First argument is not a DFG function"_s);
+    return JSValue::encode(jsString(vm, VMInspector::getDisassembly(dfg->jitCode()->addressForCall())));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionGetFTLDisassembly, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto fn = jsDynamicCast<JSFunction*>(callFrame->argument(0));
+    if (!fn)
+        return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
+    auto* ftl = fn->jsExecutable()->codeBlockForCall();
+    if (ftl->jitType() != JITType::FTLJIT)
+        return throwVMTypeError(globalObject, scope, "First argument is not an FTL function"_s);
+    return JSValue::encode(jsString(vm, VMInspector::getDisassembly(ftl->jitCode()->addressForCall())));
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4545,6 +4575,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
     addFunction(vm, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
     addFunction(vm, "weakCreate"_s, functionWeakCreate, 0);
+    addFunction(vm, "getDFGDisassembly"_s, functionGetDFGDisassembly, 0);
+    addFunction(vm, "getFTLDisassembly"_s, functionGetFTLDisassembly, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
