@@ -316,7 +316,7 @@ public:
 #endif
 
     // Returns whether or not we should proceed with editing.
-    bool willApplyEditing(CompositeEditCommand&, Vector<RefPtr<StaticRange>>&&);
+    bool willApplyEditing(CompositeEditCommand&, Vector<Ref<StaticRange>>&&);
     bool willUnapplyEditing(const EditCommandComposition&) const;
     bool willReapplyEditing(const EditCommandComposition&) const;
 

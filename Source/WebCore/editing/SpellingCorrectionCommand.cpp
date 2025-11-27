@@ -129,7 +129,7 @@ String SpellingCorrectionCommand::inputEventData() const
     return CompositeEditCommand::inputEventData();
 }
 
-Vector<RefPtr<StaticRange>> SpellingCorrectionCommand::targetRanges() const
+Vector<Ref<StaticRange>> SpellingCorrectionCommand::targetRanges() const
 {
     return { 1, StaticRange::create(m_rangeToBeCorrected) };
 }

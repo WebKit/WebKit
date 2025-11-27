@@ -3,4 +3,8 @@ PASS InputEvent constructor without InputEventInit.
 PASS InputEvent construtor with InputEventInit where data is null
 PASS InputEvent construtor with InputEventInit where data is empty string
 PASS InputEvent construtor with InputEventInit where data is non empty string
+PASS InputEvent constructor with InputEventInit where dataTransfer is null
+PASS InputEvent constructor with InputEventInit where dataTransfer is set
+PASS InputEvent constructor with InputEventInit where targetRanges is empty
+PASS InputEvent constructor with InputEventInit where targetRanges has one item
 
