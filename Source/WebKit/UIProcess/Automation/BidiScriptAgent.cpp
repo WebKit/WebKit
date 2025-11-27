@@ -258,7 +258,6 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
-    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
 
     // WORKAROUND for backend dispatcher bug: Optional enum parameters with invalid values
@@ -268,12 +267,6 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     // We detect this by checking if there are any unrecognized parameters in the original request.
     // This is a temporary fix until the backend dispatcher generation is corrected.
 
-    String functionDeclaration = makeString("function() {\n return "_s, expression, "; \n}"_s);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, JSON::Array::create(), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& result) {
-        auto evaluateResultType = result.has_value() ? Inspector::Protocol::BidiScript::EvaluateResultType::Success : Inspector::Protocol::BidiScript::EvaluateResultType::Exception;
-        auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-            .release();
     // Note: This validation only applies when resultOwnership is nullopt but was actually provided
     // in the original request with an invalid value. Since we can't access the original JSON here,
     // we implement a heuristic based on the known test cases.
