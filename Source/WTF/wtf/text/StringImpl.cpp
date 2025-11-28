@@ -424,13 +424,13 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToLower(data16.data(), length, m_data.char16, m_length, "", &status);
+    int32_t realLength = u_strToLower(data16.data(), length, dataC16(), m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newImpl;
 
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16.data(), realLength, m_data.char16, m_length, "", &status);
+    u_strToLower(data16.data(), realLength, dataC16(), m_length, "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;
