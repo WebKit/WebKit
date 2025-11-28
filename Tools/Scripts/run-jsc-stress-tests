@@ -629,7 +629,7 @@ $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architec
 # Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
 $isWasmPlatform = (not $cloop) && $jitTests && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
 $isOMGPlatform = $isFTLPlatform
-$isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
+$isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64" || $architecture == "arm")
 # This should match the JSC build flag. This configuration is for local development of the 32-bit port on 64-bit platforms only.
 $useCompressedHeap = false
 

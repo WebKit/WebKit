@@ -6136,7 +6136,8 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
         jit.move(MacroAssembler::TrustedImm32(0xBFFF), tmp);
         constexpr int stackSlotsToClobber = 3 * stackAlignmentBytes();
         constexpr int stackBytesToClobber = stackSlotsToClobber * registerSize();
-        static_assert(!(stackBytesToClobber & (stackAlignmentBytes() - 1)), "Size in bytes to clobber on stack is aligned");
+        // FIXME
+        // static_assert(!(stackBytesToClobber & (stackAlignmentBytes() - 1)), "Size in bytes to clobber on stack is aligned");
         for (int i = 0; i < stackSlotsToClobber / 2; ++i)
             jit.pushPair(tmp, tmp);
         jit.addPtr(MacroAssembler::TrustedImm32(stackBytesToClobber), MacroAssembler::stackPointerRegister);

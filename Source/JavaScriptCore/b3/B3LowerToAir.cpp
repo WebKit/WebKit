@@ -4572,14 +4572,11 @@ private:
             }
             emitSIMDUnaryOp(Air::VectorExtaddPairwise);
             return;
-        case B3::VectorMulSat:
-            if constexpr (isX86()) {
-                SIMDValue* value = m_value->as<SIMDValue>();
-                append(Air::VectorMulSat, tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(GP), m_code.newTmp(FP));
-                return;
-            }
-            emitSIMDMonomorphicBinaryOp(Air::VectorMulSat);
+        case B3::VectorMulSat: {
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(Air::VectorMulSat, tmp(value->child(0)), tmp(value->child(1)), tmp(value), m_code.newTmp(GP), m_code.newTmp(FP));
             return;
+        }
         case B3::VectorSwizzle:
             if (m_value->numChildren() == 2)
                 emitSIMDMonomorphicBinaryOp(Air::VectorSwizzle);

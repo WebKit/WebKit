@@ -6156,6 +6156,9 @@ public:
     
     void moveVector(FPRegisterID src, FPRegisterID dest)
     {
+        if (src == dest)
+            return;
+
         if (supportsAVX())
             m_assembler.vmovaps_rr(src, dest);
         else
@@ -8100,7 +8103,7 @@ public:
         }
     }
 
-    void vectorPmin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    void vectorPmin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -8114,7 +8117,7 @@ public:
             m_assembler.vminpd_rrr(left, right, dest);
     }
 
-    void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -8217,7 +8220,7 @@ public:
 
     using RoundingType = X86Assembler::RoundingType;
 
-    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -8227,7 +8230,7 @@ public:
             m_assembler.vroundpd_rr(input, dest, RoundingType::TowardInfiniti);
     }
 
-    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -8237,7 +8240,7 @@ public:
             m_assembler.vroundpd_rr(input, dest, RoundingType::TowardNegativeInfiniti);
     }
 
-    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -8357,7 +8360,7 @@ public:
         m_assembler.vshufps_i8rrr(0x88, scratchFPR, dest, dest);
     }
 
-    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
@@ -9144,7 +9147,7 @@ public:
         }
     }
 
-    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
+    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(supportsAVX());
         m_assembler.vpmaddwd_rrr(b, a, dest);

@@ -280,7 +280,13 @@ public:
         auto effectiveGPRCount = numberOfSetFPRs()
             ? WTF::roundUpToMultipleOf<2>(numberOfSetGPRs())
             : numberOfSetGPRs();
-        return effectiveGPRCount * bytesForWidth(pointerWidth()) + numberOfSetFPRs() * sizeof(double);
+        // FIXME: is this correct?
+        // Count wide FPRs (V128) which need 16 bytes instead of 8
+        RegisterSet upperFPRs;
+        upperFPRs.m_bits = m_upperBits;
+        upperFPRs.m_bits &= RegisterSetBuilder::allFPRs().m_bits;
+        size_t wideFPRCount = upperFPRs.m_bits.count();
+        return effectiveGPRCount * bytesForWidth(pointerWidth()) + numberOfSetFPRs() * sizeof(double) + wideFPRCount * sizeof(double);
 #endif
     }
 

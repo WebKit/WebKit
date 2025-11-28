@@ -51,7 +51,6 @@ B3::Origin OpcodeOrigin::asB3Origin()
 ASCIILiteral OpcodeOrigin::opcodeString() const
 {
     switch (opcode()) {
-#if USE(JSVALUE64)
     case OpType::ExtGC:
         return makeString(gcOpcode());
     case OpType::Ext1:
@@ -60,7 +59,6 @@ ASCIILiteral OpcodeOrigin::opcodeString() const
         return makeString(simdOpcode());
     case OpType::ExtAtomic:
         return makeString(atomicOpcode());
-#endif
     default:
         return makeString(opcode());
     }

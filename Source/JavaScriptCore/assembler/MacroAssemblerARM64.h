@@ -5983,7 +5983,7 @@ public:
         }
     }
 
-    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
     {
         RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
 
@@ -6246,19 +6246,19 @@ public:
         m_assembler.vectorCnt(dest, input, simdInfo.lane);
     }
 
-    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         m_assembler.vectorFrintp(dest, input, simdInfo.lane);
     }
 
-    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         m_assembler.vectorFrintm(dest, input, simdInfo.lane);
     }
 
-    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         m_assembler.vectorFrintz(dest, input, simdInfo.lane);
@@ -6279,7 +6279,7 @@ public:
         }
     }
 
-    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
         m_assembler.vectorFrintn(dest, input, simdInfo.lane);
@@ -6454,7 +6454,7 @@ public:
             m_assembler.uqsub(dest, left, right, simdInfo.lane);
     }
 
-    void vectorLoad8Splat(Address address, FPRegisterID dest) { m_assembler.ld1r<8>(dest, extractSimpleAddress(address)); }
+    void vectorLoad8Splat(Address address, FPRegisterID dest, FPRegisterID) { m_assembler.ld1r<8>(dest, extractSimpleAddress(address)); }
     void vectorLoad16Splat(Address address, FPRegisterID dest) { m_assembler.ld1r<16>(dest, extractSimpleAddress(address)); }
     void vectorLoad32Splat(Address address, FPRegisterID dest) { m_assembler.ld1r<32>(dest, extractSimpleAddress(address)); }
     void vectorLoad64Splat(Address address, FPRegisterID dest) { m_assembler.ld1r<64>(dest, extractSimpleAddress(address)); }
@@ -6545,8 +6545,8 @@ public:
     }
 
     void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID b, FPRegisterID dest) { m_assembler.urhadd(dest, a, b, simdInfo.lane); }
-    
-    void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest)
+
+    void vectorMulSat(FPRegisterID a, FPRegisterID b, FPRegisterID dest, RegisterID, FPRegisterID)
     {
         // (i_1 * i_2 + 2^14) >> 15
         // <=>
@@ -6556,7 +6556,7 @@ public:
         m_assembler.sqrdmulhv(dest, a, b, SIMDLane::i16x8);
     }
 
-    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch) 
+    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch)
     {
         ASSERT(scratch != dest);
         ASSERT(scratch != a);

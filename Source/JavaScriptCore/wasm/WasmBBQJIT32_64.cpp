@@ -480,12 +480,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::load(LoadOpType loadOp, Value pointer, 
                 m_jit.loadPair32(location, resultLocation.asGPRlo(), resultLocation.asGPRhi());
                 break;
             case LoadOpType::F32Load:
-                m_jit.load32(location, wasmScratchGPR);
-                m_jit.move32ToFloat(wasmScratchGPR, resultLocation.asFPR());
+                m_jit.loadFloat(location, resultLocation.asFPR());
                 break;
             case LoadOpType::F64Load:
-                m_jit.loadPair32(location, wasmScratchGPR, wasmScratchGPR2);
-                m_jit.move64ToDouble(wasmScratchGPR2, wasmScratchGPR, resultLocation.asFPR());
+                m_jit.loadDouble(location, resultLocation.asFPR());
                 break;
             }
 
@@ -565,18 +563,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::store(StoreOpType storeOp, Value pointe
                 } else
                     m_jit.storePair32(valueLocation.asGPRlo(), valueLocation.asGPRhi(), location);
                 return;
-            case StoreOpType::F32Store: {
-                ScratchScope<1, 0> scratches(*this);
-                m_jit.moveFloatTo32(valueLocation.asFPR(), scratches.gpr(0));
-                m_jit.store32(scratches.gpr(0), location);
+            case StoreOpType::F32Store:
+                m_jit.storeFloat(valueLocation.asFPR(), location);
                 return;
-            }
-            case StoreOpType::F64Store: {
-                ScratchScope<1, 0> scratches(*this);
-                m_jit.moveDoubleTo64(valueLocation.asFPR(), wasmScratchGPR2, scratches.gpr(0));
-                m_jit.storePair32(scratches.gpr(0), wasmScratchGPR2, location);
+            case StoreOpType::F64Store:
+                m_jit.storeDouble(valueLocation.asFPR(), location);
                 return;
-            }
             }
         });
     }
@@ -1473,6 +1465,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayGet(ExtGCOpType arrayGetKind, u
             case TypeKind::F64:
                 m_jit.loadDouble(fieldAddress, resultLocation.asFPR());
                 break;
+            case TypeKind::V128:
+                m_jit.loadVector(fieldAddress, resultLocation.asFPR());
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -1505,6 +1500,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayGet(ExtGCOpType arrayGetKind, u
                 break;
             case TypeKind::F64:
                 m_jit.loadDouble(fieldBaseIndex, resultLocation.asFPR());
+                break;
+            case TypeKind::V128:
+                m_jit.loadVector(fieldBaseIndex, resultLocation.asFPR());
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1602,6 +1600,9 @@ void BBQJIT::emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value ind
             case TypeKind::F64:
                 m_jit.storeDouble(valueLocation.asFPR(), fieldAddress);
                 break;
+            case TypeKind::V128:
+                m_jit.storeVector(valueLocation.asFPR(), fieldAddress);
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -1652,6 +1653,9 @@ void BBQJIT::emitArraySetUnchecked(uint32_t typeIndex, Value arrayref, Value ind
                 break;
             case TypeKind::F64:
                 m_jit.storeDouble(valueLocation.asFPR(), fieldBaseIndex);
+                break;
+            case TypeKind::V128:
+                m_jit.storeVector(valueLocation.asFPR(), fieldBaseIndex);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -1796,6 +1800,9 @@ bool BBQJIT::emitStructSet(GPRReg structGPR, const StructType& structType, uint3
         case TypeKind::F64:
             m_jit.storePair32(TrustedImm32(value.asI64lo()), TrustedImm32(value.asI64hi()), MacroAssembler::Address(structGPR, fieldOffset));
             break;
+        // V128 constants are never tracked as Value::Const - they're immediately materialized
+        // So this case should never be reached
+        case TypeKind::V128:
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -1829,6 +1836,9 @@ bool BBQJIT::emitStructSet(GPRReg structGPR, const StructType& structType, uint3
         break;
     case TypeKind::F64:
         m_jit.storeDouble(valueLocation.asFPR(), MacroAssembler::Address(structGPR, fieldOffset));
+        break;
+    case TypeKind::V128:
+        m_jit.storeVector(valueLocation.asFPR(), MacroAssembler::Address(structGPR, fieldOffset));
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -1965,6 +1975,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructGet(ExtGCOpType structGetKind,
         break;
     case TypeKind::F64:
         m_jit.loadDouble(MacroAssembler::Address(structLocation.asGPRlo(), fieldOffset), resultLocation.asFPR());
+        break;
+    case TypeKind::V128:
+        m_jit.loadVector(MacroAssembler::Address(structLocation.asGPRlo(), fieldOffset), resultLocation.asFPR());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -2878,30 +2891,26 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
                 case TypeKind::Func:
                     if (slot.isGPR2())
                         m_jit.loadPair32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asGPRlo(), slot.asGPRhi());
-                    else {
-                        m_jit.loadPair32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchGPR, wasmScratchGPR2);
-                        m_jit.storePair32(wasmScratchGPR, wasmScratchGPR2, slot.asAddress());
-                    }
+                    else
+                        m_jit.transfer64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                     break;
                 case TypeKind::F32:
                     if (slot.isFPR())
                         m_jit.loadFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
-                    else {
-                        m_jit.loadFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
-                        m_jit.storeFloat(wasmScratchFPR, slot.asAddress());
-                    }
+                    else
+                        m_jit.transferFloat(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                     break;
                 case TypeKind::F64:
                     if (slot.isFPR())
                         m_jit.loadDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
-                    else {
-                        m_jit.loadDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
-                        m_jit.storeDouble(wasmScratchFPR, slot.asAddress());
-                    }
+                    else
+                        m_jit.transferDouble(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                     break;
                 case TypeKind::V128:
-                    m_jit.loadVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), wasmScratchFPR);
-                    m_jit.storeVector(wasmScratchFPR, slot.asAddress());
+                    if (slot.isFPR())
+                        m_jit.loadVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
+                    else
+                        m_jit.transferVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                     break;
                 case TypeKind::Void:
                     RELEASE_ASSERT_NOT_REACHED();
@@ -3071,139 +3080,6 @@ void BBQJIT::restoreWebAssemblyGlobalState()
 void BBQJIT::restoreWebAssemblyGlobalStateAfterWasmCall()
 {
     restoreWebAssemblyGlobalState();
-}
-
-// SIMD
-
-void BBQJIT::notifyFunctionUsesSIMD()
-{
-    m_usesSIMD = false;
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoad(ExpressionType, uint32_t, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDStore(ExpressionType, ExpressionType, uint32_t)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-void BBQJIT::materializeVectorConstant(v128_t, Location)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-ExpressionType BBQJIT::addConstant(v128_t)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addExtractLane(SIMDInfo, uint8_t, Value, Value&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-}
-
-PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return { };
-
 }
 
 void BBQJIT::emitStoreConst(Value constant, Location loc)

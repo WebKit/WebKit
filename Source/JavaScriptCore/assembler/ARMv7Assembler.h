@@ -624,9 +624,18 @@ private:
         OP_VLDR         = 0xED10,
         OP_VMOV_CtoS    = 0xEE00,
         OP_VMOV_StoC    = 0xEE10,
+        OP_VMOV_VEC8_StoC   = 0xEED0,
+        OP_VMOV_VECS8_StoC  = 0xEE50,
+        OP_VMOV_VEC8_StoC2  = 0x0B10,
+        OP_VMOV_VEC16_StoC  = 0xEE90,
+        OP_VMOV_VECS16_StoC = 0xEE10,
+        OP_VMOV_VEC16_StoC2 = 0x0B30,
+        OP_VMOV_VEC32_StoC  = 0xEE10,
+        OP_VMOV_VEC32_StoC2 = 0x0B10,
         OP_VMLA_T2      = 0xEE00,
-        OP_VMLS_T2      = 0xEE10,
         OP_VMUL_T2      = 0xEE20,
+        OP_VFMA_T2      = 0xEEA0,
+        OP_VFMS_T2      = 0xEEA0,
         OP_VADD_T2      = 0xEE30,
         OP_VSUB_T2      = 0xEE30,
         OP_VDIV         = 0xEE80,
@@ -634,14 +643,57 @@ private:
         OP_VCMP         = 0xEEB0,
         OP_VCVT_FPIVFP  = 0xEEB0,
         OP_VMOV_T2      = 0xEEB0,
-        OP_VMOV_IMM_T2  = 0xEEB0,
         OP_VMRS         = 0xEEB0,
         OP_VNEG_T2      = 0xEEB0,
         OP_VSQRT_T1     = 0xEEB0,
         OP_VCVTSD_T1    = 0xEEB0,
         OP_VCVTDS_T1    = 0xEEB0,
         OP_VAND_T1      = 0xEF00,
+        OP_VBIC_T1      = 0xEF10,
         OP_VORR_T1      = 0xEF20,
+        OP_VEOR_T1      = 0xFF00,
+        OP_VBSL_T1      = 0xFF10,
+        OP_VADD_I_T1    = 0xEF00,
+        OP_VSUB_I_T1    = 0xFF00,
+        OP_VMUL_I_T1    = 0xEF00,
+        OP_VMIN_S_T1    = 0xEF00,
+        OP_VMIN_U_T1    = 0xFF00,
+        OP_VMAX_S_T1    = 0xEF00,
+        OP_VMAX_U_T1    = 0xFF00,
+        OP_VPMIN_U_T1   = 0xFF00,
+        OP_VPMAX_U_T1   = 0xFF00,
+        OP_VQADD_S_T1   = 0xEF00,
+        OP_VQADD_U_T1   = 0xFF00,
+        OP_VQSUB_S_T1   = 0xEF00,
+        OP_VQSUB_U_T1   = 0xFF00,
+        OP_VRHADD_S_T1  = 0xEF00,
+        OP_VRHADD_U_T1  = 0xFF00,
+        OP_VQRDMULH_T1  = 0xFF00,
+        OP_VTBL_T1      = 0xFFB0,
+        OP_VQMOVN_T1    = 0xFFB2,
+        OP_VPADD_I_T1   = 0xEF00,
+        OP_VCEQ_T1      = 0xFF00,
+        OP_VCGT_S_T1    = 0xEF00,
+        OP_VCGT_U_T1    = 0xFF00,
+        OP_VCGE_S_T1    = 0xEF00,
+        OP_VCGE_U_T1    = 0xFF00,
+        OP_VMVN_T1      = 0xFFB0,
+        OP_VDUP_T1      = 0xEE80,
+        OP_VABS_I_T1    = 0xFFB1,
+        OP_VNEG_I_T1    = 0xFFB1,
+        OP_VABS_F_T1    = 0xFFB9,
+        OP_VNEG_F_T1    = 0xFFB9,
+        OP_VCNT_T1      = 0xFFB0,
+        OP_VPADDL_T1    = 0xFFB0,
+        OP_VCVT_NEON_T1 = 0xFFB3,
+        OP_VSHL_U_T1    = 0xFF00,
+        OP_VSHL_S_T1    = 0xEF00,
+        OP_VMULL_U_T1   = 0xFF80,
+        OP_VMULL_S_T1   = 0xEF80,
+        OP_VMOVL_U_T1   = 0xFF80,
+        OP_VMOVL_S_T1   = 0xEF80,
+        OP_VLD1_T1      = 0xF920,
+        OP_VST1_T1      = 0xF900,
         OP_B_T3a        = 0xF000,
         OP_B_T4a        = 0xF000,
         OP_BL_T4a       = 0xF000,
@@ -656,6 +708,7 @@ private:
         OP_ADD_S_imm_T3 = 0xF110,
         OP_CMN_imm      = 0xF110,
         OP_ADC_imm      = 0xF140,
+        OP_SBC_imm      = 0xF160,
         OP_SUB_imm_T3   = 0xF1A0,
         OP_SUB_S_imm_T3 = 0xF1B0,
         OP_CMP_imm_T2   = 0xF1B0,
@@ -714,16 +767,59 @@ private:
     } OpcodeID1;
 
     typedef enum {
-        OP_VAND_T1b      = 0x0010,
-        OP_VORR_T1b      = 0x0010,
+        OP_VAND_T1b      = 0x0110,
+        OP_VBIC_T1b      = 0x0110,
+        OP_VORR_T1b      = 0x0110,
+        OP_VEOR_T1b      = 0x0110,
+        OP_VBSL_T1b      = 0x0110,
+        OP_VADD_I_T1b    = 0x0800,
+        OP_VSUB_I_T1b    = 0x0800,
+        OP_VMUL_I_T1b    = 0x0910,
+        OP_VMIN_S_T1b    = 0x0610,
+        OP_VMAX_S_T1b    = 0x0600,
+        OP_VMIN_U_T1b    = 0x0610,
+        OP_VMAX_U_T1b    = 0x0600,
+        OP_VPMIN_U_T1b   = 0x0A10,
+        OP_VPMAX_U_T1b   = 0x0A00,
+        OP_VQADD_S_T1b   = 0x0010,
+        OP_VQADD_U_T1b   = 0x0010,
+        OP_VQSUB_S_T1b   = 0x0210,
+        OP_VQSUB_U_T1b   = 0x0210,
+        OP_VRHADD_U_T1b  = 0x0100,
+        OP_VQRDMULH_T1b  = 0x0B00,
+        OP_VTBL_T1b      = 0x0800,
+        OP_VQMOVN_S_T1b  = 0x0280,
+        OP_VQMOVUN_T1b   = 0x0240,
+        OP_VPADD_I_T1b   = 0x0B10,
+        OP_VCEQ_I_T1b    = 0x0810,
+        OP_VCGT_S_T1b    = 0x0300,
+        OP_VCGT_U_T1b    = 0x0300,
+        OP_VCGE_S_T1b    = 0x0310,
+        OP_VCGE_U_T1b    = 0x0310,
+        OP_VMVN_T1b      = 0x0580,
+        OP_VABS_I_T1b    = 0x0300,
+        OP_VNEG_I_T1b    = 0x0380,
+        OP_VABS_F_T1b    = 0x0700,
+        OP_VNEG_F_T1b    = 0x0780,
+        OP_VCNT_T1b      = 0x0500,
+        OP_VPADDL_S_T1b  = 0x0200,
+        OP_VPADDL_U_T1b  = 0x0280,
+        OP_VCVT_F32_S32_T1b = 0x0600,
+        OP_VCVT_F32_U32_T1b = 0x0680,
+        OP_VCVT_S32_F32_T1b = 0x0700,
+        OP_VCVT_U32_F32_T1b = 0x0780,
+        OP_VSHL_U_T1b    = 0x0400,
+        OP_VSHL_S_T1b    = 0x0400,
+        OP_VMULL_T1b     = 0x0C00,
+        OP_VMOVL_T1b     = 0x0A10,
+        OP_VFMA_T2b      = 0x0A00,
+        OP_VFMS_T2b      = 0x0A40,
         OP_VADD_T2b      = 0x0A00,
         OP_VDIVb         = 0x0A00,
         OP_FLDSb         = 0x0A00,
         OP_VLDRb         = 0x0A00,
-        OP_VMOV_IMM_T2b  = 0x0A00,
         OP_VMOV_T2b      = 0x0A40,
         OP_VMLA_T2b      = 0x0A00,
-        OP_VMLS_T2b      = 0x0A00,
         OP_VMUL_T2b      = 0x0A00,
         OP_FSTSb         = 0x0A00,
         OP_VSTRb         = 0x0A00,
@@ -815,7 +911,6 @@ private:
     }
 
 public:
-    
     void adc(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
     {
         // Rd can only be SP if Rn is also SP.
@@ -1718,6 +1813,14 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_SBC_reg_T2, rn, FourFours(shift.hi4(), rd, shift.lo4(), rm));
     }
 
+    void sbc(RegisterID rd, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(!BadReg(rd));
+        ASSERT(!BadReg(rn));
+        ASSERT(imm.isValid());
+        m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_SBC_imm, rn, rd, imm);
+    }
+
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
     template<int datasize>
     ALWAYS_INLINE void sdiv(RegisterID rd, RegisterID rn, RegisterID rm)
@@ -2232,12 +2335,652 @@ public:
 
     void vand(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(OP_VAND_T1, OP_VAND_T1b, true, rn, rd, rm);
+        m_formatter.neonThreeRegisterOp(OP_VAND_T1, OP_VAND_T1b, 0, rd, rn, rm);
     }
 
     void vorr(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(OP_VORR_T1, OP_VORR_T1b, true, rn, rd, rm);
+        m_formatter.neonThreeRegisterOp(OP_VORR_T1, OP_VORR_T1b, 0, rd, rn, rm);
+    }
+
+    void vmovVector(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        FPDoubleRegisterID rmHi = static_cast<FPDoubleRegisterID>(rm + 1);
+        FPDoubleRegisterID rdHi = static_cast<FPDoubleRegisterID>(rd + 1);
+        vorr(rd, rm, rm);
+        vorr(rdHi, rmHi, rmHi);
+    }
+
+    void veor(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VEOR_T1, OP_VEOR_T1b, 0, rd, rn, rm);
+    }
+
+    void vbsl(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VBSL_T1, OP_VBSL_T1b, 0, rd, rn, rm);
+    }
+
+    void vmvn(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMVN_T1, OP_VMVN_T1b, 0, rd, rm);
+    }
+
+    void vbic(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VBIC_T1, OP_VBIC_T1b, 0, rd, rn, rm);
+    }
+
+    void vadd_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VADD_I_T1, OP_VADD_I_T1b, 0, rd, rn, rm);
+    }
+
+    void vadd_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VADD_I_T1, OP_VADD_I_T1b, 1, rd, rn, rm);
+    }
+
+    void vadd_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VADD_I_T1, OP_VADD_I_T1b, 2, rd, rn, rm);
+    }
+
+    void vadd_i64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VADD_I_T1, OP_VADD_I_T1b, 3, rd, rn, rm);
+    }
+
+    void vsub_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSUB_I_T1, OP_VSUB_I_T1b, 0, rd, rn, rm);
+    }
+
+    void vsub_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSUB_I_T1, OP_VSUB_I_T1b, 1, rd, rn, rm);
+    }
+
+    void vsub_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSUB_I_T1, OP_VSUB_I_T1b, 2, rd, rn, rm);
+    }
+
+    void vsub_i64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSUB_I_T1, OP_VSUB_I_T1b, 3, rd, rn, rm);
+    }
+
+    void vmul_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMUL_I_T1, OP_VMUL_I_T1b, 0, rd, rn, rm);
+    }
+
+    void vmul_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMUL_I_T1, OP_VMUL_I_T1b, 1, rd, rn, rm);
+    }
+
+    void vmul_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMUL_I_T1, OP_VMUL_I_T1b, 2, rd, rn, rm);
+    }
+
+    void vmin_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_S_T1, OP_VMIN_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vmin_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_S_T1, OP_VMIN_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vmin_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_S_T1, OP_VMIN_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vmin_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_U_T1, OP_VMIN_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vmin_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_U_T1, OP_VMIN_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vmin_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMIN_U_T1, OP_VMIN_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vmax_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_S_T1, OP_VMAX_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vmax_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_S_T1, OP_VMAX_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vmax_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_S_T1, OP_VMAX_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vmax_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_U_T1, OP_VMAX_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vmax_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_U_T1, OP_VMAX_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vmax_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMAX_U_T1, OP_VMAX_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vpmin_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMIN_U_T1, OP_VPMIN_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vpmin_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMIN_U_T1, OP_VPMIN_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vpmin_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMIN_U_T1, OP_VPMIN_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vpmax_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMAX_U_T1, OP_VPMAX_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vpmax_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMAX_U_T1, OP_VPMAX_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vpmax_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPMAX_U_T1, OP_VPMAX_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vqadd_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_S_T1, OP_VQADD_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vqadd_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_S_T1, OP_VQADD_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vqadd_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_S_T1, OP_VQADD_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vqadd_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_U_T1, OP_VQADD_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vqadd_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_U_T1, OP_VQADD_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vqadd_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQADD_U_T1, OP_VQADD_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vqsub_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_S_T1, OP_VQSUB_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vqsub_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_S_T1, OP_VQSUB_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vqsub_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_S_T1, OP_VQSUB_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vqsub_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_U_T1, OP_VQSUB_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vqsub_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_U_T1, OP_VQSUB_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vqsub_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQSUB_U_T1, OP_VQSUB_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vrhadd_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VRHADD_U_T1, OP_VRHADD_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vrhadd_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VRHADD_U_T1, OP_VRHADD_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vrhadd_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VRHADD_S_T1, OP_VRHADD_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vrhadd_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VRHADD_S_T1, OP_VRHADD_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vqrdmulh_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VQRDMULH_T1, OP_VQRDMULH_T1b, 1, rd, rn, rm);
+    }
+
+    void vtbl2(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VTBL_T1, OP_VTBL_T1b, true, rn, rd, rm);
+    }
+
+    void vqmovn_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVN_S_T1b, 0, rd, rm);
+    }
+
+    void vqmovn_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVN_S_T1b, 1, rd, rm);
+    }
+
+    void vqmovn_s64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVN_S_T1b, 2, rd, rm);
+    }
+
+    void vqmovun_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVUN_T1b, 0, rd, rm);
+    }
+
+    void vqmovun_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVUN_T1b, 1, rd, rm);
+    }
+
+    void vqmovun_s64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VQMOVN_T1, OP_VQMOVUN_T1b, 2, rd, rm);
+    }
+
+    void vpadd_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VPADD_I_T1, OP_VPADD_I_T1b, 2, rd, rn, rm);
+    }
+
+    void vshl_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_U_T1, OP_VSHL_U_T1b, 0, rd, rm, rn);
+    }
+
+    void vshl_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_U_T1, OP_VSHL_U_T1b, 1, rd, rm, rn);
+    }
+
+    void vshl_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_U_T1, OP_VSHL_U_T1b, 2, rd, rm, rn);
+    }
+
+    void vshl_u64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_U_T1, OP_VSHL_U_T1b, 3, rd, rm, rn);
+    }
+
+    void vshl_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_S_T1, OP_VSHL_S_T1b, 0, rd, rm, rn);
+    }
+
+    void vshl_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_S_T1, OP_VSHL_S_T1b, 1, rd, rm, rn);
+    }
+
+    void vshl_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_S_T1, OP_VSHL_S_T1b, 2, rd, rm, rn);
+    }
+
+    void vshl_s64(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VSHL_S_T1, OP_VSHL_S_T1b, 3, rd, rm, rn);
+    }
+
+    void vmull_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_U_T1, OP_VMULL_T1b, 0, rd, rn, rm);
+    }
+
+    void vmull_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_U_T1, OP_VMULL_T1b, 1, rd, rn, rm);
+    }
+
+    void vmull_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_U_T1, OP_VMULL_T1b, 2, rd, rn, rm);
+    }
+
+    void vmull_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_S_T1, OP_VMULL_T1b, 0, rd, rn, rm);
+    }
+
+    void vmull_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_S_T1, OP_VMULL_T1b, 1, rd, rn, rm);
+    }
+
+    void vmull_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VMULL_S_T1, OP_VMULL_T1b, 2, rd, rn, rm);
+    }
+
+    void vmovl_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_U_T1, OP_VMOVL_T1b, 2, rd, rm);
+    }
+
+    void vmovl_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_U_T1, OP_VMOVL_T1b, 4, rd, rm);
+    }
+
+    void vmovl_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_U_T1, OP_VMOVL_T1b, 8, rd, rm);
+    }
+
+    void vmovl_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_S_T1, OP_VMOVL_T1b, 2, rd, rm);
+    }
+
+    void vmovl_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_S_T1, OP_VMOVL_T1b, 4, rd, rm);
+    }
+
+    void vmovl_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VMOVL_S_T1, OP_VMOVL_T1b, 8, rd, rm);
+    }
+
+    void vcvt_f64_f32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
+    {
+        vcvtds(rd, rm);
+    }
+
+    void vcvt_f32_f64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        vcvtsd(rd, rm);
+    }
+
+    void vcvt_s32_f64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        vcvt_floatingPointToSigned(rd, rm);
+    }
+
+    void vcvt_u32_f64(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        vcvt_floatingPointToUnsigned(rd, rm);
+    }
+
+    void vcvt_f64_s32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
+    {
+        vcvt_signedToFloatingPoint(rd, rm, true);
+    }
+
+    void vcvt_f64_u32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
+    {
+        vcvt_unsignedToFloatingPoint(rd, rm, true);
+    }
+
+    void vabs_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VABS_I_T1, OP_VABS_I_T1b, 0, rd, rm);
+    }
+
+    void vabs_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VABS_I_T1, OP_VABS_I_T1b, 1, rd, rm);
+    }
+
+    void vabs_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VABS_I_T1, OP_VABS_I_T1b, 2, rd, rm);
+    }
+
+    void vneg_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VNEG_I_T1, OP_VNEG_I_T1b, 0, rd, rm);
+    }
+
+    void vneg_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VNEG_I_T1, OP_VNEG_I_T1b, 1, rd, rm);
+    }
+
+    void vneg_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VNEG_I_T1, OP_VNEG_I_T1b, 2, rd, rm);
+    }
+
+    void vabs_f32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VABS_F_T1, OP_VABS_F_T1b, 0, rd, rm);
+    }
+
+    void vneg_f32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VNEG_F_T1, OP_VNEG_F_T1b, 0, rd, rm);
+    }
+
+    void vcnt(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VCNT_T1, OP_VCNT_T1b, 0, rd, rm);
+    }
+
+    void vpaddl_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VPADDL_T1, OP_VPADDL_S_T1b, 0, rd, rm);
+    }
+
+    void vpaddl_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VPADDL_T1, OP_VPADDL_S_T1b, 1, rd, rm);
+    }
+
+    void vpaddl_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VPADDL_T1, OP_VPADDL_U_T1b, 0, rd, rm);
+    }
+
+    void vpaddl_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VPADDL_T1, OP_VPADDL_U_T1b, 1, rd, rm);
+    }
+
+    void vcvt_f32_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VCVT_NEON_T1, OP_VCVT_F32_S32_T1b, 2, rd, rm);
+    }
+
+    void vcvt_f32_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VCVT_NEON_T1, OP_VCVT_F32_U32_T1b, 2, rd, rm);
+    }
+
+    void vcvt_s32_f32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VCVT_NEON_T1, OP_VCVT_S32_F32_T1b, 2, rd, rm);
+    }
+
+    void vcvt_u32_f32(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonTwoRegisterOp(OP_VCVT_NEON_T1, OP_VCVT_U32_F32_T1b, 2, rd, rm);
+    }
+
+    void vceq_i8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCEQ_T1, OP_VCEQ_I_T1b, 0, rd, rn, rm);
+    }
+
+    void vceq_i16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCEQ_T1, OP_VCEQ_I_T1b, 1, rd, rn, rm);
+    }
+
+    void vceq_i32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCEQ_T1, OP_VCEQ_I_T1b, 2, rd, rn, rm);
+    }
+
+    void vcgt_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_S_T1, OP_VCGT_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vcgt_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_S_T1, OP_VCGT_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vcgt_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_S_T1, OP_VCGT_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vcgt_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_U_T1, OP_VCGT_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vcgt_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_U_T1, OP_VCGT_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vcgt_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGT_U_T1, OP_VCGT_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vcge_s8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_S_T1, OP_VCGE_S_T1b, 0, rd, rn, rm);
+    }
+
+    void vcge_s16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_S_T1, OP_VCGE_S_T1b, 1, rd, rn, rm);
+    }
+
+    void vcge_s32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_S_T1, OP_VCGE_S_T1b, 2, rd, rn, rm);
+    }
+
+    void vcge_u8(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_U_T1, OP_VCGE_U_T1b, 0, rd, rn, rm);
+    }
+
+    void vcge_u16(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_U_T1, OP_VCGE_U_T1b, 1, rd, rn, rm);
+    }
+
+    void vcge_u32(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.neonThreeRegisterOp(OP_VCGE_U_T1, OP_VCGE_U_T1b, 2, rd, rn, rm);
+    }
+
+    void vfma(FPSingleRegisterID sd, FPSingleRegisterID sn, FPSingleRegisterID sm)
+    {
+        m_formatter.vfpOp(OP_VFMA_T2, OP_VFMA_T2b, false, sn, sd, sm);
+    }
+
+    void vfma(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VFMA_T2, OP_VFMA_T2b, true, rn, rd, rm);
+    }
+
+    void vfms(FPSingleRegisterID sd, FPSingleRegisterID sn, FPSingleRegisterID sm)
+    {
+        m_formatter.vfpOp(OP_VFMS_T2, OP_VFMS_T2b, false, sn, sd, sm);
+    }
+
+    void vfms(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VFMS_T2, OP_VFMS_T2b, true, rn, rd, rm);
+    }
+
+    void vld1_64(FPDoubleRegisterID rd, RegisterID rn)
+    {
+        // FIXME: create a neonTwoRegisterMemoryOp
+        OpcodeID1 word1 = static_cast<OpcodeID1>(OP_VLD1_T1 | ((rd >> 4) << 6) | rn);
+        uint16_t word2 = ((rd & 0xF) << 12) | 0x07CF;
+        m_formatter.twoWordOp16Imm16(word1, word2);
+    }
+
+    void vst1_64(FPDoubleRegisterID rd, RegisterID rn)
+    {
+        // FIXME: create a neonTwoRegisterMemoryOp
+        OpcodeID1 word1 = static_cast<OpcodeID1>(OP_VST1_T1 | ((rd >> 4) << 6) | rn);
+        uint16_t word2 = ((rd & 0xF) << 12) | 0x07CF;
+        m_formatter.twoWordOp16Imm16(word1, word2);
+    }
+
+    void vld1_128(FPDoubleRegisterID rd, RegisterID rn)
+    {
+        // FIXME: create a neonTwoRegisterMemoryOp
+        OpcodeID1 word1 = static_cast<OpcodeID1>(OP_VLD1_T1 | ((rd >> 4) << 6) | rn);
+        uint16_t word2 = ((rd & 0xF) << 12) | 0x0A0F;
+        m_formatter.twoWordOp16Imm16(word1, word2);
+    }
+
+    void vst1_128(FPDoubleRegisterID rd, RegisterID rn)
+    {
+        // FIXME: create a neonTwoRegisterMemoryOp
+        OpcodeID1 word1 = static_cast<OpcodeID1>(OP_VST1_T1 | ((rd >> 4) << 6) | rn);
+        uint16_t word2 = ((rd & 0xF) << 12) | 0x0A0F;
+        m_formatter.twoWordOp16Imm16(word1, word2);
     }
 
     void vadd(FPSingleRegisterID rd, FPSingleRegisterID rn, FPSingleRegisterID rm)
@@ -2276,6 +3019,11 @@ public:
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, toDouble, vcvtOp(false, false, false), rd, rm);
     }
 
+    void vcvt_signedToFloatingPoint(FPSingleRegisterID rd, FPSingleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, false, vcvtOp(false, false, false), rd, rm);
+    }
+
     void vcvt_unsignedToFloatingPoint(FPDoubleRegisterID rd, FPSingleRegisterID rm, bool toDouble = true)
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
@@ -2293,7 +3041,7 @@ public:
         // boolean values are 64bit (toInt, unsigned, roundZero)
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, true, vcvtOp(true, false, false), rd, rm);
     }
-    
+
     void vcvt_floatingPointToUnsigned(FPSingleRegisterID rd, FPDoubleRegisterID rm)
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
@@ -2304,6 +3052,11 @@ public:
     {
         // boolean values are 64bit (toInt, unsigned, roundZero)
         m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, false, vcvtOp(true, false, true), rd, rm);
+    }
+
+    void vcvt_floatingPointToSignedNearest(FPSingleRegisterID rd, FPSingleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VCVT_FPIVFP, OP_VCVT_FPIVFPb, false, vcvtOp(true, false, false), rd, rm);
     }
 
     void vcvt_floatingPointToUnsigned(FPSingleRegisterID rd, FPSingleRegisterID rm)
@@ -2326,7 +3079,7 @@ public:
     {
         m_formatter.vfpMemOp(OP_VLDR, OP_VLDRb, true, rn, rd, imm);
     }
-    
+
     void flds(FPSingleRegisterID rd, RegisterID rn, int32_t imm)
     {
         m_formatter.vfpMemOp(OP_FLDS, OP_FLDSb, false, rn, rd, imm);
@@ -2361,6 +3114,119 @@ public:
     void vmov(FPDoubleRegisterID rd, FPDoubleRegisterID rn)
     {
         m_formatter.vfpOp(OP_VMOV_T2, OP_VMOV_T2b, true, VFPOperand(0), rd, rn);
+    }
+
+    void vmov(FPSingleRegisterID rd, FPSingleRegisterID rn)
+    {
+        m_formatter.vfpOp(OP_VMOV_T2, OP_VMOV_T2b, false, VFPOperand(0), rd, rn);
+    }
+
+    void vmovFromVectorElement8(RegisterID rt, FPDoubleRegisterID dn, uint8_t index)
+    {
+        ASSERT(index < 8);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VMOV_VEC8_StoC | ((index & 0x4) << 3) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = OP_VMOV_VEC8_StoC2 | (rt << 12) | ((index & 0x3) << 5);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovFromVectorElementS8(RegisterID rt, FPDoubleRegisterID dn, uint8_t index)
+    {
+        ASSERT(index < 8);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VMOV_VECS8_StoC | ((index & 0x4) << 3) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = OP_VMOV_VEC8_StoC2 | (rt << 12) | ((index & 0x3) << 5);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovFromVectorElement16(RegisterID rt, FPDoubleRegisterID dn, uint8_t index)
+    {
+        ASSERT(index < 4);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VMOV_VEC16_StoC | ((index & 0x2) << 4) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = OP_VMOV_VEC16_StoC2 | (rt << 12) | ((index & 0x1) << 6);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovFromVectorElementS16(RegisterID rt, FPDoubleRegisterID dn, uint8_t index)
+    {
+        ASSERT(index < 4);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VMOV_VECS16_StoC | ((index & 0x2) << 4) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = OP_VMOV_VEC16_StoC2 | (rt << 12) | ((index & 0x1) << 6);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovFromVectorElement32(RegisterID rt, FPDoubleRegisterID dn, uint8_t index)
+    {
+        ASSERT(index < 2);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VMOV_VEC32_StoC | (index << 5) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = OP_VMOV_VEC32_StoC2 | (rt << 12);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vdup8(FPDoubleRegisterID qd, RegisterID rt)
+    {
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VDUP_T1 | 0x0040 | ((qd & 0x10) << 3) | (qd & 0xF);
+        uint16_t word2 = 0x0B10 | (rt << 12);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vdup16(FPDoubleRegisterID qd, RegisterID rt)
+    {
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VDUP_T1 | 0x0000 | ((qd & 0x10) << 3) | (qd & 0xF);
+        uint16_t word2 = 0x0B30 | (rt << 12);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vdup32(FPDoubleRegisterID qd, RegisterID rt)
+    {
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = OP_VDUP_T1 | 0x0000 | ((qd & 0x10) << 3) | (qd & 0xF);
+        uint16_t word2 = 0x0B10 | (rt << 12);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovToVectorElement8(FPDoubleRegisterID dn, RegisterID rt, uint8_t index)
+    {
+        ASSERT(index < 8);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = 0xEE40 | ((index & 0x4) << 3) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = 0x0B10 | (rt << 12) | ((index & 0x3) << 5);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovToVectorElement16(FPDoubleRegisterID dn, RegisterID rt, uint8_t index)
+    {
+        ASSERT(index < 4);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = 0xEE00 | ((index & 0x2) << 4) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = 0x0B30 | (rt << 12) | ((index & 0x1) << 6);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovToVectorElement32(FPDoubleRegisterID dn, RegisterID rt, uint8_t index)
+    {
+        ASSERT(index < 2);
+        ASSERT(!BadReg(rt));
+        uint16_t word1 = 0xEE00 | (index << 5) | ((dn & 0x10) << 3) | (dn & 0xF);
+        uint16_t word2 = 0x0B10 | (rt << 12);
+        m_formatter.twoWordOp16Imm16(static_cast<OpcodeID1>(word1), word2);
+    }
+
+    void vmovToVectorElementFloat32(FPDoubleRegisterID dn, FPSingleRegisterID sm, uint8_t index)
+    {
+        ASSERT(index < 2);
+        FPSingleRegisterID destSingle = !index ? asSingle(dn) : asSingleUpper(dn);
+        vmov(destSingle, sm);
+    }
+
+    void vmovToVectorElementFloat64(FPDoubleRegisterID dn, FPDoubleRegisterID dm)
+    {
+        vmov(dn, dm);
     }
 
     void vmrs(RegisterID reg = ARMRegisters::pc)
@@ -3413,6 +4279,37 @@ private:
             m_buffer.putShort(op2 | b.bits4() << 12 | size << 8 | a.bits1() << 7 | c.bits1() << 5 | c.bits4());
         }
 
+        // NEON three-register data processing instructions (D-register version)
+        // Format: 111U 1110 0Dss Vn:Vd opc NQM0 Vm
+        // size: 00=8bit, 01=16bit, 10=32bit, 11=64bit
+        ALWAYS_INLINE void neonThreeRegisterOp(OpcodeID1 op1, OpcodeID2 op2, uint32_t size, FPDoubleRegisterID vd, FPDoubleRegisterID vn, FPDoubleRegisterID vm)
+        {
+            ASSERT(size <= 3);
+            uint32_t d = vd & 0xf;
+            uint32_t n = vn & 0xf;
+            uint32_t m = vm & 0xf;
+            uint32_t vdBit = (vd >> 4) & 1; // D bit
+            uint32_t vnBit = (vn >> 4) & 1; // N bit
+            uint32_t vmBit = (vm >> 4) & 1; // M bit
+
+            m_buffer.putShort(op1 | (size << 4) | (vnBit << 3) | n);
+            m_buffer.putShort((d << 12) | op2 | (vdBit << 6) | (vmBit << 5) | m);
+        }
+
+        // NEON two-register misc instructions (D-register version)
+        // Format: 1111 1111 1D11 ssoo Vd:4 oooo oQM0 Vm:4
+        // size: 00=8bit, 01=16bit, 10=32bit, 11=64bit
+        ALWAYS_INLINE void neonTwoRegisterOp(OpcodeID1 op1, OpcodeID2 op2, uint32_t size, FPDoubleRegisterID vd, FPDoubleRegisterID vm)
+        {
+            uint32_t d = vd & 0xf;
+            uint32_t m = vm & 0xf;
+            uint32_t vdBit = (vd >> 4) & 1; // D bit
+            uint32_t vmBit = (vm >> 4) & 1; // M bit
+
+            m_buffer.putShort(op1 | (size << 2));
+            m_buffer.putShort((d << 12) | op2 | (vdBit << 6) | (vmBit << 5) | m);
+        }
+
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         // (i.e. +/-(0..255) 32-bit words)
         ALWAYS_INLINE void vfpMemOp(OpcodeID1 op1, OpcodeID2 op2, bool size, RegisterID rn, VFPOperand rd, int32_t imm)
@@ -3422,7 +4319,7 @@ private:
                 imm = -imm;
                 up = false;
             }
-            
+
             uint32_t offset = imm;
             ASSERT(!(offset & ~0x3fc));
             offset >>= 2;
