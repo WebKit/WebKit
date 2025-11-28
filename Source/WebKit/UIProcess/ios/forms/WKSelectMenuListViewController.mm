@@ -138,8 +138,7 @@ static constexpr CGFloat itemCellBaselineToBottom = 8;
 
 - (instancetype)initWithDelegate:(id <WKSelectMenuListViewControllerDelegate>)delegate
 {
-    self = [super initWithDelegate:delegate dictationMode:PUICDictationModeText];
-    return self;
+    return [super initWithDelegate:delegate dictationMode:PUICDictationModeText];
 }
 
 - (void)viewDidLoad

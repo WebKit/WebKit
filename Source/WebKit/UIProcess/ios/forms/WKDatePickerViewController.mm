@@ -223,8 +223,7 @@ struct EraAndYear {
 
 - (instancetype)initWithDelegate:(id <WKQuickboardViewControllerDelegate>)delegate
 {
-    self = [super initWithDelegate:delegate];
-    return self;
+    return [super initWithDelegate:delegate];
 }
 
 - (void)viewDidLoad

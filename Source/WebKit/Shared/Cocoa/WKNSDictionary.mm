@@ -56,8 +56,7 @@ using namespace WebKit;
 - (instancetype)initWithObjects:(const id [])objects forKeys:(const id <NSCopying> [])keys count:(NSUInteger)count
 {
     ASSERT_NOT_REACHED();
-    self = [super initWithObjects:objects forKeys:keys count:count];
-    return self;
+    return [super initWithObjects:objects forKeys:keys count:count];
 }
 
 - (NSUInteger)count

@@ -77,8 +77,7 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [super init];
-    return self;
+    return [super init];
 }
 
 + (BOOL)supportsSecureCoding
