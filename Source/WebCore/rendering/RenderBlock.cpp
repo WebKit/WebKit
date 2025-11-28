@@ -794,6 +794,32 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     return margin;
 }
 
+static bool needsLayoutDueToStaticPosition(RenderBox& child)
+{
+    // When a non-positioned block element moves, it may have positioned children that are
+    // implicitly positioned relative to the non-positioned block.
+    bool isHorizontal = child.isHorizontalWritingMode();
+
+    if (child.style().hasStaticBlockPosition(isHorizontal)) {
+        LayoutUnit currentLogicalTop = child.logicalTop();
+        LayoutUnit currentLogicalHeight = child.logicalHeight();
+        auto computedValues = child.computeLogicalHeight(currentLogicalHeight, currentLogicalTop);
+        if (computedValues.m_position != currentLogicalTop || computedValues.m_extent != currentLogicalHeight)
+            return true;
+    }
+
+    if (child.style().hasStaticInlinePosition(isHorizontal)) {
+        LayoutUnit currentLogicalLeft = child.logicalLeft();
+        LayoutUnit currentLogicalWidth = child.logicalWidth();
+        RenderBox::LogicalExtentComputedValues computedValues;
+        child.computeLogicalWidth(computedValues);
+        if (computedValues.m_position != currentLogicalLeft || computedValues.m_extent != currentLogicalWidth)
+            return true;
+    }
+
+    return false;
+}
+
 void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
@@ -818,7 +844,7 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
     // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
     // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
     // positioned explicitly) this should not incur a performance penalty.
-    if (relayoutChildren == RelayoutChildren::Yes || (outOfFlowBox.style().hasStaticBlockPosition(isHorizontalWritingMode()) && outOfFlowBox.parent() != this))
+    if (relayoutChildren == RelayoutChildren::Yes || needsLayoutDueToStaticPosition(outOfFlowBox))
         outOfFlowBox.setChildNeedsLayout(MarkOnlyThis);
 
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.

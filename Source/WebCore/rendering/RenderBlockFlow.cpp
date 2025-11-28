@@ -1208,9 +1208,6 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
 
 void RenderBlockFlow::adjustOutOfFlowBlock(RenderBox& child, const MarginInfo& marginInfo)
 {
-    bool isHorizontal = isHorizontalWritingMode();
-    bool hasStaticBlockPosition = child.style().hasStaticBlockPosition(isHorizontal);
-    
     LayoutUnit logicalTop = logicalHeight();
     updateStaticInlinePositionForChild(child, logicalTop);
 
@@ -1223,11 +1220,8 @@ void RenderBlockFlow::adjustOutOfFlowBlock(RenderBox& child, const MarginInfo& m
     }
 
     RenderLayer* childLayer = child.layer();
-    if (childLayer->staticBlockPosition() != logicalTop) {
+    if (childLayer->staticBlockPosition() != logicalTop)
         childLayer->setStaticBlockPosition(logicalTop);
-        if (hasStaticBlockPosition)
-            child.setChildNeedsLayout(MarkOnlyThis);
-    }
 }
 
 void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode applyDelta)
