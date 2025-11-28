@@ -601,7 +601,8 @@ BidiScriptAgent::ParsedStackTrace BidiScriptAgent::parseStackTrace(const String&
             result.topLineNumber = lineNumber;
         if (!result.topColumnNumber && parsed)
             result.topColumnNumber = columnNumber;
-        result.callFrames->addItem(
+        auto callFrames = result.callFrames;
+        callFrames->addItem(
             BidiScript::StackFrame::create()
                 .setLineNumber(parsed ? lineNumber : 0)
                 .setColumnNumber(parsed ? columnNumber : 0)
