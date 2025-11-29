@@ -42,6 +42,7 @@
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "VideoFrame.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
