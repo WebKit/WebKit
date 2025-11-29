@@ -1134,6 +1134,18 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncSpeciesGetter, (JSGlobalObject* globalObject,
     return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(globalFuncReflectOwnKeys, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(callFrame->argumentCount() == 1);
+    ASSERT(callFrame->uncheckedArgument(0).isObject());
+
+    JSValue target = callFrame->uncheckedArgument(0);
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, asObject(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include)));
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

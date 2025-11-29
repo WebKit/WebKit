@@ -137,6 +137,7 @@ class JSGlobalObject;
     v(webAssemblyInstantiateStreamingInternal, nullptr) \
     v(Object, nullptr) \
     v(Array, nullptr) \
+    v(reflectOwnKeys, nullptr) \
     v(applyFunction, nullptr) \
     v(callFunction, nullptr) \
     v(hasOwnPropertyFunction, nullptr) \

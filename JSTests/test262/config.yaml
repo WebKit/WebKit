@@ -10,6 +10,7 @@ flags:
   iterator-sequencing: useIteratorSequencing
   explicit-resource-management: useExplicitResourceManagement
   upsert: useMapGetOrInsert
+  joint-iteration: useIteratorZip
 skip:
   features:
     - callable-boundary-realms
@@ -17,7 +18,6 @@ skip:
     - decorators
     - source-phase-imports
     - import-defer
-    - joint-iteration
   paths:
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/built-ins/Temporal/Now/plainDateISO
