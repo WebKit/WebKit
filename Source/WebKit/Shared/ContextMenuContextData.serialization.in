@@ -36,7 +36,7 @@ class WebKit::ContextMenuContextData {
     WebCore::IntRect controlledImageBounds();
     String controlledImageAttachmentID();
     std::optional<WebCore::ElementContext> controlledImageElementContext();
-    String controlledImageMIMEType();
+    MimeType controlledImageMIMEType();
 #endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     std::optional<WebCore::ShareableBitmapHandle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle();

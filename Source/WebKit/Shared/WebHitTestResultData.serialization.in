@@ -61,7 +61,7 @@ struct WebKit::WebHitTestResultData {
     String imageText;
     std::optional<WebCore::SharedMemoryHandle> getImageSharedMemoryHandle();
     RefPtr<WebCore::ShareableBitmap> imageBitmap;
-    String sourceImageMIMEType;
+    MimeType sourceImageMIMEType;
     bool hasEntireImage;
     bool allowsFollowingLink;
     bool allowsFollowingImageURL;

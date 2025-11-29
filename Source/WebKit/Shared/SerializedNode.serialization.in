@@ -41,7 +41,7 @@
     URL baseURL;
     URL baseURLOverride;
     Variant<String, URL> documentURI;
-    String contentType;
+    MimeType contentType;
 };
 [Nested] enum class WebCore::ClonedDocumentType : uint8_t {
     XMLDocument,

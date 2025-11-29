@@ -99,7 +99,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool hasResourceLoadClient;
 
-    Vector<String> mimeTypesWithCustomContentProviders;
+    Vector<MimeType> mimeTypesWithCustomContentProviders;
 
     bool controlledByAutomation;
     bool isProcessSwap;
@@ -170,8 +170,8 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     String overrideContentSecurityPolicy;
     std::optional<double> cpuLimit;
 
-    HashMap<String, WebKit::WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
-    Vector<String> urlSchemesWithLegacyCustomProtocolHandlers;
+    HashMap<URLScheme, WebKit::WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
+    Vector<URLScheme> urlSchemesWithLegacyCustomProtocolHandlers;
 
 #if ENABLE(APPLICATION_MANIFEST)
     std::optional<WebCore::ApplicationManifest> applicationManifest;
@@ -196,7 +196,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     String overriddenMediaType;
     Vector<String> corsDisablingPatterns;
-    HashSet<String> maskedURLSchemes;
+    HashSet<URLScheme> maskedURLSchemes;
     bool loadsSubresources;
     std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
     std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;

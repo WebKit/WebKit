@@ -570,6 +570,34 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "member"_s
             },
         } },
+        { "ValdidatedStringUserStruct1"_s, {
+            {
+                "ValidatedString"_s,
+                "myString"_s
+            },
+        } },
+        { "ValdidatedStringUserStruct2"_s, {
+            {
+                "ValidatedString"_s,
+                "myString"_s
+            },
+            {
+                "Vector<ValidatedString>"_s,
+                "myStringVector"_s
+            },
+            {
+                "HashMap<ValidatedString, SomeObject>"_s,
+                "myStringMap"_s
+            },
+            {
+                "HashSet<ValidatedString>"_s,
+                "myStringSet"_s
+            },
+            {
+                "std::optional<ValidatedString>"_s,
+                "myOptionalString"_s
+            },
+        } },
 #if USE(PASSKIT)
         { "PKPaymentMethod"_s, {
             { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }
@@ -621,6 +649,11 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "WebCore::NonConditionalVariant"_s, {
         {
             "Variant<int, double>"_s
+            , "alias"_s }
+        } },
+        { "ValidatedString"_s, {
+        {
+            "WTF::String"_s
             , "alias"_s }
         } },
     };

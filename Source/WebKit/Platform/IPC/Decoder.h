@@ -148,10 +148,10 @@ public:
         return *this;
     }
 
-    template<typename T>
-    std::optional<T> decode()
+    template<typename T, typename R = T>
+    std::optional<R> decode()
     {
-        std::optional<T> t { ArgumentCoder<std::remove_cvref_t<T>>::decode(*this) };
+        std::optional<R> t { ArgumentCoder<std::remove_cvref_t<T>>::decode(*this) };
         if (!t) [[unlikely]]
             markInvalid();
         return t;

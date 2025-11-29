@@ -22,7 +22,7 @@
 
 header: "SessionState.h"
 [CustomHeader] struct WebKit::HTTPBody {
-    String contentType;
+    MimeType contentType;
     Vector<WebKit::HTTPBody::Element> elements;
 };
 
@@ -31,7 +31,7 @@ header: "SessionState.h"
 };
 
 [Nested] struct WebKit::HTTPBody::Element::FileData {
-    String filePath;
+    FilePath filePath;
     int64_t fileStart;
     std::optional<int64_t> fileLength;
     std::optional<WallTime> expectedFileModificationTime;

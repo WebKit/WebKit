@@ -370,3 +370,17 @@ using WebCore::ConditionalVariant = Variant<
 >;
 
 using WebCore::NonConditionalVariant = Variant<int, double>
+
+[Alias=class WTF::String, Validator='$->validate()'] alias ValidatedString;
+
+struct ValdidatedStringUserStruct1 {
+    ValidatedString myString;
+}
+
+struct ValdidatedStringUserStruct2 {
+    ValidatedString myString;
+    Vector<ValidatedString> myStringVector;
+    HashMap<ValidatedString, SomeObject> myStringMap;
+    HashSet<ValidatedString> myStringSet;
+    std::optional<ValidatedString> myOptionalString;
+}

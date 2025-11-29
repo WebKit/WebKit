@@ -34,7 +34,7 @@ header: <WebCore/Pasteboard.h>
 #endif
 #if !(PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN))
     RefPtr<WebCore::SharedBuffer> resourceData;
-    String resourceMIMEType;
+    MimeType resourceMIMEType;
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
     String suggestedName;

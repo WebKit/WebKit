@@ -32,7 +32,7 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 #endif
     bool shouldSuppressMemoryPressureHandler
 
-    Vector<String> urlSchemesRegisteredForCustomProtocols
+    Vector<URLScheme> urlSchemesRegisteredForCustomProtocols
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier
@@ -46,10 +46,10 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration
 #endif
 
-    Vector<String> urlSchemesRegisteredAsSecure
-    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy
-    Vector<String> urlSchemesRegisteredAsLocal
-    Vector<String> urlSchemesRegisteredAsNoAccess
+    Vector<URLScheme> urlSchemesRegisteredAsSecure
+    Vector<URLScheme> urlSchemesRegisteredAsBypassingContentSecurityPolicy
+    Vector<URLScheme> urlSchemesRegisteredAsLocal
+    Vector<URLScheme> urlSchemesRegisteredAsNoAccess
 
     bool enablePrivateClickMeasurement
     bool ftpEnabled
