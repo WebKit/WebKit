@@ -336,7 +336,7 @@ void applyValueCoordinatedValueListProperty(BuilderState& builderState, CSSValue
 inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setDirection(fromCSSValue<TextDirection>(value));
-    builderState.style().setHasExplicitlySetDirection();
+    builderState.style().setHasExplicitlySetDirection(true);
 }
 
 inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
@@ -701,7 +701,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
     builderState.setWritingMode(fromCSSValue<StyleWritingMode>(value));
-    builderState.style().setHasExplicitlySetWritingMode();
+    builderState.style().setHasExplicitlySetWritingMode(true);
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
@@ -734,7 +734,7 @@ inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, 
 inline void BuilderCustom::applyValueColorScheme(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setColorScheme(toStyleFromCSSValue<ColorScheme>(builderState, value));
-    builderState.style().setHasExplicitlySetColorScheme();
+    builderState.style().setHasExplicitlySetColorScheme(true);
 }
 #endif
 

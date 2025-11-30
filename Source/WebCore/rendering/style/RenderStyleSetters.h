@@ -293,25 +293,6 @@ inline void RenderStyle::setPageSize(Style::PageSize&& pageSize) { SET_NESTED(m_
 inline void RenderStyle::setWordSpacing(Style::WordSpacing&& wordSpacing) { SET_NESTED(m_inheritedData, fontData, wordSpacing, WTFMove(wordSpacing)); }
 inline void RenderStyle::setLetterSpacing(Style::LetterSpacing&& letterSpacing) { SET_NESTED(m_inheritedData, fontData, letterSpacing, WTFMove(letterSpacing)); }
 
-// FIXME: Support generating "ExplicitlySet" setters
-inline void RenderStyle::setHasExplicitlySetBorderBottomLeftRadius(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetBorderBottomLeftRadius, value); }
-inline void RenderStyle::setHasExplicitlySetBorderBottomRightRadius(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetBorderBottomRightRadius, value); }
-inline void RenderStyle::setHasExplicitlySetBorderTopLeftRadius(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetBorderTopLeftRadius, value); }
-inline void RenderStyle::setHasExplicitlySetBorderTopRightRadius(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetBorderTopRightRadius, value); }
-inline void RenderStyle::setHasExplicitlySetColor(bool value) { m_inheritedFlags.hasExplicitlySetColor = value; }
-inline void RenderStyle::setHasExplicitlySetDirection() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetDirection, true); }
-inline void RenderStyle::setHasExplicitlySetPaddingBottom(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetPaddingBottom, value); }
-inline void RenderStyle::setHasExplicitlySetPaddingLeft(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetPaddingLeft, value); }
-inline void RenderStyle::setHasExplicitlySetPaddingRight(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetPaddingRight, value); }
-inline void RenderStyle::setHasExplicitlySetPaddingTop(bool value) { SET_NESTED(m_nonInheritedData, surroundData, hasExplicitlySetPaddingTop, value); }
-inline void RenderStyle::setHasExplicitlySetStrokeColor(bool value) { SET(m_rareInheritedData, hasSetStrokeColor, static_cast<unsigned>(value)); }
-inline void RenderStyle::setHasExplicitlySetStrokeWidth(bool value) { SET(m_rareInheritedData, hasSetStrokeWidth, static_cast<unsigned>(value)); }
-inline void RenderStyle::setHasExplicitlySetWritingMode() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetWritingMode, true); }
-#if ENABLE(DARK_MODE_CSS)
-inline void RenderStyle::setHasExplicitlySetColorScheme() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetColorScheme, true); }
-#endif
-
-
 #undef SET
 #undef SET_DOUBLY_NESTED
 #undef SET_DOUBLY_NESTED_PAIR

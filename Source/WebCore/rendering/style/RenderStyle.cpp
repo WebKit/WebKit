@@ -2095,7 +2095,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyStrokeLinecap);
         if (first.joinStyle != second.joinStyle)
             changingProperties.m_properties.set(CSSPropertyStrokeLinejoin);
-        if (first.hasSetStrokeWidth != second.hasSetStrokeWidth || first.strokeWidth != second.strokeWidth)
+        if (first.hasExplicitlySetStrokeWidth != second.hasExplicitlySetStrokeWidth || first.strokeWidth != second.strokeWidth)
             changingProperties.m_properties.set(CSSPropertyStrokeWidth);
         if (first.listStyleImage != second.listStyleImage)
             changingProperties.m_properties.set(CSSPropertyListStyleImage);
@@ -2127,7 +2127,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // effectiveInert
         // usedContentVisibility
         // visitedLinkStrokeColor
-        // hasSetStrokeColor
+        // hasExplicitlySetStrokeColor
         // usedZoom
         // textSecurity
         // userModify
@@ -2299,21 +2299,6 @@ void RenderStyle::setPageScaleTransform(float scale)
 const Color& RenderStyle::color() const
 {
     return m_inheritedData->color;
-}
-
-const Color& RenderStyle::visitedLinkColor() const
-{
-    return m_inheritedData->visitedLinkColor;
-}
-
-void RenderStyle::setColor(Color&& v)
-{
-    SET_VAR(m_inheritedData, color, WTFMove(v));
-}
-
-void RenderStyle::setVisitedLinkColor(Color&& v)
-{
-    SET_VAR(m_inheritedData, visitedLinkColor, WTFMove(v));
 }
 
 const CounterDirectiveMap& RenderStyle::counterDirectives() const

@@ -1052,7 +1052,7 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     inline Style::ColorScheme colorScheme() const;
-    inline void setHasExplicitlySetColorScheme();
+    inline void setHasExplicitlySetColorScheme(bool);
     inline bool hasExplicitlySetColorScheme() const;
 #endif
 
@@ -1401,7 +1401,7 @@ public:
     void setLocale(Style::WebkitLocale&&);
     void setTextRendering(TextRenderingMode);
 
-    void setColor(Color&&);
+    inline void setColor(Color&&);
 
     void setTextAlign(Style::TextAlign v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
     inline void setTextAlignLast(Style::TextAlignLast);
@@ -1939,13 +1939,16 @@ public:
     constexpr bool isRubyContainerOrInternalRubyBox() const;
     constexpr bool isOriginalDisplayListItemType() const;
 
-    inline bool setDirection(TextDirection bidiDirection);
+    inline TextDirection computedDirection() const;
+    inline bool setDirection(TextDirection);
     inline bool hasExplicitlySetDirection() const;
-    inline void setHasExplicitlySetDirection();
+    inline void setHasExplicitlySetDirection(bool);
 
+    inline StyleWritingMode computedWritingMode() const;
     inline bool setWritingMode(StyleWritingMode);
     inline bool hasExplicitlySetWritingMode() const;
-    inline void setHasExplicitlySetWritingMode();
+    inline void setHasExplicitlySetWritingMode(bool);
+
     inline bool setTextOrientation(TextOrientation);
 
     bool emptyState() const { return m_nonInheritedFlags.emptyState; }
@@ -2301,7 +2304,7 @@ public:
     static constexpr MathShift initialMathShift();
     static constexpr MathStyle initialMathStyle();
 
-    void setVisitedLinkColor(Color&&);
+    inline void setVisitedLinkColor(Color&&);
     inline void setVisitedLinkBackgroundColor(Style::Color&&);
     inline void setVisitedLinkBorderLeftColor(Style::Color&&);
     inline void setVisitedLinkBorderRightColor(Style::Color&&);
@@ -2333,7 +2336,7 @@ public:
     inline const Style::Color& textStrokeColor() const;
     inline const Style::Color& caretColor() const;
     inline bool hasAutoCaretColor() const;
-    const Color& visitedLinkColor() const;
+    inline const Color& visitedLinkColor() const;
     inline const Style::Color& visitedLinkBackgroundColor() const;
     inline const Style::Color& visitedLinkBorderLeftColor() const;
     inline const Style::Color& visitedLinkBorderRightColor() const;

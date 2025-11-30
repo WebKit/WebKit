@@ -217,8 +217,8 @@ public:
     PREFERRED_TYPE(Style::SVGPaintOrder::Type) unsigned paintOrder : 3;
     PREFERRED_TYPE(LineCap) unsigned capStyle : 2;
     PREFERRED_TYPE(LineJoin) unsigned joinStyle : 2;
-    PREFERRED_TYPE(bool) unsigned hasSetStrokeWidth : 1;
-    PREFERRED_TYPE(bool) unsigned hasSetStrokeColor : 1;
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeWidth : 1;
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
     PREFERRED_TYPE(bool) unsigned hasAutoCaretColor : 1;
     PREFERRED_TYPE(bool) unsigned hasVisitedLinkAutoCaretColor : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;

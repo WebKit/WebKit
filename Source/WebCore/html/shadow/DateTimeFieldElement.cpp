@@ -35,7 +35,7 @@
 #include "LocalizedStrings.h"
 #include "NodeDocument.h"
 #include "PlatformLocale.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "StyleResolver.h"
