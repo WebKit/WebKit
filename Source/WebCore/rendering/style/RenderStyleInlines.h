@@ -25,50 +25,11 @@
 
 #pragma once
 
-#include <WebCore/AnchorPositionEvaluator.h>
-#include <WebCore/Element.h>
-#include <WebCore/FontCascadeDescription.h>
-#include <WebCore/GraphicsTypes.h>
-#include <WebCore/HitTestRequest.h>
-#include <WebCore/PositionTryOrder.h>
 #include <WebCore/RenderStyle.h>
-#include <WebCore/ScrollTypes.h>
-#include <WebCore/StyleAppearance.h>
-#include <WebCore/StyleFillLayers.h>
-#include <WebCore/StyleFontFamily.h>
-#include <WebCore/StyleFontFeatureSettings.h>
-#include <WebCore/StyleFontPalette.h>
-#include <WebCore/StyleFontSizeAdjust.h>
-#include <WebCore/StyleFontStyle.h>
-#include <WebCore/StyleFontVariantAlternates.h>
-#include <WebCore/StyleFontVariantEastAsian.h>
-#include <WebCore/StyleFontVariantLigatures.h>
-#include <WebCore/StyleFontVariantNumeric.h>
-#include <WebCore/StyleFontVariationSettings.h>
-#include <WebCore/StyleFontWeight.h>
-#include <WebCore/StyleFontWidth.h>
-#include <WebCore/StyleGridTrackSizingDirection.h>
-#include <WebCore/StyleTextAlign.h>
-#include <WebCore/StyleTextAutospace.h>
-#include <WebCore/StyleTextDecorationLine.h>
-#include <WebCore/StyleTextSpacingTrim.h>
-#include <WebCore/StyleTextTransform.h>
-#include <WebCore/StyleWebKitLocale.h>
-#include <WebCore/UnicodeBidi.h>
-#include <WebCore/ViewTimeline.h>
-#include <WebCore/WebAnimationTypes.h>
 
-#if ENABLE(APPLE_PAY)
-#include <WebCore/ApplePayButtonPart.h>
-#endif
-
-#if HAVE(CORE_MATERIAL)
-#include <WebCore/AppleVisualEffect.h>
-#endif
-
-#define RENDER_STYLE_INLINES_GENERATED_INCLUDE_TRAP 1
-#include <WebCore/RenderStyleInlinesGenerated.h>
-#undef RENDER_STYLE_INLINES_GENERATED_INCLUDE_TRAP
+#define RENDER_STYLE_PROPERTIES_GETTERS_INCLUDE_TRAP 1
+#include <WebCore/RenderStylePropertiesGetters.h>
+#undef RENDER_STYLE_PROPERTIES_GETTERS_INCLUDE_TRAP
 
 namespace WebCore {
 
@@ -92,6 +53,8 @@ inline std::optional<PseudoElementType> RenderStyle::pseudoElementType() const {
 inline const AtomString& RenderStyle::pseudoElementNameArgument() const { return m_nonInheritedData->rareData->pseudoElementNameArgument; }
 inline bool RenderStyle::hasAnyPublicPseudoStyles() const { return m_nonInheritedFlags.hasAnyPublicPseudoStyles(); }
 inline bool RenderStyle::hasAttrContent() const { return m_nonInheritedData->miscData->hasAttrContent; }
+
+inline Style::WebkitLocale RenderStyle::computedLocale() const { return fontDescription().computedLocale(); }
 
 // MARK: transform constants
 
@@ -124,19 +87,28 @@ inline bool RenderStyle::borderRightIsTransparent() const { return border().righ
 inline bool RenderStyle::borderTopIsTransparent() const { return border().top().isTransparent(); }
 inline bool RenderStyle::columnRuleIsTransparent() const { return columnRule().isTransparent(); }
 
+inline bool RenderStyle::hasExplicitlySetBorderRadius() const
+{
+    return hasExplicitlySetBorderBottomLeftRadius() || hasExplicitlySetBorderBottomRightRadius() || hasExplicitlySetBorderTopLeftRadius() || hasExplicitlySetBorderTopRightRadius();
+}
+
+inline bool RenderStyle::hasExplicitlySetPadding() const
+{
+    return hasExplicitlySetPaddingBottom() || hasExplicitlySetPaddingLeft() || hasExplicitlySetPaddingRight() || hasExplicitlySetPaddingTop();
+}
+
 // MARK: Cached used values
 
 inline StyleAppearance RenderStyle::usedAppearance() const { return static_cast<StyleAppearance>(m_nonInheritedData->miscData->usedAppearance); }
 inline Style::ZIndex RenderStyle::usedZIndex() const { return m_nonInheritedData->boxData->usedZIndex(); }
 inline Style::Contain RenderStyle::usedContain() const { return m_nonInheritedData->rareData->usedContain(); }
-inline float RenderStyle::usedZoom() const { return m_rareInheritedData->usedZoom; }
 inline ContentVisibility RenderStyle::usedContentVisibility() const { return static_cast<ContentVisibility>(m_rareInheritedData->usedContentVisibility); }
 inline Style::TouchAction RenderStyle::usedTouchAction() const { return m_rareInheritedData->usedTouchAction; }
+inline float RenderStyle::usedLetterSpacing() const { return fontCascade().letterSpacing(); }
+inline float RenderStyle::usedWordSpacing() const { return fontCascade().wordSpacing(); }
 #if HAVE(CORE_MATERIAL)
 inline AppleVisualEffect RenderStyle::usedAppleVisualEffectForSubtree() const { return static_cast<AppleVisualEffect>(m_rareInheritedData->usedAppleVisualEffectForSubtree); }
 #endif
-inline float RenderStyle::usedLetterSpacing() const { return fontCascade().letterSpacing(); }
-inline float RenderStyle::usedWordSpacing() const { return fontCascade().wordSpacing(); }
 
 // MARK: Derived used values
 
@@ -512,33 +484,6 @@ inline bool RenderStyle::fontCascadeEqual(const RenderStyle& other) const
         || m_inheritedData->fontData->fontCascade == other.m_inheritedData->fontData->fontCascade;
 }
 
-inline bool RenderStyle::evaluationTimeZoomEnabled() const
-{
-    return m_rareInheritedData->evaluationTimeZoomEnabled;
-}
-
-inline float RenderStyle::deviceScaleFactor() const
-{
-    return m_rareInheritedData->deviceScaleFactor;
-}
-
-inline bool RenderStyle::useSVGZoomRulesForLength() const
-{
-    return m_nonInheritedData->rareData->useSVGZoomRulesForLength;
-}
-
-inline Style::ZoomFactor RenderStyle::usedZoomForLength() const
-{
-    if (useSVGZoomRulesForLength())
-        return Style::ZoomFactor(1.0f, deviceScaleFactor());
-
-    if (evaluationTimeZoomEnabled())
-        return Style::ZoomFactor(usedZoom(), deviceScaleFactor());
-
-    return Style::ZoomFactor(1.0f, deviceScaleFactor());
-}
-
-
 // MARK: has*() functions
 
 inline bool RenderStyle::hasAnimations() const { return !animations().isInitial(); }
@@ -701,36 +646,6 @@ inline Style::LineWidth RenderStyle::borderAfterWidth() const { return borderAft
 inline Style::LineWidth RenderStyle::borderBeforeWidth() const { return borderBeforeWidth(writingMode()); }
 inline Style::LineWidth RenderStyle::borderEndWidth() const { return borderEndWidth(writingMode()); }
 inline Style::LineWidth RenderStyle::borderStartWidth() const { return borderStartWidth(writingMode()); }
-
-// MARK: - Aggregate getters
-
-inline const Style::InsetBox& RenderStyle::insetBox() const { return m_nonInheritedData->surroundData->inset; }
-inline const Style::MarginBox& RenderStyle::marginBox() const { return m_nonInheritedData->surroundData->margin; }
-inline const Style::PaddingBox& RenderStyle::paddingBox() const { return m_nonInheritedData->surroundData->padding; }
-inline const Style::ScrollMarginBox& RenderStyle::scrollMarginBox() const { return m_nonInheritedData->rareData->scrollMargin; }
-inline const Style::ScrollPaddingBox& RenderStyle::scrollPaddingBox() const { return m_nonInheritedData->rareData->scrollPadding; }
-inline const Style::ScrollTimelines& RenderStyle::scrollTimelines() const { return m_nonInheritedData->rareData->scrollTimelines; }
-inline const Style::ViewTimelines& RenderStyle::viewTimelines() const { return m_nonInheritedData->rareData->viewTimelines; }
-inline const Style::Animations& RenderStyle::animations() const { return m_nonInheritedData->miscData->animations; }
-inline const Style::Transitions& RenderStyle::transitions() const { return m_nonInheritedData->miscData->transitions; }
-inline const Style::BackgroundLayers& RenderStyle::backgroundLayers() const { return m_nonInheritedData->backgroundData->background; }
-inline const Style::MaskLayers& RenderStyle::maskLayers() const { return m_nonInheritedData->miscData->mask; }
-inline const Style::MaskBorder& RenderStyle::maskBorder() const { return m_nonInheritedData->rareData->maskBorder; }
-inline const Style::BorderImage& RenderStyle::borderImage() const { return border().image(); }
-inline const Style::TransformOrigin& RenderStyle::transformOrigin() const { return m_nonInheritedData->miscData->transform->origin; }
-inline const Style::PerspectiveOrigin& RenderStyle::perspectiveOrigin() const { return m_nonInheritedData->rareData->perspectiveOrigin; }
-inline const OutlineValue& RenderStyle::outline() const { return m_nonInheritedData->backgroundData->outline; }
-inline const BorderData& RenderStyle::border() const { return m_nonInheritedData->surroundData->border; }
-inline Style::LineWidthBox RenderStyle::borderWidth() const { return border().borderWidth(); }
-inline const Style::BorderRadius& RenderStyle::borderRadii() const { return border().radii(); }
-inline const BorderValue& RenderStyle::borderBottom() const { return border().bottom(); }
-inline const BorderValue& RenderStyle::borderLeft() const { return border().left(); }
-inline const BorderValue& RenderStyle::borderRight() const { return border().right(); }
-inline const BorderValue& RenderStyle::borderTop() const { return border().top(); }
-inline const BorderValue& RenderStyle::columnRule() const { return m_nonInheritedData->miscData->multiCol->columnRule; }
-inline const FontCascade& RenderStyle::fontCascade() const { return m_inheritedData->fontData->fontCascade; }
-inline bool RenderStyle::hasExplicitlySetBorderRadius() const { return hasExplicitlySetBorderBottomLeftRadius() || hasExplicitlySetBorderBottomRightRadius() || hasExplicitlySetBorderTopLeftRadius() || hasExplicitlySetBorderTopRightRadius(); }
-inline bool RenderStyle::hasExplicitlySetPadding() const { return hasExplicitlySetPaddingBottom() || hasExplicitlySetPaddingLeft() || hasExplicitlySetPaddingRight() || hasExplicitlySetPaddingTop(); }
 
 // MARK: - Property initial values
 
@@ -1081,67 +996,5 @@ constexpr Style::WebkitTouchCallout RenderStyle::initialTouchCallout() { return 
 inline Style::LineHeight RenderStyle::initialSpecifiedLineHeight() { return CSS::Keyword::Normal { }; }
 constexpr Style::TextSizeAdjust RenderStyle::initialTextSizeAdjust() { return CSS::Keyword::Auto { }; }
 #endif
-
-// MARK: - Property getters
-
-inline TextDirection RenderStyle::computedDirection() const { return writingMode().computedTextDirection(); }
-inline StyleWritingMode RenderStyle::computedWritingMode() const { return writingMode().computedWritingMode(); }
-inline Style::LineWidth RenderStyle::borderBottomWidth() const { return border().borderBottomWidth(); }
-inline Style::LineWidth RenderStyle::borderLeftWidth() const { return border().borderLeftWidth(); }
-inline Style::LineWidth RenderStyle::borderRightWidth() const { return border().borderRightWidth(); }
-inline Style::LineWidth RenderStyle::borderTopWidth() const { return border().borderTopWidth(); }
-inline Style::LineWidth RenderStyle::columnRuleWidth() const { return m_nonInheritedData->miscData->multiCol->columnRuleWidth(); }
-
-// FIXME: - Below are property getters that are not yet generated
-
-// FIXME: Support properties that set more than one value when set.
-inline StyleAppearance RenderStyle::appearance() const { return static_cast<StyleAppearance>(m_nonInheritedData->miscData->appearance); }
-inline BlendMode RenderStyle::blendMode() const { return static_cast<BlendMode>(m_nonInheritedData->rareData->effectiveBlendMode); }
-inline float RenderStyle::zoom() const { return m_nonInheritedData->rareData->zoom; }
-
-// FIXME: Add a type that encapsulates both caretColor() and hasAutoCaretColor().
-inline const Style::Color& RenderStyle::caretColor() const { return m_rareInheritedData->caretColor; }
-inline bool RenderStyle::hasAutoCaretColor() const { return m_rareInheritedData->hasAutoCaretColor; }
-inline const Style::Color& RenderStyle::visitedLinkCaretColor() const { return m_rareInheritedData->visitedLinkCaretColor; }
-inline bool RenderStyle::hasVisitedLinkAutoCaretColor() const { return m_rareInheritedData->hasVisitedLinkAutoCaretColor; }
-
-// FIXME: Support generating properties that have their storage spread out
-inline Style::Cursor RenderStyle::cursor() const { return { m_rareInheritedData->cursorImages, cursorType() }; }
-inline Style::ZIndex RenderStyle::specifiedZIndex() const { return m_nonInheritedData->boxData->specifiedZIndex(); }
-
-// FIXME: Support descriptors
-inline const Style::PageSize& RenderStyle::pageSize() const { return m_nonInheritedData->rareData->pageSize; }
-
-// FIXME: Support generating getter and setter with different names (or rename computedLetterSpacing() to letterSpacing() and computedWordSpacing() to wordSpacing())
-inline const Style::LetterSpacing& RenderStyle::computedLetterSpacing() const { return m_inheritedData->fontData->letterSpacing; }
-inline const Style::WordSpacing& RenderStyle::computedWordSpacing() const { return m_inheritedData->fontData->wordSpacing; }
-
-// FIXME: Support generated font-property getters
-inline Style::FontFamilies RenderStyle::fontFamily() const { return { fontDescription().families(), fontDescription().isSpecifiedFont() }; }
-inline Style::FontPalette RenderStyle::fontPalette() const { return fontDescription().fontPalette(); }
-inline Style::FontSizeAdjust RenderStyle::fontSizeAdjust() const { return fontDescription().fontSizeAdjust(); }
-inline Style::FontStyle RenderStyle::fontStyle() const { return { fontDescription().fontStyleSlope(), fontDescription().fontStyleAxis() }; }
-inline FontOpticalSizing RenderStyle::fontOpticalSizing() const { return fontDescription().opticalSizing(); }
-inline Style::FontFeatureSettings RenderStyle::fontFeatureSettings() const { return fontDescription().featureSettings(); }
-inline Style::FontVariationSettings RenderStyle::fontVariationSettings() const { return fontDescription().variationSettings(); }
-inline Style::FontWeight RenderStyle::fontWeight() const { return fontDescription().weight(); }
-inline Style::FontWidth RenderStyle::fontWidth() const { return fontDescription().width(); }
-inline Kerning RenderStyle::fontKerning() const { return fontDescription().kerning(); }
-inline FontSmoothingMode RenderStyle::fontSmoothing() const { return fontDescription().fontSmoothing(); }
-inline FontSynthesisLonghandValue RenderStyle::fontSynthesisSmallCaps() const { return fontDescription().fontSynthesisSmallCaps(); }
-inline FontSynthesisLonghandValue RenderStyle::fontSynthesisStyle() const { return fontDescription().fontSynthesisStyle(); }
-inline FontSynthesisLonghandValue RenderStyle::fontSynthesisWeight() const { return fontDescription().fontSynthesisWeight(); }
-inline Style::FontVariantAlternates RenderStyle::fontVariantAlternates() const { return fontDescription().variantAlternates(); }
-inline FontVariantCaps RenderStyle::fontVariantCaps() const { return fontDescription().variantCaps(); }
-inline Style::FontVariantEastAsian RenderStyle::fontVariantEastAsian() const { return fontDescription().variantEastAsian(); }
-inline FontVariantEmoji RenderStyle::fontVariantEmoji() const { return fontDescription().variantEmoji(); }
-inline Style::FontVariantLigatures RenderStyle::fontVariantLigatures() const { return fontDescription().variantLigatures(); }
-inline Style::FontVariantNumeric RenderStyle::fontVariantNumeric() const { return fontDescription().variantNumeric(); }
-inline FontVariantPosition RenderStyle::fontVariantPosition() const { return fontDescription().variantPosition(); }
-inline TextRenderingMode RenderStyle::textRendering() const { return fontDescription().textRenderingMode(); }
-inline Style::TextAutospace RenderStyle::textAutospace() const { return fontDescription().textAutospace(); }
-inline Style::TextSpacingTrim RenderStyle::textSpacingTrim() const { return fontDescription().textSpacingTrim(); }
-inline Style::WebkitLocale RenderStyle::locale() const { return fontDescription().specifiedLocale(); }
-inline Style::WebkitLocale RenderStyle::computedLocale() const { return fontDescription().computedLocale(); }
 
 } // namespace WebCore

@@ -42,6 +42,7 @@
 #include "NavigationDisabler.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
+#include "RenderStyleInlines.h"
 #include "RenderWidgetInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "ScriptController.h"

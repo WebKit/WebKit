@@ -127,34 +127,34 @@ public:
     bool isInterlinearRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
-    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
-    bool isRuby() const { return style().display() == DisplayType::Ruby; }
-    bool isRubyBase() const { return style().display() == DisplayType::RubyBase; }
-    bool isRubyInlineBox() const { return isRuby() || isRubyBase(); }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
     bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
-    bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
-    bool isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
-    bool isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
-    bool isTableFooter() const { return style().display() == DisplayType::TableFooterGroup; }
-    bool isTableRow() const { return style().display() == DisplayType::TableRow; }
-    bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
-    bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
-    bool isTableCell() const { return style().display() == DisplayType::TableCell; }
-    bool isInternalTableBox() const;
-    bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
-    bool isFlexItem() const;
-    bool isGridFormattingContext() const { return isGridBox() || isGridLanesBox(); }
-    bool isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
-    bool isGridLanesBox() const { return style().display() == DisplayType::GridLanes || style().display() == DisplayType::InlineGridLanes; }
-    bool isGridItem() const;
+    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
     bool isImage() const { return m_nodeType == NodeType::Image; }
-    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
-    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
-    bool isListItem() const { return style().display() == DisplayType::ListItem; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
     bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
+    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
+    bool isInternalTableBox() const;
+    inline bool isRuby() const;
+    inline bool isRubyBase() const;
+    inline bool isRubyInlineBox() const;
+    inline bool isTableCaption() const;
+    inline bool isTableHeader() const;
+    inline bool isTableBody() const;
+    inline bool isTableFooter() const;
+    inline bool isTableRow() const;
+    inline bool isTableColumnGroup() const;
+    inline bool isTableColumn() const;
+    inline bool isTableCell() const;
+    inline bool isFlexBox() const;
+    bool isFlexItem() const;
+    inline bool isGridFormattingContext() const;
+    inline bool isGridBox() const;
+    inline bool isGridLanesBox() const;
+    bool isGridItem() const;
+    inline bool isListItem() const;
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
     bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }

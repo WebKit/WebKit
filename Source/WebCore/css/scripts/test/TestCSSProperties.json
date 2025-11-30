@@ -5,6 +5,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>"
             }
         },
@@ -13,6 +14,7 @@
             "initial": "0",
             "values": [ "auto" ],
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "auto | <shared-rule-one>"
             }
         },
@@ -21,6 +23,7 @@
             "initial": "0",
             "values": [ "auto" ],
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "auto | <shared-rule-exported>"
             }
         },
@@ -29,6 +32,7 @@
             "initial": "0",
             "values": [ "auto" ],
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "auto | <shared-rule-with-override-function>"
             }
         },
@@ -36,6 +40,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "sink-priority": true,
                 "parser-grammar": "<number>"
             }
@@ -44,6 +49,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "high-priority": true,
                 "parser-grammar": "<number>"
             }
@@ -52,6 +58,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "top-priority": true,
                 "top-priority-reason": "justification string",
                 "parser-grammar": "<number>"
@@ -61,6 +68,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "medium-priority": true,
                 "parser-grammar": "<number>"
             }
@@ -69,6 +77,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "animation-wrapper": "DiscreteCoordinatedValueListPropertyWrapper",
                 "coordinated-value-list-property": true,
                 "parser-grammar": "<number>#"
@@ -78,6 +87,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "coordinated-value-list-property": true,
                 "parser-grammar": "<number>#"
             }
@@ -86,6 +96,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "coordinated-value-list-property": true,
                 "style-converter": "FillTestConverter",
                 "parser-grammar": "<number>#"
@@ -95,6 +106,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number [-inf, -10]> | <length [0, inf]> | <angle [-90,90]> | <percentage [1,100]>"
             }
         },
@@ -102,6 +114,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "settings-flag": "cssSettingsOneEnabled",
                 "parser-grammar": "<number>"
             }
@@ -111,6 +124,7 @@
             "animation-type": "by computed value",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "animation-wrapper": "Wrapper<float>",
                 "parser-grammar": "<number>"
             }
@@ -119,6 +133,7 @@
             "animation-type": "by computed value",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "animation-wrapper": "Wrapper<float>",
                 "animation-wrapper-acceleration": "always",
                 "parser-grammar": "<number>"
@@ -128,6 +143,7 @@
             "animation-type": "by computed value",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "animation-wrapper": "Wrapper<float>",
                 "animation-wrapper-acceleration": "threaded-only",
                 "parser-grammar": "<number>"
@@ -138,6 +154,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "horizontal"
@@ -149,6 +166,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "logical-property-group": {
                     "name": "test-group",
                     "resolver": "vertical"
@@ -158,6 +176,7 @@
         },
         "test-logical-property-group-logical-block": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "skip-style-builder": true,
                 "logical-property-group": {
                     "name": "test-group",
@@ -168,6 +187,7 @@
         },
         "test-logical-property-group-logical-inline": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "skip-style-builder": true,
                 "logical-property-group": {
                     "name": "test-group",
@@ -179,6 +199,7 @@
 
         "test-shorthand-one": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "longhands": [
                     "test-logical-property-group-physical-horizontal",
                     "test-logical-property-group-physical-vertical"
@@ -191,6 +212,7 @@
         },
         "test-shorthand-two": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "longhands": [
                     "test-logical-property-group-logical-block",
                     "test-logical-property-group-logical-inline"
@@ -203,6 +225,7 @@
         },
         "font": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "longhands": [
                     "test-sink-priority",
                     "test-high-priority"
@@ -214,6 +237,7 @@
         },
         "all": {
             "codegen-properties": {
+                "skip-render-style": true,
                 "longhands": [
                     "all"
                 ],
@@ -226,6 +250,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>*"
             }
         },
@@ -233,6 +258,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>*@(no-single-item-opt)"
             }
         },
@@ -240,6 +266,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{2,}"
             }
         },
@@ -247,6 +274,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,}"
             }
         },
@@ -254,6 +282,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,}@(no-single-item-opt)"
             }
         },
@@ -262,6 +291,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{2,}"
             }
         },
@@ -269,6 +299,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{1,}"
             }
         },
@@ -276,6 +307,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{1,}@(no-single-item-opt)"
             }
         },
@@ -284,6 +316,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{2,3}"
             }
         },
@@ -291,6 +324,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,3}"
             }
         },
@@ -298,6 +332,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,3}@(no-single-item-opt)"
             }
         },
@@ -305,6 +340,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{2}"
             }
         },
@@ -312,6 +348,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,2}@(type=CSSValuePair)"
             }
         },
@@ -319,6 +356,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,2}@(type=CSSValuePair no-single-item-opt)"
             }
         },
@@ -326,6 +364,7 @@
             "animation-type": "discrete",
             "initial": "0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,2}@(type=CSSValuePair default=previous)"
             }
         },
@@ -333,6 +372,7 @@
             "animation-type": "discrete",
             "initial": "0 0 0 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>{1,4}@(type=CSSValuePair default=previous)"
             }
         },
@@ -341,6 +381,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{2,3}"
             }
         },
@@ -348,6 +389,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{1,3}"
             }
         },
@@ -355,6 +397,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{1,3}@(no-single-item-opt)"
             }
         },
@@ -362,6 +405,7 @@
             "animation-type": "discrete",
             "initial": "0, 0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>#{2}"
             }
         },
@@ -370,6 +414,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> | <custom-ident> | <length> ]"
             }
         },
@@ -377,6 +422,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> | foo | bar | baz | [ <custom-ident> && <dashed-ident> ] ]"
             }
         },
@@ -384,6 +430,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> | foo@(settings-flag=cssSettingsFooDisabled) | bar | baz | [ <custom-ident> && <dashed-ident> ] ]"
             }
         },
@@ -391,6 +438,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number>@(settings-flag=cssSettingsReferenceDisabled) | foo | bar | baz | [ <custom-ident> && <dashed-ident> ] ]"
             }
         },
@@ -398,6 +446,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> | foo | bar | baz | [ <custom-ident> && <dashed-ident> ]@(settings-flag=cssSettingsGroupDisabled) ]"
             }
         },
@@ -405,6 +454,7 @@
             "animation-type": "discrete",
             "initial": "none",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "none || [ foo | bar ]@(settings-flag=cssSettingsGroupDisabled)"
             }
         },
@@ -412,6 +462,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident> <length> ]"
             }
         },
@@ -419,6 +470,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident>? <length> ]"
             }
         },
@@ -426,6 +478,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident>? <length>? ]"
             }
         },
@@ -433,6 +486,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident>? <length>? ]@(no-single-item-opt)"
             }
         },
@@ -440,6 +494,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident> <length>? ]"
             }
         },
@@ -447,6 +502,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident> <length> ]@(type=CSSCustomType)"
             }
         },
@@ -454,6 +510,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident>? <length>? ]@(type=CSSCustomType)"
             }
         },
@@ -461,6 +518,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident>? <length>? ]@(type=CSSCustomType no-single-item-opt)"
             }
         },
@@ -468,6 +526,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> <custom-ident> <length>? ]@(type=CSSCustomType)"
             }
         },
@@ -475,6 +534,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length> ]"
             }
         },
@@ -482,6 +542,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length> ]"
             }
         },
@@ -489,6 +550,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]"
             }
         },
@@ -496,6 +558,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(no-single-item-opt)"
             }
         },
@@ -503,6 +566,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(preserve-order)"
             }
         },
@@ -510,6 +574,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(preserve-order no-single-item-opt)"
             }
         },
@@ -517,6 +582,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(preserve-order)"
             }
         },
@@ -524,6 +590,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(preserve-order no-single-item-opt)"
             }
         },
@@ -531,6 +598,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(type=CSSCustomType)"
             }
         },
@@ -538,6 +606,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length> ]@(preserve-order type=CSSCustomType)"
             }
         },
@@ -545,6 +614,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(type=CSSCustomType)"
             }
         },
@@ -552,6 +622,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident>? && <length>? ]@(preserve-order type=CSSCustomType)"
             }
         },
@@ -559,6 +630,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(type=CSSCustomType)"
             }
         },
@@ -566,6 +638,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(type=CSSCustomType no-single-item-opt)"
             }
         },
@@ -573,6 +646,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(preserve-order type=CSSCustomType)"
             }
         },
@@ -580,6 +654,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> && <custom-ident> && <length>? ]@(preserve-order type=CSSCustomType no-single-item-opt)"
             }
         },
@@ -587,6 +662,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]"
             }
         },
@@ -594,6 +670,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(no-single-item-opt)"
             }
         },
@@ -601,6 +678,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order)"
             }
         },
@@ -608,6 +686,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order no-single-item-opt)"
             }
         },
@@ -615,6 +694,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(type=CSSCustomType)"
             }
         },
@@ -622,6 +702,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(type=CSSCustomType no-single-item-opt)"
             }
         },
@@ -629,6 +710,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order type=CSSCustomType)"
             }
         },
@@ -636,6 +718,7 @@
             "animation-type": "discrete",
             "initial": "0 foo 1px",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "[ <number> || <custom-ident> || <length> ]@(preserve-order type=CSSCustomType no-single-item-opt)"
             }
         },
@@ -643,6 +726,7 @@
             "animation-type": "discrete",
             "initial": "foo()",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo()"
             }
         },
@@ -650,6 +734,7 @@
             "animation-type": "discrete",
             "initial": "foo(1)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> )"
             }
         },
@@ -657,6 +742,7 @@
             "animation-type": "discrete",
             "initial": "foo(1)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> | <string> | bar | baz )"
             }
         },
@@ -664,6 +750,7 @@
             "animation-type": "discrete",
             "initial": "foo()",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number>? )"
             }
         },
@@ -671,6 +758,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number>#{1,4} )"
             }
         },
@@ -678,6 +766,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2, 3)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number>#{3} )"
             }
         },
@@ -685,6 +774,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number># )"
             }
         },
@@ -692,6 +782,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number>#{2,} )"
             }
         },
@@ -699,6 +790,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> <string> )"
             }
         },
@@ -706,6 +798,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> <string>? )"
             }
         },
@@ -713,6 +806,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> && <string> )"
             }
         },
@@ -720,6 +814,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> && <string>? )"
             }
         },
@@ -727,6 +822,7 @@
             "animation-type": "discrete",
             "initial": "foo(1, 2)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo( <number> || <string> )"
             }
         },
@@ -734,6 +830,7 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
+                "skip-render-style": true,
                 "color-property": true,
                 "parser-grammar": "<color>"
             }
@@ -742,6 +839,7 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
+                "skip-render-style": true,
                 "color-property": true,
                 "parser-grammar": "<color allowed-types=absolute>"
             }
@@ -750,6 +848,7 @@
             "animation-type": "discrete",
             "initial": "url(about:blank)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<image>"
             }
         },
@@ -757,6 +856,7 @@
             "animation-type": "discrete",
             "initial": "url(about:blank)",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<image allowed-types=url,generated>"
             }
         },
@@ -764,6 +864,7 @@
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo | bar"
             }
         },
@@ -771,6 +872,7 @@
             "animation-type": "discrete",
             "initial": "foo",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "foo@(aliased-to=baz) | bar"
             }
         },
@@ -778,6 +880,7 @@
             "animation-type": "discrete",
             "initial": "none",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "none | <url>"
             }
         },
@@ -785,6 +888,7 @@
             "animation-type": "discrete",
             "initial": "none",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "none | <url allowed-modifiers=crossorigin,integrity,referrerpolicy>"
             }
         },
@@ -793,6 +897,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "style-extractor-converter": "TestExtractorOnlyConversion",
                 "parser-grammar": "<number>"
             }
@@ -801,6 +906,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "style-converter": "TestSharedBuilderExtractorConversion",
                 "parser-grammar": "<number>"
             }
@@ -809,6 +915,7 @@
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "style-extractor-custom": true,
                 "parser-grammar": "<number>"
             }
@@ -817,6 +924,7 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
+                "skip-render-style": true,
                 "color-property": true,
                 "parser-grammar": "<color>"
             }
@@ -825,7 +933,8 @@
             "animation-type": "discrete",
             "initial": "currentColor",
             "codegen-properties": {
-                "visited-link-color-support": true,
+                "skip-render-style": true,
+                "render-style-visited-link-support": true,
                 "color-property": true,
                 "parser-grammar": "<color>"
             }
@@ -835,9 +944,9 @@
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
-                "render-style-storage-path": ["level1"],
+                "render-style-storage-container-path": ["level1"],
                 "render-style-storage-kind": "reference",
-                "render-style-type": "Style::Number<>"
+                "render-style-storage-type": "Style::Number<>"
             }
         },
         "test-render-style-storage-one-level-value": {
@@ -845,9 +954,9 @@
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
-                "render-style-storage-path": ["level1"],
+                "render-style-storage-container-path": ["level1"],
                 "render-style-storage-kind": "value",
-                "render-style-type": "Style::Number<>"
+                "render-style-storage-type": "Style::Number<>"
             }
         },
         "test-render-style-storage-one-level-enum": {
@@ -855,9 +964,9 @@
             "initial": "foo",
             "codegen-properties": {
                 "parser-grammar": "foo | bar",
-                "render-style-storage-path": ["level1"],
+                "render-style-storage-container-path": ["level1"],
                 "render-style-storage-kind": "enum",
-                "render-style-type": "Style::TestEnumeration"
+                "render-style-storage-type": "Style::TestEnumeration"
             }
         },
         "test-render-style-storage-one-level-raw": {
@@ -865,9 +974,9 @@
             "initial": "foo",
             "codegen-properties": {
                 "parser-grammar": "foo || bar",
-                "render-style-storage-path": ["level1"],
+                "render-style-storage-container-path": ["level1"],
                 "render-style-storage-kind": "raw",
-                "render-style-type": "Style::TestRaw"
+                "render-style-storage-type": "Style::TestRaw"
             }
         },
         "test-render-style-storage-two-level-reference": {
@@ -875,19 +984,20 @@
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
-                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-container-path": ["level1", "level2"],
                 "render-style-storage-kind": "reference",
-                "render-style-type": "Style::Number<>"
+                "render-style-storage-type": "Style::Number<>"
             }
         },
         "test-render-style-storage-two-level-value": {
             "animation-type": "discrete",
             "initial": "0",
             "codegen-properties": {
+                "skip-render-style": true,
                 "parser-grammar": "<number>",
-                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-container-path": ["level1", "level2"],
                 "render-style-storage-kind": "value",
-                "render-style-type": "Style::Number<>"
+                "render-style-storage-type": "Style::Number<>"
             }
         },
         "test-render-style-storage-two-level-enum": {
@@ -895,9 +1005,9 @@
             "initial": "foo",
             "codegen-properties": {
                 "parser-grammar": "foo | bar",
-                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-container-path": ["level1", "level2"],
                 "render-style-storage-kind": "enum",
-                "render-style-type": "Style::TestEnumeration"
+                "render-style-storage-type": "Style::TestEnumeration"
             }
         },
         "test-render-style-storage-two-level-raw": {
@@ -905,9 +1015,9 @@
             "initial": "foo",
             "codegen-properties": {
                 "parser-grammar": "foo || bar",
-                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-container-path": ["level1", "level2"],
                 "render-style-storage-kind": "raw",
-                "render-style-type": "Style::TestRaw"
+                "render-style-storage-type": "Style::TestRaw"
             }
         }
     },

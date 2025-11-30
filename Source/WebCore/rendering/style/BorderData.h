@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace CSS::Literals;
 
 class BorderData {
-    friend class RenderStyle;
+    friend class RenderStyleProperties;
 public:
     using Radii = Style::BorderRadius;
 
@@ -137,13 +137,21 @@ public:
     const BorderValue& top() const { return m_edges.top(); }
     const BorderValue& bottom() const { return m_edges.bottom(); }
 
+    Style::BorderImage& image() { return m_image; }
     const Style::BorderImage& image() const { return m_image; }
+
+    Style::BorderRadius& radii() { return m_radii; }
+    const Style::BorderRadius& radii() const { return m_radii; }
+
+    Style::BorderRadiusValue& topLeftRadius() { return m_radii.topLeft(); }
+    Style::BorderRadiusValue& topRightRadius() { return m_radii.topRight(); }
+    Style::BorderRadiusValue& bottomLeftRadius() { return m_radii.bottomLeft(); }
+    Style::BorderRadiusValue& bottomRightRadius() { return m_radii.bottomRight(); }
 
     const Style::BorderRadiusValue& topLeftRadius() const { return m_radii.topLeft(); }
     const Style::BorderRadiusValue& topRightRadius() const { return m_radii.topRight(); }
     const Style::BorderRadiusValue& bottomLeftRadius() const { return m_radii.bottomLeft(); }
     const Style::BorderRadiusValue& bottomRightRadius() const { return m_radii.bottomRight(); }
-    const Style::BorderRadius& radii() const { return m_radii; }
 
     const Style::CornerShapeValue& topLeftCornerShape() const { return m_cornerShapes.topLeft(); }
     const Style::CornerShapeValue& topRightCornerShape() const { return m_cornerShapes.topRight(); }

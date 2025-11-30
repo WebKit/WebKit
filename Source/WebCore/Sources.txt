@@ -2984,7 +2984,10 @@ rendering/style/OutlineValue.cpp
 rendering/style/PositionTryOrder.cpp
 rendering/style/ReferenceFilterOperation.cpp
 rendering/style/RenderStyle.cpp
+rendering/style/RenderStyleBase.cpp
 rendering/style/RenderStyleConstants.cpp
+rendering/style/RenderStylePropertiesGettersCustom.cpp
+rendering/style/RenderStylePropertiesSettersCustom.cpp
 rendering/style/SVGRenderStyle.cpp
 rendering/style/SVGRenderStyleDefs.cpp
 rendering/style/StyleAppleColorFilterData.cpp

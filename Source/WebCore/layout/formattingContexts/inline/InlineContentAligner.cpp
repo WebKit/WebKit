@@ -27,6 +27,7 @@
 #include "InlineContentAligner.h"
 
 #include "InlineFormattingContext.h"
+#include "LayoutBoxInlines.h"
 #include "TextUtil.h"
 
 namespace WebCore {

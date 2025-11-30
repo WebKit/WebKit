@@ -32,11 +32,11 @@
 namespace WebCore {
 
 class BorderData;
-class RenderStyle;
+class RenderStyleBase;
 
 class BorderValue final {
     friend class BorderData;
-    friend class RenderStyle;
+    friend class RenderStyleProperties;
 public:
     BorderValue()
         : m_style(static_cast<unsigned>(BorderStyle::None))

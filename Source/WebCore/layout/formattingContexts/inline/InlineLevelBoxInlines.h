@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveKeywordList.h"
 #include "InlineLevelBox.h"
+#include "LayoutBoxInlines.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {

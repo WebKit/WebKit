@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TableFormattingState.h"
 
+#include "LayoutBoxInlines.h"
 #include "RenderStyleInlines.h"
 #include "RenderObject.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"

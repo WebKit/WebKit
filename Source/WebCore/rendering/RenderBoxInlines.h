@@ -71,6 +71,31 @@ inline bool RenderBox::shouldTrimChildMargin(Style::MarginTrimSide type, const R
 inline bool RenderBox::stretchesToViewport() const { return document().inQuirksMode() && style().logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isDocumentElementRenderer() || isBody()) && !shouldComputeLogicalHeightFromAspectRatio() && !isInline(); }
 inline bool RenderBox::isColumnSpanner() const { return style().columnSpan() == ColumnSpan::All; }
 
+inline bool RenderBox::scrollsOverflow() const
+{
+    return scrollsOverflowX() || scrollsOverflowY();
+}
+
+bool RenderBox::scrollsOverflowX() const
+{
+    return hasNonVisibleOverflow() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto);
+}
+
+bool RenderBox::scrollsOverflowY() const
+{
+    return hasNonVisibleOverflow() && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto);
+}
+
+bool RenderBox::isScrollContainerX() const
+{
+    return style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Hidden || style().overflowX() == Overflow::Auto;
+}
+
+bool RenderBox::isScrollContainerY() const
+{
+    return style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Hidden || style().overflowY() == Overflow::Auto;
+}
+
 inline LayoutPoint RenderBox::topLeftLocation() const
 {
     // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.

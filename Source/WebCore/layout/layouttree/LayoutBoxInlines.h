@@ -26,10 +26,28 @@
 #pragma once
 
 #include "LayoutBox.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 
 namespace Layout {
+
+inline bool Box::isRuby() const { return style().display() == DisplayType::Ruby; }
+inline bool Box::isRubyBase() const { return style().display() == DisplayType::RubyBase; }
+inline bool Box::isRubyInlineBox() const { return isRuby() || isRubyBase(); }
+inline bool Box::isTableCaption() const { return style().display() == DisplayType::TableCaption; }
+inline bool Box::isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
+inline bool Box::isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
+inline bool Box::isTableFooter() const { return style().display() == DisplayType::TableFooterGroup; }
+inline bool Box::isTableRow() const { return style().display() == DisplayType::TableRow; }
+inline bool Box::isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
+inline bool Box::isTableColumn() const { return style().display() == DisplayType::TableColumn; }
+inline bool Box::isTableCell() const { return style().display() == DisplayType::TableCell; }
+inline bool Box::isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex || m_nodeType == NodeType::ImplicitFlexBox; }
+inline bool Box::isGridFormattingContext() const { return isGridBox() || isGridLanesBox(); }
+inline bool Box::isGridBox() const { return style().display() == DisplayType::Grid || style().display() == DisplayType::InlineGrid; }
+inline bool Box::isGridLanesBox() const { return style().display() == DisplayType::GridLanes || style().display() == DisplayType::InlineGridLanes; }
+inline bool Box::isListItem() const { return style().display() == DisplayType::ListItem; }
 
 inline bool Box::isContainingBlockForFixedPosition() const
 {

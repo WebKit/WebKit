@@ -41,6 +41,7 @@
 #include "PathTraversalState.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
+#include "RenderStyleBaseInlines.h"
 #include "RenderStyleDifference.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
@@ -109,15 +110,122 @@ struct SameSizeAsRenderStyle : CanMakeCheckedPtr<SameSizeAsRenderStyle> {
 
 static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
-static_assert(PublicPseudoIDBits == allPublicPseudoElementTypes.size());
+inline RenderStyleBase::RenderStyleBase(RenderStyleBase&&) = default;
+inline RenderStyleBase& RenderStyleBase::operator=(RenderStyleBase&&) = default;
 
-static_assert(!(static_cast<unsigned>(Style::maxTextTransformValue) >> TextTransformBits));
+inline RenderStyleBase::RenderStyleBase(CreateDefaultStyleTag)
+    : m_nonInheritedData(StyleNonInheritedData::create())
+    , m_rareInheritedData(StyleRareInheritedData::create())
+    , m_inheritedData(StyleInheritedData::create())
+    , m_svgStyle(SVGRenderStyle::create())
+{
+    m_inheritedFlags.writingMode = WritingMode(RenderStyle::initialWritingMode(), RenderStyle::initialDirection(), RenderStyle::initialTextOrientation()).toData();
+    m_inheritedFlags.emptyCells = static_cast<unsigned>(RenderStyle::initialEmptyCells());
+    m_inheritedFlags.captionSide = static_cast<unsigned>(RenderStyle::initialCaptionSide());
+    m_inheritedFlags.listStylePosition = static_cast<unsigned>(RenderStyle::initialListStylePosition());
+    m_inheritedFlags.visibility = static_cast<unsigned>(RenderStyle::initialVisibility());
+    m_inheritedFlags.textAlign = static_cast<unsigned>(RenderStyle::initialTextAlign());
+    m_inheritedFlags.textTransform = RenderStyle::initialTextTransform().toRaw();
+    m_inheritedFlags.textDecorationLineInEffect = RenderStyle::initialTextDecorationLine().toRaw();
+    m_inheritedFlags.cursorType = static_cast<unsigned>(RenderStyle::initialCursor().predefined);
+#if ENABLE(CURSOR_VISIBILITY)
+    m_inheritedFlags.cursorVisibility = static_cast<unsigned>(RenderStyle::initialCursorVisibility());
+#endif
+    m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(RenderStyle::initialWhiteSpaceCollapse());
+    m_inheritedFlags.textWrapMode = static_cast<unsigned>(RenderStyle::initialTextWrapMode());
+    m_inheritedFlags.textWrapStyle = static_cast<unsigned>(RenderStyle::initialTextWrapStyle());
+    m_inheritedFlags.borderCollapse = static_cast<unsigned>(RenderStyle::initialBorderCollapse());
+    m_inheritedFlags.rtlOrdering = static_cast<unsigned>(RenderStyle::initialRTLOrdering());
+    m_inheritedFlags.boxDirection = static_cast<unsigned>(RenderStyle::initialBoxDirection());
+    m_inheritedFlags.printColorAdjust = static_cast<unsigned>(RenderStyle::initialPrintColorAdjust());
+    m_inheritedFlags.pointerEvents = static_cast<unsigned>(RenderStyle::initialPointerEvents());
+    m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
+#if ENABLE(TEXT_AUTOSIZING)
+    m_inheritedFlags.autosizeStatus = 0;
+#endif
 
-// Value zero is used to indicate no pseudo-element.
-static_assert(!((enumToUnderlyingType(PseudoElementType::HighestEnumValue) + 1) >> PseudoElementTypeBits));
+    m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(RenderStyle::initialDisplay());
+    m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(RenderStyle::initialDisplay());
+    m_nonInheritedFlags.overflowX = static_cast<unsigned>(RenderStyle::initialOverflowX());
+    m_nonInheritedFlags.overflowY = static_cast<unsigned>(RenderStyle::initialOverflowY());
+    m_nonInheritedFlags.clear = static_cast<unsigned>(RenderStyle::initialClear());
+    m_nonInheritedFlags.position = static_cast<unsigned>(RenderStyle::initialPosition());
+    m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(RenderStyle::initialUnicodeBidi());
+    m_nonInheritedFlags.floating = static_cast<unsigned>(RenderStyle::initialFloating());
+    m_nonInheritedFlags.textDecorationLine = RenderStyle::initialTextDecorationLine().toRaw();
+    m_nonInheritedFlags.usesViewportUnits = false;
+    m_nonInheritedFlags.usesContainerUnits = false;
+    m_nonInheritedFlags.useTreeCountingFunctions = false;
+    m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
+    m_nonInheritedFlags.disallowsFastPathInheritance = false;
+    m_nonInheritedFlags.emptyState = false;
+    m_nonInheritedFlags.firstChildState = false;
+    m_nonInheritedFlags.lastChildState = false;
+    m_nonInheritedFlags.isLink = false;
+    m_nonInheritedFlags.pseudoElementType = 0;
+    m_nonInheritedFlags.pseudoBits = 0;
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
+    static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
+    static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
+}
+
+inline RenderStyleBase::RenderStyleBase(const RenderStyleBase& other, CloneTag)
+    : m_nonInheritedData(other.m_nonInheritedData)
+    , m_nonInheritedFlags(other.m_nonInheritedFlags)
+    , m_rareInheritedData(other.m_rareInheritedData)
+    , m_inheritedData(other.m_inheritedData)
+    , m_inheritedFlags(other.m_inheritedFlags)
+    , m_svgStyle(other.m_svgStyle)
+{
+}
+
+inline RenderStyleBase::RenderStyleBase(RenderStyleBase& a, RenderStyleBase&& b)
+    : m_nonInheritedData(a.m_nonInheritedData.replace(WTFMove(b.m_nonInheritedData)))
+    , m_nonInheritedFlags(std::exchange(a.m_nonInheritedFlags, b.m_nonInheritedFlags))
+    , m_rareInheritedData(a.m_rareInheritedData.replace(WTFMove(b.m_rareInheritedData)))
+    , m_inheritedData(a.m_inheritedData.replace(WTFMove(b.m_inheritedData)))
+    , m_inheritedFlags(std::exchange(a.m_inheritedFlags, b.m_inheritedFlags))
+    , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTFMove(b.m_cachedPseudoStyles)))
+    , m_svgStyle(a.m_svgStyle.replace(WTFMove(b.m_svgStyle)))
+{
+}
+
+inline void RenderStyleBase::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
+{
+    // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
+    effectiveDisplay = other.effectiveDisplay;
+    originalDisplay = other.originalDisplay;
+    overflowX = other.overflowX;
+    overflowY = other.overflowY;
+    clear = other.clear;
+    position = other.position;
+    unicodeBidi = other.unicodeBidi;
+    floating = other.floating;
+    textDecorationLine = other.textDecorationLine;
+    usesViewportUnits = other.usesViewportUnits;
+    usesContainerUnits = other.usesContainerUnits;
+    useTreeCountingFunctions = other.useTreeCountingFunctions;
+    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
+    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
+}
+
+RenderStyle::RenderStyle(RenderStyle&&) = default;
+RenderStyle& RenderStyle::operator=(RenderStyle&&) = default;
+
+inline RenderStyle::RenderStyle(CreateDefaultStyleTag tag)
+    : RenderStyleProperties { tag }
+{
+}
+
+inline RenderStyle::RenderStyle(const RenderStyle& other, CloneTag tag)
+    : RenderStyleProperties { other, tag }
+{
+}
+
+inline RenderStyle::RenderStyle(RenderStyle& a, RenderStyle&& b)
+    : RenderStyleProperties { a, WTFMove(b) }
+{
+}
 
 RenderStyle& RenderStyle::defaultStyleSingleton()
 {
@@ -175,94 +283,6 @@ RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle&
     return style;
 }
 
-RenderStyle::RenderStyle(RenderStyle&&) = default;
-RenderStyle& RenderStyle::operator=(RenderStyle&&) = default;
-
-RenderStyle::RenderStyle(CreateDefaultStyleTag)
-    : m_nonInheritedData(StyleNonInheritedData::create())
-    , m_rareInheritedData(StyleRareInheritedData::create())
-    , m_inheritedData(StyleInheritedData::create())
-    , m_svgStyle(SVGRenderStyle::create())
-{
-    m_inheritedFlags.writingMode = WritingMode(initialWritingMode(), initialDirection(), initialTextOrientation()).toData();
-    m_inheritedFlags.emptyCells = static_cast<unsigned>(initialEmptyCells());
-    m_inheritedFlags.captionSide = static_cast<unsigned>(initialCaptionSide());
-    m_inheritedFlags.listStylePosition = static_cast<unsigned>(initialListStylePosition());
-    m_inheritedFlags.visibility = static_cast<unsigned>(initialVisibility());
-    m_inheritedFlags.textAlign = static_cast<unsigned>(initialTextAlign());
-    m_inheritedFlags.textTransform = initialTextTransform().toRaw();
-    m_inheritedFlags.textDecorationLineInEffect = initialTextDecorationLine().toRaw();
-    m_inheritedFlags.cursorType = static_cast<unsigned>(initialCursor().predefined);
-#if ENABLE(CURSOR_VISIBILITY)
-    m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
-#endif
-    m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(initialWhiteSpaceCollapse());
-    m_inheritedFlags.textWrapMode = static_cast<unsigned>(initialTextWrapMode());
-    m_inheritedFlags.textWrapStyle = static_cast<unsigned>(initialTextWrapStyle());
-    m_inheritedFlags.borderCollapse = static_cast<unsigned>(initialBorderCollapse());
-    m_inheritedFlags.rtlOrdering = static_cast<unsigned>(initialRTLOrdering());
-    m_inheritedFlags.boxDirection = static_cast<unsigned>(initialBoxDirection());
-    m_inheritedFlags.printColorAdjust = static_cast<unsigned>(initialPrintColorAdjust());
-    m_inheritedFlags.pointerEvents = static_cast<unsigned>(initialPointerEvents());
-    m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
-#if ENABLE(TEXT_AUTOSIZING)
-    m_inheritedFlags.autosizeStatus = 0;
-#endif
-
-    m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(initialDisplay());
-    m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(initialDisplay());
-    m_nonInheritedFlags.overflowX = static_cast<unsigned>(initialOverflowX());
-    m_nonInheritedFlags.overflowY = static_cast<unsigned>(initialOverflowY());
-    m_nonInheritedFlags.clear = static_cast<unsigned>(initialClear());
-    m_nonInheritedFlags.position = static_cast<unsigned>(initialPosition());
-    m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(initialUnicodeBidi());
-    m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
-    m_nonInheritedFlags.textDecorationLine = initialTextDecorationLine().toRaw();
-    m_nonInheritedFlags.usesViewportUnits = false;
-    m_nonInheritedFlags.usesContainerUnits = false;
-    m_nonInheritedFlags.useTreeCountingFunctions = false;
-    m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
-    m_nonInheritedFlags.disallowsFastPathInheritance = false;
-    m_nonInheritedFlags.emptyState = false;
-    m_nonInheritedFlags.firstChildState = false;
-    m_nonInheritedFlags.lastChildState = false;
-    m_nonInheritedFlags.isLink = false;
-    m_nonInheritedFlags.pseudoElementType = 0;
-    m_nonInheritedFlags.pseudoBits = 0;
-
-    static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
-    static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
-}
-
-inline RenderStyle::RenderStyle(const RenderStyle& other, CloneTag)
-    : m_nonInheritedData(other.m_nonInheritedData)
-    , m_nonInheritedFlags(other.m_nonInheritedFlags)
-    , m_rareInheritedData(other.m_rareInheritedData)
-    , m_inheritedData(other.m_inheritedData)
-    , m_inheritedFlags(other.m_inheritedFlags)
-    , m_svgStyle(other.m_svgStyle)
-{
-}
-
-inline RenderStyle::RenderStyle(RenderStyle& a, RenderStyle&& b)
-    : m_nonInheritedData(a.m_nonInheritedData.replace(WTFMove(b.m_nonInheritedData)))
-    , m_nonInheritedFlags(std::exchange(a.m_nonInheritedFlags, b.m_nonInheritedFlags))
-    , m_rareInheritedData(a.m_rareInheritedData.replace(WTFMove(b.m_rareInheritedData)))
-    , m_inheritedData(a.m_inheritedData.replace(WTFMove(b.m_inheritedData)))
-    , m_inheritedFlags(std::exchange(a.m_inheritedFlags, b.m_inheritedFlags))
-    , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTFMove(b.m_cachedPseudoStyles)))
-    , m_svgStyle(a.m_svgStyle.replace(WTFMove(b.m_svgStyle)))
-{
-}
-
-RenderStyle::~RenderStyle()
-{
-#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-    m_deletionHasBegun = true;
-#endif
-}
-
 RenderStyle RenderStyle::replace(RenderStyle&& newStyle)
 {
     return RenderStyle { *this, WTFMove(newStyle) };
@@ -303,25 +323,6 @@ void RenderStyle::fastPathInheritFrom(const RenderStyle& inheritParent)
     }
 }
 
-inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
-{
-    // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
-    effectiveDisplay = other.effectiveDisplay;
-    originalDisplay = other.originalDisplay;
-    overflowX = other.overflowX;
-    overflowY = other.overflowY;
-    clear = other.clear;
-    position = other.position;
-    unicodeBidi = other.unicodeBidi;
-    floating = other.floating;
-    textDecorationLine = other.textDecorationLine;
-    usesViewportUnits = other.usesViewportUnits;
-    usesContainerUnits = other.usesContainerUnits;
-    useTreeCountingFunctions = other.useTreeCountingFunctions;
-    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
-    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
-}
-
 void RenderStyle::copyNonInheritedFrom(const RenderStyle& other)
 {
     m_nonInheritedData = other.m_nonInheritedData;
@@ -338,21 +339,6 @@ void RenderStyle::copyContentFrom(const RenderStyle& other)
     if (!other.m_nonInheritedData->miscData->content.isData())
         return;
     m_nonInheritedData.access().miscData.access().content = other.m_nonInheritedData->miscData->content;
-}
-
-void RenderStyle::setEvaluationTimeZoomEnabled(bool value)
-{
-    SET_VAR(m_rareInheritedData, evaluationTimeZoomEnabled, value);
-}
-
-void RenderStyle::setDeviceScaleFactor(float value)
-{
-    SET_VAR(m_rareInheritedData, deviceScaleFactor, value);
-}
-
-void RenderStyle::setUseSVGZoomRulesForLength(bool value)
-{
-    SET_NESTED_VAR(m_nonInheritedData, rareData, useSVGZoomRulesForLength, value);
 }
 
 void RenderStyle::copyPseudoElementsFrom(const RenderStyle& other)
@@ -2296,21 +2282,6 @@ void RenderStyle::setPageScaleTransform(float scale)
     setTransformOriginY(0_css_px);
 }
 
-const Color& RenderStyle::color() const
-{
-    return m_inheritedData->color;
-}
-
-const CounterDirectiveMap& RenderStyle::counterDirectives() const
-{
-    return m_nonInheritedData->rareData->counterDirectives;
-}
-
-CounterDirectiveMap& RenderStyle::accessCounterDirectives()
-{
-    return m_nonInheritedData.access().rareData.access().counterDirectives;
-}
-
 const AtomString& RenderStyle::hyphenString() const
 {
     ASSERT(hyphens() != Hyphens::None);
@@ -2361,96 +2332,6 @@ void RenderStyle::adjustMaskLayers()
     ensureMaskLayers().prepareForUse();
 }
 
-const FontMetrics& RenderStyle::metricsOfPrimaryFont() const
-{
-    return m_inheritedData->fontData->fontCascade.metricsOfPrimaryFont();
-}
-
-const FontCascadeDescription& RenderStyle::fontDescription() const
-{
-    return m_inheritedData->fontData->fontCascade.fontDescription();
-}
-
-FontCascadeDescription& RenderStyle::mutableFontDescriptionWithoutUpdate()
-{
-    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
-    return cascade.mutableFontDescription();
-}
-
-FontCascade& RenderStyle::mutableFontCascadeWithoutUpdate()
-{
-    return m_inheritedData.access().fontData.access().fontCascade;
-}
-
-float RenderStyle::specifiedFontSize() const
-{
-    return fontDescription().specifiedSize();
-}
-
-float RenderStyle::computedFontSize() const
-{
-    return fontDescription().computedSize();
-}
-
-void RenderStyle::setFontCascade(FontCascade&& fontCascade)
-{
-    if (fontCascade == this->fontCascade())
-        return;
-
-    m_inheritedData.access().fontData.access().fontCascade = fontCascade;
-}
-
-void RenderStyle::setFontDescription(FontCascadeDescription&& description)
-{
-    if (fontDescription() == description)
-        return;
-
-    auto existingFontCascade = this->fontCascade();
-    RefPtr fontSelector = existingFontCascade.fontSelector();
-
-    auto newCascade = FontCascade { WTFMove(description), existingFontCascade };
-    newCascade.update(WTFMove(fontSelector));
-    setFontCascade(WTFMove(newCascade));
-}
-
-bool RenderStyle::setFontDescriptionWithoutUpdate(FontCascadeDescription&& description)
-{
-    if (fontDescription() == description)
-        return false;
-
-    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
-    cascade = { WTFMove(description), cascade };
-    return true;
-}
-
-const Style::LineHeight& RenderStyle::specifiedLineHeight() const
-{
-#if ENABLE(TEXT_AUTOSIZING)
-    return m_inheritedData->specifiedLineHeight;
-#else
-    return m_inheritedData->lineHeight;
-#endif
-}
-
-#if ENABLE(TEXT_AUTOSIZING)
-
-void RenderStyle::setSpecifiedLineHeight(Style::LineHeight&& lineHeight)
-{
-    SET_VAR(m_inheritedData, specifiedLineHeight, WTFMove(lineHeight));
-}
-
-#endif
-
-const Style::LineHeight& RenderStyle::lineHeight() const
-{
-    return m_inheritedData->lineHeight;
-}
-
-void RenderStyle::setLineHeight(Style::LineHeight&& lineHeight)
-{
-    SET_VAR(m_inheritedData, lineHeight, WTFMove(lineHeight));
-}
-
 float RenderStyle::computedLineHeight() const
 {
     return computeLineHeight(lineHeight());
@@ -2472,199 +2353,6 @@ float RenderStyle::computeLineHeight(const Style::LineHeight& lineHeight) const
             return Style::evaluate<LayoutUnit>(calc, LayoutUnit { computedFontSize() }, usedZoomForLength()).toFloat();
         }
     );
-}
-
-void RenderStyle::setTextSpacingTrim(Style::TextSpacingTrim value)
-{
-    auto description = fontDescription();
-    description.setTextSpacingTrim(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setTextAutospace(Style::TextAutospace value)
-{
-    auto description = fontDescription();
-    description.setTextAutospace(Style::toPlatform(value));
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSize(float size)
-{
-    // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
-    // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
-
-    ASSERT(std::isfinite(size));
-    if (!std::isfinite(size) || size < 0)
-        size = 0;
-    else
-        size = std::min(maximumAllowedFontSize, size);
-
-    auto description = fontDescription();
-    description.setSpecifiedSize(size);
-    description.setComputedSize(size);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSizeAdjust(Style::FontSizeAdjust sizeAdjust)
-{
-    auto description = fontDescription();
-    description.setFontSizeAdjust(sizeAdjust.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontOpticalSizing(FontOpticalSizing opticalSizing)
-{
-    auto description = fontDescription();
-    description.setOpticalSizing(opticalSizing);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontFamily(Style::FontFamilies&& families)
-{
-    auto description = fontDescription();
-    description.setFamilies(families.takePlatform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontFeatureSettings(Style::FontFeatureSettings&& settings)
-{
-    auto description = fontDescription();
-    description.setFeatureSettings(settings.takePlatform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariationSettings(Style::FontVariationSettings&& settings)
-{
-    auto description = fontDescription();
-    description.setVariationSettings(settings.takePlatform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontWeight(Style::FontWeight value)
-{
-    auto description = fontDescription();
-    description.setWeight(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontWidth(Style::FontWidth value)
-{
-    auto description = fontDescription();
-    description.setWidth(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontStyle(Style::FontStyle style)
-{
-    auto description = fontDescription();
-    description.setFontStyleSlope(style.platformSlope());
-    description.setFontStyleAxis(style.platformAxis());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontPalette(Style::FontPalette&& value)
-{
-    auto description = fontDescription();
-    description.setFontPalette(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontKerning(Kerning value)
-{
-    auto description = fontDescription();
-    description.setKerning(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSmoothing(FontSmoothingMode value)
-{
-    auto description = fontDescription();
-    description.setFontSmoothing(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSynthesisSmallCaps(FontSynthesisLonghandValue value)
-{
-    auto description = fontDescription();
-    description.setFontSynthesisSmallCaps(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSynthesisStyle(FontSynthesisLonghandValue value)
-{
-    auto description = fontDescription();
-    description.setFontSynthesisStyle(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontSynthesisWeight(FontSynthesisLonghandValue value)
-{
-    auto description = fontDescription();
-    description.setFontSynthesisWeight(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantAlternates(Style::FontVariantAlternates&& value)
-{
-    auto description = fontDescription();
-    description.setVariantAlternates(value.takePlatform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantCaps(FontVariantCaps value)
-{
-    auto description = fontDescription();
-    description.setVariantCaps(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantEastAsian(Style::FontVariantEastAsian value)
-{
-    auto description = fontDescription();
-    description.setVariantEastAsian(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantEmoji(FontVariantEmoji value)
-{
-    auto description = fontDescription();
-    description.setVariantEmoji(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantLigatures(Style::FontVariantLigatures value)
-{
-    auto description = fontDescription();
-    description.setVariantLigatures(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantNumeric(Style::FontVariantNumeric value)
-{
-    auto description = fontDescription();
-    description.setVariantNumeric(value.platform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontVariantPosition(FontVariantPosition value)
-{
-    auto description = fontDescription();
-    description.setVariantPosition(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setLocale(Style::WebkitLocale&& value)
-{
-    auto description = fontDescription();
-    description.setSpecifiedLocale(value.takePlatform());
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setTextRendering(TextRenderingMode value)
-{
-    auto description = fontDescription();
-    description.setTextRenderingMode(value);
-    setFontDescription(WTFMove(description));
 }
 
 const Style::Color& RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
@@ -3104,24 +2792,6 @@ LayoutBoxExtent RenderStyle::imageOutsets(const Style::MaskBorder& image) const
     };
 }
 
-std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyle::fontAndGlyphOrientation()
-{
-    if (!writingMode().isVerticalTypographic())
-        return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
-
-    switch (writingMode().computedTextOrientation()) {
-    case TextOrientation::Mixed:
-        return { FontOrientation::Vertical, NonCJKGlyphOrientation::Mixed };
-    case TextOrientation::Upright:
-        return { FontOrientation::Vertical, NonCJKGlyphOrientation::Upright };
-    case TextOrientation::Sideways:
-        return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
-    default:
-        ASSERT_NOT_REACHED();
-        return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
-    }
-}
-
 void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMode)
 {
     if (paginationMode == Pagination::Mode::Unpaginated)
@@ -3231,32 +2901,9 @@ bool RenderStyle::scrollSnapDataEquivalent(const RenderStyle& other) const
         && m_nonInheritedData->rareData->scrollSnapAlign == other.m_nonInheritedData->rareData->scrollSnapAlign;
 }
 
-Style::LineWidth RenderStyle::outlineWidth() const
-{
-    auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outline.style() == OutlineStyle::None)
-        return 0_css_px;
-    if (outlineStyle() == OutlineStyle::Auto)
-        return Style::LineWidth { std::max(Style::evaluate<float>(outline.width(), usedZoomForLength()), RenderTheme::platformFocusRingWidth()) };
-    return outline.width();
-}
-
-Style::Length<> RenderStyle::outlineOffset() const
-{
-    auto& outline = m_nonInheritedData->backgroundData->outline;
-    if (outlineStyle() == OutlineStyle::Auto)
-        return Style::Length<> { Style::evaluate<float>(outline.offset(), Style::ZoomNeeded { }) + RenderTheme::platformFocusRingOffset(Style::evaluate<float>(outline.width(), usedZoomForLength())) };
-    return outline.offset();
-}
-
 float RenderStyle::outlineSize() const
 {
     return std::max(0.0f, Style::evaluate<float>(outlineWidth(), usedZoomForLength()) + Style::evaluate<float>(outlineOffset(), Style::ZoomNeeded { }));
-}
-
-CheckedRef<const FontCascade> RenderStyle::checkedFontCascade() const
-{
-    return fontCascade();
 }
 
 bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
@@ -3406,76 +3053,6 @@ void RenderStyle::adjustViewTimelines()
 }
 
 #if !LOG_DISABLED
-void RenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonInheritedFlags& other) const
-{
-    if (*this == other)
-        return;
-
-    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, effectiveDisplay);
-    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, originalDisplay);
-    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowX);
-    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowY);
-    LOG_IF_DIFFERENT_WITH_CAST(Clear, clear);
-    LOG_IF_DIFFERENT_WITH_CAST(PositionType, position);
-    LOG_IF_DIFFERENT_WITH_CAST(UnicodeBidi, unicodeBidi);
-    LOG_IF_DIFFERENT_WITH_CAST(Float, floating);
-
-    LOG_IF_DIFFERENT(usesViewportUnits);
-    LOG_IF_DIFFERENT(usesContainerUnits);
-    LOG_IF_DIFFERENT(useTreeCountingFunctions);
-
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(Style::TextDecorationLine, textDecorationLine);
-
-    LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
-    LOG_IF_DIFFERENT(disallowsFastPathInheritance);
-
-    LOG_IF_DIFFERENT(emptyState);
-    LOG_IF_DIFFERENT(firstChildState);
-    LOG_IF_DIFFERENT(lastChildState);
-    LOG_IF_DIFFERENT(isLink);
-
-    LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
-    LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);
-}
-
-void RenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const InheritedFlags& other) const
-{
-    if (*this == other)
-        return;
-
-    LOG_IF_DIFFERENT(writingMode);
-
-    LOG_IF_DIFFERENT_WITH_CAST(WhiteSpaceCollapse, whiteSpaceCollapse);
-    LOG_IF_DIFFERENT_WITH_CAST(TextWrapMode, textWrapMode);
-    LOG_IF_DIFFERENT_WITH_CAST(Style::TextAlign, textAlign);
-    LOG_IF_DIFFERENT_WITH_CAST(TextWrapStyle, textWrapStyle);
-
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(Style::TextTransform, textTransform);
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(Style::TextDecorationLine, textDecorationLineInEffect);
-
-    LOG_IF_DIFFERENT_WITH_CAST(PointerEvents, pointerEvents);
-    LOG_IF_DIFFERENT_WITH_CAST(Visibility, visibility);
-    LOG_IF_DIFFERENT_WITH_CAST(CursorType, cursorType);
-
-#if ENABLE(CURSOR_VISIBILITY)
-    LOG_IF_DIFFERENT_WITH_CAST(CursorVisibility, cursorVisibility);
-#endif
-
-    LOG_IF_DIFFERENT_WITH_CAST(ListStylePosition, listStylePosition);
-    LOG_IF_DIFFERENT_WITH_CAST(EmptyCell, emptyCells);
-    LOG_IF_DIFFERENT_WITH_CAST(BorderCollapse, borderCollapse);
-    LOG_IF_DIFFERENT_WITH_CAST(CaptionSide, captionSide);
-    LOG_IF_DIFFERENT_WITH_CAST(BoxDirection, boxDirection);
-    LOG_IF_DIFFERENT_WITH_CAST(Order, rtlOrdering);
-    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColor);
-    LOG_IF_DIFFERENT_WITH_CAST(PrintColorAdjust, printColorAdjust);
-    LOG_IF_DIFFERENT_WITH_CAST(InsideLink, insideLink);
-
-#if ENABLE(TEXT_AUTOSIZING)
-    LOG_IF_DIFFERENT_WITH_CAST(unsigned, autosizeStatus);
-#endif
-}
-
 void RenderStyle::dumpDifferences(TextStream& ts, const RenderStyle& other) const
 {
     m_nonInheritedData->dumpDifferences(ts, *other.m_nonInheritedData);
@@ -3488,7 +3065,6 @@ void RenderStyle::dumpDifferences(TextStream& ts, const RenderStyle& other) cons
     m_svgStyle->dumpDifferences(ts, other.m_svgStyle);
 }
 #endif
-
 
 } // namespace WebCore
 

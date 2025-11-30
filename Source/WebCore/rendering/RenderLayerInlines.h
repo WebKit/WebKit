@@ -47,6 +47,11 @@ inline bool RenderLayer::hasAppleVisualEffect() const { return renderer().hasApp
 inline bool RenderLayer::hasAppleVisualEffectRequiringBackdropFilter() const { return renderer().hasAppleVisualEffectRequiringBackdropFilter(); }
 #endif
 
+bool RenderLayer::isViewportConstrained() const
+{
+    return renderer().isFixedPositioned() || renderer().isStickilyPositioned();
+}
+
 inline bool RenderLayer::isTransformed() const
 {
     // If the scroll offset is present, a transform is applied on top of existing

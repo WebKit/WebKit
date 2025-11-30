@@ -27,6 +27,7 @@
 #include "FlexFormattingUtils.h"
 
 #include "FlexFormattingContext.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutContext.h"
 #include "LogicalFlexItem.h"
 #include "RenderStyleInlines.h"

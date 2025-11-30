@@ -36,6 +36,16 @@ inline RefPtr<Element> RenderElement::protectedElement() const { return element(
 inline Element* RenderElement::nonPseudoElement() const { return downcast<Element>(RenderObject::nonPseudoNode()); }
 inline RefPtr<Element> RenderElement::protectedNonPseudoElement() const { return nonPseudoElement(); }
 
+inline bool RenderElement::isFixedPositioned() const
+{
+    return isOutOfFlowPositioned() && style().position() == PositionType::Fixed;
+}
+
+inline bool RenderElement::isAbsolutelyPositioned() const
+{
+    return isOutOfFlowPositioned() && style().position() == PositionType::Absolute;
+}
+
 inline bool RenderElement::isBlockLevelBox() const
 {
     // block-level boxes are boxes that participate in a block formatting context.

@@ -34,6 +34,7 @@
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineTypes.h"
 #include "InlineQuirks.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
 #include "RenderStyleInlines.h"
 #include "RubyFormattingContext.h"

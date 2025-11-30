@@ -2,60 +2,55 @@
 
 #pragma once
 
-#ifndef RENDER_STYLE_SETTERS_GENERATED_INCLUDE_TRAP
+#ifndef RENDER_STYLE_PROPERTIES_SETTERS_INCLUDE_TRAP
 #error "Please do not include this file anywhere except from RenderStyleSetters.h."
 #endif
 
 #include "RenderStyleInlines.h"
+#include "RenderStylePropertiesSettersCustom.h"
 
 namespace WebCore {
 
-inline void RenderStyle::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
+inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration value)
 {
     if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleStorageOneLevelEnum))
         level1.access().testRenderStyleStorageOneLevelEnum = static_cast<unsigned>(value);
 }
 
-inline void RenderStyle::setTestRenderStyleStorageOneLevelRaw(Style::TestRaw value)
+inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelRaw(Style::TestRaw value)
 {
     if (value != Style::TestRaw::fromRaw(level1->testRenderStyleStorageOneLevelRaw))
         level1.access().testRenderStyleStorageOneLevelRaw = value.toRaw();
 }
 
-inline void RenderStyle::setTestRenderStyleStorageOneLevelReference(Style::Number<>&& value)
+inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelReference(Style::Number<>&& value)
 {
     if (value != level1->testRenderStyleStorageOneLevelReference)
         level1.access().testRenderStyleStorageOneLevelReference = WTFMove(value);
 }
 
-inline void RenderStyle::setTestRenderStyleStorageOneLevelValue(Style::Number<> value)
+inline void RenderStyleProperties::setTestRenderStyleStorageOneLevelValue(Style::Number<> value)
 {
     if (value != level1->testRenderStyleStorageOneLevelValue)
         level1.access().testRenderStyleStorageOneLevelValue = value;
 }
 
-inline void RenderStyle::setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration value)
+inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration value)
 {
     if (value != static_cast<Style::TestEnumeration>(level1->level2->testRenderStyleStorageTwoLevelEnum))
         level1.access().level2.access().testRenderStyleStorageTwoLevelEnum = static_cast<unsigned>(value);
 }
 
-inline void RenderStyle::setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw value)
+inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw value)
 {
     if (value != Style::TestRaw::fromRaw(level1->level2->testRenderStyleStorageTwoLevelRaw))
         level1.access().level2.access().testRenderStyleStorageTwoLevelRaw = value.toRaw();
 }
 
-inline void RenderStyle::setTestRenderStyleStorageTwoLevelReference(Style::Number<>&& value)
+inline void RenderStyleProperties::setTestRenderStyleStorageTwoLevelReference(Style::Number<>&& value)
 {
     if (value != level1->level2->testRenderStyleStorageTwoLevelReference)
         level1.access().level2.access().testRenderStyleStorageTwoLevelReference = WTFMove(value);
-}
-
-inline void RenderStyle::setTestRenderStyleStorageTwoLevelValue(Style::Number<> value)
-{
-    if (value != level1->level2->testRenderStyleStorageTwoLevelValue)
-        level1.access().level2.access().testRenderStyleStorageTwoLevelValue = value;
 }
 
 } // namespace WebCore

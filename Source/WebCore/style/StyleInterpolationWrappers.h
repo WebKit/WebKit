@@ -50,7 +50,7 @@ template<typename T, typename GetterType = T>
 class WrapperWithGetter : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WrapperWithGetter, Animation);
 public:
-    WrapperWithGetter(CSSPropertyID property, GetterType (RenderStyle::*getter)() const)
+    WrapperWithGetter(CSSPropertyID property, GetterType (RenderStyleProperties::*getter)() const)
         : WrapperBase(property)
         , m_getter(getter)
     {
@@ -76,14 +76,14 @@ public:
 #endif
 
 private:
-    GetterType (RenderStyle::*m_getter)() const;
+    GetterType (RenderStyleProperties::*m_getter)() const;
 };
 
 template<typename T, typename GetterType = T, typename SetterType = T>
 class Wrapper : public WrapperWithGetter<T, GetterType> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Wrapper, Animation);
 public:
-    Wrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType))
+    Wrapper(CSSPropertyID property, GetterType (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(SetterType))
         : WrapperWithGetter<T, GetterType>(property, getter)
         , m_setter(setter)
     {
@@ -95,16 +95,16 @@ public:
     }
 
 protected:
-    void (RenderStyle::*m_setter)(SetterType);
+    void (RenderStyleProperties::*m_setter)(SetterType);
 };
 
 // Deduction guide for getter/setters that return and take values.
 template<typename T>
-Wrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T)) -> Wrapper<T, T, T>;
+Wrapper(CSSPropertyID, T (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T)) -> Wrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
 template<typename T>
-Wrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> Wrapper<T, const T&, T&&>;
+Wrapper(CSSPropertyID, const T& (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T&&)) -> Wrapper<T, const T&, T&&>;
 
 // MARK: - Typed Wrappers
 
@@ -112,7 +112,7 @@ template<typename T, typename GetterType = T, typename SetterType = T>
 class StyleTypeWrapper : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleTypeWrapper, Animation);
 public:
-    StyleTypeWrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType))
+    StyleTypeWrapper(CSSPropertyID property, GetterType (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(SetterType))
         : WrapperBase(property)
         , m_getter(getter)
         , m_setter(setter)
@@ -154,26 +154,26 @@ private:
         return (style.*m_getter)();
     }
 
-    GetterType (RenderStyle::*m_getter)() const;
-    void (RenderStyle::*m_setter)(SetterType);
+    GetterType (RenderStyleProperties::*m_getter)() const;
+    void (RenderStyleProperties::*m_setter)(SetterType);
 };
 
 // Deduction guide for getter/setters that return and take values.
-template<typename T>
-StyleTypeWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T)) -> StyleTypeWrapper<T, T, T>;
+template<typename T, typename RenderStyleTypeA, typename RenderStyleTypeB>
+StyleTypeWrapper(CSSPropertyID, T (RenderStyleTypeA::*getter)() const, void (RenderStyleTypeB::*setter)(T)) -> StyleTypeWrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
-template<typename T>
-StyleTypeWrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, const T&, T&&>;
+template<typename T, typename RenderStyleTypeA, typename RenderStyleTypeB>
+StyleTypeWrapper(CSSPropertyID, const T& (RenderStyleTypeA::*getter)() const, void (RenderStyleTypeB::*setter)(T&&)) -> StyleTypeWrapper<T, const T&, T&&>;
 
 // Deduction guide for getter/setters that return values and take r-value references.
-template<typename T>
-StyleTypeWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, T, T&&>;
+template<typename T, typename RenderStyleTypeA, typename RenderStyleTypeB>
+StyleTypeWrapper(CSSPropertyID, T (RenderStyleTypeA::*getter)() const, void (RenderStyleTypeB::*setter)(T&&)) -> StyleTypeWrapper<T, T, T&&>;
 
 template<typename T> class VisitedAffectedStyleTypeWrapper : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisitedAffectedStyleTypeWrapper, Animation);
 public:
-    VisitedAffectedStyleTypeWrapper(CSSPropertyID property, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&), const T& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(T&&))
+    VisitedAffectedStyleTypeWrapper(CSSPropertyID property, const T& (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T&&), const T& (RenderStyleProperties::*visitedGetter)() const, void (RenderStyleProperties::*visitedSetter)(T&&))
         : WrapperBase(property)
         , m_wrapper(StyleTypeWrapper<T, const T&, T&&>(property, getter, setter))
         , m_visitedWrapper(StyleTypeWrapper<T, const T&, T&&>(property, visitedGetter, visitedSetter))
@@ -213,7 +213,7 @@ public:
 template<typename T, typename GetterType = T, typename SetterType = T> class DiscreteWrapper : public WrapperWithGetter<T, GetterType> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DiscreteWrapper, Animation);
 public:
-    DiscreteWrapper(CSSPropertyID property, GetterType (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SetterType))
+    DiscreteWrapper(CSSPropertyID property, GetterType (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(SetterType))
         : WrapperWithGetter<T, GetterType>(property, getter)
         , m_setter(setter)
     {
@@ -231,26 +231,26 @@ public:
     }
 
 private:
-    void (RenderStyle::*m_setter)(SetterType);
+    void (RenderStyleProperties::*m_setter)(SetterType);
 };
 
 // Deduction guide for getter/setters that return and take values.
 template<typename T>
-DiscreteWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T)) -> DiscreteWrapper<T, T, T>;
+DiscreteWrapper(CSSPropertyID, T (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T)) -> DiscreteWrapper<T, T, T>;
 
 // Deduction guide for getter/setters that return const references and take r-value references.
 template<typename T>
-DiscreteWrapper(CSSPropertyID, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> DiscreteWrapper<T, const T&, T&&>;
+DiscreteWrapper(CSSPropertyID, const T& (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T&&)) -> DiscreteWrapper<T, const T&, T&&>;
 
 // Deduction guide for getter/setters that return values and take r-value references.
 template<typename T>
-DiscreteWrapper(CSSPropertyID, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&)) -> DiscreteWrapper<T, T, T&&>;
+DiscreteWrapper(CSSPropertyID, T (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T&&)) -> DiscreteWrapper<T, T, T&&>;
 
 template<typename T>
 class NonNormalizedDiscreteWrapper final : public Wrapper<T> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonNormalizedDiscreteWrapper, Animation);
 public:
-    NonNormalizedDiscreteWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+    NonNormalizedDiscreteWrapper(CSSPropertyID property, T (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(T))
         : Wrapper<T>(property, getter, setter)
     {
     }
@@ -267,7 +267,7 @@ class FontSizeWrapper final : public Wrapper<float> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontSizeWrapper, Animation);
 public:
     FontSizeWrapper()
-        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &RenderStyle::computedFontSize, &RenderStyle::setFontSize)
+        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &RenderStyleProperties::computedFontSize, &RenderStyleProperties::setFontSize)
     {
     }
 
@@ -282,7 +282,7 @@ public:
 class ColorWrapper final : public WrapperWithGetter<const WebCore::Color&> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ColorWrapper, Animation);
 public:
-    ColorWrapper(CSSPropertyID property, const WebCore::Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(WebCore::Color&&))
+    ColorWrapper(CSSPropertyID property, const WebCore::Color& (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(WebCore::Color&&))
         : WrapperWithGetter<const WebCore::Color&>(property, getter)
         , m_setter(setter)
     {
@@ -294,13 +294,13 @@ public:
     }
 
 private:
-    void (RenderStyle::*m_setter)(WebCore::Color&&);
+    void (RenderStyleProperties::*m_setter)(WebCore::Color&&);
 };
 
 class VisitedAffectedColorWrapper final : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisitedAffectedColorWrapper, Animation);
 public:
-    VisitedAffectedColorWrapper(CSSPropertyID property, const WebCore::Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(WebCore::Color&&), const WebCore::Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(WebCore::Color&&))
+    VisitedAffectedColorWrapper(CSSPropertyID property, const WebCore::Color& (RenderStyleProperties::*getter)() const, void (RenderStyleProperties::*setter)(WebCore::Color&&), const WebCore::Color& (RenderStyleProperties::*visitedGetter)() const, void (RenderStyleProperties::*visitedSetter)(WebCore::Color&&))
         : WrapperBase(property)
         , m_wrapper(ColorWrapper(property, getter, setter))
         , m_visitedWrapper(ColorWrapper(property, visitedGetter, visitedSetter))
@@ -339,7 +339,7 @@ class CaretColorWrapper final : public VisitedAffectedStyleTypeWrapper<Color> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CaretColorWrapper, Animation);
 public:
     CaretColorWrapper()
-        : VisitedAffectedStyleTypeWrapper<Color>(CSSPropertyCaretColor, &RenderStyle::caretColor, &RenderStyle::setCaretColor, &RenderStyle::visitedLinkCaretColor, &RenderStyle::setVisitedLinkCaretColor)
+        : VisitedAffectedStyleTypeWrapper<Color>(CSSPropertyCaretColor, &RenderStyleProperties::caretColor, &RenderStyleProperties::setCaretColor, &RenderStyleProperties::visitedLinkCaretColor, &RenderStyleProperties::setVisitedLinkCaretColor)
     {
     }
 
@@ -468,7 +468,7 @@ class VisibilityWrapper final : public Wrapper<Visibility> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisibilityWrapper, Animation);
 public:
     VisibilityWrapper()
-        : Wrapper(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility)
+        : Wrapper(CSSPropertyVisibility, &RenderStyleProperties::visibility, &RenderStyleProperties::setVisibility)
     {
     }
 
@@ -614,9 +614,9 @@ public:
     using List = T;
     using CoordinatedValueListValueType = typename List::value_type;
 
-    using ListGetter = const List& (RenderStyle::*)() const;
-    using ListAccessor = List& (RenderStyle::*)();
-    using ListSetter = void (RenderStyle::*)(List&&);
+    using ListGetter = const List& (RenderStyleBase::*)() const;
+    using ListAccessor = List& (RenderStyleBase::*)();
+    using ListSetter = void (RenderStyleBase::*)(List&&);
 
     CoordinatedValueListPropertyWrapper(CSSPropertyID property, ListGetter getter, ListAccessor accessor, ListSetter setter, RepeatedValueWrapper repeatedValueWrapper)
         : WrapperBase(property)

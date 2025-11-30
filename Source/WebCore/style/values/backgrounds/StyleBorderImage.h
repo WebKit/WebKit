@@ -32,6 +32,9 @@
 #include <wtf/DataRef.h>
 
 namespace WebCore {
+
+class RenderStyleProperties;
+
 namespace Style {
 
 // <'border-image'> = <'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'>
@@ -87,7 +90,7 @@ struct BorderImage {
     bool operator==(const BorderImage&) const = default;
 
 private:
-    friend class WebCore::RenderStyle;
+    friend class WebCore::RenderStyleProperties;
 
     struct Data : RefCounted<Data> {
         static Ref<Data> create();

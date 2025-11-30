@@ -31,6 +31,7 @@
 #include "InlineFormattingUtils.h"
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutInitialContainingBlock.h"
 #include "RenderStyleInlines.h"
 #include "RubyFormattingContext.h"

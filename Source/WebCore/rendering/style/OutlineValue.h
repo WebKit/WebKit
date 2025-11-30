@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-class RenderStyle;
+class RenderStyleBase;
 
 class OutlineValue final {
-    friend class RenderStyle;
+    friend class RenderStyleProperties;
 public:
     OutlineValue()
         : m_style(static_cast<unsigned>(OutlineStyle::None))

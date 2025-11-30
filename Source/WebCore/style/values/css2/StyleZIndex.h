@@ -81,6 +81,7 @@ private:
     // value range for `z-index`. If we determine its ok for `z-index` to only have `MAX_INT - 1` values, we can switch this
     // out for `ValueOrKeyword` with a custom `MarkableTraits`.
     friend class WebCore::RenderStyle;
+    friend class WebCore::RenderStyleProperties;
     friend class WebCore::StyleBoxData;
 
     constexpr ZIndex(bool isAuto, Value value)
