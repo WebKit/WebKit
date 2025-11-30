@@ -380,6 +380,16 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
     m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->canvasContext().canvasBase().memoryCost());
 }
 
+void InspectorCanvasAgent::didRemoveCanvasFromDocument(CanvasRenderingContext& context)
+{
+    auto inspectorCanvas = findInspectorCanvas(context);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    unbindCanvas(*inspectorCanvas);
+}
+
 void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)
 {
     auto* context = canvasBase.renderingContext();

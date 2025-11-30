@@ -1002,6 +1002,16 @@ void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& ne
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
+void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    if (removalType.disconnectedFromDocument) {
+        if (RefPtr context = renderingContext())
+            InspectorInstrumentation::didRemoveCanvasFromDocument(*context);
+    }
+
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
 bool HTMLCanvasElement::needsPreparationForDisplay()
 {
     return m_context && m_context->needsPreparationForDisplay();
