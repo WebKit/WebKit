@@ -120,11 +120,10 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
 
 void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoint& paintOffset) const
 {
-    CheckedRef styleToUse = renderer.style();
-
-    if (!styleToUse->hasOutline())
+    if (!renderer.hasOutline())
         return;
 
+    CheckedRef styleToUse = renderer.style();
     if (styleToUse->outlineStyle() == OutlineStyle::Auto) {
         CheckedPtr paintContainer = m_paintInfo.paintContainer;
         auto focusRingRects = collectFocusRingRects(renderer, paintOffset, paintContainer.get());
@@ -133,8 +132,12 @@ void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoin
         return;
     }
 
-    if (renderer.hasOutlineAnnotation())
+    auto hasThemedFocusRing = renderer.theme().supportsFocusRing(renderer, styleToUse.get());
+    if (renderer.hasOutlineAnnotation() && !hasThemedFocusRing)
         addPDFURLAnnotationForLink(renderer, paintOffset);
+
+    if (!styleToUse->hasOutline())
+        return;
 
     if (m_paintInfo.context().paintingDisabled())
         return;
