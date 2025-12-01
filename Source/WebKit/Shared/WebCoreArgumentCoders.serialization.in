@@ -8865,7 +8865,10 @@ header: <WebCore/TrackInfo.h>
     WebCore::FloatSize displaySize;
     uint8_t bitDepth;
     WebCore::PlatformVideoColorSpace colorSpace;
-    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms
+#if PLATFORM(VISION)
+    RetainPtr<CFDictionaryRef> spatialVideoMetadata;
+#endif
+    Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
 };
 
 [RefCounted, CreateUsing=fromVariant] struct WebCore::TrackInfo {

@@ -142,6 +142,10 @@ struct VideoInfo : public TrackInfo {
     uint8_t bitDepth { 8 };
     PlatformVideoColorSpace colorSpace;
 
+#if PLATFORM(VISION)
+    RetainPtr<CFDictionaryRef> spatialVideoMetadata;
+#endif
+
     Vector<AtomData> extensionAtoms;
 
 private:
@@ -164,6 +168,7 @@ private:
         , extensionAtoms(WTFMove(extensionAtoms))
     {
     }
+
 #if ENABLE(ENCRYPTED_MEDIA)
     static Ref<VideoInfo> create(FourCC codecName, const String& codecString, WebCore::TrackID trackID, std::optional<EncryptionData>&& encryptionData, std::optional<FourCC> encryptionOriginalFormat, Vector<EncryptionInitData>&& encryptionInitDatas, FloatSize size, FloatSize displaySize, uint8_t bitDepth, PlatformVideoColorSpace colorSpace, Vector<AtomData>&& extensionAtoms)
     {
@@ -179,6 +184,41 @@ private:
         , extensionAtoms(WTFMove(extensionAtoms))
     {
     }
+#endif
+
+#if PLATFORM(VISION)
+    static Ref<VideoInfo> create(FourCC codecName, const String& codecString, WebCore::TrackID trackID, FloatSize size, FloatSize displaySize, uint8_t bitDepth, PlatformVideoColorSpace colorSpace, RetainPtr<CFDictionaryRef>&& spatialVideoMetadata, Vector<AtomData>&& extensionAtoms)
+    {
+        return adoptRef(*new VideoInfo(codecName, codecString, trackID, size, displaySize, bitDepth, colorSpace, WTFMove(spatialVideoMetadata), WTFMove(extensionAtoms)));
+    }
+
+    VideoInfo(FourCC codecName, const String& codecString, WebCore::TrackID trackID, FloatSize size, FloatSize displaySize, uint8_t bitDepth, PlatformVideoColorSpace colorSpace, RetainPtr<CFDictionaryRef>&& spatialVideoMetadata, Vector<AtomData>&& extensionAtoms)
+        : TrackInfo(TrackType::Video, codecName, codecString, trackID)
+        , size(size)
+        , displaySize(displaySize)
+        , bitDepth(bitDepth)
+        , colorSpace(colorSpace)
+        , spatialVideoMetadata(WTFMove(spatialVideoMetadata))
+        , extensionAtoms(WTFMove(extensionAtoms))
+    {
+    }
+#if ENABLE(ENCRYPTED_MEDIA)
+    static Ref<VideoInfo> create(FourCC codecName, const String& codecString, WebCore::TrackID trackID, std::optional<EncryptionData>&& encryptionData, std::optional<FourCC> encryptionOriginalFormat, Vector<EncryptionInitData>&& encryptionInitDatas, FloatSize size, FloatSize displaySize, uint8_t bitDepth, PlatformVideoColorSpace colorSpace, RetainPtr<CFDictionaryRef>&& spatialVideoMetadata, Vector<AtomData>&& extensionAtoms)
+    {
+        return adoptRef(*new VideoInfo(codecName, codecString, trackID, WTFMove(encryptionData), encryptionOriginalFormat, WTFMove(encryptionInitDatas), size, displaySize, bitDepth, colorSpace, WTFMove(spatialVideoMetadata), WTFMove(extensionAtoms)));
+    }
+
+    VideoInfo(FourCC codecName, const String& codecString, WebCore::TrackID trackID, std::optional<EncryptionData>&& encryptionData, std::optional<FourCC> encryptionOriginalFormat, Vector<EncryptionInitData>&& encryptionInitDatas, FloatSize size, FloatSize displaySize, uint8_t bitDepth, PlatformVideoColorSpace colorSpace, RetainPtr<CFDictionaryRef>&& spatialVideoMetadata, Vector<AtomData>&& extensionAtoms)
+        : TrackInfo(TrackType::Video, codecName, codecString, trackID, WTFMove(encryptionData), encryptionOriginalFormat, WTFMove(encryptionInitDatas))
+        , size(size)
+        , displaySize(displaySize)
+        , bitDepth(bitDepth)
+        , colorSpace(colorSpace)
+        , spatialVideoMetadata(WTFMove(spatialVideoMetadata))
+        , extensionAtoms(WTFMove(extensionAtoms))
+    {
+    }
+#endif
 #endif
 
     bool equalTo(const TrackInfo& otherVideoInfo) const final

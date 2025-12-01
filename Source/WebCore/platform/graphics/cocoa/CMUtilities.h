@@ -71,6 +71,10 @@ WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
 
 WEBCORE_EXPORT FourCC computeBoxType(FourCC);
 
+#if PLATFORM(VISION)
+WEBCORE_EXPORT RetainPtr<CFDictionaryRef> extractSpatialVideoMetadata(CMFormatDescriptionRef);
+#endif
+
 class PacketDurationParser final {
     WTF_MAKE_TZONE_ALLOCATED(PacketDurationParser);
 public:

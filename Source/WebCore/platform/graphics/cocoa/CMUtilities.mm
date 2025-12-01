@@ -63,6 +63,57 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PacketDurationParser);
 constexpr uint32_t kAudioFormatVorbis = 'vorb';
 #endif
 
+#if PLATFORM(VISION)
+static bool canCopyFormatDescriptionExtension()
+{
+    static bool canCopyFormatDescriptionExtension =
+        PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProjectionKind()
+            && PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ViewPackingKind()
+            && PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_CameraCalibrationDataLensCollection();
+    return canCopyFormatDescriptionExtension;
+}
+
+RetainPtr<CFDictionaryRef> extractSpatialVideoMetadata(CMFormatDescriptionRef description)
+{
+    if (!canCopyFormatDescriptionExtension())
+        return nullptr;
+
+    static CFStringRef keys[] = {
+        PAL::kCMFormatDescriptionExtension_CameraCalibrationDataLensCollection,
+        PAL::kCMFormatDescriptionExtension_HasLeftStereoEyeView,
+        PAL::kCMFormatDescriptionExtension_HasRightStereoEyeView,
+        PAL::kCMFormatDescriptionExtension_HeroEye,
+        PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView,
+        PAL::kCMFormatDescriptionExtension_HorizontalDisparityAdjustment,
+        PAL::kCMFormatDescriptionExtension_StereoCameraBaseline,
+        PAL::kCMFormatDescriptionExtension_ProjectionKind,
+        PAL::kCMFormatDescriptionExtension_ViewPackingKind
+    };
+
+    static constexpr size_t numberOfKeys = sizeof(keys) / sizeof(keys[0]);
+    auto keysSpan = unsafeMakeSpan(keys, numberOfKeys);
+    size_t keysSet = 0;
+    Vector<RetainPtr<CFPropertyListRef>, numberOfKeys> values(numberOfKeys, [&](size_t index) -> RetainPtr<CFPropertyListRef> {
+        RetainPtr value = PAL::CMFormatDescriptionGetExtension(description, RetainPtr { keysSpan[index] }.get());
+        if (!value)
+            return nullptr;
+        keysSet++;
+        return value;
+    });
+
+    if (!keysSet)
+        return nullptr;
+
+    RetainPtr<CFMutableDictionaryRef> extensions = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, keysSet, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    for (size_t index = 0; index < numberOfKeys; index++) {
+        if (values[index])
+            CFDictionarySetValue(extensions.get(), keysSpan[index], values[index].get());
+    }
+    return extensions;
+}
+#endif
+
 CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo& info)
 {
     ASSERT(info.codecName.value != kAudioFormatLinearPCM);
@@ -353,6 +404,15 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     }
 #endif
 
+#if PLATFORM(VISION)
+    if (videoInfo.spatialVideoMetadata) {
+        CFDictionaryApplyFunction(videoInfo.spatialVideoMetadata.get(), [](CFTypeRef key, CFTypeRef value, void* context) {
+            CFMutableDictionaryRef dict = static_cast<CFMutableDictionaryRef>(context);
+            CFDictionarySetValue(dict, key, value);
+        }, extensions.get());
+    }
+#endif
+
     CMVideoFormatDescriptionRef formatDescription = nullptr;
     auto error = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, videoInfo.codecName.value, videoInfo.size.width(), videoInfo.size.height(), extensions.get(), &formatDescription);
     if (error != noErr) {
@@ -432,6 +492,10 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     setEncryptionInfo(videoInfo, description);
+#endif
+
+#if PLATFORM(VISION)
+    videoInfo->spatialVideoMetadata = extractSpatialVideoMetadata(description);
 #endif
 
     return videoInfo;

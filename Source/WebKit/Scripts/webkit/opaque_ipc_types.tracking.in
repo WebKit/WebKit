@@ -355,6 +355,7 @@
     [Legacy] StructureParam WebKit::SecItemRequestData.m_attributesToMatch
     [Legacy] StructureParam WebKit::SecItemRequestData.m_queryDictionary
     [Legacy] StructureParam WebCore::FontPlatformDataAttributes.m_attributes
+    [Legacy] StructureParam WebCore::VideoInfo.spatialVideoMetadata
 }
 
 [UnsafeWrapper] RetainPtr<CFDataRef> {
