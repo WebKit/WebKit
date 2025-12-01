@@ -58,11 +58,15 @@ public:
     class StaticSymbolImpl final : private StringImplShape {
         WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
     public:
-        template<unsigned characterCount>
-        inline constexpr StaticSymbolImpl(const char (&characters)[characterCount], Flags = s_flagDefault);
+        template<typename CharType, unsigned characterCount>
+        consteval StaticSymbolImpl(const CharType (&characters)[characterCount], Flags flags = s_flagDefault)
+            : StaticSymbolImpl(unsafeMakeSpan<const CharType>(characters, characterCount - 1), flags)
+        {
+            RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(m_length == std::char_traits<CharType>::length(characters));
+        }
 
-        template<unsigned characterCount>
-        inline constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags = s_flagDefault);
+        template<typename CharType>
+        consteval StaticSymbolImpl(std::span<CharType>, Flags);
 
         operator SymbolImpl&() { SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<SymbolImpl*>(this); }
 
@@ -115,18 +119,10 @@ inline SymbolImpl::SymbolImpl(Flags flags)
     static_assert(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
 }
 
-template<unsigned characterCount>
-inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(const char (&characters)[characterCount], Flags flags)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-    , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
-    , m_flags(flags)
-{
-}
-
-template<unsigned characterCount>
-inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags flags)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-    , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+template<typename CharType>
+consteval SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(std::span<CharType> data, Flags flags)
+    : StringImplShape(s_refCountFlagIsStaticString, data, s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(data) << s_flagCount))
+    , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(data) << s_flagCount)
     , m_flags(flags)
 {
 }

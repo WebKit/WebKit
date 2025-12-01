@@ -61,8 +61,8 @@ public:
     template<typename T, typename Converter = DefaultConverter>
     static unsigned computeHashAndMaskTop8Bits(std::span<const T> data);
 
-    template<typename T, unsigned characterCount>
-    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount]);
+    template<typename T>
+    static consteval unsigned computeLiteralHashAndMaskTop8Bits(std::span<T>);
 
     void addCharacter(char16_t character);
 
