@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeMac.h"
 
-#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(MAC)
 
 #import "Logging.h"
 #import "PlatformCALayer.h"
@@ -258,4 +258,4 @@ void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
     } forPhase:kCATransactionPhasePostCommit];
 }
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

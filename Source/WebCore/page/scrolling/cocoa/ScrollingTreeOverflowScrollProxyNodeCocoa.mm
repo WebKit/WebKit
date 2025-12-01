@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ScrollingTreeOverflowScrollProxyNodeCocoa.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #import "ScrollingStateOverflowScrollProxyNode.h"
 #import "ScrollingStateTree.h"
 #import "WebCoreCALayerExtras.h"
@@ -66,5 +64,3 @@ void ScrollingTreeOverflowScrollProxyNodeCocoa::applyLayerPositions()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

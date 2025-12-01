@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY)
 
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "RemoteLayerTreeHost.h"
@@ -512,4 +512,4 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(IOS_FAMILY)

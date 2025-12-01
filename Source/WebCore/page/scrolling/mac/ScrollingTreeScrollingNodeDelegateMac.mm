@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeScrollingNodeDelegateMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "Logging.h"
 #import "ScrollExtents.h"
@@ -354,4 +354,4 @@ String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(Scrol
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "UIKitSPI.h"

@@ -916,7 +916,6 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
 
 void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& wheelEvent, OptionSet<EventHandling> eventHandling)
 {
-#if ENABLE(ASYNC_SCROLLING)
     if (!m_frame->page())
         return;
 
@@ -930,10 +929,6 @@ void EventHandler::wheelEventWasProcessedByMainThread(const PlatformWheelEvent& 
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*view))
             scrollingCoordinator->wheelEventWasProcessedByMainThread(wheelEvent, m_wheelScrollGestureState);
     }
-#else
-    UNUSED_PARAM(wheelEvent);
-    UNUSED_PARAM(eventHandling);
-#endif
 }
 
 bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelEvent& wheelEvent, const Widget& widget, const WeakPtr<ScrollableArea>& scrollableArea)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 OBJC_CLASS WKBaseScrollView;
 
@@ -66,4 +66,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

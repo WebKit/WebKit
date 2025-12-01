@@ -27,7 +27,6 @@
 #import "ScrollingTreePluginScrollingNodeIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
-#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 
@@ -94,5 +93,4 @@ void ScrollingTreePluginScrollingNodeIOS::repositionScrollingLayers()
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
 #endif // PLATFORM(IOS_FAMILY)

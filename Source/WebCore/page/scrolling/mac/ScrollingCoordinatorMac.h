@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(MAC)
 
 #include <WebCore/ThreadedScrollingCoordinator.h>
 
@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

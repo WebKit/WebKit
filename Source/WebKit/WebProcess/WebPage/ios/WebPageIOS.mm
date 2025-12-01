@@ -3669,10 +3669,8 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     auto* elementForScrollTesting = linkElement ? linkElement : &element;
     if (auto* renderer = elementForScrollTesting->renderer()) {
-#if ENABLE(ASYNC_SCROLLING)
         if (auto* scrollingCoordinator = page.scrollingCoordinator())
             info.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
-#endif
     }
 
     info.needsPointerTouchCompatibilityQuirk = document->quirks().needsPointerTouchCompatibility(element);
@@ -4193,10 +4191,8 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->writingMode().isBidiRTL();
 
-#if ENABLE(ASYNC_SCROLLING)
         if (auto* scrollingCoordinator = this->scrollingCoordinator())
             information.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
-#endif
     } else
         information.interactionRect = { };
 

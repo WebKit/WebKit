@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #include <WebCore/ScrollingTreePositionedNode.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -55,5 +53,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreePositionedNodeCocoa, isPositionedNodeCocoa())
-
-#endif // ENABLE(ASYNC_SCROLLING)

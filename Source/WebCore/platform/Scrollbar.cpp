@@ -510,7 +510,7 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
 {
     // It's unfortunate that this needs to be done with an ifdef. Ideally there would be a way to feature-detect
     // the necessary support within AppKit.
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     CheckedRef scrollableArea = m_scrollableArea.get();
     return !scrollableArea->forceUpdateScrollbarsOnMainThreadForPerformanceTesting()
         && (scrollableArea->hasLayerForVerticalScrollbar() || scrollableArea->hasLayerForHorizontalScrollbar())

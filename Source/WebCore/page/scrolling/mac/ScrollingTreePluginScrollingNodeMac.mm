@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreePluginScrollingNodeMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "Logging.h"
 #import "ScrollingStatePluginScrollingNode.h"
@@ -110,4 +110,4 @@ void ScrollingTreePluginScrollingNodeMac::repositionRelatedLayers()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

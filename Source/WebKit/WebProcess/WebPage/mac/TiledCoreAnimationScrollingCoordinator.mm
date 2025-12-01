@@ -25,7 +25,8 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(MAC)
+
 #import "TiledCoreAnimationScrollingCoordinator.h"
 
 #import "WebPage.h"
@@ -58,4 +59,4 @@ void TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged(bo
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

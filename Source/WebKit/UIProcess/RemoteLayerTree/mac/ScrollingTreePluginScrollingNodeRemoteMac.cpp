@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingTreePluginScrollingNodeRemoteMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include "RemoteScrollingTree.h"
 #include <WebCore/ScrollingStatePluginScrollingNode.h>

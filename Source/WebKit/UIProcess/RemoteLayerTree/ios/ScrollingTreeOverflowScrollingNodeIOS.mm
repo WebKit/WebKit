@@ -27,7 +27,6 @@
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
 
 #if PLATFORM(IOS_FAMILY)
-#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
 #import "UIKitSPI.h"
@@ -117,5 +116,4 @@ String ScrollingTreeOverflowScrollingNodeIOS::scrollbarStateForOrientation(Scrol
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING)
 #endif // PLATFORM(IOS_FAMILY)
