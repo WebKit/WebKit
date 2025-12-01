@@ -1,0 +1,3 @@
+
+PASS SVG nested hover transform test: nested .a element remains non-selectable under .p:hover
+

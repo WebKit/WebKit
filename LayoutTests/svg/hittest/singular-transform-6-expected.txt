@@ -1,0 +1,3 @@
+
+PASS SVG hover transform viewBox test: <rect> element becomes selectable under .p:hover with zero viewBox
+

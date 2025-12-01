@@ -1,0 +1,4 @@
+XX
+
+PASS SVG hover transform text test: <text> element remains non-selectable under .p:hover
+

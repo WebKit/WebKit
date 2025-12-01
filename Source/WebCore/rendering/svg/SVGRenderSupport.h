@@ -62,6 +62,11 @@ public:
     // Determines whether the passed point lies in a clipping area
     static bool pointInClippingArea(const RenderElement&, const FloatPoint&);
 
+    // Transform 'pointInParent' to object's user-space and check if it is
+    // within the clipping area. Returns false if the transform is singular or
+    // the point is outside the clipping area.
+    static bool transformToUserSpaceAndCheckClipping(RenderElement&, const AffineTransform& localTransform, const FloatPoint& pointInParent, FloatPoint& localPoint);
+
     struct ContainerBoundingBoxes {
         Markable<FloatRect> objectBoundingBox;
         FloatRect repaintBoundingBox;

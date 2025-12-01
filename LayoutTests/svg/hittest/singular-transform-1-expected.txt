@@ -1,0 +1,3 @@
+
+PASS SVG hover transform test: .a element remains non-selectable under .p:hover
+
