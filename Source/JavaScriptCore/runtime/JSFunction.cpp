@@ -522,7 +522,7 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     if (offset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessorOrValue))) {
         JSValue displayName = object->getDirect(offset);
         if (displayName && displayName.isString())
-            return asString(displayName)->tryGetValueWithoutGC();
+            return makeString(asString(displayName));
     }
 
     if (auto* function = jsDynamicCast<JSFunction*>(object)) {

@@ -106,37 +106,41 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSString* thisObject = asString(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    
     uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer) {
-        if (pointer & JSRopeString::isSubstringInPointer) {
-            visitor.appendUnbarriered(static_cast<JSRopeString*>(thisObject)->fiber1());
-            return;
-        }
-        for (unsigned index = 0; index < JSRopeString::s_maxInternalRopeLength; ++index) {
-            JSString* fiber = nullptr;
-            switch (index) {
-            case 0:
-                fiber = std::bit_cast<JSString*>(pointer & JSRopeString::stringMask);
-                break;
-            case 1:
-                fiber = static_cast<JSRopeString*>(thisObject)->fiber1();
-                break;
-            case 2:
-                fiber = static_cast<JSRopeString*>(thisObject)->fiber2();
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                return;
-            }
-            if (!fiber)
-                break;
-            visitor.appendUnbarriered(fiber);
-        }
+
+    // This JSString is not JSRopeString. Thus we report held string's cost.
+    if (thisObject->isStringImplOwner()) {
+        ASSERT(!(pointer & isRopeInPointer));
+        if (StringImpl* impl = std::bit_cast<StringImpl*>(pointer))
+            visitor.reportExtraMemoryVisited(impl->costDuringGC());
         return;
     }
-    if (StringImpl* impl = std::bit_cast<StringImpl*>(pointer))
-        visitor.reportExtraMemoryVisited(impl->costDuringGC());
+
+    if (!(pointer & isRopeInPointer)) {
+        // When rope is resolved, fiber2 is a holder of the resolved string.
+        if (auto* fiber = static_cast<JSRopeString*>(thisObject)->fiber2())
+            visitor.appendUnbarriered(fiber);
+        return;
+    }
+
+    if (pointer & JSRopeString::isSubstringInPointer) {
+        visitor.appendUnbarriered(static_cast<JSRopeString*>(thisObject)->fiber1());
+        return;
+    }
+    if (auto* fiber = std::bit_cast<JSString*>(pointer & JSRopeString::stringMask))
+        visitor.appendUnbarriered(fiber);
+    else
+        return;
+
+    if (auto* fiber = static_cast<JSRopeString*>(thisObject)->fiber1())
+        visitor.appendUnbarriered(fiber);
+    else
+        return;
+
+    if (auto* fiber = static_cast<JSRopeString*>(thisObject)->fiber2())
+        visitor.appendUnbarriered(fiber);
+    else
+        return;
 }
 
 DEFINE_VISIT_CHILDREN(JSString);
@@ -159,8 +163,7 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToAtomString(JSGlobal
 
     if (length() > maxLengthForOnStackResolve) {
         scope.release();
-        constexpr bool reportAllocation = true;
-        return convertToAtomString(resolveRopeWithFunction<reportAllocation>(globalObject, [&] (Ref<StringImpl>&& newImpl) {
+        return convertToAtomString(resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) {
             return AtomStringImpl::add(newImpl.ptr());
         }));
     }
@@ -180,10 +183,7 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToAtomString(JSGlobal
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
 
-    size_t sizeToReport = atomString.impl()->hasOneRef() ? atomString.impl()->cost() : 0;
-    convertToNonRope(String { atomString.releaseImpl() });
-    // If we resolved a string that didn't previously exist, notify the heap that we've grown.
-    vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
+    convertToNonRope(vm, String { atomString.releaseImpl() });
     return { this, static_cast<AtomStringImpl*>(valueInternal().impl()) };
 }
 
@@ -194,8 +194,7 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToExistingAtomString(
 
     if (length() > maxLengthForOnStackResolve) {
         RefPtr<AtomStringImpl> existingAtomString;
-        constexpr bool reportAllocation = true;
-        resolveRopeWithFunction<reportAllocation>(globalObject, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
+        resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
             existingAtomString = AtomStringImpl::lookUp(newImpl.ptr());
             if (existingAtomString)
                 return Ref { *existingAtomString };
@@ -221,11 +220,11 @@ GCOwnedDataScope<AtomStringImpl*> JSRopeString::resolveRopeToExistingAtomString(
         existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
 
     if (existingAtomString)
-        convertToNonRope(*existingAtomString);
+        convertToNonRope(vm, *existingAtomString);
     return { this, existingAtomString.get() };
 }
 
-template<bool reportAllocation, typename Function>
+template<typename Function>
 const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
 {
     ASSERT(isRope());
@@ -234,7 +233,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
         auto newImpl = substringBase()->valueInternal().substringSharingImpl(substringOffset(), length());
-        convertToNonRope(function(newImpl.releaseImpl().releaseNonNull()));
+        convertToNonRope(vm, function(newImpl.releaseImpl().releaseNonNull()));
         return valueInternal();
     }
     
@@ -246,12 +245,9 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
             return nullString();
         }
 
-        size_t sizeToReport = newImpl->cost();
         uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         resolveRopeInternalNoSubstring(buffer, stackLimit);
-        convertToNonRope(function(newImpl.releaseNonNull()));
-        if constexpr (reportAllocation)
-            vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
+        convertToNonRope(vm, function(newImpl.releaseNonNull()));
         return valueInternal();
     }
     
@@ -262,27 +258,15 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         return nullString();
     }
     
-    size_t sizeToReport = newImpl->cost();
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
     resolveRopeInternalNoSubstring(buffer, stackLimit);
-    convertToNonRope(function(newImpl.releaseNonNull()));
-    if constexpr (reportAllocation)
-        vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
+    convertToNonRope(vm, function(newImpl.releaseNonNull()));
     return valueInternal();
 }
 
 const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
 {
-    constexpr bool reportAllocation = true;
-    return resolveRopeWithFunction<reportAllocation>(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
-        return WTFMove(newImpl);
-    });
-}
-
-const String& JSRopeString::resolveRopeWithoutGC() const
-{
-    constexpr bool reportAllocation = false;
-    return resolveRopeWithFunction<reportAllocation>(nullptr, [] (Ref<StringImpl>&& newImpl) {
+    return resolveRopeWithFunction(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
         return WTFMove(newImpl);
     });
 }
@@ -338,15 +322,6 @@ bool JSString::getStringPropertyDescriptor(JSGlobalObject* globalObject, Propert
     }
     
     return false;
-}
-
-GCOwnedDataScope<const String&> JSString::tryGetValueWithoutGC() const
-{
-    if (isRope()) {
-        // Pass nullptr for the JSGlobalObject so that resolveRope does not throw in the event of an OOM error.
-        return { this, static_cast<const JSRopeString*>(this)->resolveRopeWithoutGC() };
-    }
-    return { this, valueInternal() };
 }
 
 JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
