@@ -45,7 +45,7 @@ ALWAYS_INLINE void AsyncNodeDeletionQueue::addIfSubtreeSizeIsUnderLimit(NodeVect
     if (m_nodeCount + subTreeSize > s_maxSizeAsyncNodeDeletionQueue)
         return;
     m_nodeCount += subTreeSize;
-    m_queue.appendVector(WTFMove(children));
+    m_queue.append(WTFMove(children));
 }
 
 ALWAYS_INLINE void AsyncNodeDeletionQueue::deleteNodesNow()

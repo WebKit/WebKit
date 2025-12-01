@@ -43,7 +43,7 @@ public:
     ALWAYS_INLINE static bool isNodeLikelyLarge(const Node&);
 
 private:
-    Vector<Ref<Node>> m_queue;
+    Vector<NodeVector> m_queue;
     unsigned m_nodeCount { 0 };
     static constexpr unsigned s_maxSizeAsyncNodeDeletionQueue = 100000;
 };
