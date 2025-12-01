@@ -345,3 +345,26 @@
         color: var(--selected-secondary-text-color-active);
     }
 }
+
+.string-tree.formatted-string {
+    display: inline;
+    color: var(--syntax-highlight-string-color);
+}
+
+.string-tree .string-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.string-show-more-link {
+    color: var(--text-color-secondary);
+    text-decoration: underline;
+    cursor: pointer;
+    font-style: italic;
+}
+
+.string-show-more-link:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+}
