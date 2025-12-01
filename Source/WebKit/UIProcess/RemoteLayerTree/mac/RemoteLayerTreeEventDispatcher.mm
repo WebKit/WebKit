@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeEventDispatcher.h"
 
-#if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#if PLATFORM(MAC)
 
 #import "DisplayLink.h"
 #import "Logging.h"
@@ -821,4 +821,4 @@ void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#endif // PLATFORM(MAC)

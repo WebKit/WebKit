@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ScrollingTreeMac.h"
 
+#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+
 #import "Logging.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
@@ -44,8 +46,6 @@
 #import "WheelEventTestMonitor.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/TextStream.h>
-
-#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
 
 using namespace WebCore;
 
@@ -258,4 +258,4 @@ void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
     } forPhase:kCATransactionPhasePostCommit];
 }
 
-#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
+#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)

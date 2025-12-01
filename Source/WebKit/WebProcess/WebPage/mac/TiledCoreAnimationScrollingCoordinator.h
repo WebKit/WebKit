@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
+#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
 
 #include <WebCore/ScrollingCoordinatorMac.h>
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
+#endif // #if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
