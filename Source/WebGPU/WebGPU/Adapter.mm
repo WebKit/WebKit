@@ -70,7 +70,6 @@ bool Adapter::getLimits(WGPUSupportedLimits& limits)
 
 void Adapter::getProperties(WGPUAdapterProperties& properties)
 {
-    // FIXME: What should the vendorID and deviceID be?
     properties.vendorID = 0;
     properties.deviceID = 0;
     properties.name = m_device.name.UTF8String;

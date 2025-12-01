@@ -195,9 +195,6 @@ static std::optional<MTLIndexType> indexType(WGPUIndexFormat format)
 
 bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
 {
-    // FIXME: Implement this according to the description in
-    // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpurenderpipelinedescriptor
-
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 

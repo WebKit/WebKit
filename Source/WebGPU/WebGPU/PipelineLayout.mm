@@ -192,9 +192,7 @@ void PipelineLayout::setLabel(String&&)
 
 bool PipelineLayout::operator==(const PipelineLayout& other) const
 {
-    UNUSED_PARAM(other);
-    // FIXME: Implement this
-    return false;
+    return uniqueId() == other.uniqueId();
 }
 
 BindGroupLayout& PipelineLayout::bindGroupLayout(size_t i) const

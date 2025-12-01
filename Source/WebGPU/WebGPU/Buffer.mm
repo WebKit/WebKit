@@ -65,8 +65,6 @@ static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor&
     if (device.isLost())
         return false;
 
-    // FIXME: "If any of the bits of descriptor’s usage aren’t present in this device’s [[allowed buffer usages]] return false."
-
     if ((descriptor.usage & WGPUBufferUsage_MapRead) && (descriptor.usage & WGPUBufferUsage_MapWrite))
         return false;
 
@@ -147,7 +145,6 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
         return Buffer::createInvalid(*this);
     }
 
-    // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
     auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
@@ -241,10 +238,8 @@ void Buffer::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-destroy
 
-    if (m_state != State::Unmapped && m_state != State::Destroyed) {
-        // FIXME: ASSERT() that this call doesn't fail.
+    if (m_state != State::Unmapped && m_state != State::Destroyed)
         unmap();
-    }
 
     setState(State::Destroyed);
     for (auto commandEncoder : m_commandEncoders) {

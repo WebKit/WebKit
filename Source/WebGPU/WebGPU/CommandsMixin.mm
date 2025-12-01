@@ -41,10 +41,8 @@ bool CommandsMixin::prepareTheEncoderState() const
     case EncoderState::Open:
         return true;
     case EncoderState::Locked:
-        // FIXME: "Make encoder invalid"
         return false;
     case EncoderState::Ended:
-        // FIXME: "Generate a validation error"
         return false;
     }
 }

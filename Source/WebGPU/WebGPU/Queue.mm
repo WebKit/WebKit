@@ -231,11 +231,6 @@ NSString* Queue::errorValidatingSubmit(const Vector<Ref<WebGPU::CommandBuffer>>&
             return command->lastError() ?: @"Validation failure.";
     }
 
-    // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
-    // FIXME: "For occlusion queries, occlusionQuerySet in beginRenderPass() does not constitute a reference, while beginOcclusionQuery() does."
-
-    // There's only one queue right now, so there is no need to make sure that the command buffers are being submitted to the correct queue.
-
     return nil;
 }
 
@@ -1111,8 +1106,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     }
 
     ensureBlitCommandEncoder();
-    // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
-    // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     NSUInteger newBufferSize = dataByteSize - dataLayoutOffset;
     bool noCopy = newBufferSize >= largeBufferSize;
     auto temporaryBufferWithOffset = newTemporaryBufferWithBytes(data.subspan(dataLayoutOffset), noCopy);

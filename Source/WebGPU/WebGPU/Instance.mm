@@ -156,8 +156,6 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 {
     auto devices = getDevices();
 
-    // FIXME: Deal with options.compatibleSurface.
-
     auto sortedDevices = WebGPU::sortedDevices(devices, options.powerPreference);
 
     if (options.forceFallbackAdapter) {
@@ -189,7 +187,6 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
         return;
     }
 
-    // FIXME: this should be asynchronous
     callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this, options.xrCompatible, WTFMove(*deviceCapabilities)), { });
 }
 

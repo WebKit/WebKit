@@ -36,7 +36,7 @@ using BufferBindingSizesForPipeline = HashMap<uint32_t, BufferBindingSizesForBin
 
 struct LibraryCreationResult {
     id<MTLLibrary> library;
-    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
+    WGSL::Reflection::EntryPointInformation entryPointInformation;
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 };
 

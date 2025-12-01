@@ -2080,8 +2080,6 @@ NSString* CommandEncoder::validateFinishError() const
     if (m_debugGroupStackSize)
         return [NSString stringWithFormat:@"GPUCommandEncoder.finish: encoder stack size '%llu'", m_debugGroupStackSize];
 
-    // FIXME: "Every usage scope contained in this must satisfy the usage scope validation."
-
     return nil;
 }
 

@@ -64,7 +64,7 @@ public:
 
     virtual void present(uint32_t);
     virtual Texture* getCurrentTexture(uint32_t);
-    virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+    virtual TextureView* getCurrentTextureView();
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }

@@ -59,8 +59,6 @@
 
 namespace WebGPU {
 
-// FIXME: It would be cool if we didn't have to list all these overloads, but instead could do something like bridge_cast() in WTF.
-
 inline Adapter& fromAPI(WGPUAdapter adapter)
 {
     return static_cast<Adapter&>(*adapter);

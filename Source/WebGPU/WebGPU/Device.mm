@@ -613,7 +613,6 @@ bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& ca
     } else
         callback(WGPUErrorType_NoError, { });
 
-    // FIXME: Make sure this is the right thing to return.
     return true;
 }
 

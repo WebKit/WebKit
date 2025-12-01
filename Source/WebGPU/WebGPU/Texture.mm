@@ -2891,11 +2891,9 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     }
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures)
+static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool isDepthOrStencil)
 {
-
-    // FIXME: only perform this check if the texture is a depth/stencil texture.
-    if (!supportsNonPrivateDepthStencilTextures)
+    if (isDepthOrStencil && !supportsNonPrivateDepthStencilTextures)
         return MTLStorageModePrivate;
 
     if (deviceHasUnifiedMemory)
@@ -2976,11 +2974,9 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     textureDescriptor.sampleCount = descriptor.sampleCount;
 
-    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures);
+    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures, Texture::isDepthOrStencilFormat(descriptor.format));
 
-    // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
-
     id<MTLTexture> texture = [m_device newTextureWithDescriptor:textureDescriptor];
 
     if (!texture) {
