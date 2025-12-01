@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
+#include "AirInsertionSet.h"
 #include "AirInst.h"
 #include <wtf/Vector.h>
 
@@ -71,15 +72,17 @@ public:
     const Arg& src() const { return m_src; }
     const Arg& dst() const { return m_dst; }
 
+    void setSrc(const Arg& arg)
+    {
+        ASSERT(m_src.bank() == arg.bank());
+        m_src = arg;
+    }
+
     // The width determines the kind of move we do. You can only choose Width32 or Width64 right now.
     // For GP, it picks between Move32 and Move. For FP, it picks between MoveFloat and MoveDouble.
     Width width() const { return m_width; }
     
     Bank bank() const;
-
-    // Creates an instruction sequence for the move represented by this shuffle pair.
-    // You need to pass Code because we may need to create a tmp.
-    Vector<Inst, 2> insts(Code&, Value* origin) const;
 
     void dump(PrintStream&) const;
     
@@ -88,6 +91,16 @@ private:
     Arg m_dst;
     Width m_width { Width8 };
 };
+
+struct InsertionLocation {
+    InsertionSet& insertionSet;
+    unsigned index;
+
+    inline void insert(Inst&& inst) { insertionSet.insert(index, inst); }
+};
+
+// Add a move for a ShufflePair to an insertion set.
+void emitMoveForPair(InsertionLocation, const ShufflePair&, const Arg&, Value*);
 
 // Create a Shuffle instruction.
 Inst createShuffle(Value* origin, const Vector<ShufflePair>&);
@@ -123,13 +136,13 @@ Inst createShuffle(Value* origin, const Vector<ShufflePair>&);
 //
 // NOTE: Use this method (and its friend below) to emit shuffles after register allocation. Before
 // register allocation it is much better to simply use the Shuffle instruction.
-Vector<Inst> emitShuffle(
-    Code& code, Vector<ShufflePair>, std::array<Arg, 2> scratch, Bank, Value* origin);
+void emitShuffle(
+    InsertionLocation, Vector<ShufflePair, 8>&, std::array<Arg, 2> scratch, Bank, Value* origin);
 
 // Perform a shuffle that involves any number of types. Pass scratch registers or memory locations
 // for each type according to the rules above.
-Vector<Inst> emitShuffle(
-    Code& code, const Vector<ShufflePair>&,
+void emitShuffle(
+    InsertionLocation, const Vector<ShufflePair>&,
     const std::array<Arg, 2>& gpScratch, const std::array<Arg, 2>& fpScratch,
     Value* origin);
 
