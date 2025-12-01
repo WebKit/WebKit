@@ -1239,7 +1239,7 @@ inline constexpr bool StringImpl::isValidLength(size_t length)
 
 template<typename T> constexpr size_t StringImpl::tailOffset()
 {
-    return roundUpToMultipleOf<alignof(T)>(sizeof(StringImplShape));
+    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_data8) + sizeof(StringImpl::m_data8));
 }
 
 inline bool StringImpl::requiresCopy() const
