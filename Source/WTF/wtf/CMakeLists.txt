@@ -373,6 +373,7 @@ set(WTF_PUBLIC_HEADERS
     UniqueArray.h
     UniqueRef.h
     UniqueRefVector.h
+    VMAllocSpan.h
     VMTags.h
     ValidatedReinterpretCast.h
     ValueCheck.h
@@ -690,6 +691,7 @@ if (WIN32)
         win/PathWalker.h
         win/SoftLinking.h
         win/Win32Handle.h
+        win/WinVMSpan.h
     )
 elseif (APPLE)
     list(APPEND WTF_SOURCES
@@ -711,6 +713,7 @@ elseif (APPLE)
         cocoa/TypeCastsCocoa.h
         cocoa/VectorCocoa.h
 
+        darwin/MachVMSpan.h
         darwin/OSLogPrintStream.h
         darwin/WeakLinking.h
         darwin/XPCExtras.h

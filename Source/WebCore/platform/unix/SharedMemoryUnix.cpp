@@ -76,6 +76,11 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
     return PROT_READ | PROT_WRITE;
 }
 
+VMAllocSpan SharedMemoryHandle::tryMap(SharedMemoryProtection protection)
+{
+    return MmapSpan::mmap(0, size(), accessModeMMap(protection), MAP_SHARED, m_handle.value(), 0);
+}
+
 static UnixFileDescriptor createSharedMemory()
 {
     int fileDescriptor = -1;
@@ -132,48 +137,33 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
             return nullptr;
     }
 
-    void* data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor.value(), 0);
-    if (data == MAP_FAILED)
+    auto data = MmapSpan<uint8_t>::mmap(nullptr, size,  PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor.value());
+    if (!data)
         return nullptr;
-
-    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
-    instance->m_data = data;
-    instance->m_fileDescriptor = WTFMove(fileDescriptor);
-    instance->m_size = size;
-    return instance;
+    return adoptRef(*new SharedMemory(WTFMove(data), Handle { WTFMove(fileDescriptor), size }, Protection::ReadWrite));
 }
 
-RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handleIn, Protection protection)
 {
-    void* data = mmap(0, handle.size(), accessModeMMap(protection), MAP_SHARED, handle.m_handle.value(), 0);
-    if (data == MAP_FAILED)
+    auto data = handleIn.map(protection);
+    if (!data)
         return nullptr;
-
-    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
-    instance->m_data = data;
-    instance->m_size = handle.size();
-    return instance;
+    auto handle = WTFMove(handleIn);
+    return adoptRef(*new SharedMemory(WTFMove(data), WTFMove(handle.handle), protection));
 }
 
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, int fileDescriptor)
 {
-    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
-    instance->m_data = data;
-    instance->m_size = size;
-    instance->m_fileDescriptor = UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
-    instance->m_isWrappingMap = true;
-    return instance;
+    return adoptRef(*new SharedMemory(size, Handle { UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt }, Protection::ReadOnly }));
 }
 
 SharedMemory::~SharedMemory()
 {
-    if (m_isWrappingMap) {
-        auto wrapped = m_fileDescriptor.release();
-        UNUSED_VARIABLE(wrapped);
+    if (m_wrapMapSize) {
+        (void) m_data.leakSpan();
+        (void) m_fileDescriptor.release();
         return;
     }
-
-    munmap(m_data, m_size);
 }
 
 auto SharedMemory::createHandle(Protection) -> std::optional<Handle>

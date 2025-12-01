@@ -26,11 +26,11 @@
 
 #pragma once
 
-#include <span>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/VMAllocSpan.h>
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -92,6 +92,8 @@ public:
 
     size_t size() const { return m_size; }
 
+    VMAllocSpan<uint8_t> tryMap(SharedMemoryProtection);
+
     // Take ownership of the memory for process memory accounting purposes.
     WEBCORE_EXPORT void takeOwnershipOfMemory(MemoryLedger) const;
     // Transfer ownership of the memory for process memory accounting purposes.
@@ -128,41 +130,34 @@ public:
 
     WEBCORE_EXPORT std::optional<Handle> createHandle(Protection);
 
-    size_t size() const { return m_size; }
+    size_t size() const { return m_wrapMapSize ? m_wrapMapSize : m_data.sizeInBytes(); }
 
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return unsafeMakeSpan(static_cast<const uint8_t*>(m_data), m_size); }
-    std::span<uint8_t> mutableSpan() const LIFETIME_BOUND { return unsafeMakeSpan(static_cast<uint8_t*>(m_data), m_size); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_data.span(); }
+    std::span<uint8_t> mutableSpan() const LIFETIME_BOUND { return const_cast<VMAllocSpan<uint8_t>&>(m_data).mutableSpan(); }
 
 #if OS(WINDOWS)
     HANDLE handle() const { return m_handle.get(); }
 #endif
 
-#if PLATFORM(COCOA)
     Protection protection() const { return m_protection; }
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT RetainPtr<NSData> toNSData() const;
 #endif
 
     WEBCORE_EXPORT Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:
+    SharedMemory(VMAllocSpan<uint8_t> data, Handle::Type&&, Protection);
+    // FIXME: Should be removed.
+    SharedMemory(size_t wrapMapSize, Handle::Type&&, Protection);
 #if OS(DARWIN)
-    MachSendRight createSendRight(Protection) const;
+    SharedMemory(VMAllocSpan<uint8_t> data);
 #endif
 
-    size_t m_size;
-    void* m_data;
-#if PLATFORM(COCOA)
-    Protection m_protection;
-#endif
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-    UnixFileDescriptor m_fileDescriptor;
-    bool m_isWrappingMap { false };
-#elif OS(DARWIN)
-    MachSendRight m_sendRight;
-#elif OS(WINDOWS)
-    Win32Handle m_handle;
-#endif
+    VMAllocSpan<uint8_t> m_data;
+    Handle::Type m_handle;
+    size_t m_wrapMapSize { 0 };
+    Protection m_protection { Protection::ReadWrite };
 };
 
 } // namespace WebCore

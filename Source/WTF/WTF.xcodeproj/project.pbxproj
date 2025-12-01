@@ -163,6 +163,8 @@
 		7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		7B8486622ED5E5A400E34DC1 /* AllocSpanMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8486612ED5E5A400E34DC1 /* AllocSpanMixin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B8486772ED869F600E34DC1 /* MachVMSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8486762ED869F600E34DC1 /* MachVMSpan.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B8486792ED86A2C00E34DC1 /* VMAllocSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8486782ED86A2C00E34DC1 /* VMAllocSpan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B8A1DC82A336B9000A4CE4E /* SequenceLocked.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8A1DC72A336B9000A4CE4E /* SequenceLocked.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
@@ -1426,6 +1428,8 @@
 		7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafetyAnalysis.h; sourceTree = "<group>"; };
 		7B2739F12632A8940040F182 /* ThreadAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadAssertions.h; sourceTree = "<group>"; };
 		7B8486612ED5E5A400E34DC1 /* AllocSpanMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AllocSpanMixin.h; sourceTree = "<group>"; };
+		7B8486762ED869F600E34DC1 /* MachVMSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachVMSpan.h; sourceTree = "<group>"; };
+		7B8486782ED86A2C00E34DC1 /* VMAllocSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMAllocSpan.h; sourceTree = "<group>"; };
 		7B8A1DC72A336B9000A4CE4E /* SequenceLocked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SequenceLocked.h; sourceTree = "<group>"; };
 		7C137941222326C700D7A824 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		7C137942222326D500D7A824 /* ieee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ieee.h; sourceTree = "<group>"; };
@@ -2166,6 +2170,7 @@
 				46335BEC2E778B1300860373 /* DispatchExtras.h */,
 				6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */,
 				6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */,
+				7B8486762ED869F600E34DC1 /* MachVMSpan.h */,
 				53FC70CE23FB950C005B1990 /* OSLogPrintStream.h */,
 				53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */,
 				37C7CC291EA40A73007BD956 /* WeakLinking.h */,
@@ -2773,6 +2778,7 @@
 				0F95B63420CB53C100479635 /* Vector.cpp */,
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
+				7B8486782ED86A2C00E34DC1 /* VMAllocSpan.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
 				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
 				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
@@ -3650,6 +3656,7 @@
 				DD3DC91727A4BF8E007E5B61 /* LogInitialization.h in Headers */,
 				DD3DC89227A4BF8E007E5B61 /* MachSendRight.h in Headers */,
 				E3BFBA792E05EE9F00A38E4F /* MachSendRightAnnotated.h in Headers */,
+				7B8486772ED869F600E34DC1 /* MachVMSpan.h in Headers */,
 				DDF306E027C08654006A526F /* MachVMSPI.h in Headers */,
 				DD3DC8B627A4BF8E007E5B61 /* MainThread.h in Headers */,
 				DD4901EC27B4748A00D7E50D /* MainThreadData.h in Headers */,
@@ -3938,6 +3945,7 @@
 				4448265228D18CA600D916E8 /* VectorCF.h in Headers */,
 				DDF3079727C086CD006A526F /* VectorCocoa.h in Headers */,
 				DD3DC95327A4BF8E007E5B61 /* VectorTraits.h in Headers */,
+				7B8486792ED86A2C00E34DC1 /* VMAllocSpan.h in Headers */,
 				DD3DC95127A4BF8E007E5B61 /* VMTags.h in Headers */,
 				DD3DC8EE27A4BF8E007E5B61 /* WallTime.h in Headers */,
 				E36DC1762DF0F9C20091549D /* WasmSIMD128.h in Headers */,

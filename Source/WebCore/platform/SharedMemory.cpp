@@ -67,6 +67,20 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
     return sharedMemory;
 }
 
+SharedMemory::SharedMemory(VMAllocSpan<uint8_t> data, Handle::Type&& handle, Protection protection)
+    : m_data(WTFMove(data))
+    , m_handle(WTFMove(handle))
+    , m_protection(WTFMove(protection))
+{
+}
+
+SharedMemory::SharedMemory(size_t wrapMapSize, Handle::Type&& handle, Protection protection)
+    : m_handle(WTFMove(handle))
+    , m_wrapMapSize(wrapMapSize)
+    , m_protection(WTFMove(protection))
+{
+}
+
 Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
