@@ -19,7 +19,7 @@ layer at (0,0) size 800x403
           text run at (0,1) width 169: "Expected results"
       RenderBlock {ul} at (0,318) size 784x61
         RenderListItem {li} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 29x19
             text run at (0,0) width 29: "The "
           RenderInline {code} at (28,2) size 25x17
@@ -28,7 +28,7 @@ layer at (0,0) size 800x403
           RenderText {#text} at (52,0) size 248x19
             text run at (52,0) width 248: " containing the object appears in green"
         RenderListItem {li} at (40,20) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 29x19
             text run at (0,0) width 29: "The "
           RenderInline {code} at (28,2) size 48x17
@@ -37,6 +37,6 @@ layer at (0,0) size 800x403
           RenderText {#text} at (75,0) size 278x19
             text run at (75,0) width 278: " appears in orange. Its height is set at 13em"
         RenderListItem {li} at (40,40) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 174x19
             text run at (0,0) width 174: "The blue line is 13em wide"

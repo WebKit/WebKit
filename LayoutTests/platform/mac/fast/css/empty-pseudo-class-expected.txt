@@ -27,7 +27,7 @@ layer at (0,0) size 785x1616
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "1"
+            RenderListMarker at (-35,6) size 18x18: "1"
             RenderText {#text} at (6,8) size 87x62
               text run at (6,8) width 63: ":empty {"
               text run at (68,8) width 1: " "
@@ -42,7 +42,7 @@ layer at (0,0) size 785x1616
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "2"
+            RenderListMarker at (-35,6) size 18x18: "2"
             RenderText {#text} at (6,8) size 266x62
               text run at (6,8) width 63: ":empty {"
               text run at (68,8) width 1: " "
@@ -57,7 +57,7 @@ layer at (0,0) size 785x1616
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "3"
+            RenderListMarker at (-35,6) size 18x18: "3"
             RenderText {#text} at (6,8) size 95x62
               text run at (6,8) width 63: ":empty {"
               text run at (68,8) width 1: " "
@@ -71,7 +71,7 @@ layer at (0,0) size 785x1616
         RenderListItem {LI} at (40,729) size 616x240 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x42 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x42
-              RenderListMarker at (-38,12) size 18x17: "4"
+              RenderListMarker at (-35,12) size 18x17: "4"
               RenderText {#text} at (12,12) size 5x17
                 text run at (12,12) width 5: "."
           RenderBlock {PRE} at (16,71) size 584x103 [bgcolor=#FFFFFF]
@@ -94,7 +94,7 @@ layer at (0,0) size 785x1616
             RenderBlock {DIV} at (0,0) size 584x24
               RenderBlock {BLOCKQUOTE} at (12,12) size 560x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "5"
+            RenderListMarker at (-35,6) size 18x18: "5"
             RenderText {#text} at (6,8) size 282x62
               text run at (6,8) width 63: ":empty {"
               text run at (68,8) width 1: " "
@@ -110,7 +110,7 @@ layer at (0,0) size 785x1616
             RenderBlock {DIV} at (0,0) size 584x24
               RenderBlock {DIV} at (12,12) size 560x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "6"
+            RenderListMarker at (-35,6) size 18x18: "6"
             RenderText {#text} at (6,8) size 375x107
               text run at (6,8) width 63: ":empty {"
               text run at (68,8) width 1: " "

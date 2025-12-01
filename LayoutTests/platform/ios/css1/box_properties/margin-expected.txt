@@ -58,19 +58,19 @@ layer at (0,0) size 800x2736
           text run at (0,0) width 208: "This element has a class of zero."
       RenderBlock {UL} at (25,1184) size 734x130 [bgcolor=#00FFFF]
         RenderListItem {LI} at (40,0) size 694x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 382x19
             text run at (0,0) width 382: "This list has a margin of 25px, and a light blue background."
         RenderListItem {LI} at (40,20) size 694x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 269x19
             text run at (0,0) width 269: "Therefore, it ought to have such a margin."
         RenderListItem {LI} at (65,65) size 644x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 555x19
             text run at (0,0) width 555: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
         RenderListItem {LI} at (40,110) size 694x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 304x19
             text run at (0,0) width 304: "This list item has no special styles applied to it."
       RenderBlock {P} at (0,1339) size 784x20 [bgcolor=#C0C0C0]
@@ -136,19 +136,19 @@ layer at (0,0) size 800x2736
                   text run at (0,0) width 208: "This element has a class of zero."
               RenderBlock {UL} at (29,1032) size 712x130 [bgcolor=#00FFFF]
                 RenderListItem {LI} at (40,0) size 672x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 382x19
                     text run at (0,0) width 382: "This list has a margin of 25px, and a light blue background."
                 RenderListItem {LI} at (40,20) size 672x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 269x19
                     text run at (0,0) width 269: "Therefore, it ought to have such a margin."
                 RenderListItem {LI} at (65,65) size 622x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 555x19
                     text run at (0,0) width 555: "This list item has a margin of 25px, which should cause it to be offset in some fashion."
                 RenderListItem {LI} at (40,110) size 672x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 304x19
                     text run at (0,0) width 304: "This list item has no special styles applied to it."
               RenderBlock {P} at (4,1187) size 762x20 [bgcolor=#C0C0C0]

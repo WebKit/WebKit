@@ -31,37 +31,37 @@ layer at (0,0) size 800x827
           text run at (0,140) width 0: " "
       RenderBlock {UL} at (0,221) size 784x160
         RenderListItem {LI} at (40,0) size 744x20 [color=#0000FF]
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 194x19
             text run at (0,0) width 194: "This list item should be blue..."
         RenderListItem {LI} at (40,20) size 744x80 [color=#0000FF]
           RenderBlock (anonymous) at (0,0) size 744x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 295x19
               text run at (0,0) width 295: "...and so should this; neither should be purple."
           RenderBlock {UL} at (0,20) size 744x60
             RenderListItem {LI} at (40,0) size 704x20 [color=#808080]
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 194x19
                 text run at (0,0) width 194: "This list item should be gray..."
             RenderListItem {LI} at (40,20) size 704x20 [color=#808080]
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 116x19
                 text run at (0,0) width 116: "...as should this...."
             RenderListItem {LI} at (40,40) size 704x20 [color=#008000]
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 196x19
                 text run at (0,0) width 196: "...but this one should be green."
         RenderListItem {LI} at (40,100) size 744x20 [color=#660000]
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 174x19
             text run at (0,0) width 174: "This ought to be dark red..."
         RenderListItem {LI} at (40,120) size 744x20 [color=#008000]
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 87x19
             text run at (0,0) width 87: "...this green..."
         RenderListItem {LI} at (40,140) size 744x20 [color=#0000FF]
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 98x19
             text run at (0,0) width 98: "...and this blue."
       RenderBlock {P} at (0,397) size 784x20 [color=#0000FF]
@@ -92,37 +92,37 @@ layer at (0,0) size 800x827
             RenderTableCell {TD} at (12,28) size 705x276 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (4,4) size 697x160
                 RenderListItem {LI} at (40,0) size 657x20 [color=#0000FF]
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 194x19
                     text run at (0,0) width 194: "This list item should be blue..."
                 RenderListItem {LI} at (40,20) size 657x80 [color=#0000FF]
                   RenderBlock (anonymous) at (0,0) size 657x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 295x19
                       text run at (0,0) width 295: "...and so should this; neither should be purple."
                   RenderBlock {UL} at (0,20) size 657x60
                     RenderListItem {LI} at (40,0) size 617x20 [color=#808080]
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 194x19
                         text run at (0,0) width 194: "This list item should be gray..."
                     RenderListItem {LI} at (40,20) size 617x20 [color=#808080]
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 116x19
                         text run at (0,0) width 116: "...as should this...."
                     RenderListItem {LI} at (40,40) size 617x20 [color=#008000]
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 196x19
                         text run at (0,0) width 196: "...but this one should be green."
                 RenderListItem {LI} at (40,100) size 657x20 [color=#660000]
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 174x19
                     text run at (0,0) width 174: "This ought to be dark red..."
                 RenderListItem {LI} at (40,120) size 657x20 [color=#008000]
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 87x19
                     text run at (0,0) width 87: "...this green..."
                 RenderListItem {LI} at (40,140) size 657x20 [color=#0000FF]
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 98x19
                     text run at (0,0) width 98: "...and this blue."
               RenderBlock {P} at (4,180) size 697x20 [color=#0000FF]

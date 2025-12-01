@@ -35,27 +35,27 @@ layer at (0,0) size 800x297
       RenderBlock {UL} at (0,148) size 784x117
         RenderListItem {LI} at (40,0) size 744x75 [border: (2px solid #0000FF) none]
           RenderBlock (anonymous) at (0,2) size 744x19
-            RenderListMarker at (-17,1) size 7x18: bullet
+            RenderListMarker at (-15,1) size 7x18: bullet
             RenderText {#text} at (0,1) size 62x18
               text run at (0,1) width 62: "HERE \x{21E7}"
           RenderBlock {UL} at (0,21) size 744x54
             RenderListItem {LI} at (40,0) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderListMarker at (-15,0) size 7x18: white bullet
               RenderText {#text} at (0,0) size 77x18
                 text run at (0,0) width 77: "dummy text"
             RenderListItem {LI} at (40,18) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderListMarker at (-15,0) size 7x18: white bullet
               RenderText {#text} at (0,0) size 77x18
                 text run at (0,0) width 77: "dummy text"
             RenderListItem {LI} at (40,36) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderListMarker at (-15,0) size 7x18: white bullet
               RenderText {#text} at (0,0) size 77x18
                 text run at (0,0) width 77: "dummy text"
         RenderListItem {LI} at (40,75) size 744x21 [border: (2px solid #0000FF) none]
-          RenderListMarker at (-17,3) size 7x18: bullet
+          RenderListMarker at (-15,3) size 7x18: bullet
           RenderText {#text} at (0,3) size 62x18
             text run at (0,3) width 62: "HERE \x{21E7}"
         RenderListItem {LI} at (40,96) size 744x21 [border: (2px solid #0000FF) none]
-          RenderListMarker at (-17,3) size 7x18: bullet
+          RenderListMarker at (-15,3) size 7x18: bullet
           RenderText {#text} at (0,3) size 62x18
             text run at (0,3) width 62: "HERE \x{21E7}"

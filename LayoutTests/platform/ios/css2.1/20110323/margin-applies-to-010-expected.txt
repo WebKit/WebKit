@@ -10,4 +10,4 @@ layer at (0,0) size 800x72
 layer at (8,72) size 340x340
   RenderBlock (positioned) {DIV} at (8,72) size 340x340 [border: (10px solid #0000FF)]
     RenderListItem {DIV} at (60,60) size 220x220 [border: (10px solid #FFA500)]
-      RenderListMarker at (-18,10) size 7x19: bullet
+      RenderListMarker at (-15,10) size 7x19: bullet

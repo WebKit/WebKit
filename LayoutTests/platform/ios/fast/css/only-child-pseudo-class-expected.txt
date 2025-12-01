@@ -27,7 +27,7 @@ layer at (0,0) size 800x1613
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x103 [bgcolor=#FFFFFF]
-            RenderListMarker at (-39,6) size 18x20: "1"
+            RenderListMarker at (-35,6) size 18x20: "1"
             RenderText {#text} at (6,11) size 134x86
               text run at (6,11) width 134: "div :only-child {"
               text run at (139,11) width 1: " "
@@ -47,7 +47,7 @@ layer at (0,0) size 800x1613
           RenderBlock {DIV} at (16,16) size 596x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 596x117 [bgcolor=#FFFFFF]
-            RenderListMarker at (-39,6) size 18x20: "2"
+            RenderListMarker at (-35,6) size 18x20: "2"
             RenderText {#text} at (6,11) size 204x100
               text run at (6,11) width 134: "div :only-child {"
               text run at (139,11) width 1: " "
@@ -69,7 +69,7 @@ layer at (0,0) size 800x1613
           RenderBlock {DIV} at (16,16) size 596x44 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 596x24 [bgcolor=#009900]
             RenderBlock (anonymous) at (0,24) size 596x20
-              RenderListMarker at (-39,0) size 18x19: "3"
+              RenderListMarker at (-35,0) size 18x19: "3"
               RenderText {#text} at (0,0) size 5x19
                 text run at (0,0) width 5: "."
           RenderBlock {PRE} at (16,73) size 596x111 [bgcolor=#FFFFFF]
@@ -95,7 +95,7 @@ layer at (0,0) size 800x1613
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {BLOCKQUOTE} at (40,40) size 516x0
           RenderBlock {PRE} at (16,56) size 596x117 [bgcolor=#FFFFFF]
-            RenderListMarker at (-39,6) size 18x20: "4"
+            RenderListMarker at (-35,6) size 18x20: "4"
             RenderText {#text} at (6,11) size 219x100
               text run at (6,11) width 134: "div :only-child {"
               text run at (139,11) width 1: " "
@@ -118,7 +118,7 @@ layer at (0,0) size 800x1613
             RenderBlock {DIV} at (0,0) size 596x24
             RenderBlock {DIV} at (0,24) size 596x0
           RenderBlock {PRE} at (16,53) size 596x145 [bgcolor=#FFFFFF]
-            RenderListMarker at (-39,6) size 18x20: "5"
+            RenderListMarker at (-35,6) size 18x20: "5"
             RenderText {#text} at (6,11) size 469x128
               text run at (6,11) width 134: "div :only-child {"
               text run at (139,11) width 1: " "

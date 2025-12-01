@@ -47,7 +47,7 @@ layer at (0,0) size 800x635
           text run at (460,0) width 1: " "
       RenderBlock {UL} at (0,344) size 784x20
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 239x19
             text run at (0,0) width 239: "This sentence should NOT be purple."
       RenderTable {TABLE} at (0,380) size 413x239 [border: (1px outset #000000)]
@@ -86,7 +86,7 @@ layer at (0,0) size 800x635
                   text run at (351,0) width 1: " "
               RenderBlock {UL} at (4,169) size 391x20
                 RenderListItem {LI} at (40,0) size 351x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 239x19
                     text run at (0,0) width 239: "This sentence should NOT be purple."
 layer at (8,169) size 784x2 clip at (0,0) size 0x0

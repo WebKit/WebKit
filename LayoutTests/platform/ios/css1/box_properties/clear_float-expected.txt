@@ -30,19 +30,19 @@ layer at (0,0) size 800x810
             text run at (0,0) width 82: "Top menu"
         RenderBlock {UL} at (24,35) size 156x81
           RenderListItem {LI} at (0,0) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "green"
           RenderListItem {LI} at (0,20) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 64x19
               text run at (0,0) width 64: "white text"
           RenderListItem {LI} at (0,40) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 96x19
               text run at (0,0) width 96: "0.5em padding"
           RenderListItem {LI} at (0,60) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 89x19
               text run at (0,0) width 89: "0.5em margin"
       RenderBlock (floating) {DIV} at (0,318) size 192x127 [color=#FFFFFF] [bgcolor=#0000FF]
@@ -51,19 +51,19 @@ layer at (0,0) size 800x810
             text run at (0,0) width 112: "Bottom menu"
         RenderBlock {UL} at (24,35) size 156x81
           RenderListItem {LI} at (0,0) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 108x19
               text run at (0,0) width 108: "blue background"
           RenderListItem {LI} at (0,20) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 64x19
               text run at (0,0) width 64: "white text"
           RenderListItem {LI} at (0,40) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 96x19
               text run at (0,0) width 96: "0.5em padding"
           RenderListItem {LI} at (0,60) size 156x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 89x19
               text run at (0,0) width 89: "0.5em margin"
       RenderBlock {DIV} at (224,182) size 528x237 [bgcolor=#FFFF00]
@@ -100,19 +100,19 @@ layer at (0,0) size 800x810
                     text run at (0,0) width 82: "Top menu"
                 RenderBlock {UL} at (24,35) size 156x81
                   RenderListItem {LI} at (0,0) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 36x19
                       text run at (0,0) width 36: "green"
                   RenderListItem {LI} at (0,20) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 64x19
                       text run at (0,0) width 64: "white text"
                   RenderListItem {LI} at (0,40) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 96x19
                       text run at (0,0) width 96: "0.5em padding"
                   RenderListItem {LI} at (0,60) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 89x19
                       text run at (0,0) width 89: "0.5em margin"
               RenderBlock (floating) {DIV} at (4,140) size 192x127 [color=#FFFFFF] [bgcolor=#0000FF]
@@ -121,19 +121,19 @@ layer at (0,0) size 800x810
                     text run at (0,0) width 112: "Bottom menu"
                 RenderBlock {UL} at (24,35) size 156x81
                   RenderListItem {LI} at (0,0) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 108x19
                       text run at (0,0) width 108: "blue background"
                   RenderListItem {LI} at (0,20) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 64x19
                       text run at (0,0) width 64: "white text"
                   RenderListItem {LI} at (0,40) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 96x19
                       text run at (0,0) width 96: "0.5em padding"
                   RenderListItem {LI} at (0,60) size 156x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 89x19
                       text run at (0,0) width 89: "0.5em margin"
               RenderBlock {DIV} at (228,4) size 314x337 [bgcolor=#FFFF00]

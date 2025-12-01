@@ -169,7 +169,7 @@ layer at (0,0) size 800x4213
           text run at (0,20) width 241: "standards (e.g., font names or URLs.)"
       RenderBlock {OL} at (0,1439) size 784x20
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderListMarker at (-17,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 635x19
             text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
       RenderBlock {P} at (0,1475) size 784x40
@@ -178,7 +178,7 @@ layer at (0,0) size 800x4213
           text run at (0,20) width 114: "not the first child."
       RenderBlock {UL} at (0,1531) size 784x40
         RenderListItem {LI} at (40,0) size 744x40
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 704x39
             text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
             text run at (0,20) width 232: "CSS2, the selector should not apply."
@@ -389,7 +389,7 @@ layer at (0,0) size 800x4213
                   text run at (0,20) width 278: "other standards (e.g., font names or URLs.)"
               RenderBlock {OL} at (4,620) size 762x20
                 RenderListItem {LI} at (40,0) size 722x20
-                  RenderListMarker at (-21,0) size 16x19: "1"
+                  RenderListMarker at (-17,0) size 16x19: "1"
                   RenderText {#text} at (0,0) size 635x19
                     text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
               RenderBlock {P} at (4,656) size 762x40
@@ -398,7 +398,7 @@ layer at (0,0) size 800x4213
                   text run at (0,20) width 129: "is not the first child."
               RenderBlock {UL} at (4,712) size 762x40
                 RenderListItem {LI} at (40,0) size 722x40
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 704x39
                     text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
                     text run at (0,20) width 232: "CSS2, the selector should not apply."

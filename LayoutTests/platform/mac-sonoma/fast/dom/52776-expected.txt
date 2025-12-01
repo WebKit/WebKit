@@ -237,7 +237,7 @@ layer at (0,0) size 785x1696
             text run at (19,1) width 1: "\x{202C}\x{202A}"
       RenderBlock {UL} at (0,1646) size 769x18
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-15,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 717x18
             text run at (0,0) width 717: "test id=test: the right-most character of rendering result of <PDF>abc<PDF> in RTL block should be c: Success"
 selection start: position 3 of child 0 {#text} of child 20 {DIV} of child 1 {DIV} of body

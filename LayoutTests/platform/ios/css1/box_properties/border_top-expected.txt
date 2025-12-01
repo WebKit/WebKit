@@ -52,28 +52,28 @@ layer at (0,0) size 800x1015
       RenderBlock {UL} at (0,396) size 784x129
         RenderListItem {LI} at (40,0) size 744x83 [border: (3px solid #000000) none]
           RenderBlock (anonymous) at (0,3) size 744x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 123x19
               text run at (0,0) width 123: "This is a list item..."
           RenderBlock {UL} at (0,23) size 744x60
             RenderListItem {LI} at (40,0) size 704x20
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 75x19
                 text run at (0,0) width 75: "...and this..."
             RenderListItem {LI} at (40,20) size 704x20
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 118x19
                 text run at (0,0) width 118: "...is a second list..."
             RenderListItem {LI} at (40,40) size 704x20
-              RenderListMarker at (-18,0) size 7x19: white bullet
+              RenderListMarker at (-15,0) size 7x19: white bullet
               RenderText {#text} at (0,0) size 182x19
                 text run at (0,0) width 182: "...nested within the list item."
         RenderListItem {LI} at (40,83) size 744x23 [border: (3px solid #000000) none]
-          RenderListMarker at (-18,3) size 7x19: bullet
+          RenderListMarker at (-15,3) size 7x19: bullet
           RenderText {#text} at (0,3) size 163x19
             text run at (0,3) width 163: "This is a second list item."
         RenderListItem {LI} at (40,106) size 744x23 [border: (3px solid #000000) none]
-          RenderListMarker at (-18,3) size 7x19: bullet
+          RenderListMarker at (-15,3) size 7x19: bullet
           RenderText {#text} at (0,3) size 493x19
             text run at (0,3) width 493: "Each list item in this list should have a medium-width black border at its top."
       RenderTable {TABLE} at (0,541) size 784x458 [border: (1px outset #000000)]
@@ -124,28 +124,28 @@ layer at (0,0) size 800x1015
               RenderBlock {UL} at (4,278) size 762x129
                 RenderListItem {LI} at (40,0) size 722x83 [border: (3px solid #000000) none]
                   RenderBlock (anonymous) at (0,3) size 722x20
-                    RenderListMarker at (-18,0) size 7x19: bullet
+                    RenderListMarker at (-15,0) size 7x19: bullet
                     RenderText {#text} at (0,0) size 123x19
                       text run at (0,0) width 123: "This is a list item..."
                   RenderBlock {UL} at (0,23) size 722x60
                     RenderListItem {LI} at (40,0) size 682x20
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 75x19
                         text run at (0,0) width 75: "...and this..."
                     RenderListItem {LI} at (40,20) size 682x20
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 118x19
                         text run at (0,0) width 118: "...is a second list..."
                     RenderListItem {LI} at (40,40) size 682x20
-                      RenderListMarker at (-18,0) size 7x19: white bullet
+                      RenderListMarker at (-15,0) size 7x19: white bullet
                       RenderText {#text} at (0,0) size 182x19
                         text run at (0,0) width 182: "...nested within the list item."
                 RenderListItem {LI} at (40,83) size 722x23 [border: (3px solid #000000) none]
-                  RenderListMarker at (-18,3) size 7x19: bullet
+                  RenderListMarker at (-15,3) size 7x19: bullet
                   RenderText {#text} at (0,3) size 163x19
                     text run at (0,3) width 163: "This is a second list item."
                 RenderListItem {LI} at (40,106) size 722x23 [border: (3px solid #000000) none]
-                  RenderListMarker at (-18,3) size 7x19: bullet
+                  RenderListMarker at (-15,3) size 7x19: bullet
                   RenderText {#text} at (0,3) size 493x19
                     text run at (0,3) width 493: "Each list item in this list should have a medium-width black border at its top."
 layer at (8,113) size 784x2 clip at (0,0) size 0x0

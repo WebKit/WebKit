@@ -52,7 +52,7 @@ layer at (0,0) size 785x961
           text run at (0,18) width 330: "\"Alternate SS\" has been selected via the user agent."
       RenderBlock {UL} at (0,301) size 769x54 [color=#FF0000]
         RenderListItem {LI} at (40,0) size 729x18 [color=#008000]
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-15,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 398x18
             text run at (0,0) width 398: "This sentence should be green due to an imported style sheet ["
           RenderInline {CODE} at (397,2) size 204x15
@@ -61,7 +61,7 @@ layer at (0,0) size 785x961
           RenderText {#text} at (600,0) size 10x18
             text run at (600,0) width 10: "]."
         RenderListItem {LI} at (40,18) size 729x18 [color=#800080]
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-15,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 404x18
             text run at (0,0) width 404: "This sentence should be purple due to an imported style sheet ["
           RenderInline {CODE} at (403,2) size 180x15
@@ -70,7 +70,7 @@ layer at (0,0) size 785x961
           RenderText {#text} at (582,0) size 10x18
             text run at (582,0) width 10: "]."
         RenderListItem {LI} at (40,36) size 729x18 [color=#008000]
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-15,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 400x18
             text run at (0,0) width 400: "This sentence should be green thanks to the STYLE attribute ["
           RenderInline {CODE} at (399,2) size 164x15
@@ -83,15 +83,15 @@ layer at (0,0) size 785x961
           text run at (0,0) width 510: "This sentence should be purple, and it doesn't have a terminating paragraph tag."
       RenderBlock {OL} at (0,405) size 769x54
         RenderListItem {LI} at (40,0) size 729x18
-          RenderListMarker at (-20,0) size 16x18: "1"
+          RenderListMarker at (-17,0) size 16x18: "1"
           RenderText {#text} at (0,0) size 204x18
             text run at (0,0) width 204: "This list should NOT be purple."
         RenderListItem {LI} at (40,18) size 729x18
-          RenderListMarker at (-20,0) size 16x18: "2"
+          RenderListMarker at (-17,0) size 16x18: "2"
           RenderText {#text} at (0,0) size 176x18
             text run at (0,0) width 176: "It should, instead, be black."
         RenderListItem {LI} at (40,36) size 729x18
-          RenderListMarker at (-20,0) size 16x18: "3"
+          RenderListMarker at (-17,0) size 16x18: "3"
           RenderText {#text} at (0,0) size 512x18
             text run at (0,0) width 512: "If it IS purple, then the browser hasn't correctly parsed the preceding paragraph."
       RenderBlock {P} at (0,475) size 769x36
@@ -148,7 +148,7 @@ layer at (0,0) size 785x961
                   text run at (0,18) width 367: "sheet \"Alternate SS\" has been selected via the user agent."
               RenderBlock {UL} at (4,108) size 747x54 [color=#FF0000]
                 RenderListItem {LI} at (40,0) size 707x18 [color=#008000]
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (-15,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 398x18
                     text run at (0,0) width 398: "This sentence should be green due to an imported style sheet ["
                   RenderInline {CODE} at (397,2) size 204x15
@@ -157,7 +157,7 @@ layer at (0,0) size 785x961
                   RenderText {#text} at (600,0) size 10x18
                     text run at (600,0) width 10: "]."
                 RenderListItem {LI} at (40,18) size 707x18 [color=#800080]
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (-15,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 404x18
                     text run at (0,0) width 404: "This sentence should be purple due to an imported style sheet ["
                   RenderInline {CODE} at (403,2) size 180x15
@@ -166,7 +166,7 @@ layer at (0,0) size 785x961
                   RenderText {#text} at (582,0) size 10x18
                     text run at (582,0) width 10: "]."
                 RenderListItem {LI} at (40,36) size 707x18 [color=#008000]
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (-15,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 400x18
                     text run at (0,0) width 400: "This sentence should be green thanks to the STYLE attribute ["
                   RenderInline {CODE} at (399,2) size 164x15
@@ -179,15 +179,15 @@ layer at (0,0) size 785x961
                   text run at (0,0) width 510: "This sentence should be purple, and it doesn't have a terminating paragraph tag."
               RenderBlock {OL} at (4,212) size 747x54
                 RenderListItem {LI} at (40,0) size 707x18
-                  RenderListMarker at (-20,0) size 16x18: "1"
+                  RenderListMarker at (-17,0) size 16x18: "1"
                   RenderText {#text} at (0,0) size 204x18
                     text run at (0,0) width 204: "This list should NOT be purple."
                 RenderListItem {LI} at (40,18) size 707x18
-                  RenderListMarker at (-20,0) size 16x18: "2"
+                  RenderListMarker at (-17,0) size 16x18: "2"
                   RenderText {#text} at (0,0) size 176x18
                     text run at (0,0) width 176: "It should, instead, be black."
                 RenderListItem {LI} at (40,36) size 707x18
-                  RenderListMarker at (-20,0) size 16x18: "3"
+                  RenderListMarker at (-17,0) size 16x18: "3"
                   RenderText {#text} at (0,0) size 512x18
                     text run at (0,0) width 512: "If it IS purple, then the browser hasn't correctly parsed the preceding paragraph."
               RenderBlock {P} at (4,282) size 747x36

@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (2,0) size 742x36 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x36
             RenderListItem {LI} at (40,0) size 700x18
-              RenderListMarker at (-20,0) size 16x18: "1"
+              RenderListMarker at (-17,0) size 16x18: "1"
               RenderText {#text} at (0,0) size 27x18
                 text run at (0,0) width 27: "One"
             RenderListItem {LI} at (40,18) size 700x18
-              RenderListMarker at (-20,0) size 16x18: "2"
+              RenderListMarker at (-17,0) size 16x18: "2"
               RenderText {#text} at (0,0) size 29x18
                 text run at (0,0) width 29: "Two"
         RenderBlock (anonymous) at (0,52) size 784x18
@@ -24,15 +24,15 @@ layer at (0,0) size 800x600
         RenderBlock {BLOCKQUOTE} at (2,86) size 742x54 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x54
             RenderListItem {LI} at (40,0) size 700x18
-              RenderListMarker at (-20,0) size 16x18: "2"
+              RenderListMarker at (-17,0) size 16x18: "2"
               RenderText {#text} at (0,0) size 29x18
                 text run at (0,0) width 29: "Two"
             RenderListItem {LI} at (40,18) size 700x18
-              RenderListMarker at (-20,0) size 16x18: "3"
+              RenderListMarker at (-17,0) size 16x18: "3"
               RenderText {#text} at (0,0) size 38x18
                 text run at (0,0) width 38: "Three"
             RenderListItem {LI} at (40,36) size 700x18
-              RenderListMarker at (-20,0) size 16x18: "4"
+              RenderListMarker at (-17,0) size 16x18: "4"
               RenderText {#text} at (0,0) size 31x18
                 text run at (0,0) width 31: "Four"
 caret: position 0 of child 2 {BR} of child 3 {DIV} of body
