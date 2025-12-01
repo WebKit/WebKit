@@ -31,7 +31,9 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
 
 namespace WebCore {
 

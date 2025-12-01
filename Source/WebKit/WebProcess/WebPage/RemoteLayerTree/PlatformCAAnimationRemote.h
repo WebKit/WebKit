@@ -30,11 +30,13 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 namespace WTF {
 class TextStream;
 };
-
-OBJC_CLASS CALayer;
 
 namespace WebKit {
 

@@ -28,8 +28,11 @@
 #pragma once
 
 #include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
-OBJC_CLASS CALayer;
+
+#include <pal/cocoa/CALayerForward.h>
+
 using PlatformLayer = CALayer;
 #elif USE(COORDINATED_GRAPHICS)
 namespace WebCore {

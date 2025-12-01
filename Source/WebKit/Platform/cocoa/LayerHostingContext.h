@@ -36,7 +36,10 @@
 #include <wtf/MachSendRightAnnotated.h>
 #endif
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS CAContext;
 
 #if USE(EXTENSIONKIT)

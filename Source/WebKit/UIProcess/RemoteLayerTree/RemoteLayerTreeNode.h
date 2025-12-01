@@ -38,7 +38,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS NSString;
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIView;

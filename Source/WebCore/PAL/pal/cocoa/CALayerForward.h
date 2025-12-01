@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,8 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+DECLARE_SYSTEM_HEADER
 
-#include <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#include <wtf/Compiler.h>
 
-#if PLATFORM(COCOA)
-#include <pal/cocoa/CALayerForward.h>
-#endif
-
-namespace WebCore {
-
-class ScrollingTreeScrollingNodeDelegateMac;
-
-class WEBCORE_EXPORT ScrollingTreeOverflowScrollingNodeMac : public ScrollingTreeOverflowScrollingNode {
-public:
-    static Ref<ScrollingTreeOverflowScrollingNodeMac> create(ScrollingTree&, ScrollingNodeID);
-    virtual ~ScrollingTreeOverflowScrollingNodeMac();
-
-protected:
-    ScrollingTreeOverflowScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
-
-    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
-
-    void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
-    void willDoProgrammaticScroll(const FloatPoint&) final;
-
-    void repositionScrollingLayers() override;
-    void repositionRelatedLayers() override;
-
-    WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
-
-private:
-    ScrollingTreeScrollingNodeDelegateMac& delegate() const;
-
-    void willBeDestroyed() final;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+OBJC_CLASS CALayer;

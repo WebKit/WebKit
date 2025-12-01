@@ -41,6 +41,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
 #include <wtf/BlockPtr.h>
 #endif
 
@@ -54,7 +55,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-OBJC_CLASS CALayer;
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIGestureRecognizer;
