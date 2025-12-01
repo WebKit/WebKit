@@ -191,18 +191,8 @@ http/tests/eventloop/idle-callback-not-affected-by-timers-in-cross-origin.html [
 # WebKitTestRunner needs a more complete implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/mac/pasteboard/dataTransfer-set-data-file-url.html
-editing/mac/pasteboard/drag-selections-to-contenteditable.html
-editing/pasteboard/4947130.html
-editing/pasteboard/cleanup-on-move.html
 editing/pasteboard/copy-standalone-image-crash.html
-editing/pasteboard/drag-drop-paragraph-crasher.html
-editing/pasteboard/emacs-cntl-y-001.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/smart-paste-004.html
-editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 editing/selection/5354455-2.html

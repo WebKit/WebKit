@@ -184,7 +184,6 @@ webkit.org/b/98942 storage/storagequota-request-quota.html [ Failure ]
 webkit.org/b/98942 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 
 # GTK doesn't support smart replace.
-webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
@@ -730,7 +729,6 @@ webkit.org/b/264664 fast/media/mq-prefers-reduced-motion-live-update-for-listene
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
-webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure ]
 
 
 webkit.org/b/218320 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html [ Failure ]
@@ -1089,18 +1087,7 @@ webkit.org/b/279016 gamepad/ [ Skip ] # Timing out, see bug for details.
 # https://bugs.webkit.org/show_bug.cgi?id=157179
 # Implement EditingCallbacks deletegates in the WebKitTestRunner
 webkit.org/b/157179 editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure Timeout ]
-webkit.org/b/157179 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure Timeout ]
-webkit.org/b/157179 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Failure Timeout ]
 webkit.org/b/157179 editing/pasteboard/drag-drop-copy-content.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drag-drop-input-textarea.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drag-drop-url-text.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drag-image-in-about-blank-frame.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drop-file-svg.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drop-inputtext-acquires-style.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drop-link.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drop-text-without-selection.html [ ImageOnlyFailure ]
-webkit.org/b/157179 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
 webkit.org/b/157179 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/157179 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/157179 editing/selection/drag-text-delay.html [ Failure ]
@@ -1119,8 +1106,6 @@ webkit.org/b/157179 fast/forms/file/file-input-empty-validation.html [ Failure ]
 webkit.org/b/157179 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
 webkit.org/b/157179 fast/lists/drag-into-marker.html [ Failure ]
 webkit.org/b/157179 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
-webkit.org/b/157179 editing/pasteboard/cleanup-on-move.html [ Failure ]
-webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/157179 fast/events/drag-customData.html  [ Timeout ]
 webkit.org/b/157179 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
 
@@ -1177,7 +1162,6 @@ Bug(GTK) http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 webkit.org/b/182352 http/tests/misc/bubble-drag-events.html [ Failure ]
 
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
-webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
 
 # Expose title direction in WebKit API
 webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
@@ -1201,8 +1185,6 @@ webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
 
 # PasteBoard::plainText() does not support file names.
-webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
-webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-URLs.html [ Skip ]
 http/tests/images/hidpi-srcset-copy.html [ Skip ]
 
 # Test marked in TestExpectations as failing on non-retina displays, passing on GTK port
@@ -1211,7 +1193,6 @@ webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ Pass ]
 # Test globally skipped, passing on GTK port
 webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
-webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
 
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
