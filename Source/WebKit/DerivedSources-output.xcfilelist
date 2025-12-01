@@ -443,6 +443,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageAreaMapMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextCheckingControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextCheckingControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextStyleManager.swift
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UIWindowScene+Extras.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UserMediaCaptureManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UserMediaCaptureManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UserMediaCaptureManagerProxyMessageReceiver.cpp

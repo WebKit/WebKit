@@ -2439,8 +2439,10 @@
 		EBA8D3B727A5E33F00CB7900 /* PushServiceConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = EBA8D3B127A5E33F00CB7900 /* PushServiceConnection.mm */; };
 		EBDF51D12C8FBC4700EA1376 /* WebsitePushAndNotificationsEnabledPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = EBDF51CF2C8FBC4700EA1376 /* WebsitePushAndNotificationsEnabledPolicy.h */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EE7371602EE2555C009F354F /* UIWindowScene+Extras.h in Headers */ = {isa = PBXBuildFile; fileRef = EE73715F2EE25554009F354F /* UIWindowScene+Extras.h */; };
 		EEA52F482D70545300D578B5 /* WKStageMode.h in Headers */ = {isa = PBXBuildFile; fileRef = EE0D3CDD2D3709BE00072978 /* WKStageMode.h */; };
 		EEA52F492D7055A700D578B5 /* WKStageMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0D3CDC2D3709BE00072978 /* WKStageMode.swift */; };
+		EEEEBCBD2EE35A8B000FF6AF /* UIWindowScene+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEEBCBC2EE35A8B000FF6AF /* UIWindowScene+Extras.swift */; };
 		EEFE72792D64FE5600DC6214 /* StageModeInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = EEFE72782D64FE5600DC6214 /* StageModeInteractionState.h */; };
 		F30EE46E2E721ED600935B60 /* WebFrameInspectorTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = F30EE46D2E721ECE00935B60 /* WebFrameInspectorTarget.h */; };
 		F30EE4712E72226700935B60 /* WebPageInspectorTargetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F30EE4702E72225D00935B60 /* WebPageInspectorTargetProxy.h */; };
@@ -8590,6 +8592,8 @@
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
 		EE0D3CDC2D3709BE00072978 /* WKStageMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStageMode.swift; sourceTree = "<group>"; };
 		EE0D3CDD2D3709BE00072978 /* WKStageMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKStageMode.h; sourceTree = "<group>"; };
+		EE73715F2EE25554009F354F /* UIWindowScene+Extras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIWindowScene+Extras.h"; sourceTree = "<group>"; };
+		EEEEBCBC2EE35A8B000FF6AF /* UIWindowScene+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIWindowScene+Extras.swift"; path = "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UIWindowScene+Extras.swift"; sourceTree = "<group>"; };
 		EEFE72782D64FE5600DC6214 /* StageModeInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StageModeInteractionState.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F30EE46D2E721ECE00935B60 /* WebFrameInspectorTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFrameInspectorTarget.h; sourceTree = "<group>"; };
@@ -10531,6 +10535,8 @@
 				CD9A64A127C89742003827C0 /* UIProcessLogInitializationCocoa.mm */,
 				463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */,
 				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
+				EE73715F2EE25554009F354F /* UIWindowScene+Extras.h */,
+				EEEEBCBC2EE35A8B000FF6AF /* UIWindowScene+Extras.swift */,
 				070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */,
 				52D5A1AA1C57494E00DE34A3 /* VideoPresentationManagerProxy.h */,
 				52D5A1AB1C57494E00DE34A3 /* VideoPresentationManagerProxy.messages.in */,
@@ -18315,6 +18321,7 @@
 				515BE1A91D55293400DD7C68 /* UIGamepadProvider.h in Headers */,
 				CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */,
 				461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */,
+				EE7371602EE2555C009F354F /* UIWindowScene+Extras.h in Headers */,
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
@@ -21483,6 +21490,7 @@
 				5CFFD8482DEF511C00C421F5 /* SwiftDemoLogo.swift in Sources */,
 				5CAAA85029BFBE99003340AE /* TCCSoftLink.mm in Sources */,
 				E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */,
+				EEEEBCBD2EE35A8B000FF6AF /* UIWindowScene+Extras.swift in Sources */,
 				93A883182E7DB8260041D118 /* UnifiedSource1-ARC.mm in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-nonARC.mm in Sources */,
 				7B9FC5F028ABB557007570E7 /* UnifiedSource1.cpp in Sources */,
