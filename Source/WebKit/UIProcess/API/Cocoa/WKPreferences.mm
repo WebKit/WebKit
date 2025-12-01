@@ -1404,6 +1404,18 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     protectedPreferences(self)->setSafeBrowsingEnabled(enabled);
 }
 
+#if HAVE(SAFE_BROWSING)
+- (BOOL)_isDelayModalsUntilSafeBrowsingResultEnabled
+{
+    return protectedPreferences(self)->delayModalsUntilSafeBrowsingResultEnabled();
+}
+
+- (void)_setDelayModalsUntilSafeBrowsingResultEnabled:(BOOL)enabled
+{
+    protectedPreferences(self)->setDelayModalsUntilSafeBrowsingResultEnabled(enabled);
+}
+#endif
+
 - (void)_setVideoQualityIncludesDisplayCompositingEnabled:(BOOL)videoQualityIncludesDisplayCompositingEnabled
 {
     protectedPreferences(self)->setVideoQualityIncludesDisplayCompositingEnabled(videoQualityIncludesDisplayCompositingEnabled);

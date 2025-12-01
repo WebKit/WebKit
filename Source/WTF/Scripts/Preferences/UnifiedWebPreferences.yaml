@@ -2423,6 +2423,22 @@ DefaultTextEncodingName:
     WebCore:
       default: '{ }'
 
+DelayModalsUntilSafeBrowsingResultEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Delay Modals Until Safe Browsing Result"
+  humanReadableDescription: "Delay showing modal alerts until Safe Browsing response"
+  webcoreBinding: none
+  condition: HAVE(SAFE_BROWSING)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DeprecationReportingEnabled:
   type: bool
   status: testable

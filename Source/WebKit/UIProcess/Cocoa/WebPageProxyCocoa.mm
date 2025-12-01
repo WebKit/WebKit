@@ -275,6 +275,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
     size_t redirectChainIndex = navigation.redirectChainIndex(url);
 
     navigation.setSafeBrowsingCheckOngoing(redirectChainIndex, true);
+    m_isSafeBrowsingCheckInProgress = true;
 
     auto performLookup = [weakThis = WeakPtr { *this }, navigation = Ref { navigation }, forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex](RetainPtr<SSBLookupResult> cachedResult) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -324,6 +325,38 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
     [historyDelegate _webView:webView.get() cachedSafeBrowsingResultForURL:url.createNSURL().get() completionHandler:cacheCompletionHandler.get()];
 #endif
 }
+
+#if HAVE(SAFE_BROWSING)
+void WebPageProxy::deferModalUntilSafeBrowsingCompletes(CompletionHandler<void(bool)>&& handler)
+{
+    ASSERT(isMainRunLoop());
+    ASSERT(handler);
+
+    if (!protectedPreferences()->delayModalsUntilSafeBrowsingResultEnabled() || !m_isSafeBrowsingCheckInProgress) {
+        handler(true);
+        return;
+    }
+
+    // Queue the handler to be called when Safe Browsing completes
+    m_deferredModalHandlers.append(WTFMove(handler));
+}
+
+void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
+{
+    ASSERT(isMainRunLoop());
+
+    auto& handlers = m_deferredModalHandlers;
+    if (handlers.isEmpty())
+        return;
+
+    // Call all queued handlers with the result
+    // Sequential execution maintains ordering
+    for (auto& handler : std::exchange(handlers, { }))
+        handler(userProceeded);
+
+    m_isSafeBrowsingCheckInProgress = false;
+}
+#endif
 
 #if ENABLE(CONTENT_FILTERING)
 void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
