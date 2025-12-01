@@ -158,6 +158,7 @@ protected:
 
     std::atomic<unsigned> m_refCount;
     unsigned m_length;
+    mutable unsigned m_hashAndFlags;
     union {
         const Latin1Character* m_data8;
         const char16_t* m_data16;
@@ -165,7 +166,6 @@ protected:
         // These are needed to avoid reinterpret_cast.
         const char* m_data8Char;
     };
-    mutable unsigned m_hashAndFlags;
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -877,8 +877,8 @@ inline bool deprecatedIsNotSpaceOrNewline(char16_t character)
 inline constexpr StringImplShape::StringImplShape(unsigned refCount, std::span<const char> data, unsigned hashAndFlags)
     : m_refCount(refCount)
     , m_length(data.size())
-    , m_data8Char(data.data())
     , m_hashAndFlags(hashAndFlags)
+    , m_data8Char(data.data())
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -886,8 +886,8 @@ inline constexpr StringImplShape::StringImplShape(unsigned refCount, std::span<c
 inline constexpr StringImplShape::StringImplShape(unsigned refCount, std::span<const Latin1Character> data, unsigned hashAndFlags)
     : m_refCount(refCount)
     , m_length(data.size())
-    , m_data8(data.data())
     , m_hashAndFlags(hashAndFlags)
+    , m_data8(data.data())
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -895,8 +895,8 @@ inline constexpr StringImplShape::StringImplShape(unsigned refCount, std::span<c
 inline constexpr StringImplShape::StringImplShape(unsigned refCount, std::span<const char16_t> data, unsigned hashAndFlags)
     : m_refCount(refCount)
     , m_length(data.size())
-    , m_data16(data.data())
     , m_hashAndFlags(hashAndFlags)
+    , m_data16(data.data())
 {
     RELEASE_ASSERT(data.size() <= MaxLength);
 }
@@ -1239,7 +1239,7 @@ inline constexpr bool StringImpl::isValidLength(size_t length)
 
 template<typename T> constexpr size_t StringImpl::tailOffset()
 {
-    return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
+    return roundUpToMultipleOf<alignof(T)>(sizeof(StringImplShape));
 }
 
 inline bool StringImpl::requiresCopy() const
