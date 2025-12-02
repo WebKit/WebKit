@@ -36,17 +36,11 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     auto handle = Win32Handle::adopt(::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0));
     if (!handle)
         return nullptr;
-
-    void* baseAddress = ::MapViewOfFileEx(handle.get(), FILE_MAP_ALL_ACCESS, 0, 0, size, nullptr);
-    if (!baseAddress)
+    auto data = WinVMSpan::mapViewOfFile(handle.get(), FILE_MAP_ALL_ACCESS, 0, 0, size, nullptr);
+    ASSERT_WITH_MESSAGE(data, "::MapViewOfFileEx failed with error %lu %p", ::GetLastError(), handle.m_handle.get());
+    if (!data)
         return nullptr;
-
-    RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
-    memory->m_size = size;
-    memory->m_data = baseAddress;
-    memory->m_handle = WTFMove(handle);
-
-    return memory;
+    return adoptRef(*new SharedMemory(WTFMove(data), WTFMove(handle.m_handle), Protection::ReadWrite));
 }
 
 static DWORD accessRights(SharedMemory::Protection protection)
@@ -62,27 +56,17 @@ static DWORD accessRights(SharedMemory::Protection protection)
     return 0;
 }
 
-RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handleIn, Protection protection)
 {
-    void* data = ::MapViewOfFile(handle.m_handle.get(), accessRights(protection), 0, 0, handle.size());
-    ASSERT_WITH_MESSAGE(data, "::MapViewOfFile failed with error %lu %p", ::GetLastError(), handle.m_handle.get());
+    auto data = WinVMSpan::mapViewOfFile(handleIn.m_handle.get(), accessRights(protection), 0, 0, size, nullptr);
+    ASSERT_WITH_MESSAGE(data, "::MapViewOfFileEx failed with error %lu %p", ::GetLastError(), handleIn.m_handle.get());
     if (!data)
         return nullptr;
-
-    RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
-    memory->m_size = handle.size();
-    memory->m_data = data;
-    memory->m_handle = WTFMove(handle.m_handle);
-    return memory;
+    auto handle = WTFMove(handleIn);
+    return adoptRef(*new SharedMemory(WTFMove(data), WTFMove(handle.m_handle), protection));
 }
 
-SharedMemory::~SharedMemory()
-{
-    ASSERT(m_data);
-    ASSERT(m_handle);
-
-    ::UnmapViewOfFile(m_data);
-}
+SharedMemory::~SharedMemory() = default;
 
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
 {
