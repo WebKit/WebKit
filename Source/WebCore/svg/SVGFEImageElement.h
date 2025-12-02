@@ -37,16 +37,9 @@ public:
 
     virtual ~SVGFEImageElement();
 
-    // CheckedPtr interface
-    uint32_t checkedPtrCount() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const { return SVGFilterPrimitiveStandardAttributes::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const { SVGFilterPrimitiveStandardAttributes::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion()
-    {
-        SVGFilterPrimitiveStandardAttributes::setDidBeginCheckedPtrDeletion();
-        CachedImageClient::setDidBeginCheckedPtrDeletion();
-    }
+    // CachedResourceClient.
+    void ref() const final { SVGFilterPrimitiveStandardAttributes::ref(); }
+    void deref() const final { SVGFilterPrimitiveStandardAttributes::deref(); }
 
     bool renderingTaintsOrigin() const;
 

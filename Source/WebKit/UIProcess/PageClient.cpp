@@ -50,4 +50,11 @@ CheckedRef<WebCore::WebMediaSessionManager> PageClient::checkedMediaSessionManag
 }
 #endif
 
+#if ENABLE(VIDEO)
+void PageClient::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
+{
+    completionHandler(makeUnexpected<WebCore::ExceptionData>({ WebCore::ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s }));
+}
+#endif
+
 } // namespace WebKit

@@ -40,13 +40,14 @@ class Document;
 class WorkletGlobalScopeProxy;
 class WorkletPendingTasks;
 
-class Worklet : public RefCountedAndCanMakeWeakPtr<Worklet>, public ScriptWrappable, public ActiveDOMObject {
+class Worklet : public RefCounted<Worklet>, public ScriptWrappable, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worklet);
 public:
+    virtual ~Worklet();
+
+    // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-
-    virtual ~Worklet();
 
     virtual void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 

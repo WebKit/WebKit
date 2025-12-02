@@ -7,6 +7,8 @@ PASS mediaDevices.getUserMedia() is present on navigator
 PASS groupId is correctly supported by getUserMedia() for video devices
 PASS groupId is correctly supported by getUserMedia() for audio devices
 FAIL getUserMedia() supports setting none as resizeMode. assert_true: resizeMode should be supported expected true got undefined
-FAIL getUserMedia() supports setting crop-and-scale as resizeMode. assert_true: resizeMode should be supported expected true got undefined
+FAIL getUserMedia() supports setting crop-and-scale as resizeMode without downscaling. assert_true: resizeMode should be supported expected true got undefined
+FAIL getUserMedia() supports setting crop-and-scale as resizeMode with downscaling. assert_true: resizeMode should be supported expected true got undefined
+FAIL getUserMedia() supports setting crop-and-scale as resizeMode with decimation. assert_true: resizeMode should be supported expected true got undefined
 FAIL getUserMedia() fails with exact invalid resizeMode. assert_true: resizeMode should be supported expected true got undefined
 

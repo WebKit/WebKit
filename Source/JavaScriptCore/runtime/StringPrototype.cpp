@@ -1142,7 +1142,8 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
 
     // Most strings lower/upper case will be the same size as original, so try that first.
     Vector<char16_t> buffer;
-    buffer.reserveInitialCapacity(s->length());
+    if (!StringImpl::isValidLength<char16_t>(s->length()) || !buffer.tryReserveInitialCapacity(s->length())) [[unlikely]]
+        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
     auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
     auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters().get(), s->length(), locale.utf8().data());
     if (U_FAILURE(status))

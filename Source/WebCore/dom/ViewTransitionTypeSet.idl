@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledBySetting=ViewTransitionTypesEnabled,
+    EnabledBySetting=ViewTransitionsEnabled,
     Exposed=Window
 ]
 interface ViewTransitionTypeSet {

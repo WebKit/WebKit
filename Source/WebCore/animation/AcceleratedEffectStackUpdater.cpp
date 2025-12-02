@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
+#include "KeyframeEffectStack.h"
 #include "RenderElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"

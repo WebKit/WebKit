@@ -208,7 +208,7 @@ protected:
                 jit->exceptionCheck(CCallHelpers::operationExceptionRegister<typename FunctionTraits<FunctionType>::ResultType>());
         }
 
-        if constexpr (!std::is_same_v<ResultType, NoResultTag>)
+        if constexpr (!std::same_as<ResultType, NoResultTag>)
             jit->setupResults(extractResult(this->m_result));
 
         if (m_spillMode == NeedToSpill)

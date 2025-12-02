@@ -404,7 +404,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     auto suggestedURL = saveDatas[0].url;
     ASSERT(!suggestedURL.isEmpty());
 
-    NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).unsafeGet();
+    RetainPtr<NSURL> platformURL = m_suggestedToActualURLMap.get(suggestedURL);
     if (!platformURL) {
         platformURL = [NSURL URLWithString:suggestedURL.createNSString().get()];
         // The user must confirm new filenames before we can save to them.
@@ -436,17 +436,17 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     };
 
     if (!forceSaveAs) {
-        saveToURL(platformURL);
+        saveToURL(platformURL.get());
         return;
     }
 
     NSSavePanel *panel = [NSSavePanel savePanel];
-    panel.nameFieldStringValue = platformURL.lastPathComponent;
+    panel.nameFieldStringValue = platformURL.get().lastPathComponent;
 
     // If we have a file URL we've already saved this file to a path and
     // can provide a good directory to show. Otherwise, use the system's
     // default behavior for the initial directory to show in the dialog.
-    if (platformURL.isFileURL)
+    if (platformURL.get().isFileURL)
         panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
     auto completionHandler = ^(NSInteger result) {

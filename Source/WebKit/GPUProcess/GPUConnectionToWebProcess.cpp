@@ -441,7 +441,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 #endif
 #if ENABLE(VIDEO)
     protectedVideoFrameObjectHeap()->close();
-    protectedRemoteMediaPlayerManagerProxy()->clear();
+    protectedRemoteMediaPlayerManagerProxy()->connectionToWebProcessClosed();
 #endif
     // RemoteRenderingBackend objects ref their GPUConnectionToWebProcess so we need to make sure
     // to break the reference cycle by destroying them.

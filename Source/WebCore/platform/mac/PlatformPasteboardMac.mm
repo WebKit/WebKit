@@ -98,15 +98,12 @@ PasteboardBuffer PlatformPasteboard::bufferForType(const String& pasteboardType)
     if (pasteboardType == String(legacyTIFFPasteboardTypeSingleton())) {
         data = [m_pasteboard _dataWithoutConversionForType:pasteboardType.createNSString().get() securityScoped:NO];
         if (!data) {
-            static NeverDestroyed<RetainPtr<NSArray>> sourceTypes;
-            static std::once_flag onceFlag;
-            std::call_once(onceFlag, [] {
-                auto originalSourceTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
-                if (originalSourceTypes) {
-                    sourceTypes.get() = [(__bridge NSArray *)originalSourceTypes.get() arrayByExcludingObjectsInArray:@[UTTypePDF.identifier]];
-                } else
-                    sourceTypes.get() = nil;
-            });
+            static NeverDestroyed<RetainPtr<NSArray>> sourceTypes = [] -> NSArray * {
+                RetainPtr originalSourceTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+                if (originalSourceTypes)
+                    return [(__bridge NSArray *)originalSourceTypes.get() arrayByExcludingObjectsInArray:@[UTTypePDF.identifier]];
+                return nil;
+            }();
 
             for (NSString *sourceType in sourceTypes.get().get()) {
                 data = [m_pasteboard _dataWithoutConversionForType:sourceType securityScoped:NO];

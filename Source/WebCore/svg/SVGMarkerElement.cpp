@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -45,15 +45,16 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
     ASSERT(hasTagName(SVGNames::markerTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::refXAttr, &SVGMarkerElement::m_refX>();
         PropertyRegistry::registerProperty<SVGNames::refYAttr, &SVGMarkerElement::m_refY>();
         PropertyRegistry::registerProperty<SVGNames::markerWidthAttr, &SVGMarkerElement::m_markerWidth>();
         PropertyRegistry::registerProperty<SVGNames::markerHeightAttr, &SVGMarkerElement::m_markerHeight>();
         PropertyRegistry::registerProperty<SVGNames::markerUnitsAttr, SVGMarkerUnitsType, &SVGMarkerElement::m_markerUnits>();
         PropertyRegistry::registerProperty<SVGNames::orientAttr, &SVGMarkerElement::m_orientAngle, &SVGMarkerElement::m_orientType>();
-    });
+    }
 }
 
 Ref<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
@@ -89,10 +90,10 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
         Ref { m_refY }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::markerWidthAttr:
-        Ref { m_markerWidth }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_markerWidth }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "3"_s));
         break;
     case AttributeNames::markerHeightAttr:
-        Ref { m_markerHeight }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_markerHeight }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "3"_s));
         break;
     default:
         break;

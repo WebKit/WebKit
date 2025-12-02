@@ -65,7 +65,7 @@ void RenderImageResource::setCachedImage(CachedResourceHandle<CachedImage>&& new
         return;
 
     if (m_cachedImage && m_renderer && m_cachedImageRemoveClientIsNeeded)
-        m_cachedImage->removeClient(*m_renderer);
+        m_cachedImage->removeClient(m_renderer->protectedCachedImageClient());
     if (!m_renderer) {
         // removeClient may have destroyed the renderer.
         return;
@@ -75,7 +75,7 @@ void RenderImageResource::setCachedImage(CachedResourceHandle<CachedImage>&& new
     if (!m_cachedImage)
         return;
 
-    m_cachedImage->addClient(*renderer());
+    m_cachedImage->addClient(renderer()->protectedCachedImageClient());
     if (m_cachedImage->errorOccurred())
         renderer()->imageChanged(m_cachedImage.get());
 }
@@ -112,7 +112,7 @@ void RenderImageResource::setContainerContext(const IntSize& imageContainerSize,
 {
     if (!m_cachedImage || !m_renderer)
         return;
-    m_cachedImage->setContainerContextForClient(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), imageURL);
+    m_cachedImage->setContainerContextForClient(m_renderer->protectedCachedImageClient(), imageContainerSize, m_renderer->style().usedZoom(), imageURL);
 }
 
 LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const

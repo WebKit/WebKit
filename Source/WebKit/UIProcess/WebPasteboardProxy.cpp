@@ -46,13 +46,7 @@ WebPasteboardProxy::PasteboardAccessInformation::~PasteboardAccessInformation() 
 
 WebPasteboardProxy& WebPasteboardProxy::singleton()
 {
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<WebPasteboardProxy> proxy;
-
-    std::call_once(onceFlag, [] {
-        proxy.construct();
-    });
-
+    static NeverDestroyed<WebPasteboardProxy> proxy;
     return proxy;
 }
 

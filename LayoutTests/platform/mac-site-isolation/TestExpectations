@@ -3,28 +3,13 @@
 ####################
 # Tests that crash #
 ####################
-css1/basic/class_as_selector.html [ Skip ]
-css1/box_properties/border_style_inline.html [ Skip ]
-css2.1/t170602-bdr-conflct-w-91-d.html [ Skip ]
-editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
-fast/events/onchange-text-form-field.html [ Skip ]
-fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Skip ]
-fast/media/mq-grid-02.html [ Skip ]
 http/tests/inspector/target/provisional-load-cancels-previous-load.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-borders/border-image-width-interpolation-math-functions.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-empty-location.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?7-8 [ Skip ]
-imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play.html [ Skip ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html?origin=cross-site-redirect [ Skip ]
 imported/w3c/web-platform-tests/speculation-rules/speculation-tags/same-site-to-cross-site-redirection-prefetch.https.html [ Skip ]
-media/media-source/media-source-loadedmetada-with-two-sourcebuffers.html [ Skip ]
-media/modern-media-controls/status-support/status-support-error.html [ Skip ]
-svg/dynamic-updates/SVGRectElement-svgdom-width-prop.html [ Skip ]
-webgl/1.0.x/conformance/textures/video/tex-2d-luminance-luminance-unsigned_byte.html [ Skip ]
-webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-rgba8ui-rgba_integer-unsigned_byte.html [ Skip ]
 
 #######################
 # Tests that time out #
@@ -321,13 +306,6 @@ security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.h
 storage/indexeddb/IDBTransaction-page-cache.html [ Skip ]
 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html [ Skip ]
 tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html [ Skip ]
-webarchive/loading/cache-expired-subresource.html [ Skip ]
-webarchive/loading/mainresource-null-mimetype-crash.html [ Skip ]
-webarchive/loading/missing-data.html [ Skip ]
-webarchive/loading/object.html [ Skip ]
-webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Skip ]
-webarchive/loading/test-loading-archive.html [ Skip ]
-webarchive/loading/video-in-webarchive.html [ Skip ]
 webgl/2.0.y/conformance/textures/video/tex-2d-alpha-alpha-unsigned_byte.html [ Skip ]
 webrtc/datachannel/datachannel-page-cache-send.html [ Skip ]
 webrtc/datachannel/datachannel-page-cache.html [ Skip ]

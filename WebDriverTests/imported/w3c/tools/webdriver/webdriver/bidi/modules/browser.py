@@ -1,6 +1,7 @@
-from typing import Any, Mapping, MutableMapping
+from typing import Any, List, Mapping
 
 from ._module import BidiModule, command
+from ..undefined import UNDEFINED, Maybe, Nullable
 
 
 class Browser(BidiModule):
@@ -27,8 +28,16 @@ class Browser(BidiModule):
         return result["clientWindows"]
 
     @command
-    def create_user_context(self) -> Mapping[str, Any]:
-        return {}
+    def create_user_context(
+            self, accept_insecure_certs: Maybe[bool] = UNDEFINED,
+            proxy: Maybe[Mapping[str, Any]] = UNDEFINED,
+            unhandled_prompt_behavior: Maybe[Mapping[str, str]] = UNDEFINED,
+    ) -> Mapping[str, Any]:
+        return {
+            "acceptInsecureCerts": accept_insecure_certs,
+            "proxy": proxy,
+            "unhandledPromptBehavior": unhandled_prompt_behavior
+        }
 
     @create_user_context.result
     def _create_user_context(self, result: Mapping[str, Any]) -> Any:
@@ -52,11 +61,19 @@ class Browser(BidiModule):
 
     @command
     def remove_user_context(
-        self, user_context: str
+            self, user_context: str
     ) -> Mapping[str, Any]:
-        params: MutableMapping[str, Any] = {}
+        return {
+            "userContext": user_context
+        }
 
-        if user_context is not None:
-            params["userContext"] = user_context
+    @command
+    def set_download_behavior(
+            self, download_behavior: Nullable[Mapping[str, Any]],
+            user_contexts: Maybe[List[str]] = UNDEFINED
 
-        return params
+    ) -> Mapping[str, Any]:
+        return {
+            "downloadBehavior": download_behavior,
+            "userContexts": user_contexts
+        }

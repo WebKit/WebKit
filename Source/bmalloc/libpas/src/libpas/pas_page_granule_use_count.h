@@ -47,6 +47,7 @@ static PAS_ALWAYS_INLINE void pas_page_granule_get_indices(
     PAS_ASSERT(*index_of_last_granule < page_size / granule_size);
 }
 
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static PAS_ALWAYS_INLINE void pas_page_granule_for_each_use_in_range(
     pas_page_granule_use_count* use_counts,
     uintptr_t begin,
@@ -71,6 +72,7 @@ static PAS_ALWAYS_INLINE void pas_page_granule_for_each_use_in_range(
          ++granule_index)
         action(use_counts + granule_index, arg);
 }
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static PAS_ALWAYS_INLINE void pas_page_granule_use_count_increment(
     pas_page_granule_use_count* use_count_ptr,

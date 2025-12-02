@@ -83,7 +83,54 @@ public:
         return { borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth() };
     }
 
-    bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
+    // `BorderEdgesView` provides a RectEdges-like interface for efficiently working with
+    // the values stored in BorderValue by edge. This allows `RenderStyle` code generation
+    // to work as if the `border-{edge}-*`properties were stored in a RectEdges, while
+    // instead storing them grouped together by edge in BorderValue.
+    //
+    // FIXME: Currently this is only implemented for `border-{edge}-color` and `border-{edge}-style`,
+    // due to `border-{edge}-width` needing to return the computed value from borderEdgeWidth() from
+    // its getter.
+    template<bool isConst, template<BoxSide> typename Accessor, typename GetterType, typename SetterType = GetterType>
+    struct BorderEdgesView {
+        GetterType top() const { return Accessor<BoxSide::Top>::get(borderData); }
+        GetterType right() const { return Accessor<BoxSide::Right>::get(borderData); }
+        GetterType bottom() const { return Accessor<BoxSide::Bottom>::get(borderData); }
+        GetterType left() const { return Accessor<BoxSide::Left>::get(borderData); }
+
+        void setTop(SetterType value) requires (!isConst) { Accessor<BoxSide::Top>::set(borderData, std::forward<SetterType>(value)); }
+        void setRight(SetterType value) requires (!isConst){ Accessor<BoxSide::Right>::set(borderData, std::forward<SetterType>(value)); }
+        void setBottom(SetterType value) requires (!isConst){ Accessor<BoxSide::Bottom>::set(borderData, std::forward<SetterType>(value)); }
+        void setLeft(SetterType value) requires (!isConst) { Accessor<BoxSide::Left>::set(borderData, std::forward<SetterType>(value)); }
+
+        std::conditional_t<isConst, const BorderData&, BorderData&> borderData;
+    };
+
+    template<BoxSide side> struct ColorAccessor {
+        static const Style::Color& get(const BorderData& data) { return data.edges()[side].m_color; }
+        static void set(BorderData& data, Style::Color&& color) { data.edges()[side].m_color = WTFMove(color); }
+    };
+    using BorderColorsView = BorderEdgesView<false, ColorAccessor, const Style::Color&, Style::Color&&>;
+    using BorderColorsConstView = BorderEdgesView<true, ColorAccessor, const Style::Color&, Style::Color&&>;
+    BorderColorsView colors() { return { .borderData = *this }; }
+    BorderColorsConstView colors() const { return { .borderData = *this }; }
+
+    template<BoxSide side> struct StyleAccessor {
+        static unsigned get(const BorderData& data) { return data.edges()[side].m_style; }
+        static void set(BorderData& data, unsigned style) { data.edges()[side].m_style = style; }
+    };
+    using BorderStylesView = BorderEdgesView<false, StyleAccessor, unsigned>;
+    using BorderStylesConstView = BorderEdgesView<true, StyleAccessor, unsigned>;
+    BorderStylesView styles() { return { .borderData = *this }; }
+    BorderStylesConstView styles() const { return { .borderData = *this }; }
+
+    RectEdges<BorderValue>& edges() { return m_edges; }
+    const RectEdges<BorderValue>& edges() const { return m_edges; }
+
+    BorderValue& left() { return m_edges.left(); }
+    BorderValue& right() { return m_edges.right(); }
+    BorderValue& top() { return m_edges.top(); }
+    BorderValue& bottom() { return m_edges.bottom(); }
 
     const BorderValue& left() const { return m_edges.left(); }
     const BorderValue& right() const { return m_edges.right(); }
@@ -102,6 +149,8 @@ public:
     const Style::CornerShapeValue& topRightCornerShape() const { return m_cornerShapes.topRight(); }
     const Style::CornerShapeValue& bottomLeftCornerShape() const { return m_cornerShapes.bottomLeft(); }
     const Style::CornerShapeValue& bottomRightCornerShape() const { return m_cornerShapes.bottomRight(); }
+
+    bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 

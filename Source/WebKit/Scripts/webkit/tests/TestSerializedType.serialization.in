@@ -355,6 +355,12 @@ NSNull wrapped by CoreIPCNull
     bool left();
 }
 
+class WebCore::OpaqueTypeObject {
+    NotDispatchableFromWebContent member
+}
+
+using WebCore::AliasOpaqueTypeWrapper = Variant<int, Vector<uint8_t>>
+
 using WebCore::ConditionalVariant = Variant<
     int,
 #if USE(CHAR)

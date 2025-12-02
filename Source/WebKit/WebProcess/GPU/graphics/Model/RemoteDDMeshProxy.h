@@ -74,11 +74,8 @@ private:
         return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
 
-    void addMesh(const WebCore::DDModel::DDMeshDescriptor&) final;
     void update(const WebCore::DDModel::DDUpdateMeshDescriptor&) final;
-    void addTexture(const WebCore::DDModel::DDTextureDescriptor&) final;
     void updateTexture(const WebCore::DDModel::DDUpdateTextureDescriptor&) final;
-    void addMaterial(const WebCore::DDModel::DDMaterialDescriptor&) final;
     void updateMaterial(const WebCore::DDModel::DDUpdateMaterialDescriptor&) final;
 #if PLATFORM(COCOA)
     std::pair<simd_float4, simd_float4> getCenterAndExtents() const final;

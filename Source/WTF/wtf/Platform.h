@@ -158,3 +158,10 @@
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif
+
+#if OS(WINDOWS)
+// https://github.com/MicrosoftDocs/cpp-docs/blob/main/docs/cpp/empty-bases.md
+#define WTF_EMPTY_BASE_CLASS __declspec(empty_bases)
+#else
+#define WTF_EMPTY_BASE_CLASS
+#endif

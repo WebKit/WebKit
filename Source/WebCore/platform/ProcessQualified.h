@@ -97,22 +97,22 @@ public:
 
     // Comparison operators for callers that have already verified that
     // the objects originate from the same process.
-    bool lessThanSameProcess(const ProcessQualified& other)
+    bool lessThanSameProcess(const ProcessQualified& other) const
     {
         ASSERT(processIdentifier() == other.processIdentifier());
         return object() < other.object();
     }
-    bool lessThanOrEqualSameProcess(const ProcessQualified& other)
+    bool lessThanOrEqualSameProcess(const ProcessQualified& other) const
     {
         ASSERT(processIdentifier() == other.processIdentifier());
         return object() <= other.object();
     }
-    bool greaterThanSameProcess(const ProcessQualified& other)
+    bool greaterThanSameProcess(const ProcessQualified& other) const
     {
         ASSERT(processIdentifier() == other.processIdentifier());
         return object() > other.object();
     }
-    bool greaterThanOrEqualSameProcess(const ProcessQualified& other)
+    bool greaterThanOrEqualSameProcess(const ProcessQualified& other) const
     {
         ASSERT(processIdentifier() == other.processIdentifier());
         return object() >= other.object();

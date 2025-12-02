@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "TransactionID.h"
 #import "WKApplicationStateTrackingView.h"
 #import "WKBase.h"
 #import "WKBrowsingContextController.h"
@@ -49,6 +50,7 @@ class WebPageProxy;
 class WebProcessProxy;
 class WebProcessPool;
 struct MainFrameData;
+struct PageData;
 enum class ViewStabilityFlag : uint8_t;
 }
 
@@ -128,7 +130,7 @@ enum class ViewStabilityFlag : uint8_t;
 - (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight;
 - (void)_hideInspectorHighlight;
 
-- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData;
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData pageData:(const WebKit::PageData&)pageData transactionID:(const WebKit::TransactionID&)transactionID;
 - (void)_layerTreeCommitComplete;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;

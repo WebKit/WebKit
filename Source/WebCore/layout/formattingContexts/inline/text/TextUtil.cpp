@@ -386,7 +386,7 @@ bool TextUtil::mayBreakInBetween(String previousContent, const RenderStyle& prev
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
         nextContent.convertTo16Bit();
     }
-    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, nextContentStyle.computedLocale(), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
+    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, Style::toPlatform(nextContentStyle.computedLocale()), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.
     char16_t lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;

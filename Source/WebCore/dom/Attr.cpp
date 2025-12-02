@@ -115,9 +115,9 @@ ExceptionOr<void> Attr::setValue(const AtomString& value)
 
                 verifiedValue = compliantValue.releaseReturnValue();
 
-                if (RefPtr newElement = m_element.get(); newElement != element) {
-                    if (!newElement)
-                        m_standaloneValue = WTFMove(verifiedValue);
+                element = m_element.get();
+                if (!element) {
+                    m_standaloneValue = WTFMove(verifiedValue);
                     return { };
                 }
             }

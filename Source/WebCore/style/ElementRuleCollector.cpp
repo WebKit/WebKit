@@ -247,6 +247,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         collectMatchingRulesForList(matchRequest.ruleSet.linkPseudoClassRules(), matchRequest);
     if (matchesFocusPseudoClass(element))
         collectMatchingRulesForList(matchRequest.ruleSet.focusPseudoClassRules(), matchRequest);
+    if (matchesFocusVisiblePseudoClass(element))
+        collectMatchingRulesForList(matchRequest.ruleSet.focusVisiblePseudoClassRules(), matchRequest);
     if (&element == element.document().documentElement())
         collectMatchingRulesForList(matchRequest.ruleSet.rootElementRules(), matchRequest);
     collectMatchingRulesForList(matchRequest.ruleSet.tagRules(element.localName(), isHTML), matchRequest);

@@ -141,8 +141,8 @@ void CachedRawResource::notifyClientsDataWasReceived(const SharedBuffer& buffer)
 
     CachedResourceHandle protectedThis { this };
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
-    while (CachedRawResourceClient* c = walker.next())
-        c->dataReceived(*this, buffer);
+    while (RefPtr client = walker.next())
+        client->dataReceived(*this, buffer);
 }
 
 static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, CachedRawResourceClient& client, Vector<std::pair<ResourceRequest, ResourceResponse>>&& redirectsInReverseOrder, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -207,7 +207,7 @@ void CachedRawResource::allClientsRemoved()
 
 static void iterateClients(CachedResourceClientWalker<CachedRawResourceClient>&& walker, CachedResourceHandle<CachedRawResource>&& handle, ResourceRequest&& request, std::unique_ptr<ResourceResponse>&& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    auto client = walker.next();
+    RefPtr client = walker.next();
     if (!client)
         return completionHandler(WTFMove(request));
     const ResourceResponse& responseReference = *response;
@@ -236,15 +236,15 @@ void CachedRawResource::responseReceived(ResourceResponse&& newResponse)
         m_resourceLoaderIdentifier = m_loader->identifier();
     CachedResource::responseReceived(WTFMove(newResponse));
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
-    while (CachedRawResourceClient* c = walker.next())
-        c->responseReceived(*this, response(), nullptr);
+    while (RefPtr client = walker.next())
+        client->responseReceived(*this, response(), nullptr);
 }
 
 bool CachedRawResource::shouldCacheResponse(const ResourceResponse& response)
 {
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
-    while (CachedRawResourceClient* c = walker.next()) {
-        if (!c->shouldCacheResponse(*this, response))
+    while (RefPtr client = walker.next()) {
+        if (!client->shouldCacheResponse(*this, response))
             return false;
     }
     return true;
@@ -253,15 +253,15 @@ bool CachedRawResource::shouldCacheResponse(const ResourceResponse& response)
 void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
-    while (CachedRawResourceClient* c = walker.next())
-        c->dataSent(*this, bytesSent, totalBytesToBeSent);
+    while (RefPtr client = walker.next())
+        client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
 void CachedRawResource::finishedTimingForWorkerLoad(ResourceTiming&& resourceTiming)
 {
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
-    while (CachedRawResourceClient* c = walker.next())
-        c->finishedTimingForWorkerLoad(*this, resourceTiming);
+    while (RefPtr client = walker.next())
+        client->finishedTimingForWorkerLoad(*this, resourceTiming);
 }
 
 void CachedRawResource::switchClientsToRevalidatedResource()

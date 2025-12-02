@@ -61,15 +61,9 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         return lineLayoutResult.contentGeometry.logicalWidth;
     };
     auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, isFirstFormattedLine(), lineLayoutResult.nonSpanningInlineLevelBoxCount };
-    auto& runs = lineLayoutResult.runs;
-    if (lineLayoutResult.hasBlockContent()) {
-        // Since we don't need to position and align block content inside the line, we don't need to create any boxes for this block content.
-        auto marginBoxHeight = formattingContext().geometryForBox(runs[0].layoutBox()).marginBoxHeight();
-        auto blockLineLogicalTopLeft = InlineLayoutPoint { lineLayoutResult.lineGeometry.initialLogicalLeft, lineLayoutResult.lineGeometry.logicalTopLeft.y() };
-        lineBox.setLogicalRect({ blockLineLogicalTopLeft, lineLayoutResult.lineGeometry.logicalWidth, marginBoxHeight });
-        setVerticalPropertiesForInlineLevelBox(lineBox, lineBox.rootInlineBox());
-        lineBox.setHasContent(!!marginBoxHeight);
-    } else {
+    if (lineLayoutResult.hasBlockContent())
+        constructBlockContent(lineBox);
+    else {
         constructInlineLevelBoxes(lineBox);
         if (lineBox.hasContent()) {
             adjustIdeographicBaselineIfApplicable(lineBox);
@@ -530,6 +524,37 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         ASSERT(run.isOpaque());
     }
     lineBox.setHasContent(lineHasContent);
+}
+
+void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
+{
+    auto& lineLayoutResult = this->lineLayoutResult();
+    auto& runs = lineLayoutResult.runs;
+    if (runs.isEmpty() || !runs.last().isBlock()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Since we don't need to position and align block content inside the line, we don't need to create any boxes for this block content.
+    auto& blockGeometry = formattingContext().geometryForBox(runs.last().layoutBox());
+    for (size_t index = 0;  index < runs.size() - 1; ++index) {
+        auto& run = runs[index];
+        if (run.isLineSpanningInlineBoxStart()) {
+            auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), run.layoutBox().style(), lineLayoutResult.contentGeometry.logicalLeft, lineLayoutResult.contentGeometry.logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
+            setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
+            lineSpanningInlineBox.setLogicalTop(blockGeometry.marginBefore());
+            lineSpanningInlineBox.setLogicalHeight(InlineLayoutUnit(blockGeometry.borderBoxHeight()));
+            lineBox.addInlineLevelBox(WTFMove(lineSpanningInlineBox));
+            continue;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
+    auto blockLineLogicalTopLeft = InlineLayoutPoint { lineLayoutResult.lineGeometry.initialLogicalLeft, lineLayoutResult.lineGeometry.logicalTopLeft.y() };
+    lineBox.setLogicalRect({ blockLineLogicalTopLeft, lineLayoutResult.lineGeometry.logicalWidth, blockGeometry.marginBoxHeight() });
+    setVerticalPropertiesForInlineLevelBox(lineBox, lineBox.rootInlineBox());
+    // FIXME: Let's considered collapsed block boxes contentful for now (webkit.org/b/302804).
+    lineBox.setHasContent(true);
 }
 
 void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox& lineBox)

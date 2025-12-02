@@ -27,8 +27,7 @@
 #include "StyleScrollbarWidth.h"
 
 #include "DocumentQuirks.h"
-#include "StyleBuilderState.h"
-#include "StylePrimitiveKeyword+CSSValueConversion.h"
+#include "StyleBuilderChecking.h"
 
 namespace WebCore {
 namespace Style {
@@ -37,12 +36,23 @@ namespace Style {
 
 auto CSSValueConversion<ScrollbarWidth>::operator()(BuilderState& state, const CSSValue& value) -> ScrollbarWidth
 {
-    auto scrollbarWidth = toStyleFromCSSValue<WebCore::ScrollbarWidth>(state, value);
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
+    if (!primitiveValue)
+        return ScrollbarWidth::Auto;
 
-    if (scrollbarWidth == WebCore::ScrollbarWidth::Thin && state.document().quirks().needsScrollbarWidthThinDisabledQuirk())
-        return CSS::Keyword::Auto { };
-
-    return scrollbarWidth;
+    switch (primitiveValue->valueID()) {
+    case CSSValueAuto:
+        return ScrollbarWidth::Auto;
+    case CSSValueThin:
+        if (state.document().quirks().needsScrollbarWidthThinDisabledQuirk())
+            return ScrollbarWidth::Auto;
+        return ScrollbarWidth::Thin;
+    case CSSValueNone:
+        return ScrollbarWidth::None;
+    default:
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return ScrollbarWidth::Auto;
+    }
 }
 
 } // namespace Style

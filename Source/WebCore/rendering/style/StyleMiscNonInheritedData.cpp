@@ -215,7 +215,7 @@ void StyleMiscNonInheritedData::dumpDifferences(TextStream& ts, const StyleMiscN
 
     LOG_IF_DIFFERENT_WITH_CAST(UserDrag, objectFit);
     LOG_IF_DIFFERENT_WITH_CAST(ObjectFit, textOverflow);
-    LOG_IF_DIFFERENT_WITH_CAST(Resize, resize);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::Resize, resize);
 }
 #endif // !LOG_DISABLED
 

@@ -147,7 +147,7 @@ private:
     void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
     
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) final;
-    void dispatchWillSubmitForm(WebCore::FormState&, CompletionHandler<void()>&&) final;
+    void dispatchWillSubmitForm(WebCore::FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
     
     void revertToProvisionalState(WebCore::DocumentLoader*) final;
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
@@ -278,6 +278,9 @@ private:
 #endif
 
     bool siteIsolationEnabled() const;
+
+    void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&) final;
+    void broadcastFrameTreeSyncDataToOtherProcesses(const WebCore::FrameTreeSyncSerializationData&) final;
 
     Ref<WebCore::LocalFrame> protectedLocalFrame() const;
 

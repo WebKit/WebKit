@@ -26,6 +26,7 @@
 #ifndef BlobDataFileReference_h
 #define BlobDataFileReference_h
 
+#include <optional>
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WallTime.h>

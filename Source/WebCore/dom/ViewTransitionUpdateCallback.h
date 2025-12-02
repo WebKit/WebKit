@@ -38,6 +38,10 @@ class ViewTransitionUpdateCallback : public RefCounted<ViewTransitionUpdateCallb
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<RefPtr<DOMPromise>> invoke() = 0;
 
 private:

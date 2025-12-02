@@ -516,7 +516,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
+        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
             cachedImage()->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
@@ -775,7 +775,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = paintInfo.context().drawImage(*img, rect, options);
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
+        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(cachedImageClient());
 
 #if USE(SYSTEM_PREVIEW)
     auto* imageElement = dynamicDowncast<HTMLImageElement>(element());

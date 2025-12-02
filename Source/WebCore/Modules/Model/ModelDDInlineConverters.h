@@ -25,26 +25,22 @@
 
 #pragma once
 
+#if ENABLE(GPU_PROCESS_MODEL)
+
 #include <WebCore/DDImageAsset.h>
 #include <WebCore/DDMaterialDescriptor.h>
 #include <WebCore/DDMesh.h>
 #include <WebCore/DDMeshDescriptor.h>
-#include <WebCore/DDTextureDescriptor.h>
 #include <WebCore/DDUpdateMaterialDescriptor.h>
 #include <WebCore/DDUpdateMeshDescriptor.h>
 #include <WebCore/DDUpdateTextureDescriptor.h>
-#include <WebCore/ModelDDTypes.h>
+#include <WebGPU/DDModelTypes.h>
 #include <wtf/cf/VectorCF.h>
 #include <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
 
-static String toCpp(NSString* s)
-{
-    return String(s);
-}
-
-static DDModel::DDVertexAttributeFormat toCpp(WebDDVertexAttributeFormat *format)
+static DDModel::DDVertexAttributeFormat toCpp(DDBridgeVertexAttributeFormat *format)
 {
     return DDModel::DDVertexAttributeFormat {
         .semantic = format.semantic,
@@ -54,15 +50,15 @@ static DDModel::DDVertexAttributeFormat toCpp(WebDDVertexAttributeFormat *format
     };
 }
 
-static Vector<DDModel::DDVertexAttributeFormat> toCppVertexAttributes(NSArray<WebDDVertexAttributeFormat *> *formats)
+static Vector<DDModel::DDVertexAttributeFormat> toCpp(NSArray<DDBridgeVertexAttributeFormat *> *formats)
 {
     Vector<DDModel::DDVertexAttributeFormat> result;
-    for (WebDDVertexAttributeFormat *f in formats)
+    for (DDBridgeVertexAttributeFormat *f in formats)
         result.append(toCpp(f));
     return result;
 }
 
-static DDModel::DDVertexLayout toCpp(WebDDVertexLayout *layout)
+static DDModel::DDVertexLayout toCpp(DDBridgeVertexLayout *layout)
 {
     return DDModel::DDVertexLayout {
         .bufferIndex = layout.bufferIndex,
@@ -70,28 +66,15 @@ static DDModel::DDVertexLayout toCpp(WebDDVertexLayout *layout)
         .bufferStride = layout.bufferStride,
     };
 }
-static Vector<DDModel::DDVertexLayout> toCppVertexLayouts(NSArray<WebDDVertexLayout *> *layouts)
+static Vector<DDModel::DDVertexLayout> toCpp(NSArray<DDBridgeVertexLayout *> *layouts)
 {
     Vector<DDModel::DDVertexLayout> result;
-    for (WebDDVertexLayout *l in layouts)
+    for (DDBridgeVertexLayout *l in layouts)
         result.append(toCpp(l));
     return result;
 }
 
-static WebCore::DDModel::DDMeshDescriptor toCpp(WebAddMeshRequest *addMesh)
-{
-    return WebCore::DDModel::DDMeshDescriptor {
-        .indexCapacity = addMesh.indexCapacity,
-        .indexType = addMesh.indexType,
-        .vertexBufferCount = addMesh.vertexBufferCount,
-        .vertexCapacity = addMesh.vertexCapacity,
-        .vertexAttributes = toCppVertexAttributes(addMesh.vertexAttributes),
-        .vertexLayouts = toCppVertexLayouts(addMesh.vertexLayouts),
-        .identifier = addMesh.identifier
-    };
-}
-
-static Vector<DDModel::DDFloat4x4> toVector(WebChainedFloat4x4 *input)
+static Vector<DDModel::DDFloat4x4> toCpp(DDBridgeChainedFloat4x4 *input)
 {
     Vector<DDModel::DDFloat4x4> result;
     for ( ; input; input = input.next)
@@ -100,15 +83,7 @@ static Vector<DDModel::DDFloat4x4> toVector(WebChainedFloat4x4 *input)
     return result;
 }
 
-static Vector<KeyValuePair<int32_t, uint64_t>> toCpp(NSArray<WebSetRenderFlags *> *renderFlags)
-{
-    Vector<KeyValuePair<int32_t, uint64_t>> result;
-    for (WebSetRenderFlags *flag in renderFlags)
-        result.append({ flag.partIndex, flag.renderFlags });
-    return result;
-}
-
-static DDModel::DDMeshPart toCpp(WebDDMeshPart *part)
+static DDModel::DDMeshPart toCpp(DDBridgeMeshPart *part)
 {
     return DDModel::DDMeshPart {
         static_cast<uint32_t>(part.indexOffset),
@@ -120,213 +95,180 @@ static DDModel::DDMeshPart toCpp(WebDDMeshPart *part)
     };
 }
 
-static Vector<KeyValuePair<int32_t, DDModel::DDMeshPart>> toCpp(NSArray<WebSetPart *> *parts)
+static Vector<DDModel::DDMeshPart> toCpp(NSArray<DDBridgeMeshPart *> *parts)
 {
-    Vector<KeyValuePair<int32_t, DDModel::DDMeshPart>> result;
-    for (WebSetPart *f in parts)
-        result.append({ f.partIndex, toCpp(f.part) });
+    Vector<DDModel::DDMeshPart> result;
+    for (DDBridgeMeshPart *p in parts)
+        result.append(toCpp(p));
     return result;
 }
 
-static DDModel::DDReplaceVertices toCpp(WebReplaceVertices *a)
+static WebCore::DDModel::DDMeshDescriptor toCpp(DDBridgeMeshDescriptor *descriptor)
 {
-    return DDModel::DDReplaceVertices {
-        .bufferIndex = static_cast<int32_t>(a.bufferIndex),
-        .buffer = makeVector(a.buffer)
+    return WebCore::DDModel::DDMeshDescriptor {
+        .vertexBufferCount = descriptor.vertexBufferCount,
+        .vertexCapacity = descriptor.vertexCapacity,
+        .vertexAttributes = toCpp(descriptor.vertexAttributes),
+        .vertexLayouts = toCpp(descriptor.vertexLayouts),
+        .indexCapacity = descriptor.indexCapacity,
+        .indexType = static_cast<long>(descriptor.indexType)
     };
 }
 
-static Vector<DDModel::DDReplaceVertices> toCpp(NSArray<WebReplaceVertices *> *arr)
+static Vector<Vector<uint8_t>> toCpp(NSArray<NSData *> *dataVector)
 {
-    Vector<DDModel::DDReplaceVertices> result;
-    for (WebReplaceVertices *a in arr)
-        result.append(toCpp(a));
+    Vector<Vector<uint8_t>> result;
+    for (NSData *data in dataVector)
+        result.append(makeVector(data));
+
     return result;
 }
 
-static Vector<String> toCpp(NSArray<NSUUID *> *arr)
+static Vector<String> toCpp(NSArray<NSString *> *stringVector)
 {
     Vector<String> result;
-    for (NSUUID *a in arr) {
-        if (a)
-            result.append(String(a.UUIDString));
-    }
+    for (NSString *s in stringVector)
+        result.append(s);
+
     return result;
 }
 
-static WebCore::DDModel::DDUpdateMeshDescriptor toCpp(WebUpdateMeshRequest *update)
+static WebCore::DDModel::DDUpdateMeshDescriptor toCpp(DDBridgeUpdateMesh *update)
 {
     return WebCore::DDModel::DDUpdateMeshDescriptor {
-        .partCount = static_cast<int32_t>(update.partCount),
+        .identifier = update.identifier,
+        .updateType = static_cast<uint8_t>(update.updateType),
+        .descriptor = toCpp(update.descriptor),
         .parts = toCpp(update.parts),
-        .renderFlags = toCpp(update.renderFlags),
-        .vertices = toCpp(update.vertices),
-        .indices = makeVector(update.indices),
-        .transform = update.transform,
-        .instanceTransforms4x4 = toVector(update.instanceTransforms),
-        .materialIds = toCpp(update.materialIds),
-        .identifier = update.identifier
+        .indexData = makeVector(update.indexData),
+        .vertexData = toCpp(update.vertexData),
+        .instanceTransforms = toCpp(update.instanceTransforms),
+        .materialPrims = toCpp(update.materialPrims)
     };
 }
 
-static WebCore::DDModel::DDSemantic toCpp(WebDDSemantic semantic)
-{
-    switch (semantic) {
-    case WebDDSemantic::kColor:
-        return WebCore::DDModel::DDSemantic::Color;
-    case WebDDSemantic::kVector:
-        return WebCore::DDModel::DDSemantic::Vector;
-    case WebDDSemantic::kScalar:
-        return WebCore::DDModel::DDSemantic::Scalar;
-    default:
-    case WebDDSemantic::kUnknown:
-        return WebCore::DDModel::DDSemantic::Unknown;
-    }
-}
-
-static WebCore::DDModel::DDImageAsset toCpp(WebDDImageAsset *imageAsset)
-{
-    RetainPtr imageSource = adoptCF(CGImageSourceCreateWithData((CFDataRef)imageAsset.data, nullptr));
-    auto platformImage = adoptCF(CGImageSourceCreateImageAtIndex(imageSource.get(), 0, nullptr));
-    RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
-    auto byteSpan = span(pixelDataCfData.get());
-
-    auto width = CGImageGetWidth(platformImage.get());
-    auto height = CGImageGetHeight(platformImage.get());
-    auto bytesPerPixel = (int)(byteSpan.size() / (width * height));
-
-    return WebCore::DDModel::DDImageAsset {
-        .data = Vector<uint8_t> { byteSpan },
-        .width = static_cast<uint32_t>(width),
-        .height = static_cast<uint32_t>(height),
-        .bytesPerPixel = static_cast<uint32_t>(bytesPerPixel),
-        .semantic = toCpp(imageAsset.semantic),
-        .path = imageAsset.path,
-        .identifier = imageAsset.identifier
-    };
-}
-
-static WebCore::DDModel::DDNodeType toCpp(WebDDNodeType nodeType)
+#if ENABLE(GPU_PROCESS_MODEL_MATERIALS)
+static WebCore::DDModel::DDNodeType toCpp(DDBridgeNodeType nodeType)
 {
     switch (nodeType) {
-    case WebDDNodeType::kBuiltin:
+    case DDBridgeNodeType::kBuiltin:
         return WebCore::DDModel::DDNodeType::Builtin;
-    case WebDDNodeType::kConstant:
+    case DDBridgeNodeType::kConstant:
         return WebCore::DDModel::DDNodeType::Constant;
-    case WebDDNodeType::kArguments:
+    case DDBridgeNodeType::kArguments:
         return WebCore::DDModel::DDNodeType::Arguments;
     default:
-    case WebDDNodeType::kResults:
+    case DDBridgeNodeType::kResults:
         return WebCore::DDModel::DDNodeType::Results;
     }
 }
 
-static WebCore::DDModel::DDBuiltin toCpp(WebDDBuiltin *builtin)
+static WebCore::DDModel::DDBuiltin toCpp(DDBridgeBuiltin *builtin)
 {
     return WebCore::DDModel::DDBuiltin {
-        .definition = toCpp(builtin.definition),
-        .name = toCpp(builtin.name)
+        .definition = builtin.definition,
+        .name = builtin.name
     };
 }
 
-static WebCore::DDModel::DDConstant toCpp(WebDDConstant constant)
+static WebCore::DDModel::DDConstant toCpp(DDBridgeConstant constant)
 {
     switch (constant) {
-    case WebDDConstant::kBool:
+    case DDBridgeConstant::kBool:
         return WebCore::DDModel::DDConstant::kBool;
-    case WebDDConstant::kUchar:
+    case DDBridgeConstant::kUchar:
         return WebCore::DDModel::DDConstant::kUchar;
-    case WebDDConstant::kInt:
+    case DDBridgeConstant::kInt:
         return WebCore::DDModel::DDConstant::kInt;
-    case WebDDConstant::kUint:
+    case DDBridgeConstant::kUint:
         return WebCore::DDModel::DDConstant::kUint;
-    case WebDDConstant::kHalf:
+    case DDBridgeConstant::kHalf:
         return WebCore::DDModel::DDConstant::kHalf;
-    case WebDDConstant::kFloat:
+    case DDBridgeConstant::kFloat:
         return WebCore::DDModel::DDConstant::kFloat;
-    case WebDDConstant::kTimecode:
+    case DDBridgeConstant::kTimecode:
         return WebCore::DDModel::DDConstant::kTimecode;
-    case WebDDConstant::kString:
+    case DDBridgeConstant::kString:
         return WebCore::DDModel::DDConstant::kString;
-    case WebDDConstant::kToken:
+    case DDBridgeConstant::kToken:
         return WebCore::DDModel::DDConstant::kToken;
-    case WebDDConstant::kAsset:
+    case DDBridgeConstant::kAsset:
         return WebCore::DDModel::DDConstant::kAsset;
-    case WebDDConstant::kMatrix2f:
+    case DDBridgeConstant::kMatrix2f:
         return WebCore::DDModel::DDConstant::kMatrix2f;
-    case WebDDConstant::kMatrix3f:
+    case DDBridgeConstant::kMatrix3f:
         return WebCore::DDModel::DDConstant::kMatrix3f;
-    case WebDDConstant::kMatrix4f:
+    case DDBridgeConstant::kMatrix4f:
         return WebCore::DDModel::DDConstant::kMatrix4f;
-    case WebDDConstant::kQuatf:
+    case DDBridgeConstant::kQuatf:
         return WebCore::DDModel::DDConstant::kQuatf;
-    case WebDDConstant::kQuath:
+    case DDBridgeConstant::kQuath:
         return WebCore::DDModel::DDConstant::kQuath;
-    case WebDDConstant::kFloat2:
+    case DDBridgeConstant::kFloat2:
         return WebCore::DDModel::DDConstant::kFloat2;
-    case WebDDConstant::kHalf2:
+    case DDBridgeConstant::kHalf2:
         return WebCore::DDModel::DDConstant::kHalf2;
-    case WebDDConstant::kInt2:
+    case DDBridgeConstant::kInt2:
         return WebCore::DDModel::DDConstant::kInt2;
-    case WebDDConstant::kFloat3:
+    case DDBridgeConstant::kFloat3:
         return WebCore::DDModel::DDConstant::kFloat3;
-    case WebDDConstant::kHalf3:
+    case DDBridgeConstant::kHalf3:
         return WebCore::DDModel::DDConstant::kHalf3;
-    case WebDDConstant::kInt3:
+    case DDBridgeConstant::kInt3:
         return WebCore::DDModel::DDConstant::kInt3;
-    case WebDDConstant::kFloat4:
+    case DDBridgeConstant::kFloat4:
         return WebCore::DDModel::DDConstant::kFloat4;
-    case WebDDConstant::kHalf4:
+    case DDBridgeConstant::kHalf4:
         return WebCore::DDModel::DDConstant::kHalf4;
-    case WebDDConstant::kInt4:
+    case DDBridgeConstant::kInt4:
         return WebCore::DDModel::DDConstant::kInt4;
 
-    case WebDDConstant::kPoint3f:
+    case DDBridgeConstant::kPoint3f:
         return WebCore::DDModel::DDConstant::kPoint3f;
-    case WebDDConstant::kPoint3h:
+    case DDBridgeConstant::kPoint3h:
         return WebCore::DDModel::DDConstant::kPoint3h;
-    case WebDDConstant::kNormal3f:
+    case DDBridgeConstant::kNormal3f:
         return WebCore::DDModel::DDConstant::kNormal3f;
-    case WebDDConstant::kNormal3h:
+    case DDBridgeConstant::kNormal3h:
         return WebCore::DDModel::DDConstant::kNormal3h;
-    case WebDDConstant::kVector3f:
+    case DDBridgeConstant::kVector3f:
         return WebCore::DDModel::DDConstant::kVector3f;
-    case WebDDConstant::kVector3h:
+    case DDBridgeConstant::kVector3h:
         return WebCore::DDModel::DDConstant::kVector3h;
-    case WebDDConstant::kColor3f:
+    case DDBridgeConstant::kColor3f:
         return WebCore::DDModel::DDConstant::kColor3f;
-    case WebDDConstant::kColor3h:
+    case DDBridgeConstant::kColor3h:
         return WebCore::DDModel::DDConstant::kColor3h;
-    case WebDDConstant::kColor4f:
+    case DDBridgeConstant::kColor4f:
         return WebCore::DDModel::DDConstant::kColor4f;
-    case WebDDConstant::kColor4h:
+    case DDBridgeConstant::kColor4h:
         return WebCore::DDModel::DDConstant::kColor4h;
-    case WebDDConstant::kTexCoord2h:
+    case DDBridgeConstant::kTexCoord2h:
         return WebCore::DDModel::DDConstant::kTexCoord2h;
-    case WebDDConstant::kTexCoord2f:
+    case DDBridgeConstant::kTexCoord2f:
         return WebCore::DDModel::DDConstant::kTexCoord2f;
-    case WebDDConstant::kTexCoord3h:
+    case DDBridgeConstant::kTexCoord3h:
         return WebCore::DDModel::DDConstant::kTexCoord3h;
-    case WebDDConstant::kTexCoord3f:
+    case DDBridgeConstant::kTexCoord3f:
         return WebCore::DDModel::DDConstant::kTexCoord3f;
     }
 }
 
-static Vector<WebCore::DDModel::DDNumberOrString> toCpp(NSArray<NSValue *> *constantValues)
+static Vector<WebCore::DDModel::DDNumberOrString> toCpp(NSArray<DDValueString *> *constantValues)
 {
     Vector<WebCore::DDModel::DDNumberOrString> result;
     result.reserveCapacity(constantValues.count);
-    for (NSValue* v in constantValues) {
-        if ([v isKindOfClass:NSNumber.class])
-            result.append(static_cast<NSNumber *>(v).doubleValue);
+    for (DDValueString *v in constantValues) {
+        if (v.string.length)
+            result.append(v.string);
         else
-            result.append(String(static_cast<NSString*>(v.nonretainedObjectValue)));
+            result.append(v.number.doubleValue);
     }
 
     return result;
 }
 
-static WebCore::DDModel::DDConstantContainer toCpp(WebDDConstantContainer *container)
+static WebCore::DDModel::DDConstantContainer toCpp(DDBridgeConstantContainer *container)
 {
     return WebCore::DDModel::DDConstantContainer {
         .constant = toCpp(container.constant),
@@ -335,7 +277,7 @@ static WebCore::DDModel::DDConstantContainer toCpp(WebDDConstantContainer *conta
     };
 }
 
-static WebCore::DDModel::DDNode toCpp(WebDDNode *node)
+static WebCore::DDModel::DDNode toCpp(DDBridgeNode *node)
 {
     return WebCore::DDModel::DDNode {
         .bridgeNodeType = toCpp(node.bridgeNodeType),
@@ -344,7 +286,7 @@ static WebCore::DDModel::DDNode toCpp(WebDDNode *node)
     };
 }
 
-static WebCore::DDModel::DDEdge toCpp(WebDDEdge *edge)
+static WebCore::DDModel::DDEdge toCpp(DDBridgeEdge *edge)
 {
     return WebCore::DDModel::DDEdge {
         .upstreamNodeIndex = edge.upstreamNodeIndex,
@@ -354,65 +296,65 @@ static WebCore::DDModel::DDEdge toCpp(WebDDEdge *edge)
     };
 }
 
-static WebCore::DDModel::DDDataType toCpp(WebDDDataType type)
+static WebCore::DDModel::DDDataType toCpp(DDBridgeDataType type)
 {
     switch (type) {
-    case WebDDDataType::kBool:
+    case DDBridgeDataType::kBool:
         return WebCore::DDModel::DDDataType::kBool;
-    case WebDDDataType::kInt:
+    case DDBridgeDataType::kInt:
         return WebCore::DDModel::DDDataType::kInt;
-    case WebDDDataType::kInt2:
+    case DDBridgeDataType::kInt2:
         return WebCore::DDModel::DDDataType::kInt2;
-    case WebDDDataType::kInt3:
+    case DDBridgeDataType::kInt3:
         return WebCore::DDModel::DDDataType::kInt3;
-    case WebDDDataType::kInt4:
+    case DDBridgeDataType::kInt4:
         return WebCore::DDModel::DDDataType::kInt4;
-    case WebDDDataType::kFloat:
+    case DDBridgeDataType::kFloat:
         return WebCore::DDModel::DDDataType::kFloat;
-    case WebDDDataType::kColor3f:
+    case DDBridgeDataType::kColor3f:
         return WebCore::DDModel::DDDataType::kColor3f;
-    case WebDDDataType::kColor3h:
+    case DDBridgeDataType::kColor3h:
         return WebCore::DDModel::DDDataType::kColor3h;
-    case WebDDDataType::kColor4f:
+    case DDBridgeDataType::kColor4f:
         return WebCore::DDModel::DDDataType::kColor4f;
-    case WebDDDataType::kColor4h:
+    case DDBridgeDataType::kColor4h:
         return WebCore::DDModel::DDDataType::kColor4h;
-    case WebDDDataType::kFloat2:
+    case DDBridgeDataType::kFloat2:
         return WebCore::DDModel::DDDataType::kFloat2;
-    case WebDDDataType::kFloat3:
+    case DDBridgeDataType::kFloat3:
         return WebCore::DDModel::DDDataType::kFloat3;
-    case WebDDDataType::kFloat4:
+    case DDBridgeDataType::kFloat4:
         return WebCore::DDModel::DDDataType::kFloat4;
-    case WebDDDataType::kHalf:
+    case DDBridgeDataType::kHalf:
         return WebCore::DDModel::DDDataType::kHalf;
-    case WebDDDataType::kHalf2:
+    case DDBridgeDataType::kHalf2:
         return WebCore::DDModel::DDDataType::kHalf2;
-    case WebDDDataType::kHalf3:
+    case DDBridgeDataType::kHalf3:
         return WebCore::DDModel::DDDataType::kHalf3;
-    case WebDDDataType::kHalf4:
+    case DDBridgeDataType::kHalf4:
         return WebCore::DDModel::DDDataType::kHalf4;
-    case WebDDDataType::kMatrix2f:
+    case DDBridgeDataType::kMatrix2f:
         return WebCore::DDModel::DDDataType::kMatrix2f;
-    case WebDDDataType::kMatrix3f:
+    case DDBridgeDataType::kMatrix3f:
         return WebCore::DDModel::DDDataType::kMatrix3f;
-    case WebDDDataType::kMatrix4f:
+    case DDBridgeDataType::kMatrix4f:
         return WebCore::DDModel::DDDataType::kMatrix4f;
-    case WebDDDataType::kSurfaceShader:
+    case DDBridgeDataType::kSurfaceShader:
         return WebCore::DDModel::DDDataType::kSurfaceShader;
-    case WebDDDataType::kGeometryModifier:
+    case DDBridgeDataType::kGeometryModifier:
         return WebCore::DDModel::DDDataType::kGeometryModifier;
-    case WebDDDataType::kString:
+    case DDBridgeDataType::kString:
         return WebCore::DDModel::DDDataType::kString;
-    case WebDDDataType::kToken:
+    case DDBridgeDataType::kToken:
         return WebCore::DDModel::DDDataType::kToken;
-    case WebDDDataType::kAsset:
+    case DDBridgeDataType::kAsset:
         return WebCore::DDModel::DDDataType::kAsset;
     default:
         RELEASE_ASSERT_NOT_REACHED("USD file is corrupt");
     }
 }
 
-static WebCore::DDModel::DDInputOutput toCpp(WebDDInputOutput *inputOutput)
+static WebCore::DDModel::DDInputOutput toCpp(DDBridgeInputOutput *inputOutput)
 {
     return WebCore::DDModel::DDInputOutput {
         .type = toCpp(inputOutput.type),
@@ -420,7 +362,7 @@ static WebCore::DDModel::DDInputOutput toCpp(WebDDInputOutput *inputOutput)
     };
 }
 
-static WebCore::DDModel::DDPrimvar toCpp(WebDDPrimvar *primvar)
+static WebCore::DDModel::DDPrimvar toCpp(DDBridgePrimvar *primvar)
 {
     return WebCore::DDModel::DDPrimvar {
         .name = toCpp(primvar.name),
@@ -428,6 +370,13 @@ static WebCore::DDModel::DDPrimvar toCpp(WebDDPrimvar *primvar)
         .attributeFormat = primvar.attributeFormat
     };
 }
+
+static WebCore::DDModel::DDMaterialGraph toCpp(DDBridgeMaterialGraph *)
+{
+    return WebCore::DDModel::DDMaterialGraph {
+    };
+}
+#endif
 
 template<typename T, typename U>
 static Vector<U> toCpp(NSArray<T *> *nsArray)
@@ -440,44 +389,60 @@ static Vector<U> toCpp(NSArray<T *> *nsArray)
     return result;
 }
 
-static WebCore::DDModel::DDMaterialGraph toCpp(WebDDMaterialGraph *materialGraph)
+static WebCore::DDModel::DDImageAssetSwizzle convert(MTLTextureSwizzleChannels swizzle)
 {
-    return WebCore::DDModel::DDMaterialGraph {
-        .nodes = toCpp<WebDDNode, WebCore::DDModel::DDNode>(materialGraph.nodes),
-        .edges = toCpp<WebDDEdge, WebCore::DDModel::DDEdge>(materialGraph.edges),
-        .inputs = toCpp<WebDDInputOutput, WebCore::DDModel::DDInputOutput>(materialGraph.inputs),
-        .outputs = toCpp<WebDDInputOutput, WebCore::DDModel::DDInputOutput>(materialGraph.outputs),
-        .primvars = toCpp<WebDDPrimvar, WebCore::DDModel::DDPrimvar>(materialGraph.primvars),
-        .identifier = materialGraph.identifier
+    return WebCore::DDModel::DDImageAssetSwizzle {
+        .red = swizzle.red,
+        .green = swizzle.green,
+        .blue = swizzle.blue,
+        .alpha = swizzle.alpha
     };
 }
 
-static WebCore::DDModel::DDTextureDescriptor toCpp(WebDDAddTextureRequest *update)
+static WebCore::DDModel::DDImageAsset convert(DDBridgeImageAsset *imageAsset)
 {
-    return WebCore::DDModel::DDTextureDescriptor {
-        .imageAsset = toCpp(update.imageAsset)
+    RetainPtr imageSource = adoptCF(CGImageSourceCreateWithData((CFDataRef)imageAsset.data, nullptr));
+    auto platformImage = adoptCF(CGImageSourceCreateImageAtIndex(imageSource.get(), 0, nullptr));
+    RetainPtr pixelDataCfData = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(platformImage.get())));
+    auto byteSpan = span(pixelDataCfData.get());
+
+    auto width = CGImageGetWidth(platformImage.get());
+    auto height = CGImageGetHeight(platformImage.get());
+    auto bytesPerPixel = (int)(byteSpan.size() / (width * height));
+
+    return WebCore::DDModel::DDImageAsset {
+        .data = Vector<uint8_t> { byteSpan },
+        .width = static_cast<long>(width),
+        .height = static_cast<long>(height),
+        .depth = 1,
+        .bytesPerPixel = bytesPerPixel,
+        .textureType = imageAsset.textureType,
+        .pixelFormat = imageAsset.pixelFormat,
+        .mipmapLevelCount = imageAsset.mipmapLevelCount,
+        .arrayLength = imageAsset.arrayLength,
+        .textureUsage = imageAsset.textureUsage,
+        .swizzle = convert(imageAsset.swizzle)
     };
 }
 
-static WebCore::DDModel::DDUpdateTextureDescriptor toCpp(WebDDUpdateTextureRequest *update)
+static WebCore::DDModel::DDUpdateTextureDescriptor toCpp(DDBridgeUpdateTexture *update)
 {
     return WebCore::DDModel::DDUpdateTextureDescriptor {
-        .imageAsset = toCpp(update.imageAsset)
+        .imageAsset = convert(update.imageAsset),
+        .identifier = update.identifier,
+        .hashString = update.hashString
     };
 }
 
-static WebCore::DDModel::DDMaterialDescriptor toCpp(WebDDAddMaterialRequest *update)
-{
-    return WebCore::DDModel::DDMaterialDescriptor {
-        .materialGraph = toCpp(update.material)
-    };
-}
-
-static WebCore::DDModel::DDUpdateMaterialDescriptor toCpp(WebDDUpdateMaterialRequest *update)
+static WebCore::DDModel::DDUpdateMaterialDescriptor toCpp(DDBridgeUpdateMaterial *update)
 {
     return WebCore::DDModel::DDUpdateMaterialDescriptor {
-        .materialGraph = toCpp(update.material)
+        .materialGraph = makeVector(update.materialGraph),
+        .identifier = update.identifier
     };
 }
 
 }
+
+#endif
+

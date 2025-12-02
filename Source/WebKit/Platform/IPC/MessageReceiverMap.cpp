@@ -118,14 +118,14 @@ void MessageReceiverMap::invalidate()
 
 bool MessageReceiverMap::dispatchMessage(Connection& connection, Decoder& decoder)
 {
-    if (auto messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
+    if (RefPtr messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());
 
         messageReceiver->didReceiveMessage(connection, decoder);
         return true;
     }
 
-    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
+    if (RefPtr messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
         messageReceiver->didReceiveMessage(connection, decoder);
         return true;
     }
@@ -135,13 +135,13 @@ bool MessageReceiverMap::dispatchMessage(Connection& connection, Decoder& decode
 
 bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
 {
-    if (auto messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
+    if (RefPtr messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());
         messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }
 
-    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
+    if (RefPtr messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
         messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }

@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedScrollDrivenAnimationsEnabled=true ThreadedTimeBasedAnimationsEnabled=false ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const target = createDiv(t);
+    
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    target.animate({ opacity: [0, 1] }, { timeline });
+    target.animate({ translate: '0 100px' }, 1000 * 1000);
+
+    await legacyAnimationCommit();
+
+    const animations = window.internals?.acceleratedAnimationsForElement(target);
+    assert_equals(animations.length, 2, "Both animations are accelerated");
+    assert_equals(animations[0].property, "opacity");
+    assert_true(animations[0].isThreaded, "The scroll-driven animation is threaded");
+    assert_equals(animations[1].property, "transform");
+    assert_false(animations[1].isThreaded, "The time-based animation is not threaded");
+}, "Scroll-driven and monotonic animations can be combined on the same element and yield accelerated animations provided they affect different properties.");
+
+</script>
+</body>

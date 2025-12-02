@@ -6,4 +6,5 @@ PASS: acronymText.attributedStringForTextMarkerRangeContainsAttribute('AXExpande
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Foo Bar
+Foo
+Bar

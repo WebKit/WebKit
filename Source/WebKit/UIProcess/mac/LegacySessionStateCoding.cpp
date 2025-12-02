@@ -380,10 +380,7 @@ static MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> encodeSessionHistoryEn
 
 static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& frameState)
 {
-    static NeverDestroyed<RetainPtr<CFAllocatorRef>> fastMallocDeallocator;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static NeverDestroyed<RetainPtr<CFAllocatorRef>> fastMallocDeallocator = [] {
         CFAllocatorContext context = {
             0, // version
             nullptr, // info
@@ -397,8 +394,8 @@ static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& fram
             },
             nullptr, // preferredSize
         };
-        fastMallocDeallocator.get() = adoptCF(CFAllocatorCreate(kCFAllocatorDefault, &context));
-    });
+        return adoptCF(CFAllocatorCreate(kCFAllocatorDefault, &context));
+    }();
 
     size_t bufferSize;
     auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);

@@ -1357,7 +1357,7 @@ private:
 
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias: {
+        case PutByValDirectResolved: {
             Edge& child1 = m_graph.varArgChild(node, 0);
             Edge& child2 = m_graph.varArgChild(node, 1);
             Edge& child3 = m_graph.varArgChild(node, 2);

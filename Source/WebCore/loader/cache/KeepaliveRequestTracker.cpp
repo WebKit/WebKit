@@ -28,7 +28,12 @@
 
 namespace WebCore {
 
-const uint64_t maxInflightKeepaliveBytes { 65536 }; // 64 kibibytes as per Fetch specification.
+constexpr uint64_t maxInflightKeepaliveBytes { 65536 }; // 64 kibibytes as per Fetch specification.
+
+Ref<KeepaliveRequestTracker> KeepaliveRequestTracker::create()
+{
+    return adoptRef(*new KeepaliveRequestTracker);
+}
 
 KeepaliveRequestTracker::~KeepaliveRequestTracker()
 {

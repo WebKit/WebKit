@@ -24,7 +24,7 @@
 #include "BaseTarget.xcconfig"
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AppleFeatures.xcconfig"
 
-GCC_PREPROCESSOR_DEFINITIONS = $(ENABLE_RELOCATABLE_WEBPUSHD) $(inherited) $(ENABLE_WEBGPU_SWIFT) $(ENABLE_SWIFT_DEMO_URI_SCHEME);
+GCC_PREPROCESSOR_DEFINITIONS = $(ENABLE_RELOCATABLE_WEBPUSHD) $(inherited) $(ENABLE_WEBGPU_SWIFT) $(ENABLE_SWIFT_DEMO_URI_SCHEME) $(GENERATE_SINGLE_SWIFT_INTEROP_FILE);
 
 PRODUCT_NAME = WebKit;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
@@ -167,16 +167,6 @@ WK_PDFKIT_LDFLAGS_maccatalyst_MACOS_SINCE_1100 = $(WK_PDFKIT_LDFLAGS_iphoneos);
 WK_PROTOTYPE_TOOLS_LDFLAGS = $(WK_PROTOTYPE_TOOLS_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_PROTOTYPE_TOOLS_LDFLAGS_cocoatouch = -framework PrototypeTools;
 
-WK_SAFE_BROWSING_LDFLAGS = $(WK_SAFE_BROWSING_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_SAFE_BROWSING_LDFLAGS_iphoneos = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_iphonesimulator = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_watchos = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_watchsimulator = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_xros = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_xrsimulator = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_maccatalyst = -framework SafariSafeBrowsing;
-WK_SAFE_BROWSING_LDFLAGS_macosx = -weak_framework SafariSafeBrowsing;
-
 WK_SECURITY_INTERFACE_LDFLAGS = $(WK_SECURITY_INTERFACE_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SECURITY_INTERFACE_LDFLAGS_macosx = -framework SecurityInterface;
 
@@ -317,11 +307,12 @@ WK_GAMECONTROLLERUI_LDFLAGS_xros = $(WK_GAMECONTROLLERUI_LDFLAGS$(WK_XROS_26));
 WK_GAMECONTROLLERUI_LDFLAGS_xrsimulator = $(WK_GAMECONTROLLERUI_LDFLAGS$(WK_XROS_26));
 WK_GAMECONTROLLERUI_LDFLAGS_XROS_SINCE_26 = -Wl,-upward_framework,GameControllerUI -Wl,-weak_framework,GameControllerUI;
 
-FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal -weak_framework CoreML -weak_framework NaturalLanguage $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_MOBILE_KEY_BAG_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SAFE_BROWSING_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_MRUIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS) $(WK_LIBBSM_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_WRITING_TOOLS_LDFLAGS) $(WK_USERNOTIFICATIONS_LDFLAGS) $(WK_UIKITSERVICES_LDFLAGS) $(WK_SPRINGBOARDSERVICES_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_TEXT_EXTRACTION_FILTER_LDFLAGS) $(WK_GAMECONTROLLERUI_LDFLAGS)
+FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal -weak_framework CoreML -weak_framework NaturalLanguage $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_MOBILE_KEY_BAG_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_MRUIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS) $(WK_LIBBSM_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_WRITING_TOOLS_LDFLAGS) $(WK_USERNOTIFICATIONS_LDFLAGS) $(WK_UIKITSERVICES_LDFLAGS) $(WK_SPRINGBOARDSERVICES_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_TEXT_EXTRACTION_FILTER_LDFLAGS) $(WK_GAMECONTROLLERUI_LDFLAGS)
 
 // Prevent C++ standard library basic_stringstream, operator new, delete and their related exception types from being exported as weak symbols.
 // WebCore::CSS::Range<-inf,inf> can be removed once we no longer support macOS Sonoma. See https://bugs.webkit.org/show_bug.cgi?id=295857
-UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTAXtlN7WebCore3CSS5RangeELdfff0000000000000ELd7ff0000000000000EEE;
+// Also work around rdar://165050676 by hiding all exported symbols from the "Cxx" module.
+UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTAXtlN7WebCore3CSS5RangeELdfff0000000000000ELd7ff0000000000000EEE -Wl,-unexported_symbol,_$s*3Cxx*;
 
 WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS = -Xlinker -no_inits;
 WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(WK_ANY_SANITIZER_ENABLED)_$(ENABLE_LLVM_PROFILE_GENERATION));
@@ -416,12 +407,40 @@ WK_SUPPORTS_SWIFT_OBJCXX_INTEROP[sdk=macosx26.3*] = $(WK_NOT_$(DEPLOYMENT_LOCATI
 SWIFT_OBJC_INTEROP_MODE = $(SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP));
 SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = objcxx;
 SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = $(inherited);
+SWIFT_OBJC_INTERFACE_HEADER_NAME = WebKit-Swift-Generated.h;
+
+// Prior to 26.3, rdar://152836730 and rdar://152838988 require us to
+// generate a separate header file for Swift/obj-C interop vs Swift/C++
+// interop. After that point, they can be combined into one.
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE = YES;
+
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=macosx14*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=macosx15*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=macosx26.0*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=macosx26.1*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=macosx26.2*] = ;
+
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=iphone*18.*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=iphone*26.0*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=iphone*26.1*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=iphone*26.2*] = ;
+
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=xr*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=appletv*] = ;
+WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE[sdk=watch*] = ;
+
+// Corresponding preprocessor symbol
+GENERATE_SINGLE_SWIFT_INTEROP_FILE = $(GENERATE_SINGLE_SWIFT_INTEROP_FILE_$(WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE));
+GENERATE_SINGLE_SWIFT_INTEROP_FILE_ = ;
+GENERATE_SINGLE_SWIFT_INTEROP_FILE_YES = GENERATE_SINGLE_SWIFT_INTEROP_FILE;
 
 // FIXME: (rdar://149474443) Swift/Cxx interop does not respect CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
 // FIXME: (rdar://103177280) "-no-verify-emitted-module-interface;" is needed to workaround a SwiftVerifyEmittedModuleInterface bug
-OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP));
+OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) $(OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_$(WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE);
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -no-verify-emitted-module-interface;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
+OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_YES = -enable-experimental-feature RequiresObjC=Foundation;
+OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_NO = ;
 
 // WebKit's clang module does not build in public SDK builds of these
 // platforms, preventing any Swift compilation. (https://bugs.webkit.org/show_bug.cgi?id=280912)

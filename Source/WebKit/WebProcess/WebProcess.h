@@ -145,6 +145,7 @@ class RemoteImageDecoderAVFManager;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
+class RemoteSharedResourceCacheProxy;
 class StorageAreaMap;
 class UserData;
 class WebAutomationSessionProxy;
@@ -165,6 +166,7 @@ class WebTransportSession;
 struct AccessibilityPreferences;
 struct AdditionalFonts;
 struct ContentWorldIdentifierType;
+struct RemoteAudioSessionConfiguration;
 struct RemoteWorkerInitializationData;
 struct UserMessage;
 struct WebProcessCreationParameters;
@@ -175,6 +177,12 @@ struct WebPreferencesStore;
 struct WebTransportSessionIdentifierType;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
+
+#if USE(LIBRICE)
+class RiceBackendProxy;
+struct RiceBackendIdentifierType;
+using RiceBackendIdentifier = ObjectIdentifier<RiceBackendIdentifierType>;
+#endif
 
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
@@ -302,6 +310,12 @@ public:
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
 
+#if USE(LIBRICE)
+    RefPtr<RiceBackendProxy> gstreamerIceBackend(RiceBackendIdentifier);
+    void addRiceBackend(RiceBackendIdentifier, RiceBackendProxy&);
+    void removeRiceBackend(RiceBackendIdentifier);
+#endif
+
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
     Ref<GPUProcessConnection> ensureProtectedGPUProcessConnection();
@@ -327,6 +341,7 @@ public:
     Ref<RemoteCDMFactory> protectedCDMFactory();
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
+    RemoteSharedResourceCacheProxy& gpuProcessSharedResourceCache();
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)
@@ -544,6 +559,10 @@ public:
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     void initializeAccessibility(Vector<SandboxExtension::Handle>&&);
     bool shouldInitializeAccessibility() const { return m_shouldInitializeAccessibility; }
+#endif
+
+#if USE(AUDIO_SESSION)
+    void remoteAudioSessionConfigurationChanged(const RemoteAudioSessionConfiguration&);
 #endif
 
 private:
@@ -826,6 +845,7 @@ private:
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     std::unique_ptr<AudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
 #endif
+    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -965,6 +985,11 @@ private:
 
     Lock m_webTransportSessionsLock;
     HashMap<WebTransportSessionIdentifier, ThreadSafeWeakPtr<WebTransportSession>> m_webTransportSessions WTF_GUARDED_BY_LOCK(m_webTransportSessionsLock);
+
+#if USE(LIBRICE)
+    HashMap<RiceBackendIdentifier, ThreadSafeWeakPtr<RiceBackendProxy>> m_gstreamerIceBackends;
+#endif
+
     HashSet<WebCore::RegistrableDomain> m_domainsWithStorageAccessQuirks;
     std::unique_ptr<ScriptTrackingPrivacyFilter> m_scriptTrackingPrivacyFilter;
     bool m_mediaPlaybackEnabled { false };

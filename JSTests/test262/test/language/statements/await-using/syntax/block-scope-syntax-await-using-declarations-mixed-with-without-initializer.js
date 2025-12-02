@@ -21,7 +21,6 @@ info: |
 negative:
   phase: parse
   type: SyntaxError
-flags: [async]
 features: [explicit-resource-management]
 ---*/
 

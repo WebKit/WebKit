@@ -30,8 +30,8 @@
 
 #include "FetchBodySource.h"
 #include "FormDataConsumer.h"
+#include "ReadableStreamToSharedBufferSink.h"
 #include <WebCore/JSDOMPromiseDeferredForward.h>
-#include <WebCore/ReadableStreamToSharedBufferSink.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserGestureIndicator.h>
@@ -62,6 +62,7 @@ public:
 
     bool hasData() const { return !!m_buffer; }
     const FragmentedSharedBuffer* data() const LIFETIME_BOUND { return m_buffer.get().unsafeGet(); }
+    RefPtr<JSC::ArrayBuffer> asArrayBuffer();
     void setData(Ref<FragmentedSharedBuffer>&&);
 
     RefPtr<FragmentedSharedBuffer> takeData();

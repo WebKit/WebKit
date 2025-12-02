@@ -451,6 +451,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
     auto writingMode = root().style().writingMode();
     auto lineBoxLogicalRect = lineBox.logicalRect();
     auto lineBoxVisualOffset = m_displayLine.topLeft();
+    auto lineHasBlockContent = lineLayoutResult.hasBlockContent();
 
     auto rootLogicalRect = lineBox.logicalRectForRootInlineBox();
     auto rootVisualRect = mapInlineRectLogicalToVisual(rootLogicalRect, lineBoxLogicalRect, writingMode);
@@ -504,9 +505,14 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                     adjustLogicalRectForTextSpacing(rect);
                 return rect;
             }
-            if (lineRun.isLineSpanningInlineBoxStart())
+            if (lineRun.isLineSpanningInlineBoxStart()) {
+                // Ideally spanning inline boxes on block lines would not have borders and padding.
+                if (lineHasBlockContent)
+                    return lineBox.logicalContentBoxForInlineBox(layoutBox);
                 return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+            }
             if (lineRun.isBlock()) {
+                ASSERT(lineHasBlockContent);
                 auto borderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
                 return { borderBoxRect.top(), borderBoxRect.left(), borderBoxRect.width(), borderBoxRect.height() };
             }
@@ -559,7 +565,8 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             auto borderBoxLogicalTopLeft = toLayoutPoint(lineBox.logicalRect().topLeft() + logicalRect.topLeft());
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 // Inline boxes need special (stretchy) box geometry handling.
-                setInlineBoxGeometry(lineRun.layoutBox(), boxGeometry, { borderBoxLogicalTopLeft, logicalRect.size() }, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
+                if (!lineHasBlockContent)
+                    setInlineBoxGeometry(lineRun.layoutBox(), boxGeometry, { borderBoxLogicalTopLeft, logicalRect.size() }, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
                 return;
             }
             boxGeometry.setTopLeft(borderBoxLogicalTopLeft);
@@ -780,7 +787,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
         auto& inlineContent = lineLayoutResult.runs;
         for (size_t index = 0; index < lineLayoutResult.directionality.visualOrderList.size(); ++index) {
             auto logicalIndex = lineLayoutResult.directionality.visualOrderList[index];
-            ASSERT(inlineContent[logicalIndex].bidiLevel() != InlineItem::opaqueBidiLevel);
+            ASSERT(inlineContent[logicalIndex].bidiLevel() != InlineItem::opaqueBidiLevel || inlineContent[logicalIndex].isLineSpanningInlineBoxStart());
 
             auto& lineRun = inlineContent[logicalIndex];
             auto needsDisplayBoxOrGeometrySetting = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();

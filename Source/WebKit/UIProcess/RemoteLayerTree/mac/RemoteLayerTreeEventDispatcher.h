@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#if PLATFORM(MAC)
 
 #include "DisplayLinkObserverID.h"
 #include "MomentumEventDispatcher.h"
@@ -216,4 +216,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
+#endif // PLATFORM(MAC)

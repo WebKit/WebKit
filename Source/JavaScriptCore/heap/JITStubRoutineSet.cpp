@@ -85,11 +85,7 @@ void JITStubRoutineSet::prepareForConservativeScan()
         m_range = Range<uintptr_t> { 0, 0 };
         return;
     }
-    std::sort(
-        m_routines.begin(), m_routines.end(),
-        [&] (const Routine& a, const Routine& b) {
-            return a.startAddress < b.startAddress;
-        });
+    std::ranges::sort(m_routines, { }, &Routine::startAddress);
     m_range = Range<uintptr_t> {
         m_routines.first().startAddress,
         m_routines.last().routine->endAddress()

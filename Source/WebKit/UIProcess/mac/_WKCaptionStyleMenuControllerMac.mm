@@ -28,22 +28,38 @@
 
 #if PLATFORM(MAC)
 
+#import "_WKCaptionStyleMenuControllerInternal.h"
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+#import "_WKCaptionStyleMenuControllerAVKitMac.h"
+
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/cf/CoreMediaSoftLink.h>
+
+SOFTLINK_AVKIT_FRAMEWORK()
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
+#endif
+
 using namespace WebCore;
 using namespace WTF;
 
-@interface WKCaptionStyleMenuController () <NSMenuDelegate> {
-    Vector<String> _profileIDs;
-    String _savedActiveProfileID;
-    RetainPtr<NSMenu> _menu;
-}
+@interface WKCaptionStyleMenuController () <NSMenuDelegate>
 @end
 
 @implementation WKCaptionStyleMenuController
+
++ (instancetype)menuController
+{
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+    if (AVKitLibrary() && getAVLegibleMediaOptionsMenuControllerClassSingleton())
+        return [[[_WKCaptionStyleMenuControllerAVKitMac alloc] init] autorelease];
+#endif
+    return [[[self alloc] init] autorelease];
+}
 
 - (instancetype)init
 {
@@ -52,7 +68,7 @@ using namespace WTF;
 
     _menu = adoptNS([[NSMenu alloc] initWithTitle:@""]);
     [_menu setDelegate:self];
-    _savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID();
+    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().get();
 
     [self rebuildMenu];
 
@@ -72,7 +88,7 @@ using namespace WTF;
         [item setRepresentedObject:profileID.createNSString().get()];
 
         // Add checkmark for currently selected item
-        if (profileID == _savedActiveProfileID)
+        if ([profileID.createNSString().get() isEqualToString:self.savedActiveProfileID])
             [item setState:NSControlStateValueOn];
 
         [_menu addItem:item.get()];
@@ -89,10 +105,10 @@ using namespace WTF;
     [_menu addItem:systemCaptionSettingsItem.get()];
 }
 
-- (BOOL)isAncestorOf:(NSMenu *)menu
+- (BOOL)isAncestorOf:(PlatformMenu *)menu
 {
     do {
-        if (_menu == menu)
+        if (_menu.get() == menu)
             return true;
         menu = menu.supermenu;
     } while (menu);
@@ -100,11 +116,21 @@ using namespace WTF;
     return false;
 }
 
-#pragma mark - Properties
-
 - (NSMenu *)captionStyleMenu
 {
     return _menu.get();
+}
+
+#pragma mark - Properties
+
+- (PlatformMenu *)menu
+{
+    return _menu.get();
+}
+
+- (void)setMenu:(PlatformMenu *)menu
+{
+    _menu = menu;
 }
 
 #pragma mark - Actions
@@ -118,8 +144,8 @@ using namespace WTF;
     if (![nsProfileID isKindOfClass:NSString.class])
         return;
 
-    _savedActiveProfileID = nsProfileID;
-    CaptionUserPreferencesMediaAF::setActiveProfileID(_savedActiveProfileID);
+    self.savedActiveProfileID = nsProfileID;
+    CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
     [self rebuildMenu];
 }
 
@@ -127,12 +153,12 @@ using namespace WTF;
 {
     NSString *nsProfileID = (NSString *)item.representedObject;
     if ([nsProfileID isKindOfClass:NSString.class]) {
-        CaptionUserPreferencesMediaAF::setActiveProfileID(nsProfileID);
+        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(nsProfileID));
         return;
     }
 
-    if (!_savedActiveProfileID.isEmpty())
-        CaptionUserPreferencesMediaAF::setActiveProfileID(_savedActiveProfileID);
+    if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
+        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
 }
 
 - (void)systemCaptionStyleSettingsItemSelected:(NSMenuItem *)sender
@@ -144,7 +170,7 @@ using namespace WTF;
 
 - (void)menuWillOpen:(NSMenu *)menu
 {
-    _savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID();
+    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().get();
 
     if (auto delegate = self.delegate)
         [delegate captionStyleMenuWillOpen:_menu.get()];
@@ -157,9 +183,9 @@ using namespace WTF;
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    if (!_savedActiveProfileID.isEmpty())
-        CaptionUserPreferencesMediaAF::setActiveProfileID(_savedActiveProfileID);
-    _savedActiveProfileID = nullString();
+    if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
+        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+    self.savedActiveProfileID = nil;
 
     if (auto delegate = self.delegate)
         [delegate captionStyleMenuDidClose:_menu.get()];

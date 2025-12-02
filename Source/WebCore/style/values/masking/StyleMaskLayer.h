@@ -31,6 +31,7 @@
 #include <WebCore/StyleBackgroundSize.h>
 #include <WebCore/StyleCoordinatedValueListValue.h>
 #include <WebCore/StyleImageOrNone.h>
+#include <WebCore/StyleMaskMode.h>
 #include <WebCore/StylePosition.h>
 #include <WebCore/StyleRepeatStyle.h>
 #include <wtf/RefPtr.h>

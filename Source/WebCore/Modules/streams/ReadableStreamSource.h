@@ -43,6 +43,7 @@ public:
     void start(ReadableStreamDefaultController&&, DOMPromiseDeferred<void>&&);
     void pull(DOMPromiseDeferred<void>&&);
     void cancel(JSC::JSValue);
+    void error(JSC::JSGlobalObject&, JSC::JSValue);
 
     bool isPulling() const { return !!m_promise; }
 
@@ -60,7 +61,7 @@ protected:
 
     virtual void doStart() = 0;
     virtual void doPull() = 0;
-    virtual void doCancel() = 0;
+    virtual void doCancel(JSC::JSValue) = 0;
 
 private:
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
@@ -92,7 +93,7 @@ private:
     void setInactive() final { }
     void doStart() final { }
     void doPull() final { }
-    void doCancel() final;
+    void doCancel(JSC::JSValue) final;
 
     bool m_isCancelled { false };
 };

@@ -75,7 +75,7 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponentsType typ
 {
     int key = static_cast<int>(type);
     if (m_formatterMap.contains(key))
-        return m_formatterMap.get(key).unsafeGet();
+        return m_formatterMap.get(key);
 
     auto dateFormatter = createFormatterForType(type);
     m_formatterMap.set(key, dateFormatter.get());

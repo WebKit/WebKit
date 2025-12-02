@@ -38,6 +38,11 @@ using SandboxFlags = OptionSet<SandboxFlag>;
 
 namespace WebKit {
 
+enum class CommitTiming : bool {
+    WaitForLoad,
+    Immediately,
+};
+
 struct ProvisionalFrameCreationParameters {
     WebCore::FrameIdentifier frameID;
     std::optional<WebCore::FrameIdentifier> frameIDBeforeProvisionalNavigation;
@@ -46,6 +51,7 @@ struct ProvisionalFrameCreationParameters {
     WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode scrollingMode;
     std::optional<WebCore::IntSize> initialSize;
+    CommitTiming commitTiming { CommitTiming::WaitForLoad };
 };
 
 } // namespace WebKit

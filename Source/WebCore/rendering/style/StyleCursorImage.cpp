@@ -159,7 +159,7 @@ void StyleCursorImage::setContainerContextForRenderer(const RenderElement& rende
 {
     if (!hasCachedImage())
         return;
-    cachedImage()->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, m_originalURL.resolved);
+    cachedImage()->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, m_originalURL.resolved);
 }
 
 bool StyleCursorImage::usesDataProtocol() const

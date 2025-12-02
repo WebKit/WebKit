@@ -37,10 +37,11 @@ inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName
 {
     ASSERT(hasTagName(SVGNames::feMergeNodeTag));
     
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEMergeNodeElement::m_in1>();
-    });
+    }
 }
 
 Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document& document)

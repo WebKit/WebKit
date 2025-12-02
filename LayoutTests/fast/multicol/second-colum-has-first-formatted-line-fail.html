@@ -1,0 +1,21 @@
+<style>
+.columns {
+  height: 60px;
+  width: 300px;
+  column-count: 1;
+  widows: 2;
+  font-family: Ahem;
+  font-size: 15px;
+}
+
+.child::first-line {
+  color: red;
+}
+
+</style>
+<div class=columns>
+  <div class=child>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporary.
+    PASS if this line is NOT red when it appears in the second column.
+  </div>
+</div>

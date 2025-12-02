@@ -1,9 +1,0 @@
-
-PASS CompressionStream constructor should throw on invalid format
-PASS deflated empty data should be reinflated back to its origin
-PASS deflated small amount data should be reinflated back to its origin
-PASS deflated large amount data should be reinflated back to its origin
-PASS gzipped empty data should be reinflated back to its origin
-PASS gzipped small amount data should be reinflated back to its origin
-PASS gzipped large amount data should be reinflated back to its origin
-

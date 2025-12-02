@@ -52,7 +52,7 @@ class StyleSheetContents;
 using CascadeLayerName = Vector<AtomString>;
     
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
-class StyleRuleBase : public RefCounted<StyleRuleBase>, public NoVirtualDestructorBase {
+class WTF_EMPTY_BASE_CLASS StyleRuleBase : public RefCounted<StyleRuleBase>, public NoVirtualDestructorBase {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleBase, StyleRuleBase);
 public:
     StyleRuleType type() const { return static_cast<StyleRuleType>(m_type); }

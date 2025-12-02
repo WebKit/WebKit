@@ -21,46 +21,29 @@
 #include "CryptoAlgorithmX25519.h"
 
 #include "CryptoKeyOKP.h"
-#if HAVE(SWIFT_CPP_INTEROP)
 #include <pal/PALSwift.h>
-#endif
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
 namespace WebCore {
 
-#if HAVE(SWIFT_CPP_INTEROP)
 static std::optional<Vector<uint8_t>> deriveBitsCryptoKit(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
         return std::nullopt;
     auto rv = PAL::EdKey::deriveBits(PAL::EdKeyAgreementAlgorithm::x25519(), baseKey.span(), publicKey.span());
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
     return WTFMove(rv.result);
-}
 #else
-static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>& baseKey, const Vector<uint8_t>& publicKey)
-{
-    if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
-        return std::nullopt;
+    UNUSED_PARAM(baseKey);
+    UNUSED_PARAM(publicKey);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
+#endif
+}
 
-    ccec25519pubkey derivedKey;
-    static_assert(sizeof(derivedKey) == ed25519KeySize);
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-    if (cccurve25519(derivedKey, baseKey.span().data(), publicKey.span().data()))
-        return std::nullopt;
-#else
-    cccurve25519(derivedKey, baseKey.span().data(), publicKey.span().data());
-#endif
-    return Vector<uint8_t>(std::span { derivedKey });
-}
-#endif
 std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return deriveBitsCryptoKit(baseKey.platformKey(), publicKey.platformKey());
-#else
-    return deriveBitsCoreCrypto(baseKey.platformKey(), publicKey.platformKey());
-#endif
 }
 } // namespace WebCore

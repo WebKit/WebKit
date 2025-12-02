@@ -51,6 +51,10 @@ public:
         m_cachedScript->removeClient(*this);
     }
 
+    // CachedResourceClient.
+    void ref() const final { JSC::BaseWebAssemblySourceProvider::ref(); }
+    void deref() const final { JSC::BaseWebAssemblySourceProvider::deref(); }
+
     unsigned hash() const final { return m_cachedScript->scriptHash(); }
     StringView source() const final { return m_cachedScript->script(); }
     size_t size() const final { return m_buffer ? m_buffer->size() : 0; }

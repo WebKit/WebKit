@@ -75,7 +75,7 @@ window.onload = async function () {
 
     await UIHelper.ensureStablePresentationUpdate();
 
-    results.textContent = await UIHelper.getCALayerTree();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
     testEl.remove();
 
     testRunner.notifyDone();

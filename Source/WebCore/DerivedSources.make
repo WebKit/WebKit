@@ -831,6 +831,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webdriver/Navigator+WebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/webtransport/DatagramsReadableMode.idl \
     $(WebCore)/Modules/webtransport/WebTransport.idl \
     $(WebCore)/Modules/webtransport/WebTransportBidirectionalStream.idl \
     $(WebCore)/Modules/webtransport/WebTransportCloseInfo.idl \
@@ -1152,6 +1153,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Document+CSSOMView.idl \
     $(WebCore)/dom/Document+CaretPositionFromPoint.idl \
     $(WebCore)/dom/Document+Fullscreen.idl \
+    $(WebCore)/dom/Document+Immersive.idl \
     $(WebCore)/dom/Document+HTML.idl \
     $(WebCore)/dom/Document+HTMLObsolete.idl \
     $(WebCore)/dom/Document+PageVisibility.idl \
@@ -1289,6 +1291,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
+    $(WebCore)/html/CaptionDisplaySettingsOptions.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMTokenList.idl \
     $(WebCore)/html/DOMURL.idl \
@@ -1376,6 +1379,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/HTMLUListElement.idl \
     $(WebCore)/html/HTMLUnknownElement.idl \
     $(WebCore)/html/HTMLVideoElement.idl \
+	$(WebCore)/html/HTMLVideoElement+CaptionDisplaySettings.idl \
     $(WebCore)/html/HTMLVideoElement+RequestVideoFrameCallback.idl \
     $(WebCore)/html/ImageBitmap.idl \
     $(WebCore)/html/ImageBitmapOptions.idl \
@@ -1388,6 +1392,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/OffscreenCanvas.idl \
     $(WebCore)/html/PopoverInvokerElement.idl \
     $(WebCore)/html/RadioNodeList.idl \
+    $(WebCore)/html/ResolvedCaptionDisplaySettingsOptions.idl \
     $(WebCore)/html/SubmitEvent.idl \
     $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \
@@ -1780,6 +1785,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/MallocStatistics.idl \
     $(WebCore)/testing/MemoryInfo.idl \
     $(WebCore)/testing/MockCDMFactory.idl \
+    $(WebCore)/testing/MockCaptionDisplaySettingsClientCallback.idl \
     $(WebCore)/testing/MockContentFilterSettings.idl \
     $(WebCore)/testing/MockPageOverlay.idl \
     $(WebCore)/testing/MockPaymentAddress.idl \
@@ -1961,6 +1967,8 @@ all : \
     Namespace.h \
     NodeName.cpp \
     NodeName.h \
+    RenderStyleInlinesGenerated.h \
+    RenderStyleSettersGenerated.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -2011,6 +2019,8 @@ CSS_PROPERTY_NAME_FILES = \
     CSSPropertyParsing.cpp \
     CSSPropertyParsing.h \
     CSSStyleProperties+PropertyNames.idl \
+    RenderStyleInlinesGenerated.h \
+    RenderStyleSettersGenerated.h \
     StyleBuilderGenerated.cpp \
     StyleExtractorGenerated.cpp \
     StyleInterpolationWrapperMap.cpp \

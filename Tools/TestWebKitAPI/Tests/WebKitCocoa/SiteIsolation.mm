@@ -5575,6 +5575,38 @@ TEST(SiteIsolation, CreateWebArchiveNestedFrameForCopy)
     validateWebArchiveMainResource([actualNestedFrameArchives.firstObject objectForKey:@"WebMainResource"], expectedNestedFrameResource);
 }
 
+TEST(SiteIsolation, LoadWebArchive)
+{
+    RetainPtr<NSURL> archiveURL = [NSBundle.test_resourcesBundle URLForResource:@"SiteIsolationLoadWebArchive" withExtension:@"webarchive"];
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get(), CGRectZero, true);
+    [webView loadRequest:[NSURLRequest requestWithURL:archiveURL.get()]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example.com"_s,
+            { { "https://apple.com"_s } }
+        },
+    });
+}
+
+TEST(SiteIsolation, LoadWebArchiveNestedFrame)
+{
+    RetainPtr<NSURL> archiveURL = [NSBundle.test_resourcesBundle URLForResource:@"SiteIsolationLoadWebArchiveNestedFrame" withExtension:@"webarchive"];
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get(), CGRectZero, true);
+    [webView loadRequest:[NSURLRequest requestWithURL:archiveURL.get()]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://domain1.com"_s,
+            { { "https://domain2.com"_s, { { "https://domain3.com"_s } } } }
+        },
+    });
+}
+
 // FIXME: Re-enable this once the extra resize events are gone.
 // https://bugs.webkit.org/show_bug.cgi?id=292311 might do it.
 TEST(SiteIsolation, DISABLED_Events)
@@ -6834,6 +6866,57 @@ TEST(SiteIsolation, StatusBarVisibility)
     EXPECT_TRUE([[opened.webView objectByEvaluatingJavaScript:statusBarVisible inFrame:[opened.webView firstChildFrame]] boolValue]);
 }
 
+TEST(SiteIsolation, LocalIframeOpensBlobURLFromFileMainFrame)
+{
+    auto iframeHTML = "<script>"
+    "const htmlContent = ` <!DOCTYPE html> <html> <h1>Blob URL Loaded</h1> <script>window.webkit.messageHandlers.testHandler.postMessage('blob url loaded');<\\/script> </html> `;"
+    "const blob = new Blob([htmlContent], { type: 'text/html' });"
+    "const blobUrl = URL.createObjectURL(blob);"
+    "const newWindow = window.open(blobUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');"
+    "window.parent.postMessage('ping', '*');"
+    "</script>"
+    "<h1>blob-popup-local-iframe</h1>"_s;
+
+    HTTPServer server({
+    { "/blob-popup-local-iframe.html"_s, { iframeHTML } },
+    }, HTTPServer::Protocol::Http, nullptr, nullptr, 8001);
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+
+    __block RetainPtr<WKWebView> blobWindow;
+    __block bool blobWindowOpened = false;
+    __block bool blobContentChecked = false;
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        EXPECT_WK_STREQ([action.request.URL scheme], @"blob");
+        blobWindowOpened = true;
+        blobWindow = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        return blobWindow.get();
+    };
+
+    [webView setUIDelegate:uiDelegate.get()];
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [messageHandler addMessage:@"blob url loaded" withHandler:^{
+        blobContentChecked = true;
+    }];
+
+    NSURL *file = [NSBundle.test_resourcesBundle URLForResource:@"blob-popup-file-mainframe" withExtension:@"html"];
+    [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
+
+    TestWebKitAPI::Util::run(&blobContentChecked);
+
+    EXPECT_TRUE(blobWindowOpened);
+    EXPECT_NOT_NULL(blobWindow.get());
+}
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, ColorInputPickerLocation)
@@ -7060,5 +7143,139 @@ TEST(SiteIsolation, FindStringAcrossMultipleFramesIOS)
 }
 
 #endif
+
+TEST(SiteIsolation, MainPageNavigatesCrossOriginIframeToAboutBlank)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='iframe1' src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<script>alert('loaded iframe1');</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    // Load main page
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+
+    // Wait until cross-origin iframe is loaded
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded iframe1");
+
+    // Before the main page navigates the iframe, check that
+    // the iframe is in a separate process.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        },
+        { RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
+
+    // Have the main frame navigate a cross-origin child iframe
+    // to about:blank.
+    // The about:blank iframe should inherit the origin of it's parent,
+    // or it's opener if the parent doesn't exist.
+    // https://dev.w3.org/html5/spec-LC/origin-0.html
+    // https://dev.w3.org/html5/spec-LC/browsers.html#about-blank-origin
+    //
+    // iframe goes from "https://example.com/example" -> "about:blank"
+    // and inherits the origin of the origin which initiated navigation.
+    [webView evaluateJavaScript:
+        @"let iframe1 = document.getElementById('iframe1');"
+        "iframe1.onload = () => { alert('loaded about:blank'); };"
+        "iframe1.src = 'about:blank';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded about:blank");
+
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    pid_t mainFramePid = mainFrame.info._processIdentifier;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    EXPECT_NE(mainFramePid, 0);
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_EQ(mainFramePid, childFramePid);
+    EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
+
+    // After navigation, the cross-origin iframe has now become about:blank
+    // and should have the same origin as the main page.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        },
+    });
+}
+
+TEST(SiteIsolation, ChildIframeNavigatesCrossOriginGrandchildIframeToAboutBlank)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe id='child' src='https://example.com/child_iframe'></iframe>"_s } },
+        { "/child_iframe"_s, { "<iframe id='grandchild' src='https://webkit.org/grandchild_iframe'></iframe>"_s } },
+        { "/grandchild_iframe"_s, { "<script>alert('loaded webkit.org');</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+
+    // wait for cross-origin grandchild iframe to be loaded
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded webkit.org");
+
+    // ensure that the cross-origin grandchild iframe is in a separate process
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s, { { RemoteFrame } } } }
+        },
+        { RemoteFrame,
+            { { RemoteFrame, { { "https://webkit.org"_s } } } }
+        },
+    });
+
+    // note that this JavaScript gets executed in the context of the
+    // child iframe (which is at example.com).
+    //
+    // The example.com child iframe navigates the webkit.org grandchild iframe.
+    // to about:blank
+    [webView evaluateJavaScript:
+        @"let grandchild = document.getElementById('grandchild');"
+        "grandchild.onload = () => { alert('loaded about:blank'); };"
+        "grandchild.src = 'about:blank';"
+    inFrame:[webView firstChildFrame]
+    completionHandler:nil];
+
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded about:blank");
+
+    auto mainFrame = [webView mainFrame];
+    auto childFrame = mainFrame.childFrames.firstObject;
+    auto grandChildFrame = childFrame.childFrames.firstObject;
+    pid_t childFramePid = childFrame.info._processIdentifier;
+    pid_t grandChildFramePid = grandChildFrame.info._processIdentifier;
+    EXPECT_NE(childFramePid, 0);
+    EXPECT_NE(grandChildFramePid, 0);
+    EXPECT_EQ(childFramePid, grandChildFramePid);
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "example.com");
+    EXPECT_WK_STREQ(grandChildFrame.info.securityOrigin.host, "example.com");
+
+    // After navigation, the cross-origin iframe has now become about:blank
+    // and should have the same origin as the main page.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s,  { { "https://example.com"_s } } } }
+        },
+    });
+}
+
+TEST(SiteIsolation, BrowsingContextGroupSwitchForIncompatibleCrossOriginOpenerPolicy)
+{
+    HTTPServer server({
+        { "/coop-unsafe-none"_s, { { { "Cross-Origin-Opener-Policy"_s, "unsafe-none"_s } }, "<script>w = window.open('https://webkit.org/coop-same-origin-allow-popups')</script>"_s } },
+        { "/coop-same-origin-allow-popups"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin-allow-popups"_s } }, "child"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/coop-unsafe-none");
+
+    EXPECT_WK_STREQ(opened.webView.get().URL.host, "webkit.org");
+    checkFrameTreesInProcesses(opener.webView.get(), {
+        { "https://example.com"_s },
+    });
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { "https://webkit.org"_s },
+    });
+}
 
 }

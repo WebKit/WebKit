@@ -82,36 +82,30 @@ bool defaultScrollAnimatorEnabled()
 
 bool defaultTextRecognitionInVideosEnabled()
 {
-    static bool enabled = false;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        enabled = os_feature_enabled(VisualIntelligence, LiveText);
-    });
+    static bool enabled = os_feature_enabled(VisualIntelligence, LiveText);
+#else
+    static bool enabled = false;
 #endif
     return enabled;
 }
 
 bool defaultVisualTranslationEnabled()
 {
-    static bool enabled = false;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        enabled = os_feature_enabled(Translate, EnableVisualIntelligenceUI);
-    });
+    static bool enabled = os_feature_enabled(Translate, EnableVisualIntelligenceUI);
+#else
+    static bool enabled = false;
 #endif
     return enabled;
 }
 
 bool defaultRemoveBackgroundEnabled()
 {
-    static bool enabled = false;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        enabled = os_feature_enabled(VisualIntelligence, RemoveBackground);
-    });
+    static bool enabled = os_feature_enabled(VisualIntelligence, RemoveBackground);
+#else
+    static bool enabled = false;
 #endif
     return enabled;
 }

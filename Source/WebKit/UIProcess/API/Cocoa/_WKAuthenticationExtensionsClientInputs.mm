@@ -31,6 +31,8 @@
 - (void)dealloc
 {
     SUPPRESS_UNRETAINED_ARG [_appid release];
+    SUPPRESS_UNRETAINED_ARG [_prfSalt1 release];
+    SUPPRESS_UNRETAINED_ARG [_prfSalt2 release];
     [super dealloc];
 }
 

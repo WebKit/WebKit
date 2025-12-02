@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeFrameScrollingNodeMac.h"
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "LayoutSize.h"
 #import "LocalFrameView.h"
@@ -287,4 +287,4 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

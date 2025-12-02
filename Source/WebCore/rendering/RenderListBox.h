@@ -104,8 +104,6 @@ private:
 
     void layout() override;
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const override;
-
     bool canBeProgramaticallyScrolled() const override { return true; }
     void autoscroll(const IntPoint&) override;
     void stopAutoscroll() override;

@@ -47,6 +47,11 @@ public:
     static Ref<AbortSignal> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~AbortSignal();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     static Ref<AbortSignal> abort(JSDOMGlobalObject&, ScriptExecutionContext&, JSC::JSValue reason);
     static Ref<AbortSignal> timeout(ScriptExecutionContext&, uint64_t milliseconds);
     static Ref<AbortSignal> any(ScriptExecutionContext&, const Vector<Ref<AbortSignal>>&);

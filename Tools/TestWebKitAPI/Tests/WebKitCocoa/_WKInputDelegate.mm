@@ -62,7 +62,7 @@ static bool willSubmitFormValuesCalled;
 {
 }
 
-- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject <NSSecureCoding> *)userObject submissionHandler:(void (^)(void))submissionHandler
+- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject <NSSecureCoding> *)userObject requestURL:(NSURL *)requestURL method:(NSString *)method submissionHandler:(void (^)(void))submissionHandler
 {
     bool dictionaryIsAsExpected = [(NSDictionary *)userObject isEqualToDictionary:@{
         @"NumberKey": @(24),
@@ -77,6 +77,8 @@ static bool willSubmitFormValuesCalled;
     EXPECT_EQ(values.count, 2u);
     EXPECT_STREQ([[values objectForKey:@"testname1"] UTF8String], "testvalue1");
     EXPECT_STREQ([[values objectForKey:@"testname2"] UTF8String], "testvalue2");
+    EXPECT_STREQ([[requestURL absoluteString] UTF8String], "test:///formtarget");
+    EXPECT_STREQ([method UTF8String], "POST");
     willSubmitFormValuesCalled = true;
     submissionHandler();
 }

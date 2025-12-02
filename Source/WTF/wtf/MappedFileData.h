@@ -30,7 +30,7 @@
 
 #if HAVE(MMAP)
 #include <wtf/MallocSpan.h>
-#include <wtf/Mmap.h>
+#include <wtf/MmapSpan.h>
 #endif
 
 #if OS(WINDOWS)
@@ -56,7 +56,7 @@ public:
     MappedFileData& operator=(MappedFileData&&) = default;
 
 #if HAVE(MMAP)
-    explicit MappedFileData(MallocSpan<uint8_t, Mmap>&&);
+    explicit MappedFileData(MmapSpan<uint8_t>&&);
 
     std::span<uint8_t> leakHandle() WARN_UNUSED_RETURN { return m_fileData.leakSpan(); }
     explicit operator bool() const { return !!m_fileData; }
@@ -75,7 +75,7 @@ public:
 
 private:
 #if HAVE(MMAP)
-    MallocSpan<uint8_t, Mmap> m_fileData;
+    MmapSpan<uint8_t> m_fileData;
 #elif OS(WINDOWS)
     std::span<uint8_t> m_fileData;
     Win32Handle m_fileMapping;

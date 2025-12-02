@@ -24,9 +24,28 @@
 
 webkit_platform_headers: "CoreIPCCGColorSpace.h"
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCGColorSpace {
-    CGColorSpaceSerialization m_cgColorSpace;
+[WebKitPlatform] enum class WebKit::ExtendedRangeDerivative : uint8_t {
+    kNone,
+    kExtendedRange,
+    kExtendedRangeDisplayReferredDerivative,
+    kExtendedRangeSceneReferredDerivative
 }
-using CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
+
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::ICCData {
+    Vector<uint8_t> data;
+    WebKit::ExtendedRangeDerivative derivative;
+}
+
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::IndexedColorSpace {
+    int8_t index;
+    Vector<uint8_t> table;
+    Box<WebKit::CoreIPCCGColorSpace> colorSpace;
+};
+
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCGColorSpace {
+    WebKit::CGColorSpaceSerialization m_cgColorSpace;
+}
+
+using WebKit::CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
 
 #endif

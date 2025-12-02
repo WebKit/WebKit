@@ -1085,14 +1085,14 @@ public:
 
         if (exceptionReg != InvalidGPRReg) {
             RegisterSetBuilder spilledRegs = spilledRegsForSilentSpillPlans(plans);
-            if constexpr (std::is_same_v<GPRReg, ResultRegType> || std::is_same_v<JSValueRegs, ResultRegType>) {
+            if constexpr (std::same_as<GPRReg, ResultRegType> || std::same_as<JSValueRegs, ResultRegType>) {
                 spilledRegs.add(GPRInfo::returnValueGPR, IgnoreVectors);
                 spilledRegs.add(result, IgnoreVectors);
             }
 
             if constexpr (sizeof...(OtherSpilledRegTypes) > 0) {
                 constexpr auto addRegIfNeeded = [](auto& spilledRegs, auto& reg) ALWAYS_INLINE_LAMBDA {
-                    static_assert(std::is_same_v<GPRReg, std::decay_t<decltype(reg)>> || std::is_same_v<JSValueRegs, std::decay_t<decltype(reg)>>);
+                    static_assert(std::same_as<GPRReg, std::decay_t<decltype(reg)>> || std::same_as<JSValueRegs, std::decay_t<decltype(reg)>>);
                     spilledRegs.add(reg, IgnoreVectors);
                 };
                 (addRegIfNeeded(spilledRegs, otherSpilledRegs), ...);

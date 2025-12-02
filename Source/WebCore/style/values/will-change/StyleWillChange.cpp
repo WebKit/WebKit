@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyleWillChange.h"
 
+#include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include <wtf/TZoneMallocInlines.h>
 

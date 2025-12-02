@@ -105,6 +105,7 @@ DECLARE_SYSTEM_HEADER
 
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
+// FIXME: (rdar://165525506) This file is invalid in a module because PassKit has symbols with incorrect linkage.
 // FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
 // linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
 // these includes in an extern "C" block.
@@ -376,6 +377,8 @@ NS_ASSUME_NONNULL_BEGIN
 #endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD) && !USE(APPLE_INTERNAL_SDK)
 
 NS_ASSUME_NONNULL_END
+
+// FIXME: (rdar://165525506) This file is invalid in a module because PassKit has symbols with incorrect linkage.
 
 extern "C"
 void PKDrawApplePayButtonWithCornerRadius(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);

@@ -91,7 +91,7 @@ public:
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
-    RetainPtr<dispatch_data_t> protectedDispatchData() const;
+    OSObjectPtr<dispatch_data_t> protectedDispatchData() const;
 #endif
 
 #if USE(GLIB)

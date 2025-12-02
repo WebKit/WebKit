@@ -36,6 +36,8 @@
 namespace WebKit {
 
 class RemoteCDM final : public WebCore::CDMPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteCDM);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteCDM);
 public:
     static std::unique_ptr<RemoteCDM> create(WeakPtr<RemoteCDMFactory>&&, RemoteCDMIdentifier&&, RemoteCDMConfiguration&&, const String& mediaKeysHashSalt);
     virtual ~RemoteCDM() = default;
@@ -52,7 +54,7 @@ private:
     bool supportsConfiguration(const WebCore::CDMKeySystemConfiguration&) const final;
     bool supportsConfigurationWithRestrictions(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool supportsSessionTypeWithConfiguration(const WebCore::CDMSessionType&, const WebCore::CDMKeySystemConfiguration&) const final;
-    bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&) const final;
+    bool supportsInitData(const String&, const WebCore::SharedBuffer&) const final;
     WebCore::CDMRequirement distinctiveIdentifiersRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     WebCore::CDMRequirement persistentStateRequirement(const WebCore::CDMKeySystemConfiguration&, const WebCore::CDMRestrictions&) const final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const WebCore::CDMKeySystemConfiguration&) const final;
@@ -61,8 +63,8 @@ private:
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
 
-    Vector<AtomString> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }
-    Vector<AtomString> supportedRobustnesses() const final { return m_configuration.supportedRobustnesses; }
+    Vector<String> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }
+    Vector<String> supportedRobustnesses() const final { return m_configuration.supportedRobustnesses; }
     bool supportsServerCertificates() const final { return m_configuration.supportsServerCertificates; }
     bool supportsSessions() const final { return m_configuration.supportsSessions; }
 

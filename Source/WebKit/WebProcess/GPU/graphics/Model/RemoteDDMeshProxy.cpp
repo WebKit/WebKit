@@ -33,7 +33,6 @@
 #include <WebCore/DDFloat4x4.h>
 #include <WebCore/DDMeshDescriptor.h>
 #include <WebCore/DDMeshPart.h>
-#include <WebCore/DDTextureDescriptor.h>
 #include <WebCore/DDUpdateMeshDescriptor.h>
 #include <WebCore/DDUpdateTextureDescriptor.h>
 #include <WebCore/StageModeOperations.h>
@@ -70,13 +69,13 @@ static WebCore::DDModel::DDFloat4x4 makeTransformMatrix(
     return result;
 }
 
-static std::pair<simd_float4, simd_float4> computeMinAndMaxCorners(const Vector<KeyValuePair<int32_t, WebCore::DDModel::DDMeshPart>>& parts, const Vector<WebCore::DDModel::DDFloat4x4>& instanceTransforms)
+static std::pair<simd_float4, simd_float4> computeMinAndMaxCorners(const Vector<WebCore::DDModel::DDMeshPart>& parts, const Vector<WebCore::DDModel::DDFloat4x4>& instanceTransforms)
 {
     simd_float3 minCorner = simd_make_float3(FLT_MAX, FLT_MAX, FLT_MAX);
     simd_float3 maxCorner = simd_make_float3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-    for (const KeyValuePair<int32_t, WebCore::DDModel::DDMeshPart>& part : parts) {
-        minCorner = simd_min(part.value.boundsMin, minCorner);
-        maxCorner = simd_max(part.value.boundsMax, maxCorner);
+    for (const WebCore::DDModel::DDMeshPart& part : parts) {
+        minCorner = simd_min(part.boundsMin, minCorner);
+        maxCorner = simd_max(part.boundsMax, maxCorner);
     }
 
     if (!instanceTransforms.size())
@@ -122,16 +121,6 @@ RemoteDDMeshProxy::~RemoteDDMeshProxy()
 #endif
 }
 
-void RemoteDDMeshProxy::addMesh(const WebCore::DDModel::DDMeshDescriptor& descriptor)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = send(Messages::RemoteDDMesh::AddMesh(descriptor));
-    UNUSED_PARAM(sendResult);
-#else
-    UNUSED_PARAM(descriptor);
-#endif
-}
-
 #if ENABLE(GPU_PROCESS_MODEL)
 static WebCore::DDModel::DDFloat4x4 buildTranslation(float x, float y, float z)
 {
@@ -144,7 +133,7 @@ static WebCore::DDModel::DDFloat4x4 buildTranslation(float x, float y, float z)
 void RemoteDDMeshProxy::update(const WebCore::DDModel::DDUpdateMeshDescriptor& descriptor)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms4x4);
+    auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms);
     m_minCorner = simd_min(minCorner, m_minCorner);
     m_maxCorner = simd_max(maxCorner, m_maxCorner);
 
@@ -177,30 +166,10 @@ void RemoteDDMeshProxy::setLabelInternal(const String& label)
 #endif
 }
 
-void RemoteDDMeshProxy::addTexture(const WebCore::DDModel::DDTextureDescriptor& descriptor)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = send(Messages::RemoteDDMesh::AddTexture(descriptor));
-    UNUSED_PARAM(sendResult);
-#else
-    UNUSED_PARAM(descriptor);
-#endif
-}
-
 void RemoteDDMeshProxy::updateTexture(const WebCore::DDModel::DDUpdateTextureDescriptor& descriptor)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     auto sendResult = send(Messages::RemoteDDMesh::UpdateTexture(descriptor));
-    UNUSED_PARAM(sendResult);
-#else
-    UNUSED_PARAM(descriptor);
-#endif
-}
-
-void RemoteDDMeshProxy::addMaterial(const WebCore::DDModel::DDMaterialDescriptor& descriptor)
-{
-#if ENABLE(GPU_PROCESS_MODEL)
-    auto sendResult = send(Messages::RemoteDDMesh::AddMaterial(descriptor));
     UNUSED_PARAM(sendResult);
 #else
     UNUSED_PARAM(descriptor);

@@ -27,8 +27,11 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class WKNavigationData;
 @class WKWebView;
+@class SSBLookupResult;
 
 @protocol WKHistoryDelegatePrivate <NSObject>
 
@@ -39,4 +42,10 @@
 - (void)_webView:(WKWebView *)webView didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
 - (void)_webView:(WKWebView *)webView didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL;
 
+- (void)_webView:(WKWebView *)webView didReceiveSafeBrowsingResult:(SSBLookupResult *)result forURL:(NSURL *)URL;
+- (void)_webView:(WKWebView *)webView cachedSafeBrowsingResultForURL:(NSURL *)URL completionHandler:(void (^)(SSBLookupResult * NS_NULLABLE_RESULT, NSError * _Nullable error))completionHandler;
+
 @end
+
+NS_ASSUME_NONNULL_END
+

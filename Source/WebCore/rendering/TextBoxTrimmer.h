@@ -48,4 +48,14 @@ private:
     bool m_shouldRestoreTextBoxTrimStatus { false };
 };
 
+class TextBoxTrimStartDisabler {
+public:
+    TextBoxTrimStartDisabler(const RenderBox&);
+    ~TextBoxTrimStartDisabler();
+
+private:
+    CheckedPtr<const RenderBox> m_renderBox;
+    std::optional<LocalFrameViewLayoutContext::TextBoxTrim> m_previousTextBoxTrimStatus { };
+};
+
 }

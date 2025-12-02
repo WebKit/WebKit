@@ -1673,7 +1673,6 @@ public:
 
 #if ENABLE(VIDEO)
     virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum  format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
-    WEBCORE_EXPORT virtual RefPtr<Image> videoFrameToImage(VideoFrame&);
 #endif
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }

@@ -59,7 +59,10 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     // FIXME: handle non-BrowsingContext obtained from `Target`.
     std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), WindowNotFound);
+
+    auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
     // FIXME: handle `awaitPromise` option.
     // FIXME: handle `resultOwnership` option.
@@ -69,7 +72,7 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
 
     Ref<JSON::Array> argumentsArray = arguments ? arguments.releaseNonNull() : JSON::Array::create();
 
-    session->evaluateJavaScriptFunction(*browsingContext, emptyString(), functionDeclaration, WTFMove(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& stringResult) {
+    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTFMove(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& stringResult) {
         // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
         // https://bugs.webkit.org/show_bug.cgi?id=288058
         if (!stringResult) {
@@ -118,14 +121,17 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     // FIXME: handle non-BrowsingContext obtained from `Target`.
     std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), WindowNotFound);
+
+    auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
     // FIXME: handle `awaitPromise` option.
     // FIXME: handle `resultOwnership` option.
     // FIXME: handle `serializationOptions` option.
 
     String functionDeclaration = makeString("function() {\n return "_s, expression, "; \n}"_s);
-    session->evaluateJavaScriptFunction(*browsingContext, emptyString(), functionDeclaration, JSON::Array::create(), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& result) {
+    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, JSON::Array::create(), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTFMove(callback)](Inspector::CommandResult<String>&& result) {
         auto evaluateResultType = result.has_value() ? Inspector::Protocol::BidiScript::EvaluateResultType::Success : Inspector::Protocol::BidiScript::EvaluateResultType::Exception;
         auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
             .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)

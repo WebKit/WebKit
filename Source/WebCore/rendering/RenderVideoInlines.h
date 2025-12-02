@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VIDEO)
+
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/RenderVideo.h>
 
@@ -36,3 +38,5 @@ inline RenderVideo* HTMLVideoElement::renderer() const
 }
 
 }
+
+#endif // ENABLE(VIDEO)

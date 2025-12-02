@@ -81,6 +81,11 @@ public:
     static Ref<Performance> create(ScriptExecutionContext* context, MonotonicTime timeOrigin) { return adoptRef(*new Performance(context, timeOrigin)); }
     ~Performance();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     DOMHighResTimeStamp now() const;
     DOMHighResTimeStamp timeOrigin() const;
     ReducedResolutionSeconds nowInReducedResolutionSeconds() const;

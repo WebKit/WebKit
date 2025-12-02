@@ -38,6 +38,7 @@
 #include "LoadedWebArchive.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -518,19 +519,23 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, String&&
 #endif
 }
 
-void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, API::Navigation& navigation, BrowsingContextGroup& group, CompletionHandler<void(WebCore::PageIdentifier)>&& completionHandler)
+void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, API::Navigation& navigation, BrowsingContextGroup& group, std::optional<SecurityOriginData> effectiveOrigin, CompletionHandler<void(WebCore::PageIdentifier)>&& completionHandler)
 {
     if (isMainFrame())
         return completionHandler(*webPageIDInCurrentProcess());
 
-    Site navigationSite(navigation.currentRequest().url());
+    Site site = effectiveOrigin ? Site { *effectiveOrigin } : Site { navigation.currentRequest().url() };
     RefPtr page = m_page.get();
     // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
     Site mainFrameSite(page->mainFrame()->url());
     auto mainFrameDomain = mainFrameSite.domain();
 
+    // If we have an effectiveOrigin, it means we are loading about:blank which doesn't have any resources
+    // to load can commit it's provisional frame immediately
+    CommitTiming commitTiming = effectiveOrigin ? CommitTiming::Immediately : CommitTiming::WaitForLoad;
+
     m_provisionalFrame = nullptr;
-    m_provisionalFrame = adoptRef(*new ProvisionalFrameProxy(*this, group.ensureProcessForSite(navigationSite, mainFrameSite, process, page->protectedPreferences())));
+    m_provisionalFrame = adoptRef(*new ProvisionalFrameProxy(*this, group.ensureProcessForSite(site, mainFrameSite, process, page->protectedPreferences()), commitTiming));
     page->protectedWebsiteDataStore()->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [pageID = page->webPageIDInProcess(process), completionHandler = WTFMove(completionHandler)] mutable {
         completionHandler(pageID);
     });
@@ -676,7 +681,7 @@ void WebFrameProxy::broadcastFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
     RELEASE_ASSERT(webPage->protectedPreferences()->siteIsolationEnabled());
 
     webPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.send(Messages::WebPage::UpdateFrameTreeSyncData(m_frameID, data), pageID);
+        webProcess.send(Messages::WebPage::AllFrameTreeSyncDataChangedInAnotherProcess(m_frameID, data), pageID);
     });
 }
 
@@ -741,21 +746,21 @@ auto WebFrameProxy::traverseNext(CanWrap canWrap) const -> TraversalResult
 auto WebFrameProxy::traversePrevious(CanWrap canWrap) -> TraversalResult
 {
     if (RefPtr previousSibling = this->previousSibling())
-        return { RefPtr { previousSibling->deepLastChild() }, DidWrap::No };
+        return { previousSibling->deepLastChild(), DidWrap::No };
     if (RefPtr parent = parentFrame())
         return { WTFMove(parent), DidWrap::No };
 
     if (canWrap == CanWrap::Yes)
-        return { RefPtr { deepLastChild() }, DidWrap::Yes };
+        return { deepLastChild(), DidWrap::Yes };
     return { };
 }
 
-WebFrameProxy* WebFrameProxy::deepLastChild()
+RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
 {
     RefPtr result = this;
     for (RefPtr last = lastChild(); last; last = last->lastChild())
         result = last;
-    return result.unsafeGet();
+    return result;
 }
 
 WebFrameProxy* WebFrameProxy::firstChild() const
@@ -869,6 +874,20 @@ void WebFrameProxy::sendMessageToInspectorFrontend(const String& targetId, const
 {
     if (RefPtr page = m_page.get())
         page->inspectorController().sendMessageToInspectorFrontend(targetId, message);
+}
+
+ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier> frameIDBeforeProvisionalNavigation, CommitTiming commitTiming)
+{
+    return ProvisionalFrameCreationParameters {
+        frameID(),
+        frameIDBeforeProvisionalNavigation,
+        layerHostingContextIdentifier(),
+        effectiveSandboxFlags(),
+        effectiveReferrerPolicy(),
+        scrollingMode(),
+        remoteFrameSize(),
+        commitTiming,
+    };
 }
 
 } // namespace WebKit

@@ -1,0 +1,6 @@
+non-empty
+
+PASS t1.getBoundingClientRect().width
+PASS t2.getBoundingClientRect().width
+PASS t3.getBoundingClientRect().width
+

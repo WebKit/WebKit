@@ -156,7 +156,7 @@ private:
     IntPoint m_dragLocation;
     CachedResourceHandle<CachedImage> m_dragImage;
     RefPtr<Element> m_dragImageElement;
-    std::unique_ptr<DragImageLoader> m_dragImageLoader;
+    RefPtr<DragImageLoader> m_dragImageLoader;
 #endif
 };
 

@@ -244,6 +244,19 @@ VideoFrameContentHint webkitGstBufferGetContentHint(GstBuffer* buffer)
     return VideoFrameContentHint::None;
 }
 
+MediaTime webkitGstBufferGetProcessingTime(GstBuffer* buffer, GstElement* element)
+{
+    if (!GST_IS_BUFFER(buffer))
+        return MediaTime::invalidTime();
+
+    auto meta = getInternalVideoFrameMetadata(buffer);
+    if (!meta)
+        return MediaTime::invalidTime();
+
+    auto [startTime, stopTime] = meta->priv->processingTimes.get(element);
+    return fromGstClockTime(GST_CLOCK_DIFF(startTime, stopTime));
+}
+
 #undef GST_CAT_DEFAULT
 
 #endif

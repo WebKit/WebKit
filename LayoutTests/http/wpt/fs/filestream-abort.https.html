@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/fs/resources/test-helpers.js"></script>
+<script src="/fs/resources/sandboxed-fs-test-helpers.js"></script>
+<body>
+<script>
+directory_test(async (t, root) => {
+  const handle = await createEmptyFile(t, 'test1', root);
+  const stream = await handle.createWritable();
+
+  if (window.internals)
+    assert_equals(internals.fileConnectionHandleCount(handle), 1);
+
+  await stream.write('1234567890');
+  await stream.abort(t);
+
+  if (window.internals)
+    assert_equals(internals.fileConnectionHandleCount(handle), 0);
+}, 'Abort the stream');
+
+directory_test(async (t, root) => {
+  const handle = await createEmptyFile(t, 'test2', root);
+  const stream = await handle.createWritable();
+
+  if (window.internals)
+    assert_equals(internals.fileConnectionHandleCount(handle), 1);
+
+  await stream.getWriter().abort(t);
+
+  if (window.internals)
+    assert_equals(internals.fileConnectionHandleCount(handle), 0);
+}, 'Abort the stream writer');
+
+</script>
+</body>
+</html>

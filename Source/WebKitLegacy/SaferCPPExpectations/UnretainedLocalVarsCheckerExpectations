@@ -1,5 +1,13 @@
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 cf/WebCoreSupport/WebInspectorClientCF.cpp
+[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
+[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebInspectorClientIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] ios/WebView/WebPDFViewIOS.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
+[ iOS ] ios/WebView/WebPlainWhiteView.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMAbstractView.mm
 mac/DOM/DOMBlob.mm
@@ -49,6 +57,8 @@ mac/Misc/WebNSURLExtras.mm
 mac/Plugins/WebBasePluginPackage.mm
 [ Mac ] mac/Plugins/WebPluginController.mm
 mac/Plugins/WebPluginDatabase.mm
+[ iOS ] mac/Storage/WebDatabaseManager.mm
+[ iOS ] mac/Storage/WebDatabaseManagerClient.mm
 mac/Storage/WebStorageManager.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
 mac/WebCoreSupport/WebChromeClient.mm
@@ -58,9 +68,10 @@ mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebFrameNetworkingContext.mm
 [ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
-mac/WebCoreSupport/WebNotificationClient.mm
+[ iOS ] mac/WebCoreSupport/WebProgressTrackerClient.mm
 mac/WebCoreSupport/WebVisitedLinkStore.mm
 [ Mac ] mac/WebInspector/WebNodeHighlight.mm
+[ iOS ] mac/WebInspector/WebNodeHighlighter.mm
 mac/WebView/WebArchive.mm
 mac/WebView/WebDataSource.mm
 mac/WebView/WebDelegateImplementationCaching.mm
@@ -81,15 +92,3 @@ mac/WebView/WebScriptWorld.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
 mac/WebView/WebViewRenderingUpdateScheduler.mm
-[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
-[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebInspectorClientIOS.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] ios/WebView/WebPDFViewIOS.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
-[ iOS ] ios/WebView/WebPlainWhiteView.mm
-[ iOS ] mac/Storage/WebDatabaseManager.mm
-[ iOS ] mac/Storage/WebDatabaseManagerClient.mm
-[ iOS ] mac/WebCoreSupport/WebProgressTrackerClient.mm
-[ iOS ] mac/WebInspector/WebNodeHighlighter.mm

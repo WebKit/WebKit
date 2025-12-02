@@ -68,7 +68,7 @@ enum class TapHandlingResult : uint8_t;
 - (UIView *)_currentContentView;
 
 - (void)_didCommitLoadForMainFrame;
-- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData;
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData pageData:(const WebKit::PageData&)pageData transactionID:(const WebKit::TransactionID&)transactionID;
 - (void)_layerTreeCommitComplete;
 
 - (void)_couldNotRestorePageState;

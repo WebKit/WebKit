@@ -74,12 +74,24 @@ void RemoteMediaPlayerManagerProxy::clear()
 {
     auto proxies = std::exchange(m_proxies, { });
 
-    for (auto& proxy : proxies.values())
+    for (Ref proxy : proxies.values())
         proxy->invalidate();
 
 #if ENABLE(MEDIA_SOURCE)
     m_pendingMediaSources.clear();
 #endif
+}
+
+void RemoteMediaPlayerManagerProxy::connectionToWebProcessClosed()
+{
+    for (Ref proxy : m_proxies.values())
+        proxy->connectionToWebProcessClosed();
+
+#if ENABLE(MEDIA_SOURCE)
+    for (auto keyValuePair : m_pendingMediaSources)
+        Ref { keyValuePair.value }->connectionToWebProcessClosed();
+#endif
+    clear();
 }
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
@@ -221,7 +233,7 @@ void RemoteMediaPlayerManagerProxy::registerMediaSource(RemoteMediaSourceIdentif
     ASSERT(RunLoop::isMain());
 
     ASSERT(!m_pendingMediaSources.contains(identifier));
-    m_pendingMediaSources.add(identifier, &mediaSource);
+    m_pendingMediaSources.add(identifier, mediaSource);
 }
 
 void RemoteMediaPlayerManagerProxy::invalidateMediaSource(RemoteMediaSourceIdentifier identifier)
@@ -239,7 +251,7 @@ RefPtr<RemoteMediaSourceProxy> RemoteMediaPlayerManagerProxy::pendingMediaSource
     auto iterator = m_pendingMediaSources.find(identifier);
     if (iterator == m_pendingMediaSources.end())
         return nullptr;
-    return iterator->value;
+    return iterator->value.copyRef();
 }
 #endif
 

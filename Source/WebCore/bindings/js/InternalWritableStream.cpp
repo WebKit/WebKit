@@ -244,6 +244,23 @@ void InternalWritableStream::errorIfPossible(Exception&& exception)
         scope.clearException();
 }
 
+JSC::JSValue InternalWritableStream::errorIfPossible(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
+{
+    auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().writableStreamErrorIfPossiblePrivateName();
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(guardedObject());
+    arguments.append(reason);
+    ASSERT(!arguments.hasOverflowed());
+
+    auto result = invokeWritableStreamFunction(globalObject, privateName, arguments);
+    if (result.hasException())
+        return { };
+
+    return result.returnValue();
+}
+
 JSC::JSValue InternalWritableStream::getWriter(JSC::JSGlobalObject& globalObject)
 {
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);

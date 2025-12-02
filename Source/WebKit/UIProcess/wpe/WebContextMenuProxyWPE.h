@@ -38,13 +38,9 @@ public:
         return adoptRef(*new WebContextMenuProxyWPE(page, WTFMove(context), userData));
     }
 
-    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) final { }
-    void show() final { };
-
 private:
-    WebContextMenuProxyWPE(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-        : WebContextMenuProxy(page, WTFMove(context), userData)
-    { }
+    WebContextMenuProxyWPE(WebPageProxy&, ContextMenuContextData&&, const UserData&);
+    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
 };
 
 } // namespace WebKit

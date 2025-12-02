@@ -54,4 +54,9 @@ SubmitEvent::SubmitEvent(RefPtr<HTMLElement>&& submitter)
     , m_submitter(WTFMove(submitter))
 { }
 
+bool SubmitEvent::isSubmitEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore

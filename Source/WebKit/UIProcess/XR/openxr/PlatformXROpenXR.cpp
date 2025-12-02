@@ -24,6 +24,7 @@
 
 #include "APIUIClient.h"
 #include "OpenXRExtensions.h"
+#include "OpenXRHitTestManager.h"
 #include "OpenXRInput.h"
 #include "OpenXRLayer.h"
 #include "OpenXRUtils.h"
@@ -65,8 +66,9 @@ struct OpenXRCoordinator::RenderState {
 #if ENABLE(WEBXR_HIT_TEST)
     PlatformXR::HitTestSource nextHitTestSource { 1 };
     PlatformXR::TransientInputHitTestSource nextTransientInputHitTestSource { 1 };
-    HashSet<PlatformXR::HitTestSource> hitTestSources;
-    HashSet<PlatformXR::TransientInputHitTestSource> transientInputHitTestSources;
+    HashMap<PlatformXR::HitTestSource, UniqueRef<PlatformXR::HitTestOptions>> hitTestSources;
+    HashMap<PlatformXR::TransientInputHitTestSource, UniqueRef<PlatformXR::TransientInputHitTestOptions>> transientInputHitTestSources;
+    std::unique_ptr<OpenXRHitTestManager> hitTestManager;
 #endif
 };
 
@@ -365,7 +367,7 @@ void OpenXRCoordinator::submitFrame(WebPageProxy& page, Vector<XRDeviceLayer>&& 
 }
 
 #if ENABLE(WEBXR_HIT_TEST)
-void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformXR::HitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler)
+void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformXR::HitTestOptions& options, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::HitTestSource>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     WTF::switchOn(m_state,
@@ -383,8 +385,11 @@ void OpenXRCoordinator::requestHitTestSource(WebPageProxy& page, const PlatformX
                 return;
             }
 
-            active.renderQueue->dispatch([renderState = active.renderState, completionHandler = WTFMove(completionHandler)]() mutable {
-                auto addResult = renderState->hitTestSources.add(renderState->nextHitTestSource);
+            auto copiedOptions = makeUniqueRef<PlatformXR::HitTestOptions>(options);
+            active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
+                if (!renderState->hitTestManager)
+                    renderState->hitTestManager = makeUnique<OpenXRHitTestManager>(m_session);
+                auto addResult = renderState->hitTestSources.add(renderState->nextHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
                 callOnMainRunLoop([source = renderState->nextHitTestSource, completionHandler = WTFMove(completionHandler)] mutable {
                     completionHandler(source);
@@ -419,7 +424,7 @@ void OpenXRCoordinator::deleteHitTestSource(WebPageProxy& page, PlatformXR::HitT
         });
 }
 
-void OpenXRCoordinator::requestTransientInputHitTestSource(WebPageProxy& page, const PlatformXR::TransientInputHitTestOptions&, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::TransientInputHitTestSource>)>&& completionHandler)
+void OpenXRCoordinator::requestTransientInputHitTestSource(WebPageProxy& page, const PlatformXR::TransientInputHitTestOptions& options, CompletionHandler<void(WebCore::ExceptionOr<PlatformXR::TransientInputHitTestSource>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     WTF::switchOn(m_state,
@@ -437,8 +442,11 @@ void OpenXRCoordinator::requestTransientInputHitTestSource(WebPageProxy& page, c
                 return;
             }
 
-            active.renderQueue->dispatch([renderState = active.renderState, completionHandler = WTFMove(completionHandler)]() mutable {
-                auto addResult = renderState->transientInputHitTestSources.add(renderState->nextTransientInputHitTestSource);
+            auto copiedOptions = makeUniqueRef<PlatformXR::TransientInputHitTestOptions>(options);
+            active.renderQueue->dispatch([this, renderState = active.renderState, options = WTFMove(copiedOptions), completionHandler = WTFMove(completionHandler)]() mutable {
+                if (!renderState->hitTestManager)
+                    renderState->hitTestManager = makeUnique<OpenXRHitTestManager>(m_session);
+                auto addResult = renderState->transientInputHitTestSources.add(renderState->nextTransientInputHitTestSource, WTFMove(options));
                 ASSERT_UNUSED(addResult.isNewEntry, addResult);
                 callOnMainRunLoop([source = renderState->nextTransientInputHitTestSource, completionHandler = WTFMove(completionHandler)] mutable {
                     completionHandler(source);
@@ -908,10 +916,21 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> rend
     }
 
 #if ENABLE(WEBXR_HIT_TEST)
-    for (auto source : renderState->hitTestSources)
-        frameData.hitTestResults.add(source, Vector<PlatformXR::FrameData::HitTestResult> { });
-    for (auto source : renderState->transientInputHitTestSources)
-        frameData.transientInputHitTestResults.add(source, Vector<PlatformXR::FrameData::TransientInputHitTestResult> { });
+    for (auto& pair : renderState->hitTestSources)
+        frameData.hitTestResults.add(pair.key, renderState->hitTestManager->requestHitTest(pair.value->offsetRay, m_localSpace, renderState->frameState.predictedDisplayTime));
+    for (auto& pair : renderState->transientInputHitTestSources) {
+        Vector<PlatformXR::FrameData::TransientInputHitTestResult> results;
+        for (const auto& inputSource : frameData.inputSources) {
+            if (inputSource.profiles.contains(pair.value->profile)) {
+                PlatformXR::FrameData::TransientInputHitTestResult result = {
+                    inputSource.handle,
+                    renderState->hitTestManager->requestHitTest(pair.value->offsetRay, m_localSpace, renderState->frameState.predictedDisplayTime)
+                };
+                results.append(WTFMove(result));
+            }
+        }
+        frameData.transientInputHitTestResults.add(pair.key, WTFMove(results));
+    }
 #endif
 
     auto toXREnvironmentBlendMode = [](XrEnvironmentBlendMode mode) {

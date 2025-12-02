@@ -287,11 +287,7 @@ private:
                 Vector<SwitchCase> cases;
                 for (SwitchCase switchCase : switchValue->cases(m_block))
                     cases.append(switchCase);
-                std::sort(
-                    cases.begin(), cases.end(),
-                    [] (const SwitchCase& left, const SwitchCase& right) {
-                        return left.caseValue() < right.caseValue();
-                    });
+                std::ranges::sort(cases, { }, &SwitchCase::caseValue);
                 FrequentedBlock fallThrough = m_block->fallThrough();
                 m_block->values().removeLast();
                 recursivelyBuildSwitch(cases, fallThrough, 0, false, cases.size(), m_block);

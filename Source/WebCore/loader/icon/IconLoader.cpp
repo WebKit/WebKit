@@ -42,6 +42,11 @@
 
 namespace WebCore {
 
+Ref<IconLoader> IconLoader::create(DocumentLoader& documentLoader, const URL& url)
+{
+    return adoptRef(*new IconLoader(documentLoader, url));
+}
+
 IconLoader::IconLoader(DocumentLoader& documentLoader, const URL& url)
     : m_documentLoader(documentLoader)
     , m_url(url)
@@ -58,7 +63,7 @@ void IconLoader::startLoading()
     if (m_resource)
         return;
 
-    RefPtr frame = m_documentLoader->frame();
+    RefPtr frame = m_documentLoader ? m_documentLoader->frame() : nullptr;
     if (!frame)
         return;
 
@@ -122,7 +127,8 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
 
     // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
     // trigger IconLoader::stopLoading() during destruction, so we should just return here.
-    Ref { m_documentLoader.get() }->finishedLoadingIcon(*this, data.get());
+    if (RefPtr documentLoader = m_documentLoader.get())
+        documentLoader->finishedLoadingIcon(*this, data.get());
 }
 
 }

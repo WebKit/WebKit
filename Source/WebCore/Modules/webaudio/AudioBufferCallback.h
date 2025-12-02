@@ -38,6 +38,10 @@ class AudioBufferCallback : public RefCounted<AudioBufferCallback>, public Activ
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(AudioBuffer*) = 0;
     virtual CallbackResult<void> invokeRethrowingException(AudioBuffer*) = 0;
 

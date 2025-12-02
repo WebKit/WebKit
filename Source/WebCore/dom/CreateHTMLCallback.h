@@ -36,6 +36,10 @@ class CreateHTMLCallback : public ThreadSafeRefCounted<CreateHTMLCallback>, publ
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     virtual bool hasCallback() const = 0;
 
     virtual CallbackResult<String> invoke(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments) = 0;

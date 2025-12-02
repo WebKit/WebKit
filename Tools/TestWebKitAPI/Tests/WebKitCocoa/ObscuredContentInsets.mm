@@ -250,8 +250,12 @@ TEST(ObscuredContentInsets, ScrollPocketCaptureColor)
     EXPECT_EQ(WebCore::serializationForCSS(colorBeforeChangingBackground), "rgb(255, 255, 255)"_s);
     EXPECT_EQ(WebCore::serializationForCSS(colorAfterChangingBackground), "rgb(34, 34, 34)"_s);
 }
-
+// FIXME when rdar://164512771 is resolved.
+#if PLATFORM(MAC)
+TEST(ObscuredContentInsets, DISABLED_TopOverhangColorExtensionLayer)
+#else
 TEST(ObscuredContentInsets, TopOverhangColorExtensionLayer)
+#endif
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 400)]);
 

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if USE(LIBWEBRTC) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "RealtimeOutgoingAudioSource.h"
@@ -27,6 +27,7 @@
 #include <gst/audio/audio.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
+#include <wtf/MediaTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -71,4 +72,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC) && USE(GSTREAMER)

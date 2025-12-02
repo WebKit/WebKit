@@ -31,7 +31,7 @@ promise_test(async test => {
     localVideo.srcObject = stream;
     await localVideo.play();
 
-    const audioTrack = stream.getAudioTracks()[0];
+    const audioTrack = stream.getAudioTracks()[0].clone();
     localVideo.srcObject = stream;
     await localVideo.play();
 

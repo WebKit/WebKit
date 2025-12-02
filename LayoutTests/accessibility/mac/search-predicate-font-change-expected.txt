@@ -4,9 +4,12 @@ PASS: firstText.stringValue === 'AXValue: One'
 PASS: resultText.stringValue === 'AXValue: Two'
 PASS: resultText.stringValue === 'AXValue: Three'
 PASS: resultText.stringValue === 'AXValue: Four'
-PASS: Found #span-4 text after #span-1 after dynamic change.
+PASS: Found #div-4 text after #div-1 after dynamic change.
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-OneFour Two Three
+One
+Four
+Two
+Three

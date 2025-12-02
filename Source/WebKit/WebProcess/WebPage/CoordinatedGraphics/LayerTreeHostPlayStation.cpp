@@ -404,7 +404,7 @@ bool LayerTreeHost::isCompositionRequiredOrOngoing() const
     return m_compositionRequired || m_forceFrameSync || m_compositor->isActive();
 }
 
-void LayerTreeHost::requestComposition()
+void LayerTreeHost::requestComposition(CompositionReason)
 {
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {

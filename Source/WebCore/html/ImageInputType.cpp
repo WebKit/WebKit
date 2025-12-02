@@ -185,7 +185,7 @@ unsigned ImageInputType::height() const
         return optionalHeight.value();
 
     // If the image is available, use its height.
-    CheckedPtr imageLoader = element->imageLoader();
+    RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
         return imageLoader->image()->imageSizeForRenderer(renderer.get(), 1).height().toUnsigned();
 
@@ -208,7 +208,7 @@ unsigned ImageInputType::width() const
         return optionalWidth.value();
 
     // If the image is available, use its width.
-    CheckedPtr imageLoader = element->imageLoader();
+    RefPtr imageLoader = element->imageLoader();
     if (imageLoader && imageLoader->image())
         return imageLoader->image()->imageSizeForRenderer(renderer.get(), 1).width().toUnsigned();
 

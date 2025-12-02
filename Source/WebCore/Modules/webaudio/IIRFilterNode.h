@@ -35,6 +35,7 @@ namespace WebCore {
 
 class IIRFilterNode final : public AudioBasicProcessorNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IIRFilterNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IIRFilterNode);
 public:
     static ExceptionOr<Ref<IIRFilterNode>> create(ScriptExecutionContext&, BaseAudioContext&, IIRFilterOptions&&);
 

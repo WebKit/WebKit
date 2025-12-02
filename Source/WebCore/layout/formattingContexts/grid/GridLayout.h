@@ -83,14 +83,11 @@ private:
 
     static UsedTrackSizes performGridSizingAlgorithm(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList);
 
-    using UsedInlineSizes = Vector<LayoutUnit>;
-    using UsedBlockSizes = Vector<LayoutUnit>;
     std::pair<UsedInlineSizes, UsedBlockSizes> layoutGridItems(const PlacedGridItems&, const UsedTrackSizes&) const;
 
     static Vector<UsedMargins> computeInlineMargins(const PlacedGridItems&, const Style::ZoomFactor&);
     static Vector<UsedMargins> computeBlockMargins(const PlacedGridItems&, const Style::ZoomFactor&);
 
-    using BorderBoxPositions = Vector<LayoutUnit>;
     static BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
     static BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
 

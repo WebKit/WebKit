@@ -4635,28 +4635,28 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
     attributes.textLists = editableTextListsAtPositionInDescendingOrder(document().selection().selection().start());
 
     switch (style->textAlign()) {
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
+    case Style::TextAlign::Right:
+    case Style::TextAlign::WebKitRight:
         attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Right;
         break;
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
+    case Style::TextAlign::Left:
+    case Style::TextAlign::WebKitLeft:
         attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Left;
         break;
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
+    case Style::TextAlign::Center:
+    case Style::TextAlign::WebKitCenter:
         attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Center;
         break;
-    case TextAlignMode::Justify:
+    case Style::TextAlign::Justify:
         attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Justify;
         break;
-    case TextAlignMode::Start:
+    case Style::TextAlign::Start:
         if (style->hasExplicitlySetDirection())
             attributes.horizontalAlignment = style->isLeftToRightDirection() ? FontAttributes::HorizontalAlignment::Left : FontAttributes::HorizontalAlignment::Right;
         else
             attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Natural;
         break;
-    case TextAlignMode::End:
+    case Style::TextAlign::End:
         attributes.horizontalAlignment = style->isLeftToRightDirection() ? FontAttributes::HorizontalAlignment::Right : FontAttributes::HorizontalAlignment::Left;
         break;
     }

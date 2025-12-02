@@ -59,6 +59,7 @@ private:
     const Ref<IPC::Connection> m_connection;
     RetainPtr<nw_connection_t> m_nwConnection;
     bool m_isSTUN { false };
+    bool m_enableServiceClass { false };
 #if ASSERT_ENABLED
     bool m_isClosed { false };
 #endif

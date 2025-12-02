@@ -58,8 +58,9 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
 {
     ASSERT(hasTagName(SVGNames::patternTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGPatternElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGPatternElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGPatternElement::m_width>();
@@ -67,7 +68,7 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
         PropertyRegistry::registerProperty<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();
-    });
+    }
 }
 
 Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)

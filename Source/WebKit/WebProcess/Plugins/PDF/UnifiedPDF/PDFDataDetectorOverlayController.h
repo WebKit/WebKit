@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -54,13 +55,17 @@ class PDFDataDetectorItem;
 class UnifiedPDFPlugin;
 class WebMouseEvent;
 
-class PDFDataDetectorOverlayController final : private WebCore::PageOverlayClient, WebCore::DataDetectorHighlightClient {
+class PDFDataDetectorOverlayController final : public RefCounted<PDFDataDetectorOverlayController>, private WebCore::PageOverlayClient, WebCore::DataDetectorHighlightClient {
     WTF_MAKE_TZONE_ALLOCATED(PDFDataDetectorOverlayController);
     WTF_MAKE_NONCOPYABLE(PDFDataDetectorOverlayController);
 public:
-    explicit PDFDataDetectorOverlayController(UnifiedPDFPlugin&);
+    static Ref<PDFDataDetectorOverlayController> create(UnifiedPDFPlugin&);
     virtual ~PDFDataDetectorOverlayController();
     void teardown();
+
+    // WebCore::DataDetectorHighlightClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     bool handleMouseEvent(const WebMouseEvent&, PDFDocumentLayout::PageIndex);
     RefPtr<WebCore::PageOverlay> protectedOverlay() const { return m_overlay; }
@@ -71,6 +76,8 @@ public:
     void hideActiveHighlightOverlay();
 
 private:
+    explicit PDFDataDetectorOverlayController(UnifiedPDFPlugin&);
+
     // PageOverlayClient
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) final;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) final { }

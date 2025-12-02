@@ -30,12 +30,14 @@
 
 #include "Logging.h"
 #include "MessageSenderInlines.h"
+#include "RemoteAudioSessionConfiguration.h"
 #include "RemoteMediaSessionManagerMessages.h"
 #include "RemoteMediaSessionManagerProxyMessages.h"
 #include "RemoteMediaSessionState.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <algorithm>
 #include <ranges>
@@ -53,7 +55,7 @@ RefPtr<RemoteMediaSessionManager> RemoteMediaSessionManager::create(WebPage& top
 }
 
 RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& topPage, WebPage& localPage)
-    : PlatformMediaSessionManager(localPage.identifier())
+    : REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS(localPage.identifier())
     , m_topPage(topPage)
     , m_localPage(localPage)
     , m_topPageID(topPage.identifier())
@@ -62,6 +64,25 @@ RemoteMediaSessionManager::RemoteMediaSessionManager(WebPage& topPage, WebPage& 
     WebProcess::singleton().addMessageReceiver(Messages::RemoteMediaSessionManager::messageReceiverName(), m_localPageID, *this);
 
     localPage.send(Messages::WebPageProxy::EnsureRemoteMediaSessionManagerProxy());
+
+#if USE(AUDIO_SESSION)
+    Ref sharedSession = WebCore::AudioSession::singleton();
+    RemoteAudioSessionConfiguration configuration = {
+        sharedSession->routingContextUID(),
+        sharedSession->sampleRate(),
+        sharedSession->bufferSize(),
+        sharedSession->numberOfOutputChannels(),
+        sharedSession->maximumNumberOfOutputChannels(),
+        sharedSession->preferredBufferSize(),
+        sharedSession->outputLatency(),
+        sharedSession->isMuted(),
+        sharedSession->isActive(),
+        sharedSession->sceneIdentifier(),
+        sharedSession->soundStageSize(),
+        sharedSession->categoryOverride(),
+    };
+    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioConfigurationChanged(WTFMove(configuration)));
+#endif
 }
 
 RemoteMediaSessionManager::~RemoteMediaSessionManager()
@@ -71,13 +92,13 @@ RemoteMediaSessionManager::~RemoteMediaSessionManager()
 
 void RemoteMediaSessionManager::addSession(WebCore::PlatformMediaSessionInterface& session)
 {
-    PlatformMediaSessionManager::addSession(session);
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
     send(Messages::RemoteMediaSessionManagerProxy::AddMediaSession(currentSessionState(session)));
 }
 
 void RemoteMediaSessionManager::removeSession(WebCore::PlatformMediaSessionInterface& session)
 {
-    PlatformMediaSessionManager::removeSession(session);
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::removeSession(session);
 
     if (!m_cachedSessionState.contains(session.mediaSessionIdentifier()))
         return;
@@ -90,7 +111,7 @@ void RemoteMediaSessionManager::removeSession(WebCore::PlatformMediaSessionInter
 void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionInterface& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), ", size = ", sessions().computeSize());
-    PlatformMediaSessionManager::setCurrentSession(session);
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
 
     send(Messages::RemoteMediaSessionManagerProxy::SetCurrentMediaSession(currentSessionState(session)));
 }
@@ -149,6 +170,44 @@ RemoteMediaSessionState& RemoteMediaSessionManager::currentSessionState(const We
     return addResult.iterator->value;
 }
 
+#if PLATFORM(COCOA)
+void RemoteMediaSessionManager::audioHardwareDidBecomeActive()
+{
+    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioHardwareDidBecomeActive());
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::audioHardwareDidBecomeActive();
+}
+
+void RemoteMediaSessionManager::audioHardwareDidBecomeInactive()
+{
+    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioHardwareDidBecomeInactive());
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::audioHardwareDidBecomeInactive();
+}
+
+void RemoteMediaSessionManager::audioOutputDeviceChanged()
+{
+    auto supportedBufferSizes = audioHardwareListener()->supportedBufferSizes();
+    send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioOutputDeviceChanged(supportedBufferSizes.minimum, supportedBufferSizes.maximum));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::audioOutputDeviceChanged();
+}
+#endif
+
+#if USE(AUDIO_SESSION)
+void RemoteMediaSessionManager::setAudioSessionCategory(WebCore::AudioSessionCategory type, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy)
+{
+    WebCore::AudioSession::singleton().setCategory(type, mode, policy);
+}
+
+void RemoteMediaSessionManager::setAudioSessionPreferredBufferSize(uint64_t preferredBufferSize)
+{
+    WebCore::AudioSession::singleton().setPreferredBufferSize(preferredBufferSize);
+}
+
+void RemoteMediaSessionManager::tryToSetAudioSessionActive(bool active)
+{
+    WebCore::AudioSession::singleton().tryToSetActive(active);
+}
+#endif
+
 void RemoteMediaSessionManager::updateCachedSessionState(const WebCore::PlatformMediaSessionInterface& session, RemoteMediaSessionState& state)
 {
     state.state = session.state();
@@ -156,9 +215,7 @@ void RemoteMediaSessionManager::updateCachedSessionState(const WebCore::Platform
     state.interruptionType = session.interruptionType();
 
     state.duration = session.duration();
-
     state.nowPlayingInfo = session.nowPlayingInfo();
-
     state.shouldOverrideBackgroundLoadingRestriction = session.shouldOverrideBackgroundLoadingRestriction();
     state.isPlayingToWirelessPlaybackTarget = session.isPlayingToWirelessPlaybackTarget();
     state.isPlayingOnSecondScreen = session.isPlayingOnSecondScreen();

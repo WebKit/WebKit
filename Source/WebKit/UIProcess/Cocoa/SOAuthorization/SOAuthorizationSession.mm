@@ -234,8 +234,8 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     }
 
     auto initiatorOrigin = emptyString();
-    if (m_navigationAction->sourceFrame())
-        initiatorOrigin = m_navigationAction->sourceFrame()->securityOrigin().securityOrigin()->toString();
+    if (RefPtr sourceOrigin = m_navigationAction->sourceFrame() ? m_navigationAction->sourceFrame()->securityOrigin().securityOrigin().ptr() : nullptr; sourceOrigin && !sourceOrigin->isOpaque())
+        initiatorOrigin = sourceOrigin->toString();
     if (m_action == InitiatingAction::SubFrame && m_page->mainFrame())
         initiatorOrigin = WebCore::SecurityOrigin::create(m_page->mainFrame()->url())->toString();
     RetainPtr<NSDictionary> authorizationOptions = @{

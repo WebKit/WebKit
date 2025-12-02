@@ -278,6 +278,13 @@ std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyIOS::disp
     return [displayLinkHandler() nominalFramesPerSecond];
 }
 
+UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+{
+    if (RefPtr node = m_remoteLayerTreeHost->nodeForID(layerID))
+        return node->uiView();
+    return nil;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

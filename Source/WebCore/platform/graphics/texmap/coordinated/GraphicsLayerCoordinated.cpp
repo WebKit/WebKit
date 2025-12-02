@@ -664,11 +664,11 @@ void GraphicsLayerCoordinated::transformRelatedPropertyDidChange()
         noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
 }
 
-Vector<std::pair<String, double>> GraphicsLayerCoordinated::acceleratedAnimationsForTesting(const Settings&) const
+Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCoordinated::acceleratedAnimationsForTesting() const
 {
-    Vector<std::pair<String, double>> animations;
+    Vector<GraphicsLayer::AcceleratedAnimationForTesting> animations;
     for (auto& animation : m_animations.animations())
-        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimation::State::Playing ? 1 : 0 });
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimation::State::Playing ? 1.0 : 0.0, false });
     return animations;
 }
 

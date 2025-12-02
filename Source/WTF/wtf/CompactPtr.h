@@ -65,19 +65,19 @@ public:
 
     ALWAYS_INLINE CompactPtr(T* ptr) { set(ptr); }
 
-    ALWAYS_INLINE constexpr CompactPtr(const CompactPtr& o) : m_ptr(o.m_ptr) { }
+    ALWAYS_INLINE constexpr CompactPtr(const CompactPtr& other) : m_ptr(other.m_ptr) { }
 
     template <typename X>
-    ALWAYS_INLINE constexpr CompactPtr(const CompactPtr<X>& o) : m_ptr(o.m_ptr) { static_assert(std::is_convertible_v<X*, T*>); }
+    ALWAYS_INLINE constexpr CompactPtr(const CompactPtr<X>& other) : m_ptr(other.m_ptr) { static_assert(std::is_convertible_v<X*, T*>); }
 
-    ALWAYS_INLINE CompactPtr(CompactPtr&& o) { swap(o); }
+    ALWAYS_INLINE CompactPtr(CompactPtr&& other) { swap(other); }
 
     template <typename X>
-    ALWAYS_INLINE CompactPtr(CompactPtr<X>&& o)
-        : m_ptr(o.m_ptr)
+    ALWAYS_INLINE CompactPtr(CompactPtr<X>&& other)
+        : m_ptr(other.m_ptr)
     { 
         static_assert(std::is_convertible_v<X*, T*>);
-        std::exchange(o.m_ptr, 0);
+        std::exchange(other.m_ptr, 0);
     }
 
     ALWAYS_INLINE constexpr CompactPtr(HashTableDeletedValueType) : m_ptr(hashDeletedStorageValue) { }
@@ -98,18 +98,21 @@ public:
         return *this;
     }
 
-    CompactPtr<T>& operator=(const CompactPtr& o)
+    CompactPtr<T>& operator=(const CompactPtr& other)
     {
-        CompactPtr copy(o);
+        if (&other == this)
+            return *this;
+
+        CompactPtr copy(other);
         swap(copy);
         return *this;
     }
 
     template <typename X>
-    CompactPtr<T>& operator=(const CompactPtr<X>& o)
+    CompactPtr<T>& operator=(const CompactPtr<X>& other)
     {
         static_assert(std::is_convertible_v<X*, T*>);
-        CompactPtr copy(o);
+        CompactPtr copy(other);
         swap(copy);
         return *this;
     }
@@ -121,18 +124,18 @@ public:
         return *this;
     }
 
-    CompactPtr<T>& operator=(CompactPtr&& o)
+    CompactPtr<T>& operator=(CompactPtr&& other)
     {
-        CompactPtr moved(WTFMove(o));
+        CompactPtr moved(WTFMove(other));
         swap(moved);
         return *this;
     }
 
     template <typename X>
-    CompactPtr<T>& operator=(CompactPtr<X>&& o)
+    CompactPtr<T>& operator=(CompactPtr<X>&& other)
     {
         static_assert(std::is_convertible_v<X*, T*>);
-        CompactPtr moved(WTFMove(o));
+        CompactPtr moved(WTFMove(other));
         swap(moved);
         return *this;
     }

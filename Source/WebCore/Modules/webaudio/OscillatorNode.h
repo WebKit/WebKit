@@ -36,6 +36,7 @@ namespace WebCore {
 
 class OscillatorNode final : public AudioScheduledSourceNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(OscillatorNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OscillatorNode);
 public:
     static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
 
@@ -44,8 +45,8 @@ public:
     OscillatorType typeForBindings() const { ASSERT(isMainThread()); return m_type; }
     ExceptionOr<void> setTypeForBindings(OscillatorType);
 
-    AudioParam* frequency() { return m_frequency.get(); }
-    AudioParam* detune() { return m_detune.get(); }
+    AudioParam& frequency() { return m_frequency.get(); }
+    AudioParam& detune() { return m_detune.get(); }
 
     void setPeriodicWave(PeriodicWave&);
 
@@ -71,10 +72,10 @@ private:
     OscillatorType m_type; // Only used on the main thread.
     
     // Frequency value in Hertz.
-    RefPtr<AudioParam> m_frequency;
+    const Ref<AudioParam> m_frequency;
 
     // Detune value (deviating from the frequency) in Cents.
-    RefPtr<AudioParam> m_detune;
+    const Ref<AudioParam> m_detune;
 
     bool m_firstRender { true };
 

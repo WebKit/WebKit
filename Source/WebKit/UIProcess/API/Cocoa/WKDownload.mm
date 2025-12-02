@@ -322,7 +322,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id <WKDownloadDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKDownloadDelegatePrivate>)delegate

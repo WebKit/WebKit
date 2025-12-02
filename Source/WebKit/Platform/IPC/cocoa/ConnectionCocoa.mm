@@ -499,13 +499,7 @@ static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& 
 
 static bool shouldLogIncomingMessageHandling()
 {
-    static dispatch_once_t once;
-    static bool shouldLog;
-
-    dispatch_once(&once, ^{
-        shouldLog = !!getenv("WEBKIT_LOG_INCOMING_MESSAGES");
-    });
-
+    static bool shouldLog = !!getenv("WEBKIT_LOG_INCOMING_MESSAGES");
     return shouldLog;
 }
 

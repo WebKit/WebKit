@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class PipeToDefaultReadRequest;
-class StreamPipeToState : public RefCountedAndCanMakeWeakPtr<StreamPipeToState>, public ContextDestructionObserver {
+class StreamPipeToState : public RefCounted<StreamPipeToState>, public ContextDestructionObserver {
 public:
     static Ref<StreamPipeToState> create(JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& source, Ref<WritableStream>&& destination, Ref<ReadableStreamDefaultReader>&& reader, Ref<InternalWritableStreamWriter>&& writer, StreamPipeOptions&& options, RefPtr<DeferredPromise>&& promise)
     {
@@ -59,6 +59,10 @@ public:
         return state;
     }
     ~StreamPipeToState();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void doWrite(JSC::JSValue);
     JSDOMGlobalObject* globalObject();

@@ -158,10 +158,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncAdd, (JSGlobalObject* glo
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::PlainDate result = TemporalCalendar::addDurationToDate(globalObject, plainDate->plainDate(), duration, overflow);
@@ -183,10 +180,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSubtract, (JSGlobalObject
     auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::PlainDate result = TemporalCalendar::addDurationToDate(globalObject, plainDate->plainDate(), -duration, overflow);
@@ -225,7 +219,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncUntil, (JSGlobalObject* g
     if (!plainDate)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.until called on value that's not a PlainDate"_s);
 
-    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto result = plainDate->until(globalObject, other, callFrame->argument(1));
@@ -244,7 +238,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSince, (JSGlobalObject* g
     if (!plainDate)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.since called on value that's not a PlainDate"_s);
 
-    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto result = plainDate->since(globalObject, other, callFrame->argument(1));
@@ -263,7 +257,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncEquals, (JSGlobalObject* 
     if (!plainDate)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.equals called on value that's not a PlainDate"_s);
 
-    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
 
     if (plainDate->plainDate() != other->plainDate())

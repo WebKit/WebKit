@@ -38,6 +38,10 @@ class FileCallback : public RefCounted<FileCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(File&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(File&) = 0;
 

@@ -39,13 +39,11 @@ namespace WebCore {
 
 static NSBundle *passKitBundleSingleton()
 {
-    static NSBundle *passKitBundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSBundle>> passKitBundle = [] {
         RetainPtr systemDirectoryPath = FileSystem::systemDirectoryPath();
-        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:retainPtr([systemDirectoryPath stringByAppendingPathComponent:@"Library/Frameworks/PassKit.framework"]).get() isDirectory:YES]];
-    });
-    return passKitBundle;
+        return [NSBundle bundleWithURL:[NSURL fileURLWithPath:retainPtr([systemDirectoryPath stringByAppendingPathComponent:@"Library/Frameworks/PassKit.framework"]).get() isDirectory:YES]];
+    }();
+    return passKitBundle.get().get();
 }
 
 static RetainPtr<CGPDFPageRef> loadPassKitPDFPage(NSString *imageName)
@@ -63,21 +61,13 @@ static RetainPtr<CGPDFPageRef> loadPassKitPDFPage(NSString *imageName)
 
 static RetainPtr<CGPDFPageRef> applePayLogoWhite()
 {
-    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage.get() = loadPassKitPDFPage(@"PayButtonLogoWhite");
-    });
+    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage = loadPassKitPDFPage(@"PayButtonLogoWhite");
     return logoPage;
 }
 
 static RetainPtr<CGPDFPageRef> applePayLogoBlack()
 {
-    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage.get() = loadPassKitPDFPage(@"PayButtonLogoBlack");
-    });
+    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage = loadPassKitPDFPage(@"PayButtonLogoBlack");
     return logoPage;
 }
 

@@ -43,16 +43,16 @@ using namespace WebCore;
 
 static OptionSet<TextCheckerState>& mutableState()
 {
-    static OptionSet<TextCheckerState> state;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    static OptionSet<TextCheckerState> state = [] {
+        OptionSet<TextCheckerState> state;
         if (TextChecker::isContinuousSpellCheckingAllowed())
             state.add(TextCheckerState::ContinuousSpellCheckingEnabled);
 #if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
         if ([UITextChecker respondsToSelector:@selector(grammarCheckingEnabled)] && [UITextChecker grammarCheckingEnabled])
             state.add(TextCheckerState::GrammarCheckingEnabled);
 #endif
-    });
+        return state;
+    }();
     return state;
 }
 

@@ -186,6 +186,16 @@ _expected_model_base = {
             'conditions': (None),
         },
         {
+            'name': 'OpaqueTypeSecurityAssertion',
+            'parameters': (
+                ('NotDispatchableFromWebContent', 'ping'),
+            ),
+            'reply_parameters': (
+                ('NotDispatchableFromWebContent', 'pong'),
+            ),
+            'conditions': (None),
+        },
+        {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
                 ('MachSendRight', 'connectionIdentifier'),

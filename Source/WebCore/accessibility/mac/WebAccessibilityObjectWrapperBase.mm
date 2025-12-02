@@ -330,18 +330,23 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     // If it does become invalidated, self.axBackingObject will be nil.
     retainPtr(self).autorelease();
 
-    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
-    if (!backingObject) {
-        if (!isMainThread()) {
-            // It's possible our backing object just hasn't been attached yet.
-            // Try again after making sure all isolated trees are up-to-date, which could
-            // attach an object to this wrapper.
-            AXTreeStore<AXIsolatedTree>::applyPendingChangesForAllIsolatedTrees();
-            return m_isolatedObject.get();
+    {
+        // Explicitly scope this RefPtr. Otherwise, if we get to the end of this method,
+        // and this RefPtr was the last strong-ref, self.axBackingObject would return a
+        // pointer to an object destroyed when this RefPtr is destroyed.
+        RefPtr<AXCoreObject> backingObject = self.axBackingObject;
+        if (!backingObject) {
+            if (!isMainThread()) {
+                // It's possible our backing object just hasn't been attached yet.
+                // Try again after making sure all isolated trees are up-to-date, which could
+                // attach an object to this wrapper.
+                AXTreeStore<AXIsolatedTree>::applyPendingChangesForAllIsolatedTrees();
+                return m_isolatedObject.get();
+            }
+            return nil;
         }
-        return nil;
+        backingObject->updateBackingStore();
     }
-    backingObject->updateBackingStore();
     return self.axBackingObject;
 }
 #else

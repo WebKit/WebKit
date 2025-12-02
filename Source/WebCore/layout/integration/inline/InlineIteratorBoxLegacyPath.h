@@ -47,6 +47,7 @@ public:
     bool isInlineBox() const { return m_inlineBox->isInlineFlowBox(); }
     bool isRootInlineBox() const { return m_inlineBox->isRootInlineBox(); }
     bool isBlockLevelBox() const { return false; }
+    bool isAtomicInlineBox() const { return renderer().isBlockLevelReplacedOrAtomicInline(); }
 
     FloatRect visualRectIgnoringBlockDirection() const { return m_inlineBox->frameRect(); }
 

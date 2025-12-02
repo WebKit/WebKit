@@ -82,11 +82,9 @@ public:
     
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const final;
-    void paintOutline(PaintInfo&, const LayoutPoint&) const;
+    void collectLineBoxRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset) const;
 
     bool mayAffectLayout() const;
-
     bool requiresLayer() const override;
 
     LayoutPoint firstInlineBoxTopLeft() const;

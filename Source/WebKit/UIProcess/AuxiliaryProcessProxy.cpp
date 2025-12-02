@@ -454,7 +454,7 @@ void AuxiliaryProcessProxy::shutDownProcess()
 
 AuxiliaryProcessProxy* AuxiliaryProcessProxy::fromConnection(const IPC::Connection& connection)
 {
-    return connectionToProcessMap().get(connection.uniqueID()).get();
+    return connectionToProcessMap().get(connection.uniqueID());
 }
 
 void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)

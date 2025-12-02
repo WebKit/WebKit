@@ -149,6 +149,13 @@ void Navigation::markRequestAsFromClientInput()
         m_lastNavigationAction->isRequestFromClientOrUserInput = true;
 }
 
+WebCore::SecurityOriginData Navigation::requesterOrigin() const
+{
+    if (m_lastNavigationAction && m_lastNavigationAction->requester)
+        return m_lastNavigationAction->requester->securityOrigin->data();
+    return { };
+}
+
 void Navigation::setSafeBrowsingCheckOngoing(size_t index, bool ongoing)
 {
     if (ongoing)

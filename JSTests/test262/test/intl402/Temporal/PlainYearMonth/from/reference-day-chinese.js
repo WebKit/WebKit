@@ -13,13 +13,6 @@ features: [Temporal]
 
 // Month codes, month indices, and the ISO reference days of the months in 2022
 const months2022TestData = [
-  // TODO: Sources conflict over whether M01L and M12L exist in _any_ year.
-  // Clarify this, and delete if appropriate. ICU has them, but may be wrong.
-  //
-  // - ICU4C and ICU4X both have M01L in Gregorian year 1651.
-  // - ICU4C has M12L in Gregorian year 1889, but ICU4X doesn't.
-  // - ICU4X has M12L in Gregorian year 1403, but ICU4C doesn't.
-
   ["M01", 1, 1],
   ["M02", 2, 3],
   ["M03", 3, 1],
@@ -34,37 +27,14 @@ const months2022TestData = [
   ["M12", 12, 23],
 ];
 for (let [nonLeapMonthCode, month, referenceISODay] of months2022TestData) {
-  // Allow implementation-defined "epoch year" for the Chinese calendar.
-  const year = new Temporal.PlainDate(2022, 3, 1).withCalendar("chinese").year;
   const leapMonthCode = nonLeapMonthCode + "L";
-  const fields = { year, monthCode: leapMonthCode, calendar: "chinese" };
+  const fields = { year: 2022, monthCode: leapMonthCode, calendar: "chinese" };
 
   const result = Temporal.PlainYearMonth.from(fields, { overflow: "constrain" });
-
-  // CalendarDateToISO ( calendar, fields, overflow )
-  //
-  // > If the month is a leap month that doesn't exist in the year, pick another
-  // > date according to the cultural conventions of that calendar's users.
-  // > Usually this will result in the same day in the month before or after
-  // > where that month would normally fall in a leap year.
-  //
-  // Without clear information in which direction the month has to be adjusted,
-  // we have to allow two possible implementations:
-  // 1. The previous month is used, i.e. "M01L" is constrained to "M01".
-  // 2. The next month is used, i.e. "M01L" is constrained to "M02".
-  if (result.month !== month) {
-    assert.sameValue(result.month, month + 1);
-
-    // Adjust nonLeapMonthCode, month, referenceISODay using the data from the
-    // next month.
-    const nextMonth = months2022TestData.find(e => e[1] === month + 1);
-    [nonLeapMonthCode, month, referenceISODay] = nextMonth;
-  }
-
   TemporalHelpers.assertPlainYearMonth(
     result,
-    year, month, nonLeapMonthCode,
-    `Chinese intercalary month ${leapMonthCode} does not exist in year 2022 (overflow constrain)`,
+    2022, month, nonLeapMonthCode,
+    `Chinese intercalary month ${leapMonthCode} is constrained to ${nonLeapMonthCode} in year 2022 (overflow constrain)`,
     /* era = */ undefined, /* era year = */ undefined, referenceISODay
   );
 
@@ -75,9 +45,10 @@ for (let [nonLeapMonthCode, month, referenceISODay] of months2022TestData) {
   );
 }
 
-// Years in which leap months exist according to ICU4C/ICU4X.
+// Years in which leap months exist in our supported range according to
+// ICU4C/ICU4X. Note use of near-future year for "M11L" rather than use of a
+// year several hundred years before the start of our range.
 const leapMonthsTestData = [
-  ["M01L", 1651, 2, 20],
   ["M02L", 2023, 3, 22],
   ["M03L", 1993, 4, 22],
   ["M04L", 2020, 5, 23],
@@ -87,11 +58,9 @@ const leapMonthsTestData = [
   ["M08L", 1995, 9, 25],
   ["M09L", 2014, 10, 24],
   ["M10L", 1984, 11, 23],
-  ["M11L", 1517, 12, 23],
+  ["M11L", 2033, 12, 22],
 ];
-for (const [monthCode, relatedYear, month, referenceISODay, isoYear = relatedYear, isoMonth = month] of leapMonthsTestData) {
-  // Allow implementation-defined "epoch year" for the Chinese calendar.
-  const year = new Temporal.PlainDate(relatedYear, 3, 1).withCalendar("chinese").year;
+for (const [monthCode, year, month, referenceISODay, isoYear = year, isoMonth = month] of leapMonthsTestData) {
   const result = Temporal.PlainYearMonth.from({ year, monthCode, calendar: "chinese" });
   TemporalHelpers.assertPlainYearMonth(
     result,

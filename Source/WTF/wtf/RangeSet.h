@@ -155,11 +155,9 @@ public:
             return;
         }
 
-        std::sort(
-            m_ranges.begin(), m_ranges.end(),
-            [&] (const Range& a, const Range& b) -> bool {
-                return a.begin() < b.begin();
-            });
+        std::ranges::sort(m_ranges, [&](const Range& a, const Range& b) {
+            return a.begin() < b.begin();
+        });
 
         unsigned srcIndex = 1;
         unsigned dstIndex = 1;

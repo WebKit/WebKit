@@ -16,29 +16,29 @@
 </head>
 <body>
 
-<span id="span-1" class="font">One</span>
-<span class="font">Skip</span>
+<div role="presentation" id="div-1" class="font">One</div>
+<div role="presentation" class="font">Skip</div>
 
-<span class="text-color">Two</span>
-<span class="text-color">Skip</span>
+<div role="presentation" class="text-color">Two</div>
+<div role="presentation" class="text-color">Skip</div>
 
-<span class="background-color">Three</span>
-<span class="background-color">Skip</span>
+<div role="presentation" class="background-color">Three</div>
+<div role="presentation" class="background-color">Skip</div>
 
-<span class="subscript">Four</span>
-<span class="subscript">Skip</span>
+<div role="presentation" class="subscript">Four</div>
+<div role="presentation" class="subscript">Skip</div>
 
-<span class="superscript">Five</span>
-<span class="superscript">Skip</span>
+<div role="presentation" class="superscript">Five</div>
+<div role="presentation" class="superscript">Skip</div>
 
-<span class="text-shadow">Six</span>
-<span class="text-shadow">Skip</span>
+<div role="presentation" class="text-shadow">Six</div>
+<div role="presentation" class="text-shadow">Skip</div>
 
-<span class="underline">Seven</span>
-<span class="underline">Skip</span>
+<div role="presentation" class="underline">Seven</div>
+<div role="presentation" class="underline">Skip</div>
 
-<span id="span-8" class="linethrough">Eight</span>
-<span class="linethrough">Skip</span>Last text
+<div role="presentation" id="div-8" class="linethrough">Eight</div>
+<div role="presentation" class="linethrough">Skip</div>Last text
     
 <script>
 var output = "This test ensures that our handling of the AXStyleChangeSearchKey behaves correctly.\n\n";
@@ -75,7 +75,7 @@ if (window.accessibilityController) {
     output += expect("resultText.stringValue", "'AXValue: Last text'");
 
     // Ensure we behave correctly after a dynamic change.
-    document.getElementById("span-1").after(document.getElementById("span-8"));
+    document.getElementById("div-1").after(document.getElementById("div-8"));
     setTimeout(async function() {
         await waitFor(() => {
             var resultText = webArea.uiElementForSearchPredicate(startText, true, "AXStyleChangeSearchKey", "", false);

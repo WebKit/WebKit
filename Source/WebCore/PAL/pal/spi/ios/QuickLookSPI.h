@@ -28,9 +28,15 @@
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
+
 #import <QuickLook/QuickLook.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+
+// FIXME: (rdar://165510931) This file is invalid in a module because QuickLook has incorrect extern_c attributes in its dependencies.
 
 #import <QuickLook/QuickLookPrivate.h>
 
@@ -95,3 +101,5 @@ NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
 NSString *QLTypeCopyUTIForURLAndMimeType(NSURL *, NSString *mimeType);
 
 WTF_EXTERN_C_END
+
+#endif // PLATFORM(IOS_FAMILY)

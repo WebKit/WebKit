@@ -160,6 +160,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -829,10 +830,23 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = WebCore::PrintContext::max
 @implementation WebCoreScrollView
 @end
 
+class EmptyCachedImageClient : public WebCore::CachedImageClient, public RefCounted<EmptyCachedImageClient> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyCachedImageClient);
+public:
+    static Ref<EmptyCachedImageClient> create() { return adoptRef(*new EmptyCachedImageClient); }
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    EmptyCachedImageClient() = default;
+};
+
 // We need this to be able to safely reference the CachedImage for the promised drag data
 static WebCore::CachedImageClient& promisedDataClient()
 {
-    static NeverDestroyed<WebCore::CachedImageClient> staticCachedResourceClient;
+    static NeverDestroyed<Ref<EmptyCachedImageClient>> staticCachedResourceClient = EmptyCachedImageClient::create();
     return staticCachedResourceClient.get();
 }
 
@@ -1808,11 +1822,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
         return owner;
 
     for (NSTrackingArea *trackingArea in self.trackingAreas) {
-        static Class managerClass;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [] {
-            managerClass = NSClassFromString(@"NSToolTipManager");
-        });
+        static Class managerClass = NSClassFromString(@"NSToolTipManager");
 
         id owner = trackingArea.owner;
         if ([owner class] == managerClass)
@@ -6266,7 +6276,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!frame || !frame->document() || !frame->document()->documentElement() || !frame->document()->documentElement()->renderer())
         return WebCore::ScrollbarWidth::Auto;
 
-    return frame->document()->documentElement()->renderer()->style().scrollbarWidth().platform();
+    return WebCore::Style::toPlatform(frame->document()->documentElement()->renderer()->style().scrollbarWidth());
 }
 
 @end

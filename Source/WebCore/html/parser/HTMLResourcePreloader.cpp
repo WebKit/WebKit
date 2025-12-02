@@ -79,6 +79,18 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     return request;
 }
 
+Ref<HTMLResourcePreloader> HTMLResourcePreloader::create(Document& document)
+{
+    return adoptRef(*new HTMLResourcePreloader(document));
+}
+
+HTMLResourcePreloader::HTMLResourcePreloader(Document& document)
+    : m_document(document)
+{
+}
+
+HTMLResourcePreloader::~HTMLResourcePreloader() = default;
+
 void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 {
     for (auto& request : requests)
@@ -87,15 +99,17 @@ void HTMLResourcePreloader::preload(PreloadRequestStream requests)
 
 void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
 {
-    Ref document = m_document.get();
-    ASSERT(document->frame());
+    RefPtr document = m_document.get();
+    if (!document || !document->frame())
+        return;
+
     ASSERT(document->renderView());
 
     auto queries = MQ::MediaQueryParser::parse(preload->media(), document->cssParserContext());
-    if (!MQ::MediaQueryEvaluator { screenAtom(), document, document->renderStyle() }.evaluate(queries))
+    if (!MQ::MediaQueryEvaluator { screenAtom(), *document, document->renderStyle() }.evaluate(queries))
         return;
 
-    document->protectedCachedResourceLoader()->preload(preload->resourceType(), preload->resourceRequest(document));
+    document->protectedCachedResourceLoader()->preload(preload->resourceType(), preload->resourceRequest(*document));
 }
 
 }

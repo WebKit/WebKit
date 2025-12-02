@@ -28,8 +28,6 @@
 
 #import "PlatformLayer.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 namespace WebCore {
 
 void LayerRepresentation::retainPlatformLayer(void* typelessLayer)
@@ -60,5 +58,3 @@ CALayer* LayerRepresentation::platformLayerFromGraphicsLayer(GraphicsLayer& grap
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

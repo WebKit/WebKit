@@ -242,7 +242,7 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
 
 - (id<WKShareSheetDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKShareSheetDelegate>)delegate

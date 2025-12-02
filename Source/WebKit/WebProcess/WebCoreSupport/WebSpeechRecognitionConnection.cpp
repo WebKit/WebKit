@@ -109,7 +109,7 @@ void WebSpeechRecognitionConnection::didReceiveUpdate(WebCore::SpeechRecognition
     if (!m_clientMap.contains(clientIdentifier))
         return;
 
-    auto client = m_clientMap.get(clientIdentifier);
+    RefPtr client = m_clientMap.get(clientIdentifier);
     if (!client) {
         m_clientMap.remove(clientIdentifier);
         // Inform server that client does not exist any more.

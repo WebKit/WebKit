@@ -4,9 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS media.webkitDisplayingFullscreen became true
-PASS !!mediaControls.querySelector('.buttons-container.left') became true
-PASS mediaControls.querySelector('.buttons-container.left').style.width became "100px"
-PASS mediaControls.querySelector('.controls-bar').style.transform is ""
+PASS Controls did not move when dragging over a button
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -48,6 +48,10 @@ public:
     static Ref<FormState> create(HTMLFormElement&, StringPairVector&& textFieldValues, Document&, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
     ~FormState();
 
+    // FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     HTMLFormElement& form() const { return m_form; }
     const StringPairVector& textFieldValues() const { return m_textFieldValues; }
     Document& sourceDocument() const { return m_sourceDocument; }

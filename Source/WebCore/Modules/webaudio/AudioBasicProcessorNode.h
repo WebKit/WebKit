@@ -36,6 +36,7 @@ class AudioProcessor;
 // AudioBasicProcessorNode is an AudioNode with one input and one output where the input and output have the same number of channels.
 class AudioBasicProcessorNode : public AudioNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioBasicProcessorNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioBasicProcessorNode);
 public:
     AudioBasicProcessorNode(BaseAudioContext&, NodeType);
     virtual ~AudioBasicProcessorNode();

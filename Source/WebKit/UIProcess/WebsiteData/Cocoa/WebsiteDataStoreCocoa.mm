@@ -294,17 +294,15 @@ void WebsiteDataStore::platformDestroy()
 
 static String defaultWebsiteDataStoreRootDirectory()
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSURL>> websiteDataStoreDirectory;
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSURL>> websiteDataStoreDirectory = [] {
         RetainPtr libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
         RELEASE_ASSERT(libraryDirectory);
         RetainPtr webkitDirectory = [libraryDirectory URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
         if (!WebKit::processHasContainer())
             webkitDirectory = [webkitDirectory URLByAppendingPathComponent:applicationOrProcessIdentifier().get() isDirectory:YES];
 
-        websiteDataStoreDirectory.get() = [webkitDirectory URLByAppendingPathComponent:@"WebsiteDataStore" isDirectory:YES];
-    });
+        return [webkitDirectory URLByAppendingPathComponent:@"WebsiteDataStore" isDirectory:YES];
+    }();
 
     return websiteDataStoreDirectory.get().get().absoluteURL.path;
 }
@@ -559,10 +557,7 @@ String WebsiteDataStore::defaultResourceMonitorThrottlerDirectory(const String& 
 
 String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory shouldCreateDirectory)
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSURL>> tempURL;
-    
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSURL>> tempURL = [] {
         RetainPtr url = [NSURL fileURLWithPath:RetainPtr { NSTemporaryDirectory() }.get() isDirectory:YES];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
@@ -570,8 +565,8 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
         if (!WebKit::processHasContainer())
             url = [url URLByAppendingPathComponent:applicationOrProcessIdentifier().get() isDirectory:YES];
         
-        tempURL.get() = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
-    });
+        return [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+    }();
     
     RetainPtr url = [tempURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
 
@@ -584,10 +579,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSURL>> cacheURL;
-
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSURL>> cacheURL = [] {
         RetainPtr url = [[NSFileManager defaultManager] URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
@@ -595,8 +587,8 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
         if (!WebKit::processHasContainer())
             url = [url URLByAppendingPathComponent:applicationOrProcessIdentifier().get() isDirectory:YES];
 
-        cacheURL.get() = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
-    });
+        return [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+    }();
 
     RetainPtr url = [cacheURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
     if (shouldCreateDirectory == ShouldCreateDirectory::Yes
@@ -608,10 +600,7 @@ String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& di
 
 String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String&, ShouldCreateDirectory shouldCreateDirectory)
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL;
-
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSURL>> websiteDataURL = [] {
         RetainPtr url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
@@ -620,8 +609,8 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
         if (!WebKit::processHasContainer())
             url = [url URLByAppendingPathComponent:applicationOrProcessIdentifier().get() isDirectory:YES];
 
-        websiteDataURL.get() = [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
-    });
+        return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
+    }();
 
     RetainPtr url = [websiteDataURL.get() URLByAppendingPathComponent:directoryName.createNSString().get() isDirectory:YES];
 
@@ -1019,11 +1008,7 @@ String WebsiteDataStore::resolvedContainerTemporaryDirectory()
 
 String WebsiteDataStore::defaultResolvedContainerTemporaryDirectory()
 {
-    static NeverDestroyed<String> resolvedTemporaryDirectory;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        resolvedTemporaryDirectory.get() = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
-    });
+    static NeverDestroyed<String> resolvedTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(String(NSTemporaryDirectory()));
     return resolvedTemporaryDirectory;
 }
 

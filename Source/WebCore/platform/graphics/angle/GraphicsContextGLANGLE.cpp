@@ -198,12 +198,12 @@ bool GraphicsContextGLANGLE::initialize()
         return false;
 
     {
-        StringView extensionsString { unsafeSpan8(byteCast<char>(GL_GetString(GL_EXTENSIONS))) };
+        StringView extensionsString { unsafeSpan(byteCast<char>(GL_GetString(GL_EXTENSIONS))) };
         for (auto extension : extensionsString.split(' '))
             m_extensions.add(extension.span8());
     }
     {
-        StringView extensionsString { unsafeSpan8(byteCast<char>(GL_GetString(GL_REQUESTABLE_EXTENSIONS_ANGLE))) };
+        StringView extensionsString { unsafeSpan(byteCast<char>(GL_GetString(GL_REQUESTABLE_EXTENSIONS_ANGLE))) };
         for (auto extension : extensionsString.split(' '))
             m_allRequestableExtensions.add(extension.span8());
     }

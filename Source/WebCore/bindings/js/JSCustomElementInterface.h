@@ -61,6 +61,10 @@ public:
         return adoptRef(*new JSCustomElementInterface(name, callback, globalObject));
     }
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     Ref<Element> constructElementWithFallback(Document&, CustomElementRegistry&, const AtomString&, ParserConstructElementWithEmptyStack = ParserConstructElementWithEmptyStack::No);
     Ref<Element> constructElementWithFallback(Document&, CustomElementRegistry&, const QualifiedName&);
     Ref<HTMLElement> createElement(Document&);

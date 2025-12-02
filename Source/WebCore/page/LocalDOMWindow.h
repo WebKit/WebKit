@@ -89,6 +89,11 @@ public:
     static Ref<LocalDOMWindow> create(Document& document) { return adoptRef(*new LocalDOMWindow(document)); }
     WEBCORE_EXPORT virtual ~LocalDOMWindow();
 
+    // ContextDestructionObserver.
+    void ref() const final { DOMWindow::ref(); }
+    void deref() const final { DOMWindow::deref(); }
+    USING_CAN_MAKE_WEAKPTR(DOMWindow);
+
     // In some rare cases, we'll reuse a LocalDOMWindow for a new Document. For example,
     // when a script calls window.open("..."), the browser gives JavaScript a window
     // synchronously but kicks off the load in the window asynchronously. Web sites
@@ -378,9 +383,6 @@ public:
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     PushManager& pushManager();
-
-    void ref() const final { DOMWindow::ref(); }
-    void deref() const final { DOMWindow::deref(); }
 #endif
 
 private:

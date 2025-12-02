@@ -83,7 +83,7 @@ void MetadataStatistics::reportMetadataStatistics()
         opcodeIds[i] = i;
         memoryUsagePerOpcode[i] = perOpcodeCount[i] * metadataSize(static_cast<OpcodeID>(i));
     }
-    std::sort(opcodeIds.begin(), opcodeIds.end(), [&](auto a, auto b) {
+    std::ranges::sort(opcodeIds, [&](auto a, auto b) {
         return memoryUsagePerOpcode[a] > memoryUsagePerOpcode[b];
     });
     for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; ++i) {

@@ -40,6 +40,8 @@ namespace WebCore {
 
 auto DOMPromise::whenSettled(Function<void()>&& callback) -> IsCallbackRegistered
 {
+    if (isSuspended())
+        return IsCallbackRegistered::No;
     return whenPromiseIsSettled(globalObject(), promise(), WTFMove(callback));
 }
 

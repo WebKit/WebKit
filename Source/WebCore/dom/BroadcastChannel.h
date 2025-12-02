@@ -57,6 +57,7 @@ public:
     // ActiveDOMObject.
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     BroadcastChannelIdentifier identifier() const;
     String name() const;

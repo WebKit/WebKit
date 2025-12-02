@@ -988,6 +988,82 @@ bool Font::hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph> glyp
     return false;
 }
 
+std::optional<Ref<Font>> Font::fromIPCData(IPCFontData&& data)
+{
+    return WTF::switchOn(data,
+        [] (const InstalledFont& installedFont) -> std::optional<Ref<Font>> {
+            return installedFont.toFont();
+        },
+        [] (const CustomFontCreationData& creationData) -> std::optional<Ref<Font>> {
+            Ref fontFaceData = SharedBuffer::create(WTFMove(creationData.fontFaceData));
+            RefPtr<FontCustomPlatformData> customPlatformData = FontCustomPlatformData::create(fontFaceData, creationData.itemInCollection);
+            if (!customPlatformData)
+                return std::nullopt;
+
+            RetainPtr baseFontDescriptor = customPlatformData->fontDescriptor.get();
+            if (!baseFontDescriptor)
+                return std::nullopt;
+
+            RetainPtr<CFDictionaryRef> attributesDictionary = creationData.attributes ? creationData.attributes->toCFDictionary() : nullptr;
+            RetainPtr fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor.get(), attributesDictionary.get()));
+
+            RetainPtr font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), creationData.metadata.pointSize, nullptr));
+
+            return Font::create(FontPlatformData(creationData.metadata.pointSize, FontOrientation(creationData.metadata.orientation), FontWidthVariant(creationData.metadata.widthVariant), TextRenderingMode(creationData.metadata.textRenderingMode), creationData.metadata.syntheticBold, creationData.metadata.syntheticOblique, WTFMove(font), WTFMove(customPlatformData)));
+        }
+    );
+}
+
+std::optional<InstalledFont> Font::toSerializableInstalledFont() const
+{
+    RetainPtr ctFont = this->ctFont();
+    if (!ctFont || m_platformData.creationData())
+        return std::nullopt;
+
+    FontMetadata fontData = {
+        CTFontGetSize(ctFont.get()),
+        platformData().orientation(),
+        platformData().widthVariant(),
+        platformData().textRenderingMode(),
+        platformData().syntheticBold(),
+        platformData().syntheticOblique()
+    };
+
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont.get()));
+    RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+    return InstalledFont {
+        InstalledFont::PostScriptFont {
+            String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()),
+            CTFontDescriptorGetOptions(fontDescriptor.get()),
+            FontPlatformSerializedAttributes::fromCF(attributes.get())
+        },
+        fontData
+    };
+}
+
+IPCFontData Font::toSerializableFont() const
+{
+    std::optional<InstalledFont> installedFont = toSerializableInstalledFont();
+    if (installedFont)
+        return { *installedFont };
+
+    RetainPtr font = ctFont();
+    RetainPtr fontDescriptor = adoptCF(CTFontCopyFontDescriptor(font.get()));
+    RetainPtr attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+
+    const auto& data = m_platformData.creationData();
+    FontMetadata fontData = {
+        CTFontGetSize(font.get()),
+        m_platformData.orientation(),
+        m_platformData.widthVariant(),
+        m_platformData.textRenderingMode(),
+        m_platformData.syntheticBold(),
+        m_platformData.syntheticOblique()
+    };
+
+    return { CustomFontCreationData { fontData, { data->fontFaceData->span() }, FontPlatformSerializedAttributes::fromCF(attributes.get()), data->itemInCollection } };
+}
+
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const

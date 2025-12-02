@@ -296,6 +296,27 @@ static ExceptionOr<Ref<JSC::ArrayBuffer>> transferArrayBuffer(JSC::VM& vm, JSC::
     return ArrayBuffer::create(WTFMove(contents));
 }
 
+// https://streams.spec.whatwg.org/#readablestream-pull-from-bytes
+size_t ReadableByteStreamController::pullFromBytes(JSDOMGlobalObject& globalObject, JSC::ArrayBuffer& buffer, size_t offset)
+{
+    ASSERT(offset < buffer.byteLength());
+    auto available = buffer.byteLength() - offset;
+    RefPtr request = getByobRequest();
+    RefPtr currentView = request ? request->view() : nullptr;
+    auto desiredSize = currentView ? currentView->byteLength() : available;
+
+    auto pullSize = std::min(available, desiredSize);
+
+    if (currentView) {
+        memcpySpan(currentView->mutableSpan().subspan(0, pullSize), buffer.span().subspan(offset, pullSize));
+        request->respond(globalObject, pullSize);
+        return offset + pullSize;
+    }
+
+    enqueue(globalObject, buffer, offset, pullSize);
+    return offset + pullSize;
+}
+
 // https://streams.spec.whatwg.org/#readable-byte-stream-controller-enqueue
 ExceptionOr<void> ReadableByteStreamController::enqueue(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view)
 {
@@ -960,7 +981,7 @@ void ReadableByteStreamController::handleSourcePromise(DOMPromise& algorithmProm
 {
     algorithmPromise.whenSettled([promise = Ref { algorithmPromise }, callback = WTFMove(callback)]() mutable {
         auto* globalObject = promise->globalObject();
-        if (!globalObject)
+        if (!globalObject || promise->isSuspended())
             return;
 
         switch (promise->status()) {

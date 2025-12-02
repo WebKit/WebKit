@@ -85,13 +85,13 @@ protected:
     std::pair<unsigned, unsigned> selectionStartEnd() const;
     MarkedText createMarkedTextFromSelectionInBox();
     const FontCascade& fontCascade() const;
-    WritingMode writingMode() const { return m_style.writingMode(); }
+    WritingMode writingMode() const { return m_style->writingMode(); }
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
     bool isInsideShapedContent() const;
 
     struct DecoratingBox {
         InlineIterator::InlineBoxIterator inlineBox;
-        const RenderStyle& style;
+        const CheckedRef<const RenderStyle> style;
         TextDecorationPainter::Styles textDecorationStyles;
         FloatPoint location;
     };
@@ -100,9 +100,9 @@ protected:
 
     // FIXME: We could just talk to the display box directly.
     const InlineIterator::BoxModernPath m_textBox;
-    const RenderText& m_renderer;
-    const Document& m_document;
-    const RenderStyle& m_style;
+    const CheckedRef<const RenderText> m_renderer;
+    const CheckedRef<const Document> m_document;
+    const CheckedRef<const RenderStyle> m_style;
     const FloatRect m_logicalRect;
     const TextRun m_paintTextRun;
     PaintInfo& m_paintInfo;

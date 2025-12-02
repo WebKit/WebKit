@@ -68,9 +68,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebAnimation);
 
-HashSet<WebAnimation*>& WebAnimation::instances()
+HashSet<CheckedPtr<WebAnimation>>& WebAnimation::instances()
 {
-    static NeverDestroyed<HashSet<WebAnimation*>> instances;
+    static NeverDestroyed<HashSet<CheckedPtr<WebAnimation>>> instances;
     return instances;
 }
 

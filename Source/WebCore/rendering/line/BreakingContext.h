@@ -376,7 +376,7 @@ inline bool BreakingContext::handleText()
         m_renderTextInfo.text = &renderer;
         m_renderTextInfo.font = &font;
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);
-        m_renderTextInfo.lineBreakIteratorFactory.resetStringAndReleaseIterator(renderer.text(), style.computedLocale(), iteratorMode, contentAnalysis);
+        m_renderTextInfo.lineBreakIteratorFactory.resetStringAndReleaseIterator(renderer.text(), Style::toPlatform(style.computedLocale()), iteratorMode, contentAnalysis);
     } else if (m_renderTextInfo.layout && m_renderTextInfo.font != &font) {
         m_renderTextInfo.font = &font;
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);
@@ -585,7 +585,7 @@ inline bool BreakingContext::handleText()
             // Spaces after right-aligned text and before a line-break get collapsed away completely so that the trailing
             // space doesn't seem to push the text out from the right-hand edge.
             // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
-            if (m_nextObject && m_startOfIgnoredSpaces.offset() && m_nextObject->isBR() && (m_blockStyle.textAlign() == TextAlignMode::Right || m_blockStyle.textAlign() == TextAlignMode::WebKitRight)) {
+            if (m_nextObject && m_startOfIgnoredSpaces.offset() && m_nextObject->isBR() && (m_blockStyle.textAlign() == Style::TextAlign::Right || m_blockStyle.textAlign() == Style::TextAlign::WebKitRight)) {
                 m_startOfIgnoredSpaces.setOffset(m_startOfIgnoredSpaces.offset() - 1);
                 // If there's just a single trailing space start ignoring it now so it collapses away.
                 if (m_current.offset() == renderer.text().length() - 1)

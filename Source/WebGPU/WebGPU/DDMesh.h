@@ -37,6 +37,9 @@ struct WGPUDDMeshImpl {
 };
 
 @class DDBridgeReceiver;
+@class DDBridgeUpdateMaterial;
+@class DDBridgeUpdateMesh;
+@class DDBridgeUpdateTexture;
 
 namespace WebGPU {
 
@@ -57,12 +60,9 @@ public:
     ~DDMesh();
 
     bool isValid() const;
-    void addMesh(WGPUDDMeshDescriptor*);
-    void update(WGPUDDUpdateMeshDescriptor*);
-    void addTexture(WGPUDDTextureDescriptor*);
-    void updateTexture(WGPUDDUpdateTextureDescriptor*);
-    void addMaterial(WGPUDDMaterialDescriptor*);
-    void updateMaterial(WGPUDDUpdateMaterialDescriptor*);
+    void update(DDBridgeUpdateMesh*);
+    void updateTexture(DDBridgeUpdateTexture*);
+    void updateMaterial(DDBridgeUpdateMaterial*);
     void play(bool);
 
     id<MTLTexture> texture() const;
@@ -78,7 +78,7 @@ private:
     WGPUDDCreateMeshDescriptor m_descriptor;
     NSMutableArray<id<MTLTexture>>* m_textures { nil };
 
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     DDBridgeReceiver* m_ddReceiver;
     simd_float4x4 m_transform { matrix_identity_float4x4 };
 #endif

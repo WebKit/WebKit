@@ -1126,6 +1126,10 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::PictureInPicture:
             return matchesPictureInPicturePseudoClass(element);
 #endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        case CSSSelector::PseudoClass::Immersive:
+            return matchesImmersivePseudoClass(element);
+#endif
         case CSSSelector::PseudoClass::InRange:
             return isInRange(element);
         case CSSSelector::PseudoClass::OutOfRange:

@@ -133,11 +133,9 @@ private:
             if (!m_barrierPoints[nodeIndex])
                 continue;
             
-            std::sort(
-                m_neededBarriers.begin(), m_neededBarriers.end(),
-                [&] (const ChildAndOrigin& a, const ChildAndOrigin& b) -> bool {
-                    return a.child < b.child;
-                });
+            std::ranges::sort(m_neededBarriers, [&](const auto& a, const auto& b) {
+                return a.child < b.child;
+            });
             removeRepeatedElements(
                 m_neededBarriers, 
                 [&] (const ChildAndOrigin& a, const ChildAndOrigin& b) -> bool{

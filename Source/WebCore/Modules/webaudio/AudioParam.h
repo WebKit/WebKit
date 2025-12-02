@@ -51,6 +51,8 @@ class AudioParam final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(AudioParam);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioParam);
 public:
     static constexpr double SmoothingConstant = 0.05;
     static constexpr double SnapThreshold = 0.001;

@@ -26,6 +26,15 @@
 #pragma once
 
 namespace WebCore {
+class AudioCaptureSource;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
+template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AudioCaptureSource> : std::true_type { };
+}
+
+namespace WebCore {
 
 enum class AudioSessionCategory : uint8_t;
 enum class AudioSessionMode : uint8_t;

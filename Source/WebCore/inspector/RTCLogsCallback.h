@@ -35,6 +35,10 @@ class RTCLogsCallback : public RefCounted<RTCLogsCallback>, public ActiveDOMCall
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     struct Logs {
         String type;
         String message;

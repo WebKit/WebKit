@@ -77,7 +77,6 @@ public:
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
     constexpr std::span<const char> span() const { return m_charactersWithNullTerminator.first(length()); }
     std::span<const Latin1Character> span8() const { return byteCast<Latin1Character>(m_charactersWithNullTerminator.first(length())); }
-    std::span<const char8_t> spanChar8() const { return byteCast<char8_t>(m_charactersWithNullTerminator.first(length())); }
     std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
@@ -173,14 +172,9 @@ constexpr std::span<const Latin1Character> operator""_span8(const char* characte
     return span;
 }
 
-constexpr std::span<const char8_t> operator""_spanChar8(const char* characters, size_t n)
+constexpr std::span<const char8_t> operator""_span(const char8_t* characters, size_t n)
 {
-    auto span = byteCast<char8_t>(unsafeMakeSpan(characters, n));
-#if ASSERT_ENABLED
-    for (size_t i = 0, size = span.size(); i < size; ++i)
-        ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(span[i]));
-#endif
-    return span;
+    return unsafeMakeSpan(characters, n);
 }
 
 } // inline StringLiterals

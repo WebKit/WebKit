@@ -559,7 +559,7 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
     m_edges.shrinkToFit();
 
     // Sort edges based on from identifier.
-    std::sort(m_edges.begin(), m_edges.end(), [&] (const HeapSnapshotEdge& a, const HeapSnapshotEdge& b) {
+    std::ranges::sort(m_edges, [&](const auto& a, const auto& b) {
         return a.from.identifier < b.from.identifier;
     });
 

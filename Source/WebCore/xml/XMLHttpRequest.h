@@ -233,6 +233,7 @@ private:
     struct LoadingActivity {
         Ref<XMLHttpRequest> protectedThis; // Keep object alive while loading even if there is no longer a JS wrapper.
         Ref<ThreadableLoader> loader;
+        Ref<ThreadableLoader> protectedLoader() const;
     };
     std::optional<LoadingActivity> m_loadingActivity;
 

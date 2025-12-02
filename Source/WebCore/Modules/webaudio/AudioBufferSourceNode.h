@@ -40,6 +40,7 @@ struct AudioBufferSourceOptions;
 
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioBufferSourceNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioBufferSourceNode);
 public:
     static ExceptionOr<Ref<AudioBufferSourceNode>> create(BaseAudioContext&, AudioBufferSourceOptions&& = { });
 

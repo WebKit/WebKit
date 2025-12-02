@@ -115,7 +115,7 @@ public:
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
 #if ENABLE(VIDEO)
-    void drawVideoFrame(VideoFrame&, const FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
+    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
 
     using GraphicsContext::scale;

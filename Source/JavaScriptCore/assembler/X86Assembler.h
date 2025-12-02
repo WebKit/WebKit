@@ -3167,9 +3167,19 @@ public:
         m_formatter.immediate32(imm);
     }
     
-    void movsxd_rr(RegisterID src, RegisterID dst)
+    void movsxdq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_MOVSXD_GvEv, dst, src);
+    }
+
+    void movsxdq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOVSXD_GvEv, dst, base, offset);
+    }
+
+    void movsxdq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_MOVSXD_GvEv, dst, base, index, scale, offset);
     }
 
     void movzwl_mr(int offset, RegisterID base, RegisterID dst)
@@ -3192,6 +3202,18 @@ public:
         m_formatter.twoByteOp(OP2_MOVSX_GvEw, dst, base, index, scale, offset);
     }
 
+    void movswq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/movsx:movsxd
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEw, dst, base, offset);
+    }
+
+    void movswq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/movsx:movsxd
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEw, dst, base, index, scale, offset);
+    }
+
     void movzbl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, offset);
@@ -3206,10 +3228,22 @@ public:
     {
         m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, offset);
     }
-    
+
     void movsbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, index, scale, offset);
+    }
+
+    void movsbq_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/movsx:movsxd
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEb, dst, base, offset);
+    }
+
+    void movsbq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/movsx:movsxd
+        m_formatter.twoByteOp64(OP2_MOVSX_GvEb, dst, base, index, scale, offset);
     }
 
     void movzbl_rr(RegisterID src, RegisterID dst)

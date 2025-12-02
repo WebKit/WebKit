@@ -38,6 +38,10 @@ class FileSystemEntriesCallback : public RefCounted<FileSystemEntriesCallback>, 
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(const Vector<Ref<FileSystemEntry>>&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(const Vector<Ref<FileSystemEntry>>&) = 0;
 

@@ -37,11 +37,7 @@ namespace WebKit {
 
 PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 {
-    static LazyNeverDestroyed<OpenXRCoordinator> xrCoordinator;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        xrCoordinator.construct();
-    });
+    static NeverDestroyed<OpenXRCoordinator> xrCoordinator;
     return &xrCoordinator.get();
 }
 

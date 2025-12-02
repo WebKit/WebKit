@@ -714,6 +714,70 @@ public:
     {
         ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testProperty());
     }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelEnum(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageOneLevelEnum());
+    }
+    static void extractTestRenderStyleStorageOneLevelEnumSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageOneLevelEnum());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelRaw(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageOneLevelRaw());
+    }
+    static void extractTestRenderStyleStorageOneLevelRawSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageOneLevelRaw());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelReference(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageOneLevelReference());
+    }
+    static void extractTestRenderStyleStorageOneLevelReferenceSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageOneLevelReference());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageOneLevelValue(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageOneLevelValue());
+    }
+    static void extractTestRenderStyleStorageOneLevelValueSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageOneLevelValue());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelEnum(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageTwoLevelEnum());
+    }
+    static void extractTestRenderStyleStorageTwoLevelEnumSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageTwoLevelEnum());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelRaw(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageTwoLevelRaw());
+    }
+    static void extractTestRenderStyleStorageTwoLevelRawSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageTwoLevelRaw());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelReference(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageTwoLevelReference());
+    }
+    static void extractTestRenderStyleStorageTwoLevelReferenceSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageTwoLevelReference());
+    }
+    static RefPtr<CSSValue> extractTestRenderStyleStorageTwoLevelValue(ExtractorState& extractorState)
+    {
+        return ExtractorConverter::convert(extractorState, extractorState.style.testRenderStyleStorageTwoLevelValue());
+    }
+    static void extractTestRenderStyleStorageTwoLevelValueSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        ExtractorSerializer::serialize(extractorState, builder, context, extractorState.style.testRenderStyleStorageTwoLevelValue());
+    }
     static RefPtr<CSSValue> extractTestSettingsOne(ExtractorState& extractorState)
     {
         return ExtractorConverter::convert(extractorState, extractorState.style.testSettingsOne());
@@ -1052,6 +1116,22 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         return ExtractorFunctions::extractTestNumericValueRange(extractorState);
     case CSSPropertyID::CSSPropertyTestProperty:
         return ExtractorFunctions::extractTestProperty(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
+        return ExtractorFunctions::extractTestRenderStyleStorageOneLevelEnum(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
+        return ExtractorFunctions::extractTestRenderStyleStorageOneLevelRaw(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
+        return ExtractorFunctions::extractTestRenderStyleStorageOneLevelReference(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
+        return ExtractorFunctions::extractTestRenderStyleStorageOneLevelValue(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
+        return ExtractorFunctions::extractTestRenderStyleStorageTwoLevelEnum(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
+        return ExtractorFunctions::extractTestRenderStyleStorageTwoLevelRaw(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
+        return ExtractorFunctions::extractTestRenderStyleStorageTwoLevelReference(extractorState);
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
+        return ExtractorFunctions::extractTestRenderStyleStorageTwoLevelValue(extractorState);
     case CSSPropertyID::CSSPropertyTestSettingsOne:
         return ExtractorFunctions::extractTestSettingsOne(extractorState);
     case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
@@ -1380,6 +1460,30 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::CSSPropertyTestProperty:
         ExtractorFunctions::extractTestPropertySerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
+        ExtractorFunctions::extractTestRenderStyleStorageOneLevelEnumSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
+        ExtractorFunctions::extractTestRenderStyleStorageOneLevelRawSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
+        ExtractorFunctions::extractTestRenderStyleStorageOneLevelReferenceSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
+        ExtractorFunctions::extractTestRenderStyleStorageOneLevelValueSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
+        ExtractorFunctions::extractTestRenderStyleStorageTwoLevelEnumSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
+        ExtractorFunctions::extractTestRenderStyleStorageTwoLevelRawSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
+        ExtractorFunctions::extractTestRenderStyleStorageTwoLevelReferenceSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
+        ExtractorFunctions::extractTestRenderStyleStorageTwoLevelValueSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::CSSPropertyTestSettingsOne:
         ExtractorFunctions::extractTestSettingsOneSerialization(extractorState, builder, context);

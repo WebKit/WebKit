@@ -31,6 +31,7 @@
 #include "Clipboard.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "GtkUtilities.h"
+#include "GtkVersioning.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"

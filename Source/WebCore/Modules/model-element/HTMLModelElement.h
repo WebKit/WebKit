@@ -146,6 +146,13 @@ public:
     void isMuted(IsMutedPromise&&);
     void setIsMuted(bool, DOMPromiseDeferred<void>&&);
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool immersive() const;
+    void requestImmersive(DOMPromiseDeferred<void>&&);
+    void ensureImmersivePresentation(CompletionHandler<void(ExceptionOr<const LayerHostingContextIdentifier>)>&&);
+    void exitImmersivePresentation(CompletionHandler<void()>&&);
+#endif
+
     bool supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 
@@ -267,6 +274,7 @@ private:
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
 
     LayoutSize contentSize() const;
+    bool modelContainerSizeIsEmpty() const;
 
     void reportExtraMemoryCost();
 
@@ -341,6 +349,16 @@ private:
     CachedResourceHandle<CachedRawResource> m_environmentMapResource;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool m_detachedForImmersive { false };
+    void setDetachedForImmersive(bool);
+
+    Vector<CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>> m_modelPlayerCreationCallbacks;
+    void ensureModelPlayer(CompletionHandler<void(ExceptionOr<RefPtr<ModelPlayer>>)>&&);
+#endif
+
+    void triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<RefPtr<ModelPlayer>>&&);
 };
 
 } // namespace WebCore

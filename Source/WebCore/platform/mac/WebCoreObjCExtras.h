@@ -28,10 +28,11 @@
 
 #pragma once
 
-#if __has_feature(objc_arc)
-#error Do not use these functions in ARC-enabled code, as they conflict with ARC's automatic memory management.
-#endif
+// Do not use these functions in ARC-enabled code, as they conflict with ARC's automatic memory management.
+#if !__has_feature(objc_arc)
 
 // The class passed here is the class that implements the dealloc method that this function is called from.
 WEBCORE_EXPORT bool WebCoreObjCScheduleDeallocateOnMainThread(Class, id);
 WEBCORE_EXPORT bool WebCoreObjCScheduleDeallocateOnMainRunLoop(Class, id);
+
+#endif // !__has_feature(objc_arc)

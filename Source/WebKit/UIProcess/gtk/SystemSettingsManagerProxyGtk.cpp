@@ -193,7 +193,7 @@ void SystemSettingsManagerProxy::updateFontProperties(const String& fontName, We
     // If the size of the font is in points, we need to convert it to pixels.
     if (!pango_font_description_get_size_is_absolute(pangoDescription))
         size = size * (WebCore::fontDPI() / 72.0);
-    changedState.fontFamily = String::fromUTF8(unsafeSpan8(pango_font_description_get_family(pangoDescription)));
+    changedState.fontFamily = String { byteCast<char8_t>(unsafeSpan(pango_font_description_get_family(pangoDescription))) };
     changedState.fontSize = static_cast<float>(size);
     changedState.fontWeight = pango_font_description_get_weight(pangoDescription);
     pango_font_description_free(pangoDescription);

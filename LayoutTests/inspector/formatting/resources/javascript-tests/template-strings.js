@@ -19,3 +19,9 @@ tag`before ${1+1} after`
         y
     } after
 `
+`
+A
+B
+C
+`
+let shouldNotHaveNewLinesIntroduceBefore;

@@ -37,6 +37,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRandomNumber.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -44,8 +45,6 @@ GST_DEBUG_CATEGORY_STATIC(webkit_webrtc_utils_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_utils_debug
 
 namespace WebCore {
-
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
 
 static inline RTCIceComponent toRTCIceComponent(int component)
 {
@@ -297,7 +296,7 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     ensureDebugCategoryInitialized();
     GST_TRACE("Parsing ICE Candidate: %s", sdp.utf8().data());
-    if (!sdp.startsWith("candidate:"_s)) {
+    if (!sdp.startsWith("candidate:"_s) && !sdp.startsWith("a=candidate:"_s)) {
         GST_WARNING("Invalid SDP ICE candidate format, must start with candidate: prefix");
         return { };
     }
@@ -314,7 +313,7 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
     guint16 relatedPort = 0;
     String usernameFragment;
     String lowercasedSDP = sdp.convertToASCIILowercase();
-    StringView view = StringView(lowercasedSDP).substring(10);
+    StringView view = StringView(lowercasedSDP).substring(sdp.startsWith("candidate:"_s) ? 10 : 12);
     unsigned i = 0;
     NextSDPField nextSdpField { NextSDPField::None };
 
@@ -462,7 +461,9 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
 
     switch (info.type) {
     case PeerConnectionBackend::CertificateInformation::Type::ECDSAP256: {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
         privateKey.reset(EVP_EC_gen("prime256v1"));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
         if (!privateKey)
             return { };
         break;
@@ -600,7 +601,7 @@ std::optional<int> payloadTypeForEncodingName(const String& encodingName)
     return { };
 }
 
-GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities, Function<void(GstStructure*)> supplementCapsCallback)
+GRefPtr<GstCaps> capsFromRtpCapabilities(const RTPHeaderExtensionMapping& extensionMapping, const RTCRtpCapabilities& capabilities, Function<void(GstStructure*)> supplementCapsCallback)
 {
     auto caps = adoptGRef(gst_caps_new_empty());
     for (unsigned index = 0; auto& codec : capabilities.codecs) {
@@ -626,8 +627,10 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities& capabilities,
         supplementCapsCallback(codecStructure);
 
         if (!index) {
-            for (unsigned i = 1; auto& extension : capabilities.headerExtensions)
-                gst_structure_set(codecStructure, makeString("extmap-"_s, i++).ascii().data(), G_TYPE_STRING, extension.uri.ascii().data(), nullptr);
+            for (auto& extension : capabilities.headerExtensions) {
+                auto identifier = extensionMapping.get(extension.uri);
+                gst_structure_set(codecStructure, makeString("extmap-"_s, identifier).ascii().data(), G_TYPE_STRING, extension.uri.ascii().data(), nullptr);
+            }
         }
         gst_caps_append_structure(caps.get(), codecStructure);
         index++;
@@ -743,8 +746,8 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
         if (!G_VALUE_HOLDS_STRING(value))
             continue;
 
-        const char* uri = g_value_get_string(value);
-        if (!g_str_equal(uri, GST_RTP_HDREXT_BASE "ssrc-audio-level"))
+        auto uri = CStringView::unsafeFromUTF8(g_value_get_string(value));
+        if (uri != GST_RTP_HDREXT_BASE "ssrc-audio-level"_s)
             continue;
 
         GValue arrayValue G_VALUE_INIT;
@@ -756,7 +759,7 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
         g_value_set_static_string(&stringValue, "");
         gst_value_array_append_value(&arrayValue, &stringValue);
 
-        g_value_set_string(&stringValue, uri);
+        g_value_set_string(&stringValue, uri.utf8());
         gst_value_array_append_value(&arrayValue, &stringValue);
 
         g_value_set_static_string(&stringValue, "vad=on");
@@ -952,9 +955,11 @@ SDPStringBuilder::SDPStringBuilder(const GstSDPMessage* sdp)
 
             m_stringBuilder.append("t="_s, unsafeSpan(time->start), ' ', unsafeSpan(time->stop), CRLF);
             if (time->repeat) {
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
                 m_stringBuilder.append("r="_s, unsafeSpan(g_array_index(time->repeat, char*, 0)));
-                for (unsigned ii = 0; ii < time->repeat->len; ii++)
-                    m_stringBuilder.append(' ', unsafeSpan(g_array_index(time->repeat, char*, i)));
+                for (unsigned ii = 1; ii < time->repeat->len; ii++)
+                    m_stringBuilder.append(' ', unsafeSpan(g_array_index(time->repeat, char*, ii)));
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
                 m_stringBuilder.append(CRLF);
             }
         }
@@ -1044,17 +1049,16 @@ GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer,
 
         GST_DEBUG("Probed midExtID %u and ridExtID %u from SDP", midExtID, ridExtID);
 
-        uint8_t* pdata;
         uint16_t bits;
-        unsigned wordLength;
-        if (!gst_rtp_buffer_get_extension_data(buffer.mappedData(), &bits, reinterpret_cast<gpointer*>(&pdata), &wordLength))
+        auto bytes = adoptGRef(gst_rtp_buffer_get_extension_bytes(buffer.mappedData(), &bits));
+        if (!bytes)
             continue;
 
+        auto extensionBytes = span(bytes);
         GstRTPHeaderExtensionFlags extensionFlags;
-        gsize byteLength = wordLength * 4;
         guint headerUnitTypes;
         gsize offset = 0;
-        GUniquePtr<char> mid, rid;
+        std::span<const uint8_t> mid, rid;
 
         if (bits == 0xBEDE) {
             headerUnitTypes = 1;
@@ -1071,12 +1075,13 @@ GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer,
             guint8 readId, readLength;
 
             // Not enough remaining data.
-            if (offset + headerUnitTypes >= byteLength)
+            if (offset + headerUnitTypes >= extensionBytes.size_bytes())
                 break;
 
+            auto value = GST_READ_UINT8(extensionBytes.subspan(offset).data());
             if (extensionFlags & GST_RTP_HEADER_EXTENSION_ONE_BYTE) {
-                readId = GST_READ_UINT8(pdata + offset) >> 4;
-                readLength = (GST_READ_UINT8(pdata + offset) & 0x0F) + 1;
+                readId = value >> 4;
+                readLength = (value & 0x0F) + 1;
                 offset++;
 
                 // Padding.
@@ -1087,42 +1092,46 @@ GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer& buffer,
                 if (readId == 15)
                     break;
             } else {
-                readId = GST_READ_UINT8(pdata + offset);
+                readId = value;
                 offset += 1;
 
                 // Padding.
                 if (!readId)
                     continue;
 
-                readLength = GST_READ_UINT8(pdata + offset);
+                readLength = value;
                 offset++;
             }
             GST_TRACE("Found rtp header extension with id %u and length %u", readId, readLength);
 
             // Ignore extension headers where the size does not fit.
-            if (offset + readLength > byteLength) {
+            if (offset + readLength > extensionBytes.size_bytes()) {
                 GST_WARNING("Extension length extends past the size of the extension data");
                 break;
             }
 
-            const char* data = reinterpret_cast<const char*>(&pdata[offset]);
+            auto data = extensionBytes.subspan(offset, readLength);
             if (readId == midExtID)
-                mid.reset(g_strndup(data, readLength));
+                mid = data;
             else if (readId == ridExtID)
-                rid.reset(g_strndup(data, readLength));
+                rid = data;
 
-            if (rid && mid)
+            if (!rid.empty() && !mid.empty())
                 break;
 
             offset += readLength;
         }
 
-        if (mid) {
-            gst_caps_set_simple(mediaCaps.get(), "a-mid", G_TYPE_STRING, mid.get(), nullptr);
+        if (!mid.empty()) {
+            // FIXME: Move this to CStringView as soon as it gains a span constructor.
+            CString midString(mid);
+            gst_caps_set_simple(mediaCaps.get(), "a-mid", G_TYPE_STRING, midString.data(), nullptr);
 
-            if (rid)
-                gst_caps_set_simple(mediaCaps.get(), "a-rid", G_TYPE_STRING, rid.get(), nullptr);
-
+            if (!rid.empty()) {
+                // FIXME: Move this to CStringView as soon as it gains a span constructor.
+                CString ridString(rid);
+                gst_caps_set_simple(mediaCaps.get(), "a-rid", G_TYPE_STRING, ridString.data(), nullptr);
+            }
             return mediaCaps;
         }
     }
@@ -1176,8 +1185,6 @@ bool validateRTPHeaderExtensions(const GstSDPMessage* previousSDP, const GstSDPM
     }
     return true;
 }
-
-IGNORE_CLANG_WARNINGS_END
 
 #undef GST_CAT_DEFAULT
 

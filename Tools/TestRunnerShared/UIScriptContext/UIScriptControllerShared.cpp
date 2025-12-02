@@ -81,6 +81,7 @@ TextExtractionTestOptions* toTextExtractionTestOptions(JSContextRef context, JSV
     options.mergeParagraphs = booleanProperty(context, (JSObjectRef)argument, "mergeParagraphs", false);
     options.skipNearlyTransparentContent = booleanProperty(context, (JSObjectRef)argument, "skipNearlyTransparentContent", false);
     options.nodeIdentifierInclusion = stringProperty(context, (JSObjectRef)argument, "nodeIdentifierInclusion");
+    options.outputFormat = stringProperty(context, (JSObjectRef)argument, "outputFormat");
     return &options;
 }
 

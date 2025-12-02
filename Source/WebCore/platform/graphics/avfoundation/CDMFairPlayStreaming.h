@@ -58,6 +58,7 @@ private:
 
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateFairPlayStreaming);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivateFairPlayStreaming);
 public:
     CDMPrivateFairPlayStreaming(const String& mediaKeysHashSalt, const CDMPrivateClient&);
     virtual ~CDMPrivateFairPlayStreaming();
@@ -69,11 +70,11 @@ public:
     ASCIILiteral logClassName() const { return "CDMPrivateFairPlayStreaming"_s; }
 #endif
 
-    Vector<AtomString> supportedInitDataTypes() const override;
+    Vector<String> supportedInitDataTypes() const override;
     bool supportsConfiguration(const CDMKeySystemConfiguration&) const override;
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const override;
-    Vector<AtomString> supportedRobustnesses() const override;
+    Vector<String> supportedRobustnesses() const override;
     CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const override;
@@ -81,20 +82,20 @@ public:
     void loadAndInitialize() override;
     bool supportsServerCertificates() const override;
     bool supportsSessions() const override;
-    bool supportsInitData(const AtomString&, const SharedBuffer&) const override;
+    bool supportsInitData(const String&, const SharedBuffer&) const override;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
     std::optional<String> sanitizeSessionId(const String&) const override;
 
-    static const AtomString& sinfName();
+    static const String& sinfName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
 
-    static const AtomString& skdName();
+    static const String& skdName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-    static const AtomString& mptsName();
+    static const String& mptsName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsMpts(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeMpts(const SharedBuffer&);
     static const Vector<Ref<SharedBuffer>>& mptsKeyIDs();

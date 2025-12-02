@@ -564,7 +564,7 @@ TEST(SOAuthorizationRedirect, InterceptionDoNotHandle)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorizationDidNotHandle:gAuthorization];
@@ -586,7 +586,7 @@ TEST(SOAuthorizationRedirect, InterceptionCancel)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorizationDidCancel:gAuthorization];
@@ -609,7 +609,7 @@ TEST(SOAuthorizationRedirect, InterceptionCompleteWithoutData)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorizationDidComplete:gAuthorization];
@@ -631,7 +631,7 @@ TEST(SOAuthorizationRedirect, InterceptionUnexpectedCompletion)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     [gDelegate authorization:gAuthorization didCompleteWithHTTPAuthorizationHeaders:adoptNS([[NSDictionary alloc] init]).get()];
@@ -654,7 +654,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_FALSE(policyForAppSSOPerformed); // The delegate isn't registered, so this won't be set.
 #if PLATFORM(MAC) || PLATFORM(IOS)
     EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
@@ -707,9 +707,9 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed2)
 #endif
     Util::run(&authorizationPerformed);
 #if PLATFORM(MAC)
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    checkAuthorizationOptions(true, "null"_s, 0);
+    checkAuthorizationOptions(true, emptyString(), 0);
 #endif
     EXPECT_FALSE(policyForAppSSOPerformed); // The delegate isn't registered, so this won't be set.
 
@@ -741,9 +741,9 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
     Util::run(&authorizationPerformed);
     EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
 #if PLATFORM(MAC)
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    checkAuthorizationOptions(true, "null"_s, 0);
+    checkAuthorizationOptions(true, emptyString(), 0);
 #endif
     EXPECT_TRUE(policyForAppSSOPerformed);
 
@@ -770,7 +770,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed4)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -797,7 +797,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithOtherHttpStatusCode)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -878,7 +878,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWith302AfterRedirection)
 
     [webView loadRequest:server.request("/redirection.html"_s)];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, ""_s, 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
     auto simpleURL2String = server.request("/simple2.html"_s).URL.absoluteString;
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:simpleURL statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : simpleURL2String }]);
@@ -1071,7 +1071,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookie)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -1105,7 +1105,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookies)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -1145,9 +1145,9 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithRedirectionAndCookie)
 #endif
     Util::run(&authorizationPerformed);
 #if PLATFORM(MAC)
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
 #elif PLATFORM(IOS) || PLATFORM(VISION)
-    checkAuthorizationOptions(true, "null"_s, 0);
+    checkAuthorizationOptions(true, emptyString(), 0);
 #endif
     EXPECT_TRUE(policyForAppSSOPerformed);
 
@@ -1178,7 +1178,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithDifferentOrigin)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     URL redirectURL { "https://www.example.com"_str };
@@ -1209,7 +1209,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
     // Should activate the session.
     [webView addToTestWindow];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -1265,7 +1265,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithActiveSessionDidMoveWindow)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     // Should be a no op.
@@ -1298,7 +1298,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedTwice)
         policyForAppSSOPerformed = false;
         [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
         Util::run(&authorizationPerformed);
-        checkAuthorizationOptions(false, i ? "file://"_s : "null"_s, 0);
+        checkAuthorizationOptions(false, i ? "file://"_s : ""_s, 0);
         EXPECT_TRUE(policyForAppSSOPerformed);
 
         navigationCompleted = false;
@@ -1327,7 +1327,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     // Suppress the last active session.
@@ -1336,7 +1336,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationCancelled);
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -1378,7 +1378,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
     // Activate the last session.
     [webView addToTestWindow];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
@@ -1414,7 +1414,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
 
     [webView loadRequest:request.get()];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, emptyString(), 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     // Pass a HTTP 200 response with a html to mimic a SAML response.
@@ -1495,6 +1495,24 @@ TEST(SOAuthorizationRedirect, AuthorizationOptionsWithPath)
     EXPECT_TRUE(policyForAppSSOPerformed);
 }
 
+TEST(SOAuthorizationRedirect, AuthorizationOptionsAboutBlank)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"about:blank"]];
+    Util::run(&navigationCompleted);
+
+    [delegate setShouldOpenExternalSchemes:true];
+    [webView evaluateJavaScript: @"location = 'http://www.example.com'" completionHandler:nil];
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(true, ""_s, 0);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+}
 
 TEST(SOAuthorizationRedirect, InterceptionDidNotHandleTwice)
 {
@@ -1570,7 +1588,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&authorizationPerformed);
-    checkAuthorizationOptions(false, "null"_s, 0);
+    checkAuthorizationOptions(false, ""_s, 0);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];

@@ -41,6 +41,7 @@ class RenderStyle;
 
 class StyleOriginatedAnimation : public WebAnimation {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleOriginatedAnimation);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleOriginatedAnimation);
 public:
     ~StyleOriginatedAnimation();
 

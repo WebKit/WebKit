@@ -724,8 +724,6 @@ editing/input/composition-highlights.html [ Pass ]
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Pass ]
 
-imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftest.https.html [ Pass ]
-
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 editing/selection/expando.html [ Pass ]
 

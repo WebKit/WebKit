@@ -49,7 +49,11 @@ private:
     SubmitEvent(const AtomString& type, Init&&);
     explicit SubmitEvent(RefPtr<HTMLElement>&& submitter);
 
+    bool isSubmitEvent() const final;
+
     RefPtr<HTMLElement> m_submitter;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(SubmitEvent)

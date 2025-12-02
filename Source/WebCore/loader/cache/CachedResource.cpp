@@ -316,7 +316,7 @@ void CachedResource::checkNotify(const NetworkLoadMetrics& metrics, LoadWillCont
         return;
 
     CachedResourceClientWalker<CachedResourceClient> walker(*this);
-    while (CachedResourceClient* client = walker.next())
+    while (RefPtr client = walker.next())
         client->notifyFinished(*this, metrics, loadWillContinueInAnotherProcess);
 }
 
@@ -782,10 +782,10 @@ void CachedResource::switchClientsToRevalidatedResource()
 
     Vector<SingleThreadWeakPtr<CachedResourceClient>> clientsToMove;
     for (auto entry : m_clients) {
-        auto& client = entry.key;
+        Ref client = entry.key;
         unsigned count = entry.value;
         while (count) {
-            clientsToMove.append(client);
+            clientsToMove.append(client.get());
             --count;
         }
     }
@@ -940,11 +940,7 @@ ResourceResponse& CachedResource::mutableResponse()
 const ResourceResponse& CachedResource::response() const
 {
     if (!m_response) {
-        static LazyNeverDestroyed<ResourceResponse> staticEmptyResponse;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [&] {
-            staticEmptyResponse.construct();
-        });
+        static NeverDestroyed<ResourceResponse> staticEmptyResponse;
         return staticEmptyResponse;
     }
     return m_response->m_response;
@@ -965,11 +961,7 @@ void CachedResource::restartDecodedDataDeletionTimer()
 const ResourceError& CachedResource::resourceError() const
 {
     if (!m_response) {
-        static LazyNeverDestroyed<ResourceError> emptyError;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [&] {
-            emptyError.construct();
-        });
+        static NeverDestroyed<ResourceError> emptyError;
         return emptyError;
     }
     return m_response->m_error;

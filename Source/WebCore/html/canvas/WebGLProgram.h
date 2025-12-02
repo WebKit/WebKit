@@ -55,6 +55,10 @@ public:
     static RefPtr<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
 
+    // ContextDestructionObserver.
+    void ref() const final { WebGLObject::ref(); }
+    void deref() const final { WebGLObject::deref(); }
+
     static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 

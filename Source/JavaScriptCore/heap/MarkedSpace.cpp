@@ -127,7 +127,7 @@ static Vector<size_t> sizeClasses()
 
     {
         // Sort and deduplicate.
-        std::sort(result.begin(), result.end());
+        std::ranges::sort(result);
         auto it = std::unique(result.begin(), result.end());
         result.shrinkCapacity(it - result.begin());
     }

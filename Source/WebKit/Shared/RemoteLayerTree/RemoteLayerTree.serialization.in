@@ -111,34 +111,12 @@ header: "RemoteLayerBackingStore.h"
 
     Vector<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
-    Vector<WebCore::PlatformLayerIdentifier> m_videoLayerIDsPendingFullscreen;
     Vector<WebCore::PlatformLayerIdentifier> m_layerIDsWithNewlyUnreachableBackingStore;
 
     WebCore::IntSize m_contentsSize;
     WebCore::IntSize m_scrollGeometryContentSize;
     WebCore::IntPoint m_scrollOrigin;
-    WebCore::LayoutSize m_baseLayoutViewportSize;
-    WebCore::LayoutPoint m_minStableLayoutViewportOrigin;
-    WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
     WebCore::IntPoint m_scrollPosition;
-
-    double m_pageScaleFactor;
-    double m_minimumScaleFactor;
-    double m_maximumScaleFactor;
-    double m_initialScaleFactor;
-    double m_viewportMetaTagWidth;
-    WebCore::InteractiveWidget m_viewportMetaTagInteractiveWidget;
-    uint64_t m_renderTreeSize;
-    WebKit::TransactionID m_transactionID;
-    bool m_scaleWasSetByUIProcess;
-    bool m_allowsUserScaling;
-    bool m_avoidsUnsafeArea;
-    bool m_viewportMetaTagWidthWasExplicit;
-    bool m_viewportMetaTagCameFromImageDocument;
-
-#if PLATFORM(IOS_FAMILY)
-    std::optional<uint64_t> m_dynamicViewportSizeUpdateID;
-#endif
 
 #if ENABLE(THREADED_ANIMATIONS)
     HashSet<Ref<WebCore::AcceleratedTimeline>> m_timelines;
@@ -274,21 +252,42 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
 
 [CustomHeader] struct WebKit::PageData {
     Vector<WebKit::PageData::TransactionCallbackID> callbackIDs;
+    uint64_t renderTreeSize;
 };
 
 [CustomHeader] struct WebKit::MainFrameData {
-    WebKit::ActivityStateChangeID activityStateChangeID;
+    WebCore::LayoutSize baseLayoutViewportSize;
+    WebCore::LayoutPoint minStableLayoutViewportOrigin;
+    WebCore::LayoutPoint maxStableLayoutViewportOrigin;
     WebCore::Color themeColor;
     WebCore::Color pageExtendedBackgroundColor;
     WebCore::Color sampledPageTopColor;
-    std::optional<WebKit::EditorState> editorState;
-    OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
     std::optional<WebCore::FixedContainerEdges> fixedContainerEdges;
-    bool isInStableState;
+
 #if PLATFORM(MAC)
     Markable<WebCore::PlatformLayerIdentifier> pageScalingLayerID;
     Markable<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID;
     Markable<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID;
+#endif
+
+    double pageScaleFactor;
+    double minimumScaleFactor;
+    double maximumScaleFactor;
+    double initialScaleFactor;
+    double viewportMetaTagWidth;
+    WebKit::ActivityStateChangeID activityStateChangeID;
+    OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
+    bool scaleWasSetByUIProcess;
+    bool allowsUserScaling;
+    bool avoidsUnsafeArea;
+    bool viewportMetaTagWidthWasExplicit;
+    bool viewportMetaTagCameFromImageDocument;
+    bool isInStableState;
+    WebCore::InteractiveWidget viewportMetaTagInteractiveWidget;
+
+    std::optional<WebKit::EditorState> editorState;
+#if PLATFORM(IOS_FAMILY)
+    std::optional<uint64_t> dynamicViewportSizeUpdateID;
 #endif
 };
 
@@ -298,5 +297,7 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     Vector<WebKit::RemoteLayerTreeCommitBundle::RootFrameData> transactions;
     WebKit::PageData pageData;
     std::optional<WebKit::MainFrameData> mainFrameData;
+    
+    WebKit::TransactionID transactionID;
     MonotonicTime startTime;
 };

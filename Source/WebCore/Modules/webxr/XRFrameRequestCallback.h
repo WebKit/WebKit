@@ -39,6 +39,10 @@ class XRFrameRequestCallback : public RefCounted<XRFrameRequestCallback>, public
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(double highResTimeMs, WebXRFrame&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double highResTimeMs, WebXRFrame&) = 0;
 

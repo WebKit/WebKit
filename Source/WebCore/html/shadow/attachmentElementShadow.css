@@ -46,6 +46,8 @@ div#attachment-container {
     background-color: canvas;
     border-radius: 8px;
     font: caption;
+    direction: inherit;
+    text-align: start;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;

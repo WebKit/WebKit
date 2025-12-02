@@ -53,6 +53,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
@@ -114,7 +115,7 @@ struct EventSource {
 
     GSource source;
     GPollFD pfd;
-    struct wl_display* display;
+    WPEDisplayWayland* display;
 };
 
 GSourceFuncs EventSource::sourceFuncs = {
@@ -122,16 +123,16 @@ GSourceFuncs EventSource::sourceFuncs = {
     [](GSource* base, gint* timeout) -> gboolean
     {
         auto* source = reinterpret_cast<EventSource*>(base);
-        struct wl_display* display = source->display;
+        auto* display = WPE_DISPLAY_WAYLAND(source->display);
 
         *timeout = -1;
 
-        while (wl_display_prepare_read(display)) {
-            if (wl_display_dispatch_pending(display) < 0)
+        while (wl_display_prepare_read(display->priv->wlDisplay)) {
+            if (wl_display_dispatch_pending(display->priv->wlDisplay) < 0)
                 return FALSE;
         }
 
-        wl_display_flush(display);
+        wl_display_flush(display->priv->wlDisplay);
 
         return FALSE;
     },
@@ -139,13 +140,22 @@ GSourceFuncs EventSource::sourceFuncs = {
     [](GSource* base) -> gboolean
     {
         auto* source = reinterpret_cast<EventSource*>(base);
-        struct wl_display* display = source->display;
+        auto* display = WPE_DISPLAY_WAYLAND(source->display);
+
+        if (source->pfd.revents & (G_IO_ERR | G_IO_HUP)) {
+            GUniquePtr<GError> error(g_error_new_literal(WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST, "Connection to Wayland compositor was lost"));
+            wpe_display_disconnected(WPE_DISPLAY(display), error.get());
+            return FALSE;
+        }
 
         if (source->pfd.revents & G_IO_IN) {
-            if (wl_display_read_events(display) < 0)
+            if (wl_display_read_events(display->priv->wlDisplay) < 0) {
+                GUniquePtr<GError> error(g_error_new(WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST, "Error reading events from Wayland display: %s", g_strerror(errno)));
+                wpe_display_disconnected(WPE_DISPLAY(display), error.get());
                 return FALSE;
+            }
         } else
-            wl_display_cancel_read(display);
+            wl_display_cancel_read(display->priv->wlDisplay);
 
         return !!source->pfd.revents;
     },
@@ -153,14 +163,20 @@ GSourceFuncs EventSource::sourceFuncs = {
     [](GSource* base, GSourceFunc, gpointer) -> gboolean
     {
         auto* source = reinterpret_cast<EventSource*>(base);
-        struct wl_display* display = source->display;
+        auto* display = WPE_DISPLAY_WAYLAND(source->display);
 
-        if (source->pfd.revents & (G_IO_ERR | G_IO_HUP))
+        if (source->pfd.revents & (G_IO_ERR | G_IO_HUP)) {
+            GUniquePtr<GError> error(g_error_new_literal(WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST, "Connection to Wayland compositor was lost"));
+            wpe_display_disconnected(WPE_DISPLAY(display), error.get());
             return FALSE;
+        }
 
         if (source->pfd.revents & G_IO_IN) {
-            if (wl_display_dispatch_pending(display) < 0)
+            if (wl_display_dispatch_pending(display->priv->wlDisplay) < 0) {
+                GUniquePtr<GError> error(g_error_new(WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST, "Error disaptching events to Wayland display: %s", g_strerror(errno)));
+                wpe_display_disconnected(WPE_DISPLAY(display), error.get());
                 return FALSE;
+            }
         }
 
         source->pfd.revents = 0;
@@ -175,8 +191,8 @@ static GRefPtr<GSource> wpeDisplayWaylandCreateEventSource(WPEDisplayWayland* di
 {
     auto source = adoptGRef(g_source_new(&EventSource::sourceFuncs, sizeof(EventSource)));
     auto& eventSource = *reinterpret_cast<EventSource*>(source.get());
-    eventSource.display = display->priv->wlDisplay;
-    eventSource.pfd.fd = wl_display_get_fd(eventSource.display);
+    eventSource.display = display;
+    eventSource.pfd.fd = wl_display_get_fd(display->priv->wlDisplay);
     eventSource.pfd.events = G_IO_IN | G_IO_ERR | G_IO_HUP;
     eventSource.pfd.revents = 0;
     g_source_add_poll(&eventSource.source, &eventSource.pfd);

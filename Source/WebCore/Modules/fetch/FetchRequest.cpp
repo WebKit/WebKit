@@ -318,8 +318,10 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
     if (!request.isBodyNull()) {
         if (!methodCanHaveBody(m_request))
             return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
-        // FIXME: If body has a readable stream, we should pipe it to this new body stream.
-        m_body = WTFMove(*request.m_body);
+
+        RefPtr context = scriptExecutionContext();
+        auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+        m_body = request.m_body->createProxy(*globalObject);
         request.setDisturbed();
     }
 

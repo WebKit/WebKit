@@ -146,8 +146,10 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // of the buffers for safety reasons.
 
     // Get input and output busses.
-    AudioBus& inputBus = this->input(0)->bus();
-    AudioBus& outputBus = this->output(0)->bus();
+    CheckedPtr firstInput = input(0);
+    AudioBus& inputBus = firstInput->bus();
+    CheckedPtr firstOutput = output(0);
+    AudioBus& outputBus = firstOutput->bus();
 
     // Get input and output buffers. We double-buffer both the input and output sides.
     unsigned bufferIndex = this->bufferIndex();

@@ -35,6 +35,10 @@ public:
 
     virtual ~SVGFontFaceUriElement();
 
+    // CachedResourceClient.
+    void ref() const final { SVGElement::ref(); }
+    void deref() const final { SVGElement::deref(); }
+
     Ref<CSSFontFaceSrcResourceValue> createSrcValue() const;
 
 private:

@@ -348,6 +348,9 @@ inline Deque<T, inlineCapacity>::Deque(Deque&& other)
 template<typename T, size_t inlineCapacity>
 inline auto Deque<T, inlineCapacity>::operator=(const Deque& other) -> Deque&
 {
+    if (&other == this)
+        return *this;
+
     // FIXME: This is inefficient if we're using an inline buffer and T is
     // expensive to copy since it will copy the buffer twice instead of once.
     Deque<T, inlineCapacity> copy(other);

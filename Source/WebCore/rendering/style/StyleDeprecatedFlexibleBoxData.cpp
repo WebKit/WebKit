@@ -32,25 +32,25 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
 
 StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
-    : flex(RenderStyle::initialBoxFlex())
-    , flexGroup(RenderStyle::initialBoxFlexGroup())
-    , ordinalGroup(RenderStyle::initialBoxOrdinalGroup())
-    , align(static_cast<unsigned>(RenderStyle::initialBoxAlign()))
-    , pack(static_cast<unsigned>(RenderStyle::initialBoxPack()))
-    , orient(static_cast<unsigned>(RenderStyle::initialBoxOrient()))
-    , lines(static_cast<unsigned>(RenderStyle::initialBoxLines()))
+    : boxFlex(RenderStyle::initialBoxFlex())
+    , boxFlexGroup(RenderStyle::initialBoxFlexGroup())
+    , boxOrdinalGroup(RenderStyle::initialBoxOrdinalGroup())
+    , boxAlign(static_cast<unsigned>(RenderStyle::initialBoxAlign()))
+    , boxPack(static_cast<unsigned>(RenderStyle::initialBoxPack()))
+    , boxOrient(static_cast<unsigned>(RenderStyle::initialBoxOrient()))
+    , boxLines(static_cast<unsigned>(RenderStyle::initialBoxLines()))
 {
 }
 
 inline StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& other)
     : RefCounted<StyleDeprecatedFlexibleBoxData>()
-    , flex(other.flex)
-    , flexGroup(other.flexGroup)
-    , ordinalGroup(other.ordinalGroup)
-    , align(other.align)
-    , pack(other.pack)
-    , orient(other.orient)
-    , lines(other.lines)
+    , boxFlex(other.boxFlex)
+    , boxFlexGroup(other.boxFlexGroup)
+    , boxOrdinalGroup(other.boxOrdinalGroup)
+    , boxAlign(other.boxAlign)
+    , boxPack(other.boxPack)
+    , boxOrient(other.boxOrient)
+    , boxLines(other.boxLines)
 {
 }
 
@@ -61,26 +61,26 @@ Ref<StyleDeprecatedFlexibleBoxData> StyleDeprecatedFlexibleBoxData::copy() const
 
 bool StyleDeprecatedFlexibleBoxData::operator==(const StyleDeprecatedFlexibleBoxData& other) const
 {
-    return flex == other.flex
-        && flexGroup == other.flexGroup
-        && ordinalGroup == other.ordinalGroup
-        && align == other.align
-        && pack == other.pack
-        && orient == other.orient
-        && lines == other.lines;
+    return boxFlex == other.boxFlex
+        && boxFlexGroup == other.boxFlexGroup
+        && boxOrdinalGroup == other.boxOrdinalGroup
+        && boxAlign == other.boxAlign
+        && boxPack == other.boxPack
+        && boxOrient == other.boxOrient
+        && boxLines == other.boxLines;
 }
 
 #if !LOG_DISABLED
 void StyleDeprecatedFlexibleBoxData::dumpDifferences(TextStream& ts, const StyleDeprecatedFlexibleBoxData& other) const
 {
-    LOG_IF_DIFFERENT(flex);
-    LOG_IF_DIFFERENT(flexGroup);
-    LOG_IF_DIFFERENT(ordinalGroup);
+    LOG_IF_DIFFERENT(boxFlex);
+    LOG_IF_DIFFERENT(boxFlexGroup);
+    LOG_IF_DIFFERENT(boxOrdinalGroup);
 
-    LOG_IF_DIFFERENT_WITH_CAST(BoxAlignment, align);
-    LOG_IF_DIFFERENT_WITH_CAST(BoxPack, pack);
-    LOG_IF_DIFFERENT_WITH_CAST(BoxOrient, orient);
-    LOG_IF_DIFFERENT_WITH_CAST(BoxLines, lines);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxAlignment, boxAlign);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxPack, boxPack);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxOrient, boxOrient);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxLines, boxLines);
 }
 #endif // !LOG_DISABLED
 

@@ -74,7 +74,7 @@ void WasmOpcodeCounter::dump(Atomic<uint64_t>* counter, NumberOfRegisteredOpcode
         vector.append({ (OpcodeType)i, count });
     }
 
-    std::sort(vector.begin(), vector.end(), [](Pair& a, Pair& b) {
+    std::ranges::sort(vector, [](auto& a, auto& b) {
         return b.count < a.count;
     });
 

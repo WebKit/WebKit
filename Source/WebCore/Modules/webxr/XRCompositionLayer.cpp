@@ -28,18 +28,25 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "XRLayerBacking.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(XRCompositionLayer);
 
-XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionContext)
+XRCompositionLayer::XRCompositionLayer(ScriptExecutionContext* scriptExecutionContext, Ref<XRLayerBacking>&& backing)
     : WebXRLayer(scriptExecutionContext)
+    , m_backing(WTFMove(backing))
 {
 }
 
 XRCompositionLayer::~XRCompositionLayer() = default;
+
+XRLayerBacking& XRCompositionLayer::backing()
+{
+    return m_backing;
+}
 
 }
 

@@ -168,13 +168,11 @@ InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
 
 InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode, AbstractLineBuilder& lineBuilder, MayCacheLayoutResult mayCacheLayoutResult)
 {
-    auto horizontalConstraints = HorizontalConstraints { };
-    if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
-        horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
     auto layoutRange = m_inlineItemRange;
     if (layoutRange.isEmpty())
         return { };
 
+    auto availableWidth = intrinsicWidthMode == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
     auto maximumContentWidth = InlineLayoutUnit { };
     struct ContentWidthBetweenLineBreaks {
         InlineLayoutUnit maximum { };
@@ -188,17 +186,17 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     lineBuilder.setIntrinsicWidthMode(intrinsicWidthMode);
 
     while (true) {
-        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine, isFirstFormattedLineCandidate);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, availableWidth, 0.f } }, previousLine, isFirstFormattedLineCandidate);
         auto floatContentWidth = [&] {
-            auto leftWidth = LayoutUnit { };
-            auto rightWidth = LayoutUnit { };
+            auto leftWidth = InlineLayoutUnit { };
+            auto rightWidth = InlineLayoutUnit { };
             for (auto& floatItem : lineLayoutResult.floatContent.placedFloats) {
                 mayCacheLayoutResult = MayCacheLayoutResult::No;
                 auto marginBoxRect = BoxGeometry::marginBoxRect(floatItem.boxGeometry());
                 if (floatItem.isStartPositioned())
-                    leftWidth = std::max(leftWidth, marginBoxRect.right());
+                    leftWidth = std::max<InlineLayoutUnit>(leftWidth, marginBoxRect.right());
                 else
-                    rightWidth = std::max(rightWidth, horizontalConstraints.logicalWidth - marginBoxRect.left());
+                    rightWidth = std::max<InlineLayoutUnit>(rightWidth, availableWidth - marginBoxRect.left());
             }
             return InlineLayoutUnit { leftWidth + rightWidth };
         };

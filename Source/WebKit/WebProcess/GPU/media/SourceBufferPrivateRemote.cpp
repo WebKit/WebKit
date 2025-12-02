@@ -474,12 +474,6 @@ void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidDropSampl
         client->sourceBufferPrivateDidDropSample();
 }
 
-void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
-{
-    if (auto client = this->client())
-        client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
-}
-
 void SourceBufferPrivateRemote::MessageReceiver::sourceBufferPrivateDidAttach(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
     assertIsCurrent(SourceBufferPrivateRemote::queueSingleton());

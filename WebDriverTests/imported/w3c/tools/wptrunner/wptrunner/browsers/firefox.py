@@ -107,11 +107,8 @@ def check_args(**kwargs):
 def browser_kwargs(logger, test_type, run_info_data, config, subsuite, **kwargs):
     browser_kwargs = {"binary": kwargs["binary"],
                       "package_name": None,
-                      "webdriver_binary": kwargs["webdriver_binary"],
-                      "webdriver_args": kwargs["webdriver_args"].copy(),
                       "prefs_root": kwargs["prefs_root"],
                       "extra_prefs": kwargs["extra_prefs"].copy(),
-                      "test_type": test_type,
                       "debug_info": kwargs["debug_info"],
                       "symbols_path": kwargs["symbols_path"],
                       "stackwalk_binary": kwargs["stackwalk_binary"],
@@ -120,22 +117,35 @@ def browser_kwargs(logger, test_type, run_info_data, config, subsuite, **kwargs)
                       "e10s": kwargs["gecko_e10s"],
                       "disable_fission": kwargs["disable_fission"],
                       "stackfix_dir": kwargs["stackfix_dir"],
-                      "binary_args": kwargs["binary_args"].copy(),
-                      "timeout_multiplier": get_timeout_multiplier(test_type, run_info_data, **kwargs),
                       "leak_check": run_info_data["debug"] and (kwargs["leak_check"] is not False),
                       "asan": run_info_data.get("asan"),
                       "chaos_mode_flags": kwargs["chaos_mode_flags"],
                       "config": config,
                       "browser_channel": kwargs["browser_channel"],
                       "headless": kwargs["headless"],
-                      "preload_browser": kwargs["preload_browser"] and not kwargs["pause_after_test"] and not kwargs["num_test_groups"] == 1,
-                      "specialpowers_path": kwargs["specialpowers_path"],
                       "allow_list_paths": kwargs["allow_list_paths"],
                       "gmp_path": kwargs["gmp_path"] if "gmp_path" in kwargs else None,
                       "debug_test": kwargs["debug_test"]}
-    if test_type == "wdspec" and kwargs["binary"]:
-        browser_kwargs["webdriver_args"].extend(["--binary", kwargs["binary"]])
-    browser_kwargs["binary_args"].extend(subsuite.config.get("binary_args", []))
+
+    if test_type == "wdspec":
+        browser_kwargs["webdriver_binary"] = kwargs["webdriver_binary"]
+        browser_kwargs["webdriver_args"] = kwargs["webdriver_args"].copy()
+
+        if kwargs["binary"]:
+            browser_kwargs["webdriver_args"].extend(["--binary", kwargs["binary"]])
+
+    else:
+        browser_kwargs["binary_args"] = kwargs["binary_args"].copy()
+        browser_kwargs["binary_args"].extend(subsuite.config.get("binary_args", []))
+        browser_kwargs["preload_browser"] = (
+            kwargs["preload_browser"] and
+            not kwargs["pause_after_test"] and
+            not kwargs["num_test_groups"] == 1
+        )
+        browser_kwargs["specialpowers_path"] = kwargs["specialpowers_path"]
+        browser_kwargs["test_type"] = test_type
+        browser_kwargs["timeout_multiplier"] = get_timeout_multiplier(test_type, run_info_data, **kwargs)
+
     browser_kwargs["extra_prefs"].extend(subsuite.config.get("prefs", []))
     return browser_kwargs
 
@@ -154,6 +164,15 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data,
         capabilities["pageLoadStrategy"] = "eager"
     if test_type in ("reftest", "print-reftest"):
         executor_kwargs["reftest_internal"] = kwargs["reftest_internal"]
+        cache_screenshots = True
+        if run_info_data["os"] == "android":
+            try:
+                major_version = int(run_info_data["version"].split(".", 1)[0])
+            except ValueError:
+                pass
+            else:
+                cache_screenshots = major_version < 14
+        executor_kwargs["cache_screenshots"] = cache_screenshots
     if test_type == "wdspec":
         options = {"args": []}
         if kwargs["binary"]:
@@ -219,8 +238,12 @@ def run_info_extras(logger, default_prefs=None, **kwargs):
           "sessionHistoryInParent": (not kwargs.get("disable_fission") or
                                      not bool_pref("fission.disableSessionHistoryInParent")),
           "swgl": bool_pref("gfx.webrender.software"),
+          "useDrawSnapshot": bool_pref("reftest.use-draw-snapshot"),
           "privateBrowsing": bool_pref("browser.privatebrowsing.autostart"),
+          "remoteAsyncEvents": (bool_pref("remote.events.async.mouse.enabled") or
+                                bool_pref("remote.events.async.wheel.enabled")),
           "incOriginInit": os.environ.get("MOZ_ENABLE_INC_ORIGIN_INIT") == "1",
+          "navigationApi": bool_pref("dom.navigation.webidl.enabled"),
           }
     rv.update(run_info_browser_version(**kwargs))
 
@@ -245,14 +268,18 @@ def update_properties():
     return ([
         "os",
         "debug",
+        "display",
         "fission",
+        "isolated_process",
         "processor",
         "swgl",
+        "useDrawSnapshot",
         "asan",
         "tsan",
+        "remoteAsyncEvents",
         "sessionHistoryInParent",
         "subsuite"], {
-        "os": ["version"],
+        "os": ["version", "os_version"],
         "processor": ["bits"]})
 
 
@@ -753,6 +780,9 @@ class ProfileCreator:
             profile.set_preferences({
                 "geo.provider.network.url": "https://web-platform.test:8444/webdriver/tests/support/http_handlers/geolocation_override.py"
             })
+        else:
+            # Except for wdspec dispatch wheel scroll as widget event by default.
+            profile.set_preferences({"remote.events.async.wheel.enabled": True})
 
         if self.debug_test:
             profile.set_preferences({"devtools.console.stdout.content": True})
@@ -821,9 +851,7 @@ class FirefoxBrowser(Browser):
                  browser_channel="nightly", headless=None, preload_browser=False,
                  specialpowers_path=None, debug_test=False, allow_list_paths=None,
                  gmp_path=None, **kwargs):
-        Browser.__init__(self, logger)
-
-        self.logger = logger
+        super().__init__(logger, **kwargs)
 
         if timeout_multiplier:
             self.init_timeout = self.init_timeout * timeout_multiplier
@@ -879,7 +907,8 @@ class FirefoxBrowser(Browser):
                           "lsan_max_stack_depth": test.lsan_max_stack_depth,
                           "mozleak_allowed": self.leak_check and test.mozleak_allowed,
                           "mozleak_thresholds": self.leak_check and test.mozleak_threshold,
-                          "special_powers": self.specialpowers_path and test.url_base == "/_mozilla/"}
+                          "special_powers": self.specialpowers_path and test.url_base == "/_mozilla/",
+                          "testdriver": True if test.test_type == "testharness" else getattr(test, "testdriver", False)}
         return self._settings
 
     def start(self, group_metadata=None, **kwargs):
@@ -909,7 +938,8 @@ class FirefoxBrowser(Browser):
         return ExecutorBrowser, {"marionette_port": self.instance.marionette_port,
                                  "extensions": extensions,
                                  "supports_devtools": True,
-                                 "supports_window_resize": True}
+                                 "supports_window_resize": True,
+                                 "testdriver": self._settings["testdriver"]}
 
     def check_crash(self, process, test):
         return log_gecko_crashes(self.logger,
@@ -929,7 +959,7 @@ class FirefoxWdSpecBrowser(WebDriverBrowser):
                  headless=None, debug_test=False, profile_creator_cls=ProfileCreator,
                  allow_list_paths=None, gmp_path=None, **kwargs):
 
-        super().__init__(logger, binary, webdriver_binary, webdriver_args)
+        super().__init__(logger, binary, webdriver_binary, webdriver_args, **kwargs)
         self.binary = binary
         self.package_name = package_name
         self.webdriver_binary = webdriver_binary
@@ -1039,7 +1069,8 @@ class FirefoxWdSpecBrowser(WebDriverBrowser):
                 "lsan_allowed": test.lsan_allowed,
                 "lsan_max_stack_depth": test.lsan_max_stack_depth,
                 "mozleak_allowed": self.leak_check and test.mozleak_allowed,
-                "mozleak_thresholds": self.leak_check and test.mozleak_threshold}
+                "mozleak_thresholds": self.leak_check and test.mozleak_threshold,
+                "testdriver": False}
 
     @property
     def port(self):

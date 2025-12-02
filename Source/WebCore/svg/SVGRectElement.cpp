@@ -43,15 +43,16 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
 {
     ASSERT(hasTagName(SVGNames::rectTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGRectElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGRectElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>();
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>();
         PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>();
         PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>();
-    });
+    }
 }
 
 Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)

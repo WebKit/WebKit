@@ -579,27 +579,37 @@ MediaPlayer::BufferingPolicy MediaElementSession::preferredBufferingPolicy() con
     if (!element)
         return MediaPlayer::BufferingPolicy::Default;
 
-    if (isSuspended())
-        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+    auto currentPolicy = element->bufferingPolicy();
+    auto isPlaying = state() == PlatformMediaSession::State::Playing;
+    MediaPlayer::BufferingPolicy newPolicy = [&] {
 
-    if (bufferingSuspended())
-        return MediaPlayer::BufferingPolicy::LimitReadAhead;
+        if (isSuspended())
+            return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
-    if (state() == PlatformMediaSession::State::Playing)
-        return MediaPlayer::BufferingPolicy::Default;
+        if (bufferingSuspended())
+            return MediaPlayer::BufferingPolicy::LimitReadAhead;
 
-    if (shouldOverrideBackgroundLoadingRestriction())
-        return MediaPlayer::BufferingPolicy::Default;
+        if (isPlaying)
+            return MediaPlayer::BufferingPolicy::Default;
+
+        if (shouldOverrideBackgroundLoadingRestriction())
+            return MediaPlayer::BufferingPolicy::Default;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    if (m_shouldPlayToPlaybackTarget)
-        return MediaPlayer::BufferingPolicy::Default;
+        if (m_shouldPlayToPlaybackTarget)
+            return MediaPlayer::BufferingPolicy::Default;
 #endif
 
-    if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || element->elementIsHidden())
-        return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
+        if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || element->elementIsHidden())
+            return MediaPlayer::BufferingPolicy::MakeResourcesPurgeable;
 
-    return MediaPlayer::BufferingPolicy::Default;
+        return currentPolicy;
+    }();
+
+    if (currentPolicy == MediaPlayer::BufferingPolicy::PurgeResources && !isPlaying && newPolicy != MediaPlayer::BufferingPolicy::Default)
+        return MediaPlayer::BufferingPolicy::PurgeResources;
+
+    return newPolicy;
 }
 
 bool MediaElementSession::fullscreenPermitted() const

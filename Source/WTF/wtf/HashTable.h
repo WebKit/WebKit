@@ -1379,6 +1379,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename Malloc>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, Malloc>::operator=(const HashTable& other) -> HashTable&
     {
+        if (&other == this)
+            return *this;
+
         HashTable tmp(other);
         swap(tmp);
         return *this;
@@ -1439,6 +1442,12 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             }
 
             auto& key = Extractor::extract(*entry);
+            // A weak key can become null without being eagerly removed from the table.
+            if (!key) {
+                ++count;
+                continue;
+            }
+
             const_iterator it = find<ShouldValidateKey::No>(key);
             ASSERT(entry == it.m_position);
             ++count;

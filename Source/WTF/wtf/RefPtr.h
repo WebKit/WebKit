@@ -59,6 +59,10 @@ public:
     RefPtr(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
+    RefPtr(HashTableEmptyValueType) : m_ptr(hashTableEmptyValue()) { }
+    bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
+    static T* hashTableEmptyValue() { return nullptr; }
+
     ALWAYS_INLINE ~RefPtr() { RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
 
     T* get() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }

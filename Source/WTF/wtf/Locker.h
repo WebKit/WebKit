@@ -38,6 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/Compiler.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/ThreadSanitizerSupport.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -45,6 +46,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 namespace WTF {
 
 enum NoLockingNecessaryTag { NoLockingNecessary };
+
+class WTF_CAPABILITY_LOCK WordLock;
+class WTF_CAPABILITY_LOCK UnfairLock;
 
 class AbstractLocker {
     WTF_MAKE_NONCOPYABLE(AbstractLocker);
@@ -59,11 +63,86 @@ protected:
     }
 };
 
+template<typename T> class Locker;
 template<typename T> class DropLockForScope;
 
 using AdoptLockTag = std::adopt_lock_t;
 constexpr AdoptLockTag AdoptLock;
 
+// Locker specialization to use with Lock, WordLock, and UnfairLock that integrates with thread safety analysis.
+// Non-movable simple scoped lock holder.
+// Example: Locker locker { m_lock };
+template<typename T>
+#if ENABLE(UNFAIR_LOCK)
+    requires (std::same_as<T, Lock> || std::same_as<T, WordLock> || std::same_as<T, UnfairLock>)
+#else
+    requires (std::same_as<T, Lock> || std::same_as<T, WordLock>)
+#endif
+class WTF_CAPABILITY_SCOPED_LOCK Locker<T> : public AbstractLocker {
+public:
+    explicit Locker(T& lock) WTF_ACQUIRES_LOCK(lock)
+        : m_lock(lock)
+        , m_isLocked(true)
+    {
+        m_lock.lock();
+        TSAN_ANNOTATE_HAPPENS_AFTER(&m_lock);
+    }
+    Locker(AdoptLockTag, T& lock) WTF_REQUIRES_LOCK(lock)
+        : m_lock(lock)
+        , m_isLocked(true)
+    {
+    }
+    ~Locker() WTF_RELEASES_LOCK()
+    {
+        if (m_isLocked) {
+            TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
+            m_lock.unlock();
+        }
+    }
+    void unlockEarly() WTF_RELEASES_LOCK()
+    {
+        ASSERT(m_isLocked);
+        m_isLocked = false;
+        TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
+        m_lock.unlock();
+    }
+    Locker(const Locker<T>&) = delete;
+    Locker& operator=(const Locker<T>&) = delete;
+
+    void assertIsHolding(T& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock)
+    {
+        ASSERT(m_isLocked);
+        ASSERT(&lock == &m_lock);
+        lock.assertIsOwner();
+    }
+
+private:
+    // Support DropLockForScope even though it doesn't support thread safety analysis.
+    template<typename>
+    friend class DropLockForScope;
+
+    // Support Condition class to access private lock/unlock methods
+    friend class Condition;
+
+    void lock() WTF_ACQUIRES_LOCK(m_lock)
+    {
+        m_lock.lock();
+        TSAN_ANNOTATE_HAPPENS_AFTER(&m_lock);
+        compilerFence();
+    }
+
+    void unlock() WTF_RELEASES_LOCK(m_lock)
+    {
+        compilerFence();
+        TSAN_ANNOTATE_HAPPENS_BEFORE(&m_lock);
+        m_lock.unlock();
+    }
+
+    T& m_lock;
+    bool m_isLocked { false };
+};
+
+// Unspecialized Locker that skips thread safety analysis.
 template<typename T>
 class [[nodiscard]] Locker : public AbstractLocker { // NOLINT
 public:
@@ -225,6 +304,17 @@ private:
 
     T* m_lockable;
 };
+
+Locker(Lock&) -> Locker<Lock>;
+Locker(AdoptLockTag, Lock&) -> Locker<Lock>;
+
+Locker(WordLock&) -> Locker<WordLock>;
+Locker(AdoptLockTag, WordLock&) -> Locker<WordLock>;
+
+#if ENABLE(UNFAIR_LOCK)
+Locker(UnfairLock&) -> Locker<UnfairLock>;
+Locker(AdoptLockTag, UnfairLock&) -> Locker<UnfairLock>;
+#endif // ENABLE(UNFAIR_LOCK)
 
 }
 

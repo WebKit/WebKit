@@ -36,10 +36,11 @@ inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document
 {
     ASSERT(hasTagName(SVGNames::feTileTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFETileElement::m_in1>();
-    });
+    }
 }
 
 Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document& document)

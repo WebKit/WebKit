@@ -109,6 +109,10 @@
 #include "ExceptionData.h"
 #endif
 
+#if USE(GSTREAMER_WEBRTC) && USE(LIBRICE)
+#include "GStreamerIceAgent.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DummyStorageProvider);
@@ -687,7 +691,7 @@ void EmptyFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<FormState>&&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, CompletionHandler<void()>&& completionHandler)
+void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, URL&&, String&&, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
 }
@@ -1208,7 +1212,12 @@ private:
 class EmptySocketProvider final : public SocketProvider {
 public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) final { return nullptr; }
+
     std::pair<RefPtr<WebTransportSession>, Ref<WebTransportSessionPromise>> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&, const WebTransportOptions&) { return { nullptr, WebTransportSessionPromise::createAndReject() }; }
+
+#if USE(LIBRICE)
+    RefPtr<WebCore::RiceBackend> createRiceBackend(WebCore::RiceBackendClient&) final { return nullptr; }
+#endif
 };
 
 class EmptyHistoryItemClient final : public HistoryItemClient {

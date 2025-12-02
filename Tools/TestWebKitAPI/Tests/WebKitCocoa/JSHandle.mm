@@ -206,4 +206,18 @@ TEST(JSHandle, WebpagePreferences)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:checkWindowWebKit] boolValue]);
 }
 
+TEST(JSHandle, Reuse)
+{
+    RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+    worldConfiguration.get().allowJSHandleCreation = YES;
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
+
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    @autoreleasepool {
+        [webView objectByEvaluatingJavaScript:@"let f = window.webkit.createJSHandle(()=>{ return 42; }); f" inFrame:nil inContentWorld:world.get()];
+    }
+    _WKJSHandle *fun = [webView objectByEvaluatingJavaScript:@"f" inFrame:nil inContentWorld:world.get()];
+    EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return fun()" withArguments:@{ @"fun":fun } inFrame:nil inContentWorld:world.get()] isEqual:@42]);
+}
+
 }

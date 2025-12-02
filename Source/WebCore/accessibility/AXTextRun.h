@@ -112,6 +112,8 @@ struct AXTextRun {
 };
 
 struct AXTextRuns {
+    WTF_MAKE_TZONE_ALLOCATED(AXTextRuns);
+public:
     // The text for all runs, concatenated into a single string.
     String text;
     // The containing block for the text runs. This is required because based on the structure

@@ -48,12 +48,12 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebPlatformStrategies);
 
 void WebPlatformStrategies::initializeIfNecessary()
 {
-    static LazyNeverDestroyed<std::unique_ptr<WebPlatformStrategies>> platformStrategies;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        platformStrategies.construct(makeUnique<WebPlatformStrategies>());
-        setPlatformStrategies(platformStrategies.get().get());
-    });
+    static NeverDestroyed<std::unique_ptr<WebPlatformStrategies>> platformStrategies = [] {
+        auto platformStrategies = makeUnique<WebPlatformStrategies>();
+        setPlatformStrategies(platformStrategies.get());
+        return platformStrategies;
+    }();
+    UNUSED_PARAM(platformStrategies);
 }
 
 WebPlatformStrategies::WebPlatformStrategies() = default;

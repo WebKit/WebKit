@@ -35,6 +35,10 @@ class PredicateCallback : public RefCounted<PredicateCallback>, public ActiveDOM
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<bool> invoke(JSC::JSValue, uint64_t) = 0;
     virtual CallbackResult<bool> invokeRethrowingException(JSC::JSValue, uint64_t) = 0;
 

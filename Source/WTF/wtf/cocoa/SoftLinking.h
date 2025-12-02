@@ -629,7 +629,7 @@ static void* lib##Library() \
 #define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
-#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
@@ -637,8 +637,14 @@ static void* lib##Library() \
     extern resultType (*softLink##framework##functionName) parameterDeclarations; \
     bool canLoad_##framework##_##functionName(); \
     bool init_##framework##_##functionName(); \
-    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    functionAttributes resultType softLink_##framework##_##functionName parameterDeclarations; \
     }
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_WITH_NS_RETURNS_RETAINED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, NS_RETURNS_RETAINED)
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \

@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "StyleImageWrapper.h"
+#include "StyleImageOrientation.h"
 
 #include "ImageOrientation.h"
 

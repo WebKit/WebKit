@@ -417,15 +417,15 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static TestNodeIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
+    static TestNodeIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind, InternalIterator&& iterator)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestNodeIterator>(vm)) TestNodeIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestNodeIterator>(vm)) TestNodeIterator(structure, iteratedObject, kind, WTFMove(iterator));
         instance->finishCreation(vm);
         return instance;
     }
 private:
-    TestNodeIterator(JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind)
-        : Base(structure, iteratedObject, kind)
+    TestNodeIterator(JSC::Structure* structure, JSTestNode& iteratedObject, IterationKind kind, InternalIterator&& iterator)
+        : Base(structure, iteratedObject, kind, WTFMove(iterator))
     {
     }
 };
@@ -440,9 +440,12 @@ const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator"_s, &Base::
 template<>
 const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestNodeIteratorPrototype) };
 
-static inline EncodedJSValue jsTestNodePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject)
+static inline EncodedJSValue jsTestNodePrototypeFunction_entriesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestNode* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -450,9 +453,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_entries, (JSC::JSGlobalObje
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline EncodedJSValue jsTestNodePrototypeFunction_keysCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject)
+static inline EncodedJSValue jsTestNodePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestNode* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Keys));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Keys)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -460,9 +466,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_keys, (JSC::JSGlobalObject*
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline EncodedJSValue jsTestNodePrototypeFunction_valuesCaller(JSGlobalObject*, CallFrame*, JSTestNode* thisObject)
+static inline EncodedJSValue jsTestNodePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestNode* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Values));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestNodePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))

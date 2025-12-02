@@ -74,7 +74,20 @@ void AuthenticatorResponse::setExtensions(AuthenticationExtensionsClientOutputs&
 
 AuthenticationExtensionsClientOutputs AuthenticatorResponse::extensions() const
 {
-    return m_extensions;
+    auto result = m_extensions;
+
+    // Clone ArrayBuffers to prevent detachment issues
+    if (result.prf && result.prf->results) {
+        if (result.prf->results->first)
+            result.prf->results->first = ArrayBuffer::tryCreate(result.prf->results->first.get()->span());
+        if (result.prf->results->second)
+            result.prf->results->second = ArrayBuffer::tryCreate(result.prf->results->second.get()->span());
+    }
+
+    if (result.largeBlob && result.largeBlob->blob)
+        result.largeBlob->blob = ArrayBuffer::tryCreate(result.largeBlob->blob.get()->span());
+
+    return result;
 }
 
 void AuthenticatorResponse::setClientDataJSON(Ref<ArrayBuffer>&& clientDataJSON)

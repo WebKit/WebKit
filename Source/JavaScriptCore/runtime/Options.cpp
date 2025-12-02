@@ -1452,7 +1452,7 @@ void Option::dump(StringBuilder& builder) const
         builder.append(unsafeSpan(m_optionRange.rangeString()));
         break;
     case Options::Type::OptionString:
-        builder.append('"', m_optionString ? unsafeSpan8(m_optionString) : ""_span8, '"');
+        builder.append('"', m_optionString ? unsafeSpan(m_optionString) : ""_span, '"');
         break;
     case Options::Type::GCLogLevel:
         builder.append(m_gcLogLevel);

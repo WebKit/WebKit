@@ -29,6 +29,7 @@
 #import "config.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
 
+#import "APIUIClient.h"
 #import "ArgumentCoders.h"
 #import "LocalService.h"
 #import "Logging.h"
@@ -366,6 +367,15 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
             // Despite the API naming, this returns an autoreleased value and there is no need to adopt.
             request = [provider createCredentialRegistrationRequestWithChallenge:toNSData(options.challenge).get() displayName:options.user.displayName.createNSString().get() name:options.user.name.createNSString().get() userID:toNSData(options.user.id).get()];
         }
+#if HAVE(WEB_AUTHN_PRF_API)
+        if (options.extensions && options.extensions->prf) {
+            auto prf = options.extensions->prf;
+            if (prf->eval)
+                request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFRegistrationInputInstance() initWithInputValues:toASAssertionPRFInputValue(prf->eval).get()]).get();
+            else
+                request.get().prf = [getASAuthorizationPublicKeyCredentialPRFRegistrationInputClassSingleton() checkForSupport];
+        }
+#endif
         request.get().attestationPreference = toAttestationConveyancePreference(options.attestation()).get();
         RetainPtr<NSMutableArray<ASAuthorizationPublicKeyCredentialParameters *>> parameters = adoptNS([[NSMutableArray alloc] init]);
         for (auto alg : options.pubKeyCredParams)
@@ -494,6 +504,23 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             request.get().allowedCredentials = crossPlatformAllowedCredentials.get();
         if (options.extensions && !options.extensions->appid.isNull())
             request.get().appID = options.extensions->appid.createNSString().get();
+#if HAVE(WEB_AUTHN_PRF_API)
+        if (options.extensions && options.extensions->prf && [request respondsToSelector:@selector(setPrf:)]) {
+            auto prf = options.extensions->prf;
+            RetainPtr inputValues = toASAssertionPRFInputValue(prf->eval);
+            RetainPtr<NSMutableDictionary> perCredentialInputValues = nullptr;
+            if (prf->evalByCredential) {
+                perCredentialInputValues = adoptNS([[NSMutableDictionary alloc] init]);
+                for (auto& credentialIDAndInputValues : *prf->evalByCredential) {
+                    auto key = base64URLDecode(credentialIDAndInputValues.key.utf8().span());
+                    if (!key)
+                        continue;
+                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(*key).get()];
+                }
+            }
+            request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFAssertionInputInstance() initWithInputValues:inputValues.get() perCredentialInputValues:perCredentialInputValues.get()]).get();
+        }
+#endif
         [requests addObject:request.get()];
     }
 #endif // HAVE(SECURITY_KEY_API)
@@ -700,6 +727,25 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.isAuthenticatorAttestationResponse = true;
                 response.rawId = toArrayBuffer(retainPtr(credential.get().credentialID).get());
                 response.attestationObject = toArrayBuffer(retainPtr(credential.get().rawAttestationObject).get());
+                bool hasExtensionOutput = false;
+                AuthenticationExtensionsClientOutputs extensionOutputs;
+#if HAVE(WEB_AUTHN_PRF_API)
+                if ([credential respondsToSelector:@selector(prf)] && credential.get().prf) {
+                    hasExtensionOutput = true;
+                    RefPtr<ArrayBuffer> first = nullptr;
+                    RefPtr<ArrayBuffer> second = nullptr;
+                    if (credential.get().prf.first)
+                        first = toArrayBuffer(retainPtr(credential.get().prf.first).get());
+                    if (credential.get().prf.second)
+                        second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
+                    if (first)
+                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first, second } } };
+                    else
+                        extensionOutputs.prf = { credential.get().prf.isSupported, std::nullopt };
+                }
+#endif
+                if (hasExtensionOutput)
+                    response.extensionOutputs = extensionOutputs;
                 if ([credential respondsToSelector:@selector(transports)])
                     response.transports = toTransports(retainPtr(credential.get().transports).get());
                 else
@@ -714,6 +760,20 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.userHandle = toArrayBufferNilIfEmpty(retainPtr(credential.get().userID).get());
                 response.clientDataJSON = toArrayBuffer(retainPtr(credential.get().rawClientDataJSON).get());
                 attachment = AuthenticatorAttachment::CrossPlatform;
+                bool hasExtensionOutput = false;
+                AuthenticationExtensionsClientOutputs extensionOutputs;
+#if HAVE(WEB_AUTHN_PRF_API)
+                if ([credential respondsToSelector:@selector(prf)] && credential.get().prf) {
+                    hasExtensionOutput = true;
+                    RefPtr<ArrayBuffer> first = toArrayBuffer(retainPtr(credential.get().prf.first).get());
+                    RefPtr<ArrayBuffer> second = nullptr;
+                    if (credential.get().prf.second)
+                        second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
+                    extensionOutputs.prf = { std::nullopt, { { first, second } } };
+                }
+#endif
+                if (hasExtensionOutput)
+                    response.extensionOutputs = extensionOutputs;
                 if ([credential respondsToSelector:@selector(appID)]) {
                     AuthenticationExtensionsClientOutputs extensionOutputs;
                     extensionOutputs.appid = credential.get().appID;
@@ -740,8 +800,12 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     m_controller.get().delegate = (id<ASAuthorizationControllerDelegate>)m_delegate.get();
     if (requestData.mediation && *requestData.mediation == MediationRequirement::Conditional && std::holds_alternative<PublicKeyCredentialRequestOptions>(requestData.options))
         [m_controller performAutoFillAssistedRequests];
-    else
+    else {
+#if PLATFORM(VISION)
+        webPageProxy->uiClient().willPresentModalUI(*webPageProxy);
+#endif
         [m_controller performRequests];
+    }
 #endif
 }
 

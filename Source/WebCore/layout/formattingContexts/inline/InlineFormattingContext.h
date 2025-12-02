@@ -91,7 +91,7 @@ private:
     void updateBoxGeometryForPlacedFloats(const LineLayoutResult::PlacedFloatList&);
     void resetBoxGeometriesForDiscardedContent(const InlineItemRange& discardedRange, const LineLayoutResult::SuspendedFloatList& suspendedFloats);
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
-    void createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
+    bool createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent&, const InlineItemList&, InlineLayoutResult&);
     void initializeInlineLayoutState(const LayoutState&);
     void rebuildInlineItemListIfNeeded(InlineDamage*);
 

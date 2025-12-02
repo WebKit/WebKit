@@ -52,7 +52,6 @@ rendering/RenderDescendantIterator.h
 rendering/RenderFlexibleBox.cpp
 rendering/RenderFragmentContainer.h
 rendering/RenderGeometryMap.h
-rendering/RenderHighlight.h
 rendering/RenderIterator.h
 rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
@@ -61,12 +60,9 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerCompositor.h
 rendering/RenderLayerScrollableArea.h
 rendering/RenderLayoutState.h
-rendering/RenderSelection.h
 rendering/RenderSelectionGeometry.h
 rendering/RenderTableSection.h
 rendering/RenderText.cpp
-rendering/TableLayout.h
-rendering/TextBoxPainter.h
 rendering/TextDecorationPainter.h
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/line/BreakingContext.h

@@ -15,3 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/compression/resources/concatenate-stream.js
+/LayoutTests/imported/w3c/web-platform-tests/compression/resources/decompress.js
+/LayoutTests/imported/w3c/web-platform-tests/compression/resources/decompression-input.js
+/LayoutTests/imported/w3c/web-platform-tests/compression/resources/formats.js

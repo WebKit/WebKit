@@ -73,6 +73,8 @@ public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     static uint64_t generateOperationID();
 
     WEBCORE_EXPORT ~IDBTransaction() final;

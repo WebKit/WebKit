@@ -47,15 +47,14 @@ static BOOL justReturnsNO()
 PAL_EXPORT void* AVFoundationLibrary(bool isOptional = false);
 void* AVFoundationLibrary(bool isOptional)
 {
-    static void* frameworkLibrary;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        frameworkLibrary = dlopen("/System/Library/Frameworks/AVFoundation.framework/AVFoundation", RTLD_NOW);
+    static void* frameworkLibrary = [isOptional] {
+        auto* frameworkLibrary = dlopen("/System/Library/Frameworks/AVFoundation.framework/AVFoundation", RTLD_NOW);
         if (!isOptional)
             RELEASE_ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror());
 
         class_addMethod(objc_getClass("AVPlayerItem"), @selector(automaticallyNotifiesObserversOfSuppressesVideoLayers), (IMP)justReturnsNO, "B@:");
-    });
+        return frameworkLibrary;
+    }();
     return frameworkLibrary;
 }
 

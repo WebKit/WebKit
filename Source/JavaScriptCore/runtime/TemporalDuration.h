@@ -116,7 +116,6 @@ private:
     ISO8601::Duration m_duration;
 };
 
-// TODO: Move to TemporalPlainDateTime once that's created
 Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
 
 } // namespace JSC

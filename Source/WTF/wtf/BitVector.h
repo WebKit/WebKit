@@ -109,6 +109,9 @@ public:
     
     BitVector& operator=(const BitVector& other)
     {
+        if (&other == this)
+            return *this;
+
         if (isInline() && other.isInline())
             m_bitsOrPointer = other.m_bitsOrPointer;
         else

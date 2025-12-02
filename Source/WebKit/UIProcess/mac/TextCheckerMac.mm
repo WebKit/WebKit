@@ -107,9 +107,8 @@ static bool shouldSmartListsBeEnabled()
 
 static OptionSet<TextCheckerState>& mutableState()
 {
-    static OptionSet<TextCheckerState> state;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    static OptionSet<TextCheckerState> state = [&] {
+        OptionSet<TextCheckerState> state;
         if ([[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed())
             state.add(TextCheckerState::ContinuousSpellCheckingEnabled);
 
@@ -133,7 +132,8 @@ static OptionSet<TextCheckerState>& mutableState()
 
         if (shouldSmartListsBeEnabled())
             state.add(TextCheckerState::SmartListsEnabled);
-    });
+        return state;
+    }();
     return state;
 }
 

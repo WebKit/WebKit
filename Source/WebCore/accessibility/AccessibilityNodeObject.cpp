@@ -36,6 +36,7 @@
 #include "AXLoggerBase.h"
 #include "AXNotifications.h"
 #include "AXObjectCacheInlines.h"
+#include "AXStitchUtilities.h"
 #include "AXTableHelpers.h"
 #include "AXTreeStore.h"
 #include "AXUtilities.h"
@@ -89,7 +90,9 @@
 #include "HTMLTextFormControlElement.h"
 #include "HTMLVideoElement.h"
 #include "HitTestSource.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "KeyboardEvent.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
@@ -99,6 +102,7 @@
 #include "NodeTraversal.h"
 #include "ProgressTracker.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
@@ -3924,6 +3928,95 @@ String AccessibilityNodeObject::text() const
     return element ? element->innerText() : String();
 }
 
+bool AccessibilityNodeObject::isBlockFlow() const
+{
+    return is<RenderBlockFlow>(renderer());
+}
+
+Vector<Vector<AXID>> AccessibilityNodeObject::stitchGroups() const
+{
+    CheckedPtr renderBlockFlow = dynamicDowncast<RenderBlockFlow>(renderer());
+    if (!renderBlockFlow)
+        return { };
+
+    CheckedPtr inlineLayout = renderBlockFlow->inlineLayout();
+    if (!inlineLayout)
+        return { };
+
+    CheckedPtr cache = axObjectCache();
+    if (!cache)
+        return { };
+
+    bool shouldStop = false;
+    StitchingContext context { *this };
+    Vector<Vector<AXID>> stitchGroups;
+    Vector<AXID> currentGroup;
+    for (auto lineBox = inlineLayout->firstLineBox(); lineBox && !shouldStop; lineBox.traverseNext()) {
+        for (auto box = lineBox->logicalLeftmostLeafBox(); box; box.traverseLogicalRightwardOnLine()) {
+            if (box->isAtomicInlineBox()) {
+                // Atomic inline boxes (like buttons) should break up stitch groups.
+                shouldStop = true;
+                break;
+            }
+
+            // FIXME: We should also be able to stitch ellipsis-type boxes.
+            if (box->isText() || box->isLineBreak()) {
+                const auto& renderer = box->renderer();
+                RefPtr object = cache->getOrCreate(const_cast<RenderObject&>(renderer));
+                if (!object)
+                    continue;
+                AXID axID = object->objectID();
+
+                if (shouldStopStitchingAt(renderer, *object, context)) {
+                    if (currentGroup.size() > 1)
+                        stitchGroups.append(std::exchange(currentGroup, { }));
+                    else
+                        currentGroup.clear();
+                } else {
+                    CheckedPtr renderText = dynamicDowncast<RenderText>(renderer);
+
+                    // Avoid doing the wrong thing when !renderText->hasRenderedText() is only true
+                    // because it has dirty layout. We should not run this function when layout is dirty.
+                    ASSERT(!renderText || !renderText->needsLayout() || !renderText->text().length());
+
+                    if (!renderText || !renderText->hasRenderedText())
+                        continue;
+
+                    if (currentGroup.isEmpty()) {
+                        if (renderText->text().containsOnly<isASCIIWhitespace>()) {
+                            // Do not start a stitch-group with whitspace.
+                            continue;
+                        }
+                    }
+                    currentGroup.append(axID);
+                }
+            }
+        }
+    }
+
+    if (currentGroup.size() > 1) {
+        // Only do this for stitch-groups of multiple elements, since stitching a single element
+        // doesn't make any sense.
+        stitchGroups.append(WTFMove(currentGroup));
+    }
+    return stitchGroups;
+}
+
+AXCoreObject::StitchState AccessibilityNodeObject::stitchState(IncludeStitchGroup includeStitchGroup) const
+{
+    if (!AXObjectCache::isAXTextStitchingEnabled())
+        return { };
+
+    RefPtr blockFlowAncestor = downcast<AccessibilityObject>(blockFlowAncestorForStitchable());
+    if (!blockFlowAncestor)
+        return { };
+
+    CheckedPtr cache = axObjectCache();
+    if (!cache)
+        return { };
+    return stitchStateFromGroups(cache->stitchGroupsOwnedBy(*blockFlowAncestor), includeStitchGroup);
+}
+
 String AccessibilityNodeObject::stringValue() const
 {
     RefPtr node = this->node();
@@ -3937,8 +4030,25 @@ String AccessibilityNodeObject::stringValue() const
         return staticText;
     }
 
-    if (node->isTextNode())
-        return textUnderElement();
+    if (node->isTextNode()) {
+        auto stitchState = this->stitchState();
+        if (!stitchState.stitchedIntoID || *stitchState.stitchedIntoID != objectID())
+            return textUnderElement();
+
+        // |this| is the sum of several stitched text-like objects. Our string value should
+        // include all of them.
+        //
+        // We can compute the stringValue of rendered text using AXProperty::TextRuns.
+        // See AccessibilityObject::shouldCacheStringValue.
+        CheckedPtr cache = axObjectCache();
+
+        RefPtr endNode = !stitchState.group.isEmpty() && cache ? lastNode(stitchState.group, *cache) : nullptr;
+        if (!endNode || endNode == node)
+            return textUnderElement();
+
+        std::optional range = makeSimpleRange(positionBeforeNode(node.get()), positionAfterNode(endNode.get()));
+        return range ? plainText(*range, textIteratorBehaviorForTextRange()) : emptyString();
+    }
 
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*node)) {
         int selectedIndex = selectElement->selectedIndex();

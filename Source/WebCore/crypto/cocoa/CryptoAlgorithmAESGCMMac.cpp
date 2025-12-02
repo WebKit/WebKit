@@ -29,12 +29,9 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoKeyAES.h"
+#include <pal/PALSwift.h>
 #include <wtf/CryptographicUtilities.h>
 #include <wtf/StdLibExtras.h>
-
-#if HAVE(SWIFT_CPP_INTEROP)
-#include <pal/PALSwift.h>
-#endif
 
 namespace WebCore {
 
@@ -53,15 +50,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return WTFMove(cipherText);
 }
 
-#if HAVE(SWIFT_CPP_INTEROP)
 static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     auto rv = PAL::AesGcm::encrypt(key.span(), iv.span(), additionalData.span(), plainText.span(), desiredTagLengthInBytes);
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(rv.result);
-}
+#else
+    UNUSED_PARAM(iv);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(plainText);
+    UNUSED_PARAM(additionalData);
+    UNUSED_PARAM(desiredTagLengthInBytes);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
+}
 
 static ExceptionOr<Vector<uint8_t>> decyptAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
@@ -85,15 +89,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformEncrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     if (parameters.ivVector().size() >= 12)
         return encryptCryptoKitAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
     return encryptAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
-
-#else
-    return encryptAESGCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
-#endif
-
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformDecrypt(const CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)

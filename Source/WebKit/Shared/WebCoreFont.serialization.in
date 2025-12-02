@@ -51,7 +51,8 @@ enum class WebCore::TextRenderingMode : uint8_t {
     GeometricPrecision
 };
 
-using WebCore::FontPlatformData::IPCData = Variant<WebCore::FontPlatformSerializedData, WebCore::FontPlatformSerializedCreationData>;
+#if !USE(CORE_TEXT)
+using WebCore::FontPlatformData::IPCData = Variant<WebCore::FontPlatformSerializedData, WebCore::CustomFontCreationData>;
 
 [CreateUsing=fromIPCData] class WebCore::FontPlatformData {
     float size();
@@ -62,6 +63,7 @@ using WebCore::FontPlatformData::IPCData = Variant<WebCore::FontPlatformSerializ
     bool syntheticOblique();
     WebCore::FontPlatformData::IPCData toIPCData();
 }
+#endif
 
 header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontPlatformDataAttributes {
@@ -149,104 +151,43 @@ header: <WebCore/FontPlatformData.h>
 #endif
 };
 
-[CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
+[CustomHeader] struct WebCore::CustomFontCreationData {
+    WebCore::FontMetadata metadata;
     Vector<uint8_t> fontFaceData;
     std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
     String itemInCollection;
 };
 
-[CustomHeader] struct WebCore::FontPlatformSerializedData {
-    CTFontDescriptorOptions options;
-    RetainPtr<CFStringRef> referenceURL;
-    RetainPtr<CFStringRef> postScriptName;
-    std::optional<WebCore::FontPlatformSerializedAttributes> attributes;
-};
+[CustomHeader] struct WebCore::FontMetadata {
+    double pointSize;
+    WebCore::FontOrientation orientation;
+    WebCore::FontWidthVariant widthVariant;
+    WebCore::TextRenderingMode textRenderingMode;
+    bool syntheticBold;
+    bool syntheticOblique;
+}
+
+[CustomHeader, Nested] struct WebCore::InstalledFont::PostScriptFont {
+    String postScriptName;
+    CTFontDescriptorOptions fontDescriptorOptions;
+    std::optional<WebCore::FontPlatformSerializedAttributes> fontSerializedAttributes
+}
+
+[CustomHeader] struct WebCore::InstalledFont {
+    Variant<WebCore::InstalledFont::PostScriptFont> font;
+    WebCore::FontMetadata metadata;
+}
+
+
+[RefCounted, CreateUsing=fromIPCData] class WebCore::Font {
+    Variant<WebCore::InstalledFont, WebCore::CustomFontCreationData> toSerializableFont();
+}
+
 #endif // USE(CORE_TEXT)
 
+#if !USE(CORE_TEXT)
 [RefCounted] class WebCore::Font {
     WebCore::FontInternalAttributes attributes();
     WebCore::FontPlatformData platformData();
 }
-
-[Nested] enum class WebCore::FontAttributes::SubscriptOrSuperscript : uint8_t {
-    None,
-    Subscript,
-    Superscript
-};
-
-[Nested] enum class WebCore::FontAttributes::HorizontalAlignment : uint8_t {
-    Left,
-    Center,
-    Right,
-    Justify,
-    Natural
-};
-
-[CustomHeader, Nested] struct WebCore::Style::ListStyleType::NoneData {
-};
-
-[CustomHeader, Nested] struct WebCore::Style::ListStyleType::StringData {
-    AtomString identifier;
-};
-
-[CustomHeader, Nested] struct WebCore::Style::ListStyleType::CounterStyleData {
-    AtomString identifier;
-};
-
-header: <WebCore/StyleListStyleType.h>
-[CustomHeader, Nested] struct WebCore::Style::ListStyleType {
-    Variant<WebCore::Style::ListStyleType::NoneData, WebCore::Style::ListStyleType::StringData, WebCore::Style::ListStyleType::CounterStyleData> ipcData()
-};
-
-header: <WebCore/FontAttributes.h>
-[CustomHeader] struct WebCore::TextList {
-    WebCore::Style::ListStyleType styleType;
-    int startingItemNumber
-    bool ordered
-};
-
-struct WebCore::FontShadow {
-    WebCore::Color color;
-    WebCore::FloatSize offset;
-    double blurRadius;
-};
-
-[CustomHeader] struct WebCore::FontAttributes {
-    RefPtr<WebCore::Font> font
-    WebCore::Color backgroundColor
-    WebCore::Color foregroundColor
-    WebCore::FontShadow fontShadow
-    WebCore::FontAttributes::SubscriptOrSuperscript subscriptOrSuperscript
-    WebCore::FontAttributes::HorizontalAlignment horizontalAlignment
-    Vector<WebCore::TextList> textLists
-    bool hasUnderline
-    bool hasStrikeThrough
-    bool hasMultipleFonts
-};
-
-header: <WebCore/FontAttributeChanges.h>
-enum class WebCore::VerticalAlignChange : uint8_t {
-    Superscript,
-    Baseline,
-    Subscript
-};
-
-header: <WebCore/FontAttributeChanges.h>
-[CustomHeader] class WebCore::FontChanges {
-    String m_fontName;
-    String m_fontFamily;
-    std::optional<double> m_fontSize;
-    [Validator='!*m_fontSize || !*m_fontSizeDelta'] std::optional<double> m_fontSizeDelta;
-    std::optional<bool> m_bold;
-    std::optional<bool> m_italic;
-};
-
-class WebCore::FontAttributeChanges {
-    std::optional<WebCore::VerticalAlignChange> m_verticalAlign;
-    std::optional<WebCore::Color> m_backgroundColor;
-    std::optional<WebCore::Color> m_foregroundColor;
-    std::optional<WebCore::FontShadow> m_shadow;
-    std::optional<bool> m_strikeThrough;
-    std::optional<bool> m_underline;
-    WebCore::FontChanges m_fontChanges;
-};
+#endif

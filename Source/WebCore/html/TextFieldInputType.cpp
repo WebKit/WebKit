@@ -796,7 +796,7 @@ void TextFieldInputType::autoFillButtonElementWasClicked()
     if (!page)
         return;
 
-    auto event = Event::create(eventNames().webkitautofillrequestEvent, Event::CanBubble::No, Event::IsCancelable::No);
+    auto event = Event::create(eventNames().webkitautofillrequestEvent, Event::CanBubble::No, Event::IsCancelable::No, Event::IsComposed::Yes);
     event->setIsAutofillEvent();
     element->dispatchEvent(WTFMove(event));
 

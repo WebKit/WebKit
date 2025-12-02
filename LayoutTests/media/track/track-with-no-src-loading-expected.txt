@@ -1,0 +1,5 @@
+
+EVENT(error)
+EXPECTED (document.querySelector('track').readyState == '3') OK
+END OF TEST
+

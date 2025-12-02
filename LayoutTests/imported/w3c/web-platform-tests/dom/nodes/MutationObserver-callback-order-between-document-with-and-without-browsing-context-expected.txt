@@ -1,0 +1,4 @@
+
+PASS MutationObserver callback should be called in the order
+PASS "close" event on a dialog element should fire in the order
+

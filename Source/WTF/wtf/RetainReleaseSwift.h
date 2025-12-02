@@ -25,16 +25,4 @@
 
 #pragma once
 
-#if HAVE(SWIFT_CPP_INTEROP) // FIXME: rdar://136787800
 #include <wtf/SwiftBridging.h>
-#else
-
-#ifndef SWIFT_SHARED_REFERENCE // FIXME: rdar://136787800
-#define SWIFT_SHARED_REFERENCE(__retain, __release)
-#endif
-
-#ifndef SWIFT_RETURNS_INDEPENDENT_VALUE // FIXME: rdar://136787800
-#define SWIFT_RETURNS_INDEPENDENT_VALUE
-#endif
-
-#endif

@@ -52,6 +52,7 @@ public:
 
     void closeIfPossible();
     void errorIfPossible(Exception&&);
+    void errorIfPossible(JSC::JSGlobalObject&, JSC::JSValue);
 
     InternalWritableStream& internalWritableStream();
     enum class Type : uint8_t {

@@ -66,7 +66,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
                 promise.settle(WTFMove(result));
                 return;
             }
-            UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
+            UserGestureIndicator gestureIndicator(userGestureToken, userGestureToken->scope(), UserGestureToken::ShouldPropagateToMicroTask::Yes);
             promise.settle(WTFMove(result));
         });
     }, cachedResourceRequestInitiatorTypes().fetch);

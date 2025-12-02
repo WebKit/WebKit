@@ -377,7 +377,6 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
     });
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage")
 void GStreamerDataChannelHandler::onMessageString(const char* message)
 {
     Locker locker { m_clientLock };
@@ -392,15 +391,15 @@ void GStreamerDataChannelHandler::onMessageString(const char* message)
     if (!*m_client)
         return;
 
-    DC_DEBUG("Dispatching string of size %zu", strlen(message));
-    postTask([client = m_client, string = String::fromUTF8(message)] {
+    auto string = String::fromUTF8(message);
+    DC_DEBUG("Dispatching string of size %u", string.length());
+    postTask([client = m_client, string = WTFMove(string)] {
         if (!*client)
             return;
 
         client.value()->didReceiveStringData(string);
     });
 }
-IGNORE_CLANG_WARNINGS_END
 
 void GStreamerDataChannelHandler::onError(GError* error)
 {

@@ -97,7 +97,7 @@ public:
     void drawGlyphsImmediate(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void drawDisplayList(const DisplayList&, ControlFactory&) final;
 #if ENABLE(VIDEO)
-    void drawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) final;
+    void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
     void strokeRect(const FloatRect&, float) final;
     void strokeEllipse(const FloatRect&) final;

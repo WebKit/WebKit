@@ -79,13 +79,7 @@ template<typename CSSType, typename... Rest> void serializationForCSSOnTupleLike
 {
     auto swappedSeparator = ""_s;
     auto caller = WTF::makeVisitor(
-        [&]<typename T>(const std::optional<T>& element) {
-            if (!element)
-                return;
-            builder.append(std::exchange(swappedSeparator, separator));
-            serializationForCSS(builder, context, *element, rest...);
-        },
-        [&]<typename T>(const Markable<T>& element) {
+        [&]<OptionalLike T>(const T& element) {
             if (!element)
                 return;
             builder.append(std::exchange(swappedSeparator, separator));
@@ -562,12 +556,7 @@ template<TupleLike CSSType> struct CSSValueCreation<CSSType> {
             CSSValueListBuilder list;
 
             auto caller = WTF::makeVisitor(
-                [&]<typename T>(const std::optional<T>& element) {
-                    if (!element)
-                        return;
-                    list.append(createCSSValue(pool, *element, rest...));
-                },
-                [&]<typename T>(const Markable<T>& element) {
+                [&]<OptionalLike T>(const T& element) {
                     if (!element)
                         return;
                     list.append(createCSSValue(pool, *element, rest...));

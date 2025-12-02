@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
 
     img {
         display: block;
@@ -39,6 +42,8 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     await Promise.all(Array.from(document.querySelectorAll("img")).map(img => {
         return img.decode();
     }));
@@ -47,8 +52,8 @@ window.onload = async function () {
     document.querySelector("img").classList.remove("tiled");
     await UIHelper.ensureStablePresentationUpdate();
 
-    results.textContent = await UIHelper.getUIViewTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getUIViewTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };

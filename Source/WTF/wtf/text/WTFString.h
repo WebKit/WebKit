@@ -272,14 +272,18 @@ public:
     WTF_EXPORT_PRIVATE void convertTo16Bit();
 
     // String::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
+    // FIXME: Deprecated: Use constructor that takes span<const char8_t>.
     WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
-    static String fromUTF8(std::span<const Latin1Character> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
-    static String fromUTF8(std::span<const char> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
-    static String fromUTF8(const char* string) { return fromUTF8(unsafeSpan8(string)); }
+    static String fromUTF8(std::span<const Latin1Character> characters) { return byteCast<char8_t>(characters); }
+    static String fromUTF8(std::span<const char> characters) { return byteCast<char8_t>(characters); }
+    static String fromUTF8(const char* string) { return byteCast<char8_t>(unsafeSpan(string)); }
+
+    // Convert each invalid UTF-8 sequence into a replacement character.
     static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
     static String fromUTF8ReplacingInvalidSequences(std::span<const Latin1Character> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
+    // FIXME: Deprecated: Use fromUTF8ReplacingInvalidSequences.
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(std::span<const char8_t>);
     static String fromUTF8WithLatin1Fallback(std::span<const Latin1Character> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }
     static String fromUTF8WithLatin1Fallback(std::span<const char> characters) { return fromUTF8WithLatin1Fallback(byteCast<char8_t>(characters)); }

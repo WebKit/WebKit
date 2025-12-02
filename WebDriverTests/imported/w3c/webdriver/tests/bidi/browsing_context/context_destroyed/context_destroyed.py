@@ -2,7 +2,7 @@ import pytest
 from webdriver.bidi.modules.script import ContextTarget
 from webdriver.error import TimeoutException
 
-from tests.support.sync import AsyncPoll
+from tests.bidi import wait_for_bidi_events
 from .. import assert_browsing_context
 
 pytestmark = pytest.mark.asyncio
@@ -24,9 +24,8 @@ async def test_unsubscribe(bidi_session, new_tab):
 
     await bidi_session.browsing_context.close(context=new_tab["context"])
 
-    wait = AsyncPoll(bidi_session, timeout=0.5)
     with pytest.raises(TimeoutException):
-        await wait.until(lambda _: len(events) > 0)
+        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -37,6 +36,7 @@ async def test_new_context(bidi_session, wait_for_event, wait_for_future_safe, s
 
     on_entry = wait_for_event(CONTEXT_DESTROYED_EVENT)
     new_context = await bidi_session.browsing_context.create(type_hint=type_hint)
+    contexts = await bidi_session.browsing_context.get_tree(root=new_context["context"])
 
     await bidi_session.browsing_context.close(context=new_context["context"])
 
@@ -48,7 +48,8 @@ async def test_new_context(bidi_session, wait_for_event, wait_for_future_safe, s
         children=0,
         url="about:blank",
         parent=None,
-        user_context="default"
+        user_context="default",
+        client_window=contexts[0]["clientWindow"],
     )
 
 
@@ -70,9 +71,8 @@ async def test_navigate(bidi_session, subscribe_events, new_tab, inline, domain)
     )
 
     # Make sure navigation doesn't cause the context to be destroyed
-    wait = AsyncPoll(bidi_session, timeout=0.5)
     with pytest.raises(TimeoutException):
-        await wait.until(lambda _: len(events) > 0)
+        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
 
     remove_listener()
 
@@ -108,6 +108,7 @@ async def test_navigate_iframe(
         children=0,
         url=frame_url,
         parent=new_tab["context"],
+        client_window=contexts[0]["clientWindow"],
     )
 
 
@@ -140,6 +141,7 @@ async def test_delete_iframe(
         children=0,
         url=iframe["url"],
         parent=new_tab["context"],
+        client_window=contexts[0]["clientWindow"]
     )
 
 
@@ -180,6 +182,7 @@ async def test_nested_iframes_delete_top_iframe(
         children=1,
         url=test_page_same_origin_frame,
         parent=new_tab["context"],
+        client_window=contexts[0]["clientWindow"]
     )
 
     remove_listener()
@@ -224,6 +227,7 @@ async def test_nested_iframes_delete_deepest_iframe(
         children=0,
         url=deepest_iframe["url"],
         parent=top_iframe["context"],
+        client_window=contexts[0]["clientWindow"],
     )
 
     remove_listener()
@@ -244,6 +248,7 @@ async def test_iframe_destroy_parent(
     await bidi_session.browsing_context.navigate(
         url=test_page_nested_frames, context=new_tab["context"], wait="complete"
     )
+    contexts = await bidi_session.browsing_context.get_tree(root=new_tab["context"])
 
     # Destroy top context
     await bidi_session.browsing_context.close(context=new_tab["context"])
@@ -255,6 +260,7 @@ async def test_iframe_destroy_parent(
         children=1,
         url=test_page_nested_frames,
         parent=None,
+        client_window=contexts[0]["clientWindow"],
     )
 
     remove_listener()
@@ -278,15 +284,13 @@ async def test_subscribe_to_one_context(bidi_session, subscribe_events, new_tab)
     await bidi_session.browsing_context.close(context=another_new_tab["context"])
 
     # Make sure we didn't receive the event for the new tab
-    wait = AsyncPoll(bidi_session, timeout=0.5)
     with pytest.raises(TimeoutException):
-        await wait.until(lambda _: len(events) > 0)
+        await wait_for_bidi_events(bidi_session, events, 1, timeout=0.5)
 
     await bidi_session.browsing_context.close(context=new_tab["context"])
 
     # Make sure we received the event
-    await wait.until(lambda _: len(events) >= 1)
-    assert len(events) == 1
+    await wait_for_bidi_events(bidi_session, events, 1)
 
     remove_listener()
 
@@ -315,6 +319,7 @@ async def test_new_user_context(
     context = await bidi_session.browsing_context.create(
         type_hint=type_hint, user_context=user_context
     )
+    contexts = await bidi_session.browsing_context.get_tree(root=context["context"])
     assert len(events) == 0
 
     on_entry = wait_for_event(CONTEXT_DESTROYED_EVENT)
@@ -329,6 +334,7 @@ async def test_new_user_context(
         url="about:blank",
         parent=None,
         user_context=user_context,
+        client_window=contexts[0]["clientWindow"],
     )
 
     remove_listener()
@@ -349,6 +355,7 @@ async def test_with_user_context_subscription(
     context = await bidi_session.browsing_context.create(
         type_hint="tab", user_context=user_context
     )
+    contexts = await bidi_session.browsing_context.get_tree(root=context["context"])
 
     with wait_for_events([CONTEXT_DESTROYED_EVENT]) as waiter:
         await bidi_session.browsing_context.close(context=context["context"])
@@ -362,6 +369,7 @@ async def test_with_user_context_subscription(
             url="about:blank",
             parent=None,
             user_context=user_context,
+            client_window=contexts[0]["clientWindow"]
         )
 
 

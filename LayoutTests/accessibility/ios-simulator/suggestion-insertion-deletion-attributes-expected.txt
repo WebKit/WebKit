@@ -16,4 +16,6 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 inserted textdeleted text
-inserted textdeleted text
+inserted
+text
+deleted text

@@ -1,0 +1,5 @@
+When prompted, accept to share your audio stream.
+
+
+FAIL getUserMedia suports "all" assert_equals: expected (string) "all" but got (boolean) true
+

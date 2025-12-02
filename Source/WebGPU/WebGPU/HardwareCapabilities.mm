@@ -156,14 +156,14 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
 
 bool isShaderValidationEnabled(id<MTLDevice> device)
 {
-    static bool result = false;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static bool result = [&] {
         // Workaround for rdar://141660277
         NSString* deviceName = NSStringFromClass([device class]);
-        if ((result = [deviceName containsString:@"Debug"] || [deviceName containsString:@"LegacySV"] || [deviceName containsString:@"CaptureMTLDevice"]))
+        bool result = [deviceName containsString:@"Debug"] || [deviceName containsString:@"LegacySV"] || [deviceName containsString:@"CaptureMTLDevice"];
+        if (result)
             WTFLogAlways("WebGPU: Using DEBUG Metal device: retaining references"); // NOLINT
-    });
+        return result;
+    }();
     return result;
 }
 
@@ -228,10 +228,9 @@ bool isWebGPUSwiftEnabled()
 #elif !ENABLE(WEBGPU_SWIFT)
     return false;
 #else
-    static std::once_flag onceFlag;
-    static bool isWebGPUSwiftEnabled;
-    std::call_once(onceFlag, [&] {
+    static bool isWebGPUSwiftEnabled = [&] {
         NSNumber* object = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitWebGPUSwiftEnabled"];
+        bool isWebGPUSwiftEnabled;
         if (object)
             isWebGPUSwiftEnabled = object.boolValue;
         else
@@ -241,7 +240,8 @@ bool isWebGPUSwiftEnabled()
             WTFLogAlways("WebGPU: using SWIFT backend"); // NOLINT
         else
             WTFLogAlways("WebGPU: using C++ backend"); // NOLINT
-    });
+        return isWebGPUSwiftEnabled;
+    }();
     return isWebGPUSwiftEnabled;
 #endif
 }
@@ -560,14 +560,13 @@ static bool isPhysicalHardware()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
     return false;
 #else
-    static bool result = true;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static bool result = [] {
         uint32_t isVM = 0;
         size_t size = sizeof(isVM);
         if (!sysctlbyname("kern.hv_vmm_present", &isVM, &size, NULL, 0))
-            result = isVM ? [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitAllowWebGPUOnVMs"] : true;
-    });
+            return isVM ? static_cast<bool>([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitAllowWebGPUOnVMs"]) : true;
+        return true;
+    }();
     return result;
 #endif
 }

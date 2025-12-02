@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ThreadedScrollDrivenAnimationsEnabled=true ThreadedTimeBasedAnimationsEnabled=false ] -->
+<body>
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => {
+    const source = createDiv(t);
+    const target = createDiv(t);
+    source.appendChild(target);
+
+    source.attributeStyleMap.set("height", "100px");
+    source.attributeStyleMap.set("overflow", "hidden");
+    target.attributeStyleMap.set("height", "200px");
+
+    const timeline = new ScrollTimeline({ source });
+    const animation = target.animate({ opacity: [0, 1] }, { timeline });
+
+    await animationAcceleration(animation);
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 0, "A scroll-driven animation with an 'overflow: hidden' source can't be accelerated");
+
+    source.attributeStyleMap.set("overflow", "scroll");
+    await threadedAnimationsCommit();
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 1, "A scroll-driven animation with an 'overflow: scroll' source can be accelerated");
+}, "Scroll-driven animations can't be threaded if the scroll timeline source has 'overflow: hidden'.");
+
+</script>
+</body>

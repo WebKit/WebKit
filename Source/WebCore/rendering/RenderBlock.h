@@ -314,9 +314,6 @@ protected:
     void addOverflowFromOutOfFlowBoxes();
     void addVisualOverflowFromTheme();
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
-    virtual void addFocusRingRectsForInlineChildren(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const;
-
     void computeFragmentRangeForBoxChild(const RenderBox&) const;
 
     void estimateFragmentRangeForBoxChild(const RenderBox&) const;

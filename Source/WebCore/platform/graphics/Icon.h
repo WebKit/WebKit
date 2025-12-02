@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT static RefPtr<Icon> create(CocoaImage *);
     WEBCORE_EXPORT static RefPtr<Icon> create(PlatformImagePtr&&);
 
-    RetainPtr<CocoaImage> image() const { return m_image; };
+    CocoaImage* image() const { return m_image.get(); };
 #endif
 
 #if PLATFORM(MAC)

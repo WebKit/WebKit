@@ -53,6 +53,11 @@ struct LineContent {
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     HashMap<const Box*, InlineLayoutUnit> rubyBaseAlignmentOffsetList { };
     InlineLayoutUnit rubyAnnotationOffset { 0.f };
+    enum class LineBreakReason : uint8_t {
+        ForcedLineBreakByBlockContent,
+        Other
+    };
+    LineBreakReason lineBreakReason { LineBreakReason::Other };
 };
 
 static bool isContentfulOrHasDecoration(const InlineItem& inlineItem, const InlineFormattingContext& formattingContext)
@@ -91,11 +96,11 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
 
     Vector<size_t> runIndexOffsetMap;
     runIndexOffsetMap.reserveInitialCapacity(lineRuns.size());
-    auto hasOpaqueRun = false;
+    size_t numberOfOpaqueRuns = 0;
     for (size_t i = 0, accumulatedOffset = 0; i < lineRuns.size(); ++i) {
         if (lineRuns[i].bidiLevel() == InlineItem::opaqueBidiLevel) {
             ++accumulatedOffset;
-            hasOpaqueRun = true;
+            ++numberOfOpaqueRuns;
             continue;
         }
 
@@ -110,9 +115,21 @@ static inline Vector<int32_t> computedVisualOrder(const Line::RunList& lineRuns,
         runIndexOffsetMap.append(accumulatedOffset);
     }
 
+    auto forceBiDiOnOpaqueLine = [&] {
+        if (lineRuns.isEmpty() || numberOfOpaqueRuns != lineRuns.size())
+            return;
+        // When an RTL line has only opaque items (e.g. [spanning inline box start][inline box end] on <span><div></div></span>)
+        // we need to set the bidi level on the spanning inline box as if it was contentful to initiate bidi processing (mainly just RTL direction align).
+        if (!lineRuns.first().isLineSpanningInlineBoxStart())
+            return;
+        runLevels.append(lineRuns.first().layoutBox().parent().writingMode().isBidiLTR() ? UBIDI_LTR : UBIDI_RTL);
+        runIndexOffsetMap.append(0);
+    };
+    forceBiDiOnOpaqueLine();
+
     visualOrderList.resizeToFit(runLevels.size());
     ubidi_reorderVisual(runLevels.span().data(), runLevels.size(), visualOrderList.mutableSpan().data());
-    if (hasOpaqueRun) {
+    if (numberOfOpaqueRuns) {
         ASSERT(visualOrderList.size() == runIndexOffsetMap.size());
         for (size_t i = 0; i < runIndexOffsetMap.size(); ++i)
             visualOrderList[i] += runIndexOffsetMap[visualOrderList[i]];
@@ -324,7 +341,9 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
     // Both the inline content ('last line') and the trailing out-of-flow box are supposed to be center aligned.
     auto shouldTreatAsLastLine = isLastInlineContent || lineContent->range.endIndex() == lineInput.needsLayoutRange.endIndex();
     auto inlineBaseDirection = !result.runs.isEmpty() ? inlineBaseDirectionForLineContent(result.runs, rootStyle(), m_previousLine) : TextDirection::LTR;
-    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, shouldTreatAsLastLine, inlineBaseDirection) : 0.f;
+    auto lineEndsWithForcedLineBreak = lineContent->lineBreakReason == LineContent::LineBreakReason::ForcedLineBreakByBlockContent || Line::hasTrailingForcedLineBreak(result.runs);
+    auto isLastLineOrLineEndsWithForcedLineBreak = shouldTreatAsLastLine || lineEndsWithForcedLineBreak;
+    auto contentLogicalLeft = !result.runs.isEmpty() ? InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, isLastLineOrLineEndsWithForcedLineBreak, inlineBaseDirection) : 0.f;
     Vector<int32_t> visualOrderList;
     if (result.contentNeedsBidiReordering)
         computedVisualOrder(result.runs, visualOrderList);
@@ -502,8 +521,10 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
             } else if (auto* blockItem = lineCandidate->blockItem) {
                 // We need to break whenever we come across a block level block to ensure it's the only item on the line.
                 // This is unlike hard line break as in case of 'text<br>', hard line break stays on the current line.
-                if (placedInlineItemCount)
+                if (placedInlineItemCount) {
+                    lineContent->lineBreakReason = LineContent::LineBreakReason::ForcedLineBreakByBlockContent;
                     return;
+                }
 
                 ASSERT(lineCandidate->inlineContent.isEmpty());
                 handleBlockContent(*blockItem);
@@ -635,7 +656,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                 // Text is justified according to the method specified by the text-justify property,
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
-                auto hasTextAlignJustify = (isLastInlineContent || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
+                auto hasTextAlignJustify = (isLastInlineContent || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == Style::TextAlignLast::Justify : rootStyle.textAlign() == Style::TextAlign::Justify;
                 if (hasTextAlignJustify) {
                     auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                     m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
@@ -1349,7 +1370,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     // Blocks are always the only content on the line.
     ASSERT(!m_line.hasContentOrListMarker());
     if (!isInIntrinsicWidthMode())
-        formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, blockLayoutState());
+        formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
     auto marginBoxLogicalWidth = formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false);
     m_line.appendBlock(blockItem, marginBoxLogicalWidth);
     if (rootStyle().writingMode().isBidiRTL())

@@ -52,7 +52,7 @@ promise_test(async t => {
     const scroller = iframe.contentDocument.documentElement;
 
     const timeline = new ScrollTimeline({ source : scroller });
-    const animation = target().animate({ opacity: 1 }, { timeline });
+    const animation = target().animate({ opacity: 0 }, { timeline });
 
     await animationAcceleration(animation);
 

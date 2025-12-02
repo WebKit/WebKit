@@ -49,7 +49,7 @@ void CachedTextTrack::doUpdateBuffer(const FragmentedSharedBuffer* data)
     setEncodedSize(data ? data->size() : 0);
 
     CachedResourceClientWalker<CachedResourceClient> walker(*this);
-    while (CachedResourceClient* client = walker.next())
+    while (RefPtr client = walker.next())
         client->deprecatedDidReceiveCachedResource(*this);
 }
 

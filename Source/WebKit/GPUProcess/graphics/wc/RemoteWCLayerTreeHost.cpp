@@ -45,11 +45,8 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 #if ENABLE(WEBGL)
     return remoteGraphicsContextGLStreamWorkQueueSingleton();
 #else
-    static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        instance.construct("RemoteWCLayerTreeHost work queue"_s); // LazyNeverDestroyed owns the initial ref.
-    });
+    // LazyNeverDestroyed owns the initial ref.
+    static NeverDestroyed<IPC::StreamConnectionWorkQueue> instance { "RemoteWCLayerTreeHost work queue"_s };
     return instance.get();
 #endif
 }

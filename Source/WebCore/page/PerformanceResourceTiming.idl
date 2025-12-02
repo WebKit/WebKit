@@ -54,6 +54,9 @@ typedef double DOMHighResTimeStamp;
     readonly attribute unsigned long long encodedBodySize;
     readonly attribute unsigned long long decodedBodySize;
 
+    // https://w3c.github.io/resource-timing/#dfn-delivery-type
+    readonly attribute DOMString deliveryType;
+
     // https://www.w3.org/TR/server-timing/#extension-to-the-performanceresourcetiming-interface
     readonly attribute FrozenArray<PerformanceServerTiming> serverTiming;
 

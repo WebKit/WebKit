@@ -87,6 +87,9 @@ public:
     bool isFirst() const;
     bool isFirstAfterPageBreak() const;
 
+    bool hasBlockContent() const;
+    LeafBoxIterator blockLevelBox() const;
+
     // Text-relative left/right
     LeafBoxIterator lineLeftmostLeafBox() const;
     LeafBoxIterator lineRightmostLeafBox() const;
@@ -113,6 +116,7 @@ public:
     LineBoxIterator(const LineBox&);
 
     LineBoxIterator& operator++() { return traverseNext(); }
+    LineBoxIterator& operator--() { return traversePrevious(); }
     WEBCORE_EXPORT LineBoxIterator& traverseNext();
     LineBoxIterator& traversePrevious();
 
@@ -316,6 +320,13 @@ inline bool LineBox::isFirstAfterPageBreak() const
 inline bool LineBox::isFirst() const
 {
     return !previous();
+}
+
+inline bool LineBox::hasBlockContent() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.hasBlockContent();
+    });
 }
 
 inline size_t LineBox::lineIndex() const

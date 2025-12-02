@@ -328,10 +328,8 @@ static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
 
 static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureContentViewControllerInstance()
 {
-    static Class theClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(getAVPictureInPictureContentViewControllerClassSingleton(), "WebAVPictureInPictureContentViewController", 0);
+    static Class theClass = [] {
+        auto theClass = objc_allocateClassPair(getAVPictureInPictureContentViewControllerClassSingleton(), "WebAVPictureInPictureContentViewController", 0);
         class_addMethod(theClass, @selector(initWithController:), (IMP)WebAVPictureInPictureContentViewController_initWithController, "v@:@");
         class_addMethod(theClass, @selector(controller), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
         class_addMethod(theClass, @selector(playerController), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
@@ -343,7 +341,8 @@ static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureCon
         class_addIvar(theClass, "_controller", sizeof(AVPlayerController*), log2(sizeof(AVPlayerController*)), "@");
         class_addIvar(theClass, "_playerLayer", sizeof(AVPlayerLayer*), log2(sizeof(AVPlayerLayer*)), "@");
         objc_registerClassPair(theClass);
-    });
+        return theClass;
+    }();
 
     return (WebAVPictureInPictureContentViewController *)[theClass alloc];
 }

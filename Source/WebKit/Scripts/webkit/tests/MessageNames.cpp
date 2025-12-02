@@ -77,6 +77,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithLegacyReceiver_LoadSomethingElse"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithLegacyReceiver_LoadURL"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithLegacyReceiver_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_PreferencesDidChange"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlertReply"_s, ReceiverName::TestWithLegacyReceiver, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
@@ -153,6 +155,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithoutAttributes_LoadSomethingElse"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
     MessageDescription { "TestWithoutAttributes_LoadURL"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithoutAttributes_OpaqueTypeSecurityAssertion"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithoutAttributes_OpaqueTypeSecurityAssertionReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_PreferencesDidChange"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithoutAttributes_RunJavaScriptAlertReply"_s, ReceiverName::TestWithoutAttributes, false, false, true, ProcessName::Unknown, ProcessName::Unknown },

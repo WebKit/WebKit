@@ -32,6 +32,16 @@ messages -> RemoteMediaSessionManagerProxy {
     void AddMediaSession(struct WebKit::RemoteMediaSessionState session);
     void RemoveMediaSession(struct WebKit::RemoteMediaSessionState session);
     void SetCurrentMediaSession(struct WebKit::RemoteMediaSessionState session);
+
+#if PLATFORM(COCOA)
+    void RemoteAudioHardwareDidBecomeActive();
+    void RemoteAudioHardwareDidBecomeInactive();
+    void RemoteAudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum);
+#endif
+
+#if USE(AUDIO_SESSION)
+    void RemoteAudioConfigurationChanged(struct WebKit::RemoteAudioSessionConfiguration configuration);
+#endif
 }
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

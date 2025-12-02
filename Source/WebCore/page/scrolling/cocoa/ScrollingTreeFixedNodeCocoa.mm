@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ScrollingTreeFixedNodeCocoa.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #import "Logging.h"
 #import "ScrollingStateFixedNode.h"
 #import "ScrollingThread.h"
@@ -94,5 +92,3 @@ void ScrollingTreeFixedNodeCocoa::dumpProperties(TextStream& ts, OptionSet<Scrol
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

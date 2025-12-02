@@ -79,7 +79,7 @@ private:
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserAVFObjC"_s; }
-    WTFLogChannel& logChannel() const final { return LogMedia; }
+    WTFLogChannel& logChannel() const final;
 #endif
 
     RetainPtr<AVStreamDataParser> m_parser;

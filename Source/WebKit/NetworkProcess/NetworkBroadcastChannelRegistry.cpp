@@ -134,7 +134,7 @@ void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connecti
 
 std::optional<SharedPreferencesForWebProcess> NetworkBroadcastChannelRegistry::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    RefPtr webProcessConnection = m_networkProcess->protectedWebProcessConnection(connection);
     if (!webProcessConnection)
         return std::nullopt;
     return webProcessConnection->sharedPreferencesForWebProcess();

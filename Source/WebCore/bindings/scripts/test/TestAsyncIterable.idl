@@ -26,6 +26,6 @@
 [
     Exposed=TestGlobalObject
 ] interface TestAsyncIterable {
-    async iterable<TestNode>;
+    async iterable<TestNode>(TestNode option);
 };
 

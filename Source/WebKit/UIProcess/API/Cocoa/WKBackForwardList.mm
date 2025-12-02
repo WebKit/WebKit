@@ -103,4 +103,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     self._protectedList->clear();
 }
 
+- (NSString *)_loggingStringForTesting
+{
+    return self._protectedList->loggingString().createNSString().autorelease();
+}
+
 @end

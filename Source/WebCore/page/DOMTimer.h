@@ -43,7 +43,7 @@ class Document;
 class ImminentlyScheduledWorkScope;
 class ScheduledAction;
 
-class DOMTimer final : public RefCountedAndCanMakeWeakPtr<DOMTimer>, public ActiveDOMObject {
+class DOMTimer final : public RefCounted<DOMTimer>, public ActiveDOMObject {
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_TZONE_ALLOCATED(DOMTimer);
 public:

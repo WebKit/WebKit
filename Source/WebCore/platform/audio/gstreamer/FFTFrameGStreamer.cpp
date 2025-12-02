@@ -76,11 +76,9 @@ FFTFrame::FFTFrame(const FFTFrame& frame)
     m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
     m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
 
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     // Copy/setup frame data.
-    memcpy(realData().data(), frame.realData().data(), sizeof(float) * realData().size());
-    memcpy(imagData().data(), frame.imagData().data(), sizeof(float) * imagData().size());
-    IGNORE_CLANG_WARNINGS_END
+    memcpySpan(m_realData.span(), frame.realData().span());
+    memcpySpan(m_imagData.span(), frame.imagData().span());
 }
 
 void FFTFrame::initialize()

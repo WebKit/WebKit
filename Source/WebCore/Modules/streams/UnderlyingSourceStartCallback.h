@@ -42,6 +42,10 @@ class UnderlyingSourceStartCallback : public RefCounted<UnderlyingSourceStartCal
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<JSC::JSValue> invoke(JSC::JSValue, ReadableByteStreamController&) = 0;
     virtual CallbackResult<JSC::JSValue> invokeRethrowingException(JSC::JSValue, ReadableByteStreamController&) = 0;
 

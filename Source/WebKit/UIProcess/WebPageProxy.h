@@ -35,6 +35,7 @@
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
@@ -119,6 +120,7 @@ class FloatRect;
 class FloatSize;
 class FontAttributeChanges;
 class FontChanges;
+class FrameTreeSyncData;
 class GraphicsLayer;
 class ImageBufferBackend;
 class InspectorOverlay;
@@ -191,13 +193,14 @@ enum class IsPerformingHTTPFallback : bool;
 enum class LayerTreeAsTextOptions : uint16_t;
 enum class LayoutViewportConstraint : bool;
 enum class LockBackForwardList : bool;
-enum class MediaPlaybackTargetContextMockState : uint8_t;
+enum class MediaPlaybackTargetMockState : uint8_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMutedState : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
 enum class MouseEventPolicy : uint8_t;
+enum class NavigationType : uint8_t;
 enum class PermissionName : uint8_t;
 enum class PermissionState : uint8_t;
 enum class PlatformEventModifier : uint8_t;
@@ -270,17 +273,20 @@ struct DictionaryPopupInfo;
 struct DocumentSyncSerializationData;
 struct DragItem;
 struct ElementContext;
+struct ExceptionData;
 struct ExceptionDetails;
 struct FileChooserSettings;
 struct FocusOptions;
 struct FontAttributes;
 struct FrameIdentifierType;
+struct FrameTreeSyncSerializationData;
 struct GrammarDetail;
 struct HTMLModelElementCamera;
 struct ImageBufferParameters;
 struct InspectorOverlayHighlight;
 struct LinkIcon;
 struct LinkDecorationFilteringData;
+struct LiveRegionAnnouncementData;
 struct MarkupExclusionRule;
 struct MediaControlsContextMenuItem;
 struct MediaDeviceHashSalts;
@@ -335,13 +341,13 @@ struct WrappedCryptoKey;
 struct MockWebAuthenticationConfiguration;
 struct DigitalCredentialsRequestData;
 struct DigitalCredentialsResponseData;
-struct ExceptionData;
 struct MobileDocumentRequest;
 struct OpenID4VPRequest;
 #endif
 
 namespace TextExtraction {
 struct ExtractedText;
+struct FilterRuleData;
 struct InteractionDescription;
 struct Interaction;
 struct Item;
@@ -434,9 +440,10 @@ class ShareableBitmapHandle;
 class ShareableResourceHandle;
 class Site;
 class TransformationMatrix;
+struct NodeIdentifierType;
+struct ResolvedCaptionDisplaySettingsOptions;
 struct TextAnimationData;
 enum class ImageDecodingError : uint8_t;
-struct NodeIdentifierType;
 enum class ExceptionCode : uint8_t;
 
 using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
@@ -572,6 +579,7 @@ struct JSHandleInfo;
 struct KeyEventInterpretationContext;
 struct LoadParameters;
 struct MainFrameData;
+struct PageData;
 struct ModelIdentifier;
 struct NavigationActionData;
 struct NetworkResourceLoadIdentifierType;
@@ -694,7 +702,7 @@ public:
     using Identifier = WebPageProxyIdentifier;
 
     Identifier identifier() const { return m_identifier; }
-    static RefPtr<WebPageProxy> fromIdentifier(std::optional<Identifier>);
+    static WebPageProxy* fromIdentifier(std::optional<Identifier>);
     WebCore::PageIdentifier webPageIDInMainFrameProcess() const { return m_webPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return webPageIDInMainFrameProcess(); }
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
@@ -738,7 +746,7 @@ public:
     void removeDataDetectedLinks(CompletionHandler<void(DataDetectionResult&&)>&&);
 #endif
         
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
     CheckedPtr<RemoteScrollingCoordinatorProxy> checkedScrollingCoordinatorProxy() const;
 #endif
@@ -1051,6 +1059,8 @@ public:
     void setPrivateClickMeasurement(std::nullopt_t);
     void setPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&);
     void setPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, String sourceDescription, String purchaser);
+    void setPrivateClickMeasurementImmediately(WebCore::PrivateClickMeasurement&&);
+    void simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
 
     struct EventAttribution {
         uint8_t sourceID;
@@ -1269,11 +1279,11 @@ public:
     void setDataDetectionResult(DataDetectionResult&&);
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&);
-    void didCommitMainFrameData(const MainFrameData&);
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
+    void didCommitMainFrameData(const MainFrameData&, const TransactionID&);
     void layerTreeCommitComplete();
 
-    bool updateLayoutViewportParameters(const RemoteLayerTreeTransaction&);
+    bool updateLayoutViewportParameters(const MainFrameData&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void cancelComposition(const String& compositionString);
@@ -2111,7 +2121,7 @@ public:
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::FloatRect&, bool hasVideo);
     void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
-    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContextMockState);
+    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetMockState);
     void mockMediaPlaybackTargetPickerDismissPopup();
 #endif
 
@@ -2539,6 +2549,9 @@ public:
     void broadcastDocumentSyncData(IPC::Connection&, const WebCore::DocumentSyncSerializationData&);
     void broadcastAllDocumentSyncData(IPC::Connection&, Ref<WebCore::DocumentSyncData>&&);
 
+    void broadcastFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void broadcastAllFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier,  Ref<WebCore::FrameTreeSyncData>&&);
+
     void addOpenedPage(WebPageProxy&);
     bool hasOpenedPage() const;
 
@@ -2654,6 +2667,8 @@ public:
     void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&&);
+    void applyTextExtractionFilter(const String& input, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(String&&)>&&);
 
     void hasVideoInPictureInPictureDidChange(bool);
 
@@ -2723,7 +2738,7 @@ public:
 
     API::WebsitePolicies* mainFrameWebsitePolicies() const { return m_mainFrameWebsitePolicies.get(); }
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     void sendScrollUpdateForNode(std::optional<WebCore::FrameIdentifier>, WebCore::ScrollUpdate, bool isLastUpdate);
 #endif
 
@@ -2795,7 +2810,7 @@ public:
     void didRefreshDisplay();
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(COCOA)
     WebCore::FloatPoint mainFrameScrollPosition() const;
 #endif
 
@@ -2958,7 +2973,7 @@ private:
 
     WebContentMode effectiveContentModeAfterAdjustingPolicies(API::WebsitePolicies&, const WebCore::ResourceRequest&);
 
-    void willSubmitForm(IPC::Connection&, FrameInfoData&&, FrameInfoData&& sourceFrameInfoData, Vector<std::pair<String, String>>&& textFieldValues, const UserData&, CompletionHandler<void()>&&);
+    void willSubmitForm(IPC::Connection&, FrameInfoData&&, FrameInfoData&& sourceFrameInfoData, Vector<std::pair<String, String>>&& textFieldValues, const UserData&, const URL& requestURL, const String& method, CompletionHandler<void()>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentRuleListNotification(URL&&, WebCore::ContentRuleListResults&&);
@@ -2990,6 +3005,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void relayAccessibilityNotification(String&&, std::span<const uint8_t>);
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&);
+    void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&);
 #endif
     void runBeforeUnloadConfirmPanel(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, String&& message, CompletionHandler<void(bool)>&&);
     void pageDidScroll(const WebCore::IntPoint&);
@@ -3040,9 +3056,15 @@ private:
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
     void sampledPageTopColorChanged(const WebCore::Color&);
+
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
     void spatialBackdropSourceChanged(std::optional<WebCore::SpatialBackdropSource>&&);
 #endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void canEnterImmersiveElementFromURL(const URL&, CompletionHandler<void(bool)>&&);
+#endif
+
     WebCore::Color platformUnderPageBackgroundColor() const;
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
@@ -3461,7 +3483,7 @@ private:
     void setBrowsingContextGroup(BrowsingContextGroup&);
 
 #if ENABLE(VIDEO)
-    void showCaptionDisplaySettings(CompletionHandler<void(bool)>&&);
+    void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&);
 #endif
 
     struct Internals;
@@ -3498,6 +3520,11 @@ private:
 
     void setCustomUserAgentInternal();
     HashSet<Ref<WebProcessProxy>> webContentProcessesWithFrame();
+
+#if ENABLE(WEB_ARCHIVE)
+    using DataStoreUpdateResult = std::pair<RefPtr<WebsiteDataStore>, LoadedWebArchive>;
+    Expected<DataStoreUpdateResult, WebCore::ResourceError> updateDataStoreForWebArchiveLoad(WebFrameProxy&, WebCore::PolicyAction, WebCore::NavigationType, API::Navigation&);
+#endif
 
     const UniqueRef<Internals> m_internals;
     Identifier m_identifier;
@@ -3543,8 +3570,6 @@ private:
     RefPtr<DrawingAreaProxy> m_drawingArea;
 #if PLATFORM(COCOA)
     std::unique_ptr<RemoteLayerTreeHost> m_frozenRemoteLayerTreeHost;
-#endif
-#if PLATFORM(COCOA) && ENABLE(ASYNC_SCROLLING)
     std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
 #endif
     Ref<WebProcessProxy> m_legacyMainFrameProcess;
@@ -4043,9 +4068,19 @@ private:
     bool m_statusBarIsVisible { true };
     bool m_menuBarIsVisible { true };
     bool m_toolbarsAreVisible { true };
-};
+} SWIFT_SHARED_REFERENCE(refWebPageProxy, derefWebPageProxy);
 
 } // namespace WebKit
+
+inline void refWebPageProxy(WebKit::WebPageProxy* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefWebPageProxy(WebKit::WebPageProxy* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
+}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPageProxy)
     static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Page; }

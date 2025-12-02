@@ -27,7 +27,7 @@
 
 DECLARE_SYSTEM_HEADER
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<sys/fileport.h>)
 
 #include <sys/fileport.h>
 
@@ -38,5 +38,5 @@ int fileport_makeport(int, mach_port_t*);
 int fileport_makefd(mach_port_t);
 }
 
-#endif // #if USE(APPLE_INTERNAL_SDK)
+#endif // #if USE(APPLE_INTERNAL_SDK) && __has_include(<sys/fileport.h>)
 

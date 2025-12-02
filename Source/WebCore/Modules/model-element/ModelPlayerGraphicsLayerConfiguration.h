@@ -42,6 +42,9 @@ struct ModelPlayerGraphicsLayerConfiguration {
 #if ENABLE(MODEL_ELEMENT_PORTAL)
     bool hasPortal;
 #endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    bool detachedForImmersive;
+#endif
 };
 
 } // namespace WebCore

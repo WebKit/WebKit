@@ -183,6 +183,7 @@ class FontChanges;
 class Frame;
 class FrameView;
 class FrameSelection;
+class FrameTreeSyncData;
 class GraphicsContext;
 class HTMLElement;
 class HTMLImageElement;
@@ -200,7 +201,7 @@ class KeyboardEvent;
 class LegacyWebArchive;
 class LocalFrame;
 class LocalFrameView;
-class MediaPlaybackTargetContext;
+class MediaPlaybackTarget;
 class MediaSessionCoordinator;
 class MediaSessionManagerInterface;
 class Page;
@@ -296,6 +297,7 @@ struct ExceptionData;
 struct ExceptionDetails;
 struct FocusOptions;
 struct FontAttributes;
+struct FrameTreeSyncSerializationData;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -306,6 +308,7 @@ class HandleUserInputEventResult;
 #endif
 struct InteractionRegion;
 struct KeypressCommand;
+struct LiveRegionAnnouncementData;
 struct MarkupExclusionRule;
 struct MediaDeviceHashSalts;
 struct MediaPlayerClientIdentifierType;
@@ -356,6 +359,8 @@ using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierTy
 
 namespace TextExtraction {
 struct ExtractedText;
+struct FilterRuleData;
+struct FilterRule;
 struct InteractionDescription;
 struct Interaction;
 struct Item;
@@ -449,7 +454,7 @@ class WebMouseEvent;
 class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
-class WebPageInspectorTargetController;
+class WebPageInspectorTarget;
 class WebPageOverlay;
 class WebPageTesting;
 class WebPaymentCoordinator;
@@ -639,7 +644,7 @@ public:
 
 #if PLATFORM(COCOA)
     void willCommitLayerTree(RemoteLayerTreeTransaction&, WebCore::FrameIdentifier);
-    void willCommitMainFrameData(MainFrameData&);
+    void willCommitMainFrameData(MainFrameData&, const TransactionID&);
     void didFlushLayerTreeAtTime(MonotonicTime, bool flushSucceeded);
 #endif
 
@@ -811,10 +816,12 @@ public:
     Awaitable<std::optional<FrameTreeNodeData>> getFrameTree();
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
     void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
-    void updateFrameTreeSyncData(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
 
     void topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData&);
     void allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&&);
+
+    void frameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void allFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
@@ -988,6 +995,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&);
     void relayAriaNotifyNotification(WebCore::AriaNotifyData&&);
+    void relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&&);
 #endif
 
     RefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double additionalScaleFactor, SnapshotOptions);
@@ -1618,9 +1626,9 @@ public:
     bool isControlledByAutomation() const;
     void setControlledByAutomation(bool);
 
-    void connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType);
-    void disconnectInspector(const String& targetId);
-    void sendMessageToTargetBackend(const String& targetId, const String& message);
+    void connectInspector(Inspector::FrontendChannel::ConnectionType);
+    void disconnectInspector();
+    void sendMessageToTargetBackend(const String& message);
 
     void insertNewlineInQuotedContent();
 
@@ -1679,6 +1687,10 @@ public:
 
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
     void spatialBackdropSourceChanged();
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void canEnterImmersiveElement(const WebCore::Element&, CompletionHandler<void(bool)>&&);
 #endif
 
     void flushPendingEditorStateUpdate();
@@ -2642,6 +2654,8 @@ private:
     void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&&);
+    void applyTextExtractionFilter(const String& input, std::optional<WebCore::NodeIdentifier>&& containerNode, CompletionHandler<void(const String&)>&&);
 
 #if HAVE(SANDBOX_STATE_FLAGS)
     static void setHasLaunchedWebContentProcess();
@@ -2668,6 +2682,8 @@ private:
 #endif
 
     void frameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier, const String& frameName);
+
+    WebPageInspectorTarget& ensureInspectorTarget();
 
     struct Internals;
     const UniqueRef<Internals> m_internals;
@@ -2800,7 +2816,7 @@ private:
     RefPtr<WebInspectorBackend> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
     RefPtr<RemoteWebInspectorUI> m_remoteInspectorUI;
-    const UniqueRef<WebPageInspectorTargetController> m_inspectorTargetController;
+    std::unique_ptr<WebPageInspectorTarget> m_inspectorTarget;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RefPtr<PlaybackSessionManager> m_playbackSessionManager;
@@ -2852,7 +2868,7 @@ private:
     const UniqueRef<MediaKeySystemPermissionRequestManager> m_mediaKeySystemPermissionRequestManager;
 #endif
 
-    std::unique_ptr<WebCore::PrintContext> m_printContext;
+    RefPtr<WebCore::PrintContext> m_printContext;
     bool m_inActivePrintContextAccessScope { false };
     bool m_shouldEndPrintingImmediately { false };
 
@@ -3197,7 +3213,7 @@ private:
     const Ref<WebHistoryItemClient> m_historyItemClient;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    WeakHashSet<WebCore::HTMLImageElement, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
+    WeakHashSet<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -3207,6 +3223,8 @@ private:
 #if ENABLE(WRITING_TOOLS)
     const UniqueRef<TextAnimationController> m_textAnimationController;
 #endif
+
+    Vector<WebCore::TextExtraction::FilterRule> m_textExtractionFilterRules;
 
     RefPtr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
     std::unique_ptr<FrameInfoData> m_mainFrameNavigationInitiator;

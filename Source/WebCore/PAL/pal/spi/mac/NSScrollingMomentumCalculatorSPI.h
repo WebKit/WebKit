@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if USE(APPKIT)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSScrollingMomentumCalculator_Private.h>
@@ -45,3 +49,5 @@ DECLARE_SYSTEM_HEADER
 @end
 
 #endif /* USE(APPLE_INTERNAL_SDK) */
+
+#endif // USE(APPKIT)

@@ -90,7 +90,7 @@ private:
 
         void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
         void close() final;
-        void error(String&&) final;
+        void abort(JSC::JSValue) final;
 
         bool m_muted { false };
         const Ref<Source> m_source;

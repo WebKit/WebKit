@@ -246,7 +246,7 @@ TEST(WebKit, LoadMoreThan4GB)
         else {
             co_await connection.awaitableSend("HTTP/1.1 200 OK\r\nContent-type: application/octet-stream\r\n\r\n"_s);
             for (size_t i = 0; i < 16; ++i)
-                co_await connection.awaitableSend(RetainPtr { longData.get() });
+                co_await connection.awaitableSend(OSObjectPtr { longData.get() });
             connection.terminate();
         }
     } });

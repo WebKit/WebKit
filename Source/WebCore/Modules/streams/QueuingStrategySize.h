@@ -40,6 +40,10 @@ class QueuingStrategySize : public RefCounted<QueuingStrategySize>, public Activ
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<double> invoke(JSC::JSValue) = 0;
     virtual CallbackResult<double> invokeRethrowingException(JSC::JSValue) = 0;
 

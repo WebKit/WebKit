@@ -1,0 +1,3 @@
+
+PASS importScripts() supports data URLs
+

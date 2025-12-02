@@ -118,6 +118,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import "MediaPlaybackTargetContextSerialized.h"
+#import "MediaPlaybackTargetSerialized.h"
 #endif
 
 #import "PDFKitSoftLink.h"
@@ -1017,7 +1018,7 @@ void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
 
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return;
     pdfPlugin->zoomIn();
@@ -1025,7 +1026,7 @@ void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 
 void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return;
     pdfPlugin->zoomOut();
@@ -1033,7 +1034,7 @@ void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
 
 void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return completionHandler({ }, { }, { });
     pdfPlugin->save(WTFMove(completionHandler));

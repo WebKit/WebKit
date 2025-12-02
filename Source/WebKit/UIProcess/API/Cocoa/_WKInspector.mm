@@ -97,7 +97,7 @@ Ref<WebKit::WebInspectorUIProxy> protectedInspector(_WKInspector *inspector)
 
 - (id <_WKInspectorDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<_WKInspectorDelegate>)delegate

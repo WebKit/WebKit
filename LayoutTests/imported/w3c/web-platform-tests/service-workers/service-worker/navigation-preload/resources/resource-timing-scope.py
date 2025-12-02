@@ -1,4 +1,3 @@
-import time
 import zlib
 
 def main(request, response):

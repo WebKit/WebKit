@@ -415,10 +415,9 @@
       "workernames": ["igalia4-wpe-ews", "igalia5-wpe-ews", "igalia6-wpe-ews", "igalia7-wpe-ews", "igalia8-wpe-ews", "igalia9-wpe-ews", "igalia10-wpe-ews", "igalia11-wpe-ews"]
     },
     {
-      "name": "WPE-Cairo-Build-EWS", "shortname": "wpe-cairo", "icon": "buildOnly",
-      "factory": "WPECairoBuildFactory", "platform": "wpe",
+      "name": "WPE-Cairo-LibWebRTC-Build-EWS", "shortname": "wpe-cairo-libwebrtc", "icon": "buildOnly",
+      "factory": "WPECairoLibWebRTCBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF", "--cmakeargs=-DUSE_GSTREAMER_WEBRTC=FALSE"],
       "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     },
     {
@@ -526,7 +525,7 @@
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sonoma-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
-            "WPE-Cairo-Build-EWS"
+            "WPE-Cairo-LibWebRTC-Build-EWS"
       ]
     },
     {
@@ -541,7 +540,7 @@
             "macOS-Tahoe-Debug-Build-EWS", "macOS-Sonoma-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
             "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
-            "WPE-Cairo-Build-EWS"
+            "WPE-Cairo-LibWebRTC-Build-EWS"
       ]
     },
     {

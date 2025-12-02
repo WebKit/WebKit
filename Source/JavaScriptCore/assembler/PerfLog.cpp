@@ -37,10 +37,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/DataLog.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if OS(LINUX)
@@ -174,24 +178,15 @@ static inline uint32_t getCurrentThreadID()
 PerfLog::PerfLog()
 {
     {
-        StringPrintStream filename;
-        if (auto* optionalDirectory = Options::jitDumpDirectory())
-            filename.print(optionalDirectory);
-        else
-            filename.print("/tmp");
-        filename.print("/jit-", getCurrentProcessID(), ".dump");
-        m_fd = open(filename.toCString().data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
-        RELEASE_ASSERT(m_fd != -1);
+        m_file = FileSystem::createDumpFile(makeString("jit"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID(), ".dump"_s), String::fromUTF8(Options::jitDumpDirectory()));
+        RELEASE_ASSERT(m_file);
 
 #if OS(LINUX)
         // Linux perf command records this mmap operation in perf.data as a metadata to the JIT perf annotations.
         // We do not use this mmap-ed memory region actually.
-        m_marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_fd, 0);
+        m_marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_file.platformHandle(), 0);
         RELEASE_ASSERT(m_marker != MAP_FAILED);
 #endif
-
-        m_file = fdopen(m_fd, "wb");
-        RELEASE_ASSERT(m_file);
     }
 
     JITDump::FileHeader header;
@@ -199,19 +194,19 @@ PerfLog::PerfLog()
     header.pid = getCurrentProcessID();
 
     Locker locker { m_lock };
-    write(locker, &header, sizeof(JITDump::FileHeader));
+    write(locker, WTF::unsafeMakeSpan(std::bit_cast<uint8_t*>(&header), sizeof(JITDump::FileHeader)));
     flush(locker);
 }
 
-void PerfLog::write(const AbstractLocker&, const void* data, size_t size)
+void PerfLog::write(const AbstractLocker&, std::span<const uint8_t> data)
 {
-    size_t result = fwrite(data, size, 1, m_file);
-    RELEASE_ASSERT(result == 1);
+    auto result = m_file.write(data);
+    RELEASE_ASSERT(result && *result == data.size());
 }
 
 void PerfLog::flush(const AbstractLocker&)
 {
-    fflush(m_file);
+    m_file.flush();
 }
 
 void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> code)
@@ -239,9 +234,9 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
         record.codeSize = size;
         record.codeIndex = logger.m_codeIndex++;
 
-        logger.write(locker, &record, sizeof(JITDump::CodeLoadRecord));
-        logger.write(locker, name.data(), name.length() + 1);
-        logger.write(locker, executableAddress, size);
+        logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&record), sizeof(JITDump::CodeLoadRecord)));
+        logger.write(locker, name.spanIncludingNullTerminator());
+        logger.write(locker, unsafeMakeSpan(executableAddress, size));
         logger.flush(locker);
 
         dataLogLnIf(PerfLogInternal::verbose, name, " [", record.codeIndex, "] ", RawPointer(executableAddress), "-", RawPointer(executableAddress + size), " ", size);

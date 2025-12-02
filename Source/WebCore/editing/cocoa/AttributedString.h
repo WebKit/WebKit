@@ -209,23 +209,13 @@ struct WEBCORE_EXPORT AttributedString {
         Color color;
     };
 
-    struct FontWrapper {
-        Ref<Font> font;
-
-        String postScriptName() const;
-        double pointSize() const;
-        CTFontDescriptorOptions fontDescriptorOptions() const;
-        std::optional<WebCore::FontPlatformSerializedAttributes> fontSerializedAttributes() const;
-        static std::optional<FontWrapper> createFromIPCData(const String& postScriptName, double pointSize, const CTFontDescriptorOptions&, const std::optional<WebCore::FontPlatformSerializedAttributes>&);
-    };
-
     struct AttributeValue {
 
         using AttributeType = Variant<
             double,
             String,
             URL,
-            FontWrapper,
+            InstalledFont,
             Vector<String>,
             Vector<double>,
             ParagraphStyle,

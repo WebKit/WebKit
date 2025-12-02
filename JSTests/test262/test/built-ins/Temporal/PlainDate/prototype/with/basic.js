@@ -21,8 +21,3 @@ TemporalHelpers.assertPlainDate(withMonthCode, 1976, 5, "M05", 18, "with(monthCo
 
 const withDay = plainDate.with({ day: 17 });
 TemporalHelpers.assertPlainDate(withDay, 1976, 11, "M11", 17, "with(day)");
-
-const withPlural = plainDate.with({ months: 12, day: 15 });
-TemporalHelpers.assertPlainDate(withPlural, 1976, 11, "M11", 15, "with(plural)");
-
-assert.throws(RangeError, () => plainDate.with({ month: 5, monthCode: 'M06' }));

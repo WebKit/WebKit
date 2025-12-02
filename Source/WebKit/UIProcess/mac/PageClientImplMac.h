@@ -327,7 +327,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO)
-    void showCaptionDisplaySettings(CompletionHandler<void(bool)>&&) final;
+    void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&) final;
 #endif
 
     CheckedPtr<WebViewImpl> checkedImpl() const { return m_impl.get(); }

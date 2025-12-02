@@ -132,7 +132,12 @@ cache_test(function(cache, test) {
   }, 'Cache.put with HTTP 206 response');
 
 cache_test(function(cache, test) {
-    var test_url = new URL('./resources/fetch-status.py?status=206', location.href);
+    // We need to jump through some hoops to allow the test to perform opaque
+    // response filtering, but bypass the ORB safelist check. This is
+    // done, by forcing the MIME type retrieval to fail and the
+    // validation of partial first response to succeed.
+    var pipe = "status(206)|header(Content-Type,)|header(Content-Range, bytes 0-1/41)|slice(null, 1)";
+    var test_url = new URL(`./resources/blank.html?pipe=${pipe}`, location.href);
     test_url.hostname = REMOTE_HOST;
     var request = new Request(test_url.href, { mode: 'no-cors' });
     var response;
@@ -208,6 +213,7 @@ cache_test(function(cache) {
 cache_test(function(cache) {
     var first_url = test_url;
     var second_url = first_url + '#(O_o)';
+    var third_url = first_url + '#fragment';
     var alternate_response_body = 'New body';
     var alternate_response = new Response(alternate_response_body,
                                           { statusText: 'New status' });
@@ -228,8 +234,20 @@ cache_test(function(cache) {
       .then(function(body) {
           assert_equals(body, alternate_response_body,
                         'Cache put should store new response body.');
+        })
+      .then(function() {
+          return cache.put(new Request(third_url), alternate_response.clone());
+        })
+      .then(function() {
+          return cache.keys();
+        })
+      .then(function(results) {
+          // Should match urls (without fragments or with different ones) to the
+          // same cache key. However, result.url should be the latest url used.
+          assert_equals(results[0].url, third_url);
+          return;
         });
-  }, 'Cache.put called twice with request URLs that differ only by a fragment');
+}, 'Cache.put called multiple times with request URLs that differ only by a fragment');
 
 cache_test(function(cache) {
     var url = 'http://example.com/foo';

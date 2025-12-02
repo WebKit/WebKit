@@ -60,32 +60,38 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 #if PLATFORM(GTK)
     cairo_surface_t* takeSnapshotAndWaitUntilReady()
+#else
+    WebKitImage* takeSnapshotAndWaitUntilReady()
+#endif
     {
         webkit_web_view_get_snapshot(m_webView.get(), WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
             auto& test = *static_cast<FindControllerTest*>(userData);
 #if USE(GTK4)
             if (GRefPtr<GdkTexture> snapshot = adoptGRef(webkit_web_view_get_snapshot_finish(WEBKIT_WEB_VIEW(source), result, nullptr))) {
-                test.m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, gdk_texture_get_width(snapshot.get()), gdk_texture_get_height(snapshot.get()));
-                gdk_texture_download(snapshot.get(), cairo_image_surface_get_data(test.m_surface), cairo_image_surface_get_stride(test.m_surface));
-                cairo_surface_mark_dirty(test.m_surface);
+                test.m_snapshot = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, gdk_texture_get_width(snapshot.get()), gdk_texture_get_height(snapshot.get()));
+                gdk_texture_download(snapshot.get(), cairo_image_surface_get_data(test.m_snapshot), cairo_image_surface_get_stride(test.m_snapshot));
+                cairo_surface_mark_dirty(test.m_snapshot);
             }
 #else
-            test.m_surface = webkit_web_view_get_snapshot_finish(WEBKIT_WEB_VIEW(source), result, nullptr);
+            test.m_snapshot = webkit_web_view_get_snapshot_finish(WEBKIT_WEB_VIEW(source), result, nullptr);
 #endif
             test.quitMainLoop();
         }, this);
         g_main_loop_run(m_mainLoop);
-        return std::exchange(m_surface, nullptr);
+        return std::exchange(m_snapshot, nullptr);
     }
-#endif
+#endif // PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 
     GRefPtr<WebKitFindController> m_findController;
     bool m_textFound;
     unsigned m_matchCount;
 #if PLATFORM(GTK)
-    cairo_surface_t* m_surface { nullptr };
+    cairo_surface_t* m_snapshot { nullptr };
+#elif ENABLE(2022_GLIB_API)
+    WebKitImage* m_snapshot { nullptr };
 #endif
 
 private:
@@ -281,9 +287,7 @@ static void testFindControllerOptions(FindControllerTest* test, gconstpointer)
     g_assert_true(test->m_textFound);
 }
 
-// TODO: Rewrite this test to avoid using snapshots so it can be re-enabled
-// for WPE or, alternatively, make snapshots work for WPE as well.
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 {
     test->loadHtml(testString, 0);
@@ -300,7 +304,11 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 
     auto* highlightSurface = test->takeSnapshotAndWaitUntilReady();
     g_assert_nonnull(highlightSurface);
+#if PLATFORM(GTK)
     g_assert_false(Test::cairoSurfacesEqual(originalSurface, highlightSurface));
+#else
+    g_assert_false(g_icon_equal(G_ICON(originalSurface), G_ICON(highlightSurface)));
+#endif
 
     WebKitFindController* findController = webkit_web_view_get_find_controller(test->webView());
     webkit_find_controller_search_finish(findController);
@@ -308,13 +316,21 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 
     auto* unhighlightSurface = test->takeSnapshotAndWaitUntilReady();
     g_assert_nonnull(unhighlightSurface);
+#if PLATFORM(GTK)
     g_assert_true(Test::cairoSurfacesEqual(originalSurface, unhighlightSurface));
 
     cairo_surface_destroy(originalSurface);
     cairo_surface_destroy(highlightSurface);
     cairo_surface_destroy(unhighlightSurface);
-}
+#else
+    g_assert_true(g_icon_equal(G_ICON(originalSurface), G_ICON(unhighlightSurface)));
+
+    g_object_unref(originalSurface);
+    g_object_unref(highlightSurface);
+    g_object_unref(unhighlightSurface);
 #endif
+}
+#endif // PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 
 static void testFindControllerInstance(FindControllerTest* test, gconstpointer)
 {
@@ -350,7 +366,7 @@ void beforeAll()
     FindControllerTest::add("WebKitFindController", "previous", testFindControllerPrevious);
     FindControllerTest::add("WebKitFindController", "counted-matches", testFindControllerCountedMatches);
     FindControllerTest::add("WebKitFindController", "options", testFindControllerOptions);
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
     FindControllerTest::add("WebKitFindController", "hide", testFindControllerHide);
 #endif
 }

@@ -32,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/attribute-changed-callback.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/behaves-like-button-with-command.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/behaves-like-button-with-popover.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/builtin-coverage.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks-html-fragment-parsing.html

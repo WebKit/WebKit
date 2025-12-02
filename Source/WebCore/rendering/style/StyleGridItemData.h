@@ -45,20 +45,20 @@ public:
 
     bool operator==(const StyleGridItemData& o) const
     {
-        return gridColumnStart == o.gridColumnStart
-            && gridColumnEnd == o.gridColumnEnd
-            && gridRowStart == o.gridRowStart
-            && gridRowEnd == o.gridRowEnd;
+        return gridItemColumnStart == o.gridItemColumnStart
+            && gridItemColumnEnd == o.gridItemColumnEnd
+            && gridItemRowStart == o.gridItemRowStart
+            && gridItemRowEnd == o.gridItemRowEnd;
     }
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const StyleGridItemData&) const;
 #endif
 
-    Style::GridPosition gridColumnStart;
-    Style::GridPosition gridColumnEnd;
-    Style::GridPosition gridRowStart;
-    Style::GridPosition gridRowEnd;
+    Style::GridPosition gridItemColumnStart;
+    Style::GridPosition gridItemColumnEnd;
+    Style::GridPosition gridItemRowStart;
+    Style::GridPosition gridItemRowEnd;
 
 private:
     StyleGridItemData();

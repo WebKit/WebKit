@@ -1,0 +1,10 @@
+When prompted, accept to share your camera or microphone.
+
+Description
+
+This test checks that permissions.query() of camera and microphone produce "granted" after successful calls to getUserMedia for the respective device kinds.
+
+
+FAIL camera is granted after getUserMedia, according to permissions.query() assert_true: status.onchange fired for camera permission change expected true got false
+FAIL microphone is granted after getUserMedia, according to permissions.query() assert_true: status.onchange fired for microphone permission change expected true got false
+

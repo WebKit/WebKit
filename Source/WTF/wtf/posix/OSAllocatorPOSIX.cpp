@@ -32,7 +32,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/MallocSpan.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Mmap.h>
+#include <wtf/MmapSpan.h>
 #include <wtf/PageBlock.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
@@ -96,7 +96,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         bytes = bytes + 2 * guardSize;
     }
-    auto result = MallocSpan<uint8_t, Mmap>::mmap(address, bytes, protection, flags, fd);
+    auto result = MmapSpan<uint8_t>::mmap(address, bytes, protection, flags, fd);
     if (!result)
         return result.leakSpan().data();
 

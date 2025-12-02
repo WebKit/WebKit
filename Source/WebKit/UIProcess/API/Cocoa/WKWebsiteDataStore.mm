@@ -473,10 +473,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 + (NSSet *)allWebsiteDataTypes
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
-    dispatch_once(&onceToken, ^{
-        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[
+    static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes = [] {
+        RetainPtr allWebsiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[
             WKWebsiteDataTypeDiskCache,
             WKWebsiteDataTypeFetchCache,
             WKWebsiteDataTypeMemoryCache,
@@ -493,7 +491,8 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
             WKWebsiteDataTypeScreenTime,
 #endif
             WKWebsiteDataTypeHashSalt ]]);
-    });
+        return allWebsiteDataTypes;
+    }();
 
     return allWebsiteDataTypes.get().get();
 }
@@ -733,9 +732,7 @@ struct WKWebsiteData {
 
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
-    dispatch_once(&onceToken, ^ {
+    static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes = [&] {
         auto *privateTypes = @[
             _WKWebsiteDataTypeHSTSCache,
             _WKWebsiteDataTypeResourceLoadStatistics,
@@ -745,8 +742,8 @@ struct WKWebsiteData {
             _WKWebsiteDataTypeAlternativeServices
         ];
 
-        allWebsiteDataTypes.get() = [retainPtr([self allWebsiteDataTypes]) setByAddingObjectsFromArray:privateTypes];
-    });
+        return [retainPtr([self allWebsiteDataTypes]) setByAddingObjectsFromArray:privateTypes];
+    }();
 
     return allWebsiteDataTypes.get().get();
 }

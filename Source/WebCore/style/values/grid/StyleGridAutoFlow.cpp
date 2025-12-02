@@ -37,6 +37,8 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         switch (primitiveValue->valueID()) {
+        case CSSValueNormal:
+            return CSS::Keyword::Normal { };
         case CSSValueRow:
             return CSS::Keyword::Row { };
         case CSSValueColumn:
@@ -51,7 +53,7 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
 
     auto list = requiredListDowncast<CSSValueList, CSSPrimitiveValue, 1>(state, value);
     if (!list)
-        return CSS::Keyword::Row { };
+        return CSS::Keyword::Normal { };
 
     Ref first = list->item(0);
     switch (first->valueID()) {
@@ -93,6 +95,10 @@ auto CSSValueConversion<GridAutoFlow>::operator()(BuilderState& state, const CSS
             }
         }
         return CSS::Keyword::Dense { };
+    case CSSValueNormal:
+        if (list->size() != 1)
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Normal { };
     default:
         state.setCurrentPropertyInvalidAtComputedValueTime();
         return CSS::Keyword::Row { };

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23715.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23715.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -81,6 +81,12 @@
                                     <action selector="newWindow:" target="-1" id="572"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="New Site Isolated Window" tag="5" keyEquivalent="n" id="OKy-5P-TL4">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="newWindow:" target="-1" id="PS4-cQ-V4Q"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="New WebKit2 Private Window" tag="2" id="Zqs-AO-XAX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -115,6 +121,20 @@
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="79">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Clone Site Isolated Window" tag="4" keyEquivalent="i" id="ka5-QP-WgC">
+                                <connections>
+                                    <action selector="cloneSiteIsolatedWindow:" target="-1" id="fSF-Rg-NSY"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Clone Non-isolated Window" tag="4" keyEquivalent="i" id="TOF-K0-SlE">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="cloneNonIsolatedWindow:" target="-1" id="qDa-CW-kBR"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Rug-SG-b5b">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Close" keyEquivalent="w" id="73">
@@ -940,6 +960,7 @@
                 <outlet property="_newWebKit1EditorItem" destination="jNR-Z3-YWi" id="6wB-Aa-CK7"/>
                 <outlet property="_newWebKit1WindowItem" destination="573" id="ZCj-u2-PU7"/>
                 <outlet property="_newWebKit2EditorItem" destination="IdI-wb-1JD" id="DIr-pe-XI8"/>
+                <outlet property="_newWebKit2SiteIsolateWindowItem" destination="OKy-5P-TL4" id="ISk-zD-pAS"/>
                 <outlet property="_newWebKit2WindowItem" destination="571" id="1Gv-mK-aul"/>
                 <outlet property="_settingsMenu" destination="Egg-52-IiJ" id="JMi-UF-EfK"/>
             </connections>

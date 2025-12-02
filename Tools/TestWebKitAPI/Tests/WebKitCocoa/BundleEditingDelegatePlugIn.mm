@@ -86,7 +86,7 @@
 
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range
 {
-    return @{ @"org.webkit.data" : _shouldWriteEmptyData ? NSData.data : toNSDataNoCopy("hello"_span8, FreeWhenDone::No).autorelease() };
+    return @{ @"org.webkit.data" : [(_shouldWriteEmptyData ? @"" : @"hello") dataUsingEncoding:NSASCIIStringEncoding] };
 }
 
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller

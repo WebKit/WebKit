@@ -41,7 +41,7 @@ class FileSystemFileHandle;
 template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
 
-class FileSystemSyncAccessHandle : public RefCountedAndCanMakeWeakPtr<FileSystemSyncAccessHandle>, public ActiveDOMObject {
+class FileSystemSyncAccessHandle : public RefCounted<FileSystemSyncAccessHandle>, public ActiveDOMObject {
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

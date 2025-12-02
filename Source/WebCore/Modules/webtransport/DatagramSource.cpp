@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-DatagramSource::DatagramSource() = default;
+DatagramDefaultSource::DatagramDefaultSource() = default;
 
-DatagramSource::~DatagramSource() = default;
+DatagramDefaultSource::~DatagramDefaultSource() = default;
 
-void DatagramSource::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
+void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
 {
     if (m_isCancelled || m_isClosed)
         return;
@@ -49,7 +49,7 @@ void DatagramSource::receiveDatagram(std::span<const uint8_t> datagram, bool wit
         if (arrayBuffer)
             memcpySpan(arrayBuffer->mutableSpan(), datagram);
         if (!controller().enqueue(WTFMove(arrayBuffer)))
-            doCancel();
+            doCancel({ });
     }
     if (withFin) {
         m_isClosed = true;
@@ -58,9 +58,14 @@ void DatagramSource::receiveDatagram(std::span<const uint8_t> datagram, bool wit
     }
 }
 
-void DatagramSource::doCancel()
+void DatagramDefaultSource::doCancel()
 {
     m_isCancelled = true;
+}
+
+void DatagramDefaultSource::error(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+{
+    ReadableStreamSource::error(globalObject, value);
 }
 
 }

@@ -31,19 +31,15 @@
 #import <dispatch/dispatch.h>
 #import <mach/mach_time.h>
 #import <wtf/ContinuousTime.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/OSObjectPtr.h>
 
 bool WTFSignpostIndirectLoggingEnabled;
 
 os_log_t WTFSignpostLogHandle()
 {
-    static dispatch_once_t once;
-    static os_log_t handle;
-
-    dispatch_once(&once, ^{
-        handle = os_log_create("com.apple.WebKit", "Signposts");
-    });
-
-    return handle;
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<os_log_t>> handle = adoptOSObject(os_log_create("com.apple.WebKit", "Signposts"));
+    return handle.get().get();
 }
 
 #define WTF_SIGNPOST_EVENT_EMIT_FUNC_CASE_LABEL(emitFunc, name, timeFormat) \

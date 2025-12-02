@@ -1,0 +1,5 @@
+When prompted, accept to share your audio stream.
+
+
+FAIL getUserMedia suports "remote-only" assert_equals: expected (string) "remote-only" but got (boolean) true
+

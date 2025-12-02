@@ -37,6 +37,10 @@ class NodeFilter : public RefCounted<NodeFilter>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<unsigned short> acceptNode(Node&) = 0;
     virtual CallbackResult<unsigned short> acceptNodeRethrowingException(Node&) = 0;
 

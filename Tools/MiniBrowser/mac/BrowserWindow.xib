@@ -45,7 +45,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="32" height="25"/>
                         <size key="maxSize" width="32" height="25"/>
-                        <button key="view" verticalHuggingPriority="750" id="40">
+                        <button key="view" verticalHuggingPriority="750" id="40" customClass="HistoryButton">
                             <rect key="frame" x="10" y="14" width="32" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.left" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="41">
@@ -61,7 +61,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="32" height="25"/>
                         <size key="maxSize" width="32" height="27"/>
-                        <button key="view" verticalHuggingPriority="750" id="42">
+                        <button key="view" verticalHuggingPriority="750" id="42" customClass="HistoryButton">
                             <rect key="frame" x="18" y="14" width="32" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="chevron.right" catalog="system" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="43">

@@ -42,6 +42,10 @@ class WebCodecsEncodedAudioChunkOutputCallback : public RefCounted<WebCodecsEnco
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(WebCodecsEncodedAudioChunk&, const WebCodecsEncodedAudioChunkMetadata&) = 0;
 

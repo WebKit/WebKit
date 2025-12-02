@@ -82,4 +82,8 @@
     [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<boolean> hasAudio();
     [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<boolean> isMuted();
     [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<undefined> setIsMuted(boolean isMuted);
+
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] attribute EventHandler onimmersivechange;
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] attribute EventHandler onimmersiveerror;
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] Promise<undefined> requestImmersive();
 };

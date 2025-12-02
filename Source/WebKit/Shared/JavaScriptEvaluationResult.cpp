@@ -410,6 +410,7 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
         RefPtr frame = WebFrame::webFrame(document->frameID());
         RefPtr world = InjectedBundleScriptWorld::get(domGlobalObject->world());
         Ref ref { info->wrapped() };
+        WebCore::WebKitJSHandle::jsHandleSentToAnotherProcess(ref->identifier());
         return makeUniqueRef<JSHandleInfo>(ref->identifier(), world->identifier(), frame->info(), ref->windowFrameIdentifier());
     }
 
@@ -541,11 +542,11 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         ASSERT_NOT_REACHED();
         return JSValueMakeUndefined(context);
     }, [&] (UniqueRef<JSHandleInfo>&& info) -> JSValueRef {
-        auto [originalGlobalObject, object] = WebCore::WebKitJSHandle::objectForIdentifier(info.get().identifier);
+        auto* object = WebCore::WebKitJSHandle::objectForIdentifier(info.get().identifier);
         if (!object)
             return JSValueMakeUndefined(context);
         auto [lexicalGlobalObject, domGlobalObject, document] = globalObjectTuple(context);
-        if (lexicalGlobalObject != originalGlobalObject)
+        if (lexicalGlobalObject != object->globalObject())
             return JSValueMakeUndefined(context);
         return ::toRef(object);
     }, [&] (UniqueRef<WebCore::SerializedNode>&& serializedNode) -> JSValueRef {

@@ -372,26 +372,26 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
 
     auto textAlignment = NSTextAlignmentNatural;
     switch (style.textAlign()) {
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
+    case Style::TextAlign::Right:
+    case Style::TextAlign::WebKitRight:
         textAlignment = NSTextAlignmentRight;
         break;
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
+    case Style::TextAlign::Left:
+    case Style::TextAlign::WebKitLeft:
         textAlignment = NSTextAlignmentLeft;
         break;
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
+    case Style::TextAlign::Center:
+    case Style::TextAlign::WebKitCenter:
         textAlignment = NSTextAlignmentCenter;
         break;
-    case TextAlignMode::Justify:
+    case Style::TextAlign::Justify:
         textAlignment = NSTextAlignmentJustified;
         break;
-    case TextAlignMode::Start:
+    case Style::TextAlign::Start:
         if (style.hasExplicitlySetDirection())
             textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
         break;
-    case TextAlignMode::End:
+    case Style::TextAlign::End:
         textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
         break;
     default:

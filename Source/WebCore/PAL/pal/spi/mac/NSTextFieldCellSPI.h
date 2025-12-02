@@ -27,9 +27,13 @@
 
 DECLARE_SYSTEM_HEADER
 
+#if USE(APPKIT)
+
 #import <AppKit/NSTextFieldCell.h>
 
 @interface NSTextFieldCell ()
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus maskOnly:(BOOL)maskOnly;
 @end
+
+#endif // USE(APPKIT)

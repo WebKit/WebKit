@@ -40,10 +40,11 @@ SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
     , m_contextElement(contextElement)
     , m_transform(SVGTransformList::create(&contextElement, SVGPropertyAccess::ReadOnly))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::transformAttr, &SVGViewSpec::m_transform>();
-    });
+    }
 }
 
 RefPtr<SVGElement> SVGViewSpec::viewTarget() const

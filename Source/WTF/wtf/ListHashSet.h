@@ -161,6 +161,7 @@ public:
 
     bool remove(const ValueType&);
     bool remove(iterator);
+    bool removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto&);
     void clear();
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
@@ -407,6 +408,9 @@ inline ListHashSet<T, U>::ListHashSet(const ListHashSet& other)
 template<typename T, typename U>
 inline ListHashSet<T, U>& ListHashSet<T, U>::operator=(const ListHashSet& other)
 {
+    if (&other == this)
+        return *this;
+
     ListHashSet tmp(other);
     swap(tmp);
     return *this;
@@ -699,6 +703,17 @@ inline bool ListHashSet<T, U>::remove(iterator it)
     m_impl.template remove<ShouldValidateKey::Yes>(it.node());
     unlinkAndDelete(it.node());
     return true;
+}
+
+template<typename T, typename U>
+inline bool ListHashSet<T, U>::removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto& functor)
+{
+    return m_impl.removeIf([&](Node* node) {
+        if (!functor(node->m_value))
+            return false;
+        unlinkAndDelete(node);
+        return true;
+    });
 }
 
 template<typename T, typename U>

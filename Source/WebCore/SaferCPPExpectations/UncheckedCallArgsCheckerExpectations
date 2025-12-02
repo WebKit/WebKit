@@ -2,7 +2,6 @@ Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/MediaRecorder.cpp
-Modules/mediasession/MediaMetadata.cpp
 Modules/mediastream/RTCController.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpScriptTransformer.cpp
@@ -349,7 +348,6 @@ loader/SubresourceLoader.cpp
 loader/ThreadableLoaderClientWrapper.h
 loader/WorkerThreadableLoader.cpp
 loader/archive/cf/LegacyWebArchive.cpp
-loader/cache/CachedImage.cpp
 mathml/MathMLElement.cpp
 mathml/MathMLMathElement.cpp
 mathml/MathMLOperatorElement.cpp
@@ -365,7 +363,6 @@ page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/FocusController.cpp
-page/FrameConsoleClient.cpp
 page/FrameSnapshotting.cpp
 page/ImageOverlayController.cpp
 page/IntelligenceTextEffectsSupport.cpp
@@ -499,7 +496,6 @@ rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 rendering/RenderHTMLCanvas.cpp
-rendering/RenderHighlight.cpp
 rendering/RenderImage.cpp
 rendering/RenderImage.h
 rendering/RenderImageResource.cpp
@@ -529,7 +525,6 @@ rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
 rendering/RenderScrollbar.cpp
 rendering/RenderSearchField.cpp
-rendering/RenderSelection.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCaption.cpp
@@ -723,8 +718,4 @@ workers/WorkerThread.cpp
 workers/shared/context/SharedWorkerThreadProxy.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/WorkletGlobalScope.cpp
-xml/XPathFunctions.cpp
-xml/XSLImportRule.cpp
-xml/XSLStyleSheetLibxslt.cpp
-xml/XSLTProcessorLibxslt.cpp
 xml/parser/XMLDocumentParserLibxml2.cpp

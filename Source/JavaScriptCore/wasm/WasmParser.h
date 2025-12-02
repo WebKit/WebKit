@@ -184,7 +184,7 @@ ALWAYS_INLINE bool ParserBase::consumeUTF8String(Name& result, size_t stringLeng
     if (!result.tryReserveCapacity(stringLength))
         return false;
 
-    auto string = spanReinterpretCast<const char8_t>(m_source.subspan(m_offset, stringLength));
+    auto string = byteCast<char8_t>(m_source.subspan(m_offset, stringLength));
     if (auto checkResult = WTF::Unicode::checkUTF8(string); checkResult.characters.size() != string.size())
         return false;
 

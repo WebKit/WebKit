@@ -136,6 +136,8 @@ RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure*
 
     decoderImplementation = "GStreamer"_s;
 
+    framesPerSecond = gstStructureGet<double>(structure, "frames-per-second"_s);
+    totalDecodeTime = gstStructureGet<double>(structure, "total-decode-time"_s);
     framesDecoded = gstStructureGet<uint64_t>(structure, "frames-decoded"_s);
     framesDropped = gstStructureGet<uint64_t>(structure, "frames-dropped"_s);
     frameWidth = gstStructureGet<unsigned>(structure, "frame-width"_s);

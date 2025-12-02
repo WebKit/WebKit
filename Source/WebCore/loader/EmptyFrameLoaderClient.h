@@ -110,7 +110,7 @@ private:
     void dispatchUnableToImplementPolicy(const ResourceError&) final;
 
     void dispatchWillSendSubmitEvent(Ref<FormState>&&) final;
-    void dispatchWillSubmitForm(FormState&, CompletionHandler<void()>&&) final;
+    void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
 
     void revertToProvisionalState(DocumentLoader*) final;
     void setMainDocumentError(DocumentLoader*, const ResourceError&) final;

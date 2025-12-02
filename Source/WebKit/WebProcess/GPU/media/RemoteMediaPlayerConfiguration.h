@@ -34,7 +34,7 @@
 namespace WebKit {
 
 struct RemoteMediaPlayerConfiguration {
-    String engineDescription;
+    String engineDescription { "RemoteMediaPlayer_uninitialized"_s };
     bool supportsScanning { false };
     bool supportsFullscreen { false };
     bool supportsPictureInPicture { false };

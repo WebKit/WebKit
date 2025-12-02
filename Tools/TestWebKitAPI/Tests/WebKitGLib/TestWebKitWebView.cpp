@@ -1068,12 +1068,12 @@ static void testWebViewDocumentFocus(WebViewTest* test, gconstpointer)
     g_assert_false(WebViewTest::javascriptResultToBoolean(value));
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 class SnapshotWebViewTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(SnapshotWebViewTest);
 
-#if !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4)
     ~SnapshotWebViewTest()
     {
         if (m_snapshot)
@@ -1084,7 +1084,7 @@ public:
     static void onSnapshotReady(WebKitWebView* webView, GAsyncResult* result, SnapshotWebViewTest* test)
     {
         GUniqueOutPtr<GError> error;
-#if USE(GTK4)
+#if USE(GTK4) || !PLATFORM(GTK)
         test->m_snapshot = adoptGRef(webkit_web_view_get_snapshot_finish(webView, result, &error.outPtr()));
 #else
         test->m_snapshot = webkit_web_view_get_snapshot_finish(webView, result, &error.outPtr());
@@ -1097,11 +1097,13 @@ public:
 
 #if USE(GTK4)
     GdkTexture* getSnapshotAndWaitUntilReady(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
-#else
+#elif PLATFORM(GTK)
     cairo_surface_t* getSnapshotAndWaitUntilReady(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
+#else
+    GRefPtr<WebKitImage> getSnapshotAndWaitUntilReady(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
 #endif
     {
-#if !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4)
         if (m_snapshot)
             cairo_surface_destroy(m_snapshot);
 #endif
@@ -1118,7 +1120,7 @@ public:
     static void onSnapshotCancelledReady(WebKitWebView* webView, GAsyncResult* result, SnapshotWebViewTest* test)
     {
         GUniqueOutPtr<GError> error;
-#if USE(GTK4)
+#if USE(GTK4) || !PLATFORM(GTK)
         test->m_snapshot = adoptGRef(webkit_web_view_get_snapshot_finish(webView, result, &error.outPtr()));
 #else
         test->m_snapshot = webkit_web_view_get_snapshot_finish(webView, result, &error.outPtr());
@@ -1130,7 +1132,7 @@ public:
 
     gboolean getSnapshotAndCancel()
     {
-#if !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4)
         if (m_snapshot)
             cairo_surface_destroy(m_snapshot);
 #endif
@@ -1151,7 +1153,7 @@ public:
         cairo_surface_mark_dirty(surface);
         return surface;
     }
-#else
+#elif PLATFORM(GTK)
     static cairo_surface_t* snapshotToSurface(cairo_surface_t* snapshot)
     {
         return cairo_surface_reference(snapshot);
@@ -1160,8 +1162,10 @@ public:
 
 #if USE(GTK4)
     GRefPtr<GdkTexture> m_snapshot;
-#else
+#elif PLATFORM(GTK)
     cairo_surface_t* m_snapshot { nullptr };
+#else
+    GRefPtr<WebKitImage> m_snapshot;
 #endif
 };
 
@@ -1171,25 +1175,40 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     // WEBKIT_SNAPSHOT_REGION_VISIBLE returns a null snapshot when the view is not visible.
-    auto* snapshot1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    auto snapshot1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+#if PLATFORM(WPE)
+    // FIXME: View is initially visible in WPE and has a fixed hardcoded size.
+    g_assert_nonnull(snapshot1.get());
+#else
     g_assert_null(snapshot1);
+#endif
 
     // WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT works even if the window is not visible.
     snapshot1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE);
-    g_assert_nonnull(snapshot1);
+
 #if USE(GTK4)
+    g_assert_nonnull(snapshot1);
     g_assert_true(GDK_IS_MEMORY_TEXTURE(snapshot1));
+
     g_assert_cmpint(gdk_texture_get_width(snapshot1), ==, 200);
     g_assert_cmpint(gdk_texture_get_height(snapshot1), ==, 100);
-#else
+#elif PLATFORM(GTK)
+    g_assert_nonnull(snapshot1);
     g_assert_cmpuint(cairo_surface_get_type(snapshot1), ==, CAIRO_SURFACE_TYPE_IMAGE);
     g_assert_cmpint(cairo_image_surface_get_width(snapshot1), ==, 200);
     g_assert_cmpint(cairo_image_surface_get_height(snapshot1), ==, 100);
+#else
+    g_assert_nonnull(snapshot1.get());
+    g_assert_true(WEBKIT_IS_IMAGE(snapshot1.get()));
+    // FIXME: View is initially visible in WPE and has a fixed hardcoded size.
+    g_assert_cmpint(webkit_image_get_width(snapshot1.get()), ==, 1024);
+    g_assert_cmpint(webkit_image_get_height(snapshot1.get()), ==, 768);
 #endif
 
     // Show the WebView in a popup widow of 50x50 and try again with WEBKIT_SNAPSHOT_REGION_VISIBLE.
     test->showInWindow(50, 50);
     snapshot1 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+#if PLATFORM(GTK)
     g_assert_nonnull(snapshot1);
     auto* surface1 = SnapshotWebViewTest::snapshotToSurface(snapshot1);
 #if USE(GTK4)
@@ -1201,19 +1220,31 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert_cmpuint(cairo_surface_get_type(snapshot1), ==, CAIRO_SURFACE_TYPE_IMAGE);
     g_assert_cmpint(cairo_image_surface_get_width(snapshot1), ==, 50);
     g_assert_cmpint(cairo_image_surface_get_height(snapshot1), ==, 50);
+#endif // USE(GTK)
+#else
+    g_assert_nonnull(snapshot1.get());
+    g_assert_true(WEBKIT_IS_IMAGE(snapshot1.get()));
+    g_assert_cmpint(webkit_image_get_width(snapshot1.get()), ==, 50);
+    g_assert_cmpint(webkit_image_get_height(snapshot1.get()), ==, 50);
 #endif
 
     // Select all text in the WebView, request a snapshot ignoring selection.
     test->selectAll();
-    auto* snapshot2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+    auto snapshot2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_NONE);
+#if PLATFORM(GTK)
     g_assert_nonnull(snapshot2);
     auto* surface2 = SnapshotWebViewTest::snapshotToSurface(snapshot2);
     g_assert_true(Test::cairoSurfacesEqual(surface1, surface2));
     cairo_surface_destroy(surface2);
+#else
+    g_assert_nonnull(snapshot2.get());
+    g_assert_true(g_icon_equal(G_ICON(snapshot1.get()), G_ICON(snapshot2.get())));
+#endif
 
     // Request a new snapshot, including the selection this time. The size should be the same but the result
     // must be different to the one previously obtained.
     snapshot2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING);
+#if PLATFORM(GTK)
     g_assert_nonnull(snapshot2);
     surface2 = SnapshotWebViewTest::snapshotToSurface(snapshot2);
 #if USE(GTK4)
@@ -1224,12 +1255,20 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert_cmpuint(cairo_surface_get_type(snapshot2), ==, CAIRO_SURFACE_TYPE_IMAGE);
     g_assert_cmpint(cairo_image_surface_get_width(snapshot1), ==, cairo_image_surface_get_width(snapshot2));
     g_assert_cmpint(cairo_image_surface_get_height(snapshot1), ==, cairo_image_surface_get_height(snapshot2));
-#endif
+#endif // USE(GTK)
     g_assert_false(Test::cairoSurfacesEqual(surface1, surface2));
     cairo_surface_destroy(surface2);
+#else // PLATFORM(GTK)
+    g_assert_nonnull(snapshot2.get());
+    g_assert_true(WEBKIT_IS_IMAGE(snapshot2.get()));
+    g_assert_cmpint(webkit_image_get_width(snapshot1.get()), ==, webkit_image_get_width(snapshot2.get()));
+    g_assert_cmpint(webkit_image_get_height(snapshot1.get()), ==, webkit_image_get_height(snapshot2.get()));
+    g_assert_false(g_icon_equal(G_ICON(snapshot1.get()), G_ICON(snapshot2.get())));
+#endif
 
-    // Get a snpashot with a transparent background, the result must be different.
+    // Get a snapshot with a transparent background, the result must be different.
     snapshot2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND);
+#if PLATFORM(GTK)
     g_assert_nonnull(snapshot2);
     surface2 = SnapshotWebViewTest::snapshotToSurface(snapshot2);
 #if USE(GTK4)
@@ -1240,15 +1279,22 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert_cmpuint(cairo_surface_get_type(snapshot2), ==, CAIRO_SURFACE_TYPE_IMAGE);
     g_assert_cmpint(cairo_image_surface_get_width(snapshot1), ==, cairo_image_surface_get_width(snapshot2));
     g_assert_cmpint(cairo_image_surface_get_height(snapshot1), ==, cairo_image_surface_get_height(snapshot2));
-#endif
+#endif // USE(GTK)
     g_assert_false(Test::cairoSurfacesEqual(surface1, surface2));
     cairo_surface_destroy(surface2);
     cairo_surface_destroy(surface1);
+#else // PLATFORM(GTK)
+    g_assert_nonnull(snapshot2.get());
+    g_assert_true(WEBKIT_IS_IMAGE(snapshot2.get()));
+    g_assert_cmpint(webkit_image_get_width(snapshot1.get()), ==, webkit_image_get_width(snapshot2.get()));
+    g_assert_cmpint(webkit_image_get_height(snapshot1.get()), ==, webkit_image_get_height(snapshot2.get()));
+    g_assert_false(g_icon_equal(G_ICON(snapshot1.get()), G_ICON(snapshot2.get())));
+#endif
 
     // Test that cancellation works.
     g_assert_true(test->getSnapshotAndCancel());
 }
-#endif // PLATFORM(GTK)
+#endif // PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 
 #if ENABLE(NOTIFICATIONS)
 class NotificationWebViewTest: public WebViewTest {
@@ -2152,8 +2198,7 @@ void beforeAll()
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
 #endif
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
-    // FIXME: View is initially visible in WPE and has a fixed hardcoded size.
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
 #endif
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);

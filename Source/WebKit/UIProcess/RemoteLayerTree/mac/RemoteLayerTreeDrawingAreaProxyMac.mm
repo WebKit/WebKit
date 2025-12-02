@@ -197,23 +197,22 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData)
+void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID& transactionID)
 {
-    if (mainFrameData) {
-        m_pageScalingLayerID = mainFrameData->pageScalingLayerID;
-        m_pageScrollingLayerID = mainFrameData->scrolledContentsLayerID;
-        m_scrolledContentsLayerID = mainFrameData->scrolledContentsLayerID;
-        m_mainFrameClipLayerID = mainFrameData->mainFrameClipLayerID;
-    }
-
-    if (!transaction.isMainFrameProcessTransaction())
+    if (!mainFrameData)
         return;
 
     RefPtr page = this->page();
+    const auto& mainFrameCommitData = *mainFrameData;
+
+    m_pageScalingLayerID = mainFrameCommitData.pageScalingLayerID;
+    m_pageScrollingLayerID = mainFrameCommitData.scrolledContentsLayerID;
+    m_scrolledContentsLayerID = mainFrameCommitData.scrolledContentsLayerID;
+    m_mainFrameClipLayerID = mainFrameCommitData.mainFrameClipLayerID;
 
     if (m_transientZoomScale)
         applyTransientZoomToLayer();
-    else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID().greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
+    else if (m_transactionIDAfterEndingTransientZoom && transactionID.greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
@@ -231,10 +230,10 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     }
 
     page->setScrollPerformanceDataCollectionEnabled(scrollingCoordinatorProxy->scrollingPerformanceTestingEnabled());
-    
+
     if (transaction.createdLayers().size() > 0) {
         if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = page->scrollingPerformanceData())
-            scrollPerfData->didCommitLayerTree(LayoutRect(transaction.scrollPosition(),  transaction.baseLayoutViewportSize()));
+            scrollPerfData->didCommitLayerTree(LayoutRect(transaction.scrollPosition(), mainFrameCommitData.baseLayoutViewportSize));
     }
 
     layoutBannerLayers(transaction);

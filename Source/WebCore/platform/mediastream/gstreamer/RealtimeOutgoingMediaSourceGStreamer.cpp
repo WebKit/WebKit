@@ -103,7 +103,7 @@ const GRefPtr<GstCaps>& RealtimeOutgoingMediaSourceGStreamer::allowedCaps() cons
         return m_allowedCaps;
 
     auto sdpMsIdLine = makeString(m_mediaStreamId, ' ', m_trackId);
-    m_allowedCaps = capsFromRtpCapabilities(rtpCapabilities(), [&sdpMsIdLine](GstStructure* structure) {
+    m_allowedCaps = capsFromRtpCapabilities(m_rtpHeaderExtensionMapping, rtpCapabilities(), [&sdpMsIdLine](GstStructure* structure) {
         gst_structure_set(structure, "a-msid", G_TYPE_STRING, sdpMsIdLine.utf8().data(), nullptr);
     });
 
@@ -198,8 +198,6 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource(StoppedCallback&& 
                 return;
             }
             self->removeOutgoingSource();
-            if (self->m_track)
-                self->m_track->removeObserver(*self);
             data->callback();
         }), callData, reinterpret_cast<GDestroyNotify>(destroyProbeData));
         return GST_PAD_PROBE_OK;

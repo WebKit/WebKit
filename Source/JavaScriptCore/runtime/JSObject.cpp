@@ -2775,7 +2775,7 @@ void JSObject::getOwnIndexedPropertyNames(JSGlobalObject*, PropertyNameArrayBuil
                     return std::nullopt;
                 });
                 
-                std::sort(keys.begin(), keys.end());
+                std::ranges::sort(keys);
                 for (unsigned i = 0; i < keys.size(); ++i)
                     propertyNames.add(keys[i]);
             }

@@ -28,8 +28,8 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WKTypes.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import <WebCore/WKTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

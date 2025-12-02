@@ -86,8 +86,6 @@ CODE_SIGN_IDENTITY = -;
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
-OTHER_CFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR);
 SYSTEM_FRAMEWORK_SEARCH_PATHS = $(SDK_DIR)$(NORMAL_UMBRELLA_FRAMEWORKS_DIR) $(inherited) $(WK_PRIVATE_SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 

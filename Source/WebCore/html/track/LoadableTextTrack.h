@@ -65,7 +65,7 @@ private:
 #endif
 
     WeakPtr<HTMLTrackElement, WeakPtrImplWithEventTargetData> m_trackElement;
-    std::unique_ptr<TextTrackLoader> m_loader;
+    RefPtr<TextTrackLoader> m_loader;
     URL m_url;
     bool m_loadPending { false };
 };

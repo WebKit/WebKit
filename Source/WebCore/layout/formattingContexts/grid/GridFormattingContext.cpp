@@ -33,6 +33,7 @@
 #include "LayoutChildIterator.h"
 #include "PlacedGridItem.h"
 #include "RenderStyleInlines.h"
+#include "StyleGapGutter.h"
 #include "StylePrimitiveNumeric.h"
 #include "UnplacedGridItem.h"
 #include "UsedTrackSizes.h"
@@ -112,12 +113,20 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
     auto mapGridItemLocationsToGrid = [&] {
+
+        // Compute gap values for columns and rows.
+        // For now, we handle fixed gaps only (not percentages or calc).
+        CheckedRef gridStyle = root().style();
+
+        auto columnGap = GridLayoutUtils::computeGapValue(gridStyle->columnGap());
+        auto rowGap = GridLayoutUtils::computeGapValue(gridStyle->rowGap());
+
         for (auto& gridItemRect : gridItemRects) {
             auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;
-            auto columnLocation = GridLayoutUtils::computeTrackSizesBefore(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes);
-            auto rowLocation = GridLayoutUtils::computeTrackSizesBefore(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes);
+            auto columnPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.columnStartLine, usedTrackSizes.columnSizes, columnGap);
+            auto rowPosition = GridLayoutUtils::computeGridLinePosition(lineNumbersForGridArea.rowStartLine, usedTrackSizes.rowSizes, rowGap);
 
-            gridItemRect.borderBoxRect.moveBy({ columnLocation, rowLocation });
+            gridItemRect.borderBoxRect.moveBy({ columnPosition, rowPosition });
         }
     };
     mapGridItemLocationsToGrid();

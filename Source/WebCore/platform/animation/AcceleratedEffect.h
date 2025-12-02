@@ -83,6 +83,7 @@ public:
     WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&) const;
 
     WEBCORE_EXPORT void apply(AcceleratedEffectValues&, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+    WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     // Encoding and decoding support
     const AnimationEffectTiming& timing() const { return m_timing; }
@@ -108,6 +109,7 @@ private:
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
 
     void validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>&);
+    ResolvedEffectTiming resolvedTiming(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     // KeyframeInterpolation
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;

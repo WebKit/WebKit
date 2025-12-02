@@ -122,12 +122,15 @@ inline ItemTolerance forwardInheritedValue(const ItemTolerance& value) { auto co
 inline LetterSpacing forwardInheritedValue(const LetterSpacing& value) { auto copy = value; return copy; }
 inline LineHeight forwardInheritedValue(const LineHeight& value) { auto copy = value; return copy; }
 inline ListStyleType forwardInheritedValue(const ListStyleType& value) { auto copy = value; return copy; }
+inline NameScope forwardInheritedValue(const NameScope& value) { auto copy = value; return copy; }
 inline OffsetAnchor forwardInheritedValue(const OffsetAnchor& value) { auto copy = value; return copy; }
 inline OffsetDistance forwardInheritedValue(const OffsetDistance& value) { auto copy = value; return copy; }
 inline OffsetPath forwardInheritedValue(const OffsetPath& value) { auto copy = value; return copy; }
 inline OffsetPosition forwardInheritedValue(const OffsetPosition& value) { auto copy = value; return copy; }
 inline OffsetRotate forwardInheritedValue(const OffsetRotate& value) { auto copy = value; return copy; }
 inline Position forwardInheritedValue(const Position& value) { auto copy = value; return copy; }
+inline PositionAnchor forwardInheritedValue(const PositionAnchor& value) { auto copy = value; return copy; }
+inline PositionTryFallbacks forwardInheritedValue(const PositionTryFallbacks& value) { auto copy = value; return copy; }
 inline PositionX forwardInheritedValue(const PositionX& value) { auto copy = value; return copy; }
 inline PositionY forwardInheritedValue(const PositionY& value) { auto copy = value; return copy; }
 inline RepeatStyle forwardInheritedValue(const RepeatStyle& value) { auto copy = value; return copy; }
@@ -333,7 +336,7 @@ void applyValueCoordinatedValueListProperty(BuilderState& builderState, CSSValue
 inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setDirection(fromCSSValue<TextDirection>(value));
-    builderState.style().setHasExplicitlySetDirection();
+    builderState.style().setHasExplicitlySetDirection(true);
 }
 
 inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
@@ -698,7 +701,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
     builderState.setWritingMode(fromCSSValue<StyleWritingMode>(value));
-    builderState.style().setHasExplicitlySetWritingMode();
+    builderState.style().setHasExplicitlySetWritingMode(true);
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
@@ -731,7 +734,7 @@ inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, 
 inline void BuilderCustom::applyValueColorScheme(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setColorScheme(toStyleFromCSSValue<ColorScheme>(builderState, value));
-    builderState.style().setHasExplicitlySetColorScheme();
+    builderState.style().setHasExplicitlySetColorScheme(true);
 }
 #endif
 

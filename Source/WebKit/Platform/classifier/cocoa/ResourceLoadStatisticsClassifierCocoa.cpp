@@ -104,15 +104,11 @@ bool ResourceLoadStatisticsClassifierCocoa::canUseCorePrediction()
 
 const struct svm_model* ResourceLoadStatisticsClassifierCocoa::singletonPredictionModel()
 {
-    static std::optional<struct svm_model*> corePredictionModel;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        auto path = storagePath();
-        if (path.isEmpty())
-            return;
-
-        corePredictionModel = svm_load_model(path.utf8().data());
-    });
+    static std::optional<struct svm_model*> corePredictionModel = [&]() -> std::optional<struct svm_model*> {
+        if (auto path = storagePath(); !path.isEmpty())
+            return svm_load_model(path.utf8().data());
+        return std::nullopt;
+    }();
 
     if (corePredictionModel && corePredictionModel.value())
         return corePredictionModel.value();

@@ -242,6 +242,8 @@ private:
 
     // This stores only the first received buffer for each SSRC.
     HashMap<uint32_t, GRefPtr<GstBuffer>> m_inputBuffers;
+
+    RTPHeaderExtensionMapping m_rtpHeaderExtensions;
 };
 
 } // namespace WebCore

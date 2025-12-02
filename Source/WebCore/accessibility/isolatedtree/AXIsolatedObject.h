@@ -112,6 +112,8 @@ public:
     FontOrientation fontOrientation() const final { return propertyValue<FontOrientation>(AXProperty::FontOrientation); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
+    String description() const final { return stringAttributeValue(AXProperty::Description); }
+
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool isIgnored() const final { return boolAttributeValue(AXProperty::IsIgnored); }
 #else
@@ -556,9 +558,11 @@ private:
     String textContentPrefixFromListMarker() const final;
     String webAreaTitle() const final { return stringAttributeValue(AXProperty::WebAreaTitle); }
     String titleAttribute() const final { return stringAttributeValue(AXProperty::TitleAttribute); }
-    String description() const final { return stringAttributeValue(AXProperty::Description); }
 
     std::optional<String> textContent() const final;
+    bool isBlockFlow() const final { return boolAttributeValue(AXProperty::IsBlockFlow); }
+    StitchState stitchState(IncludeStitchGroup = IncludeStitchGroup::Yes) const final;
+    const Vector<Vector<AXID>>* stitchGroupsView() const;
 
     String text() const final;
     unsigned textLength() const final;

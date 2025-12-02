@@ -300,11 +300,7 @@ private:
             }
         }
 
-        std::sort(
-            m_clobbers.begin(), m_clobbers.end(),
-            [] (Clobber& a, Clobber& b) -> bool {
-                return a.index < b.index;
-            });
+        std::ranges::sort(m_clobbers, { }, &Clobber::index);
 
         if (verbose()) {
             dataLog("Intervals:\n");
@@ -369,11 +365,9 @@ private:
                 m_tmps.append(tmp);
             });
 
-        std::sort(
-            m_tmps.begin(), m_tmps.end(),
-            [&] (Tmp& a, Tmp& b) {
-                return m_map[a].interval.begin() < m_map[b].interval.begin();
-            });
+        std::ranges::sort(m_tmps, [&](auto& a, auto& b) {
+            return m_map[a].interval.begin() < m_map[b].interval.begin();
+        });
 
         if (verbose())
             dataLog("Tmps: ", listDump(m_tmps), "\n");

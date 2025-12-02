@@ -42,6 +42,10 @@ class UnderlyingSourcePullCallback : public RefCounted<UnderlyingSourcePullCallb
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<RefPtr<DOMPromise>> invoke(JSC::JSValue, ReadableByteStreamController&) = 0;
 
 private:

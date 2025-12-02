@@ -18,11 +18,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/BrowserCaptureMediaStreamTrack-restrictTo.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-api.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-deny.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-echoCancellation-all.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-echoCancellation-boolean.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-echoCancellation-remote-only.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-empty-option-param.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-impossible-constraint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-invalid-facing-mode.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-non-applicable-constraint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-permissions-query.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-required-constraint-with-ideal-value.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-trivial-constraint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/GUM-unknownkey-option-param.https.html

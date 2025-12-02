@@ -45,6 +45,10 @@ class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResou
 public:
     virtual ~LoadableNonModuleScriptBase();
 
+    // CachedResourceClient.
+    void ref() const final { LoadableScript::ref(); }
+    void deref() const final { LoadableScript::deref(); }
+
     bool isLoaded() const final;
     bool hasError() const final;
     std::optional<Error> takeError() final;

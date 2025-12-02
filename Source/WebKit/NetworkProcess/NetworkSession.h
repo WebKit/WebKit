@@ -174,6 +174,7 @@ public:
     virtual void donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&) { }
     virtual void notifyAdAttributionKitOfSessionTermination() { }
     void handlePrivateClickMeasurementConversion(WebCore::PCM::AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest, String&& attributedBundleIdentifier);
+    void simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
     void dumpPrivateClickMeasurement(CompletionHandler<void(String)>&&);
     void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
     void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);

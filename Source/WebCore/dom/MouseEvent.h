@@ -31,7 +31,7 @@
 
 #include <wtf/Platform.h>
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-#include "PlatformTouchEventIOS.h"
+#include <WebKitAdditions/PlatformTouchEventIOS.h>
 #endif
 
 namespace JSC {

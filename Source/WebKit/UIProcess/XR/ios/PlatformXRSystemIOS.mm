@@ -36,11 +36,7 @@ namespace WebKit {
 PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 {
 #if USE(ARKITXR_IOS)
-    static LazyNeverDestroyed<ARKitCoordinator> xrCoordinator;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        xrCoordinator.construct();
-    });
+    static NeverDestroyed<ARKitCoordinator> xrCoordinator;
     return &xrCoordinator.get();
 #else
     return nullptr;

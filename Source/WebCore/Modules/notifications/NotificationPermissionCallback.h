@@ -39,6 +39,10 @@ class NotificationPermissionCallback : public RefCounted<NotificationPermissionC
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(Notification::Permission) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Notification::Permission) = 0;
 

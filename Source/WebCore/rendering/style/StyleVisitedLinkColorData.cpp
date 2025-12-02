@@ -34,25 +34,19 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleVisitedLinkColorData);
 
 StyleVisitedLinkColorData::StyleVisitedLinkColorData()
-    : background(RenderStyle::initialBackgroundColor())
-    // borderLeft
-    // borderRight
-    // borderTop
-    // borderBottom
-    // textDecoration
-    // outline
+    : visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
+    // visitedLinkBorderColors
+    // visitedLinkTextDecorationColor
+    // visitedLinkOutlineColor
 {
 }
 
 StyleVisitedLinkColorData::StyleVisitedLinkColorData(const StyleVisitedLinkColorData& o)
     : RefCounted<StyleVisitedLinkColorData>()
-    , background(o.background)
-    , borderLeft(o.borderLeft)
-    , borderRight(o.borderRight)
-    , borderTop(o.borderTop)
-    , borderBottom(o.borderBottom)
-    , textDecoration(o.textDecoration)
-    , outline(o.outline)
+    , visitedLinkBackgroundColor(o.visitedLinkBackgroundColor)
+    , visitedLinkBorderColors(o.visitedLinkBorderColors)
+    , visitedLinkTextDecorationColor(o.visitedLinkTextDecorationColor)
+    , visitedLinkOutlineColor(o.visitedLinkOutlineColor)
 {
 }
 
@@ -65,25 +59,19 @@ Ref<StyleVisitedLinkColorData> StyleVisitedLinkColorData::copy() const
 
 bool StyleVisitedLinkColorData::operator==(const StyleVisitedLinkColorData& o) const
 {
-    return background == o.background
-        && borderLeft == o.borderLeft
-        && borderRight == o.borderRight
-        && borderTop == o.borderTop
-        && borderBottom == o.borderBottom
-        && textDecoration == o.textDecoration
-        && outline == o.outline;
+    return visitedLinkBackgroundColor == o.visitedLinkBackgroundColor
+        && visitedLinkBorderColors == o.visitedLinkBorderColors
+        && visitedLinkTextDecorationColor == o.visitedLinkTextDecorationColor
+        && visitedLinkOutlineColor == o.visitedLinkOutlineColor;
 }
 
 #if !LOG_DISABLED
 void StyleVisitedLinkColorData::dumpDifferences(TextStream& ts, const StyleVisitedLinkColorData& other) const
 {
-    LOG_IF_DIFFERENT(background);
-    LOG_IF_DIFFERENT(borderLeft);
-    LOG_IF_DIFFERENT(borderRight);
-    LOG_IF_DIFFERENT(borderTop);
-    LOG_IF_DIFFERENT(borderBottom);
-    LOG_IF_DIFFERENT(textDecoration);
-    LOG_IF_DIFFERENT(outline);
+    LOG_IF_DIFFERENT(visitedLinkBackgroundColor);
+    LOG_IF_DIFFERENT(visitedLinkBorderColors);
+    LOG_IF_DIFFERENT(visitedLinkTextDecorationColor);
+    LOG_IF_DIFFERENT(visitedLinkOutlineColor);
 }
 #endif
 

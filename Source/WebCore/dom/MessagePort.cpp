@@ -107,7 +107,7 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
     portToContextIdentifier().set(m_identifier, scriptExecutionContext.identifier());
 
     // Make sure the WeakPtrFactory gets initialized eagerly on the thread the MessagePort gets constructed on for thread-safety reasons.
-    initializeWeakPtrFactory();
+    EventTarget::initializeWeakPtrFactory();
 
     scriptExecutionContext.createdMessagePort(*this);
 

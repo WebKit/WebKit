@@ -87,7 +87,7 @@ static void testWebKitImagePropertiesConstruct(WebKitImageTest*, gconstpointer)
         "stride", &stride,
         nullptr);
 
-    GBytes* retrieved_data = webkit_image_as_rgba_bytes(image.get());
+    GBytes* retrieved_data = webkit_image_as_bytes(image.get());
 
     g_assert_cmpint(width, ==, 1);
     g_assert_cmpint(height, ==, 2);

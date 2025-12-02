@@ -73,7 +73,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserC
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
     , m_treeBuilder(makeUniqueRef<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
     , m_parserScheduler(HTMLParserScheduler::create(*this))
-    , m_preloader(makeUnique<HTMLResourcePreloader>(document))
+    , m_preloader(HTMLResourcePreloader::create(document))
     , m_shouldEmitTracePoints(isMainDocumentLoadingFromHTTP(document))
 {
 }

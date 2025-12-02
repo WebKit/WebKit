@@ -54,12 +54,14 @@ template<typename> class ExceptionOr;
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDataChannel);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
     WEBCORE_EXPORT virtual ~RTCDataChannel();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool ordered() const { return *m_options.ordered; }
     std::optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
@@ -97,7 +99,7 @@ public:
 private:
     RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
-    static NetworkSendQueue createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
+    static Ref<NetworkSendQueue> createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
     void removeFromDataChannelLocalMapIfNeeded();
@@ -135,7 +137,7 @@ private:
     size_t m_bufferedAmountLowThreshold { 0 };
     bool m_isDetachable { true };
     bool m_isDetached { false };
-    NetworkSendQueue m_messageQueue;
+    const Ref<NetworkSendQueue> m_messageQueue;
 };
 
 } // namespace WebCore

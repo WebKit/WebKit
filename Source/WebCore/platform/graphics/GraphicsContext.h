@@ -183,7 +183,7 @@ public:
     WEBCORE_EXPORT virtual void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
 
     void unwindStateStack(unsigned count);
-    void unwindStateStack() { unwindStateStack(stackSize()); }
+    WEBCORE_EXPORT void unwindStateStack();
 
     unsigned stackSize() const { return m_stack.size(); }
 
@@ -289,7 +289,7 @@ public:
     WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
 #if ENABLE(VIDEO)
-    WEBCORE_EXPORT virtual void drawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha);
+    WEBCORE_EXPORT virtual void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha);
 #endif
 
     // Clipping

@@ -29,6 +29,7 @@
 #include "ChannelInterpretation.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 
@@ -53,12 +54,14 @@ enum class NoiseInjectionPolicy : uint8_t;
 
 class AudioNode
     : public EventTarget
+    , public CanMakeThreadSafeCheckedPtr<AudioNode>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
 {
     WTF_MAKE_NONCOPYABLE(AudioNode);
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AudioNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioNode);
 public:
     enum NodeType {
         NodeTypeDestination,
@@ -123,7 +126,9 @@ public:
     unsigned numberOfOutputs() const { return m_outputs.size(); }
 
     AudioNodeInput* input(unsigned);
+    CheckedPtr<AudioNodeInput> checkedInput(unsigned);
     AudioNodeOutput* output(unsigned);
+    CheckedPtr<AudioNodeOutput> checkedOutput(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
     ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
@@ -251,7 +256,7 @@ private:
 
     WeakOrStrongContext m_context;
 
-    Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
+    Vector<Ref<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;
 
     double m_lastProcessingTime { -1 };

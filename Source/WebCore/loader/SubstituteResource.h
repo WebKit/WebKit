@@ -48,7 +48,7 @@ protected:
     SubstituteResource(URL&& url, ResourceResponse&& response, Ref<FragmentedSharedBuffer>&& data)
         : m_url(WTFMove(url))
         , m_response(WTFMove(response))
-        , m_data(WTFMove(data))
+        , m_data(data)
     {
     }
 

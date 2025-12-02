@@ -32,6 +32,7 @@
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityScrollbar.h"
 #include "ContainerNodeInlines.h"
+#include "DocumentView.h"
 #include "FrameInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrameInlines.h"

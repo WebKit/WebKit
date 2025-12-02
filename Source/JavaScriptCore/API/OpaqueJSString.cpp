@@ -38,7 +38,7 @@ RefPtr<OpaqueJSString> OpaqueJSString::tryCreate(const String& string)
     if (string.isNull())
         return nullptr;
 
-    return adoptRef(new OpaqueJSString(string));
+    return adoptRef(new OpaqueJSString(String { string }));
 }
 
 RefPtr<OpaqueJSString> OpaqueJSString::tryCreate(String&& string)

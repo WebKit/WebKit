@@ -264,7 +264,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id<WKFullScreenViewControllerDelegate>)delegate
 {
-    return _delegate.get().unsafeGet();
+    return _delegate.getAutoreleased();
 }
 
 - (void)setDelegate:(id<WKFullScreenViewControllerDelegate>)delegate

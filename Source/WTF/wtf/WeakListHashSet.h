@@ -32,12 +32,13 @@
 namespace WTF {
 
 // Value will be deleted lazily upon rehash or amortized over time. For manual cleanup, call removeNullReferences().
-template <typename T, typename WeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy>
+template <typename T, typename WeakPtrImplType>
 class WeakListHashSet final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakListHashSet);
 public:
-    using WeakPtrImplSet = ListHashSet<Ref<WeakPtrImpl>>;
-    using AddResult = typename WeakPtrImplSet::AddResult;
+    using KeyType = WeakPtr<T, WeakPtrImplType>;
+    using SetType = ListHashSet<KeyType>;
+    using AddResult = typename SetType::AddResult;
 
     template <typename ListHashSetType, typename IteratorType>
     class WeakListHashSetIteratorBase {
@@ -69,8 +70,12 @@ public:
 
         ~WeakListHashSetIteratorBase() = default;
 
-        ALWAYS_INLINE T* makePeek() { return static_cast<T*>((*m_position)->template get<T>()); }
-        ALWAYS_INLINE const T* makePeek() const { return static_cast<const T*>((*m_position)->template get<T>()); }
+        T* get() { return m_position->get(); }
+        const T* get() const { return get(); }
+        T& operator*() { return *get(); }
+        const T& operator*() const { return *get(); }
+        T* operator->() { return get(); }
+        const T* operator->() const { return get(); }
 
         void advance()
         {
@@ -84,14 +89,14 @@ public:
         {
             ASSERT(m_position != m_beginPosition);
             --m_position;
-            while (m_position != m_beginPosition && !makePeek())
+            while (m_position != m_beginPosition && !get())
                 --m_position;
             m_set.increaseOperationCountSinceLastCleanup();
         }
 
         void skipEmptyBuckets()
         {
-            while (m_position != m_endPosition && !makePeek())
+            while (m_position != m_endPosition && !get())
                 ++m_position;
         }
 
@@ -101,15 +106,15 @@ public:
         IteratorType m_endPosition;
     };
 
-    class WeakListHashSetIterator : public WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::iterator> {
+    class WeakListHashSetIterator : public WeakListHashSetIteratorBase<WeakListHashSet, typename SetType::iterator> {
     public:
-        using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::iterator>;
+        using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename SetType::iterator>;
 
         bool operator==(const WeakListHashSetIterator& other) const { return Base::m_position == other.Base::m_position; }
 
-        T* get() { return Base::makePeek(); }
-        T& operator*() { return *Base::makePeek(); }
-        T* operator->() { return Base::makePeek(); }
+        using Base::get;
+        using Base::operator*;
+        using Base::operator->;
 
         WeakListHashSetIterator& operator++()
         {
@@ -124,22 +129,22 @@ public:
         }
 
     private:
-        WeakListHashSetIterator(WeakListHashSet& map, typename WeakPtrImplSet::iterator position)
+        WeakListHashSetIterator(WeakListHashSet& map, typename SetType::iterator position)
             : Base { map, position }
         { }
 
-        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
+        template <typename, typename> friend class WeakListHashSet;
     };
 
-    class WeakListHashSetConstIterator : public WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::const_iterator> {
+    class WeakListHashSetConstIterator : public WeakListHashSetIteratorBase<WeakListHashSet, typename SetType::const_iterator> {
     public:
-        using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::const_iterator>;
+        using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename SetType::const_iterator>;
 
         bool operator==(const WeakListHashSetConstIterator& other) const { return Base::m_position == other.Base::m_position; }
 
-        const T* get() const { return Base::makePeek(); }
-        const T& operator*() const { return *Base::makePeek(); }
-        const T* operator->() const { return Base::makePeek(); }
+        using Base::get;
+        using Base::operator*;
+        using Base::operator->;
 
         WeakListHashSetConstIterator& operator++()
         {
@@ -154,11 +159,11 @@ public:
         }
 
     private:
-        WeakListHashSetConstIterator(const WeakListHashSet& map, typename WeakPtrImplSet::const_iterator position)
+        WeakListHashSetConstIterator(const WeakListHashSet& map, typename SetType::const_iterator position)
             : Base { map, position }
         { }
 
-        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
+        template <typename, typename> friend class WeakListHashSet;
     };
 
     using iterator = WeakListHashSetIterator;
@@ -169,88 +174,125 @@ public:
     const_iterator begin() const { return WeakListHashSetConstIterator(*this, m_set.begin()); }
     const_iterator end() const { return WeakListHashSetConstIterator(*this, m_set.end()); }
 
-    template <typename U>
-    iterator find(const U& value)
+    iterator find(const T* value)
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return WeakListHashSetIterator(*this, m_set.find(*impl));
-        return end();
+        return WeakListHashSetIterator(*this, m_set.find(value));
     }
 
-    template <typename U>
-    const_iterator find(const U& value) const
+    iterator find(const T& value)
+    {
+        return find(&value);
+    }
+
+    const_iterator find(const T* value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return WeakListHashSetConstIterator(*this, m_set.find(*impl));
-        return end();
+        return WeakListHashSetConstIterator(*this, m_set.find(value));
     }
 
-    template <typename U>
-    bool contains(const U& value) const
+    const_iterator find(const T& value) const
+    {
+        return find(&value);
+    }
+
+    bool contains(const T* value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return m_set.contains(*impl);
-        return false;
+        return m_set.contains(value);
     }
 
-    template <typename U>
-    AddResult add(const U& value)
+    bool contains(const T& value) const
     {
-        amortizedCleanupIfNeeded();
-        return m_set.add(WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return contains(&value);
     }
 
-    template <typename U>
-    AddResult appendOrMoveToLast(const U& value)
+    AddResult add(const T* value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.appendOrMoveToLast(WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return m_set.add(value);
     }
 
-    template <typename U>
-    bool moveToLastIfPresent(const U& value)
+    AddResult add(const T& value)
     {
-        amortizedCleanupIfNeeded();
-        return m_set.moveToLastIfPresent(WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return add(&value);
     }
 
-    template <typename U>
-    AddResult prependOrMoveToFirst(const U& value)
+    AddResult appendOrMoveToLast(const T* value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.prependOrMoveToFirst(WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return m_set.appendOrMoveToLast(value);
     }
 
-    template <typename U, typename V>
-    AddResult insertBefore(const U& beforeValue, const V& value)
+    AddResult appendOrMoveToLast(const T& value)
     {
-        amortizedCleanupIfNeeded();
-        return m_set.insertBefore(WeakRef<T, WeakPtrImpl>(beforeValue).releaseImpl(), WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return appendOrMoveToLast(&value);
     }
 
-    template <typename U>
-    AddResult insertBefore(iterator it, const U& value)
+    bool moveToLastIfPresent(const T* value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.insertBefore(it.m_position, WeakRef<T, WeakPtrImpl>(value).releaseImpl());
+        return m_set.moveToLastIfPresent(value);
     }
 
-    template <typename U>
-    bool remove(const U& value)
+    bool moveToLastIfPresent(const T& value)
+    {
+        return moveToLastIfPresent(&value);
+    }
+
+    AddResult prependOrMoveToFirst(const T* value)
     {
         amortizedCleanupIfNeeded();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return m_set.remove(*impl);
-        return false;
+        return m_set.prependOrMoveToFirst(value);
+    }
+
+    AddResult prependOrMoveToFirst(const T& value)
+    {
+        return prependOrMoveToFirst(&value);
+    }
+
+    AddResult insertBefore(const T* beforeValue, const T* value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.insertBefore(beforeValue, value);
+    }
+
+    AddResult insertBefore(const T& beforeValue, const T& value)
+    {
+        return insertBefore(&beforeValue, &value);
+    }
+
+    AddResult insertBefore(iterator it, const T* value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.insertBefore(it.m_position, value);
+    }
+
+    AddResult insertBefore(iterator it, const T& value)
+    {
+        return insertBefore(it, &value);
+    }
+
+    bool remove(const T* value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.remove(value);
+    }
+
+    bool remove(const T& value)
+    {
+        return remove(&value);
     }
 
     bool remove(iterator it)
     {
         if (it == end())
             return false;
+
+        // WeakPtr<T> can become null while 'it' is live.
+        if (!it.get())
+            return false;
+
         auto result = m_set.remove(it.m_position);
         amortizedCleanupIfNeeded();
         return result;
@@ -299,16 +341,7 @@ public:
 
     bool removeNullReferences()
     {
-        bool didRemove = false;
-        auto it = m_set.begin();
-        while (it != m_set.end()) {
-            auto currentIt = it;
-            ++it;
-            if (!currentIt->get()) {
-                m_set.remove(currentIt);
-                didRemove = true;
-            }
-        }
+        bool didRemove = m_set.removeIf([] (auto& value) { return !value.get(); });
         cleanupHappened();
         return didRemove;
     }
@@ -379,17 +412,19 @@ private:
             const_cast<WeakListHashSet&>(*this).removeNullReferences();
     }
 
-    WeakPtrImplSet m_set;
+    SetType m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename T, typename WeakMapImpl>
-size_t containerSize(const WeakListHashSet<T, WeakMapImpl>& container) { return container.computeSize(); }
+template<typename T, typename WeakPtrImplType>
+size_t containerSize(const WeakListHashSet<T, WeakPtrImplType>& container) { return container.computeSize(); }
 
-template<typename T, typename WeakMapImpl>
-inline auto copyToVector(const WeakListHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>> {
-    return WTF::map(collection, [](auto& v) -> WeakPtr<T, WeakMapImpl> { return WeakPtr<T, WeakMapImpl> { v }; });
+template<typename T, typename WeakPtrImplType>
+inline auto copyToVector(const WeakListHashSet<T, WeakPtrImplType>& collection) -> Vector<typename WeakListHashSet<T, WeakPtrImplType>::KeyType> {
+    return WTF::map(collection, [](auto& v) -> typename WeakListHashSet<T, WeakPtrImplType>::KeyType {
+        return typename WeakListHashSet<T, WeakPtrImplType>::KeyType { v };
+    });
 }
 
 }

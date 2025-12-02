@@ -1,0 +1,42 @@
+
+FAIL .grid-lanes 1 assert_equals:
+<div class="grid-lanes" data-expected-width="300" data-expected-height="200">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 2 assert_equals:
+<div class="grid-lanes" style="width: 200px; height: 100px;" data-expected-width="300" data-expected-height="200">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 3 assert_equals:
+<div class="grid-lanes" style="width: min-content; height: min-content;" data-expected-width="300" data-expected-height="200">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 4 assert_equals:
+<div class="grid-lanes" style="width: max-content; height: max-content;" data-expected-width="300" data-expected-height="200">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 5 assert_equals:
+<div class="grid-lanes border" data-expected-width="320" data-expected-height="220">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 6 assert_equals:
+<div class="grid-lanes border" style="width: 200px; height: 100px;" data-expected-width="320" data-expected-height="220">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 7 assert_equals:
+<div class="grid-lanes border" style="width: min-content; height: min-content;" data-expected-width="320" data-expected-height="220">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+FAIL .grid-lanes 8 assert_equals:
+<div class="grid-lanes border" style="width: max-content; height: max-content;" data-expected-width="320" data-expected-height="220">
+  <div class="item" data-offset-x="75" data-offset-y="0" data-expected-width="150" data-expected-height="200"></div>
+</div>
+offsetLeft expected 75 but got 0
+

@@ -56,6 +56,7 @@
 #include <WebCore/RTCDataChannelIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WebSocketIdentifier.h>
+#include <WebCore/WebTransportConnectionInfo.h>
 #include <optional>
 #include <wtf/HashCountedSet.h>
 #include <wtf/OptionSet.h>
@@ -68,6 +69,10 @@
 
 #if PLATFORM(COCOA)
 #include "CocoaWindow.h"
+#endif
+
+#if USE(LIBRICE)
+#include "RiceBackend.h"
 #endif
 
 namespace PAL {
@@ -439,8 +444,13 @@ private:
     void navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 #endif
 
-    void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, WebPageProxyIdentifier&&, WebCore::ClientOrigin&&, CompletionHandler<void(bool)>&&);
+    void initializeWebTransportSession(WebTransportSessionIdentifier, URL&&, WebCore::WebTransportOptions&&, WebPageProxyIdentifier&&, WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void destroyWebTransportSession(WebTransportSessionIdentifier);
+
+#if USE(LIBRICE)
+    void initializeRiceBackend(WebPageProxyIdentifier&&, CompletionHandler<void(std::optional<RiceBackendIdentifier>)>&&);
+    void destroyRiceBackend(RiceBackendIdentifier);
+#endif
 
     struct ResourceNetworkActivityTracker {
         ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
@@ -552,6 +562,10 @@ private:
     HashSet<String> m_allowedFilePaths;
 #if ENABLE(IPC_TESTING_API)
     const Ref<IPCTester> m_ipcTester;
+#endif
+
+#if USE(LIBRICE)
+    HashMap<RiceBackendIdentifier, Ref<RiceBackend>> m_gstreamerIceBackends;
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;

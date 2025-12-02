@@ -160,7 +160,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 - (void)_showPopover
 {
     RetainPtr popover = [[self class] _colorPopoverCreateIfNecessary:YES];
-    popover.get().delegate = self;
+    popover.get().delegate = (id)self;
 
     [self deactivate];
 

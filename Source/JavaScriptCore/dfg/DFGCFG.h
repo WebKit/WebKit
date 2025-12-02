@@ -96,17 +96,29 @@ public:
 
 using SSACFG = CFG;
 
-template <typename T, typename = typename std::enable_if<std::is_same<T, CPSCFG>::value>::type>
-CPSCFG& selectCFG(Graph& graph)
-{
-    return graph.ensureCPSCFG();
-}
+template<typename> struct CFGSelection;
 
-template <typename T, typename = typename std::enable_if<std::is_same<T, SSACFG>::value>::type>
-SSACFG& selectCFG(Graph& graph)
+template<>
+struct CFGSelection<CPSCFG> {
+    static CPSCFG& select(Graph& graph)
+    {
+        return graph.ensureCPSCFG();
+    }
+};
+
+template<>
+struct CFGSelection<SSACFG> {
+    static SSACFG& select(Graph& graph)
+    {
+        RELEASE_ASSERT(graph.m_ssaCFG);
+        return *graph.m_ssaCFG;
+    }
+};
+
+template<typename T>
+auto& selectCFG(Graph& graph)
 {
-    RELEASE_ASSERT(graph.m_ssaCFG);
-    return *graph.m_ssaCFG;
+    return CFGSelection<T>::select(graph);
 }
 
 } } // namespace JSC::DFG

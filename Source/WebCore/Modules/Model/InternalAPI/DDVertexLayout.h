@@ -28,9 +28,9 @@
 namespace WebCore::DDModel {
 
 struct DDVertexLayout {
-    int32_t bufferIndex;
-    int32_t bufferOffset;
-    int32_t bufferStride;
+    long bufferIndex;
+    long bufferOffset;
+    long bufferStride;
 };
 
 }

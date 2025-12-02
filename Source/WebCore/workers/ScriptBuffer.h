@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Platform.h>
 
@@ -39,19 +38,13 @@ namespace WebCore {
 class ScriptBuffer {
 public:
     ScriptBuffer() = default;
-
-    ScriptBuffer(RefPtr<FragmentedSharedBuffer>&& buffer)
-        : m_buffer(WTFMove(buffer))
-    {
-    }
+    WEBCORE_EXPORT explicit ScriptBuffer(const String&);
+    WEBCORE_EXPORT explicit ScriptBuffer(RefPtr<const FragmentedSharedBuffer>&&);
 
     static ScriptBuffer empty();
 
-    WEBCORE_EXPORT explicit ScriptBuffer(const String&);
-
     String toString() const;
-    const SharedBufferBuilder& buffer() const { return m_buffer; }
-    RefPtr<const FragmentedSharedBuffer> protectedBuffer() const { return m_buffer.get(); }
+    RefPtr<const FragmentedSharedBuffer> buffer() const { return m_buffer.get(); }
     size_t size() const { return m_buffer.size(); }
 
     ScriptBuffer isolatedCopy() const { return ScriptBuffer(m_buffer ? RefPtr<FragmentedSharedBuffer>(m_buffer.copy()) : nullptr); }
@@ -61,15 +54,6 @@ public:
     WEBCORE_EXPORT bool containsSingleFileMappedSegment() const;
     void append(const String&);
     void append(const FragmentedSharedBuffer&);
-
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    using IPCData = Variant<ShareableResourceHandle, RefPtr<FragmentedSharedBuffer>>;
-#else
-    using IPCData = RefPtr<FragmentedSharedBuffer>;
-#endif
-
-    WEBCORE_EXPORT static std::optional<ScriptBuffer> fromIPCData(IPCData&&);
-    WEBCORE_EXPORT IPCData ipcData() const;
 
     bool operator==(const ScriptBuffer& other) const { return m_buffer == other.m_buffer; }
 

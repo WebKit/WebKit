@@ -46,11 +46,13 @@ class WebCoreOpaqueRoot;
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SourceBufferList);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<SourceBufferList> create(ScriptExecutionContext*);
     virtual ~SourceBufferList();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const { return m_list.size(); }

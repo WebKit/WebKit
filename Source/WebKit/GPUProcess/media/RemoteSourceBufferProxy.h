@@ -70,6 +70,8 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
+    void connectionToWebProcessClosed();
+
 private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
 
@@ -82,7 +84,6 @@ private:
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<WebCore::MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime&) final;
     void sourceBufferPrivateDidDropSample() final;
-    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
     void sourceBufferPrivateEvictionDataChanged(const WebCore::SourceBufferEvictionData&) final;
     Ref<WebCore::MediaPromise> sourceBufferPrivateDidAttach(InitializationSegment&&) final;
 

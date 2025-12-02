@@ -32,10 +32,12 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceLoadPriority.h>
+#include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 

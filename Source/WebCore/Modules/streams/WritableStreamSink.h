@@ -45,7 +45,7 @@ public:
 
     virtual void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) = 0;
     virtual void close() = 0;
-    virtual void error(String&&) = 0;
+    virtual void abort(JSC::JSValue) = 0;
 };
 
 class SimpleWritableStreamSink : public WritableStreamSink {
@@ -58,7 +58,7 @@ private:
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
     void close() final { }
-    void error(String&&) final { }
+    void abort(JSC::JSValue) final { }
 
     WriteCallback m_writeCallback;
 };

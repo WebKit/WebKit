@@ -75,6 +75,11 @@
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
 
+#if USE(LIBRICE)
+#include "RiceBackendProxy.h"
+#include "RiceBackendProxyMessages.h"
+#endif
+
 #if ENABLE(APPLE_PAY_REMOTE_UI)
 #include "WebPaymentCoordinatorMessages.h"
 #endif
@@ -149,6 +154,14 @@ bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC:
             network->resolver(AtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID()))->didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
+        return true;
+    }
+#endif
+
+#if USE(LIBRICE)
+    if (decoder.messageReceiverName() == Messages::RiceBackendProxy::messageReceiverName()) {
+        if (RefPtr agent = WebProcess::singleton().gstreamerIceBackend(RiceBackendIdentifier(decoder.destinationID())))
+            agent->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif

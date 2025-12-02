@@ -32,7 +32,7 @@ namespace WebCore {
 
 NetworkLoadMetrics::NetworkLoadMetrics() = default;
 
-NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, PrivacyStance privacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&& additionalNetworkLoadMetricsForWebInspector)
+NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicTime&& fetchStart, MonotonicTime&& domainLookupStart, MonotonicTime&& domainLookupEnd, MonotonicTime&& connectStart, MonotonicTime&& secureConnectionStart, MonotonicTime&& connectEnd, MonotonicTime&& requestStart, MonotonicTime&& responseStart, MonotonicTime&& responseEnd, MonotonicTime&& workerStart, String&& protocol, uint16_t redirectCount, bool complete, bool cellular, bool expensive, bool constrained, bool multipath, bool isReusedConnection, bool failsTAOCheck, bool hasCrossOriginRedirect, bool fromPrefetch, PrivacyStance privacyStance, uint64_t responseBodyBytesReceived, uint64_t responseBodyDecodedSize, RefPtr<AdditionalNetworkLoadMetricsForWebInspector>&& additionalNetworkLoadMetricsForWebInspector)
     : redirectStart(WTFMove(redirectStart))
     , fetchStart(WTFMove(fetchStart))
     , domainLookupStart(WTFMove(domainLookupStart))
@@ -54,6 +54,7 @@ NetworkLoadMetrics::NetworkLoadMetrics(MonotonicTime&& redirectStart, MonotonicT
     , isReusedConnection(isReusedConnection)
     , failsTAOCheck(failsTAOCheck)
     , hasCrossOriginRedirect(hasCrossOriginRedirect)
+    , fromPrefetch(fromPrefetch)
     , privacyStance(privacyStance)
     , responseBodyBytesReceived(responseBodyBytesReceived)
     , responseBodyDecodedSize(responseBodyDecodedSize)
@@ -155,6 +156,7 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     copy.isReusedConnection = isReusedConnection;
     copy.failsTAOCheck = failsTAOCheck;
     copy.hasCrossOriginRedirect = hasCrossOriginRedirect;
+    copy.fromPrefetch = fromPrefetch;
 
     copy.privacyStance = privacyStance;
 

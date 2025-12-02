@@ -73,7 +73,7 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
         } else {
             if (allowDownloading) {
                 if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src)).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
-                    fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
+                    fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), request.releaseNonNull()));
             }
         }
     }
@@ -621,7 +621,7 @@ void CSSFontFace::opportunisticallyStartFontDataURLLoading()
 {
     // We don't want to go crazy here and blow the cache. Usually these data URLs are the first item in the src: list, so let's just check that one.
     if (!m_sources.isEmpty())
-        m_sources[0]->opportunisticallyStartFontDataURLLoading();
+        CheckedRef { *m_sources[0] }->opportunisticallyStartFontDataURLLoading();
 }
 
 size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
@@ -756,12 +756,9 @@ void CSSFontFace::updateStyleIfNeeded()
 
 bool CSSFontFace::hasSVGFontFaceSource() const
 {
-    size_t size = m_sources.size();
-    for (size_t i = 0; i < size; i++) {
-        if (m_sources[i]->isSVGFontFaceSource())
-            return true;
-    }
-    return false;
+    return m_sources.containsIf([](auto& source) {
+        return CheckedRef { *source }->isSVGFontFaceSource();
+    });
 }
 
 void CSSFontFace::setErrorState()

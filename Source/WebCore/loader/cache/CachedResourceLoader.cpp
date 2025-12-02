@@ -233,6 +233,7 @@ CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
     : m_documentLoader(documentLoader)
     , m_unusedPreloadsTimer(*this, &CachedResourceLoader::warnUnusedPreloads)
     , m_garbageCollectDocumentResourcesTimer(*this, &CachedResourceLoader::garbageCollectDocumentResources)
+    , m_keepaliveRequestTracker(KeepaliveRequestTracker::create())
 {
 }
 

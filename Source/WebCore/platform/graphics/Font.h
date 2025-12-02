@@ -84,6 +84,8 @@ enum class FontVisibility : bool { Visible, Invisible };
 enum class FontIsOrientationFallback : bool { No, Yes };
 
 #if USE(CORE_TEXT)
+using IPCFontData = Variant<WebCore::InstalledFont, WebCore::CustomFontCreationData>;
+
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 bool supportsOpenTypeFeature(CTFontRef, CFStringRef featureTag);
 #endif
@@ -259,7 +261,11 @@ public:
     std::optional<BitVector> findOTSVGGlyphs(std::span<const GlyphBufferGlyph>) const;
 
     bool hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph>) const;
-
+#if USE(CORE_TEXT)
+    WEBCORE_EXPORT static std::optional<Ref<Font>> fromIPCData(IPCFontData&&);
+    WEBCORE_EXPORT IPCFontData toSerializableFont() const;
+    WEBCORE_EXPORT std::optional<InstalledFont> toSerializableInstalledFont() const;
+#endif
 #if PLATFORM(WIN)
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 #endif

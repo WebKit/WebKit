@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT static void dispatchBarrier(Function<void ()>&&);
 
 private:
-    friend LazyNeverDestroyed<ScrollingThread>;
+    friend NeverDestroyed<ScrollingThread>;
 
     static ScrollingThread& singleton();
 

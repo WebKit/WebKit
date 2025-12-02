@@ -82,7 +82,7 @@ private:
 
         void doStart() final;
         void doPull() final;
-        void doCancel() final;
+        void doCancel(JSC::JSValue) final;
         void setActive() final;
         void setInactive() final;
 

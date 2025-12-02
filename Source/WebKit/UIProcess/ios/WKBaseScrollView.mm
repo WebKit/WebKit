@@ -259,11 +259,51 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKBaseScrollViewAdditions.mm>)
 #import <WebKitAdditions/WKBaseScrollViewAdditions.mm>
 #else
-- (BOOL)_hasEnoughContentForOverlayRegions { return false; }
-- (void)_updateOverlayRegionsBehavior:(BOOL)selected { }
-- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions whileStable:(BOOL)stable { }
-- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host { }
-- (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
+constexpr float overlayRegionContentFactor = 1.1;
+
+- (BOOL)_hasEnoughContentForOverlayRegions
+{
+    return ((self._wk_contentHeightIncludingInsets > self.bounds.size.height * overlayRegionContentFactor)
+        || (self._wk_contentWidthIncludingInsets > self.bounds.size.width * overlayRegionContentFactor));
+}
+- (void)_updateOverlayRegionsBehavior:(BOOL)selected
+{
+    UIAxis scrollableAxes = UIAxisNeither;
+
+    if (selected) {
+        if (self._wk_contentHeightIncludingInsets > self.bounds.size.height * overlayRegionContentFactor)
+            scrollableAxes |= UIAxisVertical;
+        if (self._wk_contentWidthIncludingInsets > self.bounds.size.width * overlayRegionContentFactor)
+            scrollableAxes |= UIAxisHorizontal;
+    } else if (_overlayRegionRects.size())
+        [self _updateOverlayRegionRects: { } whileStable:YES];
+
+    if (self._scrollingBehavior == scrollableAxes)
+        return;
+
+    self._scrollingBehavior = scrollableAxes;
+}
+
+- (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions whileStable:(BOOL)stable
+{
+    auto diff = _overlayRegionRects.symmetricDifferenceWith(overlayRegions);
+    if (!diff.size())
+        return;
+
+    if (!stable && overlayRegions.size() == _overlayRegionRects.size())
+        return;
+
+    _overlayRegionRects = overlayRegions;
+}
+
+- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host
+{
+    auto diff = _overlayRegionAssociatedLayers.symmetricDifferenceWith(relatedLayers);
+    if (!diff.size())
+        return;
+
+    _overlayRegionAssociatedLayers = relatedLayers;
+}
 #endif
 
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

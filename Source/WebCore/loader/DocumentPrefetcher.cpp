@@ -172,12 +172,17 @@ void DocumentPrefetcher::notifyFinished(CachedResource& resource, const NetworkL
         resource.removeClient(*this);
 }
 
+bool DocumentPrefetcher::wasPrefetched(const URL& url) const
+{
+    return m_prefetchedData.contains(url);
+}
+
 Box<NetworkLoadMetrics> DocumentPrefetcher::takePrefetchedNetworkLoadMetrics(const URL& url)
 {
     auto it = m_prefetchedData.find(url);
     if (it != m_prefetchedData.end() && it->value.metrics) {
         auto metrics = WTFMove(it->value.metrics);
-        it->value.metrics = { };
+        m_prefetchedData.remove(it);
         return metrics;
     }
     return { };

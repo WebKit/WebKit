@@ -408,7 +408,7 @@ Value FunLocalName::evaluate() const
         return node ? expandedNameLocalPart(*node) : emptyString();
     }
 
-    return expandedNameLocalPart(*evaluationContext().node);
+    return expandedNameLocalPart(*evaluationContext().protectedNode());
 }
 
 Value FunNamespaceURI::evaluate() const
@@ -422,7 +422,7 @@ Value FunNamespaceURI::evaluate() const
         return node ? node->namespaceURI().string() : emptyString();
     }
 
-    return evaluationContext().node->namespaceURI().string();
+    return evaluationContext().protectedNode()->namespaceURI().string();
 }
 
 Value FunName::evaluate() const
@@ -436,7 +436,7 @@ Value FunName::evaluate() const
         return node ? expandedName(*node) : emptyString();
     }
 
-    return expandedName(*evaluationContext().node);
+    return expandedName(*evaluationContext().protectedNode());
 }
 
 Value FunCount::evaluate() const

@@ -47,11 +47,7 @@ using KnownColorSpaceAccessor = sk_sp<SkColorSpace>();
 #endif
 template<KnownColorSpaceAccessor accessor> static const DestinationColorSpace& knownColorSpace()
 {
-    static LazyNeverDestroyed<DestinationColorSpace> colorSpace;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        colorSpace.construct(accessor());
-    });
+    static NeverDestroyed<DestinationColorSpace> colorSpace { accessor() };
     return colorSpace.get();
 }
 #else

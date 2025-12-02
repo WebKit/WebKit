@@ -1,4 +1,0 @@
-
-PASS decompressing deflated output should give Uint8Array chunks
-PASS decompressing gzip output should give Uint8Array chunks
-

@@ -24,6 +24,9 @@ var otherThrowTypeError = Object.getOwnPropertyDescriptor(otherArgs, "callee").g
 var otherThrowTypeError2 = Object.getOwnPropertyDescriptor(otherArgs, "callee").get;
 
 assert.throws(TypeError, function() {
+  localThrowTypeError();
+});
+assert.throws(other.TypeError, function() {
   otherThrowTypeError();
 });
 

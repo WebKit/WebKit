@@ -27,6 +27,8 @@
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 OBJC_CLASS WCRBrowserEngineClient;
 
 namespace WTF {
@@ -38,27 +40,31 @@ namespace WebCore {
 struct ParentalControlsURLFilterParameters;
 class ParentalControlsContentFilter;
 
-class ParentalControlsURLFilter {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParentalControlsURLFilter);
+class ParentalControlsURLFilter : public ThreadSafeRefCounted<ParentalControlsURLFilter, WTF::DestructionThread::Main> {
 public:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
 #else
     static ParentalControlsURLFilter& singleton();
+    WEBCORE_EXPORT static void setGlobalFilter(Ref<ParentalControlsURLFilter>&&);
 #endif
     WEBCORE_EXPORT static void allowURL(const ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
-
+    WEBCORE_EXPORT static WorkQueue& workQueueSingleton();
+    WEBCORE_EXPORT bool isEnabled() const;
     void resetIsEnabled();
-    bool isEnabled() const;
-    void isURLAllowed(const URL&, ParentalControlsContentFilter&);
-    void allowURL(const URL&, CompletionHandler<void(bool)>&&);
 
-private:
+    WEBCORE_EXPORT virtual ~ParentalControlsURLFilter();
+    virtual bool isEnabledImpl() const;
+    virtual void isURLAllowed(const URL&, ParentalControlsContentFilter&);
+    virtual void allowURL(const URL&, CompletionHandler<void(bool)>&&);
+
+protected:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     ParentalControlsURLFilter(const String& configurationPath);
-#else
-    ParentalControlsURLFilter();
 #endif
+    WEBCORE_EXPORT ParentalControlsURLFilter();
+
+private:
     WCRBrowserEngineClient* effectiveWCRBrowserEngineClient();
     bool isWCRBrowserEngineClientEnabled() const;
 

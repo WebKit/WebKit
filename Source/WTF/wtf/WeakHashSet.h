@@ -32,12 +32,13 @@
 
 namespace WTF {
 
-template<typename T, typename WeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy>
+template<typename T, typename WeakPtrImplType>
 class WeakHashSet final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakHashSet);
 public:
-    using WeakPtrImplSet = HashSet<Ref<WeakPtrImpl>>;
-    using AddResult = typename WeakPtrImplSet::AddResult;
+    using KeyType = WeakPtr<T, WeakPtrImplType>;
+    using SetType = HashSet<KeyType>;
+    using AddResult = typename SetType::AddResult;
 
     class WeakHashSetConstIterator {
     public:
@@ -48,7 +49,7 @@ public:
         using reference = const value_type&;
 
     private:
-        WeakHashSetConstIterator(const WeakHashSet& set, typename WeakPtrImplSet::const_iterator position)
+        WeakHashSetConstIterator(const WeakHashSet& set, typename SetType::const_iterator position)
             : m_set(&set)
             , m_position(position)
             , m_endPosition(set.m_set.end())
@@ -59,7 +60,7 @@ public:
     public:
         WeakHashSetConstIterator() = default;
 
-        T* get() const { return static_cast<T*>((*m_position)->template get<T>()); }
+        T* get() const { return m_position->get(); }
         T& operator*() const { return *get(); }
         T* operator->() const { return get(); }
 
@@ -91,11 +92,11 @@ public:
         }
 
     private:
-        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+        template <typename, typename> friend class WeakHashSet;
 
         const WeakHashSet* m_set { nullptr };
-        typename WeakPtrImplSet::const_iterator m_position;
-        typename WeakPtrImplSet::const_iterator m_endPosition;
+        typename SetType::const_iterator m_position;
+        typename SetType::const_iterator m_endPosition;
     };
     typedef WeakHashSetConstIterator const_iterator;
 
@@ -104,26 +105,26 @@ public:
     const_iterator begin() const { return WeakHashSetConstIterator(*this, m_set.begin()); }
     const_iterator end() const { return WeakHashSetConstIterator(*this, m_set.end()); }
 
-    template <typename U>
-    const_iterator find(const U& value) const
+    const_iterator find(const T* value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return WeakHashSetConstIterator(*this, m_set.find(impl));
-        return end();
+        return WeakHashSetConstIterator(*this, m_set.find(value));
     }
 
-    template <typename U>
-    AddResult add(const U& value)
+    const_iterator find(const T& value) const { return find(&value); }
+
+    AddResult add(const T* value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.add(WeakRef<T, WeakPtrImpl>(static_cast<const T&>(value)).releaseImpl());
+        return m_set.add(value);
     }
 
-    AddResult add(WeakRef<T, WeakPtrImpl> value)
+    AddResult add(const T& value) { return add(&value); }
+
+    AddResult add(WeakRef<T>&& value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.add(value.releaseImpl());
+        return m_set.add(WTFMove(value));
     }
 
     T* takeAny()
@@ -131,17 +132,16 @@ public:
         auto iterator = begin();
         if (iterator == end())
             return nullptr;
-        return static_cast<T*>(m_set.take(iterator.m_position)->template get<T>());
+        return m_set.take(iterator.m_position).get();
     }
 
-    template <typename U>
-    bool remove(const U& value)
+    bool remove(const T* value)
     {
         amortizedCleanupIfNeeded();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return m_set.remove(*impl);
-        return false;
+        return m_set.remove(value);
     }
+
+    bool remove(const T& value) { return remove(&value); }
 
     bool remove(const_iterator iterator)
     {
@@ -156,14 +156,13 @@ public:
         cleanupHappened();
     }
 
-    template <typename U>
-    bool contains(const U& value) const
+    bool contains(const T* value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakImplIfExists(); impl && *impl)
-            return m_set.contains(*impl);
-        return false;
+        return m_set.contains(value);
     }
+
+    bool contains(const T& value) const { return contains(&value); }
 
     unsigned capacity() const { return m_set.capacity(); }
 
@@ -179,7 +178,7 @@ public:
         unsigned count = 0;
         auto result = std::ranges::any_of(m_set, [&](auto& value) {
             ++count;
-            return !value.get();
+            return !value;
         });
         if (result)
             increaseOperationCountSinceLastCleanup(count);
@@ -194,19 +193,19 @@ public:
         return m_set.size();
     }
 
-    void forEach(NOESCAPE const Function<void(T&)>& callback) requires WTF::HasRefPtrMemberFunctions<T>::value
+    void forEach(NOESCAPE const Function<void(T&)>& callback) requires HasRefPtrMemberFunctions<T>::value
     {
-        auto items = compactMap(m_set, [](const Ref<WeakPtrImpl>& item) -> RefPtr<T> {
-            return RefPtr { static_cast<T*>(item->template get<T>()) };
+        auto items = compactMap(m_set, [](const KeyType& item) -> RefPtr<T> {
+            return RefPtr { item.get() };
         });
         for (auto& item : items)
             callback(item.get());
     }
 
-    void forEach(NOESCAPE const Function<void(T&)>& callback) requires (WTF::HasCheckedPtrMemberFunctions<T>::value && !WTF::HasRefPtrMemberFunctions<T>::value)
+    void forEach(NOESCAPE const Function<void(T&)>& callback) requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
     {
-        auto items = compactMap(m_set, [](const Ref<WeakPtrImpl>& item) -> CheckedPtr<T> {
-            return CheckedPtr { static_cast<T*>(item->template get<T>()) };
+        auto items = compactMap(m_set, [](const KeyType& item) -> CheckedPtr<T> {
+            return CheckedPtr { item.get() };
         });
         for (auto& item : items)
             callback(item.get());
@@ -245,18 +244,20 @@ private:
             const_cast<WeakHashSet&>(*this).removeNullReferences();
     }
 
-    WeakPtrImplSet m_set;
+    SetType m_set;
     mutable unsigned m_operationCountSinceLastCleanup { 0 };
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename T, typename WeakMapImpl>
-size_t containerSize(const WeakHashSet<T, WeakMapImpl>& container) { return container.computeSize(); }
+template<typename T, typename U>
+size_t containerSize(const WeakHashSet<T, U>& container) { return container.computeSize(); }
 
-template<typename T, typename WeakMapImpl>
-inline auto copyToVector(const WeakHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>>
+template<typename T, typename U>
+inline auto copyToVector(const WeakHashSet<T, U>& collection) -> Vector<typename WeakHashSet<T, U>::KeyType>
 {
-    return WTF::map(collection, [](auto& v) -> WeakPtr<T, WeakMapImpl> { return WeakPtr<T, WeakMapImpl> { v }; });
+    return map(collection, [](auto& v) -> typename WeakHashSet<T, U>::KeyType {
+        return typename WeakHashSet<T, U>::KeyType { v };
+    });
 }
 
 } // namespace WTF

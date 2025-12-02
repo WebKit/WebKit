@@ -30,13 +30,13 @@
 #include "ContainerNodeInlines.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
-#include "PositionArea.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "RenderTableRow.h"
 #include "RenderView.h"
+#include "StylePositionArea.h"
 
 namespace WebCore {
 
@@ -72,7 +72,7 @@ PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& render
         : renderer.containingBlockRangeForPositioned(*m_container, oppositeAxis(m_physicalAxis)).size();
 
     // Adjust for scrollable area.
-    if (m_style.positionArea() && PositionType::Fixed != m_style.position())
+    if (!m_style.positionArea().isNone() && PositionType::Fixed != m_style.position())
         expandToScrollableArea(m_containingRange);
 
     // Adjust for grid-area.
@@ -104,7 +104,7 @@ void PositionedLayoutConstraints::computeInsets()
 
 bool PositionedLayoutConstraints::needsAnchor() const
 {
-    return m_style.positionArea() || m_alignment.position() == ItemPosition::AnchorCenter;
+    return !m_style.positionArea().isNone() || m_alignment.position() == ItemPosition::AnchorCenter;
 }
 
 bool PositionedLayoutConstraints::containingCoordsAreFlipped() const
@@ -218,7 +218,7 @@ void PositionedLayoutConstraints::captureAnchorGeometry()
     m_anchorArea = extractRange(anchorRect);
 
     // Adjust containing block for position-area.
-    if (!m_style.positionArea())
+    if (m_style.positionArea().isNone())
         return;
     m_containingRange = adjustForPositionArea(m_containingRange, m_anchorArea, m_physicalAxis);
 
@@ -238,31 +238,33 @@ void PositionedLayoutConstraints::captureAnchorGeometry()
 
 LayoutRange PositionedLayoutConstraints::adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis)
 {
-    ASSERT(m_style.positionArea() && m_defaultAnchorBox && needsAnchor());
+    ASSERT(!m_style.positionArea().isNone());
+    ASSERT(m_defaultAnchorBox);
+    ASSERT(needsAnchor());
     ASSERT(anchorArea.size() >= 0);
 
     auto adjustedRange = rangeToAdjust;
-    switch (m_style.positionArea()->coordMatchedTrackForAxis(containerAxis, m_containingWritingMode, m_writingMode)) {
-    case PositionAreaTrack::Start:
+    switch (m_style.positionArea().tryValue()->coordMatchedTrackForAxis(containerAxis, m_containingWritingMode, m_writingMode)) {
+    case Style::PositionAreaTrack::Start:
         adjustedRange.shiftMaxEdgeTo(anchorArea.min());
         adjustedRange.floorSizeFromMaxEdge();
         return adjustedRange;
-    case PositionAreaTrack::SpanStart:
+    case Style::PositionAreaTrack::SpanStart:
         adjustedRange.shiftMaxEdgeTo(anchorArea.max());
         adjustedRange.capMinEdgeTo(anchorArea.min());
         return adjustedRange;
-    case PositionAreaTrack::End:
+    case Style::PositionAreaTrack::End:
         adjustedRange.shiftMinEdgeTo(anchorArea.max());
         adjustedRange.floorSizeFromMinEdge();
         return adjustedRange;
-    case PositionAreaTrack::SpanEnd:
+    case Style::PositionAreaTrack::SpanEnd:
         adjustedRange.shiftMinEdgeTo(anchorArea.min());
         adjustedRange.floorMaxEdgeTo(anchorArea.max());
         return adjustedRange;
-    case PositionAreaTrack::Center:
+    case Style::PositionAreaTrack::Center:
         adjustedRange = anchorArea;
         return adjustedRange;
-    case PositionAreaTrack::SpanAll:
+    case Style::PositionAreaTrack::SpanAll:
         adjustedRange.capMinEdgeTo(anchorArea.min());
         adjustedRange.floorMaxEdgeTo(anchorArea.max());
         return adjustedRange;
@@ -503,8 +505,8 @@ ItemPosition PositionedLayoutConstraints::resolveAlignmentValue() const
         return (ItemPosition::Auto == itemPosition) ? ItemPosition::Normal : itemPosition;
     }();
 
-    if (m_style.positionArea() && ItemPosition::Normal == alignmentPosition)
-        alignmentPosition = m_style.positionArea()->defaultAlignmentForAxis(m_physicalAxis, m_containingWritingMode, m_writingMode);
+    if (auto positionAreaValue = m_style.positionArea().tryValue(); positionAreaValue && ItemPosition::Normal == alignmentPosition)
+        alignmentPosition = positionAreaValue->defaultAlignmentForAxis(m_physicalAxis, m_containingWritingMode, m_writingMode);
 
     if (!m_defaultAnchorBox && alignmentPosition == ItemPosition::AnchorCenter)
         return ItemPosition::Center;
@@ -529,7 +531,7 @@ std::pair<bool, bool> PositionedLayoutConstraints::containerAllowsInfiniteOverfl
 bool PositionedLayoutConstraints::alignmentAppliesStretch(ItemPosition normalAlignment) const
 {
     auto alignmentPosition = m_alignment.position();
-    if (!m_style.positionArea() && (ItemPosition::Auto == alignmentPosition || ItemPosition::Normal == alignmentPosition))
+    if (m_style.positionArea().isNone() && (ItemPosition::Auto == alignmentPosition || ItemPosition::Normal == alignmentPosition))
         alignmentPosition = normalAlignment;
     return ItemPosition::Stretch == alignmentPosition;
 }

@@ -49,6 +49,10 @@
 #define SWIFT_PRIVATE_FILEID(_fileID)
 #endif
 
+#ifndef SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT
+#define SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT
+#endif
+
 #else
 
 // Copied from https://github.com/swiftlang/swift/blob/ff8b9f145320b02bc6de75163d78528f210bdba6/lib/ClangImporter/SwiftBridging/swift/bridging
@@ -318,6 +322,7 @@
 #define SWIFT_ESCAPABLE_IF(...)
 #define SWIFT_RETURNS_RETAINED
 #define SWIFT_RETURNS_UNRETAINED
+#define SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT
 #define SWIFT_PRIVATE_FILEID(_fileID)
 
 #endif // #if _CXX_INTEROP_HAS_ATTRIBUTE(swift_attr)

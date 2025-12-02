@@ -43,10 +43,10 @@ def closed_frame(session, url):
     session.url = url("/webdriver/tests/support/html/frames.html")
 
     subframe = session.find.css("#sub-frame", all=False)
-    session.switch_frame(subframe)
+    session.switch_to_frame(subframe)
 
     deleteframe = session.find.css("#delete-frame", all=False)
-    session.switch_frame(deleteframe)
+    session.switch_to_frame(deleteframe)
 
     button = session.find.css("#remove-parent", all=False)
     button.click()
@@ -127,12 +127,12 @@ def create_dialog(session):
             }, 0);
             """, args=(dialog_type, text))
 
-        wait = Poll(
-            session,
-            timeout=15,
-            ignored_exceptions=NoSuchAlertException,
-            message="No user prompt with text '{}' detected".format(text))
-        wait.until(lambda s: s.alert.text == text)
+        def check_alert_text(s):
+            assert s.alert.text == text, f"No user prompt with text '{text}' detected"
+
+        wait = Poll(session, timeout=15,
+                    ignored_exceptions=NoSuchAlertException)
+        wait.until(check_alert_text)
 
     return create_dialog
 
@@ -188,7 +188,7 @@ def stale_element(current_session, get_test_page):
 
         if as_frame:
             frame = current_session.find.css("iframe", all=False)
-            current_session.switch_frame(frame)
+            current_session.switch_to_frame(frame)
 
         element = current_session.find.css(css_value, all=False)
         shadow_root = element.shadow_root if want_shadow_root else None

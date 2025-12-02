@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+<script>
+
+function loadedAboutBlank() {
+    let grandchild = document.getElementById("grandchild");
+    grandchild.contentWindow.document.body.appendChild(
+        grandchild.contentWindow.document.createTextNode('Hello from your parent')
+    );
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function loadedCrossOrigin()
+{
+    // Once this frame's child loads to a cross site 
+    // origin, then we can attempt to navigate this frame's 
+    // child to about:blank which should make it change origin to
+    // whatever this current frame's origin is. Then, once we share 
+    // origins, we should be able to modify the frame's DOM.
+    let grandchild = document.getElementById("grandchild");
+    grandchild.onload = loadedAboutBlank;
+    grandchild.src = "about:blank";
+}
+</script>
+</head>
+<body>
+<p>Child iframe</p>
+
+<!-- Navigate to a cross origin url (where 127.0.0.1 is cross origin from localhost)-->
+<iframe id="grandchild" onload="loadedCrossOrigin()" src="http://127.0.0.1:8000/site-isolation/resources/green-background.html" style="border:5px solid blue;"></iframe>
+</body>
+</html>

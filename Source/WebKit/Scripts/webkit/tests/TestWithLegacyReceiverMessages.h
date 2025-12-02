@@ -559,6 +559,37 @@ private:
     const WebCore::PlatformLayerIdentifier& m_videoLayerID;
 };
 
+class OpaqueTypeSecurityAssertion {
+public:
+    using Arguments = std::tuple<NotDispatchableFromWebContent>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertion; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply; }
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    using ReplyArguments = std::tuple<NotDispatchableFromWebContent>;
+    using Reply = CompletionHandler<void(NotDispatchableFromWebContent&&)>;
+    using Promise = WTF::NativePromise<NotDispatchableFromWebContent, IPC::Error>;
+    explicit OpaqueTypeSecurityAssertion(const NotDispatchableFromWebContent& ping)
+        : m_ping(ping)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        ASSERT(!isInWebProcess());
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_ping;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const NotDispatchableFromWebContent& m_ping;
+};
+
 #if PLATFORM(MAC)
 class DidCreateWebProcessConnection {
 public:
@@ -745,6 +776,32 @@ public:
 
 private:
     SUPPRESS_FORWARD_DECL_MEMBER const Vector<WebCore::PluginInfo>& m_plugins;
+};
+
+class OpaqueTypeSecurityAssertionReply {
+public:
+    using Arguments = std::tuple<NotDispatchableFromWebContent>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit OpaqueTypeSecurityAssertionReply(const NotDispatchableFromWebContent& pong)
+        : m_pong(pong)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        ASSERT(!isInWebProcess());
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_pong;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const NotDispatchableFromWebContent& m_pong;
 };
 
 #if PLATFORM(MAC)

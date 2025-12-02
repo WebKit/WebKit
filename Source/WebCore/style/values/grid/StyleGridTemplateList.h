@@ -66,6 +66,7 @@ using GridTrackList = Vector<GridTrackEntry>;
 struct GridTemplateList {
     GridTemplateList(CSS::Keyword::None) { }
     GridTemplateList(GridTrackList&&);
+    bool isNone() const { return list.isEmpty(); }
 
     GridTrackList list { };
 

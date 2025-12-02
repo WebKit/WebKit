@@ -53,6 +53,7 @@ private:
     JSRetainPtr<JSStringRef> lastUndoLabel() const override;
     JSRetainPtr<JSStringRef> firstRedoLabel() const override;
     JSRetainPtr<JSStringRef> caLayerTreeAsText() const override;
+    JSRetainPtr<JSStringRef> caLayerTreeAsTextForLayerWithID(uint64_t layerID) const override;
     NSUndoManager *platformUndoManager() const override;
     JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const final;
 

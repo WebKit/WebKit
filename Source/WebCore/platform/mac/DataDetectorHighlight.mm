@@ -117,10 +117,8 @@ void DataDetectorHighlight::invalidate()
 
 void DataDetectorHighlight::notifyFlushRequired(const GraphicsLayer*)
 {
-    if (!m_client)
-        return;
-
-    m_client->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+    if (RefPtr client = m_client.get())
+        client->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
 void DataDetectorHighlight::paintContents(const GraphicsLayer&, GraphicsContext& graphicsContext, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
@@ -151,10 +149,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 float DataDetectorHighlight::deviceScaleFactor() const
 {
-    if (!m_client)
-        return 1;
-
-    return m_client->deviceScaleFactor();
+    RefPtr client = m_client.get();
+    return client ? client->deviceScaleFactor() : 1;
 }
 
 bool DataDetectorHighlight::isRangeSupportingType() const
@@ -234,10 +230,11 @@ void DataDetectorHighlight::startFadeAnimation()
 
 void DataDetectorHighlight::didFinishFadeOutAnimation()
 {
-    if (!m_client)
+    RefPtr client = m_client.get();
+    if (!client)
         return;
 
-    if (m_client->activeHighlight() == this)
+    if (client->activeHighlight() == this)
         return;
 
     layer().removeFromParent();

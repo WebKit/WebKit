@@ -349,8 +349,17 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const Intersec
     rootBounds.expand(rootMarginEdges);
 }
 
-static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer, const IntersectionObserverMarginBox& scrollMargin)
+static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const SecurityOrigin& targetSecurityOrigin, const RenderElement* renderer, std::optional<IntersectionObserverMarginBox> scrollMargin)
 {
+    // targetSecurityOrigin is the security origin of the target (the element that originates the very first rect)
+    // Scroll margin should not propagate past the first cross-origin frame in the chain leading to the main frame.
+    // e.g given the chain: main frame <- cross-origin frame <- same-origin frame 2 <- same-origin frame 1 <- target
+    // then scroll margin is applied to same-origin frame 1/2 but not to cross-origin and main frames.
+    // Hence, clear out the scroll margin when we see a cross-origin frame.
+    bool shouldApplyScrollMargin = Ref<const Frame>(renderer->frame())->frameDocumentSecurityOrigin()->isSameOriginDomain(targetSecurityOrigin);
+    if (!shouldApplyScrollMargin)
+        scrollMargin.reset();
+
     auto absoluteRects = renderer->computeVisibleRectsInContainer(
         { rect },
         &renderer->view(),
@@ -374,13 +383,15 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
         return absoluteClippedRect;
 
     auto frameRect = renderer->view().frameView().layoutViewportRect();
-    auto scrollMarginEdges = LayoutBoxExtent {
-        LayoutUnit(Style::evaluate<int>(scrollMargin.top(), frameRect.height(), Style::ZoomNeeded { })),
-        LayoutUnit(Style::evaluate<int>(scrollMargin.right(), frameRect.width(), Style::ZoomNeeded { })),
-        LayoutUnit(Style::evaluate<int>(scrollMargin.bottom(), frameRect.height(), Style::ZoomNeeded { })),
-        LayoutUnit(Style::evaluate<int>(scrollMargin.left(), frameRect.width(), Style::ZoomNeeded { })),
-    };
-    frameRect.expand(scrollMarginEdges);
+    if (scrollMargin) {
+        auto scrollMarginEdges = LayoutBoxExtent {
+            LayoutUnit(Style::evaluate<int>(scrollMargin->top(), frameRect.height(), Style::ZoomNeeded { })),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->right(), frameRect.width(), Style::ZoomNeeded { })),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->bottom(), frameRect.height(), Style::ZoomNeeded { })),
+            LayoutUnit(Style::evaluate<int>(scrollMargin->left(), frameRect.width(), Style::ZoomNeeded { })),
+        };
+        frameRect.expand(scrollMarginEdges);
+    }
 
     bool intersects = absoluteClippedRect.edgeInclusiveIntersect(frameRect);
     if (!intersects)
@@ -393,7 +404,7 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(absoluteClippedRect) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
-    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer.get(), scrollMargin);
+    return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, targetSecurityOrigin, ownerRenderer.get(), WTFMove(scrollMargin));
 }
 
 auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRegistration& registration, LocalFrameView& frameView, Element& target, ApplyRootMargin applyRootMargin) const -> IntersectionObservationState
@@ -501,7 +512,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return result->clippedOverflowRect;
         }
 
-        return computeClippedRectInRootContentsSpace(localTargetBounds, targetRenderer, scrollMarginBox());
+        return computeClippedRectInRootContentsSpace(localTargetBounds, target.document().securityOrigin(), targetRenderer, scrollMarginBox());
     }();
 
     auto rootLocalIntersectionRect = intersectionState.rootBounds;

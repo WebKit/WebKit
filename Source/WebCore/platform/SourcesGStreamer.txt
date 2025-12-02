@@ -23,6 +23,9 @@
 
 Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp
 Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.cpp
+Modules/mediastream/gstreamer/GStreamerIceAgent.cpp
+Modules/mediastream/gstreamer/GStreamerIceStream.cpp
+Modules/mediastream/gstreamer/GStreamerIceTransport.cpp
 Modules/mediastream/gstreamer/GStreamerIceTransportBackend.cpp
 Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp
 Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp
@@ -38,6 +41,8 @@ Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp
 Modules/mediastream/RTCRtpSFrameTransformerOpenSSL.cpp
 
 Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
+
+platform/rice/RiceGioBackend.cpp
 
 platform/audio/gstreamer/AudioDecoderGStreamer.cpp
 platform/audio/gstreamer/AudioDestinationGStreamer.cpp

@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Have the main frame navigate a cross-origin child iframe
+// to about:blank.
+// The about:blank iframe should inherit the origin of it's parent,
+// or it's opener if the parent doesn't exist.
+// https://dev.w3.org/html5/spec-LC/origin-0.html
+// https://dev.w3.org/html5/spec-LC/browsers.html#about-blank-origin
+
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+
+// Once we get back to about:blank, check that we can modify DOM
+loadedAboutBlank = function() {
+  let child = document.getElementById("child");
+  child.onload = null;
+
+  child.contentWindow.document.body.appendChild(
+      child.contentWindow.document.createTextNode('Hello from the main page')
+  );
+
+  if (window.testRunner)
+      testRunner.notifyDone();
+}
+
+loadedCrossOrigin = function() {
+    let child = document.getElementById("child");
+    child.onload = loadedAboutBlank;
+    child.src = 'about:blank';
+};
+
+</script>
+
+<p>This test passes if the main page can modify it's child iframe's DOM (once the child iframe has navigated away from a cross-origin site to about:blank).</p>
+<!-- Navigate to a cross origin url (where 127.0.0.1 is cross origin from localhost)-->
+<iframe id="child" onload="loadedCrossOrigin()" src="http://127.0.0.1:8000/site-isolation/resources/green-background.html"></iframe> 
+</body>
+</html>

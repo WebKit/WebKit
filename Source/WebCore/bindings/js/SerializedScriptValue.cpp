@@ -100,6 +100,7 @@
 #include <JavaScriptCore/PropertyNameArray.h>
 #include <JavaScriptCore/RegExp.h>
 #include <JavaScriptCore/RegExpObject.h>
+#include <JavaScriptCore/Strong.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <JavaScriptCore/WasmModule.h>
@@ -6285,9 +6286,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<Ref<MediaStreamTrack>> transferredMediaStreamTracks;
 #endif
 
-    HashSet<JSC::JSObject*> visited;
+    HashSet<JSC::Strong<JSC::JSObject>> visited;
     for (auto& transferable : transferList) {
-        if (!visited.add(transferable.get()).isNewEntry)
+        if (!visited.add(JSC::Strong<JSC::JSObject> { vm, transferable.get() }).isNewEntry)
             return Exception { ExceptionCode::DataCloneError, "Duplicate transferable for structured clone"_s };
 
         if (RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {

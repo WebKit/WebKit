@@ -40,11 +40,7 @@ namespace WebCore {
 
 Ref<WorkQueue> ResourceMonitorThrottlerHolder::sharedWorkQueueSingleton()
 {
-    static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        workQueue.construct(WorkQueue::create("ResourceMonitorThrottlerHolder Work Queue"_s));
-    });
+    static NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("ResourceMonitorThrottlerHolder Work Queue"_s);
     return workQueue.get();
 }
 

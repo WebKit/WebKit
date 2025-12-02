@@ -195,7 +195,7 @@ public:
     // going to be used immediately, use the return value of setVolatile to
     // determine whether the data was purged, instead of first calling state() or isVolatile().
     SetNonVolatileResult state() const;
-    bool isVolatile() const;
+    WEBCORE_EXPORT bool isVolatile() const;
 
     WEBCORE_EXPORT SetNonVolatileResult setVolatile(bool);
 

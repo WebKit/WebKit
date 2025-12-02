@@ -53,11 +53,7 @@ using namespace WebCore;
 
 WorkQueue& MediaSourcePrivateRemote::queueSingleton()
 {
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
-    std::call_once(onceKey, [] {
-        workQueue.construct(WorkQueue::create("MediaSourceRemote"_s));
-    });
+    static NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("MediaSourceRemote"_s);
     return workQueue.get();
 }
 
@@ -133,9 +129,10 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     if (returnedStatus != AddStatus::Ok)
         return returnedStatus;
 
-    ensureOnDispatcher([protectedThis = Ref { *this }, this, sourceBuffer = returnedSourceBuffer]() mutable {
-        m_sourceBuffers.append(WTFMove(sourceBuffer));
-    });
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(returnedSourceBuffer);
+    };
     outPrivate = WTFMove(returnedSourceBuffer);
     return returnedStatus;
 }
@@ -192,7 +189,6 @@ void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffere
 
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus status)
 {
-    MediaSourcePrivate::markEndOfStream(status);
     ensureOnDispatcher([protectedThis = Ref { *this }, this, status] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
@@ -211,11 +207,6 @@ void MediaSourcePrivateRemote::unmarkEndOfStream()
             return;
         gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::UnmarkEndOfStream(), m_identifier);
     });
-}
-
-MediaPlayer::ReadyState MediaSourcePrivateRemote::mediaPlayerReadyState() const
-{
-    return m_mediaPlayerReadyState;
 }
 
 void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)

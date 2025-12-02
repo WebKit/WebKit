@@ -43,7 +43,7 @@ class CachedResource;
 class Document;
 template<typename> class ExceptionOr;
 
-class InspectorAuditResourcesObject : public RefCounted<InspectorAuditResourcesObject> {
+class InspectorAuditResourcesObject : public RefCountedAndCanMakeWeakPtr<InspectorAuditResourcesObject> {
 public:
     static Ref<InspectorAuditResourcesObject> create(Inspector::InspectorAuditAgent& auditAgent)
     {
@@ -69,29 +69,98 @@ public:
 private:
     explicit InspectorAuditResourcesObject(Inspector::InspectorAuditAgent&);
 
-    CachedResourceClient& clientForResource(const CachedResource&);
+    Ref<CachedResourceClient> clientForResource(const CachedResource&);
 
     Inspector::InspectorAuditAgent& m_auditAgent;
 
-    class InspectorAuditCachedResourceClient : public CachedResourceClient { };
+    class InspectorAuditCachedResourceClient : public CachedResourceClient {
+    public:
+        explicit InspectorAuditCachedResourceClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
+
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
     InspectorAuditCachedResourceClient m_cachedResourceClient;
 
-    class InspectorAuditCachedFontClient : public CachedFontClient { };
+    class InspectorAuditCachedFontClient : public CachedFontClient {
+    public:
+        explicit InspectorAuditCachedFontClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
+
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
     InspectorAuditCachedFontClient m_cachedFontClient;
 
     class InspectorAuditCachedImageClient final : public CachedImageClient {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InspectorAuditCachedImageClient);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAuditCachedImageClient);
-    };
-    UniqueRef<InspectorAuditCachedImageClient> m_cachedImageClient;
+    public:
+        explicit InspectorAuditCachedImageClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
 
-    class InspectorAuditCachedRawResourceClient : public CachedRawResourceClient { };
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
+    InspectorAuditCachedImageClient m_cachedImageClient;
+
+    class InspectorAuditCachedRawResourceClient : public CachedRawResourceClient {
+    public:
+        explicit InspectorAuditCachedRawResourceClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
+
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
     InspectorAuditCachedRawResourceClient m_cachedRawResourceClient;
 
-    class InspectorAuditCachedSVGDocumentClient : public CachedSVGDocumentClient { };
+    class InspectorAuditCachedSVGDocumentClient : public CachedSVGDocumentClient {
+    public:
+        explicit InspectorAuditCachedSVGDocumentClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
+
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
     InspectorAuditCachedSVGDocumentClient m_cachedSVGDocumentClient;
 
-    class InspectorAuditCachedStyleSheetClient : public CachedStyleSheetClient { };
+    class InspectorAuditCachedStyleSheetClient : public CachedStyleSheetClient {
+    public:
+        explicit InspectorAuditCachedStyleSheetClient(InspectorAuditResourcesObject& owner)
+            : m_owner(owner)
+        { }
+
+    private:
+        // CachedResourceClient.
+        void ref() const final { m_owner->ref(); }
+        void deref() const final { m_owner->deref(); }
+
+        WeakRef<InspectorAuditResourcesObject> m_owner;
+    };
     InspectorAuditCachedStyleSheetClient m_cachedStyleSheetClient;
 
     MemoryCompactRobinHoodHashMap<String, CachedResource*> m_resources;

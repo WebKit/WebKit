@@ -140,7 +140,7 @@ static void reportSpeculationRulesError(LocalFrame& frame, const String& errorMe
     // https://html.spec.whatwg.org/C#report-an-exception
     auto& world = mainThreadNormalWorldSingleton();
     JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
+    JSC::JSLockHolder lock(vm);
 
     if (auto* jsGlobalObject = frame.checkedScript()->globalObject(world)) {
         auto* error = JSC::createTypeError(jsGlobalObject, errorMessage);

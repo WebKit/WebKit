@@ -476,7 +476,7 @@ public:
             navigationHistoryBehavior = NavigationHistoryBehavior::Push;
         frameLoadRequest.setNavigationHistoryBehavior(navigationHistoryBehavior);
         if (localFrame)
-            localFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission->takeState());
+            localFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission.copyRef());
         else
             frame.changeLocation(WTFMove(frameLoadRequest));
     }

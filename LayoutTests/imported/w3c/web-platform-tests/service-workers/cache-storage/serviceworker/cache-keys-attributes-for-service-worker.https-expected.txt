@@ -1,4 +1,0 @@
-
-FAIL Request.IsReloadNavigation should persist. assert_equals: expected "original: false, stored: false" but got "original: undefined, stored: undefined"
-FAIL Request.IsHistoryNavigation should persist. assert_equals: expected "original: false, stored: false" but got "original: undefined, stored: undefined"
-

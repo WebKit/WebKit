@@ -389,7 +389,7 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
     ASSERT(element.reactionQueue());
     element.setIsInCustomElementReactionQueue();
     if (!CustomElementReactionStack::s_currentProcessingStack) {
-        element.protectedDocument()->windowEventLoop().backupElementQueue().add(element);
+        element.protectedDocument()->protectedWindowEventLoop()->backupElementQueue().add(element);
         return;
     }
 

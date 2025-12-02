@@ -555,38 +555,13 @@ bool MediaSource::hasFutureTime()
 
 bool MediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 {
-    if (ranges.length() < 1 || isClosed())
+    if (isClosed())
         return true;
-
-    ASSERT(ranges.length() == 1);
 
     Ref msp = protectedPrivate().releaseNonNull();
 
     auto bufferedRanges = msp->buffered();
-    if (!bufferedRanges.length())
-        return false;
-    bufferedRanges.intersectWith(ranges);
-
-    if (!bufferedRanges.length())
-        return false;
-
-    auto hasBufferedTime = [&] (const MediaTime& time) {
-        return abs(bufferedRanges.nearest(time) - time) <= msp->timeFudgeFactor();
-    };
-
-    if (!hasBufferedTime(ranges.minimumBufferedTime()) || !hasBufferedTime(ranges.maximumBufferedTime()))
-        return false;
-
-    if (bufferedRanges.length() == 1)
-        return true;
-
-    // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
-    for (unsigned i = 1; i < bufferedRanges.length(); i++) {
-        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > msp->timeFudgeFactor())
-            return false;
-    }
-
-    return true;
+    return bufferedRanges.containWithEpsilon(ranges, msp->timeFudgeFactor());
 }
 
 void MediaSource::monitorSourceBuffers()
@@ -737,6 +712,9 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
     protectedPrivate()->durationChanged(duration);
 
+    // Changing the duration may affect the buffered range.
+    updateBufferedIfNeeded(true);
+
     // Changing the duration affects the buffered range.
     monitorSourceBuffers();
 
@@ -809,6 +787,8 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
+        // Once the entire media resource has been fetched (but potentially before any of it has been decoded)
+        // Fire an event named progress at the media element.
         msp->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NoError);
         return;
     }
@@ -1441,7 +1421,13 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     MediaSourceConfiguration configuration = {
-        protectedScriptExecutionContext()->settingsValues().textTracksInMSEEnabled
+        .textTracksEnabled = protectedScriptExecutionContext()->settingsValues().textTracksInMSEEnabled,
+#if USE(MEDIAPARSERD)
+        .demuxInProcess = protectedScriptExecutionContext()->settingsValues().mediaSourceUseRemoteAudioVideoRenderer,
+#endif
+#if ENABLE(MEDIA_RECORDER_WEBM)
+        .supportsLimitedMatroska = (document && document->quirks().needsLimitedMatroskaSupport()) || protectedScriptExecutionContext()->settingsValues().limitedMatroskaSupportEnabled
+#endif
     };
     switch (msp->addSourceBuffer(type, configuration, sourceBufferPrivate)) {
     case MediaSourcePrivate::AddStatus::Ok:

@@ -26,21 +26,21 @@
 #pragma once
 
 #include <WebCore/DDFloat4x4.h>
+#include <WebCore/DDMeshDescriptor.h>
 #include <WebCore/DDMeshPart.h>
-#include <WebCore/DDReplaceVertices.h>
 
 namespace WebCore::DDModel {
 
 struct DDUpdateMeshDescriptor {
-    int32_t partCount;
-    Vector<KeyValuePair<int32_t, DDMeshPart>> parts;
-    Vector<KeyValuePair<int32_t, uint64_t>> renderFlags;
-    Vector<DDReplaceVertices> vertices;
-    Vector<uint8_t> indices;
-    DDFloat4x4 transform;
-    Vector<DDFloat4x4> instanceTransforms4x4;
-    Vector<String> materialIds;
     String identifier;
+    uint8_t updateType;
+    DDMeshDescriptor descriptor;
+    Vector<DDMeshPart> parts;
+    Vector<uint8_t> indexData;
+    Vector<Vector<uint8_t>> vertexData;
+    DDFloat4x4 transform;
+    Vector<DDFloat4x4> instanceTransforms;
+    Vector<String> materialPrims;
 };
 
 }

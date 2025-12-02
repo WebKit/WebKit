@@ -1258,18 +1258,18 @@ nobr {
 }
 
 /* Read-only text fields do not show a focus ring but do still receive focus */
-html:focus, body:focus, input[readonly]:focus, embed:focus, iframe:focus, object:focus {
+html:focus-visible, body:focus-visible, input[readonly]:focus, embed:focus-visible, iframe:focus-visible, object:focus-visible {
     outline: none;
 }
 
 #if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
-input:focus, textarea:focus, select:focus {
+input:focus-visible, textarea:focus-visible, select:focus-visible {
     outline-offset: -2px;
 }
 #endif
 
-input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
-input[type="file"]:focus::file-selector-button {
+input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus-visible,
+input[type="file"]:focus-visible::file-selector-button {
     outline-offset: 0;
 }
 

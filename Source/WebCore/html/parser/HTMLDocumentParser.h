@@ -150,7 +150,7 @@ private:
     RefPtr<HTMLParserScheduler> m_parserScheduler;
     TextPosition m_textPosition;
 
-    std::unique_ptr<HTMLResourcePreloader> m_preloader;
+    const RefPtr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed { false };
     unsigned m_pumpSessionNestingLevel { 0 };

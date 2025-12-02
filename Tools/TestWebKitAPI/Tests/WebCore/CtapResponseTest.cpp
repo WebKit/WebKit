@@ -654,6 +654,51 @@ TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
     EXPECT_TRUE(equalSpans(responseAsCBOR.span(), std::span { TestData::kTestGetInfoResponsePlatformDevice }.subspan(1)));
 }
 
+TEST(CTAPResponseTest, TestReadMakeCredentialResponseWithHmacSecret)
+{
+    // CBOR-encoded response with hmac-secret: true extension in authenticatorData
+    // This is the response format when makeCredential is called with hmac-secret extension
+    auto response = readCTAPMakeCredentialResponse(std::span { TestData::kTestMakeCredentialResponseWithHmacSecret }, AuthenticatorAttachment::CrossPlatform, { }, AttestationConveyancePreference::Direct);
+    ASSERT_TRUE(response);
+
+    // Verify extension output contains prf.enabled: true (converted from hmac-secret: true)
+    auto extensions = response->extensions();
+    ASSERT_TRUE(extensions.prf);
+    ASSERT_TRUE(extensions.prf->enabled);
+    EXPECT_TRUE(*extensions.prf->enabled);
+}
+
+TEST(CTAPResponseTest, TestReadGetAssertionResponseWithHmacSecret)
+{
+    // CBOR-encoded response with hmac-secret extension output (32 bytes encrypted)
+    auto response = readCTAPGetAssertionResponse(std::span { TestData::kTestGetAssertionResponseWithHmacSecret }, AuthenticatorAttachment::CrossPlatform);
+    ASSERT_TRUE(response);
+
+    // Verify extension output contains prf.results with first ArrayBuffer (converted from hmac-secret)
+    auto extensions = response->extensions();
+    ASSERT_TRUE(extensions.prf);
+    ASSERT_TRUE(extensions.prf->results);
+    ASSERT_TRUE(extensions.prf->results->first);
+    EXPECT_EQ(extensions.prf->results->first->byteLength(), 32u);
+}
+
+TEST(CTAPResponseTest, TestReadGetAssertionResponseWithHmacSecret64)
+{
+    // CBOR-encoded response with hmac-secret extension output (64 bytes encrypted for 2 salts)
+    auto response = readCTAPGetAssertionResponse(std::span { TestData::kTestGetAssertionResponseWithHmacSecret64 }, AuthenticatorAttachment::CrossPlatform);
+    ASSERT_TRUE(response);
+
+    // Verify extension output contains prf.results with both first and second ArrayBuffers
+    auto extensions = response->extensions();
+    ASSERT_TRUE(extensions.prf);
+    ASSERT_TRUE(extensions.prf->results);
+    ASSERT_TRUE(extensions.prf->results->first);
+    EXPECT_EQ(extensions.prf->results->first->byteLength(), 32u);
+    ASSERT_TRUE(extensions.prf->results->second);
+    EXPECT_EQ(extensions.prf->results->second->byteLength(), 32u);
+}
+
 } // namespace TestWebKitAPI
+
 
 #endif // ENABLE(WEB_AUTHN)

@@ -44,14 +44,15 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGTextPositioningElement);
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGTextContentElement(tagName, document, WTFMove(propertyRegistry))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGTextPositioningElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGTextPositioningElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGTextPositioningElement::m_dx>();
         PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGTextPositioningElement::m_dy>();
         PropertyRegistry::registerProperty<SVGNames::rotateAttr, &SVGTextPositioningElement::m_rotate>();
-    });
+    }
 }
 
 void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

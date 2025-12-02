@@ -30,7 +30,7 @@ headers: "CoreIPCLOGFONT.h"
 #endif
 
 header: <WebCore/FontPlatformData.h>
-[CustomHeader] struct WebCore::FontPlatformSerializedCreationData {
+[CustomHeader] struct WebCore::CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
     String itemInCollection;
 };

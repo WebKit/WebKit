@@ -112,6 +112,7 @@ namespace WebCore {
         bool m_hasInfo;
         int m_gamma;
         size_t m_frameCount;
+        size_t m_decodedPixelCount;
         unsigned m_playCount;
         unsigned m_totalFrames;
         unsigned m_sizePLTE;

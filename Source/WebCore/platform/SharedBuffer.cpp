@@ -135,7 +135,13 @@ auto FragmentedSharedBuffer::toIPCData() const -> IPCData
             return segment.segment->span();
         });
     }
-
+#if PLATFORM(COCOA)
+    if (m_segments.size() == 1) {
+        Ref segment = m_segments[0].segment;
+        if (segment->containsMappedFileData())
+            return SharedMemoryHandle::createVMShare(segment->span(), SharedMemory::Protection::ReadOnly);
+    }
+#endif
     RefPtr sharedMemoryBuffer = SharedMemory::copyBuffer(*this);
     return sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
 }
@@ -585,29 +591,6 @@ std::span<const uint8_t> DataSegment::span() const
 bool DataSegment::containsMappedFileData() const
 {
     return std::holds_alternative<FileSystem::MappedFileData>(m_immutableData);
-}
-
-SharedBufferBuilder::SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>&& buffer)
-{
-    if (!buffer)
-        return;
-    initialize(buffer.releaseNonNull());
-}
-
-SharedBufferBuilder& SharedBufferBuilder::operator=(RefPtr<FragmentedSharedBuffer>&& buffer)
-{
-    m_buffer = nullptr;
-    if (!buffer)
-        return *this;
-    initialize(buffer.releaseNonNull());
-    return *this;
-}
-
-void SharedBufferBuilder::initialize(Ref<FragmentedSharedBuffer>&& buffer)
-{
-    ASSERT(!m_buffer);
-    m_segments.reserveInitialCapacity(buffer->segmentsCount());
-    append(buffer);
 }
 
 RefPtr<ArrayBuffer> SharedBufferBuilder::tryCreateArrayBuffer() const

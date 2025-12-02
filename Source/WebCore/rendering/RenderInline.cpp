@@ -25,7 +25,6 @@
 #include "config.h"
 #include "RenderInline.h"
 
-#include "BorderPainter.h"
 #include "Chrome.h"
 #include "FloatQuad.h"
 #include "FrameSelection.h"
@@ -36,6 +35,7 @@
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyInlineTextBox.h"
+#include "OutlinePainter.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
@@ -863,11 +863,11 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     // should locate itself as though it is a normal flow box in relation to its containing block.
     LayoutSize logicalOffset;
     if (!child->style().hasStaticInlinePosition(writingMode().isHorizontal())
-        || child->style().positionArea() || child->style().justifySelf().isAnchorCenter())
+        || !child->style().positionArea().isNone() || child->style().justifySelf().isAnchorCenter())
         logicalOffset.setWidth(inlinePosition);
 
     if (!child->style().hasStaticBlockPosition(writingMode().isHorizontal())
-        || child->style().positionArea() || child->style().alignSelf().isAnchorCenter())
+        || !child->style().positionArea().isNone() || child->style().alignSelf().isAnchorCenter())
         logicalOffset.setHeight(blockPosition);
 
     return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
@@ -903,78 +903,10 @@ namespace {
     };
 } // unnamed namespace
 
-void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const
+void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset) const
 {
     AbsoluteRectsIgnoringEmptyGeneratorContext context(rects, additionalOffset);
     generateLineBoxRects(context);
-
-    for (auto& child : childrenOfType<RenderElement>(*this)) {
-        if (is<RenderListMarker>(child))
-            continue;
-        FloatPoint pos(additionalOffset);
-        // FIXME: This doesn't work correctly with transforms.
-        if (child.hasLayer())
-            pos = child.localToContainerPoint(FloatPoint(), paintContainer);
-        else if (auto* box = dynamicDowncast<RenderBox>(child))
-            pos.move(box->locationOffset());
-        child.addFocusRingRects(rects, flooredIntPoint(pos), paintContainer);
-    }
-
-    if (RenderBoxModelObject* continuation = this->continuation()) {
-        if (continuation->isInline())
-            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + continuation->containingBlock()->location() - containingBlock()->location())), paintContainer);
-        else
-            continuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + downcast<RenderBox>(*continuation).location() - containingBlock()->location())), paintContainer);
-    }
-}
-
-void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
-{
-    if (!hasOutline())
-        return;
-
-    auto& styleToUse = style();
-    // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.outlineStyle() == OutlineStyle::Auto && !theme().supportsFocusRing(*this, styleToUse)) {
-        Vector<LayoutRect> focusRingRects;
-        addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
-        paintFocusRing(paintInfo, styleToUse, focusRingRects);
-    }
-
-    if (hasOutlineAnnotation() && styleToUse.outlineStyle() != OutlineStyle::Auto && !theme().supportsFocusRing(*this, styleToUse))
-        addPDFURLRect(paintInfo, paintOffset);
-
-    GraphicsContext& graphicsContext = paintInfo.context();
-    if (graphicsContext.paintingDisabled())
-        return;
-
-    if (styleToUse.outlineStyle() == OutlineStyle::Auto || !styleToUse.hasOutline())
-        return;
-
-    if (!containingBlock()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto isHorizontalWritingMode = this->isHorizontalWritingMode();
-    auto& containingBlock = *this->containingBlock();
-    auto isFlipped = containingBlock.writingMode().isBlockFlipped();
-    Vector<LayoutRect> rects;
-    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward()) {
-        auto lineBox = box->lineBox();
-        auto logicalTop = std::max(lineBox->contentLogicalTop(), box->logicalTop());
-        auto logicalBottom = std::min(lineBox->contentLogicalBottom(), box->logicalBottom());
-        auto enclosingVisualRect = FloatRect { box->logicalLeftIgnoringInlineDirection(), logicalTop, box->logicalWidth(), logicalBottom - logicalTop };
-
-        if (!isHorizontalWritingMode)
-            enclosingVisualRect = enclosingVisualRect.transposedRect();
-
-        if (isFlipped)
-            containingBlock.flipForWritingMode(enclosingVisualRect);
-
-        rects.append(LayoutRect { enclosingVisualRect });
-    }
-    BorderPainter { *this, paintInfo }.paintOutline(paintOffset, rects);
 }
 
 bool isEmptyInline(const RenderInline& renderer)

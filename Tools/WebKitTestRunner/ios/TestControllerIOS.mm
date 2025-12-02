@@ -398,6 +398,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView.findInteractionEnabled = options.findInteractionEnabled();
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        webView.shouldAcceptImmersiveEnvironmentRequests = options.shouldAcceptImmersiveEnvironmentRequests();
+#endif
+
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];

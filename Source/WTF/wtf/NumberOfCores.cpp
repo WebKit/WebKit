@@ -85,16 +85,15 @@ int numberOfProcessorCores()
 #if OS(DARWIN)
 int numberOfPhysicalProcessorCores()
 {
-    const int32_t defaultIfUnavailable = 1;
-
-    static int32_t numCores = 0;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
+    static int32_t numCores = [] {
+        constexpr int32_t defaultIfUnavailable = 1;
         size_t valueSize = sizeof(numCores);
+        int32_t numCores = 0;
         int result = sysctlbyname("hw.physicalcpu_max", &numCores, &valueSize, nullptr, 0);
         if (result < 0)
-            numCores = defaultIfUnavailable;
-    });
+            return defaultIfUnavailable;
+        return numCores;
+    }();
 
     return numCores;
 }

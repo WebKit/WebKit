@@ -39,9 +39,7 @@ using namespace WebCore;
 
 static PlatformImagePtr placeholderPlatformImage()
 {
-    static LazyNeverDestroyed<PlatformImagePtr> image;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static NeverDestroyed<PlatformImagePtr> image = [] {
         // Currently we return a placeholder that does not match the NativeImage
         // size, colorspace, isAlpha properties.
         RefPtr buffer = ImageBuffer::create(FloatSize { 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferFormat { PixelFormat::BGRA8 });
@@ -49,8 +47,8 @@ static PlatformImagePtr placeholderPlatformImage()
         buffer->context().fillRect({ 0, 0, 1, 1 }, Color::black);
         RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
         RELEASE_ASSERT(nativeImage);
-        image.construct(nativeImage->platformImage());
-    });
+        return nativeImage->platformImage();
+    }();
     return image;
 }
 

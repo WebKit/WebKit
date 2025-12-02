@@ -23,11 +23,11 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 struct WebKit::RemoteCDMConfiguration {
-    Vector<AtomString> supportedInitDataTypes;
-    Vector<AtomString> supportedRobustnesses;
+    Vector<String> supportedInitDataTypes;
+    Vector<String> supportedRobustnesses;
     bool supportsServerCertificates;
     bool supportsSessions;
     uint64_t logIdentifier;
 };
-    
+
 #endif

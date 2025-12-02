@@ -132,6 +132,7 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
 {
     ASSERT(isMainThread());
 
+    MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
     RefPtr player = platformPlayer();
     if (!player)
         return;
@@ -152,15 +153,12 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
     GST_DEBUG_OBJECT(player->pipeline(), "Marking EOS, status is %s", statusString);
 #endif
     if (endOfStreamStatus == EndOfStreamStatus::NoError) {
-        player->setNetworkState(MediaPlayer::NetworkState::Loaded);
-
         auto bufferedRanges = buffered();
         if (!bufferedRanges.length()) {
             GST_DEBUG("EOS with no buffers");
             player->setEosWithNoBuffers(true);
         }
     }
-    MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
 }
 
 void MediaSourcePrivateGStreamer::unmarkEndOfStream()
@@ -172,18 +170,6 @@ void MediaSourcePrivateGStreamer::unmarkEndOfStream()
 
     player->setEosWithNoBuffers(false);
     MediaSourcePrivate::unmarkEndOfStream();
-}
-
-MediaPlayer::ReadyState MediaSourcePrivateGStreamer::mediaPlayerReadyState() const
-{
-    RefPtr player = platformPlayer();
-    return player ? player->readyState() : MediaPlayer::ReadyState::HaveNothing;
-}
-
-void MediaSourcePrivateGStreamer::setMediaPlayerReadyState(MediaPlayer::ReadyState state)
-{
-    if (RefPtr player = platformPlayer())
-        player->setReadyState(state);
 }
 
 void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()

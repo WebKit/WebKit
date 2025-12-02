@@ -66,8 +66,15 @@ const double cMaxGamma = 21474.83;
 const double cDefaultGamma = 2.2;
 const double cInverseGamma = 0.45455;
 
-// Protect against large PNGs. See Mozilla's bug #251381 for more info.
-const unsigned long cMaxPNGSize = 1000000UL;
+// Protect against APNGs with huge amounts of frames, and PNGs with large amounts
+// of pixel data in general. See bug #302220 and Mozilla's bug #251381 for more info.
+//
+// The maximum frame count limits the memory used for array of ScalableImageDecoderFrames
+// to take at most 10MiB on 64-bit platforms, and it is large enough to cover ~70 minutes
+// of animation at 60 FPS.
+static constexpr uint32_t cMaxFrameCount = (1 << 18) - 1;
+static constexpr uint32_t cMaxPNGSize = 1000000;
+static constexpr size_t cMaxDecodedPixels = cMaxPNGSize * cMaxPNGSize;
 
 // Called if the decoding of the image fails.
 static void PNGAPI decodingFailed(png_structp png, png_const_charp)
@@ -207,6 +214,7 @@ PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
     , m_hasInfo(false)
     , m_gamma(45455)
     , m_frameCount(1)
+    , m_decodedPixelCount(0)
     , m_playCount(0)
     , m_totalFrames(0)
     , m_sizePLTE(0)
@@ -283,10 +291,12 @@ void PNGImageDecoder::headerAvailable()
     png_uint_32 height = png_get_image_height(png, info);
 
     // Protect against large images.
-    if (width > cMaxPNGSize || height > cMaxPNGSize) {
+    const auto pixelCount = checkedSum<size_t>(checkedProduct<size_t>(width, height), m_decodedPixelCount);
+    if (pixelCount.hasOverflowed() || pixelCount > cMaxDecodedPixels) {
         longjmp(JMPBUF(png), 1);
         return;
     }
+    m_decodedPixelCount = pixelCount;
 
     // We can fill in the size now that the header is available.  Avoid memory
     // corruption issues by returning early from setFailed() during this call; if we don't
@@ -572,7 +582,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         m_frameCount = png_get_uint_32(chunk->data);
         m_playCount = png_get_uint_32(chunk->data + 4);
 
-        if (!m_frameCount || m_frameCount > PNG_UINT_31_MAX || m_playCount > PNG_UINT_31_MAX) {
+        if (!m_frameCount || m_frameCount > cMaxFrameCount || m_playCount > PNG_UINT_31_MAX) {
             fallbackNotAnimated();
             return;
         }
@@ -617,7 +627,9 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         png_uint_32 width = png_get_image_width(png, info);
         png_uint_32 height = png_get_image_height(png, info);
 
-        if (m_width > cMaxPNGSize || m_height > cMaxPNGSize
+        // Protect against large images.
+        const auto pixelCount = checkedSum<size_t>(checkedProduct<size_t>(width, height), m_decodedPixelCount);
+        if (pixelCount.hasOverflowed() || pixelCount > cMaxDecodedPixels
             || m_xOffset > cMaxPNGSize || m_yOffset > cMaxPNGSize
             || m_xOffset + m_width > width
             || m_yOffset + m_height > height
@@ -625,6 +637,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             fallbackNotAnimated();
             return;
         }
+        m_decodedPixelCount = pixelCount;
 
         if (m_frameBufferCache.isEmpty())
             m_frameBufferCache.grow(1);

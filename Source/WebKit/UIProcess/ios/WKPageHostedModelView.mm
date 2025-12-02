@@ -56,18 +56,18 @@
 #if HAVE(RE_STEREO_CONTENT_SUPPORT)
 + (BOOL)_usesStereoContent
 {
-    static dispatch_once_t onceToken;
-    static BOOL stereoContentEnabled;
-    dispatch_once(&onceToken, ^{
+    static BOOL stereoContentEnabled = [] {
         NSString * const debugFlag = @"ModelDebugEnableStereoContent";
         id value = [[NSUserDefaults standardUserDefaults] objectForKey:debugFlag];
+        BOOL stereoContentEnabled;
         if (![value isKindOfClass:NSNumber.class] && ![value isKindOfClass:NSString.class])
             stereoContentEnabled = YES;
         else
             stereoContentEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:debugFlag];
 
         RELEASE_LOG_INFO(ModelElement, "Stereo content enabled: %d", stereoContentEnabled);
-    });
+        return stereoContentEnabled;
+    }();
     return stereoContentEnabled;
 }
 #endif

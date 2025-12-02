@@ -43,6 +43,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerFontLoadRequest);
 
+Ref<WorkerFontLoadRequest> WorkerFontLoadRequest::create(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
+{
+    return adoptRef(*new WorkerFontLoadRequest(WTFMove(url), loadedFromOpaqueSource));
+}
+
 WorkerFontLoadRequest::WorkerFontLoadRequest(URL&& url, LoadedFromOpaqueSource loadedFromOpaqueSource)
     : m_url(WTFMove(url))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
@@ -85,7 +90,7 @@ bool WorkerFontLoadRequest::ensureCustomFontData()
         convertWOFFToSfntIfNecessary(contiguousData);
         if (contiguousData) {
             RefPtr fontCustomPlatformData = FontCustomPlatformData::create(*contiguousData, m_url.fragmentIdentifier().toString());
-            m_data = WTFMove(contiguousData);
+            m_data.append(*contiguousData);
             if (!fontCustomPlatformData) {
                 m_errorOccurred = true;
                 return false;
@@ -110,7 +115,7 @@ void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)
 
     if (m_notifyOnClientSet) {
         m_notifyOnClientSet = false;
-        m_fontLoadRequestClient->fontLoaded(*this);
+        client->fontLoaded(*this);
     }
 }
 
@@ -133,8 +138,8 @@ void WorkerFontLoadRequest::didFinishLoading(ScriptExecutionContextIdentifier, s
     m_isLoading = false;
 
     if (!m_errorOccurred) {
-        if (m_fontLoadRequestClient)
-            m_fontLoadRequestClient->fontLoaded(*this);
+        if (CheckedPtr client = m_fontLoadRequestClient.get())
+            client->fontLoaded(*this);
         else
             m_notifyOnClientSet = true;
     }
@@ -143,8 +148,8 @@ void WorkerFontLoadRequest::didFinishLoading(ScriptExecutionContextIdentifier, s
 void WorkerFontLoadRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)
 {
     m_errorOccurred = true;
-    if (m_fontLoadRequestClient)
-        m_fontLoadRequestClient->fontLoaded(*this);
+    if (CheckedPtr client = m_fontLoadRequestClient.get())
+        client->fontLoaded(*this);
 }
 
 } // namespace WebCore

@@ -108,6 +108,9 @@ public:
     static bool accessibilityThreadTextApisEnabled() { return singleton().m_accessibilityThreadTextApis; }
 #endif
 
+    static void setAccessibilityTextStitchingEnabled(bool isEnabled) { singleton().m_accessibilityTextStitchingEnabled = isEnabled; }
+    static bool accessibilityTextStitchingEnabled() { return singleton().m_accessibilityTextStitchingEnabled; }
+
     static void setArePDFImagesEnabled(bool isEnabled) { singleton().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return singleton().m_arePDFImagesEnabled; }
 
@@ -171,6 +174,7 @@ private:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     bool m_accessibilityThreadTextApis { false };
 #endif
+    bool m_accessibilityTextStitchingEnabled { false };
 
     bool m_arePDFImagesEnabled { true };
 

@@ -109,6 +109,7 @@ class BackForwardController;
 class BadgeClient;
 class BroadcastChannelRegistry;
 class CacheStorageProvider;
+class CaptionDisplaySettingsClient;
 class Chrome;
 class CompositeEditCommand;
 class ContextMenuController;
@@ -231,6 +232,7 @@ struct ClientOrigin;
 struct DocumentSyncSerializationData;
 struct FixedContainerEdges;
 struct NavigationAPIMethodTracker;
+struct ResolvedCaptionDisplaySettingsOptions;
 struct SpatialBackdropSource;
 struct SystemPreviewInfo;
 struct TextRecognitionResult;
@@ -254,7 +256,7 @@ enum class FilterRenderingMode : uint8_t;
 enum class LayoutMilestone : uint16_t;
 enum class LoginStatusAuthenticationType : uint8_t;
 enum class PlatformMediaSessionPlaybackControlsPurpose : uint8_t;
-enum class MediaPlaybackTargetContextMockState : uint8_t;
+enum class MediaPlaybackTargetMockState : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 enum class MediaProducerMediaCaptureKind : uint8_t;
 enum class MediaProducerMutedState : uint8_t;
@@ -319,6 +321,9 @@ enum class RenderingUpdateStep : uint32_t {
     RestoreScrollPositionAndViewState   = 1 << 27,
     AdjustVisibility                    = 1 << 28,
     SnapshottedScrollOffsets            = 1 << 29,
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    Immersive                           = 1 << 30,
+#endif
 
 };
 
@@ -750,6 +755,7 @@ public:
     Ref<ServicesOverlayController> protectedServicesOverlayController();
 #endif
     ImageOverlayController& imageOverlayController();
+    Ref<ImageOverlayController> protectedImageOverlayController();
     ImageOverlayController* imageOverlayControllerIfExists() { return m_imageOverlayController.get(); }
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -1076,7 +1082,7 @@ public:
     void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool, RouteSharingPolicy, const String&);
     void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducerMediaStateFlags);
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
-    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContextMockState);
+    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
 
     WEBCORE_EXPORT void setPlaybackTarget(PlaybackTargetClientContextIdentifier, Ref<MediaPlaybackTarget>&&);
@@ -1398,6 +1404,13 @@ public:
 
     WEBCORE_EXPORT void clearIsShowingInputView();
 #endif
+
+#if ENABLE(VIDEO)
+    WEBCORE_EXPORT void setCaptionDisplaySettingsClientForTesting(Ref<CaptionDisplaySettingsClient>&&);
+    WEBCORE_EXPORT void clearCaptionDisplaySettingsClientForTesting();
+    void showCaptionDisplaySettings(HTMLMediaElement&, const ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(ExceptionOr<void>)>&&);
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1878,6 +1891,9 @@ private:
     void flushHardwareKeyboardAttachmentObservers();
 #endif
 
+#if ENABLE(VIDEO)
+    RefPtr<CaptionDisplaySettingsClient> m_captionDisplaySettingsClientForTesting;
+#endif
 }; // class Page
 
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);

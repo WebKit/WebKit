@@ -47,6 +47,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrintContext);
 
+Ref<PrintContext> PrintContext::create(LocalFrame* frame)
+{
+    return adoptRef(*new PrintContext(frame));
+}
+
 PrintContext::PrintContext(LocalFrame* frame)
     : FrameDestructionObserver(frame)
 {
@@ -325,17 +330,17 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 
     auto* frame = element->document().frame();
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
-    PrintContext printContext(frame);
-    printContext.begin(pageRect.width(), pageRect.height());
+    Ref printContext = PrintContext::create(frame);
+    printContext->begin(pageRect.width(), pageRect.height());
     FloatSize scaledPageSize = pageSizeInPixels;
     scaledPageSize.scale(frame->view()->contentsSize().width() / pageRect.width());
-    printContext.computePageRectsWithPageSize(scaledPageSize, false);
+    printContext->computePageRectsWithPageSize(scaledPageSize, false);
 
     int top = roundToInt(box->offsetTop());
     int left = roundToInt(box->offsetLeft());
     size_t pageNumber = 0;
-    for (; pageNumber < printContext.pageCount(); pageNumber++) {
-        const IntRect& page = printContext.pageRect(pageNumber);
+    for (; pageNumber < printContext->pageCount(); pageNumber++) {
+        const IntRect& page = printContext->pageRect(pageNumber);
         if (page.x() <= left && left < page.maxX() && page.y() <= top && top < page.maxY())
             return pageNumber;
     }
@@ -384,8 +389,8 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
     Ref protectedFrame { *frame };
 
     RefPtr document = frame->document();
-    PrintContext printContext(frame);
-    printContext.begin(800); // Any width is OK here.
+    Ref printContext = PrintContext::create(frame);
+    printContext->begin(800); // Any width is OK here.
     document->updateLayout();
     auto style = document->styleScope().resolver().styleForPage(pageNumber);
 
@@ -468,23 +473,23 @@ int PrintContext::numberOfPages(LocalFrame& frame, const FloatSize& pageSizeInPi
 {
     Ref protectedFrame { frame };
 
-    PrintContext printContext(&frame);
-    if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
+    Ref printContext = PrintContext::create(&frame);
+    if (!printContext->beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
         return -1;
 
-    return printContext.pageCount();
+    return printContext->pageCount();
 }
 
 void PrintContext::spoolAllPagesWithBoundaries(LocalFrame& frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
 {
     Ref protectedFrame { frame };
 
-    PrintContext printContext(&frame);
-    if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
+    Ref printContext = PrintContext::create(&frame);
+    if (!printContext->beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
         return;
 
     const float pageWidth = pageSizeInPixels.width();
-    const Vector<IntRect>& pageRects = printContext.pageRects();
+    const Vector<IntRect>& pageRects = printContext->pageRects();
     int totalHeight = pageRects.size() * (pageSizeInPixels.height() + 1) - 1;
 
     // Fill the whole background by white.
@@ -511,7 +516,7 @@ void PrintContext::spoolAllPagesWithBoundaries(LocalFrame& frame, GraphicsContex
 
         graphicsContext.save();
         graphicsContext.translate(0, currentHeight);
-        printContext.spoolPage(graphicsContext, pageIndex, pageWidth);
+        printContext->spoolPage(graphicsContext, pageIndex, pageWidth);
         graphicsContext.restore();
 
         currentHeight += pageSizeInPixels.height() + 1;

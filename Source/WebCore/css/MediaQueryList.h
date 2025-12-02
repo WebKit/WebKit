@@ -39,11 +39,13 @@ class MediaQueryEvaluator;
 class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaQueryList);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
     ~MediaQueryList();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     String media() const;
     bool matches();

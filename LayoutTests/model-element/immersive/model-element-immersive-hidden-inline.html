@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> immersive</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../resources/testdriver-vendor.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<body>
+    <model style="display: none;" id='hidden-model'>
+        <source src='../resources/cube.usdz'/>
+    </model>
+
+<script>
+
+promise_test(async t => {
+    const model = document.getElementById("hidden-model");
+
+    await test_driver.bless("immersive");
+    await model.requestImmersive();
+
+    assert_equals(document.immersiveElement, model, 'Hidden model became document\'s immersive element');
+}, 'Hidden inline model should successfully enter immersive');
+
+</script>
+</body>
+
+

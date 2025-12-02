@@ -41,6 +41,48 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
+class RemoteMediaSessionManagerAudioHardwareListener final
+    : public WebCore::AudioHardwareListener
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaSessionManagerAudioHardwareListener> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerAudioHardwareListener);
+public:
+    static Ref<RemoteMediaSessionManagerAudioHardwareListener> create(WebCore::AudioHardwareListener::Client& client)
+    {
+        return adoptRef(*new RemoteMediaSessionManagerAudioHardwareListener(client));
+    }
+    ~RemoteMediaSessionManagerAudioHardwareListener() = default;
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+
+    RemoteMediaSessionManagerAudioHardwareListener(WebCore::AudioHardwareListener::Client& client)
+        : WebCore::AudioHardwareListener(client)
+    {
+    }
+
+    void audioHardwareDidBecomeActive()
+    {
+        setHardwareActivity(WebCore::AudioHardwareActivityType::IsActive);
+        m_client.audioHardwareDidBecomeActive();
+    }
+
+    void audioHardwareDidBecomeInactive()
+    {
+        setHardwareActivity(WebCore::AudioHardwareActivityType::IsInactive);
+        m_client.audioHardwareDidBecomeInactive();
+    }
+
+    void audioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
+    {
+        setSupportedBufferSizes({ bufferSizeMinimum, bufferSizeMaximum });
+        m_client.audioOutputDeviceChanged();
+    }
+};
+#endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerAudioHardwareListener);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxy);
 
 RefPtr<RemoteMediaSessionManagerProxy> RemoteMediaSessionManagerProxy::create(WebCore::PageIdentifier identifier, WebProcessProxy& process)
@@ -53,6 +95,16 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebCore::PageIden
     , m_process(process)
     , m_topPageID(identifier)
 {
+#if USE(AUDIO_SESSION)
+    AudioSession::setSharedSession(*this);
+#endif
+
+#if PLATFORM(COCOA)
+    WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
+        return protectedThis->ensureAudioHardwareListenerProxy(client);
+    });
+#endif
+
     process.addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_topPageID, *this);
 }
 
@@ -90,6 +142,88 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionState()
 {
     updateSessionState();
 }
+
+#if USE(AUDIO_SESSION)
+void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
+{
+    m_audioConfiguration = WTFMove(configuration);
+}
+
+void RemoteMediaSessionManagerProxy::setCategory(CategoryType type, Mode mode, WebCore::RouteSharingPolicy policy)
+{
+#if PLATFORM(COCOA)
+    if (type == m_category && mode == m_mode && policy == m_routeSharingPolicy)
+        return;
+
+    m_category = type;
+    m_mode = mode;
+    m_routeSharingPolicy = policy;
+
+    send(Messages::RemoteMediaSessionManager::SetAudioSessionCategory(type, mode, policy), { });
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(policy);
+#endif
+}
+
+bool RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)
+{
+    if (active && m_isInterruptedForTesting)
+        return false;
+
+/*
+    FIXME: A call to `AudioSession::singleton().tryToSetActive` in the WebProcess ends up in
+    FIXME: `RemoteAudioSession::tryToSetActiveInternal`, which sends sync IPC to the GPU process.
+    FIXME: This is necessary because the return value, whether or not the audio session was activated,
+    FIXME: is used by `MediaSessionManagerInterface::sessionWillBeginPlayback` to know whether to
+    FIXME: allow playback to begin. Sync IPC from the UI process isn't a good idea generally, but
+    FIXME: sync IPC from the UI to the WebProcess and then to the GPU process is a terrible idea,
+    FIXME: so figure out how to restructure the logic to not require it.
+    auto sendResult = sendSync(Messages::RemoteMediaSessionManager::TryToSetAudioSessionActive(active), { });
+    auto [succeeded] = sendResult.takeReplyOr(false);
+ */
+    bool succeeded = true;
+    if (succeeded)
+        m_audioConfiguration.isActive = active;
+    return succeeded;
+}
+
+void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)
+{
+    if (m_audioConfiguration.preferredBufferSize == size)
+        return;
+
+    m_audioConfiguration.preferredBufferSize = size;
+    send(Messages::RemoteMediaSessionManager::SetAudioSessionPreferredBufferSize(size), { });
+}
+#endif
+
+#if PLATFORM(COCOA)
+void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeActive()
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeActive();
+}
+
+void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeInactive()
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeInactive();
+}
+
+void RemoteMediaSessionManagerProxy::remoteAudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioOutputDeviceChanged(bufferSizeMinimum, bufferSizeMaximum);
+}
+
+Ref<RemoteMediaSessionManagerAudioHardwareListener> RemoteMediaSessionManagerProxy::ensureAudioHardwareListenerProxy(WebCore::AudioHardwareListener::Client& client)
+{
+    if (!m_audioHardwareListenerProxy)
+        m_audioHardwareListenerProxy = RemoteMediaSessionManagerAudioHardwareListener::create(client);
+    return *m_audioHardwareListenerProxy;
+}
+#endif
 
 RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::findSession(RemoteMediaSessionState& state)
 {

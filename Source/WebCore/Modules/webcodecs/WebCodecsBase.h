@@ -56,6 +56,7 @@ public:
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     bool virtualHasPendingActivity() const final;
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
 protected:
     WebCodecsBase(ScriptExecutionContext&);

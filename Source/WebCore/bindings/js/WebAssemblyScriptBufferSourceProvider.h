@@ -64,7 +64,7 @@ public:
     void lockUnderlyingBufferImpl() final
     {
         ASSERT(!m_buffer);
-        if (RefPtr<const FragmentedSharedBuffer> buffer = m_scriptBuffer.buffer().get())
+        if (RefPtr buffer = m_scriptBuffer.buffer())
             m_buffer = buffer->makeContiguous();
     }
 

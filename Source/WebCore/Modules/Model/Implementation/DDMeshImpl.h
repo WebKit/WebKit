@@ -71,12 +71,8 @@ private:
     DDMeshImpl& operator=(DDMeshImpl&&) = delete;
 
     void setLabelInternal(const String&) final;
-#if PLATFORM(COCOA)
-    void addMesh(const DDMeshDescriptor&) final;
     void update(const DDUpdateMeshDescriptor&) final;
-    void addTexture(const DDTextureDescriptor&) final;
     void updateTexture(const DDUpdateTextureDescriptor&) final;
-    void addMaterial(const DDMaterialDescriptor&) final;
     void updateMaterial(const DDUpdateMaterialDescriptor&) final;
     void setEntityTransform(const DDFloat4x4&) final;
     std::optional<DDFloat4x4> entityTransform() const final;
@@ -84,7 +80,6 @@ private:
     void play(bool) final;
 
     void render() final;
-#endif
 
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
 

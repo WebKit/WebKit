@@ -41,7 +41,7 @@ namespace WebKit {
 void setNWParametersApplicationIdentifiers(nw_parameters_t, const char* sourceApplicationBundleIdentifier, std::optional<audit_token_t>, const String& attributedBundleIdentifier);
 void setNWParametersTrackerOptions(nw_parameters_t, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker);
 bool isKnownTracker(const WebCore::RegistrableDomain&);
-std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint);
+std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint, bool enableServiceClass);
 
 } // namespace WebKit
 

@@ -178,7 +178,7 @@ void FileSystemWritableFileStreamSink::close()
     protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
 }
 
-void FileSystemWritableFileStreamSink::error(String&&)
+void FileSystemWritableFileStreamSink::abort(JSC::JSValue)
 {
     ASSERT(!m_isClosed);
 

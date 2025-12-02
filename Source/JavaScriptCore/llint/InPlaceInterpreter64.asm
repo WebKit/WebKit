@@ -10228,6 +10228,9 @@ end
     # reserved
     # reserved        <- sp
 
+    # save t3 as a frame-relative value so stack data can be moved easily for JSPI
+    # t3 is not used after this
+    subp cfr, t3
     push t3, PC
     push PL, wasmInstance
 
@@ -10235,14 +10238,14 @@ end
     move sp, t2
     subp stackFrameSize, sp
 
-    # <first non-arg> <- t3
+    # <first non-arg> <- first_non_arg_addr
     # arg
     # ...
     # arg
     # arg             <- t4 = initial SP (wasm stack)
     # reserved
     # reserved
-    # t3, PC
+    # (first_non_arg_addr - cfr), PC
     # PL, wasmInstance <- t2 = native argument stack (pushed by mINT)
     # call frame
     # call frame
@@ -10315,7 +10318,7 @@ end
     # determine the location to begin copying stack arguments, starting from the last
     move cfr, sc2
     addp FirstArgumentOffset, sc2
-    addp t3, sc2
+    addp t3, sc2 # t3 = callerStackArgSize from the metadata
 
     #  <caller frame>              <- sc2
     #  return val
@@ -10599,14 +10602,14 @@ _wasm_ipint_call_return_location_wide32:
     addp cfr, sc0
     move sc0, sp
 
-    # <first non-arg>   <- t3
+    # <first non-arg>   <- first_non_arg_addr
     # arg
     # ...
     # arg
     # arg
     # reserved
     # reserved
-    # t3, PC
+    # (first_non_arg_addr - cfr), PC
     # PL, wasmInstance  <- sc3
     # call frame return
     # call frame return
@@ -10625,12 +10628,13 @@ _wasm_ipint_call_return_location_wide32:
     advanceMC(IPInt::CallReturnMetadata::resultBytecode)
     leap [sp, mintRetSrc], mintRetSrc
 
-    # load "saved t3" from the stack
+    # load (first_non_arg_addr - cfr) from the stack and make it absolute
 if ARM64 or ARM64E
     loadp (2 * SlotSize)[sc3], mintRetDst
 elsif X86_64
     loadp (3 * SlotSize)[sc3], mintRetDst
 end
+    addp cfr, mintRetDst
 
     # on x86, we'll use PC again for our PC base
     initPCRelative(mint_ret, PC)
@@ -10764,14 +10768,14 @@ mintAlign(_result_stack_vector)
 
 mintAlign(_end)
 
-    # <first non-arg>   <- t3
+    # <first non-arg>   <- first_non_arg_addr
     # return result
     # ...
     # return result
     # return result
     # return result
     # return result     <- mintRetDst => new SP
-    # t3, PC
+    # (first_non_arg_addr - cfr), PC
     # PL, wasmInstance  <- sc3
     # call frame return <- mintRetSrc
     # call frame return

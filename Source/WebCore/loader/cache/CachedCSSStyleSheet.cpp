@@ -137,8 +137,8 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
         return;
 
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);
-    while (CachedStyleSheetClient* c = walker.next())
-        c->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), protectedDecoder()->encoding().name(), this);
+    while (RefPtr client = walker.next())
+        client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), protectedDecoder()->encoding().name(), this);
 }
 
 String CachedCSSStyleSheet::responseMIMEType() const

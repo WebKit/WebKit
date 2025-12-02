@@ -339,14 +339,6 @@ enum class Edge : uint8_t {
     Left
 };
 
-// CSS3 Mask Mode
-
-enum class MaskMode : uint8_t {
-    Alpha,
-    Luminance,
-    MatchSource,
-};
-
 // CSS3 Marquee Properties
 
 enum class MarqueeBehavior : uint8_t {
@@ -545,15 +537,6 @@ enum class LineBreak : uint8_t {
     Anywhere
 };
 
-enum class Resize : uint8_t {
-    None,
-    Both,
-    Horizontal,
-    Vertical,
-    Block,
-    Inline,
-};
-
 enum class QuoteType : uint8_t {
     OpenQuote,
     CloseQuote,
@@ -596,35 +579,12 @@ enum class ReflectionDirection : uint8_t {
     Right
 };
 
-// The order of this enum must match the order of the text align values in CSSValueKeywords.in.
-enum class TextAlignMode : uint8_t {
-    Left,
-    Right,
-    Center,
-    Justify,
-    WebKitLeft,
-    WebKitRight,
-    WebKitCenter,
-    Start,
-    End,
-};
-
 enum class TextDecorationStyle : uint8_t {
     Solid,
     Double,
     Dotted,
     Dashed,
     Wavy
-};
-
-enum class TextAlignLast : uint8_t {
-    Auto,
-    Start,
-    End,
-    Left,
-    Right,
-    Center,
-    Justify
 };
 
 enum class TextJustify : uint8_t {
@@ -1267,7 +1227,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, LineSnap);
 WTF::TextStream& operator<<(WTF::TextStream&, ListStylePosition);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
-WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);
 WTF::TextStream& operator<<(WTF::TextStream&, NBSPMode);
 WTF::TextStream& operator<<(WTF::TextStream&, NinePieceImageRule);
 WTF::TextStream& operator<<(WTF::TextStream&, ObjectFit);
@@ -1282,7 +1241,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, PrintColorAdjust);
 WTF::TextStream& operator<<(WTF::TextStream&, PseudoElementType);
 WTF::TextStream& operator<<(WTF::TextStream&, QuoteType);
 WTF::TextStream& operator<<(WTF::TextStream&, ReflectionDirection);
-WTF::TextStream& operator<<(WTF::TextStream&, Resize);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyAlign);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyOverhang);
@@ -1294,8 +1252,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, Scroller);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifference);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifferenceContextSensitiveProperty);
 WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
-WTF::TextStream& operator<<(WTF::TextStream&, TextAlignMode);
-WTF::TextStream& operator<<(WTF::TextStream&, TextAlignLast);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationStyle);

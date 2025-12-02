@@ -37,6 +37,8 @@
 #include <Security/SecIdentity.h>
 #include <Security/SecItem.h>
 #include <WebCore/CertificateInfo.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/VectorCF.h>
 
 #if HAVE(SEC_KEYCHAIN)
@@ -47,6 +49,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SecItemShimProxy);
 
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
@@ -67,12 +71,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 SecItemShimProxy& SecItemShimProxy::singleton()
 {
-    static SecItemShimProxy* proxy;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        proxy = new SecItemShimProxy;
-    });
-    return *proxy;
+    static NeverDestroyed<UniqueRef<SecItemShimProxy>> proxy = makeUniqueRefWithoutRefCountedCheck<SecItemShimProxy>();
+    return proxy.get();
 }
 
 SecItemShimProxy::SecItemShimProxy()

@@ -25,23 +25,14 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class FrameDestructionObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::FrameDestructionObserver> : std::true_type { };
-}
 
 namespace WebCore {
 
 class LocalFrame;
 
-class FrameDestructionObserver : public CanMakeWeakPtr<FrameDestructionObserver> {
+class FrameDestructionObserver : public AbstractRefCountedAndCanMakeWeakPtr<FrameDestructionObserver> {
 public:
     WEBCORE_EXPORT explicit FrameDestructionObserver(LocalFrame*);
 

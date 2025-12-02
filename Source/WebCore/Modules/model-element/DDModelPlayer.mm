@@ -42,6 +42,7 @@
 #import "Page.h"
 #import "PlatformCALayer.h"
 #import "PlatformCALayerDelegatedContents.h"
+#import <WebGPU/DDModelTypes.h>
 
 namespace WebCore {
 
@@ -159,17 +160,10 @@ void DDModelPlayer::load(Model& modelSource, LayoutSize size)
             protectedThis->m_displayBuffers = WTFMove(surfaceHandles);
     });
 
-    m_modelLoader = adoptNS([[WebUSDModelLoader alloc] init]);
+    m_modelLoader = adoptNS([[DDBridgeModelLoader alloc] init]);
     RetainPtr nsURL = modelSource.url().createNSURL();
     Ref protectedThis = Ref { *this };
-    [m_modelLoader setCallbacksWithModelAddedCallback:^(WebAddMeshRequest *addRequest) {
-        ensureOnMainThreadWithProtectedThis([addRequest] (Ref<DDModelPlayer> protectedThis) {
-            if (protectedThis->m_currentModel)
-                protectedThis->m_currentModel->addMesh(toCpp(addRequest));
-
-            [protectedThis->m_modelLoader requestCompleted:addRequest];
-        });
-    } modelUpdatedCallback:^(WebUpdateMeshRequest *updateRequest) {
+    [m_modelLoader setCallbacksWithModelUpdatedCallback:^(DDBridgeUpdateMesh *updateRequest) {
         ensureOnMainThreadWithProtectedThis([updateRequest] (Ref<DDModelPlayer> protectedThis) {
             RefPtr model = protectedThis->m_currentModel;
             if (model) {
@@ -187,28 +181,14 @@ void DDModelPlayer::load(Model& modelSource, LayoutSize size)
                 protectedThis->notifyEntityTransformUpdated();
             }
         });
-    } textureAddedCallback:^(WebDDAddTextureRequest *addTexture) {
-        ensureOnMainThreadWithProtectedThis([addTexture] (Ref<DDModelPlayer> protectedThis) {
-            if (protectedThis->m_currentModel)
-                protectedThis->m_currentModel->addTexture(toCpp(addTexture));
-
-            [protectedThis->m_modelLoader requestCompleted:addTexture];
-        });
-    } textureUpdatedCallback:^(WebDDUpdateTextureRequest *updateTexture) {
+    } textureUpdatedCallback:^(DDBridgeUpdateTexture *updateTexture) {
         ensureOnMainThreadWithProtectedThis([updateTexture] (Ref<DDModelPlayer> protectedThis) {
             if (protectedThis->m_currentModel)
                 protectedThis->m_currentModel->updateTexture(toCpp(updateTexture));
 
             [protectedThis->m_modelLoader requestCompleted:updateTexture];
         });
-    } materialAddedCallback:^(WebDDAddMaterialRequest *addMaterial) {
-        ensureOnMainThreadWithProtectedThis([addMaterial] (Ref<DDModelPlayer> protectedThis) {
-            if (protectedThis->m_currentModel)
-                protectedThis->m_currentModel->addMaterial(toCpp(addMaterial));
-
-            [protectedThis->m_modelLoader requestCompleted:addMaterial];
-        });
-    } materialUpdatedCallback:^(WebDDUpdateMaterialRequest *updateMaterial) {
+    } materialUpdatedCallback:^(DDBridgeUpdateMaterial *updateMaterial) {
         ensureOnMainThreadWithProtectedThis([updateMaterial] (Ref<DDModelPlayer> protectedThis) {
             if (protectedThis->m_currentModel)
                 protectedThis->m_currentModel->updateMaterial(toCpp(updateMaterial));
@@ -383,6 +363,8 @@ void DDModelPlayer::simulate(float elapsedTime)
 
     m_yaw += m_yawAcceleration * elapsedTime;
     m_pitch += m_pitchAcceleration * elapsedTime;
+    m_pitch *= (1.f - elapsedTime);
+
     model->setRotation(m_yaw, m_pitch);
 }
 

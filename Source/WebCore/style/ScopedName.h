@@ -61,4 +61,14 @@ WTF::TextStream& operator<<(WTF::TextStream&, const ScopedName&);
 } // namespace Style
 } // namespace WebCore
 
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::ScopedName> {
+    static bool isEmptyValue(const WebCore::Style::ScopedName& value) { return value.name.isNull(); }
+    static WebCore::Style::ScopedName emptyValue() { return WebCore::Style::ScopedName { nullAtom() }; }
+};
+
+} // namespace WTF
+
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::ScopedName)

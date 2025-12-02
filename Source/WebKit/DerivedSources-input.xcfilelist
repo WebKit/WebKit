@@ -210,6 +210,8 @@ $(PROJECT_DIR)/Scripts/generate-serializers.py
 $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py
+$(PROJECT_DIR)/Scripts/webkit/opaque_ipc_types.py
+$(PROJECT_DIR)/Scripts/webkit/opaque_ipc_types.tracking.in
 $(PROJECT_DIR)/Scripts/webkit/parser.py
 $(PROJECT_DIR)/Shared/API/APIArray.serialization.in
 $(PROJECT_DIR)/Shared/API/APIData.serialization.in

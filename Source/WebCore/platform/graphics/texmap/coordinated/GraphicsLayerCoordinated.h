@@ -114,7 +114,7 @@ private:
     void suspendAnimations(MonotonicTime) override;
     void resumeAnimations() override;
     void transformRelatedPropertyDidChange() override;
-    Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const override;
+    Vector<GraphicsLayer::AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const override;
 
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ShouldClipToLayer::Clip) override;

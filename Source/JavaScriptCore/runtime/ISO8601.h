@@ -253,6 +253,23 @@ constexpr bool isYearWithinLimits(double year)
     return year >= minYear && year <= maxYear;
 }
 
+constexpr bool isYearWithinLimits(int32_t year)
+{
+    return year >= minYear && year <= maxYear;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isoyearmonthwithinlimits
+constexpr bool isYearMonthWithinLimits(int32_t year, int32_t month)
+{
+    if (!isYearWithinLimits(year))
+        return false;
+    if (year == minYear && month < 4)
+        return false;
+    if (year == maxYear && month > 9)
+        return false;
+    return true;
+}
+
 // Note that PlainDate does not include week unit.
 // year can be negative. And month and day starts with 1.
 class PlainDate {
@@ -297,17 +314,33 @@ static_assert(sizeof(PlainDate) == sizeof(int32_t));
 using TimeZone = Variant<TimeZoneID, int64_t>;
 
 class PlainYearMonth final {
+    WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
 public:
-    // Out-of-range years represented by outOfRangeYear, as with PlainDate
-    int32_t year : 21;
-    int32_t month : 5;
-    PlainYearMonth(int32_t y, int32_t m)
-        : year(y), month(m)
+    constexpr PlainYearMonth()
+        : m_isoPlainDate(0, 1, 1)
     {
-        ASSERT(isYearWithinLimits(year) || year == outOfRangeYear);
     }
+
+    constexpr PlainYearMonth(int32_t year, unsigned month)
+        : m_isoPlainDate(year, month, 1)
+    {
+    }
+
+    constexpr PlainYearMonth(PlainDate&& d)
+        : m_isoPlainDate(d)
+    {
+    }
+
+    friend bool operator==(const PlainYearMonth&, const PlainYearMonth&) = default;
+
+    int32_t year() const { return m_isoPlainDate.year(); }
+    uint8_t month() const { return m_isoPlainDate.month(); }
+
+    const PlainDate& isoPlainDate() const { return m_isoPlainDate; }
+private:
+    PlainDate m_isoPlainDate;
 };
-static_assert(sizeof(PlainYearMonth) <= sizeof(int32_t));
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 class PlainMonthDay {
     WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
@@ -336,6 +369,7 @@ public:
 private:
     PlainDate m_isoPlainDate;
 };
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
 // Record { [[Z]], [[OffsetString]], [[Name]] }
@@ -365,8 +399,8 @@ enum class ValidateTimeZoneID : bool { No, Yes };
 using CalendarID = RFC9557Value;
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarTime(StringView);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarDateTime(StringView);
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, TemporalDateFormat);
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarDateTime(StringView, TemporalDateFormat);
 uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
@@ -379,13 +413,13 @@ String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
 String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
-uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
 bool isValidISODate(double, double, double);
 PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
+std::optional<ParsedMonthCode> parseMonthCode(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 

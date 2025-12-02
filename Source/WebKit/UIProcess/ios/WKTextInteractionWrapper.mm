@@ -172,8 +172,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 #endif
 
     for (id<UIInteraction> interaction in _view.interactions) {
-        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
-            return selectionInteraction.unsafeGet();
+        if (auto* selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+            return selectionInteraction;
     }
 
     return nil;
@@ -230,7 +230,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
     if (newContainer == _view)
         return;
 
-    auto findParentViewBelowNewContainer = [&](UIView *view) -> UIView * {
+    auto findParentViewBelowNewContainer = [&](UIView *view) -> RetainPtr<UIView> {
         if (view == newContainer)
             return nil;
 
@@ -239,7 +239,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
                 return nil;
 
             if ([foundView superview] == newContainer)
-                return foundView.unsafeGet();
+                return foundView;
         }
 
         return nil;

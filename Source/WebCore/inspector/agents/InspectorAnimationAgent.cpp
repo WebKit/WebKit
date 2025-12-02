@@ -293,7 +293,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
     };
 
     {
-        for (auto* animation : WebAnimation::instances()) {
+        for (auto& animation : WebAnimation::instances()) {
             if (existsInCurrentPage(animation->scriptExecutionContext()))
                 bindAnimation(*animation, nullptr);
         }
@@ -559,7 +559,7 @@ void InspectorAnimationAgent::didCreateWebAnimation(WebAnimation& animation)
 void InspectorAnimationAgent::animationBindingTimerFired()
 {
     for (auto&& [animation, backtrace] : std::exchange(m_animationsPendingBinding, { }))
-        bindAnimation(animation, WTFMove(backtrace));
+        bindAnimation(Ref { animation }, WTFMove(backtrace));
 }
 
 void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
@@ -582,7 +582,7 @@ void InspectorAnimationAgent::frameNavigated(LocalFrame& frame)
 
     Vector<String> animationIdsToRemove;
     for (auto& [animationId, animation] : m_animationIdMap) {
-        if (RefPtr document = dynamicDowncast<Document>(animation->scriptExecutionContext()); document && document->frame() == &frame)
+        if (RefPtr document = dynamicDowncast<Document>(Ref { animation.get() }->scriptExecutionContext()); document && document->frame() == &frame)
             animationIdsToRemove.append(animationId);
     }
     for (const auto& animationId : animationIdsToRemove)

@@ -42,6 +42,7 @@
 namespace WebCore {
 class Exception;
 struct ClientOrigin;
+struct WebTransportConnectionInfo;
 struct WebTransportConnectionStats;
 struct WebTransportReceiveStreamStats;
 struct WebTransportSendGroupIdentifierType;
@@ -74,7 +75,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void initialize(CompletionHandler<void(bool)>&&);
+    void initialize(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
 
     void sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier>, std::span<const uint8_t>, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&&);
@@ -94,6 +95,8 @@ public:
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
     void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
+    void streamReceiveError(WebCore::WebTransportStreamIdentifier, uint64_t);
+    void streamSendError(WebCore::WebTransportStreamIdentifier, uint64_t);
     void receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void receiveBidirectionalStream(WebCore::WebTransportStreamIdentifier);
 
@@ -114,7 +117,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
     void setupConnectionHandler();
-    void setupDatagramConnection(CompletionHandler<void(bool)>&&);
+    void setupDatagramConnection(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&&);
     void receiveDatagramLoop();
     void createStream(NetworkTransportStreamType, CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&&);
 

@@ -38,12 +38,7 @@ media/modern-media-controls/media-documents/media-document-video-ipad-sizing.htm
 
 webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
 
-webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
-
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
-
-webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
-webkit.org/b/194226 quicklook/word.html [ Failure ]
 
 webkit.org/b/194259 fast/events/ios/rotation/basic-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Skip ]
@@ -52,18 +47,12 @@ webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
 
-# This tests an iphone-specific behavior so is expected to fail on iPad.
-fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
-
 # This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
 fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
 
 # <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
 fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
-
-# <rdar://problem/52914585> (Layout Test fast/forms/file/file-input-reset-using-open-panel.html is Failing)
-fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
 
 webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Timeout ]
 
@@ -88,7 +77,6 @@ webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]
 
 # Failure only on iPad simulator
-webkit.org/b/178588 fast/css/button-height.html [ Failure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]

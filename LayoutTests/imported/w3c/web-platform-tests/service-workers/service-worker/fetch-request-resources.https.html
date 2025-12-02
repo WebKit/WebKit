@@ -90,7 +90,7 @@ function script_integrity_test(frame, url, integrity, expected_integrity) {
       destination: 'script',
       message: `Script load (url:${actual_url})`
     };
-  frame.contentWindow.load_script_with_integrity(actual_url, { integrity });
+  frame.contentWindow.load_script_with_integrity(actual_url, integrity, /*type=*/null);
   return add_promise_to_test(actual_url);
 }
 
@@ -105,7 +105,7 @@ function module_script_integrity_test(frame, url, integrity, expected_integrity)
       destination: 'script',
       message: `Module Script load (url:${actual_url})`
     };
-  frame.contentWindow.load_script_with_integrity(actual_url, { integrity, type: "module" });
+  frame.contentWindow.load_script_with_integrity(actual_url, integrity, "module");
   return add_promise_to_test(actual_url);
 }
 

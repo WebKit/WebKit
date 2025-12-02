@@ -30,6 +30,7 @@
 #include "AcceleratedBackingStore.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "GtkVersioning.h"
 #include "InputMethodState.h"
 #include "MessageSenderInlines.h"
 #include "PageClientImpl.h"

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>blob-popup-file-mainframe</h1>
+    <iframe src="http://127.0.0.1:8001/blob-popup-local-iframe.html" width="600" height="400"></iframe>
+    <script>
+        window.receivedMessage = null;
+        window.addEventListener('message', function(event) {
+            window.receivedMessage = event.data;
+        });
+    </script>
+</body>
+</html>

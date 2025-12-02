@@ -300,11 +300,13 @@ struct Ray {
 };
 
 struct HitTestOptions {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(HitTestOptions);
     WebCore::TransformationMatrix nativeOrigin;
     Vector<WebCore::XRHitTestTrackableType> entityTypes;
     Ray offsetRay;
 };
 struct TransientInputHitTestOptions {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(TransientInputHitTestOptions);
     String profile;
     Vector<WebCore::XRHitTestTrackableType> entityTypes;
     Ray offsetRay;

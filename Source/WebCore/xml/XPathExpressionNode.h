@@ -37,8 +37,9 @@ struct EvaluationContext {
     unsigned size;
     unsigned position;
     HashMap<String, String> variableBindings;
-
     bool hadTypeConversionError;
+
+    RefPtr<Node> protectedNode() const { return node; }
 };
 
 class Expression {

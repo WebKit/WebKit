@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=false ] -->
+<meta charset="utf-8">
+<title>&lt;model> immersive</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../resources/testdriver-vendor.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+
+    await promise_rejects_js(t, TypeError, 
+        model.requestImmersive(),
+        'Should reject without client\'s approval'
+    );
+
+    assert_equals(document.immersiveElement, null, 'No immersive element without client approving the request');
+}, 'Model immersive request fails without client\'s approval');
+
+</script>
+</body>
+
+

@@ -446,6 +446,10 @@
 #include "WebGL2RenderingContext.h"
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#include "DocumentImmersive.h"
+#endif
+
 #define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 #define DOCUMENT_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->toUInt64() : 0, this->isTopDocument(), ##__VA_ARGS__)
 
@@ -726,6 +730,9 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #if ENABLE(FULLSCREEN_API)
     ASSERT(!m_fullscreen);
 #endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    ASSERT(!m_immersive);
+#endif
     ASSERT(!m_fontSelector);
     ASSERT(!m_fontLoader);
     ASSERT(!m_undoManager);
@@ -913,6 +920,9 @@ void Document::removedLastRef()
 #if ENABLE(FULLSCREEN_API)
         fullscreen().clear();
 #endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        immersive().clear();
+#endif
         m_associatedFormControls.clear();
         m_pendingRenderTreeUpdate = { };
 
@@ -965,6 +975,11 @@ void Document::commonTeardown()
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr fullscreen = m_fullscreen.get())
         fullscreen->clearPendingEvents();
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    if (RefPtr immersive = m_immersive.get())
+        immersive->clearPendingEvents();
 #endif
 
     if (CheckedPtr svgExtensions = svgExtensionsIfExists())
@@ -1069,6 +1084,15 @@ DocumentFullscreen& Document::ensureFullscreen()
     ASSERT(m_constructionDidFinish);
     lazyInitialize(m_fullscreen, makeUniqueWithoutRefCountedCheck<DocumentFullscreen>(*this));
     return *m_fullscreen;
+}
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+DocumentImmersive& Document::ensureImmersive()
+{
+    ASSERT(m_constructionDidFinish);
+    lazyInitialize(m_immersive, makeUniqueWithoutRefCountedCheck<DocumentImmersive>(*this));
+    return *m_immersive;
 }
 #endif
 
@@ -1224,7 +1248,7 @@ Element* Document::elementForAccessKey(const String& key)
         return nullptr;
     if (!m_accessKeyCache)
         buildAccessKeyCache();
-    return m_accessKeyCache->get(key).get();
+    return m_accessKeyCache->get(key);
 }
 
 void Document::buildAccessKeyCache()
@@ -1569,13 +1593,17 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
+    bool shouldUseNullRegistry = usesNullCustomElementRegistry();
     if (argument) [[unlikely]] {
         if (auto* options = std::get_if<ElementCreationOptions>(&*argument)) {
-            registry = options->customElementRegistry;
-            if (registry && !registry->isScoped() && registry != document->customElementRegistry())
-                return Exception { ExceptionCode::NotSupportedError };
+            auto optionalRegistry = options->customElementRegistry;
+            if (optionalRegistry) {
+                registry = *optionalRegistry;
+                shouldUseNullRegistry = !registry;
+                if (registry && !registry->isScoped() && registry != document->customElementRegistry())
+                    return Exception { ExceptionCode::NotSupportedError };
+            }
         }
-
     }
 
     auto result = [&]() -> ExceptionOr<Ref<Element>> {
@@ -1598,7 +1626,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
         CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
         return element;
     }
-    if (!registry && usesNullCustomElementRegistry())
+    if (shouldUseNullRegistry) [[unlikely]]
         element->setUsesNullCustomElementRegistry();
     return element;
 }
@@ -1994,11 +2022,16 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
+    bool shouldUseNullRegistry = usesNullCustomElementRegistry();
     if (argument) [[unlikely]] {
         if (auto* options = std::get_if<ElementCreationOptions>(&*argument)) {
-            registry = options->customElementRegistry;
-            if (registry && !registry->isScoped() && registry != customElementRegistry())
-                return Exception { ExceptionCode::NotSupportedError };
+            auto optionalRegistry = options->customElementRegistry;
+            if (optionalRegistry) {
+                registry = *optionalRegistry;
+                shouldUseNullRegistry = !registry;
+                if (registry && !registry->isScoped() && registry != document->customElementRegistry())
+                    return Exception { ExceptionCode::NotSupportedError };
+            }
         }
     }
 
@@ -2038,7 +2071,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
         CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
         return element;
     }
-    if (!registry && usesNullCustomElementRegistry())
+    if (shouldUseNullRegistry) [[unlikely]]
         element->setUsesNullCustomElementRegistry();
     return element;
 }
@@ -4162,10 +4195,12 @@ void Document::implicitOpen()
     setReadyState(ReadyState::Loading);
 }
 
-std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     CachedResourceHandle cachedFont = protectedFontLoader()->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
-    return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont, *this) : nullptr;
+    if (!cachedFont)
+        return nullptr;
+    return CachedFontLoadRequest::create(*cachedFont, *this);
 }
 
 void Document::beginLoadingFontSoon(FontLoadRequest& request)
@@ -7574,12 +7609,8 @@ const URL& Document::maskedURLForBindings()
 {
     // This function can be called from GC heap thread, thus we need to use StaticStringImpl as a source of URL.
     // StaticStringImpl is never converted to AtomString, and it is safe to be used in any threads.
-    static LazyNeverDestroyed<URL> url;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        url.construct(maskedURLStringForBindings());
-        ASSERT(url->string().impl() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
-    });
+    static NeverDestroyed<URL> url { maskedURLStringForBindings() };
+    ASSERT(url->string().impl() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
     return url;
 }
 
@@ -8739,7 +8770,7 @@ WindowEventLoop& Document::windowEventLoop()
 {
     ASSERT(isMainThread());
     if (!m_eventLoop) [[unlikely]] {
-        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(securityOrigin());
+        m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(contextDocument().securityOrigin());
         m_eventLoop->addAssociatedContext(*this);
     }
     return *m_eventLoop;
@@ -9073,6 +9104,32 @@ Ref<DocumentFullscreen> Document::protectedFullscreen()
 Ref<const DocumentFullscreen> Document::protectedFullscreen() const
 {
     return fullscreen();
+}
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+DocumentImmersive& Document::immersive()
+{
+    if (!m_immersive)
+        return ensureImmersive();
+    return *m_immersive;
+}
+
+const DocumentImmersive& Document::immersive() const
+{
+    if (!m_immersive)
+        return const_cast<Document&>(*this).ensureImmersive();
+    return *m_immersive;
+}
+
+Ref<DocumentImmersive> Document::protectedImmersive()
+{
+    return immersive();
+}
+
+Ref<const DocumentImmersive> Document::protectedImmersive() const
+{
+    return immersive();
 }
 #endif
 
@@ -10015,7 +10072,7 @@ void Document::didAssociateFormControlsTimerFired()
     }
 
     for (Ref control : controls) {
-        Ref event = Event::create(eventNames().webkitassociateformcontrolsEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
+        Ref event = Event::create(eventNames().webkitassociateformcontrolsEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes);
         event->setIsAutofillEvent();
         event->setTarget(control.ptr());
         control->dispatchEvent(event);
@@ -10868,9 +10925,9 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Functio
         return false;
     };
 
-    for (auto* animation : WebAnimation::instances()) {
+    for (auto& animation : WebAnimation::instances()) {
         if (animation->isRelevant() && effectCanBeListed(animation->effect()))
-            animations.append(animation);
+            animations.append(animation.get());
     }
 
     std::ranges::stable_sort(animations, [](auto& lhs, auto& rhs) {
@@ -10882,7 +10939,7 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(NOESCAPE const Functio
 
 void Document::keyframesRuleDidChange(const String& name)
 {
-    for (RefPtr animation : WebAnimation::instances()) {
+    for (auto& animation : WebAnimation::instances()) {
         auto cssAnimation = dynamicDowncast<CSSAnimation>(*animation);
         if (!cssAnimation || !cssAnimation->isRelevant())
             continue;
@@ -11901,10 +11958,8 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
         }, [&](StartViewTransitionOptions& options) {
             updateCallback = WTFMove(options.update);
 
-            if (options.types) {
-                ASSERT(settings().viewTransitionTypesEnabled());
+            if (options.types)
                 activeTypes = WTFMove(*options.types);
-            }
         });
     }
 

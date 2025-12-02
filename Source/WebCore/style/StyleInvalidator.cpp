@@ -303,10 +303,8 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     case MatchElement::AnySibling:
         // :nth-last-child(even of .changed)
-        if (CheckedPtr parentNode = element.parentNode()) {
-            for (auto& parentChild : childrenOfType<Element>(*element.parentNode()))
-                invalidateIfNeeded(parentChild, nullptr);
-        }
+        for (auto& parentChild : childrenOfType<Element>(*element.parentNode()))
+            invalidateIfNeeded(parentChild, nullptr);
         break;
     case MatchElement::ParentSibling:
         // .changed ~ .a > .subject

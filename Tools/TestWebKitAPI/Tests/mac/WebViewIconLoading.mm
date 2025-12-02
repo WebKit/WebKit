@@ -33,19 +33,20 @@
 static NSString *MainFrameIconKeyPath = @"mainFrameIcon";
 static bool messageReceived = false;
 
-static const char defaultFaviconHTML[] =
+static constexpr auto defaultFaviconHTML =
 "<html>" \
-"</html>";
+"</html>"_s;
 
-static const char customFaviconHTML[] =
+static constexpr auto customFaviconHTML =
 "<head>" \
 "<link rel=\"icon\" href=\"custom.ico\">" \
-"</head>";
+"</head>"_s;
 
-static const char* currentMainHTML;
+static const ASCIILiteral* currentMainHTML;
+
 static RetainPtr<NSData> mainResourceData()
 {
-    return toNSDataNoCopy(unsafeSpan8(currentMainHTML), FreeWhenDone::No);
+    return toNSData(byteCast<uint8_t>(currentMainHTML->span()));
 }
 
 static NSData *defaultFaviconData()
@@ -63,9 +64,7 @@ static NSData *customFaviconData()
 static NSImage *imageFromData(NSData *data)
 {
     auto image = adoptNS([[NSImage alloc] initWithData:data]);
-
     [image setSize:NSMakeSize(16, 16)];
-
     return image.autorelease();
 }
 
@@ -155,7 +154,7 @@ TEST(WebKitLegacy, IconLoadingDelegateDefaultFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 
-    currentMainHTML = defaultFaviconHTML;
+    currentMainHTML = &defaultFaviconHTML;
     @autoreleasepool {
         auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
         auto frameLoadDelegate = adoptNS([[IconLoadingFrameLoadDelegate alloc] init]);
@@ -178,7 +177,7 @@ TEST(WebKitLegacy, IconLoadingDelegateDefaultFirst)
         messageReceived = false;
         kvo->oldImage = imageFromData(defaultFaviconData());
         kvo->expectedImage = imageFromData(customFaviconData());
-        currentMainHTML = customFaviconHTML;
+        currentMainHTML = &customFaviconHTML;
         [webView.get().mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://testserver/2/main"]]];
 
         Util::run(&messageReceived);
@@ -196,7 +195,7 @@ TEST(WebKitLegacy, IconLoadingDelegateCustomFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 
-    currentMainHTML = customFaviconHTML;
+    currentMainHTML = &customFaviconHTML;
     @autoreleasepool {
         auto webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
         auto frameLoadDelegate = adoptNS([[IconLoadingFrameLoadDelegate alloc] init]);
@@ -219,7 +218,7 @@ TEST(WebKitLegacy, IconLoadingDelegateCustomFirst)
         messageReceived = false;
         kvo->oldImage = imageFromData(customFaviconData());
         kvo->expectedImage = imageFromData(defaultFaviconData());
-        currentMainHTML = defaultFaviconHTML;
+        currentMainHTML = &defaultFaviconHTML;
         [webView.get().mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://testserver/2/main"]]];
 
         Util::run(&messageReceived);

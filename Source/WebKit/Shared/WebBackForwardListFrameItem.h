@@ -29,6 +29,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RetainReleaseSwift.h>
 
 namespace WebKit {
 
@@ -57,8 +58,8 @@ public:
     void setParent(WebBackForwardListFrameItem* parent) { m_parent = parent; }
     bool sharesAncestor(WebBackForwardListFrameItem&) const;
 
-    WebBackForwardListFrameItem& rootFrame();
-    WebBackForwardListFrameItem& mainFrame();
+    Ref<WebBackForwardListFrameItem> rootFrame();
+    Ref<WebBackForwardListFrameItem> mainFrame();
     Ref<WebBackForwardListFrameItem> protectedMainFrame();
     WebBackForwardListFrameItem* childItemForFrameID(WebCore::FrameIdentifier);
     RefPtr<WebBackForwardListFrameItem> protectedChildItemForFrameID(WebCore::FrameIdentifier);
@@ -71,16 +72,12 @@ public:
 
     void setWasRestoredFromSession();
 
-#if !LOG_DISABLED
     String loggingString();
-#endif
 
 private:
     WebBackForwardListFrameItem(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
 
-#if !LOG_DISABLED
     String loggingStringAtIndent(size_t);
-#endif
 
     static HashMap<std::pair<WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& allItems();
 
@@ -89,6 +86,17 @@ private:
     Ref<FrameState> m_frameState;
     WeakPtr<WebBackForwardListFrameItem> m_parent;
     Vector<Ref<WebBackForwardListFrameItem>> m_children;
-};
+
+} SWIFT_SHARED_REFERENCE(refWebBackForwardListFrameItem, derefWebBackForwardListFrameItem);
 
 } // namespace WebKit
+
+inline void refWebBackForwardListFrameItem(WebKit::WebBackForwardListFrameItem* obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefWebBackForwardListFrameItem(WebKit::WebBackForwardListFrameItem* obj)
+{
+    WTF::deref(obj);
+}

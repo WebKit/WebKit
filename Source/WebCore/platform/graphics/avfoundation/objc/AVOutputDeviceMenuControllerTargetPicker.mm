@@ -51,7 +51,7 @@ static NSString *externalOutputDevicePickedKeyName = @"externalOutputDevicePicke
     WeakPtr<AVOutputDeviceMenuControllerTargetPicker> m_callback;
 }
 
-- (instancetype)initWithCallback:(WeakPtr<AVOutputDeviceMenuControllerTargetPicker>&&)callback;
+- (instancetype)initWithCallback:(AVOutputDeviceMenuControllerTargetPicker&)callback;
 - (void)clearCallback;
 - (void)observeValueForKeyPath:(id)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 @end
@@ -94,14 +94,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void AVOutputDeviceMenuControllerTargetPicker::availableDevicesDidChange()
 {
-    if (client())
-        client()->availableDevicesChanged();
+    if (CheckedPtr client = this->client())
+        client->availableDevicesChanged();
 }
 
 void AVOutputDeviceMenuControllerTargetPicker::currentDeviceDidChange()
 {
-    if (client())
-        client()->currentDeviceChanged();
+    if (CheckedPtr client = this->client())
+        client->currentDeviceChanged();
 }
 
 void AVOutputDeviceMenuControllerTargetPicker::showPlaybackTargetPicker(NSView *, const FloatRect& location, bool hasActiveRoute, bool useDarkAppearance)
@@ -121,7 +121,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (targetSelected != hasActiveRoute)
         currentDeviceDidChange();
     else if (!targetSelected && !hasActiveRoute)
-        client()->pickerWasDismissed();
+        CheckedRef { *client() }->pickerWasDismissed();
 
     m_showingMenu = false;
 }
@@ -161,7 +161,7 @@ AVOutputContext * AVOutputDeviceMenuControllerTargetPicker::outputContext()
 } // namespace WebCore
 
 @implementation WebAVOutputDeviceMenuControllerHelper
-- (instancetype)initWithCallback:(WeakPtr<AVOutputDeviceMenuControllerTargetPicker>&&)callback
+- (instancetype)initWithCallback:(AVOutputDeviceMenuControllerTargetPicker&)callback
 {
     if (!(self = [super init]))
         return nil;
@@ -189,13 +189,14 @@ AVOutputContext * AVOutputDeviceMenuControllerTargetPicker::outputContext()
         return;
 
     callOnMainThread([self, protectedSelf = retainPtr(self), keyPath = retainPtr(keyPath)] {
-        if (!m_callback)
+        CheckedPtr callback = m_callback.get();
+        if (!callback)
             return;
 
         if ([keyPath isEqualToString:externalOutputDeviceAvailableKeyName])
-            m_callback->availableDevicesDidChange();
+            callback->availableDevicesDidChange();
         else if ([keyPath isEqualToString:externalOutputDevicePickedKeyName])
-            m_callback->currentDeviceDidChange();
+            callback->currentDeviceDidChange();
     });
 }
 @end

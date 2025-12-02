@@ -6881,9 +6881,9 @@ void ByteCodeParser::parseGetById(const JSInstruction* currentInstruction, unsig
     Node* base = get(bytecode.m_base);
     
     AccessType type = AccessType::GetById;
-    if (Op::opcodeID == op_try_get_by_id)
+    if constexpr (Op::opcodeID == op_try_get_by_id)
         type = AccessType::TryGetById;
-    else if (Op::opcodeID == op_get_by_id_direct)
+    else if constexpr (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
     
     GetByStatus getByStatus = GetByStatus::computeFor(

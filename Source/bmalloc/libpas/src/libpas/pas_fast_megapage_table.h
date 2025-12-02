@@ -33,6 +33,7 @@
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
 #include "pas_lock.h"
+#include "pas_mte.h"
 #include <stdio.h>
 
 PAS_BEGIN_EXTERN_C;

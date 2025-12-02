@@ -1010,7 +1010,7 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
         HeapHolderFinder holderFinder(vm.ensureHeapProfiler(), target.asCell());
 
         auto holders = copyToVector(holderFinder.holders());
-        std::sort(holders.begin(), holders.end());
+        std::ranges::sort(holders);
         for (auto* holder : holders)
             result->putDirectIndex(globalObject, result->length(), holder);
     }

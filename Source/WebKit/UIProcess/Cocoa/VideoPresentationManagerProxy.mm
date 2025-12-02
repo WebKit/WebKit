@@ -31,6 +31,7 @@
 #import "APIPageConfiguration.h"
 #import "APIUIClient.h"
 #import "DrawingAreaProxy.h"
+#import "FrameInfoData.h"
 #import "GPUProcessProxy.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
@@ -41,6 +42,7 @@
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
+#import "WebFrameProxy.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -548,6 +550,20 @@ void VideoPresentationModelContext::setTextTrackRepresentationBounds(const IntRe
     if (RefPtr manager = m_manager.get())
         manager->setTextTrackRepresentationBounds(m_contextId, bounds);
 }
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+void VideoPresentationModelContext::requestShowCaptionDisplaySettingsPreview()
+{
+    if (RefPtr manager = m_manager.get())
+        manager->requestShowCaptionDisplaySettingsPreview(m_contextId);
+}
+
+void VideoPresentationModelContext::requestHideCaptionDisplaySettingsPreview()
+{
+    if (RefPtr manager = m_manager.get())
+        manager->requestHideCaptionDisplaySettingsPreview(m_contextId);
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 uint64_t VideoPresentationModelContext::logIdentifier() const
@@ -1358,6 +1374,43 @@ void VideoPresentationManagerProxy::setTextTrackRepresentationBounds(PlaybackSes
 {
     sendToWebProcess(contextId, Messages::VideoPresentationManager::SetTextTrackRepresentationBounds(contextId.object(), bounds));
 }
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+void VideoPresentationManagerProxy::performCaptionDisplaySettingsAction(PlaybackSessionContextIdentifier contextId, Function<void(WebPageProxy&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier)>&& action)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr mainFrame = page->mainFrame();
+    if (!mainFrame)
+        return;
+
+    WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier { contextId.object() };
+
+    mainFrame->getFrameInfo([protectedPage = RefPtr { page }, action = WTFMove(action), htmlMediaElementIdentifier](std::optional<FrameInfoData>&& frameInfo) {
+        if (!frameInfo || !protectedPage)
+            return;
+
+        action(*protectedPage, *frameInfo, htmlMediaElementIdentifier);
+    });
+}
+
+void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId)
+{
+    performCaptionDisplaySettingsAction(contextId, [](WebPageProxy& page, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier) {
+        page.showCaptionDisplaySettingsPreview(frameInfo, htmlMediaElementIdentifier);
+    });
+}
+
+void VideoPresentationManagerProxy::requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId)
+{
+    performCaptionDisplaySettingsAction(contextId, [](WebPageProxy& page, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier) {
+        page.hideCaptionDisplaySettingsPreview(frameInfo, htmlMediaElementIdentifier);
+    });
+}
+#endif
 
 void VideoPresentationManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, ShareableBitmap::Handle&& textTrack)
 {

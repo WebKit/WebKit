@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CaptionDisplaySettingsEnabled=true ] -->
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>caption-display-settings</title>
+	<script src="../video-test.js"></script>
+	<script>
+	async function runTest() {
+		findMediaElement();
+
+		testExpected('video.showCaptionDisplaySettings', undefined, '!=');
+	}
+
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+	</script>
+</head>
+<body>
+	<video muted autoplay></video>
+</body>
+</html>

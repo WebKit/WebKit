@@ -69,7 +69,7 @@ public:
 #endif
 };
 
-class MediaSession : public RefCountedAndCanMakeWeakPtr<MediaSession>, public ActiveDOMObject {
+class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(MediaSession);
 public:
     void ref() const final { RefCounted::ref(); }
@@ -205,8 +205,10 @@ void MediaSession::visitActionHandlers(Visitor& visitor) const
 {
     Locker lock { m_actionHandlersLock };
     for (auto& actionHandler : m_actionHandlers) {
-        if (actionHandler.value)
-            actionHandler.value->visitJSFunction(visitor);
+        if (actionHandler.value) {
+            // We are not ref'ing here as this function may get called from the GC thread.
+            SUPPRESS_UNCOUNTED_ARG actionHandler.value->visitJSFunction(visitor);
+        }
     }
 }
 

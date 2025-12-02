@@ -53,7 +53,7 @@ except ImportError:
 version = Version(7, 0, 2)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
-AutoInstall.register(Package('markupsafe', Version(3, 0, 2), pypi_name='MarkupSafe', wheel=True))
+AutoInstall.register(Package('markupsafe', Version(3, 0, 3), pypi_name='MarkupSafe', wheel=True))
 AutoInstall.register(Package('jinja2', Version(3, 1, 4), implicit_deps=['markupsafe']))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))

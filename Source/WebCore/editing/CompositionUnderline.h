@@ -51,6 +51,13 @@ struct CompositionUnderline {
     CompositionUnderlineColor compositionUnderlineColor { CompositionUnderlineColor::TextColor };
     Color color;
     bool thick { false };
+
+    friend std::strong_ordering operator<=>(const CompositionUnderline& a, const CompositionUnderline& b)
+    {
+        return std::make_pair(a.startOffset, a.endOffset) <=> std::make_pair(b.startOffset, b.endOffset);
+    }
+
+    friend bool operator==(const CompositionUnderline&, const CompositionUnderline&) = default;
 };
 
 } // namespace WebCore

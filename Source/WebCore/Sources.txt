@@ -21,7 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-Modules/Model/Implementation/DDMeshImpl.cpp
 Modules/Model/Implementation/ModelDowncastConvertToBackingContext.cpp
 Modules/ShapeDetection/BarcodeDetector.cpp
 Modules/ShapeDetection/FaceDetector.cpp
@@ -525,6 +524,7 @@ Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webtransport/DatagramSink.cpp
 Modules/webtransport/DatagramSource.cpp
+Modules/webtransport/DatagramByteSource.cpp
 Modules/webtransport/WebTransport.cpp
 Modules/webtransport/WebTransportBidirectionalStream.cpp
 Modules/webtransport/WebTransportBidirectionalStreamSource.cpp
@@ -586,6 +586,7 @@ accessibility/AXAttributeCacheScope.cpp
 accessibility/AXComputedObjectAttributeCache.cpp
 accessibility/AXCoreObject.cpp
 accessibility/AXGeometryManager.cpp
+accessibility/AXLiveRegionManager.cpp
 accessibility/AXLocalFrame.cpp
 accessibility/AXLogger.cpp
 accessibility/AXLoggerBase.cpp
@@ -593,6 +594,7 @@ accessibility/AXObjectCache.cpp
 accessibility/AXObjectRareData.cpp
 accessibility/AXRemoteFrame.cpp
 accessibility/AXSearchManager.cpp
+accessibility/AXStitchUtilities.cpp
 accessibility/AXTableHelpers.cpp
 accessibility/AXTextMarker.cpp
 accessibility/AXTextRun.cpp
@@ -1243,6 +1245,7 @@ dom/Document.cpp
 dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
 dom/DocumentFullscreen.cpp
+dom/DocumentImmersive.cpp
 dom/DocumentMarkerController.cpp
 dom/DocumentMediaElement.cpp
 dom/DocumentOrShadowRootFullscreen.cpp
@@ -1622,6 +1625,7 @@ html/HTMLTrackElement.cpp
 html/HTMLUListElement.cpp
 html/HTMLUnknownElement.cpp
 html/HTMLVideoElement.cpp
+html/HTMLVideoElementCaptionDisplaySettings.cpp
 html/HTMLWBRElement.cpp
 html/HiddenInputType.cpp
 html/ImageBitmap.cpp
@@ -2850,6 +2854,7 @@ rendering/MarkedText.cpp
 rendering/MotionPath.cpp
 rendering/NinePieceImagePainter.cpp
 rendering/OrderIterator.cpp
+rendering/OutlinePainter.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/PositionedLayoutConstraints.cpp
@@ -2976,8 +2981,6 @@ rendering/style/BorderValue.cpp
 rendering/style/DropShadowFilterOperationWithStyleColor.cpp
 rendering/style/GridSpan.cpp
 rendering/style/OutlineValue.cpp
-rendering/style/PositionArea.cpp
-rendering/style/PositionTryFallback.cpp
 rendering/style/PositionTryOrder.cpp
 rendering/style/ReferenceFilterOperation.cpp
 rendering/style/RenderStyle.cpp
@@ -2985,6 +2988,7 @@ rendering/style/RenderStyleConstants.cpp
 rendering/style/SVGRenderStyle.cpp
 rendering/style/SVGRenderStyleDefs.cpp
 rendering/style/StyleAppleColorFilterData.cpp
+rendering/style/StyleBackdropFilterData.cpp
 rendering/style/StyleBackgroundData.cpp
 rendering/style/StyleBoxData.cpp
 rendering/style/StyleCachedImage.cpp
@@ -3150,6 +3154,7 @@ style/StyleExtractor.cpp
 style/StyleFontSizeFunctions.cpp
 style/StyleInterpolation.cpp
 style/StyleInvalidator.cpp
+style/StyleNameScope.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
 style/StyleResolveForDocument.cpp
@@ -3174,6 +3179,12 @@ style/values/align/StyleAlignSelf.cpp
 style/values/align/StyleJustifyContent.cpp
 style/values/align/StyleJustifyItems.cpp
 style/values/align/StyleJustifySelf.cpp
+style/values/anchor-position/StylePositionAreaAxis.cpp
+style/values/anchor-position/StylePositionAreaSelf.cpp
+style/values/anchor-position/StylePositionAreaSpan.cpp
+style/values/anchor-position/StylePositionAreaTrack.cpp
+style/values/anchor-position/StylePositionArea.cpp
+style/values/anchor-position/StylePositionTryFallback.cpp
 style/values/animations/StyleAnimation.cpp
 style/values/animations/StyleSingleAnimationName.cpp
 style/values/animations/StyleSingleAnimationRangeName.cpp
@@ -3276,6 +3287,7 @@ style/values/masking/StyleMaskBorderSource.cpp
 style/values/masking/StyleMaskBorderWidth.cpp
 style/values/masking/StyleMaskBorder.cpp
 style/values/masking/StyleMaskLayer.cpp
+style/values/masking/StyleMaskMode.cpp
 style/values/math/StyleMathDepth.cpp
 style/values/motion/StyleOffsetAnchor.cpp
 style/values/motion/StyleOffsetPath.cpp
@@ -3286,6 +3298,7 @@ style/values/multicol/StyleColumnCount.cpp
 style/values/multicol/StyleColumnWidth.cpp
 style/values/non-standard/StyleWebKitBoxReflect.cpp
 style/values/non-standard/StyleWebKitLineClamp.cpp
+style/values/non-standard/StyleWebKitLocale.cpp
 style/values/non-standard/StyleWebKitOverflowScrolling.cpp
 style/values/non-standard/StyleWebKitTextStrokeWidth.cpp
 style/values/non-standard/StyleWebKitTouchCallout.cpp
@@ -3346,6 +3359,8 @@ style/values/text-decoration/StyleTextUnderlinePosition.cpp
 style/values/text/StyleHangingPunctuation.cpp
 style/values/text/StyleLetterSpacing.cpp
 style/values/text/StyleTabSize.cpp
+style/values/text/StyleTextAlign.cpp
+style/values/text/StyleTextAlignLast.cpp
 style/values/text/StyleTextAutospace.cpp
 style/values/text/StyleTextIndent.cpp
 style/values/text/StyleTextTransform.cpp
@@ -3369,6 +3384,7 @@ style/values/transitions/StyleSingleTransitionProperty.cpp
 style/values/transitions/StyleTransition.cpp
 style/values/ui/StyleAccentColor.cpp
 style/values/ui/StyleCursor.cpp
+style/values/ui/StyleResize.cpp
 style/values/view-transitions/StyleViewTransitionName.cpp
 style/values/will-change/StyleWillChange.cpp
 svg/DocumentSVG.cpp
@@ -3863,6 +3879,7 @@ JSCanvasTextBaseline.cpp
 JSCanvasTextDrawingStyles.cpp
 JSCanvasTransform.cpp
 JSCanvasUserInterface.cpp
+JSCaptionDisplaySettingsOptions.cpp
 JSCaretPosition.cpp
 JSCaretPositionFromPointOptions.cpp
 JSChannelCountMode.cpp
@@ -3972,6 +3989,7 @@ JSDataCue.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
 JSDataTransferItemList.cpp
+JSDatagramsReadableMode.cpp
 JSDatabase.cpp
 JSDatabaseCallback.cpp
 JSDecompressionStream.cpp

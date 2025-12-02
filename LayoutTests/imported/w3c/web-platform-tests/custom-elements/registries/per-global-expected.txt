@@ -1,6 +1,0 @@
-
-
-FAIL Navigating from the initial about:blank must not replace window.customElements assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
-PASS Discarding the browsing context must not change window.customElements
-PASS document.open() must not replace window.customElements
-

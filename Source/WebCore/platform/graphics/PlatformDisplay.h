@@ -114,7 +114,7 @@ public:
 
 #if USE(SKIA)
     GLContext* skiaGLContext();
-    GrDirectContext* skiaGrContext();
+    GrDirectContext* skiaGrContext() const;
     unsigned msaaSampleCount() const;
 #endif
 

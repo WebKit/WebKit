@@ -197,7 +197,7 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
                     _("Unknown favicon for page %s"), pageURI.data());
                 return;
             }
-            const auto& icon = icons.last();
+            auto& icon = icons.last();
 #if USE(CAIRO)
             g_task_return_pointer(task.get(), icon.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
 #elif USE(SKIA)

@@ -92,12 +92,8 @@ void RemoteBufferProxy::copyFrom(std::span<const uint8_t> span, size_t offset)
 
     size_t actualCopySize = span.size() - offset;
     if (actualCopySize > maxCrossProcessResourceCopySize) {
-        auto sharedMemory = WebCore::SharedMemory::copySpan(span);
-        std::optional<WebCore::SharedMemoryHandle> handle;
-        if (sharedMemory)
-            handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTFMove(handle), offset), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
-            RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+        auto handle = WebCore::SharedMemoryHandle::createCopy(span, WebCore::SharedMemory::Protection::ReadOnly);
+        auto sendResult = sendWithAsyncReply(Messages::RemoteBuffer::Copy(WTFMove(handle), offset), [](auto) {
         });
         UNUSED_VARIABLE(sendResult);
     } else {

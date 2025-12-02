@@ -118,7 +118,7 @@ void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourc
             Locker contextLocker { context().graphLock() };
 
             // Do any necesssary re-configuration to the output's number of channels.
-            output(0)->setNumberOfChannels(numberOfChannels);
+            checkedOutput(0)->setNumberOfChannels(numberOfChannels);
         }
     }
 }
@@ -144,7 +144,7 @@ bool MediaElementAudioSourceNode::wouldTaintOrigin()
 
 void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 {
-    Ref outputBus = output(0)->bus();
+    Ref outputBus = checkedOutput(0)->bus();
 
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of

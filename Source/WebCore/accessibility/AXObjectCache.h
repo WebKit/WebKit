@@ -44,6 +44,7 @@
 #include <wtf/WeakHashSet.h>
 
 #if PLATFORM(COCOA)
+#include <WebCore/AttributedString.h>
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -59,6 +60,7 @@ namespace WebCore {
 class AXComputedObjectAttributeCache;
 class AXGeometryManager;
 class AXIsolatedTree;
+class AXLiveRegionManager;
 class AXRemoteFrame;
 class AccessibilityNodeObject;
 class AccessibilityObject;
@@ -71,6 +73,7 @@ class HTMLTextFormControlElement;
 class Node;
 class Page;
 class RenderBlock;
+class RenderBlockFlow;
 class RenderImage;
 class RenderObject;
 class RenderStyle;
@@ -88,6 +91,7 @@ struct TextMarkerData;
 enum class AXNotification : uint8_t;
 enum class AXStreamOptions : uint16_t;
 enum class AXProperty : uint16_t;
+enum class LiveRegionStatus: uint8_t;
 enum class TextMarkerOrigin : uint16_t;
 
 struct CharacterOffset {
@@ -139,6 +143,8 @@ enum class NotifyPriority : uint8_t { Normal, High };
 
 enum class InterruptBehavior : uint8_t { None, All, Pending };
 
+enum class LiveRegionStatus : uint8_t { Off, Polite, Assertive };
+
 // When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
 struct AriaNotifyData {
     String message;
@@ -148,6 +154,12 @@ struct AriaNotifyData {
 };
 
 #if PLATFORM(COCOA)
+// When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
+struct LiveRegionAnnouncementData {
+    AttributedString message;
+    LiveRegionStatus status { LiveRegionStatus::Polite };
+};
+
 struct AXTextChangeContext {
     AXTextStateChangeIntent intent;
     String deletedText;
@@ -358,6 +370,10 @@ public:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     void onTextRunsChanged(const RenderObject&);
 #endif
+
+    void onLaidOutInlineContent(const RenderBlockFlow& renderBlock) { setDirtyStitchGroups(renderBlock); }
+    const Vector<Vector<AXID>>* stitchGroupsOwnedBy(AccessibilityObject&);
+
     void updateLoadingProgress(double);
     void loadingFinished() { updateLoadingProgress(1); }
     double loadingProgress() const { return m_loadingProgress; }
@@ -429,6 +445,7 @@ public:
     static bool useAXThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
     static bool shouldCreateAXThreadCompatibleMarkers() { return gAccessibilityThreadTextApisEnabled && isIsolatedTreeEnabled(); }
 #endif
+    static bool isAXTextStitchingEnabled() { return gAccessibilityTextStitchingEnabled; }
 
 #if PLATFORM(COCOA)
     static bool shouldRepostNotificationsForTests() { return gShouldRepostNotificationsForTests; }
@@ -517,6 +534,7 @@ public:
     }
     void postNotification(AccessibilityObject&, AXNotification);
     void postARIANotifyNotification(Node&, const String&, const AriaNotifyOptions&);
+    void postLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
     // Requests clients to announce to the user the given message in the way they deem appropriate.
     WEBCORE_EXPORT void announce(const String&);
 
@@ -641,9 +659,11 @@ protected:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void postPlatformAnnouncementNotification(const String&);
     WEBCORE_EXPORT void postPlatformARIANotifyNotification(const String&, NotifyPriority, InterruptBehavior, const String&);
+    WEBCORE_EXPORT void postPlatformLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&);
 #else
     void postPlatformAnnouncementNotification(const String&) { }
     void postPlatformARIANotifyNotification(const String&, NotifyPriority, InterruptBehavior, const String&) { }
+    void postPlatformLiveRegionNotification(AccessibilityObject&, LiveRegionStatus, const AttributedString&) { }
 #endif
 
     void frameLoadingEventPlatformNotification(RenderView*, AXLoadingEvent);
@@ -718,6 +738,9 @@ private:
     void handleARIARoleDescriptionChanged(Element&);
     void handleMenuOpened(Element&);
     void handleLiveRegionCreated(Element&);
+#if PLATFORM(COCOA)
+    void initializeLiveRegionManager();
+#endif
     void handleMenuItemSelected(Element*);
     void handleTabPanelSelected(Element*, Element*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
@@ -743,6 +766,8 @@ private:
     void updateCurrentModalNode();
     bool isNodeVisible(const Node*) const;
     bool modalElementHasAccessibleContent(Element&);
+
+    void setDirtyStitchGroups(const RenderBlock&);
 
     // Relationships between objects.
     static Vector<QualifiedName>& relationAttributes();
@@ -800,6 +825,9 @@ private:
     WeakHashMap<RenderText, LineRange, SingleThreadWeakPtrImpl> m_mostRecentlyPaintedText;
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
+#if PLATFORM(COCOA)
+    std::unique_ptr<AXLiveRegionManager> m_liveRegionManager;
+#endif
 
     WEBCORE_EXPORT static std::atomic<bool> gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
@@ -812,6 +840,8 @@ private:
     // Accessed on and off the main thread.
     static std::atomic<bool> gAccessibilityThreadTextApisEnabled;
 #endif
+    // Accessed on and off the main thread.
+    static std::atomic<bool> gAccessibilityTextStitchingEnabled;
 
 #if PLATFORM(COCOA)
     static std::atomic<bool> gAccessibilityDOMIdentifiersEnabled;
@@ -846,6 +876,8 @@ private:
     bool m_isRetrievingCurrentModalNode { false };
 
 #if PLATFORM(COCOA)
+    bool m_liveRegionManagerInitialized { false };
+
     static std::atomic<bool> gShouldRepostNotificationsForTests;
 #endif
 
@@ -855,7 +887,7 @@ private:
     WeakHashSet<AccessibilityObject> m_deferredRendererChangedList;
     WeakHashSet<AccessibilityObject> m_deferredRecomputeActiveSummaryList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
-    WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     WeakHashSet<AccessibilityNodeObject> m_deferredRecomputeTableCellSlotsList;
     WeakHashSet<AccessibilityNodeObject> m_deferredRowspanChanges;
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
@@ -906,6 +938,8 @@ private:
     Markable<AXID> m_lastTextFieldAXID;
     VisibleSelection m_lastSelection;
 #endif
+
+    WeakHashMap<RenderObject, Vector<Vector<AXID>>, SingleThreadWeakPtrImpl> m_stitchGroups;
 };
 
 inline bool AXObjectCache::accessibilityEnabled()

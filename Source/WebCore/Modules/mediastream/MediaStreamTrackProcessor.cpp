@@ -103,7 +103,7 @@ void MediaStreamTrackProcessor::tryEnqueueingVideoFrame()
     if (!context || !videoFrameObserverWrapper || !m_readable)
         return;
 
-    if (m_readableStreamSource->isCancelled())
+    if (m_readableStreamSource->isCancelled() || !m_readableStreamSource->isEnabled())
         return;
 
     // FIXME: If the stream is waiting, we might want to buffer based on
@@ -260,7 +260,7 @@ void MediaStreamTrackProcessor::Source::doPull()
     Ref { m_processor.get() }->tryEnqueueingVideoFrame();
 }
 
-void MediaStreamTrackProcessor::Source::doCancel()
+void MediaStreamTrackProcessor::Source::doCancel(JSC::JSValue)
 {
     m_isCancelled = true;
     Ref { m_processor.get() }->stopVideoFrameObserver();

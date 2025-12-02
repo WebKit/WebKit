@@ -38,7 +38,7 @@ class CryptoAlgorithm;
 
 class CryptoAlgorithmRegistry {
     WTF_MAKE_NONCOPYABLE(CryptoAlgorithmRegistry);
-    friend class LazyNeverDestroyed<CryptoAlgorithmRegistry>;
+    friend class NeverDestroyed<CryptoAlgorithmRegistry>;
 
 public:
     static CryptoAlgorithmRegistry& singleton();

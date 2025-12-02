@@ -92,11 +92,13 @@ class RTCPeerConnection final
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
     WEBCORE_EXPORT virtual ~RTCPeerConnection();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     using DataChannelInit = RTCDataChannelInit;
 

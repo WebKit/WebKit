@@ -39,6 +39,10 @@ public:
     static Ref<SVGUseElement> create(const QualifiedName&, Document&);
     virtual ~SVGUseElement();
 
+    // CachedResourceClient.
+    void ref() const final { SVGGraphicsElement::ref(); }
+    void deref() const final { SVGGraphicsElement::deref(); }
+
     void invalidateShadowTree();
     void updateUserAgentShadowTree() final;
 

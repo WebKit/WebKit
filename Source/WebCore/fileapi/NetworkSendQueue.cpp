@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+Ref<NetworkSendQueue> NetworkSendQueue::create(ScriptExecutionContext& context, WriteString&& writeString, WriteRawData&& writeRawData, ProcessError&& processError)
+{
+    return adoptRef(*new NetworkSendQueue(context, WTFMove(writeString), WTFMove(writeRawData), WTFMove(processError)));
+}
+
 NetworkSendQueue::NetworkSendQueue(ScriptExecutionContext& context, WriteString&& writeString, WriteRawData&& writeRawData, ProcessError&& processError)
     : ContextDestructionObserver(&context)
     , m_writeString(WTFMove(writeString))
@@ -73,8 +78,9 @@ void NetworkSendQueue::enqueue(WebCore::Blob& blob)
         enqueue(JSC::ArrayBuffer::create(static_cast<size_t>(0U), 1), 0, 0);
         return;
     }
-    Ref blobLoader = BlobLoader::create([this](BlobLoader&) {
-        processMessages();
+    Ref blobLoader = BlobLoader::create([weakThis = WeakPtr { *this }](BlobLoader&) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->processMessages();
     });
     m_queue.append(blobLoader.copyRef());
     blobLoader->start(blob, context.get(), FileReaderLoader::ReadAsArrayBuffer);

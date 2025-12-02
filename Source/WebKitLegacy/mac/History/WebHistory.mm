@@ -188,7 +188,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     ASSERT_ARG(entry, entry != nil);
     ASSERT(_entriesByDate->contains(dateKey));
 
-    NSMutableArray *entriesForDate = _entriesByDate->get(dateKey).unsafeGet();
+    RetainPtr<NSMutableArray> entriesForDate = _entriesByDate->get(dateKey);
     NSTimeInterval entryDate = [entry lastVisitedTimeInterval];
 
     unsigned count = [entriesForDate count];
@@ -452,7 +452,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WebHistoryDateKey dateKey;
     if (![self findKey:&dateKey forDay:[date timeIntervalSinceReferenceDate]])
         return nil;
-    return _entriesByDate->get(dateKey).unsafeGet();
+    return _entriesByDate->get(dateKey);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -879,7 +879,7 @@ WebHistoryWriter::WebHistoryWriter(DateToEntriesMap* entriesByDate)
 void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)
 {
     for (int dateIndex = m_dateKeys.size() - 1; dateIndex >= 0; dateIndex--) {
-        NSArray *entries = m_entriesByDate->get(m_dateKeys[dateIndex]).unsafeGet();
+        RetainPtr<NSArray> entries = m_entriesByDate->get(m_dateKeys[dateIndex]);
         NSUInteger entryCount = [entries count];
         for (NSUInteger entryIndex = 0; entryIndex < entryCount; ++entryIndex)
             writeHistoryItem(stream, [entries objectAtIndex:entryIndex]);

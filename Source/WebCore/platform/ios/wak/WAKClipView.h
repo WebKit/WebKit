@@ -28,7 +28,7 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WAKView.h"
+#import <WebCore/WAKView.h>
 
 WEBCORE_EXPORT @interface WAKClipView : WAKView
 

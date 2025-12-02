@@ -27,20 +27,20 @@ layer at (0,0) size 800x205
                         layer at (0,0) size 139x69
                           RenderView at (0,0) size 139x69
                         layer at (0,0) size 139x69
-                          RenderSVGRoot {svg} at (15,0) size 66x48
-                            RenderSVGContainer {g} at (19,5) size 52x33
-                              RenderSVGRect {rect} at (20,5) size 8x13 [stroke={[type=SOLID] [color=#000000]}] [x=30.00] [y=46.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (33,5) size 8x13 [fill={[type=SOLID] [color=#FF0000]}] [x=130.00] [y=46.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (49,5) size 8x13 [stroke={[type=SOLID] [color=#000000]}] [x=250.00] [y=46.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (62,5) size 9x13 [fill={[type=SOLID] [color=#FF0000]}] [x=350.00] [y=46.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (19,25) size 9x13 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=30.00] [y=196.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (32,25) size 9x13 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=130.00] [y=196.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (48,25) size 9x13 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=250.00] [y=196.00] [width=50.00] [height=80.00]
-                              RenderSVGRect {rect} at (62,25) size 9x12 [fill={[type=SOLID] [color=#00FF00]}] [x=350.00] [y=196.00] [width=50.00] [height=80.00]
-                            RenderSVGText {text} at (10,302) size 264x48 contains 1 chunk(s)
-                              RenderSVGInlineText {#text} at (0,0) size 264x48
+                          RenderSVGRoot {svg} at (23,0) size 93x69
+                            RenderSVGContainer {g} at (28,8) size 73x46
+                              RenderSVGRect {rect} at (29,8) size 10x17 [stroke={[type=SOLID] [color=#000000]}] [x=30.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (48,8) size 10x17 [fill={[type=SOLID] [color=#FF0000]}] [x=130.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (71,8) size 11x17 [stroke={[type=SOLID] [color=#000000]}] [x=250.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (90,8) size 11x17 [fill={[type=SOLID] [color=#FF0000]}] [x=350.00] [y=46.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (28,36) size 12x18 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=30.00] [y=196.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (47,36) size 12x18 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=130.00] [y=196.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (70,36) size 12x18 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=250.00] [y=196.00] [width=50.00] [height=80.00]
+                              RenderSVGRect {rect} at (90,37) size 11x16 [fill={[type=SOLID] [color=#00FF00]}] [x=350.00] [y=196.00] [width=50.00] [height=80.00]
+                            RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+                              RenderSVGInlineText {#text} at (0,0) size 264x46
                                 chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
-                            RenderSVGRect {rect} at (15,0) size 66x48 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+                            RenderSVGRect {rect} at (23,0) size 93x69 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {td} at (247,95) size 245x84 [r=2 c=1 rs=1 cs=1]
                       RenderImage {img} at (5,5) size 140x70

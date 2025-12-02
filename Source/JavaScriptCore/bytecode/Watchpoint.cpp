@@ -98,6 +98,10 @@ WatchpointSet::WatchpointSet(WatchpointState state)
 
 WatchpointSet::~WatchpointSet()
 {
+    // FIXME(rdar://165379969): This is here to silence a RefcountDebugger ASSERT. But the
+    // ASSERT is correct and our code is incorrect!
+    willDelete();
+
     // Remove all watchpoints, so that they don't try to remove themselves. Note that we
     // don't fire watchpoints on deletion. We assume that any code that is interested in
     // watchpoints already also separately has a mechanism to make sure that the code is

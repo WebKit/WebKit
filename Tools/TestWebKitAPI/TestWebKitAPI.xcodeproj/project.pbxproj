@@ -186,6 +186,8 @@
 		3A7AA56028E28E99009E09C2 /* ConstLiteralTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA55F28E28E99009E09C2 /* ConstLiteralTests.cpp */; };
 		3A9C438828E3E057002F7294 /* ASTStringDumperTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C438028E3E057002F7294 /* ASTStringDumperTests.cpp */; };
 		3A9C438B28E3E240002F7294 /* TestWGSLAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A9C438928E3E240002F7294 /* TestWGSLAPI.cpp */; };
+		3AB1F1CA2ED0D81400114FBF /* SiteIsolationLoadWebArchive.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AB1F1C92ED0D81400114FBF /* SiteIsolationLoadWebArchive.webarchive */; };
+		3AB1F1D52ED11FCC00114FBF /* SiteIsolationLoadWebArchiveNestedFrame.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AB1F1D42ED11FCC00114FBF /* SiteIsolationLoadWebArchiveNestedFrame.webarchive */; };
 		3ADD8988299F192F005DCE4E /* MetalGenerationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD897E299F1400005DCE4E /* MetalGenerationTests.cpp */; };
 		3AF4A0952D9DEE0B00B3FF5E /* icon-svg-16.tiff in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AF4A0932D9DEE0B00B3FF5E /* icon-svg-16.tiff */; };
 		3AF4A0962D9DEE0B00B3FF5E /* icon-svg-256.tiff in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AF4A0942D9DEE0B00B3FF5E /* icon-svg-256.tiff */; };
@@ -423,6 +425,7 @@
 		7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */; };
 		7B774906267CCE72009873B4 /* TestRunnerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B774904267CCE68009873B4 /* TestRunnerTests.cpp */; };
 		7B7D096A2519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */; };
+		7B84864C2ED4465C00E34DC1 /* SharedMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B84864B2ED4465C00E34DC1 /* SharedMemoryTests.cpp */; };
 		7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		7B9FC3A028A26137007570E7 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		7B9FC3AA28A26137007570E7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
@@ -1366,6 +1369,7 @@
 		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		DF6580942722168900B3F1C1 /* ASN1Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6580922722168900B3F1C1 /* ASN1Utilities.cpp */; };
 		DFB80E38261512C1002D4771 /* TestAwakener.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFB80E362615124E002D4771 /* TestAwakener.mm */; };
+		E1DCD2A72ECEB57200035D13 /* blob-popup-file-mainframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */; };
 		E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */; };
 		E30F393428F4973800113EE7 /* SyscallUnixSandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */; };
 		E316D42027647A0200287B16 /* RefCountedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */; };
@@ -1884,6 +1888,7 @@
 				A17C46A02C98E54B0023F3C7 /* beforeunload-slow.html in Copy Resources */,
 				A17C46A12C98E54B0023F3C7 /* beforeunload.html in Copy Resources */,
 				A17C47212C98E5C20023F3C7 /* blinking-div.html in Copy Resources */,
+				E1DCD2A72ECEB57200035D13 /* blob-popup-file-mainframe.html in Copy Resources */,
 				A17C46A22C98E54B0023F3C7 /* bundle-file.html in Copy Resources */,
 				A17C47222C98E5C20023F3C7 /* camera-to-canvas.html in Copy Resources */,
 				A17C466C2C98E4D20023F3C7 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
@@ -2261,6 +2266,8 @@
 				A17C46EF2C98E54B0023F3C7 /* simple.html in Copy Resources */,
 				A17C46F02C98E54B0023F3C7 /* simple2.html in Copy Resources */,
 				A17C46F12C98E54B0023F3C7 /* simple3.html in Copy Resources */,
+				3AB1F1CA2ED0D81400114FBF /* SiteIsolationLoadWebArchive.webarchive in Copy Resources */,
+				3AB1F1D52ED11FCC00114FBF /* SiteIsolationLoadWebArchiveNestedFrame.webarchive in Copy Resources */,
 				A17C47FB2C98E5C20023F3C7 /* skinny-autoplaying-video-with-audio.html in Copy Resources */,
 				1FEF15102D7A2AA900D29B57 /* SkipAdInPictureInPicture.html in Copy Resources */,
 				A17C46F22C98E54B0023F3C7 /* spacebar-scrolling.html in Copy Resources */,
@@ -2837,6 +2844,8 @@
 		3A9C438928E3E240002F7294 /* TestWGSLAPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestWGSLAPI.cpp; sourceTree = "<group>"; };
 		3A9C438A28E3E240002F7294 /* TestWGSLAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestWGSLAPI.h; sourceTree = "<group>"; };
 		3AA7856029B6C8AA00C4374A /* TestWebKitAPIPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWebKitAPIPrefix.h; sourceTree = "<group>"; };
+		3AB1F1C92ED0D81400114FBF /* SiteIsolationLoadWebArchive.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = SiteIsolationLoadWebArchive.webarchive; sourceTree = "<group>"; };
+		3AB1F1D42ED11FCC00114FBF /* SiteIsolationLoadWebArchiveNestedFrame.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = SiteIsolationLoadWebArchiveNestedFrame.webarchive; sourceTree = "<group>"; };
 		3ADD897E299F1400005DCE4E /* MetalGenerationTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalGenerationTests.cpp; sourceTree = "<group>"; };
 		3AEA55B22CB0897200A9ECAA /* WKPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreferences.mm; sourceTree = "<group>"; };
 		3AF4A0932D9DEE0B00B3FF5E /* icon-svg-16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "icon-svg-16.tiff"; sourceTree = "<group>"; };
@@ -3385,6 +3394,7 @@
 		7B7392EB28F84BD2007297FC /* IPCTestUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IPCTestUtilities.cpp; sourceTree = "<group>"; };
 		7B774904267CCE68009873B4 /* TestRunnerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunnerTests.cpp; sourceTree = "<group>"; };
 		7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLNoCrashOnOtherThreadAccess.mm; sourceTree = "<group>"; };
+		7B84864B2ED4465C00E34DC1 /* SharedMemoryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryTests.cpp; sourceTree = "<group>"; };
 		7B9FC57E28A26137007570E7 /* TestIPC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestIPC; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B9FC58328A26792007570E7 /* StreamConnectionBufferTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionBufferTests.cpp; sourceTree = "<group>"; };
 		7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestIPC.xcconfig; sourceTree = "<group>"; };
@@ -4091,6 +4101,7 @@
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
 		E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StopLoadingFromDidReceiveResponse.html; sourceTree = "<group>"; };
+		E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "blob-popup-file-mainframe.html"; sourceTree = "<group>"; };
 		E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtrTuple.cpp; sourceTree = "<group>"; };
 		E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SyscallUnixSandboxCheck.mm; sourceTree = "<group>"; };
 		E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedFixedVector.cpp; sourceTree = "<group>"; };
@@ -5315,6 +5326,7 @@
 				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
 				A17991891E1CA24100A505ED /* SharedBufferTest.cpp */,
 				A179918A1E1CA24100A505ED /* SharedBufferTest.h */,
+				7B84864B2ED4465C00E34DC1 /* SharedMemoryTests.cpp */,
 				ECA680CD1E68CC0900731D20 /* StringUtilities.mm */,
 				CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */,
 				41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */,
@@ -5753,6 +5765,7 @@
 				F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */,
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
+				E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */,
 				0794742C25CB33B000C597EE /* camera-to-canvas.html */,
 				F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */,
 				F43B320D2C9C801100838ABA /* canvas-fingerprinting.js */,
@@ -5996,6 +6009,8 @@
 				F4FC077620F0108100CA043C /* significant-text-milestone.html */,
 				C9B4AD291ECA6EA500F5FEA0 /* silence-long.m4a */,
 				F4D060072734A08C008FA67A /* simple-editor.html */,
+				3AB1F1C92ED0D81400114FBF /* SiteIsolationLoadWebArchive.webarchive */,
+				3AB1F1D42ED11FCC00114FBF /* SiteIsolationLoadWebArchiveNestedFrame.webarchive */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */,
 				CDDFA89D2DBD6BFF00312417 /* spatial-audio-experience-with-audio.html */,
@@ -8028,6 +8043,7 @@
 				7C83E0521D0A641800FEBCF3 /* SharedBuffer.cpp in Sources */,
 				A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */,
 				A179918B1E1CA24100A505ED /* SharedBufferTest.cpp in Sources */,
+				7B84864C2ED4465C00E34DC1 /* SharedMemoryTests.cpp in Sources */,
 				411204CE2D3AAD8E009A8554 /* SharedVideoFrame.mm in Sources */,
 				71E88C4124B5299C00665160 /* ShareSheetTests.mm in Sources */,
 				51EB126324CA6B66000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm in Sources */,

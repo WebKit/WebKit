@@ -69,7 +69,7 @@ function iframeSentMessage(message)
                 finishJSTest();
             }
 
-            if (++checkCount > 5) {
+            if (++checkCount > 50) {
                 clearInterval(handle);
                 iframeLeaked();
             }

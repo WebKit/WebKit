@@ -72,9 +72,6 @@ private:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
     bool canHaveGeneratedChildren() const override { return false; }
-    
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
-
     bool canBeProgramaticallyScrolled() const override { return true; }
 };
 

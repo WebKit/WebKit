@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/Ref.h>
@@ -60,9 +61,13 @@ class WebCoreDecompressionSession;
 
 class VideoMediaSampleRenderer final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main>
-    , public WebAVSampleBufferListenerClient {
+    , public WebAVSampleBufferListenerClient
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper 
+#endif
+{
 public:
-    static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer) { return adoptRef(*new VideoMediaSampleRenderer(renderer)); }
+    static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer, const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new VideoMediaSampleRenderer(renderer, logger, logIdentifier)); }
     ~VideoMediaSampleRenderer();
 
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
@@ -124,7 +129,7 @@ public:
     void invalidateDecompressionSession();
 
 private:
-    VideoMediaSampleRenderer(WebSampleBufferVideoRendering *);
+    VideoMediaSampleRenderer(WebSampleBufferVideoRendering *, const Logger&, uint64_t);
 
     void clearTimebase();
     using TimebaseAndTimerSource = std::pair<RetainPtr<CMTimebaseRef>, OSObjectPtr<dispatch_source_t>>;
@@ -187,6 +192,15 @@ private:
     void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool) final;
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
 
+#if !RELEASE_LOG_DISABLED
+    // Logger
+    const Logger& logger() const final { return m_logger.get(); }
+    Ref<const Logger> protectedLogger() const { return logger(); }
+    ASCIILiteral logClassName() const final { return "VideoMediaSampleRenderer"_s; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
     const bool m_rendererIsThreadSafe { false };
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer WTF_GUARDED_BY_CAPABILITY(mainThread);
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
@@ -245,6 +259,11 @@ private:
     MonotonicTime m_startupTime;
     MonotonicTime m_timeSinceLastDecode;
     FrameRateMonitor m_frameRateMonitor;
+
+#if !RELEASE_LOG_DISABLED
+    const Ref<const Logger> m_logger;
+    const uint64_t m_logIdentifier;
+#endif
 };
 
 } // namespace WebCore

@@ -409,12 +409,12 @@ static void clampDimension(WebGPU::Extent3D& extent3D, size_t dimension, WebGPU:
     });
 }
 
-static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<VideoFrame>& videoFrame, WebGPU::Extent3D& backingCopySize, NOESCAPE const ImageDataCallback& callback)
+static void getImageBytesFromVideoFrame(const RefPtr<VideoFrame>& videoFrame, WebGPU::Extent3D& backingCopySize, NOESCAPE const ImageDataCallback& callback)
 {
     if (!videoFrame.get())
         return callback({ }, 0, 0);
 
-    RefPtr<NativeImage> nativeImage = backing.getNativeImage(*videoFrame.get());
+    RefPtr nativeImage = videoFrame->copyNativeImage();
     if (!nativeImage)
         return callback({ }, 0, 0);
 
@@ -627,14 +627,14 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
     }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
 #if PLATFORM(COCOA)
         if (RefPtr player = videoElement ? videoElement->player() : nullptr; player && player->isVideoPlayer())
-            return getImageBytesFromVideoFrame(backing, player->videoFrameForCurrentTime(), backingCopySize, callback);
+            return getImageBytesFromVideoFrame(player->videoFrameForCurrentTime(), backingCopySize, callback);
 #else
         UNUSED_PARAM(videoElement);
 #endif
         return callback({ }, 0, 0);
     }, [&](const RefPtr<WebCodecsVideoFrame> webCodecsFrame) -> ResultType {
 #if PLATFORM(COCOA)
-        return getImageBytesFromVideoFrame(backing, webCodecsFrame->internalFrame(), backingCopySize, callback);
+        return getImageBytesFromVideoFrame(webCodecsFrame->internalFrame(), backingCopySize, callback);
 #else
         UNUSED_PARAM(webCodecsFrame);
         return callback({ }, 0, 0);

@@ -80,6 +80,11 @@ void WebBackForwardCache::setCapacity(WebProcessPool& pool, unsigned capacity)
     pool.sendToAllProcesses(Messages::WebProcess::SetBackForwardCacheCapacity(m_capacity));
 }
 
+unsigned WebBackForwardCache::size() const
+{
+    return m_itemsWithCachedPage.computeSize();
+}
+
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForwardCacheEntry>&& backForwardCacheEntry)
 {
     ASSERT(capacity());

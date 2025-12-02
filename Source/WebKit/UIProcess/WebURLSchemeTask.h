@@ -26,7 +26,9 @@
 #pragma once
 
 #include "APIObject.h"
-#include "WebProcessProxy.h"
+#include "WebPageProxyIdentifier.h"
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -35,6 +37,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 
 namespace API {
 class FrameInfo;
@@ -42,7 +45,6 @@ class FrameInfo;
 
 namespace WebCore {
 class ResourceError;
-class ResourceResponse;
 }
 
 namespace WebKit {
@@ -50,6 +52,7 @@ namespace WebKit {
 struct URLSchemeTaskParameters;
 class WebURLSchemeHandler;
 class WebPageProxy;
+class WebProcessProxy;
 
 using SyncLoadCompletionHandler = CompletionHandler<void(const WebCore::ResourceResponse&, const WebCore::ResourceError&, Vector<uint8_t>&&)>;
 

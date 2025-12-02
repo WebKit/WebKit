@@ -56,6 +56,8 @@ option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 
 option_parser.add_option('--disable-webdriver-bidi', action='store_false',
                          dest='enable_webdriver_bidi', default=True,
                          help='Run Selenium tests with BiDi disabled')
+option_parser.add_option('--force', action='store_true',
+                         help='Ignore the expectations file, running all given tests and assuming they should PASS')
 
 options, args = option_parser.parse_args()
 

@@ -42,6 +42,10 @@ class DatabaseCallback : public ThreadSafeRefCounted<DatabaseCallback>, public A
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(Database&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Database&) = 0;
 

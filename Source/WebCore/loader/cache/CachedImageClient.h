@@ -34,9 +34,8 @@ class IntRect;
 
 enum class VisibleInViewportState { Unknown, Yes, No };
 
-class WEBCORE_EXPORT CachedImageClient : public CachedResourceClient, public CanMakeCheckedPtr<CachedImageClient> {
+class WEBCORE_EXPORT CachedImageClient : public CachedResourceClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedImageClient);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CachedImageClient);
 public:
     virtual ~CachedImageClient() = default;
     static CachedResourceClientType expectedType() { return ImageType; }

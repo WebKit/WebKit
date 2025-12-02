@@ -216,10 +216,8 @@ void RunLoop::notifyActivity(Activity activity)
 
     // Notify the activity observers, without holding a lock - as mutations
     // to the activity observers are allowed.
-    for (Ref observer : observersToBeNotified) {
-        if (observer->notify() == ActivityObserver::NotifyResult::Stop)
-            observer->stop();
-    }
+    for (Ref observer : observersToBeNotified)
+        observer->notify();
 }
 
 void RunLoop::notifyEvent(RunLoop::Event event, const char* name)

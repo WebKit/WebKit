@@ -74,7 +74,7 @@ private:
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
 
     using ElementAttributePair = std::pair<SVGElement*, QualifiedName>;
-    using AnimationsVector = Vector<SVGSMILElement*>;
+    using AnimationsVector = Vector<WeakRef<SVGSMILElement, WeakPtrImplWithEventTargetData>>;
     using GroupedAnimationsMap = HashMap<ElementAttributePair, AnimationsVector>;
 
     void processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>&);

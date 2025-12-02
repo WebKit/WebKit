@@ -216,7 +216,7 @@ void VariableEnvironment::dump(PrintStream& out) const
 
 void CompactTDZEnvironment::sortCompact(Compact& compact)
 {
-    std::sort(compact.begin(), compact.end(), [] (auto& a, auto& b) {
+    std::ranges::sort(compact, [](auto& a, auto& b) {
         return a.get() < b.get();
     });
 }

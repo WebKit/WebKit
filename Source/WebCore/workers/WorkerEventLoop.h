@@ -42,6 +42,10 @@ public:
     // FIXME: This should be removed once MicrotaskQueue is integrated with EventLoopTaskGroup.
     void clearMicrotaskQueue();
 
+    // ContextDestructionObserver.
+    void ref() const final { EventLoop::ref(); }
+    void deref() const final { EventLoop::deref(); }
+
 private:
     explicit WorkerEventLoop(WorkerOrWorkletGlobalScope&);
 

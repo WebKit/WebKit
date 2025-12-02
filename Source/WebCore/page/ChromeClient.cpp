@@ -127,4 +127,11 @@ void ChromeClient::requestTextRecognition(Element&, TextRecognitionOptions&&, Co
 }
 #endif
 
+#if ENABLE(VIDEO)
+void ChromeClient::showCaptionDisplaySettings(HTMLMediaElement&, const ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+{
+    completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
+}
+#endif
+
 } // namespace WebCore

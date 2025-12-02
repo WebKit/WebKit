@@ -219,7 +219,7 @@ void FetchBodySource::NonByteSource::doPull()
         bodyOwner->feedStream();
 }
 
-void FetchBodySource::NonByteSource::doCancel()
+void FetchBodySource::NonByteSource::doCancel(JSC::JSValue)
 {
     m_isCancelling = true;
     RefPtr bodyOwner = m_bodyOwner.get();

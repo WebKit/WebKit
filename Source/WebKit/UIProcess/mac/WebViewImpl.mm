@@ -123,6 +123,7 @@
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/ReferrerPolicy.h>
+#import <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/Site.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -1387,7 +1388,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     m_textInputNotifications = subscribeToTextInputNotifications(this);
 #endif
 
-    configurePanGestureRecognizerIfNeeded();
+    m_panGestureController = adoptNS([[WKPanGestureController alloc] initWithPage:m_page viewImpl:*this]);
 
     WebProcessPool::statistics().wkViewCount++;
 }
@@ -1702,20 +1703,20 @@ void WebViewImpl::viewDidEndLiveResize()
 void WebViewImpl::createPDFHUD(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, const WebCore::IntRect& rect)
 {
     removePDFHUD(identifier);
-    auto hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:rect pluginIdentifier:identifier frameIdentifier:frameID page:m_page.get()]);
+    RetainPtr hud = adoptNS([[WKPDFHUDView alloc] initWithFrame:rect pluginIdentifier:identifier frameIdentifier:frameID page:m_page.get()]);
     [m_view.get() addSubview:hud.get()];
     _pdfHUDViews.add(identifier, WTFMove(hud));
 }
 
 void WebViewImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
-    if (auto hud = _pdfHUDViews.get(identifier))
+    if (RetainPtr hud = _pdfHUDViews.get(identifier))
         [hud setFrame:rect];
 }
 
 void WebViewImpl::removePDFHUD(PDFPluginIdentifier identifier)
 {
-    if (auto hud = _pdfHUDViews.take(identifier))
+    if (RetainPtr hud = _pdfHUDViews.take(identifier))
         [hud removeFromSuperview];
 }
 
@@ -3556,7 +3557,7 @@ void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidat
     });
 }
 
-void WebViewImpl::preferencesDidChange()
+void WebViewImpl::updateNeedsViewFrameInWindowCoordinatesIfNeeded()
 {
     BOOL needsViewFrameInWindowCoordinates = false;
 
@@ -3566,6 +3567,14 @@ void WebViewImpl::preferencesDidChange()
     m_needsViewFrameInWindowCoordinates = needsViewFrameInWindowCoordinates;
     if ([m_view.get() window])
         updateWindowAndViewFrames();
+}
+
+void WebViewImpl::preferencesDidChange()
+{
+    updateNeedsViewFrameInWindowCoordinatesIfNeeded();
+
+    if (RetainPtr panGestureController = m_panGestureController)
+        [panGestureController enablePanGestureIfNeeded];
 }
 
 CALayer* WebViewImpl::textIndicatorInstallationLayer()
@@ -3989,12 +3998,7 @@ RetainPtr<id> WebViewImpl::toolTipOwnerForSendingMouseEvents() const
         return owner;
 
     for (NSTrackingArea *trackingArea in protectedView().get().trackingAreas) {
-        static Class managerClass;
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [] {
-            managerClass = NSClassFromString(@"NSToolTipManager");
-        });
-
+        static Class managerClass = NSClassFromString(@"NSToolTipManager");
         RetainPtr<id> owner = trackingArea.owner;
         if ([owner class] == managerClass)
             return owner;
@@ -5578,13 +5582,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
     }];
 
-    std::ranges::sort(highlights, [](auto& a, auto& b) {
-        if (a.startOffset < b.startOffset)
-            return true;
-        if (a.startOffset > b.startOffset)
-            return false;
-        return a.endOffset < b.endOffset;
-    });
+    std::ranges::sort(highlights);
 
     Vector<WebCore::CompositionHighlight> mergedHighlights;
     mergedHighlights.reserveInitialCapacity(highlights.size());
@@ -5622,13 +5620,7 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
             underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, style.get().intValue > 1 });
     }];
 
-    std::ranges::sort(underlines, [](auto& a, auto& b) {
-        if (a.startOffset < b.startOffset)
-            return true;
-        if (a.startOffset > b.startOffset)
-            return false;
-        return a.endOffset < b.endOffset;
-    });
+    std::ranges::sort(underlines);
 
     if (!underlines.isEmpty())
         mergedUnderlines.append({ underlines.first().startOffset, underlines.last().endOffset, WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, false });
@@ -7306,21 +7298,49 @@ void WebViewImpl::unregisterViewAboveScrollPocket(NSView *containerView)
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
 #if ENABLE(VIDEO)
-void WebViewImpl::showCaptionDisplaySettings(CompletionHandler<void(bool)>&& callback)
+void WebViewImpl::showCaptionDisplaySettings(HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    RetainPtr controller = adoptNS([[WKCaptionStyleMenuController alloc] init]);
+    RetainPtr controller = [WKCaptionStyleMenuController menuController];
     NSMenu *menu = [controller captionStyleMenu];
-    callback([menu popUpMenuPositioningItem:nil atLocation:NSMakePoint(0, 0) inView:[protectedWindow() contentView]]);
+    auto menuSize = FloatSize { [menu size] };
+
+    auto menuLocationFromOptions = [&] () -> NSPoint {
+        if (!options.anchorBounds)
+            return NSMakePoint(0, 0);
+
+        // Default to presenting the menu so that the bottom-center point is centered in the anchorBounds
+        if (!options.xPositionArea && !options.yPositionArea) {
+            FloatPoint centerPoint = options.anchorBounds->center();
+            centerPoint.move(-menuSize.width() / 2, -menuSize.height());
+            return centerPoint;
+        }
+
+        auto calculateXLocation = [] (auto& anchorBounds, auto& xPositionArea, const FloatSize& menuSize) {
+            using XPositionArea = WebCore::ResolvedCaptionDisplaySettingsOptions::XPositionArea;
+            if (!xPositionArea || *xPositionArea == XPositionArea::Center)
+                return anchorBounds.center().x() - menuSize.width() / 2;
+            if (*xPositionArea == XPositionArea::Left)
+                return anchorBounds.x() - menuSize.width();
+            return anchorBounds.maxX();
+        };
+
+        auto calculateYLocation = [] (auto& anchorBounds, auto& yPositionArea, const FloatSize& menuSize) {
+            using YPositionArea = WebCore::ResolvedCaptionDisplaySettingsOptions::YPositionArea;
+            if (!yPositionArea || *yPositionArea == YPositionArea::Center)
+                return anchorBounds.center().y() - menuSize.height() / 2;
+            if (*yPositionArea == YPositionArea::Top)
+                return anchorBounds.y() - menuSize.height();
+            return anchorBounds.maxY();
+        };
+
+        return NSMakePoint(calculateXLocation(*options.anchorBounds, options.xPositionArea, menuSize), calculateYLocation(*options.anchorBounds, options.yPositionArea, menuSize));
+
+    };
+    auto menuLocation = menuLocationFromOptions();
+    [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_view.get().get()];
+    completionHandler({ });
 }
 #endif
-
-void WebViewImpl::configurePanGestureRecognizerIfNeeded()
-{
-    Ref page = m_page.get();
-    if (!page->protectedPreferences()->useAppKitGestures())
-        return;
-    m_panGestureController = adoptNS([[WKPanGestureController alloc] initWithPage:page viewImpl:*this]);
-}
 
 } // namespace WebKit
 

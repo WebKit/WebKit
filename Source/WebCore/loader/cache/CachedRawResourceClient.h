@@ -26,15 +26,6 @@
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
-class CachedRawResourceClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedRawResourceClient> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CachedResource;
 class ResourceRequest;

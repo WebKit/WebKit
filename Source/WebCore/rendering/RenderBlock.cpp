@@ -160,7 +160,7 @@ public:
         // Protect against double insert where a descendant would end up with multiple containing blocks.
         auto previousContainingBlock = m_containerMap.get(outOfFlowDescendant);
         if (previousContainingBlock && previousContainingBlock != &containingBlock) {
-            if (auto* descendants = m_descendantsMap.get(*previousContainingBlock.get()))
+            if (auto* descendants = m_descendantsMap.get(*previousContainingBlock))
                 descendants->remove(outOfFlowDescendant);
         }
 
@@ -1256,8 +1256,10 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             // in the same layer. 
             if (!inlineEnclosedInSelfPaintingLayer && !hasLayer())
                 containingBlock->addContinuationWithOutline(inlineRenderer);
-            else if (!InlineIterator::lineLeftmostInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
-                inlineRenderer->paintOutline(paintInfo, paintOffset - locationOffset() + inlineRenderer->containingBlock()->location());
+            else if (!InlineIterator::lineLeftmostInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer())) {
+                auto outlineOffset = paintOffset - locationOffset() + inlineRenderer->containingBlock()->location();
+                OutlinePainter { paintInfo }.paintOutline(*inlineRenderer, outlineOffset);
+            }
         }
         paintContinuationOutlines(paintInfo, paintOffset);
     }
@@ -1378,13 +1380,14 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
     LayoutPoint accumulatedPaintOffset = paintOffset;
     // Paint each continuation outline.
+    OutlinePainter outlinePainter { info };
     for (auto& renderInline : *continuations) {
         // Need to add in the coordinates of the intervening blocks.
         auto* block = renderInline.containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
         ASSERT(block);
-        renderInline.paintOutline(info, accumulatedPaintOffset);
+        outlinePainter.paintOutline(renderInline, accumulatedPaintOffset);
     }
 }
 
@@ -2007,7 +2010,13 @@ Node* RenderBlock::nodeForHitTest() const
     // If we are in the margins of block elements that are part of a
     // continuation we're actually still inside the enclosing element
     // that was split. Use the appropriate inner node.
-    return continuation() ? continuation()->element() : element();
+    if (auto* continuation = this->continuation())
+        return continuation->element();
+    if (auto inlineBox = dynamicDowncast<RenderInline>(parent()); inlineBox && isAnonymousBlock()) {
+        ASSERT(settings().blocksInInlineLayoutEnabled());
+        return inlineBox->element();
+    }
+    return element();
 }
 
 bool RenderBlock::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
@@ -2711,53 +2720,6 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     }
 }
 
-void RenderBlock::addFocusRingRectsForInlineChildren(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const
-{
-    // For blocks inside inlines, we include margins so that we run right up to the inline boxes
-    // above and below us (thus getting merged with them to form a single irregular shape).
-    auto* inlineContinuation = this->inlineContinuation();
-    if (inlineContinuation) {
-        // FIXME: This check really isn't accurate. 
-        bool nextInlineHasLineBox = inlineContinuation->firstLegacyInlineBox();
-        // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
-        // FIXME: This is wrong for block-flows that are horizontal.
-        // https://bugs.webkit.org/show_bug.cgi?id=46781
-        bool prevInlineHasLineBox = downcast<RenderInline>(*inlineContinuation->element()->renderer()).firstLegacyInlineBox();
-        auto topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : 0_lu;
-        auto bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : 0_lu;
-        LayoutRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);
-        if (!rect.isEmpty())
-            rects.append(rect);
-    } else if (width() && height())
-        rects.append(LayoutRect(additionalOffset, size()));
-
-    if (!hasNonVisibleOverflow() && !hasControlClip()) {
-        if (childrenInline())
-            addFocusRingRectsForInlineChildren(rects, additionalOffset, paintContainer);
-    
-        for (auto& box : childrenOfType<RenderBox>(*this)) {
-            if (is<RenderListMarker>(box) || box.isOutOfFlowPositioned())
-                continue;
-
-            FloatPoint pos;
-            // FIXME: This doesn't work correctly with transforms.
-            if (box.layer())
-                pos = box.localToContainerPoint(FloatPoint(), paintContainer);
-            else
-                pos = FloatPoint(additionalOffset.x() + box.x(), additionalOffset.y() + box.y());
-            box.addFocusRingRects(rects, flooredLayoutPoint(pos), paintContainer);
-        }
-    }
-
-    if (inlineContinuation)
-        inlineContinuation->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + inlineContinuation->containingBlock()->location() - location())), paintContainer);
-}
-
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();
@@ -3159,10 +3121,10 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     LayoutUnit logicalLeft;
     if (writingMode().isBidiLTR()) {
         switch (legend.style().textAlign()) {
-        case TextAlignMode::Center:
+        case Style::TextAlign::Center:
             logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
             break;
-        case TextAlignMode::Right:
+        case Style::TextAlign::Right:
             logicalLeft = logicalWidth() - borderAndPaddingEnd() - logicalWidthForChild(legend);
             break;
         default:
@@ -3171,10 +3133,10 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
         }
     } else {
         switch (legend.style().textAlign()) {
-        case TextAlignMode::Left:
+        case Style::TextAlign::Left:
             logicalLeft = borderAndPaddingStart();
             break;
-        case TextAlignMode::Center: {
+        case Style::TextAlign::Center: {
             // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
             // in LTR).
             LayoutUnit centeredWidth = logicalWidth() - logicalWidthForChild(legend);

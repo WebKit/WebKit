@@ -43,11 +43,12 @@ inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document
 {
     ASSERT(hasTagName(SVGNames::cursorTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGCursorElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGCursorElement::m_y>();
-    });
+    }
 }
 
 Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document& document)

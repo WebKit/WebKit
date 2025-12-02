@@ -79,6 +79,8 @@ public:
 
     RealtimeMediaSource::Type type() const;
 
+    void setRtpHeaderExtensionMapping(RTPHeaderExtensionMapping mapping) { m_rtpHeaderExtensionMapping = mapping; }
+
 protected:
     enum Type {
         Audio,
@@ -115,7 +117,7 @@ protected:
     GRefPtr<GstPad> m_webrtcSinkPad;
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
     GUniquePtr<GstStructure> m_parameters;
-
+    RTPHeaderExtensionMapping m_rtpHeaderExtensionMapping;
     Vector<RefPtr<GStreamerRTPPacketizer>> m_packetizers;
 
 private:

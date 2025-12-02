@@ -36,6 +36,7 @@ class BitmapTexturePool;
 class CoordinatedTileBuffer;
 class GraphicsContext;
 class GraphicsLayer;
+class GraphicsLayerCoordinated;
 class IntRect;
 class IntSize;
 class SkiaRecordingResult;
@@ -56,9 +57,9 @@ public:
 
     bool useThreadedRendering() const { return m_workerPool; }
 
-    Ref<CoordinatedTileBuffer> paint(const GraphicsLayer&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale);
-    Ref<SkiaRecordingResult> record(const GraphicsLayer&, const IntRect& recordRect, bool contentsOpaque, float contentsScale);
-    Ref<CoordinatedTileBuffer> replay(const RefPtr<SkiaRecordingResult>&, const IntRect& dirtyRect);
+    Ref<CoordinatedTileBuffer> paint(const GraphicsLayerCoordinated&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale);
+    Ref<SkiaRecordingResult> record(const GraphicsLayerCoordinated&, const IntRect& recordRect, bool contentsOpaque, float contentsScale);
+    Ref<CoordinatedTileBuffer> replay(const GraphicsLayerCoordinated&, const RefPtr<SkiaRecordingResult>&, const IntRect& dirtyRect);
 
 private:
     Ref<CoordinatedTileBuffer> createBuffer(RenderingMode, const IntSize&, bool contentsOpaque) const;

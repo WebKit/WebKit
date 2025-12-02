@@ -27,9 +27,31 @@
 
 DECLARE_SYSTEM_HEADER
 
+#import <wtf/Platform.h>
+
 #if USE(APPKIT)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/NSColorPopoverController_Private.h>
+#import <AppKit/NSPopoverColorWell.h>
+#else
+
 @interface NSPopoverColorWell : NSColorWell<NSPopoverDelegate>
+@end
+
+@interface NSColorPopoverController : NSViewController
+@end
+
+@class NSColorPickerMatrixView;
+
+@interface NSColorPopoverController ()
+@property (assign) id delegate;
+@property (assign) NSPopover *popover;
+@end
+
+#endif
+
+@interface NSPopoverColorWell ()
 - (void)_showPopover;
 @end
 
@@ -42,12 +64,7 @@ DECLARE_SYSTEM_HEADER
 - (void)setNumberOfColumns:(NSUInteger)columns;
 @end
 
-@interface NSColorPopoverController : NSViewController
-@end
-
 @interface NSColorPopoverController ()
-@property (assign) id delegate;
-@property (assign) NSPopover *popover;
 @property (assign) NSColorPickerMatrixView *topBarMatrixView;
 @end
 

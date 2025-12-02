@@ -68,13 +68,13 @@ WebPageInspectorTargetProxy::WebPageInspectorTargetProxy(WebPageProxy& page, con
 void WebPageInspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
     if (RefPtr provisionalPage = m_provisionalPage.get()) {
-        provisionalPage->send(Messages::WebPage::ConnectInspector(identifier(), connectionType));
+        provisionalPage->send(Messages::WebPage::ConnectInspector(connectionType));
         return;
     }
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::ConnectInspector(identifier(), connectionType), page->webPageIDInMainFrameProcess());
+        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::ConnectInspector(connectionType), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::disconnect()
@@ -83,25 +83,25 @@ void WebPageInspectorTargetProxy::disconnect()
         resume();
 
     if (RefPtr provisionalPage = m_provisionalPage.get()) {
-        provisionalPage->send(Messages::WebPage::DisconnectInspector(identifier()));
+        provisionalPage->send(Messages::WebPage::DisconnectInspector());
         return;
     }
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::DisconnectInspector(identifier()), page->webPageIDInMainFrameProcess());
+        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::DisconnectInspector(), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
     if (RefPtr provisionalPage = m_provisionalPage.get()) {
-        provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message));
+        provisionalPage->send(Messages::WebPage::SendMessageToTargetBackend(message));
         return;
     }
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), page->webPageIDInMainFrameProcess());
+        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::SendMessageToTargetBackend(message), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::didCommitProvisionalTarget()

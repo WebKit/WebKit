@@ -33,7 +33,6 @@ dom/CustomElementDefaultARIA.cpp
 dom/RejectedPromiseTracker.cpp
 [ Mac ] editing/Editor.cpp
 html/FormAssociatedCustomElement.cpp
-html/track/TrackBase.cpp
 inspector/InspectorOverlay.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 loader/NetscapePlugInStreamLoader.cpp
@@ -85,7 +84,6 @@ style/StyleCustomProperty.cpp
 style/Styleable.cpp
 style/values/StyleValueTypes.h
 style/values/backgrounds/StyleFillLayers.h
-style/values/fonts/StyleFontFeatureSettings.cpp
 style/values/fonts/StyleFontVariationSettings.cpp
 style/values/images/StyleGradient.cpp
 style/values/primitives/StylePrimitiveKeyword+CSSValueCreation.h

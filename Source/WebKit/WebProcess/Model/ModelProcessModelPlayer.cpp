@@ -224,6 +224,11 @@ void ModelProcessModelPlayer::sizeDidChange(WebCore::LayoutSize size)
 
 void ModelProcessModelPlayer::configureGraphicsLayer(WebCore::GraphicsLayer& graphicsLayer, WebCore::ModelPlayerGraphicsLayerConfiguration&& configuration)
 {
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    if (configuration.detachedForImmersive)
+        return graphicsLayer.removeModelContents();
+#endif
+
     auto modelLayerIdentifier = graphicsLayer.primaryLayerID();
     if (!modelLayerIdentifier)
         return;

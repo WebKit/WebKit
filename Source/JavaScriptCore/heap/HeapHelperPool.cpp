@@ -27,6 +27,7 @@
 #include "HeapHelperPool.h"
 
 #include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include "Options.h"
 
 namespace JSC {

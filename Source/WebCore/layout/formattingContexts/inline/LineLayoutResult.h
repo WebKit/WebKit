@@ -98,7 +98,7 @@ struct LineLayoutResult {
     {
         if (inlineContentEnding.has_value())
             return InflowContentType::Inline;
-        if (!runs.isEmpty() && runs[0].isBlock())
+        if (!runs.isEmpty() && runs.last().isBlock())
             return InflowContentType::Block;
         return { };
     }

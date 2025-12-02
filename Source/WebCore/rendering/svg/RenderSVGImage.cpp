@@ -185,7 +185,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
 
     auto drawResult = paintInfo.context().drawImage(*image, rect, sourceRect, options);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
+        imageResource().cachedImage()->addClientWaitingForAsyncDecoding(cachedImageClient());
 
     return drawResult;
 }
@@ -194,7 +194,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 {
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
+        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
             cachedImage()->removeAllClientsWaitingForAsyncDecoding();
         return;
     }

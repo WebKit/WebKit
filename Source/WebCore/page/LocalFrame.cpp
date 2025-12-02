@@ -255,7 +255,7 @@ LocalFrame::~LocalFrame()
 
     disconnectOwnerElement();
 
-    while (auto* destructionObserver = m_destructionObservers.takeAny())
+    while (RefPtr destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->frameDestroyed();
 
     RefPtr localMainFrame = this->localMainFrame();
@@ -893,8 +893,8 @@ void LocalFrame::willDetachPage()
     if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()))
         parent->loader().checkLoadComplete();
 
-    for (auto& observer : m_destructionObservers)
-        observer.willDetachPage();
+    for (Ref observer : m_destructionObservers)
+        observer->willDetachPage();
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
@@ -1130,11 +1130,12 @@ float LocalFrame::frameScaleFactor() const
     // https://github.com/w3c/csswg-drafts/issues/9644
     // Check if this frame's owner element (iframe) has CSS zoom applied.
     if (!isMainFrame()) {
+        auto rootZoom = rootFrame().pageZoomFactor();
         if (RefPtr ownerElement = this->ownerElement()) {
             if (auto* ownerRenderer = ownerElement->renderer())
-                return ownerRenderer->style().usedZoom();
+                return ownerRenderer->style().usedZoom() / rootZoom;
         }
-        return 1;
+        return rootZoom;
     }
 
     // Main frame is scaled with respect to the container.

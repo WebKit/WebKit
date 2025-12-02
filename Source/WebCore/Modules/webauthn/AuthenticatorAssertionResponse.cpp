@@ -49,6 +49,14 @@ Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const
     return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTFMove(userhandleBuffer), std::nullopt, attachment);
 }
 
+Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment)
+{
+    RefPtr<ArrayBuffer> userhandleBuffer;
+    if (!userHandle.isEmpty())
+        userhandleBuffer = ArrayBuffer::create(userHandle);
+    return create(ArrayBuffer::create(rawId), ArrayBuffer::create(authenticatorData), ArrayBuffer::create(signature), WTFMove(userhandleBuffer), WTFMove(extensions), attachment);
+}
+
 Ref<AuthenticatorAssertionResponse> AuthenticatorAssertionResponse::create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef accessControl, AuthenticatorAttachment attachment)
 {
     return adoptRef(*new AuthenticatorAssertionResponse(WTFMove(rawId), WTFMove(userHandle), WTFMove(name), accessControl, attachment));

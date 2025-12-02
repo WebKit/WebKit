@@ -829,10 +829,9 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
 {
     if (pastName.isEmpty() || m_pastNamesMap.isEmpty())
         return nullptr;
-    auto weakElement = m_pastNamesMap.get(pastName);
-    if (!weakElement)
+    RefPtr element = m_pastNamesMap.get(pastName);
+    if (!element)
         return nullptr;
-    RefPtr element { weakElement.get() };
 #if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(*element->asFormAssociatedElement());
 #endif

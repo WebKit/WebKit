@@ -450,7 +450,7 @@ ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const Fl
 }
 
 #if ENABLE(VIDEO)
-void BifurcatedGraphicsContext::drawVideoFrame(VideoFrame& videoFrame, const FloatRect& destination, WebCore::ImageOrientation orientation, bool shouldDiscardAlpha)
+void BifurcatedGraphicsContext::drawVideoFrame(const VideoFrame& videoFrame, const FloatRect& destination, WebCore::ImageOrientation orientation, bool shouldDiscardAlpha)
 {
     m_primaryContext.drawVideoFrame(videoFrame, destination, orientation, shouldDiscardAlpha);
     m_secondaryContext.drawVideoFrame(videoFrame, destination, orientation, shouldDiscardAlpha);

@@ -73,9 +73,9 @@ protected:
     void updateNowPlayingInfo();
     void updateActiveNowPlayingSession(RefPtr<PlatformMediaSessionInterface>);
 
-    void removeSession(PlatformMediaSessionInterface&) final;
-    void addSession(PlatformMediaSessionInterface&) final;
-    void setCurrentSession(PlatformMediaSessionInterface&) final;
+    void removeSession(PlatformMediaSessionInterface&) override;
+    void addSession(PlatformMediaSessionInterface&) override;
+    void setCurrentSession(PlatformMediaSessionInterface&) override;
 
     bool sessionWillBeginPlayback(PlatformMediaSessionInterface&) override;
     void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) override;
@@ -92,18 +92,16 @@ protected:
     void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() final { m_haveEverRegisteredAsNowPlayingApplication = false; };
     void resetSessionState() final;
 
-private:
-#if !RELEASE_LOG_DISABLED
-    ASCIILiteral logClassName() const override { return "MediaSessionManagerCocoa"_s; }
-#endif
-
-    // NowPlayingManagerClient
-    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument) final { processDidReceiveRemoteControlCommand(type, argument); }
+    RefPtr<AudioHardwareListener> audioHardwareListener() const;
 
     // AudioHardwareListenerClient
-    void audioHardwareDidBecomeActive() final { }
-    void audioHardwareDidBecomeInactive() final { }
-    void audioOutputDeviceChanged() final;
+    void audioHardwareDidBecomeActive() override;
+    void audioHardwareDidBecomeInactive() override;
+    void audioOutputDeviceChanged() override;
+
+private:
+    // NowPlayingManagerClient
+    void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
 
     void possiblyChangeAudioCategory();
 
@@ -111,6 +109,10 @@ private:
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
+#endif
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const override;
 #endif
 
     bool m_nowPlayingActive { false };
@@ -134,6 +136,18 @@ private:
     AudioSession::CategoryType m_previousCategory { AudioSession::CategoryType::None };
     bool m_previousHadAudibleAudioOrVideoMediaType { false };
 };
+
+inline RefPtr<AudioHardwareListener> MediaSessionManagerCocoa::audioHardwareListener() const { return m_audioHardwareListener; }
+
+inline void MediaSessionManagerCocoa::audioHardwareDidBecomeActive() { }
+
+inline void MediaSessionManagerCocoa::audioHardwareDidBecomeInactive() { }
+
+inline void MediaSessionManagerCocoa::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument) { processDidReceiveRemoteControlCommand(type, argument); }
+
+#if !RELEASE_LOG_DISABLED
+inline ASCIILiteral MediaSessionManagerCocoa::logClassName() const { return "MediaSessionManagerCocoa"_s; }
+#endif
 
 } // namespace WebCore
 

@@ -8,3 +8,5 @@ WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_FULL "Whether to enable support for static GStreamer builds" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_WEBRTC "Whether to enable support for WebRTC" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_MEDIA_TELEMETRY "Whether to enable support for media telemetry" PRIVATE OFF)
+
+WEBKIT_OPTION_DEFINE(USE_LIBRICE "Whether to enable support for librice" PRIVATE OFF)

@@ -38,11 +38,8 @@ void RunLoopObserver::schedule(PlatformRunLoop runLoop, OptionSet<Activity> acti
     if (!runLoop)
         runLoop = RunLoop::currentSingleton();
 
-    m_runLoopObserver = ActivityObserver::create(runLoop.releaseNonNull(), static_cast<uint8_t>(m_order), activities, [this]() {
-        if (!isScheduled())
-            return ActivityObserver::NotifyResult::Destroyed;
+    m_runLoopObserver = ActivityObserver::create(runLoop.releaseNonNull(), isRepeating(), static_cast<uint8_t>(m_order), activities, [this]() {
         runLoopObserverFired();
-        return isRepeating() ? ActivityObserver::NotifyResult::Continue : ActivityObserver::NotifyResult::Stop;
     });
 
     m_runLoopObserver->start();

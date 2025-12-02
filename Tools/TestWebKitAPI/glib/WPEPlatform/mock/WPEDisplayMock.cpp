@@ -212,6 +212,14 @@ void wpeDisplayMockRegister(GIOModule* ioModule)
     g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, WPE_TYPE_DISPLAY_MOCK, "wpe-display-mock", G_MAXINT32);
 }
 
+void wpeDisplayMockDisconnect(WPEDisplayMock* mock)
+{
+    mock->isConnected = FALSE;
+    GError* error = g_error_new_literal(WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST, "Display disconnected");
+    wpe_display_disconnected(WPE_DISPLAY(mock), error);
+    g_error_free(error);
+}
+
 void wpeDisplayMockUseFakeDRMNodes(WPEDisplayMock* mock, gboolean useFakeDRMNodes)
 {
     if (!useFakeDRMNodes) {

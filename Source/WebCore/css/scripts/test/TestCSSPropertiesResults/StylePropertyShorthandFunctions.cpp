@@ -95,6 +95,14 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag,
         CSSPropertyID::CSSPropertyTestNumericValueRange,
         CSSPropertyID::CSSPropertyTestProperty,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference,
+        CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue,
         CSSPropertyID::CSSPropertyTestSettingsOne,
         CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter,
         CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin,
@@ -257,6 +265,14 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMediumPriority:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
     case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
     case CSSPropertyID::CSSPropertyTestTopPriority:

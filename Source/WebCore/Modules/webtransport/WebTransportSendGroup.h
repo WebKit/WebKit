@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class ScriptExecutionContext;
 class WebTransport;
 
 struct WebTransportSendGroupIdentifierType;

@@ -79,8 +79,8 @@ a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
 a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=extmap:5 urn:ietf:params:rtp-hdrext:ntp-64
-a=extmap:6 http://www.webrtc.org/experiments/rtp-hdrext/color-space
-a=extmap:7 urn:3gpp:video-orientation
+a=extmap:7 http://www.webrtc.org/experiments/rtp-hdrext/color-space
+a=extmap:8 urn:3gpp:video-orientation
 ===
 
 PASS successfullyParsed is true

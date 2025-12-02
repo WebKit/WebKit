@@ -281,11 +281,7 @@ UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayer
 
 static Class scrollViewScrollIndicatorClassSingleton()
 {
-    static dispatch_once_t onceToken;
-    static Class scrollIndicatorClass;
-    dispatch_once(&onceToken, ^{
-        scrollIndicatorClass = NSClassFromString(@"_UIScrollViewScrollIndicator");
-    });
+    static Class scrollIndicatorClass = NSClassFromString(@"_UIScrollViewScrollIndicator");
     return scrollIndicatorClass;
 }
 

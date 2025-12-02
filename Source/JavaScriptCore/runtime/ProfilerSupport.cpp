@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/StringPrintStream.h>

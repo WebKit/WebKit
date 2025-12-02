@@ -1164,8 +1164,7 @@ private:
         m_code.forEachTmp<bank>([&](Tmp tmp) {
             ASSERT(!tmp.isReg());
             TmpData& data = m_map[tmp];
-            std::sort(data.coalescables.begin(), data.coalescables.end(),
-                [this] (const auto& a, const auto& b) -> bool {
+            std::ranges::sort(data.coalescables, [this](const auto& a, const auto& b) {
                     if (a.moveCost != b.moveCost)
                         return a.moveCost > b.moveCost;
                     // Favor coalescing shorter live ranges.
@@ -1181,15 +1180,14 @@ private:
             }
         });
 
-        std::sort(moves.begin(), moves.end(),
-            [](Move& a, Move& b) -> bool {
+        std::ranges::sort(moves, [](auto& a, auto& b) {
                 if (a.cost != b.cost)
                     return a.cost > b.cost;
                 if (a.tmp0.tmpIndex(bank) != b.tmp1.tmpIndex(bank))
                     return a.tmp0.tmpIndex(bank) < a.tmp0.tmpIndex(bank);
                 ASSERT(a.tmp1.tmpIndex(bank) != b.tmp1.tmpIndex(bank));
                 return a.tmp1.tmpIndex(bank) < b.tmp1.tmpIndex(bank);
-            });
+        });
 
         auto hasConflict = [this, &worklist0, &worklist1](Tmp group0, Tmp group1) {
             bool conflicts = false;

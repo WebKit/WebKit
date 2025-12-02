@@ -42,12 +42,14 @@ class DOMException;
 class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool has(FontFace&) const;
     size_t size();

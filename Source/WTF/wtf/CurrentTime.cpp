@@ -238,13 +238,13 @@ WallTime WallTime::now()
 static mach_timebase_info_data_t& machTimebaseInfo()
 {
     // Based on listing #2 from Apple QA 1398, but modified to be thread-safe.
-    static mach_timebase_info_data_t timebaseInfo;
-    static std::once_flag initializeTimerOnceFlag;
-    std::call_once(initializeTimerOnceFlag, [] {
+    static mach_timebase_info_data_t timebaseInfo = [] {
+        mach_timebase_info_data_t timebaseInfo;
         kern_return_t kr = mach_timebase_info(&timebaseInfo);
         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
         ASSERT(timebaseInfo.denom);
-    });
+        return timebaseInfo;
+    }();
     return timebaseInfo;
 }
 

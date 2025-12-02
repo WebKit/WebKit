@@ -6186,6 +6186,74 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_never_destroyed] [4]",
             'foo.mm')
 
+    def test_wtf_os_object_ptr(self):
+        self.assert_lint(
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            '',
+            'foo.cpp')
+        self.assert_lint(
+            'OSObjectPtr queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            '',
+            'foo.cpp')
+        self.assert_lint(
+            'OSObjectPtr<dispatch_queue_t> queue = adoptOSObject(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            '',
+            'foo.cpp')
+        self.assert_lint(
+            'auto group = adoptOSObject(dispatch_group_create());',
+            '',
+            'foo.cpp')
+        self.assert_lint(
+            'RetainPtr<dispatch_queue_t> m_queue;',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'RetainPtr<dispatch_group_t> m_group;',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'RetainPtr<dispatch_queue_t> queue;',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'RetainPtr<dispatch_group_t> group;',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto queue = adoptNS(dispatch_queue_create("foo", DISPATCH_QUEUE_SERIAL));',
+            "Use 'adoptOSObject()' instead of 'adoptNS()' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto group = adoptNS(dispatch_group_create());',
+            "Use 'adoptOSObject()' instead of 'adoptNS()' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_CONCURRENT }.get()));',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", RetainPtr { DISPATCH_QUEUE_SERIAL }.get()));',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_CONCURRENT).get()));',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+        self.assert_lint(
+            'auto queue = adoptOSObject(dispatch_queue_create("foo", retainPtr(DISPATCH_QUEUE_SERIAL).get()));',
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for dispatch objects."
+            "  [runtime/wtf_os_object_ptr] [4]",
+            'foo.mm')
+
     def test_wtf_xpc_object_ptr(self):
         self.assert_lint(
             'XPCObjectPtr<xpc_connection_t> connection = adoptXPCObject(xpc_connection_create_from_endpoint(endpoint));',

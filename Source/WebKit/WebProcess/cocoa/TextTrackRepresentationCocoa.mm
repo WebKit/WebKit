@@ -37,8 +37,11 @@
 #import <WebCore/NativeImage.h>
 #import <WebCore/NodeDocument.h>
 #import <WebCore/Page.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebTextTrackRepresentationCocoa);
 
 WebTextTrackRepresentationCocoa::WebTextTrackRepresentationCocoa(WebCore::TextTrackRepresentationClient& client, WebCore::HTMLMediaElement& mediaElement)
     : WebCore::TextTrackRepresentationCocoa(client)

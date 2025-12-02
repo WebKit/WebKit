@@ -32,6 +32,7 @@
 #import <WebCore/HTMLMediaElementIdentifier.h>
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 
@@ -121,6 +122,9 @@ UIContextMenuInteractionDelegate>
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 - (void)showMediaControlsContextMenu:(WebCore::FloatRect&&)targetFrame items:(Vector<WebCore::MediaControlsContextMenuItem>&&)items frameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier completionHandler:(CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&)completionHandler;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+#if ENABLE(VIDEO) && USE(UICONTEXTMENU)
+- (void)showCaptionDisplaySettingsMenu:(WebCore::HTMLMediaElementIdentifier)identifier withOptions:(const WebCore::ResolvedCaptionDisplaySettingsOptions&)options completionHandler:(CompletionHandler<void(Expected<void, WebCore::ExceptionData>)>&&)completionHandler;
+#endif
 - (void)cleanupSheet;
 - (void)updateSheetPosition;
 - (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo;

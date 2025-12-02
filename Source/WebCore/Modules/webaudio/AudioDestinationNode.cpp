@@ -96,7 +96,7 @@ void AudioDestinationNode::renderQuantum(AudioBus& destinationBus, size_t number
 
     // This will cause the node(s) connected to us to process, which in turn will pull on their input(s),
     // all the way backwards through the rendering graph.
-    AudioBus& renderedBus = input(0)->pull(&destinationBus, numberOfFrames);
+    AudioBus& renderedBus = checkedInput(0)->pull(&destinationBus, numberOfFrames);
 
     if (&renderedBus != &destinationBus) {
         // in-place processing was not possible - so copy

@@ -32,7 +32,7 @@ messages -> RemoteRenderingBackend Stream {
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier identifier)
     CreateDisplayListRecorder(WebKit::RemoteDisplayListRecorderIdentifier identifier)
     SinkDisplayListRecorderIntoDisplayList(WebKit::RemoteDisplayListRecorderIdentifier identifier, WebKit::RemoteDisplayListIdentifier displayListIdentifier)
-    ReleaseDisplayList(WebKit::RemoteDisplayListIdentifier identifier)
+    ReleaseDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
     GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     NativeImageBitmap(WebCore::RenderingResourceIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply

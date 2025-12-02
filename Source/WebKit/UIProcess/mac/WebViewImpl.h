@@ -132,6 +132,8 @@ struct TextRecognitionResult;
 struct TranslationContextMenuInfo;
 #endif
 
+template<typename> class ExceptionOr;
+
 namespace WritingTools {
 enum class ReplacementBehavior : uint8_t;
 }
@@ -187,6 +189,7 @@ using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
 
 namespace WebCore {
 struct DragItem;
+struct ResolvedCaptionDisplaySettingsOptions;
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
 struct DigitalCredentialsRequestData;
@@ -211,6 +214,7 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
+
 struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
@@ -475,6 +479,8 @@ public:
     void requestCandidatesForSelectionIfNeeded();
 
     void preferencesDidChange();
+
+    void updateNeedsViewFrameInWindowCoordinatesIfNeeded();
 
     void teardownTextIndicatorLayer();
     void startTextIndicatorFadeOut();
@@ -818,7 +824,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    void showCaptionDisplaySettings(CompletionHandler<void(bool)>&&);
+    void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&);
 #endif
 
 private:
@@ -923,8 +929,6 @@ private:
 #endif
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
-
-    void configurePanGestureRecognizerIfNeeded();
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

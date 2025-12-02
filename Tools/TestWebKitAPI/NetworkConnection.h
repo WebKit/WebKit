@@ -28,6 +28,8 @@
 #import "CoroutineUtilities.h"
 #import <Network/Network.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/CoroutineUtilities.h>
+#import <wtf/OSObjectPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -43,10 +45,10 @@ class Connection {
 public:
     void send(String&&, CompletionHandler<void()>&& = nullptr) const;
     void send(Vector<uint8_t>&&, CompletionHandler<void()>&& = nullptr) const;
-    void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void(bool)>&& = nullptr) const;
+    void send(OSObjectPtr<dispatch_data_t>&&, CompletionHandler<void(bool)>&& = nullptr) const;
     SendOperation awaitableSend(Vector<uint8_t>&&);
     SendOperation awaitableSend(String&&);
-    SendOperation awaitableSend(RetainPtr<dispatch_data_t>&&);
+    SendOperation awaitableSend(OSObjectPtr<dispatch_data_t>&&);
     void sendAndReportError(Vector<uint8_t>&&, CompletionHandler<void(bool)>&&) const;
     void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&, size_t minimumSize = 1) const;
     ReceiveBytesOperation awaitableReceiveBytes() const;
@@ -77,6 +79,8 @@ public:
     Connection createWebTransportConnection(ConnectionType) const;
     ReceiveIncomingConnectionOperation receiveIncomingConnection() const;
     void cancel();
+    Awaitable<void> awaitableFailure();
+    void drainWebTransportSession();
 
 private:
     friend class WebTransportServer;
@@ -84,6 +88,7 @@ private:
     ConnectionGroup(nw_connection_group_t);
     void receiveIncomingConnection(Connection);
     void receiveIncomingConnection(CompletionHandler<void(Connection)>&&);
+    void markAsFailed();
 
     struct Data;
     Ref<Data> m_data;
@@ -129,14 +134,14 @@ private:
 
 class SendOperation {
 public:
-    SendOperation(RetainPtr<dispatch_data_t>&& data, const Connection& connection)
+    SendOperation(OSObjectPtr<dispatch_data_t>&& data, const Connection& connection)
         : m_data(WTFMove(data))
         , m_connection(connection) { }
     bool await_ready() { return false; }
     void await_suspend(std::coroutine_handle<>);
     void await_resume() { }
 private:
-    RetainPtr<dispatch_data_t> m_data;
+    OSObjectPtr<dispatch_data_t> m_data;
     Connection m_connection;
 };
 

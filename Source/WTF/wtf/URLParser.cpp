@@ -2991,15 +2991,14 @@ String URLParser::serialize(const URLEncodedForm& tuples)
 
 const UIDNA& URLParser::internationalDomainNameTranscoder()
 {
-    static UIDNA* encoder;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static UIDNA* encoder = [] {
         UErrorCode error = U_ZERO_ERROR;
-        encoder = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_UNICODE | UIDNA_NONTRANSITIONAL_TO_ASCII, &error);
+        auto* encoder = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_UNICODE | UIDNA_NONTRANSITIONAL_TO_ASCII, &error);
         if (U_FAILURE(error)) [[unlikely]]
             CRASH_WITH_INFO(error);
         RELEASE_ASSERT(encoder);
-    });
+        return encoder;
+    }();
     return *encoder;
 }
 

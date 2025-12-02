@@ -37,6 +37,8 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#import "NetworkSoftLink.h"
+
 namespace WebKit {
 
 NetworkTransportStream::NetworkTransportStream(NetworkTransportSession& session, nw_connection_t connection, NetworkTransportStreamType streamType)
@@ -75,8 +77,6 @@ void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withF
         completionHandler = WTFMove(completionHandler)
     ] (nw_error_t error) mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
         if (error) {
             if (nw_error_get_error_domain(error) == nw_error_domain_posix && nw_error_get_error_code(error) == ECANCELED)
                 completionHandler(std::nullopt);
@@ -85,8 +85,10 @@ void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withF
             return;
         }
 
+        if (!protectedThis)
+            return completionHandler(std::nullopt);
+
         protectedThis->m_bytesSent += bytesSent;
-        completionHandler(std::nullopt);
 
         if (withFin) {
             switch (protectedThis->m_streamState) {
@@ -94,12 +96,15 @@ void NetworkTransportStream::sendBytes(std::span<const uint8_t> data, bool withF
                 protectedThis->m_streamState = NetworkTransportStreamState::WriteClosed;
                 break;
             case NetworkTransportStreamState::ReadClosed:
-                protectedThis->cancelSend(std::nullopt);
+                if (RefPtr session = protectedThis->m_session.get())
+                    session->destroyStream(protectedThis->m_identifier, std::nullopt);
                 break;
             case NetworkTransportStreamState::WriteClosed:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
+
+        completionHandler(std::nullopt);
     }).get());
 }
 
@@ -114,8 +119,8 @@ void NetworkTransportStream::receiveLoop()
         if (!session)
             return;
         if (error) {
-            if (!(nw_error_get_error_domain(error) == nw_error_domain_posix && nw_error_get_error_code(error) == ECANCELED))
-                session->streamReceiveBytes(protectedThis->m_identifier, { }, false, WebCore::Exception(WebCore::ExceptionCode::NetworkError));
+            if (nw_error_get_error_domain(error) != nw_error_domain_posix || nw_error_get_error_code(error) != ECANCELED)
+                session->streamReceiveError(protectedThis->m_identifier, nw_error_get_error_code(error));
             return;
         }
 
@@ -143,7 +148,7 @@ void NetworkTransportStream::receiveLoop()
                 protectedThis->m_streamState = NetworkTransportStreamState::ReadClosed;
                 break;
             case NetworkTransportStreamState::WriteClosed:
-                protectedThis->cancelReceive(std::nullopt);
+                session->destroyStream(protectedThis->m_identifier, std::nullopt);
                 break;
             case NetworkTransportStreamState::ReadClosed:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -153,17 +158,8 @@ void NetworkTransportStream::receiveLoop()
     }).get());
 }
 
-void NetworkTransportStream::setErrorCodeForStream(std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
-{
-    if (!errorCode)
-        return;
-
-    // FIXME: Implement once rdar://141886375 is available in OS builds.
-}
-
 void NetworkTransportStream::cancel(std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
 {
-    setErrorCodeForStream(errorCode);
     nw_connection_cancel(m_connection.get());
 }
 
@@ -171,12 +167,18 @@ void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportSt
 {
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
-        setErrorCodeForStream(errorCode);
         m_streamState = NetworkTransportStreamState::ReadClosed;
-        // FIXME: Implement once rdar://141886375 is available in OS builds.
+#if HAVE(WEB_TRANSPORT)
+        if (canLoad_Network_nw_connection_abort_reads())
+            softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+#endif
         break;
     }
     case NetworkTransportStreamState::WriteClosed: {
+#if HAVE(WEB_TRANSPORT)
+        if (canLoad_Network_nw_connection_abort_reads())
+            softLink_Network_nw_connection_abort_reads(m_connection.get(), errorCode.value_or(0));
+#endif
         RefPtr session = m_session.get();
         if (!session)
             return;
@@ -192,12 +194,18 @@ void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStrea
 {
     switch (m_streamState) {
     case NetworkTransportStreamState::Ready: {
-        setErrorCodeForStream(errorCode);
         m_streamState = NetworkTransportStreamState::WriteClosed;
-        // FIXME: Implement once rdar://141886375 is available in OS builds.
+#if HAVE(WEB_TRANSPORT)
+        if (canLoad_Network_nw_connection_abort_writes())
+            softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+#endif
         break;
     }
     case NetworkTransportStreamState::ReadClosed: {
+#if HAVE(WEB_TRANSPORT)
+        if (canLoad_Network_nw_connection_abort_writes())
+            softLink_Network_nw_connection_abort_writes(m_connection.get(), errorCode.value_or(0));
+#endif
         RefPtr session = m_session.get();
         if (!session)
             return;

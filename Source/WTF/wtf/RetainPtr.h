@@ -317,6 +317,12 @@ template<typename T> struct IsSmartPtr<RetainPtr<T>> {
 };
 
 template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<RetainPtr<P>> {
+    static RetainPtr<P>::PtrType emptyValue() { return nullptr; }
+    static bool isEmptyValue(const RetainPtr<P>& value) { return !value; }
+
+    using PeekType = RetainPtr<P>::PtrType;
+    static PeekType peek(const RetainPtr<P>& value) { return value.get(); }
+    static PeekType peek(P* value) { return value; }
 };
 
 template<typename P> struct DefaultHash<RetainPtr<P>> : PtrHash<RetainPtr<P>> { };

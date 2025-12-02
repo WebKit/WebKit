@@ -65,6 +65,9 @@ private:
     void updateScrollingMode(WebCore::ScrollbarMode scrollingMode) final;
     void reportMixedContentViolation(bool blocked, const URL& target) final;
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&) final;
+
+    void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&) final;
+    void broadcastFrameTreeSyncDataToOtherProcesses(const WebCore::FrameTreeSyncSerializationData&) final;
 };
 
 }

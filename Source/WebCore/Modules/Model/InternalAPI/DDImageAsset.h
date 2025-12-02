@@ -27,21 +27,25 @@
 
 namespace WebCore::DDModel {
 
-enum class DDSemantic : uint8_t {
-    Color,
-    Vector,
-    Scalar,
-    Unknown
+struct DDImageAssetSwizzle {
+    uint8_t red { 0 };
+    uint8_t green { 0 };
+    uint8_t blue { 0 };
+    uint8_t alpha { 0 };
 };
 
 struct DDImageAsset {
     Vector<uint8_t> data;
-    uint32_t width { 0 };
-    uint32_t height { 0 };
-    uint32_t bytesPerPixel { 0 };
-    DDSemantic semantic { DDSemantic::Unknown };
-    String path;
-    String identifier;
+    long width { 0 };
+    long height { 0 };
+    long depth { 0 };
+    long bytesPerPixel { 0 };
+    uint64_t textureType { 0 };
+    uint64_t pixelFormat { 0 };
+    long mipmapLevelCount { 0 };
+    long arrayLength { 0 };
+    uint64_t textureUsage { 0 };
+    DDImageAssetSwizzle swizzle { };
 };
 
 }

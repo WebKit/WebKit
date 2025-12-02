@@ -35,6 +35,10 @@ class SubscriptionObserverCallback : public RefCounted<SubscriptionObserverCallb
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(JSC::JSValue) = 0;
     virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue) = 0;
 

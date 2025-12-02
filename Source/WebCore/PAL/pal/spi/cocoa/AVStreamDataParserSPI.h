@@ -29,6 +29,10 @@ DECLARE_SYSTEM_HEADER
 
 #include <CoreMedia/CoreMedia.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <AVFoundation/AVStreamDataParser.h>
+#else
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol AVStreamDataParserOutputHandling;
@@ -73,3 +77,5 @@ typedef NS_ENUM(NSUInteger, AVStreamDataParserOutputMediaDataFlags) {
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif

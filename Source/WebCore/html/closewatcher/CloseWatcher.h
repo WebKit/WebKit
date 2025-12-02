@@ -57,8 +57,11 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
+    // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
 private:
     static Ref<CloseWatcher> establish(Document&);
 

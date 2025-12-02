@@ -10,6 +10,6 @@ FAIL Table with separated border assert_equals: Table with separated border offs
 FAIL Table with collapsed border assert_equals: Table with collapsed border offsetWidth expected 26 but got 20
 PASS Caption with padding
 PASS Caption with border
-FAIL Caption with margin assert_equals: Caption with margin offsetWidth expected 46 but got 40
+PASS Caption with margin
 PASS Bottom caption
 

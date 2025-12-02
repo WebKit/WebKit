@@ -46,8 +46,9 @@ public:
 
     virtual ~WebXRReferenceSpace();
 
-    using RefCounted<WebXRReferenceSpace>::ref;
-    using RefCounted<WebXRReferenceSpace>::deref;
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WebXRSession* session() const final { return m_session.get(); }
     std::optional<TransformationMatrix> nativeOrigin() const override;

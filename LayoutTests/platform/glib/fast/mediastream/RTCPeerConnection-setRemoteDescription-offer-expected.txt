@@ -19,7 +19,7 @@ PASS trackEvent.track.muted is true
 *** Remote track properties should match track added at remote side (remotePc)
 PASS trackEvent.track.kind is remotePcAudioTrack.kind
 PASS trackEvent.track.id is remotePcAudioTrack.id
-FAIL trackEvent.track.label should be remote audio. Was .
+PASS trackEvent.track.label is 'remote audio'
 *** Check local and remote transceivers
 PASS trackEvent.transceiver.mid is remotePcAudioTransceiver.mid
 
@@ -49,7 +49,7 @@ PASS trackEvent.track.muted is true
 *** Remote track properties should match track added at remote side (remotePc)
 PASS trackEvent.track.kind is remotePcVideoTrack.kind
 PASS trackEvent.track.id is remotePcVideoTrack.id
-FAIL trackEvent.track.label should be remote video. Was .
+PASS trackEvent.track.label is 'remote video'
 *** Check local and remote transceivers
 PASS trackEvent.transceiver.mid is remotePcVideoTransceiver.mid
 

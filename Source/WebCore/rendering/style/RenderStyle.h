@@ -28,6 +28,7 @@
 
 #include <WebCore/BoxExtents.h>
 #include <WebCore/PseudoElementIdentifier.h>
+#include <WebCore/StyleGridAutoFlow.h>
 #include <WebCore/StylePrimitiveNumeric+Forward.h>
 #include <WebCore/WritingMode.h>
 #include <unicode/utypes.h>
@@ -62,7 +63,6 @@ class LayoutRect;
 class LayoutSize;
 class LayoutUnit;
 class OutlineValue;
-class PositionArea;
 class RenderElement;
 class RenderStyle;
 class SVGRenderStyle;
@@ -163,7 +163,6 @@ enum class PointerEvents : uint8_t;
 enum class PositionType : uint8_t;
 enum class PrintColorAdjust : bool;
 enum class PseudoId : uint8_t;
-enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class RubyAlign : uint8_t;
 enum class RubyOverhang : bool;
@@ -174,8 +173,6 @@ enum class StyleColorOptions : uint8_t;
 enum class StyleDifference : uint8_t;
 enum class StyleDifferenceContextSensitiveProperty : uint8_t;
 enum class TableLayoutType : bool;
-enum class TextAlignLast : uint8_t;
-enum class TextAlignMode : uint8_t;
 enum class TextBoxTrim : uint8_t;
 enum class TextCombine : bool;
 enum class TextDecorationSkipInk : uint8_t;
@@ -207,7 +204,6 @@ enum class WordBreak : uint8_t;
 struct CSSPropertiesBitSet;
 struct CounterDirectiveMap;
 struct GridTrackList;
-struct NameScope;
 struct TransformOperationData;
 
 template<typename> class RectEdges;
@@ -271,7 +267,6 @@ struct FontVariationSettings;
 struct FontWeight;
 struct FontWidth;
 struct GapGutter;
-struct GridAutoFlow;
 struct GridPosition;
 struct GridTemplateAreas;
 struct GridTemplateList;
@@ -304,6 +299,7 @@ struct MathDepth;
 struct MaximumLines;
 struct MaximumSize;
 struct MinimumSize;
+struct NameScope;
 struct OffsetAnchor;
 struct OffsetDistance;
 struct OffsetPath;
@@ -315,10 +311,12 @@ struct PaddingEdge;
 struct PageSize;
 struct Perspective;
 struct Position;
+struct PositionAnchor;
+struct PositionArea;
 struct PositionVisibility;
 struct PositionX;
 struct PositionY;
-struct PositionTryFallback;
+struct PositionTryFallbacks;
 struct PreferredSize;
 struct ProgressTimelineAxes;
 struct ProgressTimelineNames;
@@ -345,7 +343,6 @@ struct ScrollSnapType;
 struct ScrollTimelines;
 struct ScrollbarColor;
 struct ScrollbarGutter;
-struct ScrollbarWidth;
 struct ShapeMargin;
 struct ShapeOutside;
 struct SpeakAs;
@@ -380,6 +377,7 @@ struct WebkitInitialLetter;
 struct WebkitLineBoxContain;
 struct WebkitLineClamp;
 struct WebkitLineGrid;
+struct WebkitLocale;
 struct WebkitMarqueeIncrement;
 struct WebkitMarqueeRepetition;
 struct WebkitMarqueeSpeed;
@@ -394,9 +392,13 @@ enum class Change : uint8_t;
 enum class GridTrackSizingDirection : bool;
 enum class ImageOrientation : bool;
 enum class PositionTryOrder : uint8_t;
+enum class Resize : uint8_t;
 enum class SVGGlyphOrientationHorizontal : uint8_t;
 enum class SVGGlyphOrientationVertical : uint8_t;
 enum class ScrollBehavior : bool;
+enum class ScrollbarWidth : uint8_t;
+enum class TextAlignLast : uint8_t;
+enum class TextAlign : uint8_t;
 enum class WebkitOverflowScrolling : bool;
 enum class WebkitTouchCallout : bool;
 
@@ -753,13 +755,13 @@ public:
     inline Style::FontVariantLigatures fontVariantLigatures() const;
     inline Style::FontVariantNumeric fontVariantNumeric() const;
     inline FontVariantPosition fontVariantPosition() const;
-    inline const AtomString& locale() const;
-    inline const AtomString& computedLocale() const;
+    inline Style::WebkitLocale locale() const;
+    inline Style::WebkitLocale computedLocale() const;
     inline TextRenderingMode textRendering() const;
 
     inline const Style::TextIndent& textIndent() const;
-    inline TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
-    inline TextAlignLast textAlignLast() const;
+    inline Style::TextAlign textAlign() const { return static_cast<Style::TextAlign>(m_inheritedFlags.textAlign); }
+    inline Style::TextAlignLast textAlignLast() const;
     inline TextGroupAlign textGroupAlign() const;
     inline Style::TextTransform textTransform() const;
     inline Style::TextDecorationLine textDecorationLineInEffect() const;
@@ -902,8 +904,6 @@ public:
     inline StyleAppearance usedAppearance() const;
 
     inline const Style::AspectRatio& aspectRatio() const;
-    inline Style::Number<CSS::Nonnegative> aspectRatioWidth() const;
-    inline Style::Number<CSS::Nonnegative> aspectRatioHeight() const;
     inline Style::Number<CSS::Nonnegative> aspectRatioLogicalWidth() const;
     inline Style::Number<CSS::Nonnegative> aspectRatioLogicalHeight() const;
     inline double logicalAspectRatio() const;
@@ -1003,7 +1003,7 @@ public:
     inline Style::HyphenateLimitEdge hyphenateLimitAfter() const;
     inline Style::HyphenateLimitLines hyphenateLimitLines() const;
     inline const Style::HyphenateCharacter& hyphenateCharacter() const;
-    inline Resize resize() const;
+    inline Style::Resize resize() const;
     inline ColumnAxis columnAxis() const;
     inline bool hasInlineColumnAxis() const;
     inline ColumnProgression columnProgression() const;
@@ -1011,11 +1011,13 @@ public:
     inline Style::ColumnCount columnCount() const;
     inline bool specifiesColumns() const;
     inline ColumnFill columnFill() const;
+    inline ColumnSpan columnSpan() const;
+    inline bool columnSpanEqual(const RenderStyle&) const;
+
+    const BorderValue& columnRule() const;
     inline BorderStyle columnRuleStyle() const;
     inline Style::LineWidth columnRuleWidth() const;
     inline bool columnRuleIsTransparent() const;
-    inline ColumnSpan columnSpan() const;
-    inline bool columnSpanEqual(const RenderStyle&) const;
 
     inline const Style::GapGutter& columnGap() const;
     inline const Style::GapGutter& rowGap() const;
@@ -1050,7 +1052,7 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     inline Style::ColorScheme colorScheme() const;
-    inline void setHasExplicitlySetColorScheme();
+    inline void setHasExplicitlySetColorScheme(bool);
     inline bool hasExplicitlySetColorScheme() const;
 #endif
 
@@ -1124,9 +1126,9 @@ public:
     inline void setViewTimelineAxes(Style::ProgressTimelineAxes&&);
     inline void setViewTimelineNames(Style::ProgressTimelineNames&&);
 
-    static inline const NameScope initialTimelineScope();
-    inline const NameScope& timelineScope() const;
-    inline void setTimelineScope(const NameScope&);
+    static inline Style::NameScope initialTimelineScope();
+    inline const Style::NameScope& timelineScope() const;
+    inline void setTimelineScope(Style::NameScope&&);
 
     inline Style::Animations& ensureAnimations();
     inline const Style::Animations& animations() const;
@@ -1168,17 +1170,17 @@ public:
 
     inline bool effectiveInert() const;
 
-    const Style::ScrollMarginBox& scrollMarginBox() const;
-    const Style::ScrollMarginEdge& scrollMarginTop() const;
-    const Style::ScrollMarginEdge& scrollMarginBottom() const;
-    const Style::ScrollMarginEdge& scrollMarginLeft() const;
-    const Style::ScrollMarginEdge& scrollMarginRight() const;
+    inline const Style::ScrollMarginBox& scrollMarginBox() const;
+    inline const Style::ScrollMarginEdge& scrollMarginTop() const;
+    inline const Style::ScrollMarginEdge& scrollMarginBottom() const;
+    inline const Style::ScrollMarginEdge& scrollMarginLeft() const;
+    inline const Style::ScrollMarginEdge& scrollMarginRight() const;
 
-    const Style::ScrollPaddingBox& scrollPaddingBox() const;
-    const Style::ScrollPaddingEdge& scrollPaddingTop() const;
-    const Style::ScrollPaddingEdge& scrollPaddingBottom() const;
-    const Style::ScrollPaddingEdge& scrollPaddingLeft() const;
-    const Style::ScrollPaddingEdge& scrollPaddingRight() const;
+    inline const Style::ScrollPaddingBox& scrollPaddingBox() const;
+    inline const Style::ScrollPaddingEdge& scrollPaddingTop() const;
+    inline const Style::ScrollPaddingEdge& scrollPaddingBottom() const;
+    inline const Style::ScrollPaddingEdge& scrollPaddingLeft() const;
+    inline const Style::ScrollPaddingEdge& scrollPaddingRight() const;
     inline bool scrollPaddingEqual(const RenderStyle&) const;
 
     bool hasSnapPosition() const;
@@ -1194,7 +1196,7 @@ public:
     inline Style::ScrollbarWidth scrollbarWidth() const;
 
 #if ENABLE(TOUCH_EVENTS)
-    inline Style::Color tapHighlightColor() const;
+    inline const Style::Color& tapHighlightColor() const;
 #endif
 
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
@@ -1321,11 +1323,11 @@ public:
     inline void setBackgroundLayers(Style::BackgroundLayers&&);
 
     inline void setBorderImage(Style::BorderImage&&);
-    void setBorderImageSource(Style::BorderImageSource&&);
-    void setBorderImageSlice(Style::BorderImageSlice&&);
-    void setBorderImageWidth(Style::BorderImageWidth&&);
-    void setBorderImageOutset(Style::BorderImageOutset&&);
-    void setBorderImageRepeat(Style::BorderImageRepeat&&);
+    inline void setBorderImageSource(Style::BorderImageSource&&);
+    inline void setBorderImageSlice(Style::BorderImageSlice&&);
+    inline void setBorderImageWidth(Style::BorderImageWidth&&);
+    inline void setBorderImageOutset(Style::BorderImageOutset&&);
+    inline void setBorderImageRepeat(Style::BorderImageRepeat&&);
 
     inline void setBorderTopLeftRadius(Style::BorderRadiusValue&&);
     inline void setBorderTopRightRadius(Style::BorderRadiusValue&&);
@@ -1396,17 +1398,17 @@ public:
     void setFontVariantLigatures(Style::FontVariantLigatures);
     void setFontVariantNumeric(Style::FontVariantNumeric);
     void setFontVariantPosition(FontVariantPosition);
-    void setLocale(AtomString&&);
+    void setLocale(Style::WebkitLocale&&);
     void setTextRendering(TextRenderingMode);
 
-    void setColor(Color&&);
+    inline void setColor(Color&&);
 
-    void setTextAlign(TextAlignMode v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
-    inline void setTextAlignLast(TextAlignLast);
+    void setTextAlign(Style::TextAlign v) { m_inheritedFlags.textAlign = static_cast<unsigned>(v); }
+    inline void setTextAlignLast(Style::TextAlignLast);
     inline void setTextGroupAlign(TextGroupAlign);
-    inline void addToTextDecorationLineInEffect(const Style::TextDecorationLine&);
-    inline void setTextDecorationLineInEffect(Style::TextDecorationLine&&);
-    inline void setTextDecorationLine(Style::TextDecorationLine&&);
+    inline void addToTextDecorationLineInEffect(Style::TextDecorationLine);
+    inline void setTextDecorationLineInEffect(Style::TextDecorationLine);
+    inline void setTextDecorationLine(Style::TextDecorationLine);
     inline void setTextDecorationStyle(TextDecorationStyle);
     inline void setTextDecorationSkipInk(TextDecorationSkipInk);
     inline void setTextDecorationThickness(Style::TextDecorationThickness&&);
@@ -1445,11 +1447,11 @@ public:
     inline void setMaskLayers(Style::MaskLayers&&);
 
     inline void setMaskBorder(Style::MaskBorder&&);
-    void setMaskBorderSource(Style::MaskBorderSource&&);
-    void setMaskBorderSlice(Style::MaskBorderSlice&&);
-    void setMaskBorderWidth(Style::MaskBorderWidth&&);
-    void setMaskBorderOutset(Style::MaskBorderOutset&&);
-    void setMaskBorderRepeat(Style::MaskBorderRepeat&&);
+    inline void setMaskBorderSource(Style::MaskBorderSource&&);
+    inline void setMaskBorderSlice(Style::MaskBorderSlice&&);
+    inline void setMaskBorderWidth(Style::MaskBorderWidth&&);
+    inline void setMaskBorderOutset(Style::MaskBorderOutset&&);
+    inline void setMaskBorderRepeat(Style::MaskBorderRepeat&&);
 
     void setBorderCollapse(BorderCollapse collapse) { m_inheritedFlags.borderCollapse = static_cast<unsigned>(collapse); }
     inline void setBorderHorizontalSpacing(Style::WebkitBorderSpacing);
@@ -1563,6 +1565,7 @@ public:
     inline void setBoxDecorationBreak(BoxDecorationBreak);
 
     inline void setGridAutoFlow(Style::GridAutoFlow);
+    inline void setGridAutoFlowDirection(Style::GridAutoFlow::Direction);
     inline void setGridAutoColumns(Style::GridTrackSizes&&);
     inline void setGridAutoRows(Style::GridTrackSizes&&);
     inline void setGridTemplateAreas(Style::GridTemplateAreas&&);
@@ -1592,7 +1595,7 @@ public:
     inline void setHyphenateLimitAfter(Style::HyphenateLimitEdge);
     inline void setHyphenateLimitLines(Style::HyphenateLimitLines);
     inline void setHyphenateCharacter(Style::HyphenateCharacter&&);
-    inline void setResize(Resize);
+    inline void setResize(Style::Resize);
     inline void setColumnAxis(ColumnAxis);
     inline void setColumnProgression(ColumnProgression);
     inline void setColumnWidth(Style::ColumnWidth);
@@ -1657,9 +1660,6 @@ public:
     inline void setLineAlign(LineAlign);
 
     void setPointerEvents(PointerEvents p) { m_inheritedFlags.pointerEvents = static_cast<unsigned>(p); }
-
-    inline void clearAnimations();
-    inline void clearTransitions();
 
     void adjustAnimations();
     void adjustTransitions();
@@ -1939,13 +1939,16 @@ public:
     constexpr bool isRubyContainerOrInternalRubyBox() const;
     constexpr bool isOriginalDisplayListItemType() const;
 
-    inline bool setDirection(TextDirection bidiDirection);
+    inline TextDirection computedDirection() const;
+    inline bool setDirection(TextDirection);
     inline bool hasExplicitlySetDirection() const;
-    inline void setHasExplicitlySetDirection();
+    inline void setHasExplicitlySetDirection(bool);
 
+    inline StyleWritingMode computedWritingMode() const;
     inline bool setWritingMode(StyleWritingMode);
     inline bool hasExplicitlySetWritingMode() const;
-    inline void setHasExplicitlySetWritingMode();
+    inline void setHasExplicitlySetWritingMode(bool);
+
     inline bool setTextOrientation(TextOrientation);
 
     bool emptyState() const { return m_nonInheritedFlags.emptyState; }
@@ -1973,8 +1976,8 @@ public:
     void setDisallowsFastPathInheritance() { m_nonInheritedFlags.disallowsFastPathInheritance = true; }
 
     inline void setMathDepth(Style::MathDepth);
-    inline void setMathShift(const MathShift&);
-    inline void setMathStyle(const MathStyle&);
+    inline void setMathShift(MathShift);
+    inline void setMathStyle(MathStyle);
 
     void setTextSpacingTrim(Style::TextSpacingTrim);
     void setTextAutospace(Style::TextAutospace);
@@ -2016,7 +2019,7 @@ public:
     static constexpr Style::FontVariantLigatures initialFontVariantLigatures();
     static constexpr Style::FontVariantNumeric initialFontVariantNumeric();
     static constexpr FontVariantPosition initialFontVariantPosition();
-    static inline AtomString initialLocale();
+    static inline Style::WebkitLocale initialLocale();
     static constexpr Style::TextAutospace initialTextAutospace();
     static constexpr TextRenderingMode initialTextRendering();
     static constexpr Style::TextSpacingTrim initialTextSpacingTrim();
@@ -2083,8 +2086,8 @@ public:
     static constexpr Style::Widows initialWidows();
     static constexpr Style::Orphans initialOrphans();
     static inline Style::LineHeight initialLineHeight();
-    static constexpr TextAlignMode initialTextAlign();
-    static constexpr TextAlignLast initialTextAlignLast();
+    static constexpr Style::TextAlign initialTextAlign();
+    static constexpr Style::TextAlignLast initialTextAlignLast();
     static constexpr TextGroupAlign initialTextGroupAlign();
     static constexpr Style::TextDecorationLine initialTextDecorationLine();
     static constexpr Style::TextDecorationLine initialTextDecorationLineInEffect();
@@ -2143,7 +2146,7 @@ public:
     static constexpr Style::HyphenateLimitEdge initialHyphenateLimitAfter();
     static constexpr Style::HyphenateLimitLines initialHyphenateLimitLines();
     static inline Style::HyphenateCharacter initialHyphenateCharacter();
-    static constexpr Resize initialResize();
+    static constexpr Style::Resize initialResize();
     static constexpr StyleAppearance initialAppearance();
     static inline Style::AspectRatio initialAspectRatio();
     static constexpr Style::Contain initialContain();
@@ -2301,7 +2304,7 @@ public:
     static constexpr MathShift initialMathShift();
     static constexpr MathStyle initialMathStyle();
 
-    void setVisitedLinkColor(Color&&);
+    inline void setVisitedLinkColor(Color&&);
     inline void setVisitedLinkBackgroundColor(Style::Color&&);
     inline void setVisitedLinkBorderLeftColor(Style::Color&&);
     inline void setVisitedLinkBorderRightColor(Style::Color&&);
@@ -2333,7 +2336,7 @@ public:
     inline const Style::Color& textStrokeColor() const;
     inline const Style::Color& caretColor() const;
     inline bool hasAutoCaretColor() const;
-    const Color& visitedLinkColor() const;
+    inline const Color& visitedLinkColor() const;
     inline const Style::Color& visitedLinkBackgroundColor() const;
     inline const Style::Color& visitedLinkBorderLeftColor() const;
     inline const Style::Color& visitedLinkBorderRightColor() const;
@@ -2397,25 +2400,25 @@ public:
     inline const Style::AnchorNames& anchorNames() const;
     inline void setAnchorNames(Style::AnchorNames&&);
 
-    static inline NameScope initialAnchorScope();
-    inline const NameScope& anchorScope() const;
-    inline void setAnchorScope(const NameScope&);
+    static inline Style::NameScope initialAnchorScope();
+    inline const Style::NameScope& anchorScope() const;
+    inline void setAnchorScope(Style::NameScope&&);
 
-    static inline std::optional<Style::ScopedName> initialPositionAnchor();
-    inline const std::optional<Style::ScopedName>& positionAnchor() const;
-    inline void setPositionAnchor(const std::optional<Style::ScopedName>&);
+    static inline Style::PositionAnchor initialPositionAnchor();
+    inline const Style::PositionAnchor& positionAnchor() const;
+    inline void setPositionAnchor(Style::PositionAnchor&&);
 
-    static inline std::optional<PositionArea> initialPositionArea();
-    inline std::optional<PositionArea> positionArea() const;
-    inline void setPositionArea(std::optional<PositionArea>);
+    static inline Style::PositionArea initialPositionArea();
+    inline Style::PositionArea positionArea() const;
+    inline void setPositionArea(Style::PositionArea);
 
     static constexpr Style::PositionTryOrder initialPositionTryOrder();
     inline Style::PositionTryOrder positionTryOrder() const;
     inline void setPositionTryOrder(Style::PositionTryOrder);
 
-    static FixedVector<Style::PositionTryFallback> initialPositionTryFallbacks();
-    const FixedVector<Style::PositionTryFallback>& positionTryFallbacks() const;
-    void setPositionTryFallbacks(FixedVector<Style::PositionTryFallback>&&);
+    static Style::PositionTryFallbacks initialPositionTryFallbacks();
+    inline const Style::PositionTryFallbacks& positionTryFallbacks() const;
+    inline void setPositionTryFallbacks(Style::PositionTryFallbacks&&);
 
     std::optional<size_t> usedPositionOptionIndex() const;
     void setUsedPositionOptionIndex(std::optional<size_t>);
@@ -2547,7 +2550,7 @@ private:
         // Text Formatting = 19 bits aligned onto 2 bytes + 4 trailing bits
         PREFERRED_TYPE(WhiteSpaceCollapse) unsigned char whiteSpaceCollapse : 3;
         PREFERRED_TYPE(TextWrapMode) unsigned char textWrapMode : 1;
-        PREFERRED_TYPE(TextAlignMode) unsigned char textAlign : 4;
+        PREFERRED_TYPE(Style::TextAlign) unsigned char textAlign : 4;
         PREFERRED_TYPE(TextWrapStyle) unsigned char textWrapStyle : 2;
         unsigned char textTransform : TextTransformBits; // PREFERRED_TYPE elided to avoid header inclusion.
         unsigned char : 1; // byte alignment

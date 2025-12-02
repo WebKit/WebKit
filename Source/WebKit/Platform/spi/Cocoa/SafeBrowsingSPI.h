@@ -76,6 +76,8 @@ WTF_EXTERN_C_END
 
 - (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(SSBLookupResult *, NSError *))completionHandler;
 - (void)lookUpURL:(NSURL *)URL isMainFrame:(bool)isMainFrame hasHighConfidenceOfSafety:(BOOL)hasHighConfidenceOfSafety completionHandler:(void (^)(SSBLookupResult *, NSError * _Nullable))completionHandler;
+- (void)lookUpURL:(NSURL *)URL isMainFrame:(bool)isMainFrame hasHighConfidenceOfSafety:(BOOL)hasHighConfidenceOfSafety cachedResult:(SSBLookupResult * _Nullable)cachedResult completionHandler:(void (^)(SSBLookupResult *, NSError * _Nullable))completionHandler;
+- (void)getListsForNamespace:(NSString *)listNamespace completionHandler:(void(^)(NSDictionary<NSString *, NSArray<NSString *> *> * _Nullable, NSError * _Nullable))completionHandler;
 
 @end
 

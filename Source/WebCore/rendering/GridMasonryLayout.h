@@ -71,6 +71,7 @@ private:
     LayoutUnit masonryAxisMarginBoxForItem(const RenderBox& gridItem);
     void updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     void updateItemOffset(const RenderBox& gridItem, LayoutUnit offset);
+    LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     inline Style::GridTrackSizingDirection gridAxisDirection() const;
 
     bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection masonryDirection) const;

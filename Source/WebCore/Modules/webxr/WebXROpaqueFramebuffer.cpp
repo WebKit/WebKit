@@ -142,7 +142,6 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
         m_resolveAttachments.release(*gl);
         m_displayFBO.release(*gl);
         m_resolvedFBO.release(*gl);
-        m_context->deleteFramebuffer(m_drawFramebuffer.ptr());
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.

@@ -70,9 +70,9 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
     return channel;
 }
 
-NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& context, RTCDataChannel& channel)
+Ref<NetworkSendQueue> RTCDataChannel::createMessageQueue(ScriptExecutionContext& context, RTCDataChannel& channel)
 {
-    return { context, [&channel](auto& utf8) {
+    return NetworkSendQueue::create(context, [&channel](auto& utf8) {
         if (!channel.m_handler->sendStringData(utf8))
             channel.protectedScriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Error sending string through RTCDataChannel."_s);
     }, [&channel](auto span) {
@@ -84,7 +84,7 @@ NetworkSendQueue RTCDataChannel::createMessageQueue(ScriptExecutionContext& cont
             context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Error "_s, code, " in retrieving a blob data to be sent through RTCDataChannel."_s));
         }
         return NetworkSendQueue::Continue::Yes;
-    } };
+    });
 }
 
 RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<RTCDataChannelHandler>&& handler, String&& label, RTCDataChannelInit&& options, RTCDataChannelState readyState)
@@ -122,7 +122,7 @@ ExceptionOr<void> RTCDataChannel::send(const String& data)
     // FIXME: We might want to use strict conversion like WebSocket.
     auto utf8 = data.utf8();
     m_bufferedAmount += utf8.length();
-    m_messageQueue.enqueue(WTFMove(utf8));
+    m_messageQueue->enqueue(WTFMove(utf8));
     return { };
 }
 
@@ -132,7 +132,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
         return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += data.byteLength();
-    m_messageQueue.enqueue(data, 0, data.byteLength());
+    m_messageQueue->enqueue(data, 0, data.byteLength());
     return { };
 }
 
@@ -142,7 +142,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
         return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += data.byteLength();
-    m_messageQueue.enqueue(*data.unsharedBuffer(), data.byteOffset(), data.byteLength());
+    m_messageQueue->enqueue(*data.unsharedBuffer(), data.byteOffset(), data.byteLength());
     return { };
 }
 
@@ -152,7 +152,7 @@ ExceptionOr<void> RTCDataChannel::send(Blob& blob)
         return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += blob.size();
-    m_messageQueue.enqueue(blob);
+    m_messageQueue->enqueue(blob);
     return { };
 }
 
@@ -166,7 +166,7 @@ void RTCDataChannel::close()
 
     m_readyState = RTCDataChannelState::Closing;
 
-    m_messageQueue.clear();
+    m_messageQueue->clear();
 
     if (m_handler)
         m_handler->close();
@@ -265,11 +265,7 @@ static Lock s_rtcDataChannelLocalMapLock;
 static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
 {
     ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
-    static LazyNeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        map.construct();
-    });
+    static NeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;
     return map;
 }
 

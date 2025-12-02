@@ -56,6 +56,8 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
 
+NetworkProcess/webrtc/rice/RiceBackend.cpp
+
 Platform/IPC/android/ArgumentCodersAndroid.cpp
 
 Platform/IPC/glib/ConnectionGLib.cpp
@@ -283,8 +285,10 @@ UIProcess/wpe/WPEUtilities.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
 UIProcess/wpe/WebPasteboardProxyWPE.cpp
 UIProcess/wpe/WebPreferencesWPE.cpp
+UIProcess/wpe/WebContextMenuProxyWPE.cpp
 
 UIProcess/XR/openxr/OpenXRExtensions.cpp
+UIProcess/XR/openxr/OpenXRHitTestManager.cpp
 UIProcess/XR/openxr/OpenXRInput.cpp
 UIProcess/XR/openxr/OpenXRInputSource.cpp
 UIProcess/XR/openxr/OpenXRLayer.cpp
@@ -310,6 +314,8 @@ WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 WebProcess/Inspector/wpe/WebInspectorUIWPE.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+
+WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
 
 WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
 

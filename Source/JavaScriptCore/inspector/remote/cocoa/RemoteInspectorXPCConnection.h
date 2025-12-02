@@ -49,7 +49,11 @@ public:
         virtual void xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t) = 0;
     };
 
-    RemoteInspectorXPCConnection(xpc_connection_t, dispatch_queue_t, Client*);
+    static Ref<RemoteInspectorXPCConnection> create(xpc_connection_t connection, dispatch_queue_t queue, Client* client)
+    {
+        return adoptRef(*new RemoteInspectorXPCConnection(connection, queue, client));
+    }
+
     virtual ~RemoteInspectorXPCConnection();
 
     void close();
@@ -57,6 +61,8 @@ public:
     void sendMessage(NSString *messageName, NSDictionary *userInfo);
 
 private:
+    RemoteInspectorXPCConnection(xpc_connection_t, dispatch_queue_t, Client*);
+
     RetainPtr<NSDictionary> deserializeMessage(xpc_object_t);
     void handleEvent(xpc_object_t);
     void closeOnQueue();

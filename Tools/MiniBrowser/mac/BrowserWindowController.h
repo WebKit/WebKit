@@ -47,6 +47,9 @@
 
 - (IBAction)openLocation:(id)sender;
 
+- (IBAction)cloneSiteIsolatedWindow:(id)sender;
+- (IBAction)cloneNonIsolatedWindow:(id)sender;
+
 - (IBAction)saveAsPDF:(id)sender;
 - (IBAction)saveAsImage:(id)sender;
 - (IBAction)saveAsWebArchive:(id)sender;

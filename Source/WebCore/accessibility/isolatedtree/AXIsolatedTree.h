@@ -57,7 +57,7 @@ class AXObjectCache;
 class AccessibilityObject;
 enum class AXStreamOptions : uint16_t;
 
-static constexpr uint16_t lastPropertyFlagIndex = 28;
+static constexpr uint16_t lastPropertyFlagIndex = 29;
 // The most common boolean properties are stored in a bitfield rather than in a HashMap.
 // If you edit these, make sure the corresponding AXProperty is ordered correctly in that
 // enum, and update lastPropertyFlagIndex above.
@@ -71,26 +71,27 @@ enum class AXPropertyFlag : uint32_t {
     HasItalicFont                                 = 1 << 6,
     HasPlainText                                  = 1 << 7,
     HasPointerEventsNone                          = 1 << 8,
-    IsEnabled                                     = 1 << 9,
-    IsExposedTableCell                            = 1 << 10,
-    IsExposedTableRow                             = 1 << 11,
-    IsGrabbed                                     = 1 << 12,
-    IsHiddenUntilFoundContainer                   = 1 << 13,
-    IsIgnored                                     = 1 << 14,
-    IsInlineText                                  = 1 << 15,
-    IsKeyboardFocusable                           = 1 << 16,
-    IsNonLayerSVGObject                           = 1 << 17,
+    IsBlockFlow                                   = 1 << 9,
+    IsEnabled                                     = 1 << 10,
+    IsExposedTableCell                            = 1 << 11,
+    IsExposedTableRow                             = 1 << 12,
+    IsGrabbed                                     = 1 << 13,
+    IsHiddenUntilFoundContainer                   = 1 << 14,
+    IsIgnored                                     = 1 << 15,
+    IsInlineText                                  = 1 << 16,
+    IsKeyboardFocusable                           = 1 << 17,
+    IsNonLayerSVGObject                           = 1 << 18,
     // These IsTextEmissionBehavior flags are the variants of enum TextEmissionBehavior.
-    IsTextEmissionBehaviorTab                     = 1 << 18,
-    IsTextEmissionBehaviorNewline                 = 1 << 19,
-    IsTextEmissionBehaviorDoubleNewline           = 1 << 20,
-    IsVisited                                     = 1 << 21,
-    ShowsCursorOnHover                            = 1 << 22,
-    SupportsCheckedState                          = 1 << 23,
-    SupportsDragging                              = 1 << 24,
-    SupportsExpanded                              = 1 << 25,
-    SupportsPath                                  = 1 << 26,
-    SupportsPosInSet                              = 1 << 27,
+    IsTextEmissionBehaviorTab                     = 1 << 19,
+    IsTextEmissionBehaviorNewline                 = 1 << 20,
+    IsTextEmissionBehaviorDoubleNewline           = 1 << 21,
+    IsVisited                                     = 1 << 22,
+    ShowsCursorOnHover                            = 1 << 23,
+    SupportsCheckedState                          = 1 << 24,
+    SupportsDragging                              = 1 << 25,
+    SupportsExpanded                              = 1 << 26,
+    SupportsPath                                  = 1 << 27,
+    SupportsPosInSet                              = 1 << 28,
     SupportsSetSize                               = 1 << lastPropertyFlagIndex
 };
 
@@ -104,25 +105,26 @@ enum class AXProperty : uint16_t {
     HasItalicFont = 6,
     HasPlainText = 7,
     HasPointerEventsNone = 8,
-    IsEnabled = 9,
-    IsExposedTableCell = 10,
-    IsExposedTableRow = 11,
-    IsGrabbed = 12,
-    IsHiddenUntilFoundContainer = 13,
-    IsIgnored = 14,
-    IsInlineText = 15,
-    IsKeyboardFocusable = 16,
-    IsNonLayerSVGObject = 17,
-    IsTextEmissionBehaviorTab = 18,
-    IsTextEmissionBehaviorNewline = 19,
-    IsTextEmissionBehaviorDoubleNewline = 20,
-    IsVisited = 21,
-    ShowsCursorOnHover = 22,
-    SupportsCheckedState = 23,
-    SupportsDragging = 24,
-    SupportsExpanded = 25,
-    SupportsPath = 26,
-    SupportsPosInSet = 27,
+    IsBlockFlow = 9,
+    IsEnabled = 10,
+    IsExposedTableCell = 11,
+    IsExposedTableRow = 12,
+    IsGrabbed = 13,
+    IsHiddenUntilFoundContainer = 14,
+    IsIgnored = 15,
+    IsInlineText = 16,
+    IsKeyboardFocusable = 17,
+    IsNonLayerSVGObject = 18,
+    IsTextEmissionBehaviorTab = 19,
+    IsTextEmissionBehaviorNewline = 20,
+    IsTextEmissionBehaviorDoubleNewline = 21,
+    IsVisited = 22,
+    ShowsCursorOnHover = 23,
+    SupportsCheckedState = 24,
+    SupportsDragging = 25,
+    SupportsExpanded = 26,
+    SupportsPath = 27,
+    SupportsPosInSet = 28,
     SupportsSetSize = lastPropertyFlagIndex,
     // End bool attributes that are matched in order by AXPropertyFlag.
 
@@ -290,6 +292,7 @@ enum class AXProperty : uint16_t {
     SetSize,
     SortDirection,
     SpeakAs,
+    StitchGroups,
     StringValue,
     SubrolePlatformString,
     SupportsDropping,
@@ -321,10 +324,19 @@ WTF::TextStream& operator<<(WTF::TextStream&, AXProperty);
 
 using AXPropertySet = HashSet<AXProperty, IntHash<AXProperty>, WTF::StrongEnumHashTraits<AXProperty>>;
 
-using AXIDAndCharacterRange = std::pair<Markable<AXID>, CharacterRange>;
+struct AXIDAndCharacterRange {
+    WTF_MAKE_TZONE_ALLOCATED(AXIDAndCharacterRange);
+public:
+    Markable<AXID> first;
+    CharacterRange second;
+
+    AXIDAndCharacterRange() = default;
+    AXIDAndCharacterRange(Markable<AXID> axID, CharacterRange range)
+        : first(axID), second(range) { }
+};
 
 // If this type is modified, the switchOn statment in AXIsolatedObject::setProperty must be updated as well.
-using AXPropertyValueVariant = Variant<std::nullptr_t, Markable<AXID>, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, InputType::Type, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<Markable<AXID>, Markable<AXID>>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, Vector<Vector<Markable<AXID>>>, CharacterRange, std::shared_ptr<AXIDAndCharacterRange>, ElementName, AccessibilityOrientation
+using AXPropertyValueVariant = Variant<std::nullptr_t, Markable<AXID>, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::unique_ptr<URL>, LayoutRect, FloatPoint, FloatRect, InputType::Type, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<Markable<AXID>, Markable<AXID>>>, Vector<String>, std::unique_ptr<Path>, Vector<Vector<AXID>>, OptionSet<AXAncestorFlag>, Vector<Vector<Markable<AXID>>>, CharacterRange, std::unique_ptr<AXIDAndCharacterRange>, ElementName, AccessibilityOrientation
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
     , RetainPtr<NSView>
@@ -334,7 +346,7 @@ using AXPropertyValueVariant = Variant<std::nullptr_t, Markable<AXID>, String, b
 #if ENABLE(AX_THREAD_TEXT_APIS)
     , RetainPtr<CTFontRef>
     , FontOrientation
-    , std::shared_ptr<AXTextRuns>
+    , std::unique_ptr<AXTextRuns>
     , AXTextRunLineID
     , FrameIdentifier
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
@@ -401,6 +413,9 @@ struct IsolatedObjectData {
         , propertyFlags(propertyFlags)
         , getsGeometryFromChildren(getsGeometryFromChildren)
     { }
+
+    IsolatedObjectData(const IsolatedObjectData&) = delete;
+    IsolatedObjectData(IsolatedObjectData&&) = default;
 
     void setProperty(AXProperty property, AXPropertyValueVariant&& value)
     {
@@ -598,6 +613,9 @@ private:
             : data(WTFMove(isolatedData))
             , wrapper(WTFMove(wrapper))
         { }
+
+        NodeChange(const NodeChange&) = delete;
+        NodeChange(NodeChange&&) = default;
     };
 
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
@@ -607,7 +625,7 @@ private:
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>);
     void collectNodeChangesForSubtree(AccessibilityObject&);
     bool isCollectingNodeChanges() const { return m_isCollectingNodeChanges; }
-    void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
+    void queueChange(NodeChange&&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovalsAndUnresolvedChanges();

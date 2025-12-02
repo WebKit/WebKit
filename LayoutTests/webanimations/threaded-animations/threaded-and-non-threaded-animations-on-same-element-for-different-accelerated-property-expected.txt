@@ -1,0 +1,3 @@
+
+PASS Scroll-driven and monotonic animations can be combined on the same element and yield accelerated animations provided they affect different properties.
+

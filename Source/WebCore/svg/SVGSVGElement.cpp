@@ -74,13 +74,14 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     ASSERT(hasTagName(SVGNames::svgTag));
     document.registerForDocumentSuspensionCallbacks(*this);
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGSVGElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGSVGElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGSVGElement::m_width>();
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGSVGElement::m_height>();
-    });
+    }
 }
 
 Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
@@ -209,26 +210,12 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
     case AttributeNames::yAttr:
         Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
-    case AttributeNames::widthAttr: {
-        auto length = SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
-        if (parseError != SVGParsingError::None || newValue.isEmpty()) {
-            // FIXME: This is definitely the correct behavior for a missing/removed attribute.
-            // Not sure it's correct for the empty string or for something that can't be parsed.
-            length = SVGLengthValue(SVGLengthMode::Width, "100%"_s);
-        }
-        Ref { m_width }->setBaseValInternal(length);
+    case AttributeNames::widthAttr:
+        Ref { m_width }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid, "100%"_s));
         break;
-    }
-    case AttributeNames::heightAttr: {
-        auto length = SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid);
-        if (parseError != SVGParsingError::None || newValue.isEmpty()) {
-            // FIXME: This is definitely the correct behavior for a removed attribute.
-            // Not sure it's correct for the empty string or for something that can't be parsed.
-            length = SVGLengthValue(SVGLengthMode::Height, "100%"_s);
-        }
-        Ref { m_height }->setBaseValInternal(length);
+    case AttributeNames::heightAttr:
+        Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid, "100%"_s));
         break;
-    }
     default:
         break;
     }

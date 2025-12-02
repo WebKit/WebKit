@@ -2264,9 +2264,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     float printWidth = root->writingMode().isHorizontal() ? static_cast<float>(documentRect.width()) / printScaleFactor : pageSize.width;
     float printHeight = root->writingMode().isHorizontal() ? pageSize.height : static_cast<float>(documentRect.height()) / printScaleFactor;
 
-    WebCore::PrintContext printContext(_private->coreFrame);
-    printContext.computePageRectsWithPageSize(WebCore::FloatSize(printWidth, printHeight), true);
-    return createNSArray(printContext.pageRects()).autorelease();
+    Ref printContext = WebCore::PrintContext::create(_private->coreFrame);
+    printContext->computePageRectsWithPageSize(WebCore::FloatSize(printWidth, printHeight), true);
+    return createNSArray(printContext->pageRects()).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)

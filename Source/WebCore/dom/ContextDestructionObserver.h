@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -33,7 +34,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class ContextDestructionObserver {
+class ContextDestructionObserver : public AbstractRefCountedAndCanMakeWeakPtr<ContextDestructionObserver> {
 public:
     WEBCORE_EXPORT virtual void contextDestroyed();
 

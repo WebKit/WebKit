@@ -50,6 +50,10 @@ public:
     static bool handlesIdentifier(const PaymentRequest::MethodIdentifier&);
     static bool hasActiveSession(Document&);
 
+    // ContextDestructionObserver.
+    void ref() const final { PaymentHandler::ref(); }
+    void deref() const final { PaymentHandler::deref(); }
+
 private:
     friend class PaymentHandler;
     explicit ApplePayPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);

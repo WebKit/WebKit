@@ -172,6 +172,7 @@ public:
         enum class IgnoreScrollbarForAfterMargin : bool { No, Yes };
         MarginInfo(const RenderBlockFlow&, IgnoreScrollbarForAfterMargin = IgnoreScrollbarForAfterMargin::Yes);
         MarginInfo(bool canCollapseWithChildren, bool canCollapseMarginBeforeWithChildren, bool canCollapseMarginAfterWithChildren, bool quirkContainer, bool atBeforeSideOfBlock, bool atAfterSideOfBlock,  bool hasMarginBeforeQuirk, bool hasMarginAfterQuirk, bool determinedMarginBeforeQuirk, LayoutUnit positiveMargin, LayoutUnit negativeMargin);
+        MarginInfo() = default;
 
         void setAtBeforeSideOfBlock(bool atBeforeSideOfBlock) { m_atBeforeSideOfBlock = atBeforeSideOfBlock; }
         void setAtAfterSideOfBlock(bool atAfterSideOfBlock) { m_atAfterSideOfBlock = atAfterSideOfBlock; }
@@ -266,7 +267,7 @@ public:
     LayoutUnit clearFloatsIfNeeded(RenderBox& child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
     LayoutUnit estimateLogicalTopPosition(RenderBox& child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
     void marginBeforeEstimateForChild(RenderBox&, LayoutUnit&, LayoutUnit&) const;
-    void handleAfterSideOfBlock(MarginInfo&);
+    LayoutUnit handleAfterSideOfBlock(MarginInfo&, LayoutUnit contentBoxLogicalHeight);
     void setCollapsedBottomMargin(const MarginInfo&);
 
     bool childrenPreventSelfCollapsing() const final;
@@ -354,6 +355,7 @@ public:
     void setChildrenInline(bool) final;
 
     bool hasLines() const;
+    bool hasBlocksInInlineLayout() const;
 
     enum InvalidationReason : uint8_t {
         InternalMove,       // (anon) block is moved or collapsed
@@ -519,12 +521,14 @@ private:
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
     
     PositionWithAffinity positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource) override;
-    void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const override;
 
     bool hasSvgTextLayout() const;
 
     bool hasInlineLayout() const;
     void layoutInlineContent(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    bool markInlineContentDirtyForLayout(RelayoutChildren);
+    void updateRepaintTopAndBottomAfterLayout(RelayoutChildren, std::optional<LayoutRect> partialRepaintRect, std::pair<float, float> oldContentTopAndBottomIncludingInkOverflow, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    std::optional<LayoutUnit> updateLineClampStateAndLogicalHeightAfterLayout();
     bool tryComputePreferredWidthsUsingInlinePath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
     void setStaticPositionsForSimpleOutOfFlowContent();
 

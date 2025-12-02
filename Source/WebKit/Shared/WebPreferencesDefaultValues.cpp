@@ -182,14 +182,11 @@ bool defaultManagedMediaSourceNeedsAirPlay()
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled()
 {
-    static dispatch_once_t onceToken;
-    static bool enabled { false };
-    dispatch_once(&onceToken, ^{
+    static bool enabled = [] {
         if (isInWebProcess())
-            enabled = WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.group-session.urlactivity"_s);
-        else
-            enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity"_s);
-    });
+            return WebProcess::singleton().parentProcessHasEntitlement("com.apple.developer.group-session.urlactivity"_s);
+        return WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity"_s);
+    }();
     return enabled;
 }
 #endif
@@ -258,16 +255,14 @@ bool defaultGamepadVibrationActuatorEnabled()
 bool defaultDigitalCredentialsEnabled()
 {
 #if HAVE(DIGITAL_CREDENTIALS_UI)
-    static dispatch_once_t onceToken;
-    static bool enabled { false };
-    dispatch_once(&onceToken, ^{
+    static bool enabled = [] {
         auto entitlementChecker = [inWebProcess = isInWebProcess()](auto entitlement) {
             if (inWebProcess)
                 return WebProcess::singleton().parentProcessHasEntitlement(entitlement);
             return WTF::processHasEntitlement(entitlement);
         };
-        enabled = entitlementChecker("com.apple.developer.web-browser"_s) || entitlementChecker("com.apple.developer.identity-document-services.web-presentment-controller"_s);
-    });
+        return entitlementChecker("com.apple.developer.web-browser"_s) || entitlementChecker("com.apple.developer.identity-document-services.web-presentment-controller"_s);
+    }();
     return enabled;
 #else
     return false;
@@ -294,6 +289,15 @@ bool defaultPeerConnectionEnabledAvailable()
     return WebCore::WebRTCProvider::webRTCAvailable();
 }
 #endif
+
+bool defaultWebRTCSocketsServiceClassEnabled()
+{
+#if ENABLE(WEBRTC_SOCKETS_SERVICECLASS_ENABLED)
+    return true;
+#else
+    return false;
+#endif
+}
 
 bool defaultPopoverAttributeEnabled()
 {

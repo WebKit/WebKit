@@ -189,12 +189,8 @@ HistoricResourceUsageData::HistoricResourceUsageData()
 
 static HistoricResourceUsageData& historicUsageData()
 {
-    static HistoricResourceUsageData* data { nullptr };
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        data = new HistoricResourceUsageData;
-    });
-    return *data;
+    static NeverDestroyed<UniqueRef<HistoricResourceUsageData>> data = makeUniqueRef<HistoricResourceUsageData>();
+    return data.get();
 }
 
 static void appendDataToHistory(const ResourceUsageData& data)

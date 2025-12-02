@@ -23,18 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPlaybackTargetPickerMock_h
-#define MediaPlaybackTargetPickerMock_h
+#pragma once
 
-#include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaPlaybackTargetPicker.h>
+#include <wtf/CanMakeWeakPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class MediaPlaybackTarget;
+enum class MediaPlaybackTargetMockState : uint8_t;
 
 class MediaPlaybackTargetPickerMock final : public MediaPlaybackTargetPicker, public CanMakeWeakPtr<MediaPlaybackTargetPickerMock> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlaybackTargetPickerMock);
@@ -45,25 +47,23 @@ public:
 
     virtual ~MediaPlaybackTargetPickerMock();
 
-    void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) override;
-    void startingMonitoringPlaybackTargets() override;
-    void stopMonitoringPlaybackTargets() override;
-    void invalidatePlaybackTargets() override;
-
-    void setState(const String&, MediaPlaybackTargetContext::MockState);
+    void setState(const String&, MediaPlaybackTargetMockState);
     void dismissPopup();
 
 private:
-    bool externalOutputDeviceAvailable() override;
-    Ref<MediaPlaybackTarget> playbackTarget() override;
+    void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
+    void startingMonitoringPlaybackTargets() final;
+    void stopMonitoringPlaybackTargets() final;
+    void invalidatePlaybackTargets() final;
+
+    bool externalOutputDeviceAvailable() final;
+    Ref<MediaPlaybackTarget> playbackTarget() final;
 
     String m_deviceName;
-    MediaPlaybackTargetContext::MockState m_state { MediaPlaybackTargetContext::MockState::Unknown };
+    MediaPlaybackTargetMockState m_state;
     bool m_showingMenu { false };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-
-#endif // WebContextMenuProxyMac_h

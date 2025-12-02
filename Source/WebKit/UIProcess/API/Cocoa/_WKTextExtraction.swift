@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))
+#if ENABLE_TEXT_EXTRACTION
 
 import Foundation
 #if compiler(>=6.0)
@@ -97,7 +97,7 @@ extension WKTextExtractionContainerItem {
 
 @_objcImplementation
 extension WKTextExtractionContentEditableItem {
-    fileprivate let contentEditableType: WKTextExtractionEditableType
+    let contentEditableType: WKTextExtractionEditableType
 
     @nonobjc
     private let backingIsFocused: Bool
@@ -138,7 +138,7 @@ extension WKTextExtractionContentEditableItem {
 
 @_objcImplementation
 extension WKTextExtractionTextFormControlItem {
-    fileprivate let editable: WKTextExtractionEditable
+    final private let editable: WKTextExtractionEditable
 
     @objc(secure)
     var isSecure: Bool {
@@ -459,4 +459,142 @@ extension WKTextExtractionImageItem {
     #endif
 }
 
-#endif // USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))
+@_objcImplementation
+extension _WKTextExtractionInteractionResult {
+    let error: (any Error)?
+
+    init(errorDescription: String?) {
+        self.error = errorDescription.map {
+            NSError(
+                domain: WKErrorDomain,
+                code: WKError.unknown.rawValue,
+                userInfo: [
+                    NSDebugDescriptionErrorKey: $0
+                ]
+            )
+        }
+    }
+
+    #if compiler(<6.0)
+    @objc
+    deinit {}
+    #endif
+}
+
+@_objcImplementation
+extension _WKTextExtractionInteraction {
+    let action: _WKTextExtractionAction
+
+    var nodeIdentifier: String? = nil
+    var text: String? = nil
+    var replaceAll: Bool = false
+    var scrollToVisible: Bool = false
+    var scrollDelta: CGSize = .zero
+
+    private final var backingLocation: CGPoint? = nil
+
+    var location: CGPoint {
+        get { backingLocation ?? .zero }
+        set { backingLocation = newValue }
+    }
+
+    var hasSetLocation: Bool {
+        backingLocation != nil
+    }
+
+    init(action: _WKTextExtractionAction) {
+        self.action = action
+    }
+
+    @objc(debugDescriptionInWebView:completionHandler:)
+    func debugDescription(in webView: WKWebView) async throws -> String {
+        try await webView._describe(interaction: self)
+    }
+
+    #if compiler(<6.0)
+    @objc
+    deinit {}
+    #endif
+}
+
+@_objcImplementation
+extension _WKTextExtractionResult {
+    let textContent: String
+    let filteredOutAnyText: Bool
+
+    init(textContent: String, filteredOutAnyText: Bool) {
+        self.textContent = textContent
+        self.filteredOutAnyText = filteredOutAnyText
+    }
+
+    #if compiler(<6.0)
+    @objc
+    deinit {}
+    #endif
+}
+
+@_objcImplementation
+extension _WKTextExtractionConfiguration {
+    @objc(configurationForVisibleTextOnly)
+    class var visibleTextOnly: _WKTextExtractionConfiguration {
+        .init(onlyVisibleText: true)
+    }
+
+    var outputFormat: _WKTextExtractionOutputFormat = .textTree
+    var nodeIdentifierInclusion: _WKTextExtractionNodeIdentifierInclusion
+    var filterOptions: _WKTextExtractionFilterOptions = .all
+    var targetNode: _WKJSHandle? = nil
+
+    var targetRect: CGRect = CGRectNull
+
+    var includeURLs: Bool
+    var includeRects: Bool
+    var includeEventListeners: Bool
+    var includeAccessibilityAttributes: Bool
+    var includeTextInAutoFilledControls: Bool
+
+    var mergeParagraphs: Bool = false
+    var skipNearlyTransparentContent: Bool = false
+    var onlyIncludeVisibleText: Bool
+
+    var maxWordsPerParagraph: Int = .max
+
+    var replacementStrings: [String: String]? = nil
+
+    final private var clientNodeAttributes: [String: [_WKJSHandle: String]] = [:]
+
+    @objc
+    private init(onlyVisibleText: Bool) {
+        self.includeURLs = !onlyVisibleText
+        self.includeRects = !onlyVisibleText
+        self.nodeIdentifierInclusion = onlyVisibleText ? .none : .interactive
+        self.includeEventListeners = !onlyVisibleText
+        self.includeAccessibilityAttributes = !onlyVisibleText
+        self.includeTextInAutoFilledControls = !onlyVisibleText
+        self.onlyIncludeVisibleText = onlyVisibleText
+        self.targetRect = CGRectNull
+    }
+
+    override convenience init() {
+        self.init(onlyVisibleText: false)
+    }
+
+    func forEachClientNodeAttribute(_ block: (String, String, _WKJSHandle) -> Void) {
+        for (attribute, values) in clientNodeAttributes {
+            for (handle, value) in values {
+                block(attribute, value, handle)
+            }
+        }
+    }
+
+    func addClientAttribute(_ attributeName: String, value attributeValue: String, forNode node: _WKJSHandle) {
+        clientNodeAttributes[attributeName, default: [:]][node] = attributeValue
+    }
+
+    #if compiler(<6.0)
+    @objc
+    deinit {}
+    #endif
+}
+
+#endif // ENABLE_TEXT_EXTRACTION

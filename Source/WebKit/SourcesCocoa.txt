@@ -100,6 +100,7 @@ Platform/cocoa/AssertionCapability.mm @nonARC @no-unify
 Platform/cocoa/ExtensionCapabilityGrant.mm @nonARC
 Platform/cocoa/MediaCapability.mm @nonARC
 Platform/cocoa/MediaPlaybackTargetContextSerialized.mm @nonARC
+Platform/cocoa/MediaPlaybackTargetSerialized.cpp
 Platform/cocoa/PaymentAuthorizationPresenter.mm @nonARC
 Platform/cocoa/PaymentAuthorizationViewController.mm @nonARC
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm @nonARC
@@ -216,6 +217,7 @@ Shared/ios/NativeWebKeyboardEventIOS.mm @nonARC
 Shared/ios/NativeWebMouseEventIOS.mm @nonARC
 Shared/ios/NativeWebTouchEventIOS.mm @nonARC
 Shared/ios/WebIOSEventFactory.mm @nonARC
+Shared/ios/WebParentalControlsURLFilter.mm @nonARC
 Shared/ios/WebPreferencesDefaultValuesIOS.mm @nonARC
 
 Shared/mac/AuxiliaryProcessMac.mm @nonARC
@@ -240,6 +242,7 @@ Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm @nonARC
 Shared/RemoteLayerTree/RemoteLayerWithInProcessRenderingBackingStore.mm @nonARC
 Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStore.mm @nonARC
 Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerTreeCommitBundle.mm @nonARC
 Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm @nonARC
 Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
 Shared/RemoteLayerTree/RemoteScrollingUIState.cpp
@@ -311,7 +314,6 @@ UIProcess/API/Cocoa/_WKSpatialBackdropSource.mm @nonARC
 UIProcess/API/Cocoa/_WKSystemPreferences.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKTargetedElementRequest.mm @nonARC
-UIProcess/API/Cocoa/_WKTextExtraction.mm @nonARC
 UIProcess/API/Cocoa/_WKTextInputContext.mm @nonARC
 UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm @nonARC
 UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm @nonARC
@@ -451,6 +453,7 @@ UIProcess/Cocoa/PlatformXRCoordinator.mm @nonARC
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
 UIProcess/Cocoa/ProcessAssertionCocoa.mm @nonARC
 UIProcess/Cocoa/ResourceLoadDelegate.mm @nonARC
+UIProcess/Cocoa/SafeBrowsingUtilities.mm @nonARC
 UIProcess/Cocoa/SessionStateCoding.mm @nonARC
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
 UIProcess/Cocoa/TextCheckingController.mm @nonARC

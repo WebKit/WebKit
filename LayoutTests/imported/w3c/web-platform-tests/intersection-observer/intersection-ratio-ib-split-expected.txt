@@ -1,3 +1,4 @@
 
-PASS IntersectionObserver on an IB split gets the right intersection ratio
+PASS IntersectionObserver on an IB split gets the right intersection ratio - INLINE
+PASS IntersectionObserver on an IB split gets the right intersection ratio - BLOCK
 

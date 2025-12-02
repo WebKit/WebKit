@@ -216,7 +216,6 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMediaPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitUserMessage.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebContext.h.in
-    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebResource.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebView.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebViewSessionState.h.in
@@ -238,6 +237,7 @@ endif ()
 if (ENABLE_2022_GLIB_API)
     list(APPEND WPE_API_HEADER_TEMPLATES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.h.in
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.h.in
     )
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
@@ -404,8 +404,10 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${FORWARDING_HEADERS_WPE_DIR}"
     "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
+    "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
+    "${WEBKIT_DIR}/NetworkProcess/webrtc/rice"
     "${WEBKIT_DIR}/Platform/IPC/android"
     "${WEBKIT_DIR}/Platform/IPC/glib"
     "${WEBKIT_DIR}/Platform/IPC/unix"
@@ -438,6 +440,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WPEPlatform/wpe"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
+    "${WEBKIT_DIR}/WebProcess/Network/webrtc/rice"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/glib"

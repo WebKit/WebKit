@@ -106,7 +106,6 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_rendererSeekRequest(NativePromiseRequest::create())
     , m_networkState(MediaPlayer::NetworkState::Empty)
-    , m_readyState(MediaPlayer::ReadyState::HaveNothing)
     , m_logger(player.mediaPlayerLogger())
     , m_logIdentifier(player.mediaPlayerLogIdentifier())
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -206,7 +205,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
     assertIsMainThread();
     // This media engine only supports MediaSource URLs.
     m_networkState = MediaPlayer::NetworkState::FormatError;
-    if (auto player = m_player.get())
+    if (RefPtr player = m_player.get())
         player->networkStateChanged();
 }
 
@@ -628,8 +627,16 @@ MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() c
 
 MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
 {
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        return mediaSourcePrivate->mediaPlayerReadyState();
     assertIsMainThread();
     return m_readyState;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::readyStateFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    updateStateFromReadyState();
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekable() const
@@ -644,7 +651,6 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
 {
-    ASSERT_NOT_REACHED();
     return PlatformTimeRanges::emptyRanges();
 }
 
@@ -665,38 +671,40 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
         stall();
     }
 
+    auto stallAtTime = duration();
     size_t index = ranges.find(currentTime);
-    if (index == notFound)
-        return;
-    // Find the next gap (or end of media)
-    for (; index < ranges.length(); index++) {
-        if ((index < ranges.length() - 1 && ranges.start(index + 1) - ranges.end(index) > m_mediaSourcePrivate->timeFudgeFactor())
-            || (index == ranges.length() - 1 && ranges.end(index) > currentTime)) {
-            auto gapStart = ranges.end(index);
-
-            auto logSiteIdentifier = LOGIDENTIFIER;
-            UNUSED_PARAM(logSiteIdentifier);
-            m_renderer->notifyTimeReachedAndStall(gapStart, [weakThis = WeakPtr { *this }, logSiteIdentifier](const MediaTime& stallTime) {
-                ensureOnMainThread([weakThis, logSiteIdentifier, stallTime] {
-                    RefPtr protectedThis = weakThis.get();
-                    if (!protectedThis)
-                        return;
-                    if (protectedThis->protectedMediaSourcePrivate()->hasFutureTime(stallTime) && protectedThis->shouldBePlaying()) {
-                        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "Data now available at ", stallTime, " resuming");
-                        protectedThis->m_renderer->play(); // New data was added, resume. Can't happen in practice, action would have been cancelled once buffered changed.
-                        return;
-                    }
-                    MediaTime now = protectedThis->currentTime();
-                    ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now = ", now);
-
-                    if (stallTime == protectedThis->duration())
-                        protectedThis->pause();
-                    protectedThis->timeChanged();
-                });
-            });
-            return;
+    if (index != notFound) {
+        // Find the next gap (or end of media)
+        for (; index < ranges.length(); index++) {
+            if ((index < ranges.length() - 1 && ranges.start(index + 1) - ranges.end(index) > m_mediaSourcePrivate->timeFudgeFactor())
+                || (index == ranges.length() - 1 && ranges.end(index) > currentTime)) {
+                stallAtTime = ranges.end(index);
+                break;
+            }
         }
     }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "will stall playback at time: ", stallAtTime);
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    UNUSED_PARAM(logSiteIdentifier);
+    m_renderer->notifyTimeReachedAndStall(stallAtTime, [weakThis = WeakPtr { *this }, logSiteIdentifier](const MediaTime& stallTime) {
+        ensureOnMainThread([weakThis, logSiteIdentifier, stallTime] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (protectedThis->protectedMediaSourcePrivate()->hasFutureTime(stallTime) && protectedThis->shouldBePlaying()) {
+                ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "Data now available at ", stallTime, " resuming");
+                protectedThis->m_renderer->play(); // New data was added, resume. Can't happen in practice, action would have been cancelled once buffered changed.
+                return;
+            }
+            MediaTime now = protectedThis->currentTime();
+            ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now = ", now);
+
+            if (stallTime == protectedThis->duration())
+                protectedThis->pause();
+            protectedThis->timeChanged();
+        });
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setLayerRequiresFlush()
@@ -889,7 +897,7 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC:
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
     assertIsMainThread();
-    return !m_renderer->paused() && !seeking() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
+    return !m_renderer->paused() && !seeking() && readyState() >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
@@ -923,13 +931,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
         return;
 
     MediaTime duration = mediaSourcePrivate->duration();
-    // Avoid emiting durationchanged in the case where the previous duration was unkniwn as that case is already handled
+    // Avoid emiting durationchanged in the case where the previous duration was unknown as that case is already handled
     // by the HTMLMediaElement.
     if (m_duration != duration && m_duration.isValid()) {
         if (auto player = m_player.get())
             player->durationChanged();
     }
     m_duration = duration;
+    bufferedChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
@@ -1047,14 +1056,19 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
         ALWAYS_LOG(LOGIDENTIFIER, "stall detected currentTime:", currentTime());
 
     m_readyState = readyState;
+    updateStateFromReadyState();
+}
 
+void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
+{
+    assertIsMainThread();
     if (shouldBePlaying()) {
         m_renderer->play();
         timeChanged();
     } else
         stall();
 
-    if (m_readyState >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
+    if (readyState() >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
         m_readyStateIsWaitingForAvailableFrame = true;
         return;
     }
@@ -1073,6 +1087,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkS
     m_networkState = networkState;
     if (auto player = m_player.get())
         player->networkStateChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::mediaSourceHasRetrievedAllData()
+{
+    assertIsMainThread();
+    setNetworkState(MediaPlayer::NetworkState::Loaded);
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

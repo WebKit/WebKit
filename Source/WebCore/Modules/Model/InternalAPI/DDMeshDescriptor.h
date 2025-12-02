@@ -31,13 +31,12 @@
 namespace WebCore::DDModel {
 
 struct DDMeshDescriptor {
-    int32_t indexCapacity { 0 };
-    int32_t indexType { 0 };
-    int32_t vertexBufferCount { 0 };
-    int32_t vertexCapacity { 0 };
+    long vertexBufferCount;
+    long vertexCapacity;
     Vector<DDVertexAttributeFormat> vertexAttributes;
     Vector<DDVertexLayout> vertexLayouts;
-    String identifier;
+    long indexCapacity;
+    long indexType;
 };
 
 }

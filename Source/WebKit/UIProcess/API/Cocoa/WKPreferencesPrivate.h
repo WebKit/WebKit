@@ -40,6 +40,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKInteractionRegion WK_API_AVAILABLE(macos(13.0), ios(16.0)) = 1 << 4,
     _WKSiteIsolationRegion WK_API_DEPRECATED_WITH_REPLACEMENT("ShowFrameProcessBordersEnabled", macos(15.0, WK_MAC_TBA), ios(18.0, WK_IOS_TBA), visionos(2.0, WK_XROS_TBA)) = 1 << 5,
     _WKEnhancedSecurityRegion WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) = 1 << 6,
+    _WKTouchEventRegion WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) = 1 << 7,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {

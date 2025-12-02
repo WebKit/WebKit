@@ -112,6 +112,8 @@ public:
 
 using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
+using PageAndFrameHandle = std::pair<Inspector::Protocol::Automation::BrowsingContextHandle, Inspector::Protocol::Automation::FrameHandle>;
+
 class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>
     , public IPC::MessageReceiver
     , public Inspector::AutomationBackendDispatcherHandler
@@ -311,6 +313,8 @@ public:
     String effectiveHandleForWebFrameProxy(const WebFrameProxy&);
     String handleForWebFrameID(std::optional<WebCore::FrameIdentifier>);
     String handleForWebPageProxy(const WebPageProxy&);
+
+    Expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
 
 private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);

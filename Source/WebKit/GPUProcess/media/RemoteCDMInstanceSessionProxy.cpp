@@ -65,7 +65,7 @@ void RemoteCDMInstanceSessionProxy::setLogIdentifier(uint64_t logIdentifier)
 #endif
 }
 
-void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
+void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, String initDataType, RefPtr<WebCore::SharedBuffer>&& initData, LicenseCallback&& completion)
 {
     if (!initData) {
         completion({ }, emptyString(), false, false);

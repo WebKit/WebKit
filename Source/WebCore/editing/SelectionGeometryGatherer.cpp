@@ -79,7 +79,7 @@ SelectionGeometryGatherer::Notifier::~Notifier()
         return;
 
     page->protectedServicesOverlayController()->selectionRectsDidChange(m_gatherer.boundingRects(), m_gatherer.m_gapRects, m_gatherer.isTextOnly());
-    page->imageOverlayController().selectionQuadsDidChange(frame, m_gatherer.m_quads);
+    page->protectedImageOverlayController()->selectionQuadsDidChange(frame, m_gatherer.m_quads);
 }
 
 Vector<LayoutRect> SelectionGeometryGatherer::boundingRects() const

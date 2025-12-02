@@ -919,7 +919,7 @@ pas_local_allocator_try_allocate_in_primordial_partial_view(
 
     if (result.did_succeed) {
         PAS_PROFILE(PRIMORDIAL_BUMP_ALLOCATION, &page_config, result.begin, allocator->object_size, allocation_mode);
-        PAS_MTE_HANDLE(PRIMORDIAL_BUMP_ALLOCATION, &page_config, result.begin, allocator->object_size, allocation_mode);
+        PAS_MTE_HANDLE(PRIMORDIAL_BUMP_ALLOCATION, page_config, result.begin, allocator->object_size, allocation_mode);
     }
 
     pas_lock_switch(&held_lock, NULL);
@@ -1519,7 +1519,7 @@ pas_local_allocator_try_allocate_with_free_bits(
     }
 
     PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator, allocation_mode);
-    PAS_MTE_HANDLE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator, allocation_mode);
+    PAS_MTE_HANDLE(LOCAL_FREEBITS_ALLOCATION, page_config, result, allocator, allocation_mode);
     
     return pas_allocation_result_create_success(result);
 }

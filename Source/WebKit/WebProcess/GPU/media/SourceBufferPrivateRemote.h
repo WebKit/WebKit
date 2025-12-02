@@ -86,7 +86,6 @@ public:
         void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, CompletionHandler<void()>&&);
         void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
         void sourceBufferPrivateDidDropSample();
-        void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
         void sourceBufferPrivateEvictionDataChanged(WebCore::SourceBufferEvictionData&&);
         void sourceBufferPrivateDidAttach(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
         RefPtr<WebCore::SourceBufferPrivateClient> client() const;

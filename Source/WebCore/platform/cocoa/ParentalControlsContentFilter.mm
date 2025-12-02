@@ -54,7 +54,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ParentalControlsContentFilter);
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
-ParentalControlsURLFilter& ParentalControlsContentFilter::impl() const
+Ref<ParentalControlsURLFilter> ParentalControlsContentFilter::protectedImpl() const
 {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     return ParentalControlsURLFilter::filterWithConfigurationPath(m_webContentRestrictionsConfigurationPath);
@@ -68,7 +68,7 @@ ParentalControlsURLFilter& ParentalControlsContentFilter::impl() const
 bool ParentalControlsContentFilter::enabled() const
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    return impl().isEnabled();
+    return protectedImpl()->isEnabled();
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)
     return [getWebFilterEvaluatorClassSingleton() isManagedSession];
 #else
@@ -110,7 +110,7 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     ASSERT(!m_evaluatedURL);
     m_evaluatedURL = response.url();
     m_state = State::Filtering;
-    impl().isURLAllowed(*m_evaluatedURL, *this);
+    protectedImpl()->isURLAllowed(*m_evaluatedURL, *this);
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)
     ASSERT(!m_webFilterEvaluator);
     m_webFilterEvaluator = adoptNS([allocWebFilterEvaluatorInstance() initWithResponse:response.protectedNSURLResponse().get()]);

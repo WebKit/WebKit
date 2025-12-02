@@ -41,6 +41,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLInputElementInlines.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LayoutPoint.h"
@@ -320,6 +321,11 @@ void CheckboxInputType::disabledStateChanged()
         stopSwitchAnimation(SwitchAnimationType::Held);
         stopSwitchPointerTracking();
     }
+
+#if ENABLE(TOUCH_EVENTS)
+    if (isSwitch())
+        protectedElement()->updateTouchEventHandler();
+#endif
 }
 
 void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasCheckedByJavaScript)

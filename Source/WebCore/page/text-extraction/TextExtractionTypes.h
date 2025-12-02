@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/RegularExpression.h>
 #include <WebCore/CharacterRange.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
@@ -168,12 +169,31 @@ struct Item {
     String accessibilityRole;
     HashMap<String, String> clientAttributes;
 
+    template<typename T> bool hasData() const
+    {
+        return std::holds_alternative<T>(data);
+    }
+
     template<typename T> std::optional<T> dataAs() const
     {
-        if (std::holds_alternative<T>(data))
+        if (hasData<T>())
             return std::get<T>(data);
         return std::nullopt;
     }
+};
+
+struct FilterRuleData {
+    String name;
+    String urlPatternString;
+    String scriptSource;
+};
+
+enum class FilterRulePattern : uint8_t { Global };
+
+struct FilterRule {
+    String name;
+    Variant<FilterRulePattern, JSC::Yarr::RegularExpression> urlPattern;
+    String scriptSource;
 };
 
 } // namespace TextExtraction

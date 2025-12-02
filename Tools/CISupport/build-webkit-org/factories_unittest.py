@@ -1839,7 +1839,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'benchmark-test'
         ],
-        'WPE-Linux-64-bit-Release-Cairo-Build': [
+        'WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

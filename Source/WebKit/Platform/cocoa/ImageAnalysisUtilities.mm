@@ -209,11 +209,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
 
 static bool shouldLogFullImageTranslationResults()
 {
-    static std::once_flag onceFlag;
-    static bool shouldLog = false;
-    std::call_once(onceFlag, [&] {
-        shouldLog = [NSUserDefaults.standardUserDefaults boolForKey:@"WebKitLogFullImageTranslationResults"];
-    });
+    static bool shouldLog = [NSUserDefaults.standardUserDefaults boolForKey:@"WebKitLogFullImageTranslationResults"];
     return shouldLog;
 }
 

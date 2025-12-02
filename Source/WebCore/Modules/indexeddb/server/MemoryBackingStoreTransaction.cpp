@@ -264,7 +264,7 @@ void MemoryBackingStoreTransaction::finish()
 
 MemoryCursor* MemoryBackingStoreTransaction::cursor(const IDBResourceIdentifier& identifier) const
 {
-    return m_cursors.get(identifier).get();
+    return m_cursors.get(identifier);
 }
 
 void MemoryBackingStoreTransaction::addCursor(MemoryCursor& cursor)

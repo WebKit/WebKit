@@ -378,7 +378,7 @@ void RenderGrid::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
-    if (relayoutChildren ==RelayoutChildren::No && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     // The layoutBlock was handling the layout of both the grid and masonry implementations.
@@ -1433,11 +1433,6 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
 
 Style::GridTrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
 {
-    if (areMasonryColumns())
-        return Style::GridTrackSizingDirection::Columns;
-    if (areMasonryRows())
-        return Style::GridTrackSizingDirection::Rows;
-
     return style().gridAutoFlow().isColumn() ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
 }
 

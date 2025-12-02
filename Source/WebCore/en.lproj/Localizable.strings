@@ -2068,6 +2068,9 @@
 /* accessibility label for time remaining display */
 "remaining time" = "remaining time";
 
+/* prefix for announcing removed content in ARIA live regions */
+"removed" = "removed";
+
 /* Action from safe browsing warning */
 "report an error" = "report an error";
 

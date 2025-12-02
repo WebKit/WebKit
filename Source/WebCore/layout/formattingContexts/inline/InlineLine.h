@@ -237,6 +237,7 @@ public:
     Result close();
 
     static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&, InlineItemRange, const InlineItemList&);
+    static bool hasTrailingForcedLineBreak(const RunList&);
 
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }

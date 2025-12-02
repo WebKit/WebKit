@@ -140,7 +140,7 @@ void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identif
 void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
     ASSERT(m_sessions.contains(identifier));
-    RefPtr session = m_sessions.get(identifier).get();
+    RefPtr session = m_sessions.get(identifier);
     gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTFMove(session)] {
         ASSERT(protectedThis->m_sessions.contains(identifier));
         protectedThis->m_sessions.remove(identifier);

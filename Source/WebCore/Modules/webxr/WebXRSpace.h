@@ -45,6 +45,10 @@ class WebXRSpace : public EventTarget, public ContextDestructionObserver {
 public:
     virtual ~WebXRSpace();
 
+    using ContextDestructionObserver::ref;
+    using ContextDestructionObserver::deref;
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     virtual WebXRSession* session() const = 0;
     virtual std::optional<TransformationMatrix> nativeOrigin() const = 0;
     std::optional<TransformationMatrix> effectiveOrigin() const;
@@ -83,8 +87,9 @@ public:
     }
     virtual ~WebXRViewerSpace();
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     WebXRViewerSpace(Document&, WebXRSession&);

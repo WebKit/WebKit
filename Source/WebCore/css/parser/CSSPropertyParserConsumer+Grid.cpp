@@ -424,18 +424,17 @@ RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range, CSS::Prope
 
 RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
+    auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn, CSSValueNormal>(range);
     auto denseAlgorithm = consumeIdent<CSSValueDense>(range);
     if (!rowOrColumnValue) {
         rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
         if (!rowOrColumnValue && !denseAlgorithm)
             return nullptr;
     }
+
     CSSValueListBuilder parsedValues;
     if (rowOrColumnValue) {
-        CSSValueID value = rowOrColumnValue->valueID();
-        if (value == CSSValueColumn || (value == CSSValueRow && !denseAlgorithm))
-            parsedValues.append(rowOrColumnValue.releaseNonNull());
+        parsedValues.append(rowOrColumnValue.releaseNonNull());
     }
     if (denseAlgorithm)
         parsedValues.append(denseAlgorithm.releaseNonNull());

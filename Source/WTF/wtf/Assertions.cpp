@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StackTrace.h>
 #include <wtf/StdLibExtras.h>
@@ -57,6 +58,7 @@
 #if OS(DARWIN)
 #include <sys/sysctl.h>
 #include <unistd.h>
+#include <wtf/OSObjectPtr.h>
 #endif
 
 #if !RELEASE_LOG_DISABLED && !USE(OS_LOG)
@@ -133,12 +135,8 @@ extern "C" {
 #if PLATFORM(COCOA)
 static os_log_t webkitSubsystemForGenericOSLog()
 {
-    static dispatch_once_t once;
-    static os_log_t subsystem;
-    dispatch_once(&once, ^{
-        subsystem = os_log_create(LOG_CHANNEL_WEBKIT_SUBSYSTEM, "Generic");
-    });
-    return subsystem;
+    SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<os_log_t>> subsystem = adoptOSObject(os_log_create(LOG_CHANNEL_WEBKIT_SUBSYSTEM, "Generic"));
+    return subsystem.get().get();
 }
 #endif
 
@@ -479,13 +477,8 @@ String WTFLoggingAccumulator::getAndResetAccumulatedLogs()
 
 static WTFLoggingAccumulator& loggingAccumulator()
 {
-    static WTFLoggingAccumulator* accumulator;
-    static std::once_flag initializeAccumulatorOnce;
-    std::call_once(initializeAccumulatorOnce, [] {
-        accumulator = new WTFLoggingAccumulator;
-    });
-
-    return *accumulator;
+    static NeverDestroyed<UniqueRef<WTFLoggingAccumulator>> accumulator = makeUniqueRef<WTFLoggingAccumulator>();
+    return accumulator.get();
 }
 
 void WTFSetLogChannelLevel(WTFLogChannel* channel, WTFLogLevel level)

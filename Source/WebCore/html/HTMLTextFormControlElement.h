@@ -118,6 +118,8 @@ public:
 
     bool canContainRangeEndPoint() const override { return false; }
 
+    WEBCORE_EXPORT void dispatchUserTextInputEvent();
+
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);
     bool isPlaceholderEmpty() const;

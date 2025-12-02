@@ -2,8 +2,8 @@
 PASS Registering invalid chunked encoding script
 PASS Registering invalid chunked encoding script with flush
 PASS Registering script including parse error
-PASS Registering script including undefined error
-PASS Registering script including uncaught exception
+PASS Registering script including undefined error: module
+PASS Registering script including uncaught exception: module
 FAIL Registering script with top-level await assert_unreached: Should have rejected: Registration of script with top-level await should fail. Reached unreachable code
 PASS Registering script with module instantiation error
 PASS Registering script with module instantiation error and top-level await

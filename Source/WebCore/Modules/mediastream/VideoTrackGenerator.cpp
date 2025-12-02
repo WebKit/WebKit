@@ -215,7 +215,7 @@ void VideoTrackGenerator::Sink::close()
     });
 }
 
-void VideoTrackGenerator::Sink::error(String&&)
+void VideoTrackGenerator::Sink::abort(JSC::JSValue)
 {
     close();
 }

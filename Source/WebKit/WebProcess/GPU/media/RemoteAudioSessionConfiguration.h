@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
 
 #include <WebCore/AudioSession.h>
 
@@ -43,6 +43,7 @@ struct RemoteAudioSessionConfiguration {
     bool isActive { false };
     String sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize { WebCore::AudioSessionSoundStageSize::Automatic };
+    WebCore::AudioSessionCategory categoryOverride { WebCore::AudioSession::CategoryType::None };
 };
 
 } // namespace WebKit

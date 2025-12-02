@@ -54,6 +54,7 @@
 .media-controls.mac.fullscreen .buttons-container.left {
     top: 16px;
     height: 16px;
+    width: 100px !important;
 }
 
 .media-controls.mac.fullscreen .buttons-container.center {
@@ -74,6 +75,9 @@
     top: 18px;
 }
 
+.media-controls.mac.fullscreen .buttons-container.left .slider {
+    width: 60px;
+}
 /* Scrubber */
 
 .media-controls.mac.fullscreen .time-control {

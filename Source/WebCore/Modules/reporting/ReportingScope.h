@@ -44,11 +44,15 @@ class Report;
 class ReportingObserver;
 class ScriptExecutionContext;
 
-class ReportingScope final : public RefCountedAndCanMakeWeakPtr<ReportingScope>, public ContextDestructionObserver {
+class ReportingScope final : public RefCounted<ReportingScope>, public ContextDestructionObserver {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(ReportingScope, WEBCORE_EXPORT);
 public:
     static Ref<ReportingScope> create(ScriptExecutionContext&);
     WEBCORE_EXPORT virtual ~ReportingScope();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void removeAllObservers();
     void clearReports();

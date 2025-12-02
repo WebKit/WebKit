@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "_WKCaptionStyleMenuControllerInternal.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #import <WebCore/LocalizedStrings.h>
@@ -35,6 +36,16 @@
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
+
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+#import "_WKCaptionStyleMenuControllerAVKit.h"
+
+#import <pal/spi/cocoa/AVKitSPI.h>
+#import <pal/cf/CoreMediaSoftLink.h>
+
+SOFTLINK_AVKIT_FRAMEWORK()
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
+#endif
 
 using namespace WebCore;
 using namespace WTF;
@@ -45,27 +56,30 @@ static const UIMenuIdentifier WKCaptionStyleMenuProfileIdentifier = @"WKCaptionS
 static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKCaptionStyleMenuSystemSettingsIdentifier";
 
 #if USE(UICONTEXTMENU)
-@interface WKCaptionStyleMenuController () <UIContextMenuInteractionDelegate> {
-#else
-@interface WKCaptionStyleMenuController () {
-#endif
-    Vector<String> _profileIDs;
-    String _savedActiveProfileID;
-    RetainPtr<UIMenu> _menu;
-#if USE(UICONTEXTMENU)
-    RetainPtr<UIContextMenuInteraction> _interaction;
-#endif
-}
+@interface WKCaptionStyleMenuController () <UIContextMenuInteractionDelegate>
 @end
+#else
+@interface WKCaptionStyleMenuController ()
+@end
+#endif
 
 @implementation WKCaptionStyleMenuController
+
++ (instancetype)menuController
+{
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+    if (AVKitLibrary() && getAVLegibleMediaOptionsMenuControllerClassSingleton())
+        return [[_WKCaptionStyleMenuControllerAVKit alloc] init];
+#endif
+    return [[super alloc] init];
+}
 
 - (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
 
-    _savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID();
+    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().autorelease();
     [self rebuildMenu];
 
     return self;
@@ -77,7 +91,7 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
 
     auto profileIDs = CaptionUserPreferencesMediaAF::platformProfileIDs();
     if (profileIDs.isEmpty()) {
-        _menu = [UIMenu menuWithTitle:stylesMenuTitle.get() children:@[]];
+        self.menu = [UIMenu menuWithTitle:stylesMenuTitle.get() children:@[]];
         return;
     }
 
@@ -90,8 +104,9 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
                 [strongSelf profileActionSelected:profileID];
         });
         UIAction *profileAction = [UIAction actionWithTitle:title.createNSString().get() image:nil identifier:profileID.createNSString().get() handler:profileSelectedHandler.get()];
+        profileAction.attributes = UIMenuElementAttributesKeepsMenuPresented;
 
-        if (profileID == _savedActiveProfileID)
+        if ([profileID.createNSString().autorelease() isEqualToString:self.savedActiveProfileID])
             profileAction.state = UIMenuElementStateOn;
 
         [profileElements addObject:profileAction];
@@ -108,7 +123,7 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
     UIImage *gearImage = [UIImage systemImageNamed:@"gear"];
     UIAction *systemSettingsAction = [UIAction actionWithTitle:systemCaptionSettingsTitle.get() image:gearImage identifier:WKCaptionStyleMenuSystemSettingsIdentifier handler:systemSettingsSelectedHandler.get()];
 
-    _menu = [UIMenu menuWithTitle:stylesMenuTitle.get() children:@[profileGroup, systemSettingsAction]];
+    self.menu = [UIMenu menuWithTitle:stylesMenuTitle.get() children:@[profileGroup, systemSettingsAction]];
 }
 
 - (BOOL)isAncestorOf:(PlatformMenu*)menu
@@ -120,6 +135,28 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
 }
 
 #pragma mark - Properties
+
+- (PlatformMenu *)menu
+{
+    return _menu.get();
+}
+
+- (void)setMenu:(PlatformMenu *)menu
+{
+    _menu = menu;
+}
+
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+- (UIContextMenuInteraction *)interaction
+{
+    return _interaction.get();
+}
+
+- (void)setInteraction:(UIContextMenuInteraction *)interaction
+{
+    _interaction = interaction;
+}
+#endif
 
 - (UIMenu *)captionStyleMenu
 {
@@ -139,8 +176,22 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
 
 - (void)profileActionSelected:(const WTF::String&)profileID
 {
-    _savedActiveProfileID = profileID;
-    CaptionUserPreferencesMediaAF::setActiveProfileID(_savedActiveProfileID);
+    for (UIMenuElement *childMenu in [_menu children]) {
+        auto *childAction = dynamic_objc_cast<UIAction>(childMenu);
+        if (!childAction)
+            continue;
+
+        String childActionIdentifier = childAction.identifier;
+        childAction.state = profileID == childActionIdentifier ? UIMenuElementStateOn : UIMenuElementStateOff;
+    }
+
+    self.savedActiveProfileID = profileID.createNSString().autorelease();
+    CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+
+    // UIMenu does not have the ability to notify clients when a submenu opens or closes.
+    // Provide a similar functionality for previewing subtitle changes by triggering the
+    // preview of subtitle styles when the first profile menu item is selected.
+    [self notifyMenuWillOpen];
 }
 
 - (void)systemCaptionStyleSettingsActionSelected:(UIAction *)action
@@ -152,27 +203,27 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
 
 - (void)notifyMenuWillOpen
 {
-    _savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID();
+    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().autorelease();
 
     if (auto delegate = self.delegate)
-        [delegate captionStyleMenuWillOpen:_menu.get()];
+        [delegate captionStyleMenuWillOpen:self.menu];
 }
 
 - (void)notifyMenuDidClose
 {
-    if (!_savedActiveProfileID.isEmpty())
-        CaptionUserPreferencesMediaAF::setActiveProfileID(_savedActiveProfileID);
-    _savedActiveProfileID = nullString();
+    if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
+        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
+    self.savedActiveProfileID = nil;
 
     if (auto delegate = self.delegate)
-        [delegate captionStyleMenuDidClose:_menu.get()];
+        [delegate captionStyleMenuDidClose:self.menu];
 }
 
 #if USE(UICONTEXTMENU)
 - (nullable UIContextMenuConfiguration *)contextMenuInteraction:(nonnull UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
     return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:makeBlockPtr([weakSelf = WeakObjCPtr<WKCaptionStyleMenuController>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
         if (auto strongSelf = weakSelf.get())
-            return strongSelf->_menu.get();
+            return strongSelf.get().menu;
         return nil;
     }).get()];
 }

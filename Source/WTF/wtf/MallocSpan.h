@@ -26,11 +26,9 @@
 #pragma once
 
 #include <utility>
+#include <wtf/AllocSpanMixin.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MallocCommon.h>
-#include <wtf/Mmap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/SystemMalloc.h>
 #include <wtf/TypeTraits.h>
 
@@ -38,90 +36,64 @@
 
 namespace WTF {
 
-template<typename T, typename Malloc = FastMalloc> class MallocSpan {
-    WTF_MAKE_NONCOPYABLE(MallocSpan);
+template<typename T, typename Malloc = FastMalloc> class MallocSpan : public AllocSpanMixin<T> {
     WTF_MAKE_CONFIGURABLE_ALLOCATED(Malloc);
 public:
     MallocSpan() = default;
 
     MallocSpan(MallocSpan&& other)
-        : m_span(other.leakSpan())
+        : AllocSpanMixin<T>(WTFMove(other))
     {
     }
 
     template<typename U>
     MallocSpan(MallocSpan<U, Malloc>&& other) requires (std::is_same_v<T, uint8_t>)
-        : m_span(asWritableBytes(other.leakSpan()))
+        : AllocSpanMixin<T>(asWritableBytes(other.leakSpan()))
     {
     }
 
     ~MallocSpan()
     {
+        auto span = this->mutableSpan();
         if constexpr (parameterCount(Malloc::free) == 2)
-            Malloc::free(m_span.data(), m_span.size());
+            Malloc::free(span.data(), span.size());
         else
-            Malloc::free(m_span.data());
+            Malloc::free(span.data());
     }
 
     MallocSpan& operator=(MallocSpan&& other)
     {
-        MallocSpan ptr = WTFMove(other);
-        swap(ptr);
+        MallocSpan ptr { WTFMove(other) };
+        this->swap(ptr);
         return *this;
-    }
-
-    void swap(MallocSpan& other)
-    {
-        std::swap(m_span, other.m_span);
-    }
-
-    size_t sizeInBytes() const { return m_span.size_bytes(); }
-
-    std::span<const T> span() const LIFETIME_BOUND { return spanConstCast<const T>(m_span); }
-    std::span<T> mutableSpan() LIFETIME_BOUND { return m_span; }
-    std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T>()); }
-
-    T& operator[](size_t i) LIFETIME_BOUND { return m_span[i]; }
-    const T& operator[](size_t i) const LIFETIME_BOUND { return m_span[i]; }
-
-    explicit operator bool() const
-    {
-        return !!m_span.data();
-    }
-
-    bool operator!() const
-    {
-        return !m_span.data();
     }
 
     static MallocSpan malloc(size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::malloc(sizeInBytes)), sizeInBytes };
+        return MallocSpan { Malloc::malloc(sizeInBytes), sizeInBytes };
     }
 
     static MallocSpan zeroedMalloc(size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::zeroedMalloc(sizeInBytes)), sizeInBytes };
+        return MallocSpan { Malloc::zeroedMalloc(sizeInBytes), sizeInBytes };
     }
 
     static MallocSpan alignedMalloc(size_t alignment, size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::alignedMalloc(alignment, sizeInBytes)), sizeInBytes };
+        return MallocSpan { Malloc::alignedMalloc(alignment, sizeInBytes), sizeInBytes };
     }
 
-#if HAVE(MMAP)
-    static MallocSpan mmap(void* addr, size_t sizeInBytes, int pageProtection, int options, int fileDescriptor)
+    static MallocSpan tryAlloc(size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::mmap(addr, sizeInBytes, pageProtection, options, fileDescriptor)), sizeInBytes };
+        return tryMalloc(sizeInBytes);
     }
-#endif
 
     static MallocSpan tryMalloc(size_t sizeInBytes)
     {
         auto* ptr = Malloc::tryMalloc(sizeInBytes);
         if (!ptr)
             return { };
-        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
+        return MallocSpan { ptr, sizeInBytes };
     }
 
     static MallocSpan tryZeroedMalloc(size_t sizeInBytes)
@@ -129,7 +101,7 @@ public:
         auto* ptr = Malloc::tryZeroedMalloc(sizeInBytes);
         if (!ptr)
             return { };
-        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
+        return MallocSpan { ptr, sizeInBytes };
     }
 
     static MallocSpan tryAlignedMalloc(size_t alignment, size_t sizeInBytes)
@@ -137,25 +109,20 @@ public:
         auto* ptr = Malloc::tryAlignedMalloc(alignment, sizeInBytes);
         if (!ptr)
             return { };
-        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
+        return MallocSpan { ptr, sizeInBytes };
     }
 
     void realloc(size_t newSizeInBytes)
     {
         RELEASE_ASSERT(!(newSizeInBytes % sizeof(T)));
-        m_span = unsafeMakeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSizeInBytes)), newSizeInBytes / sizeof(T));
+        MallocSpan other { Malloc::realloc(this->leakSpan().data(), newSizeInBytes), newSizeInBytes };
+        this->swap(other);
     }
 
 private:
+    using AllocSpanMixin<T>::AllocSpanMixin;
+
     template<typename U, typename OtherMalloc> friend MallocSpan<U, OtherMalloc> adoptMallocSpan(std::span<U>);
-
-    explicit MallocSpan(T* ptr, size_t sizeInBytes)
-        : m_span(unsafeMakeSpan(ptr, sizeInBytes / sizeof(T)))
-    {
-        RELEASE_ASSERT(!(sizeInBytes % sizeof(T)));
-    }
-
-    std::span<T> m_span;
 };
 
 // Specialization for SystemMalloc to access <typename T>.

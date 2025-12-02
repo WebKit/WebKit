@@ -33,11 +33,7 @@ namespace WebCore {
 
 PublicSuffixStore& PublicSuffixStore::singleton()
 {
-    static LazyNeverDestroyed<PublicSuffixStore> store;
-    static std::once_flag flag;
-    std::call_once(flag, [&] {
-        store.construct();
-    });
+    static NeverDestroyed<PublicSuffixStore> store;
     return store.get();
 }
 

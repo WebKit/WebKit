@@ -46,8 +46,9 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGFELightElement);
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::azimuthAttr, &SVGFELightElement::m_azimuth>();
         PropertyRegistry::registerProperty<SVGNames::elevationAttr, &SVGFELightElement::m_elevation>();
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGFELightElement::m_x>();
@@ -58,7 +59,7 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
         PropertyRegistry::registerProperty<SVGNames::pointsAtZAttr, &SVGFELightElement::m_pointsAtZ>();
         PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent>();
         PropertyRegistry::registerProperty<SVGNames::limitingConeAngleAttr, &SVGFELightElement::m_limitingConeAngle>();
-    });
+    }
 }
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)

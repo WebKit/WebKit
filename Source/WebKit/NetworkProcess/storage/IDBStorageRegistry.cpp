@@ -95,14 +95,14 @@ void IDBStorageRegistry::unregisterTransaction(WebCore::IDBServer::UniqueIDBData
 
 WebCore::IDBServer::UniqueIDBDatabaseConnection* IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier)
 {
-    return m_connections.get(identifier).get();
+    return m_connections.get(identifier);
 }
 
 WebCore::IDBServer::UniqueIDBDatabaseTransaction* IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier)
 {
     if (identifier.isEmpty())
         return nullptr;
-    return m_transactions.get(identifier).get();
+    return m_transactions.get(identifier);
 }
 
 } // namespace WebKit

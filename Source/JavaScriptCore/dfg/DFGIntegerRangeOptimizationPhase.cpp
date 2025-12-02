@@ -1039,6 +1039,34 @@ public:
         return std::tuple { minValue, maxValue };
     }
 
+    // Be careful: do not use this to infer a relationship that will not be pruned later,
+    // otherwise it might break the inductive reasoning around phis/upsilons.
+    // For example, if lhs > 0 => node(lhs) > 0, you can't add that relationship. Pruning
+    // relationships involving lhs won't prune this new relationship.
+    bool provablyGreaterThan(Node* lhs, Node* rhs, int32_t minOffset = 0)
+    {
+        auto iter = m_relationships.find(lhs);
+        if (iter != m_relationships.end()) {
+            for (Relationship relationship : iter->value) {
+                if (relationship.right() == rhs
+                    && relationship.offset() >= minOffset
+                    && relationship.kind() == Relationship::GreaterThan)
+                        return true;
+            }
+        }
+        return false;
+    }
+
+    bool provablyGreaterThanOrEqual(Node* lhs, Node* rhs)
+    {
+        return provablyGreaterThan(lhs, rhs, -1);
+    }
+
+    bool provablyNonNegative(Node* lhs)
+    {
+        return provablyGreaterThanOrEqual(lhs, m_zero);
+    }
+
     bool run()
     {
         ASSERT(m_graph.m_form == SSA);
@@ -1138,102 +1166,119 @@ public:
                 DFG_ASSERT(
                     m_graph, nullptr,
                     block == m_graph.block(0) || m_seenBlocks.contains(block));
-            
+
                 m_relationships = m_relationshipsAtHead[block];
-            
+
                 for (auto* node : *block) {
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Analysis: at ", node, ": ", listDump(sortedRelationships()));
                     executeNode(node);
                 }
-                
+
                 // Now comes perhaps the most important piece of cleverness: if we Branch, and
                 // the predicate involves some relation over integers, we propagate different
                 // information to the taken and notTaken paths. This handles:
                 // - Branch on int32.
                 // - Branch on LogicalNot on int32.
-                // - Branch on compare on int32's.
-                // - Branch on LogicalNot of compare on int32's.
+                // - Branch on compare on int32s.
+                // - Branch on LogicalNot of compare on int32s.
+                // - Branch on ArithBitOr of int32s
                 Node* terminal = block->terminal();
                 bool alreadyMerged = false;
                 if (terminal->op() == Branch) {
-                    Relationship relationshipForTrue;
+                    // Each relationship must be true independently, so it is not correct
+                    // to invert any of these relationships unless there is only one.
+                    Vector<Relationship, 1> relationshipForTrue;
+                    Vector<Relationship, 1> relationshipForFalse;
                     BranchData* branchData = terminal->branchData();
-                    
+
                     bool invert = false;
                     if (terminal->child1()->op() == LogicalNot) {
                         terminal = terminal->child1().node();
                         invert = true;
                     }
                     
-                    if (terminal->child1().useKind() == Int32Use) {
-                        relationshipForTrue = Relationship::safeCreate(
-                            terminal->child1().node(), m_zero, Relationship::NotEqual, 0);
-                    } else {
+                    auto extractRelationship = [&](Node* compare) -> Relationship {
                         // FIXME: Handle CompareBelow and CompareBelowEq.
-                        Node* compare = terminal->child1().node();
+                        if (!compare || !compare->isBinaryUseKind(Int32Use))
+                            return Relationship();
                         switch (compare->op()) {
                         case CompareEq:
                         case CompareStrictEq:
+                            return Relationship::safeCreate(
+                                compare->child1().node(), compare->child2().node(),
+                                Relationship::Equal, 0);
                         case CompareLess:
+                            return Relationship::safeCreate(
+                                compare->child1().node(), compare->child2().node(),
+                                Relationship::LessThan, 0);
                         case CompareLessEq:
+                            return Relationship::safeCreate(
+                                compare->child1().node(), compare->child2().node(),
+                                Relationship::LessThan, 1);
                         case CompareGreater:
-                        case CompareGreaterEq: {
-                            if (!compare->isBinaryUseKind(Int32Use))
-                                break;
-                    
-                            switch (compare->op()) {
-                            case CompareEq:
-                            case CompareStrictEq:
-                                relationshipForTrue = Relationship::safeCreate(
-                                    compare->child1().node(), compare->child2().node(),
-                                    Relationship::Equal, 0);
-                                break;
-                            case CompareLess:
-                                relationshipForTrue = Relationship::safeCreate(
-                                    compare->child1().node(), compare->child2().node(),
-                                    Relationship::LessThan, 0);
-                                break;
-                            case CompareLessEq:
-                                relationshipForTrue = Relationship::safeCreate(
-                                    compare->child1().node(), compare->child2().node(),
-                                    Relationship::LessThan, 1);
-                                break;
-                            case CompareGreater:
-                                relationshipForTrue = Relationship::safeCreate(
-                                    compare->child1().node(), compare->child2().node(),
-                                    Relationship::GreaterThan, 0);
-                                break;
-                            case CompareGreaterEq:
-                                relationshipForTrue = Relationship::safeCreate(
-                                    compare->child1().node(), compare->child2().node(),
-                                    Relationship::GreaterThan, -1);
-                                break;
-                            default:
-                                DFG_CRASH(m_graph, compare, "Invalid comparison node type");
-                                break;
-                            }
-                            break;
-                        }
-                    
+                            return Relationship::safeCreate(
+                                compare->child1().node(), compare->child2().node(),
+                                Relationship::GreaterThan, 0);
+                        case CompareGreaterEq:
+                            return Relationship::safeCreate(
+                                compare->child1().node(), compare->child2().node(),
+                                Relationship::GreaterThan, -1);
                         default:
-                            break;
+                            return Relationship();
                         }
+                    };
+
+                    auto extractBooleansFromBitwise = [&](Node* bitwise) -> std::pair<Node*, Node*> {
+                        if (!bitwise->isBinaryUseKind(Int32Use))
+                            return std::make_pair(nullptr, nullptr);
+                        if (bitwise->child1()->op() != BooleanToNumber || bitwise->child2()->op() != BooleanToNumber)
+                            return std::make_pair(nullptr, nullptr);
+                        return std::make_pair(bitwise->child1().node()->child1().node(), bitwise->child2().node()->child1().node());
+                    };
+
+                    auto* condition = terminal->child1().node();
+                    if (terminal->child1().useKind() == Int32Use) {
+                        relationshipForTrue.append(Relationship::safeCreate(
+                            terminal->child1().node(), m_zero, Relationship::NotEqual, 0));
+                        relationshipForFalse.append(Relationship::safeCreate(
+                            terminal->child1().node(), m_zero, Relationship::Equal, 0));
+
+                        auto [l, r] = extractBooleansFromBitwise(condition);
+
+                        if (condition->op() == ArithBitAnd) {
+                            if (auto relationship = extractRelationship(l))
+                                relationshipForTrue.append(relationship);
+                            if (auto relationship = extractRelationship(r))
+                                relationshipForTrue.append(relationship);
+                        } else if (condition->op() == ArithBitOr) {
+                            if (auto relationship = extractRelationship(l).inverse())
+                                relationshipForFalse.append(relationship);
+                            if (auto relationship = extractRelationship(r).inverse())
+                                relationshipForFalse.append(relationship);
+                        }
+                    } else {
+                        if (auto relationship = extractRelationship(condition))
+                            relationshipForTrue.append(relationship);
+                        if (auto relationship = extractRelationship(condition).inverse())
+                            relationshipForFalse.append(relationship);
                     }
-                    
+
                     if (invert)
-                        relationshipForTrue = relationshipForTrue.inverse();
-                    
-                    if (relationshipForTrue) {
+                        std::swap(relationshipForTrue, relationshipForFalse);
+
+                    if (relationshipForTrue.size() || relationshipForFalse.size()) {
                         RelationshipMap forTrue = m_relationships;
                         RelationshipMap forFalse = m_relationships;
-                        
-                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with true:");
-                        setRelationship(forTrue, relationshipForTrue);
-                        if (Relationship relationshipForFalse = relationshipForTrue.inverse()) {
-                            dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with false:");
-                            setRelationship(forFalse, relationshipForFalse);
+
+                        for (auto relationship : relationshipForTrue) {
+                            dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with true: ", relationship);
+                            setRelationship(forTrue, relationship);
                         }
-                        
+                        for (auto relationship : relationshipForFalse) {
+                            dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with false: ", relationship);
+                            setRelationship(forFalse, relationship);
+                        }
+
                         changed |= mergeTo(forTrue, branchData->taken.block);
                         changed |= mergeTo(forFalse, branchData->notTaken.block);
                         alreadyMerged = true;
@@ -1638,6 +1683,19 @@ private:
             default:
                 break;
             }
+            break;
+        }
+
+        case ToLength: {
+            if (node->child1().useKind() == UntypedUse)
+                break;
+            // Consider b = ToLength(a)
+            // If a < 0, then b == 0; b >= a
+            // If a >= 0, then b = a; b >= a still
+            setRelationship(Relationship(node, node->child1().node(), Relationship::GreaterThan, -1));
+            // Note that we cannot conclude that b == 0 because it won't get pruned.
+            if (provablyNonNegative(node->child1().node()))
+                setRelationship(Relationship(node, node->child1().node(), Relationship::Equal));
             break;
         }
 
@@ -2090,4 +2148,3 @@ bool performIntegerRangeOptimization(Graph& graph)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-

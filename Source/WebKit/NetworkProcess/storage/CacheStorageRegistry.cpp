@@ -56,7 +56,7 @@ void CacheStorageRegistry::unregisterCache(WebCore::DOMCacheIdentifier identifie
 
 CacheStorageCache* CacheStorageRegistry::cache(WebCore::DOMCacheIdentifier identifier)
 {
-    return m_caches.get(identifier).get();
+    return m_caches.get(identifier);
 }
 
 } // namespace WebKit

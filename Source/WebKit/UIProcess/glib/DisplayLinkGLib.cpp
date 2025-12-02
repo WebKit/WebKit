@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "DisplayLink.h"
+#include "Logging.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 
@@ -35,10 +37,31 @@ void DisplayLink::platformInitialize()
     // FIXME: We can get here with displayID == 0 (webkit.org/b/212120), in which case DisplayVBlankMonitor defaults to the main screen.
     m_vblankMonitor = DisplayVBlankMonitor::create(m_displayID);
     m_vblankMonitor->setHandler([this] {
-        notifyObserversDisplayDidRefresh();
+        m_fpsThrottleCallCounter++;
+        if (m_fpsThrottleCallCounter >= m_fpsThrottleRatio) {
+            notifyObserversDisplayDidRefresh();
+            m_fpsThrottleCallCounter = 0;
+        }
     });
 
-    m_displayNominalFramesPerSecond = m_vblankMonitor->refreshRate();
+    unsigned refreshRate = m_vblankMonitor->refreshRate();
+    m_displayNominalFramesPerSecond = refreshRate;
+    if (const char* envString = getenv("WEBKIT_DISPLAY_REFRESH_THROTTLE_FPS")) {
+        if (auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString))) {
+            // The throttle FPS must be non zero and a factor of the real display refresh rate
+            if (!*newValue)
+                WTFLogAlways("WEBKIT_DISPLAY_REFRESH_THROTTLE_FPS=%s rejected: cannot be zero", envString); // NOLINT
+            else if (refreshRate % *newValue)
+                WTFLogAlways("WEBKIT_DISPLAY_REFRESH_THROTTLE_FPS=%s rejected: not a factor of refresh rate %ufps (remainder %u)", envString, refreshRate, refreshRate % *newValue); // NOLINT
+            else
+                m_displayNominalFramesPerSecond = *newValue;
+        } else
+            WTFLogAlways("WEBKIT_DISPLAY_REFRESH_THROTTLE_FPS=%s rejected: not a positive integer", envString); // NOLINT
+    }
+
+    m_fpsThrottleRatio = refreshRate / m_displayNominalFramesPerSecond;
+    if (m_fpsThrottleRatio != 1)
+        RELEASE_LOG(DisplayLink, "[UI] DisplayLink is throttled down from %ufps to %ufps", refreshRate, m_displayNominalFramesPerSecond);
 }
 
 void DisplayLink::platformFinalize()

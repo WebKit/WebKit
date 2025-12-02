@@ -393,7 +393,7 @@ void SliderThumbElement::willDetachRenderers()
             frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     }
 #if ENABLE(IOS_TOUCH_EVENTS)
-    unregisterForTouchEvents();
+    unregisterForTouchEvents(EventHandlerRemovalReason::RendererDetached);
 #endif
 }
 
@@ -493,7 +493,7 @@ void SliderThumbElement::handleTouchEndAndCancel(TouchEvent& touchEvent)
 
 void SliderThumbElement::didAttachRenderers()
 {
-    if (shouldAcceptTouchEvents())
+    if (!isDisabledFormControl())
         registerForTouchEvents();
 }
 
@@ -527,23 +527,18 @@ void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
     HTMLDivElement::defaultEventHandler(touchEvent);
 }
 
-bool SliderThumbElement::shouldAcceptTouchEvents()
-{
-    return renderer() && !isDisabledFormControl();
-}
-
 void SliderThumbElement::registerForTouchEvents()
 {
     if (m_isRegisteredAsTouchEventListener)
         return;
 
-    ASSERT(shouldAcceptTouchEvents());
+    ASSERT(!isDisabledFormControl());
 
     document().addTouchEventHandler(*this);
     m_isRegisteredAsTouchEventListener = true;
 }
 
-void SliderThumbElement::unregisterForTouchEvents()
+void SliderThumbElement::unregisterForTouchEvents(EventHandlerRemovalReason reason)
 {
     if (!m_isRegisteredAsTouchEventListener)
         return;
@@ -551,7 +546,7 @@ void SliderThumbElement::unregisterForTouchEvents()
     clearExclusiveTouchIdentifier();
     stopDragging();
 
-    document().removeTouchEventHandler(*this);
+    document().removeTouchEventHandler(*this, EventHandlerRemoval::One, reason);
     m_isRegisteredAsTouchEventListener = false;
 }
 
@@ -563,7 +558,7 @@ void SliderThumbElement::hostDisabledStateChanged()
         stopDragging();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    if (shouldAcceptTouchEvents())
+    if (!isDisabledFormControl())
         registerForTouchEvents();
     else
         unregisterForTouchEvents();

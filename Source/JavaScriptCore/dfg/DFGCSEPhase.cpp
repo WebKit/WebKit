@@ -541,7 +541,7 @@ private:
                 } else {
                     // This rule only makes sense for local CSE, since in SSA form we have already
                     // factored the bounds check out of the PutByVal. It's kind of gross, but we
-                    // still have reason to believe that PutByValAlias is a good optimization and
+                    // still have reason to believe that PutByValDirectResolved is a good optimization and
                     // that it's better to do it with a single node rather than separating out the
                     // CheckInBounds.
                     if (m_node->op() == PutByVal || m_node->op() == PutByValDirect) {
@@ -594,7 +594,7 @@ private:
                         }
 
                         if (!!heap && m_maps.findReplacement(heap))
-                            m_node->setOp(PutByValAlias);
+                            m_node->setOp(PutByValDirectResolved);
                     }
 
                     clobberize(m_graph, m_node, *this);
@@ -616,7 +616,7 @@ private:
         
         void def(PureValue value)
         {
-            dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tDef of value ", value, " at node ", m_node->index());
+            dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tDef of value ", value, " at node ", m_node);
             Node* match = m_maps.addPure(value, m_node);
             if (!match)
                 return;
@@ -627,7 +627,7 @@ private:
     
         void def(const HeapLocation& location, const LazyNode& value)
         {
-            dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tDef to ", location, " of value ", value, " at node ", m_node->index());
+            dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tDef to ", location, " of value ", value, " at node ", m_node);
             LazyNode match = m_maps.addImpure(location, value);
             if (!match)
                 return;

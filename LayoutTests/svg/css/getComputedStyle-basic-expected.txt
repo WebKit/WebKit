@@ -93,7 +93,7 @@ rect: style.getPropertyValue(font-weight) : 400
 rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 rect: style.getPropertyValue(glyph-orientation-vertical) : auto
 rect: style.getPropertyValue(grid-auto-columns) : auto
-rect: style.getPropertyValue(grid-auto-flow) : row
+rect: style.getPropertyValue(grid-auto-flow) : normal
 rect: style.getPropertyValue(grid-auto-rows) : auto
 rect: style.getPropertyValue(grid-column-end) : auto
 rect: style.getPropertyValue(grid-column-start) : auto
@@ -334,7 +334,7 @@ g: style.getPropertyValue(font-weight) : 400
 g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 g: style.getPropertyValue(glyph-orientation-vertical) : auto
 g: style.getPropertyValue(grid-auto-columns) : auto
-g: style.getPropertyValue(grid-auto-flow) : row
+g: style.getPropertyValue(grid-auto-flow) : normal
 g: style.getPropertyValue(grid-auto-rows) : auto
 g: style.getPropertyValue(grid-column-end) : auto
 g: style.getPropertyValue(grid-column-start) : auto

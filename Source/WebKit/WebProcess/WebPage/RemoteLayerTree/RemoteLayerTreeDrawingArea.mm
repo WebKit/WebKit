@@ -382,12 +382,11 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         backingStoreCollection->willBuildTransaction();
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
-        RemoteLayerTreeTransaction layerTransaction(transactionID);
+        RemoteLayerTreeTransaction layerTransaction;
 
         RefPtr layer = downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer();
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *layer, rootLayer.frameID);
 
-        // FIXME: Investigate whether this needs to be done multiple times in a page with multiple root frames. <rdar://116202678>
         webPage->willCommitLayerTree(layerTransaction, rootLayer.frameID);
 
         m_waitingForBackingStoreSwap = true;
@@ -405,14 +404,16 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transaction : transactions)
         backingStoreCollection->willCommitLayerTree(CheckedRef { transaction.first });
 
-    RemoteLayerTreeCommitBundle bundle { WTFMove(transactions), { WTFMove(m_pendingCallbackIDs) } };
+    RemoteLayerTreeCommitBundle bundle { WTFMove(transactions), { WTFMove(m_pendingCallbackIDs), webPage->protectedCorePage()->renderTreeSize() }, std::nullopt, transactionID };
 
     if (webPage->localMainFrame()) {
         bundle.mainFrameData = MainFrameData { };
-        bundle.mainFrameData->newlyReachedPaintingMilestones = std::exchange(m_pendingNewlyReachedPaintingMilestones, { });
-        bundle.mainFrameData->activityStateChangeID = std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous);
-        webPage->willCommitMainFrameData(*bundle.mainFrameData);
-        willCommitLayerTree(*bundle.mainFrameData);
+        auto& mainFrameData = *bundle.mainFrameData;
+        mainFrameData.newlyReachedPaintingMilestones = std::exchange(m_pendingNewlyReachedPaintingMilestones, { });
+        mainFrameData.activityStateChangeID = std::exchange(m_activityStateChangeID, ActivityStateChangeAsynchronous);
+
+        webPage->willCommitMainFrameData(mainFrameData, transactionID);
+        willCommitMainFrameData(mainFrameData);
     }
     bundle.startTime = *std::exchange(m_updateStartTime, std::nullopt);
 

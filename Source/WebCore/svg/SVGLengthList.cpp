@@ -47,11 +47,12 @@ bool SVGLengthList::parse(StringView value)
             if (buffer.position() == start)
                 break;
 
-            auto value = SVGLengthValue::construct(m_lengthMode, std::span(start, buffer.position() - start));
-            if (!value)
+            SVGParsingError parseError;
+            auto length = SVGLengthValue::construct(m_lengthMode, std::span(start, buffer.position() - start), parseError);
+            if (parseError != SVGParsingError::None)
                 break;
 
-            append(SVGLength::create(WTFMove(*value)));
+            append(SVGLength::create(WTFMove(length)));
             skipOptionalSVGSpacesOrDelimiter(buffer);
         }
 

@@ -262,7 +262,10 @@ void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginD
 
 std::optional<SharedPreferencesForWebProcess> NetworkNotificationManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    return m_networkProcess->webProcessConnection(connection)->sharedPreferencesForWebProcess();
+    RefPtr webProcessConnection = m_networkProcess->protectedWebProcessConnection(connection);
+    if (!webProcessConnection)
+        return std::nullopt;
+    return webProcessConnection->sharedPreferencesForWebProcess();
 }
 
 RefPtr<WebPushD::Connection> NetworkNotificationManager::protectedConnection() const

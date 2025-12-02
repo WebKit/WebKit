@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include <wtf/RefCountable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 
 // Box<T> is a reference-counted pointer to T that allocates T using FastMalloc and prepends a reference
-// count to it.
+// count to it. It's almost just RefPtr<RefCountable<T>>, but has convenience operators.
 template<typename T>
 class Box {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Box);
@@ -51,7 +52,7 @@ public:
     static Box create(Arguments&&... arguments)
     {
         Box result;
-        result.m_data = adoptRef(new Data(std::forward<Arguments>(arguments)...));
+        result.m_data = RefCountable<T>::create(std::forward<Arguments>(arguments)...);
         return result;
     }
 
@@ -61,26 +62,16 @@ public:
     {
         if (!isValid())
             return nullptr;
-        return &m_data->value;
+        return &**m_data;
     }
 
-    T& operator*() const { RELEASE_ASSERT(isValid()); return m_data->value; }
-    T* operator->() const { RELEASE_ASSERT(isValid()); return &m_data->value; }
+    T& operator*() const { RELEASE_ASSERT(isValid()); return **m_data; }
+    T* operator->() const { RELEASE_ASSERT(isValid()); return &**m_data; }
 
     explicit operator bool() const { return isValid(); }
 
 private:
-    struct Data : ThreadSafeRefCounted<Data> {
-        template<typename... Arguments>
-        Data(Arguments&&... arguments)
-            : value(std::forward<Arguments>(arguments)...)
-        {
-        }
-
-        T value;
-    };
-
-    RefPtr<Data> m_data;
+    RefPtr<RefCountable<T>> m_data;
 };
 
 } // namespace WTF

@@ -785,15 +785,21 @@ String AccessibilityRenderObject::stringValue() const
     if (!m_renderer)
         return AccessibilityNodeObject::stringValue();
 
-    if (isStaticText() || isTextControl() || isSecureField()) {
+    bool isStaticText = this->isStaticText();
+    if (isStaticText && node()) {
+        // FIXME: Implement text stitching for node-less static text, like CSS generated content.
+        // This is relevant here because only AccessibilityNodeObject::stringValue() knows how to
+        // stitch text. Ideally, we would shrink this implementation into AccessibilityNodeObject,
+        // since that is intended to become the "node and or renderer having" accessibility object class.
+        return AccessibilityNodeObject::stringValue();
+    }
+
+    if (isStaticText || isTextControl() || isSecureField()) {
         // A combobox is considered a text control, and its value is handled in AXNodeObject.
         if (isComboBox())
             return AccessibilityNodeObject::stringValue();
         return text();
     }
-
-    if (is<RenderText>(m_renderer.get()))
-        return textUnderElement();
 
     if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(m_renderer.get())) {
         // RenderMenuList will go straight to the text() of its selected item.
@@ -873,7 +879,8 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     if (!renderer)
         return AccessibilityNodeObject::boundingBoxRect();
 
-    if (RefPtr node = renderer->node()) // If we are a continuation, we want to make sure to use the primary renderer.
+    RefPtr node = renderer->node();
+    if (node) // If we are a continuation, we want to make sure to use the primary renderer.
         renderer = node->renderer();
 
     // absoluteFocusRingQuads will query the hierarchy below this element, which for large webpages can be very slow.
@@ -885,8 +892,23 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     if (renderer->isRenderOrLegacyRenderSVGRoot())
         isSVGRoot = true;
 
-    if (auto* renderText = dynamicDowncast<RenderText>(*renderer))
-        quads = renderText->absoluteQuadsClippedToEllipsis();
+    if (auto* renderText = dynamicDowncast<RenderText>(*renderer)) {
+        auto stitchState = this->stitchState();
+        if (!stitchState.stitchedIntoID || *stitchState.stitchedIntoID != objectID() || stitchState.group.isEmpty())
+            quads = renderText->absoluteQuadsClippedToEllipsis();
+        else {
+            // |this| is a stitching of multiple objects, so we need to combine all of their bounding boxes.
+
+            CheckedPtr cache = axObjectCache();
+            RefPtr endNode = !stitchState.group.isEmpty() && cache ? lastNode(stitchState.group, *cache) : nullptr;
+            if (endNode && endNode != node) {
+                if (std::optional range = makeSimpleRange(positionBeforeNode(node.get()), positionAfterNode(endNode.get())))
+                    quads = RenderObject::absoluteTextQuads(*range);
+            }
+            if (quads.isEmpty())
+                quads = renderText->absoluteQuadsClippedToEllipsis();
+        }
+    }
     else if (isWebArea() || isSVGRoot)
         renderer->absoluteQuads(quads);
     else
@@ -1390,7 +1412,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     // https://github.com/WebKit/WebKit/commit/ddeb923489b58fd890527bf0e432ebe6a477d2ef
     // Results in a lot of useless generics being exposed, which is wasteful. We should remove this.
     WeakPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*m_renderer);
-    if (blockFlow && m_renderer->childrenInline() && !canSetFocusAttribute())
+    if (blockFlow && m_renderer->childrenInline() && !canSetFocusAttribute() && !blockFlow->hasBlocksInInlineLayout())
         return !blockFlow->hasLines() && !clickableSelfOrAncestor();
 
     if (isCanvas()) {
@@ -1607,7 +1629,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         lineHeight = LineSelection::logicalRect(*lineBox).height();
 
         CheckedPtr renderStyle = style();
-        if (renderStyle && renderStyle->textAlign() != TextAlignMode::Left) {
+        if (renderStyle && renderStyle->textAlign() != Style::TextAlign::Left) {
             // To serve the appropriate bounds for text, we need to offset them by a text run's position within its associated RenderText.
             // Computing this requires the following:
             //     1. Get the run's logical offset within the containing block (see note below).

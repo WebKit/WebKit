@@ -50,10 +50,14 @@ class DeferredPromise;
 enum class CryptoAlgorithmIdentifier : uint8_t;
 enum class CryptoKeyUsage : uint8_t;
 
-class SubtleCrypto : public RefCountedAndCanMakeWeakPtr<SubtleCrypto>, public ContextDestructionObserver {
+class SubtleCrypto : public RefCounted<SubtleCrypto>, public ContextDestructionObserver {
 public:
     static Ref<SubtleCrypto> create(ScriptExecutionContext* context) { return adoptRef(*new SubtleCrypto(context)); }
     ~SubtleCrypto();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     using KeyFormat = CryptoKeyFormat;
 

@@ -95,7 +95,6 @@ private:
         const Extent3D& copySize) final;
 
     void setLabelInternal(const String&) final;
-    RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&) final;
 
     WebGPUPtr<WGPUQueue> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;

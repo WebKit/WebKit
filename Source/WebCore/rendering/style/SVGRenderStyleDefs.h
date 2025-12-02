@@ -71,9 +71,9 @@ public:
     void dumpDifferences(TextStream&, const StyleFillData&) const;
 #endif
 
-    Style::Opacity opacity;
-    Style::SVGPaint paint;
-    Style::SVGPaint visitedLinkPaint;
+    Style::Opacity fillOpacity;
+    Style::SVGPaint fill;
+    Style::SVGPaint visitedLinkFill;
 
 private:
     StyleFillData();
@@ -93,11 +93,11 @@ public:
     void dumpDifferences(TextStream&, const StyleStrokeData&) const;
 #endif
 
-    Style::Opacity opacity;
-    Style::SVGPaint paint;
-    Style::SVGPaint visitedLinkPaint;
-    Style::SVGStrokeDashoffset dashOffset;
-    Style::SVGStrokeDasharray dashArray;
+    Style::Opacity strokeOpacity;
+    Style::SVGPaint stroke;
+    Style::SVGPaint visitedLinkStroke;
+    Style::SVGStrokeDashoffset strokeDashOffset;
+    Style::SVGStrokeDasharray strokeDashArray;
 
 private:
     StyleStrokeData();
@@ -117,8 +117,8 @@ public:
     void dumpDifferences(TextStream&, const StyleStopData&) const;
 #endif
 
-    Style::Opacity opacity;
-    Style::Color color;
+    Style::Opacity stopOpacity;
+    Style::Color stopColor;
 
 private:
     StyleStopData();

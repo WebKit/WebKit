@@ -31,6 +31,7 @@
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -87,7 +88,7 @@ struct InterfaceAddress {
 
 struct SocketAddress {
     explicit SocketAddress(const webrtc::SocketAddress&);
-    explicit SocketAddress(uint16_t port, int scopeID, Vector<char>&& hostname, std::optional<IPAddress> ipAddress)
+    explicit SocketAddress(uint16_t port, int scopeID, String&& hostname, std::optional<IPAddress> ipAddress)
         : port(port)
         , scopeID(scopeID)
         , hostname(WTFMove(hostname))
@@ -97,7 +98,7 @@ struct SocketAddress {
 
     uint16_t port;
     int scopeID;
-    Vector<char> hostname;
+    String hostname;
     std::optional<IPAddress> ipAddress;
 };
 
@@ -109,13 +110,13 @@ struct RTCNetwork {
     using InterfaceAddress = WebRTCNetwork::InterfaceAddress;
 
     RTCNetwork() = default;
-    explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
+    explicit RTCNetwork(String&& name, String&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
     RTCNetwork isolatedCopy() const;
 
     webrtc::Network value() const;
 
-    Vector<char> name;
-    Vector<char> description;
+    String name;
+    String description;
     IPAddress prefix;
     int prefixLength { 0 };
     int type { 0 };

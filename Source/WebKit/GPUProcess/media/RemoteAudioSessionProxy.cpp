@@ -47,7 +47,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxy);
 
 RemoteAudioSessionProxy::RemoteAudioSessionProxy(GPUConnectionToWebProcess& gpuConnection)
-: m_gpuConnection(gpuConnection)
+    : m_gpuConnection(gpuConnection)
 {
 }
 
@@ -78,6 +78,7 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
         m_active,
         m_sceneIdentifier,
         m_soundStageSize,
+        session->categoryOverride(),
     };
 }
 

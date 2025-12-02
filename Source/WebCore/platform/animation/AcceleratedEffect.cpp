@@ -250,6 +250,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const Timelin
             return { };
         }();
 
+        ASSERT(!std::isnan(srcKeyframe.offset()));
         m_keyframes.append({ srcKeyframe.offset(), WTFMove(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTFMove(animatedProperties) });
     }
 
@@ -355,23 +356,35 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-void AcceleratedEffect::apply(AcceleratedEffectValues& values, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+ResolvedEffectTiming AcceleratedEffect::resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
 {
+    return resolvedTiming(timelineTime, timelineDuration);
+}
+
+ResolvedEffectTiming AcceleratedEffect::resolvedTiming(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+{
+    ASSERT_IMPLIES(m_paused, m_holdTime);
+    ASSERT_IMPLIES(!m_paused, m_startTime);
+
     auto localTime = [&] {
-        ASSERT(m_holdTime || m_startTime);
-        if (m_holdTime)
+        if (m_paused)
             return *m_holdTime;
         return (timelineTime - *m_startTime) * m_playbackRate;
     }();
 
-    auto resolvedTiming = m_timing.resolve({
+    return m_timing.resolve({
         timelineTime,
         timelineDuration,
-        m_holdTime ? *m_holdTime : *m_startTime,
+        m_paused ? *m_holdTime : *m_startTime,
         localTime,
         EndpointInclusiveActiveInterval::No,
         m_playbackRate
     });
+}
+
+void AcceleratedEffect::apply(AcceleratedEffectValues& values, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+{
+    auto resolvedTiming = this->resolvedTiming(timelineTime, timelineDuration);
     if (!resolvedTiming.transformedProgress)
         return;
 

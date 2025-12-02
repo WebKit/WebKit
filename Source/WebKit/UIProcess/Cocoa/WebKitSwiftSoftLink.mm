@@ -32,28 +32,28 @@ namespace WebKit {
 extern void* WebKitSwiftLibrary(bool isOptional = false);
 void* WebKitSwiftLibrary(bool isOptional)
 {
-    static void* library;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static void* library = [isOptional] {
+        void* library = nullptr;
         // Start by searching for the library in DYLD_LIBRARY_PATH:
         if ((library = dlopen("libWebKitSwift.dylib", RTLD_NOW)))
-            return;
+            return library;
 
         // Then search in the Frameworks/ directory of the currently loaded version of WebKit.framework:
         Dl_info info { };
         if (dladdr((const void*)&WebKitSwiftLibrary, &info) && *info.dli_fname) {
             auto dliPath = String::fromUTF8(info.dli_fname);
             if (dliPath.isNull())
-                return;
+                return library;
             auto webkitFrameworkDirectory = WTF::FileSystemImpl::parentPath(dliPath);
             auto dylibPath = WTF::FileSystemImpl::pathByAppendingComponent(webkitFrameworkDirectory, "Frameworks/libWebKitSwift.dylib"_s);
             if ((library = dlopen(dylibPath.utf8().data(), RTLD_NOW)))
-                return;
+                return library;
         }
 
         if (!isOptional)
             RELEASE_ASSERT_WITH_MESSAGE(library, "%s", dlerror());
-    });
+        return library;
+    }();
     return library;
 }
 

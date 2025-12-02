@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LoadedWebArchive.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Site.h>
 #include <wtf/CompletionHandler.h>
@@ -60,8 +61,8 @@ public:
     ~BrowsingContextGroup();
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, WebProcessProxy::EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
-    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
-    FrameProcess* processForSite(const WebCore::Site&);
+    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
+    RefPtr<FrameProcess> processForSite(const WebCore::Site&);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     void removeFrameProcess(FrameProcess&);

@@ -770,7 +770,7 @@ static void logOutcomeImpl(String&& outcome)
         Vector<KeyValuePair<String, unsigned>> vector;
         for (auto& pair : set.get())
             vector.append(pair);
-        std::sort(vector.begin(), vector.end(), [](auto& a, auto &b) {
+        std::ranges::sort(vector, [](auto& a, auto &b) {
             return a.value != b.value ? a.value > b.value : codePointCompareLessThan(a.key, b.key);
         });
         dataLogLn("fastStringify outcomes");
@@ -969,7 +969,7 @@ bool FastStringifier<CharType, bufferMode>::hasRemainingCapacitySlow(unsigned si
         return true;
     } else {
         size_t newSize = std::max<size_t>(m_dynamicBuffer.size() * 2, m_dynamicBuffer.size() + size);
-        if (newSize > StringImpl::MaxLength) [[unlikely]]
+        if (!StringImpl::isValidLength<CharType>(newSize)) [[unlikely]]
             return false;
 
         if (!m_dynamicBuffer.tryGrow(newSize)) [[unlikely]]

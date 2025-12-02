@@ -175,11 +175,9 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 
 WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
 {
-    static Class theClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static Class theClass = [] {
         ASSERT(get__AVPlayerLayerViewClassSingleton());
-        theClass = objc_allocateClassPair(get__AVPlayerLayerViewClassSingleton(), "WebAVPlayerLayerView", 0);
+        auto theClass = objc_allocateClassPair(get__AVPlayerLayerViewClassSingleton(), "WebAVPlayerLayerView", 0);
         class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPlayerLayerView_dealloc, "v@:");
         class_addMethod(theClass, @selector(transferVideoViewTo:), (IMP)WebAVPlayerLayerView_transferVideoViewTo, "v@:@");
         class_addMethod(theClass, @selector(setPlayerController:), (IMP)WebAVPlayerLayerView_setPlayerController, "v@:@");
@@ -198,7 +196,8 @@ WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPlayerLayerView_layerClass, "@@:");
-    });
+        return theClass;
+    }();
     return (WebAVPlayerLayerView *)[theClass alloc];
 }
 
@@ -210,14 +209,13 @@ static Class WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
 
 WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance()
 {
-    static Class theClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(PAL::getUIViewClassSingleton(), "WebAVPictureInPicturePlayerLayerView", 0);
+    static Class theClass = [] {
+        auto theClass = objc_allocateClassPair(PAL::getUIViewClassSingleton(), "WebAVPictureInPicturePlayerLayerView", 0);
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPictureInPicturePlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");
-    });
+        return theClass;
+    }();
 
     return (WebAVPictureInPicturePlayerLayerView *)[theClass alloc];
 }

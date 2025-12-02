@@ -35,10 +35,7 @@ namespace API {
 
 WTF::String ContentRuleListStore::defaultStorePath()
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<RetainPtr<NSURL>> contentRuleListStoreURL;
-
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<RetainPtr<NSURL>> contentRuleListStoreURL = [] {
         RetainPtr<NSURL> url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
@@ -52,8 +49,8 @@ WTF::String ContentRuleListStore::defaultStorePath()
             url = [url URLByAppendingPathComponent:bundleIdentifier.get() isDirectory:YES];
         }
         
-        contentRuleListStoreURL.get() = [url URLByAppendingPathComponent:@"ContentRuleLists" isDirectory:YES];
-    });
+        return [url URLByAppendingPathComponent:@"ContentRuleLists" isDirectory:YES];
+    }();
 
     if (![[NSFileManager defaultManager] createDirectoryAtURL:contentRuleListStoreURL.get().get() withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", contentRuleListStoreURL.get().get());

@@ -27,9 +27,6 @@
 
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CounterDirectives.h>
-#include <WebCore/NameScope.h>
-#include <WebCore/PositionArea.h>
-#include <WebCore/PositionTryFallback.h>
 #include <WebCore/ScopedName.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/StyleAnchorName.h>
@@ -45,6 +42,7 @@
 #include <WebCore/StyleMarginTrim.h>
 #include <WebCore/StyleMaskBorder.h>
 #include <WebCore/StyleMaximumLines.h>
+#include <WebCore/StyleNameScope.h>
 #include <WebCore/StyleOffsetAnchor.h>
 #include <WebCore/StyleOffsetDistance.h>
 #include <WebCore/StyleOffsetPath.h>
@@ -53,6 +51,9 @@
 #include <WebCore/StylePageSize.h>
 #include <WebCore/StylePerspective.h>
 #include <WebCore/StylePerspectiveOrigin.h>
+#include <WebCore/StylePositionAnchor.h>
+#include <WebCore/StylePositionArea.h>
+#include <WebCore/StylePositionTryFallbacks.h>
 #include <WebCore/StylePositionVisibility.h>
 #include <WebCore/StylePrimitiveNumericTypes.h>
 #include <WebCore/StyleProgressTimelineAxes.h>
@@ -95,9 +96,9 @@ namespace WebCore {
 using namespace CSS::Literals;
 
 class PathOperation;
+class StyleBackdropFilterData;
 class StyleCustomPropertyData;
 class StyleDeprecatedFlexibleBoxData;
-class StyleFilterData;
 class StyleFlexibleBoxData;
 class StyleGridData;
 class StyleGridItemData;
@@ -151,7 +152,7 @@ public:
 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
 
-    DataRef<StyleFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
+    DataRef<StyleBackdropFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
 
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
@@ -215,7 +216,7 @@ public:
     Style::ProgressTimelineAxes viewTimelineAxes;
     Style::ProgressTimelineNames viewTimelineNames;
 
-    NameScope timelineScope;
+    Style::NameScope timelineScope;
 
     Style::ScrollbarGutter scrollbarGutter;
 
@@ -226,10 +227,10 @@ public:
     AtomString pseudoElementNameArgument;
 
     Style::AnchorNames anchorNames;
-    NameScope anchorScope;
-    std::optional<Style::ScopedName> positionAnchor;
-    std::optional<PositionArea> positionArea;
-    FixedVector<Style::PositionTryFallback> positionTryFallbacks;
+    Style::NameScope anchorScope;
+    Style::PositionAnchor positionAnchor;
+    Style::PositionArea positionArea;
+    Style::PositionTryFallbacks positionTryFallbacks;
     std::optional<size_t> usedPositionOptionIndex;
 
     Style::BlockStepSize blockStepSize;

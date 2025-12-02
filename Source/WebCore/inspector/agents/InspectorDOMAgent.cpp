@@ -634,7 +634,7 @@ Node* InspectorDOMAgent::nodeForId(Inspector::Protocol::DOM::NodeId id)
     if (!m_idToNode.isValidKey(id))
         return nullptr;
 
-    return m_idToNode.get(id).get();
+    return m_idToNode.get(id);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::requestChildNodes(Inspector::Protocol::DOM::NodeId nodeId, std::optional<int>&& depth)

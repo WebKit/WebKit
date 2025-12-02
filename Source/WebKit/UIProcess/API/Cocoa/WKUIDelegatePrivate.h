@@ -227,6 +227,9 @@ struct UIEdgeInsets;
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 - (void)_webView:(WKWebView *)webView setRecentlyAccessedGamepads:(BOOL)recentlyAccessedGamepads WK_API_AVAILABLE(visionos(2.0));
 - (void)_webView:(WKWebView *)webView gamepadsConnectedStateDidChange:(BOOL)gamepadsConnected WK_API_AVAILABLE(visionos(2.0));
+
+/// FIXME: Add modal type as parameter in rdar://163838660; currently it only supports WebAuthentication modal
+- (void)_webViewWillPresentModalUI:(WKWebView *)webView WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 #endif
 
 #if TARGET_OS_IPHONE

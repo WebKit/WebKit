@@ -43,11 +43,13 @@ template<typename> class ExceptionOr;
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDTMFSender);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<RTCDTMFSender> create(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);
     virtual ~RTCDTMFSender();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     bool canInsertDTMF() const;
     String toneBuffer() const;

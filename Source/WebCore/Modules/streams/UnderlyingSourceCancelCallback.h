@@ -40,6 +40,10 @@ class UnderlyingSourceCancelCallback : public RefCounted<UnderlyingSourceCancelC
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<RefPtr<DOMPromise>> invoke(JSC::JSValue thisValue, JSC::JSValue reason) = 0;
 
 private:

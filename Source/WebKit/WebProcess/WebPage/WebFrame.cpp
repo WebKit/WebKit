@@ -472,6 +472,9 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
         setLayerHostingContextIdentifier(*parameters.layerHostingContextIdentifier);
     if (parameters.initialSize)
         updateLocalFrameSize(localFrame, *parameters.initialSize);
+
+    if (parameters.commitTiming == CommitTiming::Immediately)
+        commitProvisionalFrame();
 }
 
 void WebFrame::destroyProvisionalFrame()
@@ -1571,8 +1574,8 @@ void WebFrame::takeSnapshotOfNode(JSHandleIdentifier identifier, CompletionHandl
     if (!page)
         return completion({ });
 
-    auto [globalObject, object] = WebKitJSHandle::objectForIdentifier(identifier);
-    if (!globalObject || !object)
+    auto* object = WebKitJSHandle::objectForIdentifier(identifier);
+    if (!object)
         return completion({ });
 
     auto* jsNode = jsDynamicCast<JSNode*>(object);

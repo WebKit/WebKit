@@ -34,6 +34,7 @@
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "RenderElement.h"
+#include "SVGImageForContainer.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
@@ -152,7 +153,19 @@ RefPtr<Image> StyleCrossfadeImage::image(const RenderElement* renderer, const Fl
     if (!fromImage || !toImage)
         return &Image::nullImage();
 
-    return CrossfadeGeneratedImage::create(*fromImage, *toImage, m_percentage, fixedSize(*renderer), size);
+    RefPtr protectedFromImage = fromImage;
+    RefPtr protectedToImage = toImage;
+
+    if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
+        auto fromURL = m_cachedFromImage ? m_cachedFromImage->url() : URL();
+        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), size, 1, fromURL);
+    }
+    if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
+        auto toURL = m_cachedToImage ? m_cachedToImage->url() : URL();
+        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), size, 1, toURL);
+    }
+
+    return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_percentage, fixedSize(*renderer), size);
 }
 
 bool StyleCrossfadeImage::knownToBeOpaque(const RenderElement& renderer) const

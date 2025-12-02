@@ -369,10 +369,8 @@ bool Device::isStencilOnlyFormat(MTLPixelFormat format)
 
 id<MTLFunction> Device::nopVertexFunction(id<MTLDevice> device)
 {
-    static id<MTLFunction> function = nil;
-    NSError *error = nil;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    static id<MTLFunction> function = [&] {
+        NSError *error = nil;
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
@@ -380,8 +378,8 @@ id<MTLFunction> Device::nopVertexFunction(id<MTLDevice> device)
         id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vsNop() { return (float4)0; }" options:options error:&error];
         if (error)
             WTFLogAlways("%@", error); // NOLINT
-        function = [library newFunctionWithName:@"vsNop"];
-    });
+        return [library newFunctionWithName:@"vsNop"];
+    }();
 
     return function;
 }

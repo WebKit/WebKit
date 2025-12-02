@@ -67,7 +67,7 @@ void computePreciseJumpTargetsInternal(Block* codeBlock, const JSInstructionStre
         getJumpTargetsForInstruction(codeBlock, instruction, out);
     }
     
-    std::sort(out.begin(), out.end());
+    std::ranges::sort(out);
     
     // We will have duplicates, and we must remove them.
     unsigned toIndex = 0;

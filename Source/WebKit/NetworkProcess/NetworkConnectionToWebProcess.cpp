@@ -120,6 +120,10 @@
 #include <WebCore/ResourceMonitorThrottlerHolder.h>
 #endif
 
+#if USE(LIBRICE)
+#include "RiceBackendMessages.h"
+#endif
+
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -315,7 +319,16 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
             networkTransportSession->didReceiveMessage(connection, decoder);
         return true;
     }
-    
+
+#if USE(LIBRICE)
+    if (decoder.messageReceiverName() == Messages::RiceBackend::messageReceiverName()) {
+        MESSAGE_CHECK_WITH_RETURN_VALUE(RiceBackendIdentifier::isValidIdentifier(decoder.destinationID()), false);
+        if (RefPtr iceBackend = m_gstreamerIceBackends.get(RiceBackendIdentifier(decoder.destinationID())))
+            iceBackend->didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (RefPtr swConnection = m_swConnection.get())
             swConnection->didReceiveMessage(connection, decoder);
@@ -439,6 +452,16 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
         return true;
     }
 #endif
+
+#if USE(LIBRICE)
+    if (decoder.messageReceiverName() == Messages::RiceBackend::messageReceiverName()) {
+        if (RefPtr iceBackend = m_gstreamerIceBackends.get(RiceBackendIdentifier(decoder.destinationID()))) {
+            iceBackend->didReceiveSyncMessage(connection, decoder, reply);
+            return true;
+        }
+    }
+#endif
+
     return false;
 }
 
@@ -1785,17 +1808,17 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
 }
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
-void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
 {
     if (!url.isValid()
         || !portAllowed(url)
         || isIPAddressDisallowed(url)
         || m_networkTransportSessions.contains(identifier))
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     RefPtr session = NetworkTransportSession::create(*this, identifier, WTFMove(url), WTFMove(options), WTFMove(pageID), WTFMove(clientOrigin));
     if (!session)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
     session->initialize(WTFMove(completionHandler));
     m_networkTransportSessions.set(identifier, session.releaseNonNull());
 }
@@ -1804,6 +1827,28 @@ void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessi
 {
     m_networkTransportSessions.remove(identifier);
 }
+
+#if USE(LIBRICE)
+void NetworkConnectionToWebProcess::initializeRiceBackend(WebPageProxyIdentifier&& pageID, CompletionHandler<void(std::optional<RiceBackendIdentifier>)>&& completionHandler)
+{
+    RiceBackend::initialize(*this, WTFMove(pageID), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](RefPtr<RiceBackend>&& backend) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!backend || !protectedThis)
+            return completionHandler(std::nullopt);
+
+        auto identifier = backend->identifier();
+        ASSERT(!protectedThis->m_gstreamerIceBackends.contains(identifier));
+        protectedThis->m_gstreamerIceBackends.set(identifier, backend.releaseNonNull());
+        completionHandler(identifier);
+    });
+}
+
+void NetworkConnectionToWebProcess::destroyRiceBackend(RiceBackendIdentifier identifier)
+{
+    ASSERT(m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.remove(identifier);
+}
+#endif
 
 void NetworkConnectionToWebProcess::clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 {

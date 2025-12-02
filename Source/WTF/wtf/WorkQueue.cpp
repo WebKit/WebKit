@@ -134,11 +134,7 @@ void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t ind
         Vector<Ref<Thread>> m_workers;
     };
 
-    static LazyNeverDestroyed<ThreadPool> threadPool;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        threadPool.construct();
-    });
+    static NeverDestroyed<ThreadPool> threadPool;
 
     // Cap the worker count to the number of iterations (excluding this thread)
     const size_t workerCount = std::min(iterations - 1, threadPool->workerCount());
@@ -174,12 +170,10 @@ void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t ind
 
 WorkQueue& WorkQueue::mainSingleton()
 {
-    static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
+    static NeverDestroyed<RefPtr<WorkQueue>> mainWorkQueue = [] {
         WTF::initialize();
-        mainWorkQueue.get() = adoptRef(*new WorkQueue(CreateMain));
-    });
+        return adoptRef(*new WorkQueue(CreateMain));
+    }();
     return *mainWorkQueue.get();
 }
 

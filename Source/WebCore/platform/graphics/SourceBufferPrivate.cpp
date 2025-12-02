@@ -68,6 +68,9 @@ SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent)
 SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent, WorkQueue& dispatcher)
     : m_mediaSource(&parent)
     , m_dispatcher(dispatcher)
+#if ASSERT_ENABLED
+    , m_creationThreadId(isMainThread() ? 0 : Thread::currentSingleton().uid())
+#endif
 {
 }
 
@@ -98,15 +101,42 @@ MediaTime SourceBufferPrivate::currentTime() const
     return { };
 }
 
+void SourceBufferPrivate::setMediaSourceDuration(const MediaTime& duration)
+{
+    Locker locker { m_lock };
+    m_mediaSourceDuration = duration;
+}
+
 MediaTime SourceBufferPrivate::mediaSourceDuration() const
 {
+    Locker locker { m_lock };
     return m_mediaSourceDuration;
+}
+
+void SourceBufferPrivate::setMode(SourceBufferAppendMode mode)
+{
+    ensureWeakOnDispatcher([mode](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_appendMode = mode;
+    });
 }
 
 void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
 {
-    iterateTrackBuffers([&](auto& trackBuffer) {
-        trackBuffer.resetTimestampOffset();
+    // Can be called on SourceBuffer's thread.
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.iterateTrackBuffers([&](auto& trackBuffer) {
+            trackBuffer.resetTimestampOffset();
+        });
+    });
+}
+
+void SourceBufferPrivate::startChangingType()
+{
+    // Can be called on SourceBuffer's thread.
+    ensureWeakOnDispatcher([](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_pendingInitializationSegmentForChangeType = true;
     });
 }
 
@@ -125,13 +155,40 @@ MediaTime SourceBufferPrivate::timestampOffset() const
 
 void SourceBufferPrivate::resetTrackBuffers()
 {
-    iterateTrackBuffers([&](auto& trackBuffer) {
-        trackBuffer.reset();
+    // Can be called on SourceBuffer's thread.
+    ASSERT(m_dispatcher->isCurrent() || isOnCreationThread());
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.iterateTrackBuffers([&](auto& trackBuffer) {
+            trackBuffer.reset();
+        });
     });
+}
+
+void SourceBufferPrivate::setAppendWindowStart(const MediaTime& appendWindowStart)
+{
+    // Called from the SourceBuffer's dispatcher
+    ASSERT(isOnCreationThread());
+    Locker locker { m_lock };
+    m_appendWindowStart = appendWindowStart;
+}
+
+void SourceBufferPrivate::setAppendWindowEnd(const MediaTime& appendWindowEnd)
+{
+    // Called from the SourceBuffer's dispatcher
+    ASSERT(isOnCreationThread());
+    Locker locker { m_lock };
+    m_appendWindowEnd = appendWindowEnd;
+}
+
+std::pair<MediaTime, MediaTime> SourceBufferPrivate::appendWindow() const
+{
+    Locker locker { m_lock };
+    return { m_appendWindowStart, m_appendWindowEnd };
 }
 
 void SourceBufferPrivate::updateHighestPresentationTimestamp()
 {
+    assertIsCurrent(m_dispatcher.get());
     MediaTime highestTime;
     iterateTrackBuffers([&](auto& trackBuffer) {
         auto lastSampleIter = trackBuffer.samples().presentationOrder().rbegin();
@@ -161,14 +218,25 @@ Ref<MediaPromise> SourceBufferPrivate::updateBuffered()
 
 Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
 {
+    assertIsCurrent(m_dispatcher.get());
+
     auto iteratorRange = makeSizedIteratorRange(m_trackBufferMap, m_trackBufferMap.begin(), m_trackBufferMap.end());
     return WTF::map(iteratorRange, [](auto& trackBuffer) {
         return trackBuffer.second->buffered();
     });
 }
 
+bool SourceBufferPrivate::hasReceivedFirstInitializationSegment() const
+{
+    assertIsCurrent(m_dispatcher.get());
+
+    return m_receivedFirstInitializationSegment;
+}
+
 void SourceBufferPrivate::reenqueSamples(TrackID trackID, NeedsFlush needsFlush)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     RefPtr client = this->client();
     if (!client)
         return;
@@ -182,35 +250,42 @@ void SourceBufferPrivate::reenqueSamples(TrackID trackID, NeedsFlush needsFlush)
 
 Ref<SourceBufferPrivate::ComputeSeekPromise> SourceBufferPrivate::computeSeekTime(const SeekTarget& target)
 {
-    RefPtr client = this->client();
-    if (!client)
-        return ComputeSeekPromise::createAndReject(PlatformMediaError::BufferRemoved);
+    // Called on SourceBuffer's thread
+    ASSERT(isOnCreationThread());
+    return invokeAsync(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, target] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return ComputeSeekPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        RefPtr client = protectedThis->client();
+        if (!client)
+            return ComputeSeekPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
-    auto seekTime = target.time;
+        auto seekTime = target.time;
 
-    if (target.negativeThreshold || target.positiveThreshold) {
-        iterateTrackBuffers([&](auto& trackBuffer) {
-            // Find the sample which contains the target time.
-            auto trackSeekTime = trackBuffer.findSeekTimeForTargetTime(target.time, target.negativeThreshold, target.positiveThreshold);
+        if (target.negativeThreshold || target.positiveThreshold) {
+            protectedThis->iterateTrackBuffers([&](auto& trackBuffer) {
+                // Find the sample which contains the target time.
+                auto trackSeekTime = trackBuffer.findSeekTimeForTargetTime(target.time, target.negativeThreshold, target.positiveThreshold);
 
-            if (trackSeekTime.isValid() && abs(target.time - trackSeekTime) > abs(target.time - seekTime))
-                seekTime = trackSeekTime;
-        });
-    }
-    // When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
-    // results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
-    // the time jump observer to fire.
-    if (seekTime.hasDoubleValue())
-        seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
+                if (trackSeekTime.isValid() && abs(target.time - trackSeekTime) > abs(target.time - seekTime))
+                    seekTime = trackSeekTime;
+            });
+        }
+        // When converting from a double-precision float to a MediaTime, a certain amount of precision is lost. If that
+        // results in a round-trip between `float in -> MediaTime -> float out` where in != out, we will wait forever for
+        // the time jump observer to fire.
+        if (seekTime.hasDoubleValue())
+            seekTime = MediaTime::createWithDouble(seekTime.toDouble(), MediaTime::DefaultTimeScale);
 
-    computeEvictionData();
+        protectedThis->computeEvictionData();
 
-    return ComputeSeekPromise::createAndResolve(seekTime);
+        return ComputeSeekPromise::createAndResolve(seekTime);
+    });
 }
 
 void SourceBufferPrivate::seekToTime(const MediaTime& time)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(m_dispatcher.get());
 
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.second;
@@ -225,28 +300,36 @@ void SourceBufferPrivate::seekToTime(const MediaTime& time)
 
 void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
 {
-    iterateTrackBuffers([&](auto& trackBuffer) {
-        trackBuffer.clearSamples();
+    // Called from SourceBuffer thread or on dispatcher from memoryPressure.
+    ASSERT(m_dispatcher->isCurrent() || isOnCreationThread());
+    ensureWeakOnDispatcher([shouldReportToClient](auto& buffer) {
+        buffer.iterateTrackBuffers([&](auto& trackBuffer) {
+            trackBuffer.clearSamples();
+        });
+        if (!shouldReportToClient)
+            return;
+
+        buffer.computeEvictionData();
+
+        buffer.updateHighestPresentationTimestamp();
+
+        buffer.updateBuffered();
     });
-    if (!shouldReportToClient)
-        return;
-
-    computeEvictionData();
-
-    updateHighestPresentationTimestamp();
-
-    updateBuffered();
 }
 
 Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesForTrackId(TrackID trackID)
 {
-    auto trackBuffer = m_trackBufferMap.find(trackID);
-    if (trackBuffer == m_trackBufferMap.end())
-        return SamplesPromise::createAndResolve(Vector<String> { });
+    // Internals only.
+    return invokeAsync(m_dispatcher, [protectedThis = Ref { *this }, this, trackID] {
+        assertIsCurrent(m_dispatcher.get());
+        auto trackBuffer = m_trackBufferMap.find(trackID);
+        if (trackBuffer == m_trackBufferMap.end())
+            return SamplesPromise::createAndResolve(Vector<String> { });
 
-    return SamplesPromise::createAndResolve(WTF::map(trackBuffer->second->samples().decodeOrder(), [](auto& entry) {
-        return toString(entry.second.get());
-    }));
+        return SamplesPromise::createAndResolve(WTF::map(trackBuffer->second->samples().decodeOrder(), [](auto& entry) {
+            return toString(entry.second.get());
+        }));
+    });
 }
 
 Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::enqueuedSamplesForTrackID(TrackID)
@@ -256,14 +339,24 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::enqueuedSamplesFor
 
 MediaTime SourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
 {
-    auto trackBuffer = m_trackBufferMap.find(trackID);
-    if (trackBuffer == m_trackBufferMap.end())
-        return MediaTime::invalidTime();
-    return trackBuffer->second->minimumEnqueuedPresentationTime();
+    // Called on SourceBuffer's thread for testing-only method.
+    ASSERT(m_dispatcher->isCurrent() || isOnCreationThread());
+    MediaTime minimum = MediaTime::invalidTime();
+    ensureOnDispatcherSync([&] {
+        assertIsCurrent(m_dispatcher.get());
+
+        auto trackBuffer = m_trackBufferMap.find(trackID);
+        if (trackBuffer == m_trackBufferMap.end())
+            return;
+        minimum = trackBuffer->second->minimumEnqueuedPresentationTime();
+    });
+    return minimum;
 }
 
 void SourceBufferPrivate::updateMinimumUpcomingPresentationTime(TrackBuffer& trackBuffer, TrackID trackID)
 {
+    assertIsCurrent(m_dispatcher);
+
     if (!canSetMinimumUpcomingPresentationTime(trackID))
         return;
 
@@ -273,24 +366,29 @@ void SourceBufferPrivate::updateMinimumUpcomingPresentationTime(TrackBuffer& tra
 
 void SourceBufferPrivate::setMediaSourceEnded(bool isEnded)
 {
-    assertIsCurrent(m_dispatcher);
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([isEnded](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
 
-    if (m_isMediaSourceEnded == isEnded)
-        return;
+        if (std::exchange(buffer.m_isMediaSourceEnded, isEnded) == isEnded)
+            return;
 
-    m_isMediaSourceEnded = isEnded;
-    if (m_isMediaSourceEnded) {
-        for (auto& trackBufferPair : m_trackBufferMap) {
-            TrackBuffer& trackBuffer = trackBufferPair.second;
-            TrackID trackID = trackBufferPair.first;
+        if (buffer.m_isMediaSourceEnded) {
+            for (auto& trackBufferPair : buffer.m_trackBufferMap) {
+                TrackBuffer& trackBuffer = trackBufferPair.second;
+                TrackID trackID = trackBufferPair.first;
 
-            trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
+                buffer.trySignalAllSamplesInTrackEnqueued(trackBuffer, trackID);
+            }
         }
-    }
+    });
 }
 
 void SourceBufferPrivate::trySignalAllSamplesInTrackEnqueued(TrackBuffer& trackBuffer, TrackID trackID)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     if (m_isMediaSourceEnded && !trackBuffer.remainingSamples()) {
         DEBUG_LOG(LOGIDENTIFIER, "All samples in track \"", trackID, "\" enqueued.");
         allSamplesInTrackEnqueued(trackID);
@@ -299,6 +397,8 @@ void SourceBufferPrivate::trySignalAllSamplesInTrackEnqueued(TrackBuffer& trackB
 
 void SourceBufferPrivate::provideMediaData(TrackID trackID)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     auto it = m_trackBufferMap.find(trackID);
     if (it == m_trackBufferMap.end())
         return;
@@ -345,6 +445,8 @@ void SourceBufferPrivate::provideMediaData(TrackBuffer& trackBuffer, TrackID tra
 
 void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackID trackID, const MediaTime& time, NeedsFlush needsFlush)
 {
+    assertIsCurrent(m_dispatcher);
+
     if (needsFlush == NeedsFlush::Yes)
         flush(trackID);
     bool isEnded = false;
@@ -356,16 +458,22 @@ void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackI
 
 void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime)
 {
-    for (auto& trackBufferPair : m_trackBufferMap) {
-        TrackBuffer& trackBuffer = trackBufferPair.second;
-        TrackID trackID = trackBufferPair.first;
+    // Can be called on SourceBuffer's thread.
+    ASSERT(m_dispatcher->isCurrent() || isOnCreationThread());
+    ensureWeakOnDispatcher([currentTime](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
 
-        if (trackBuffer.needsReenqueueing()) {
-            DEBUG_LOG(LOGIDENTIFIER, "reenqueuing at time ", currentTime);
-            reenqueueMediaForTime(trackBuffer, trackID, currentTime);
-        } else
-            provideMediaData(trackBuffer, trackID);
-    }
+        for (auto& trackBufferPair : buffer.m_trackBufferMap) {
+            TrackBuffer& trackBuffer = trackBufferPair.second;
+            TrackID trackID = trackBufferPair.first;
+
+            if (trackBuffer.needsReenqueueing()) {
+                DEBUG_LOG_WITH_THIS(&buffer, LOGIDENTIFIER_WITH_THIS(&buffer), "reenqueuing at time ", currentTime);
+                buffer.reenqueueMediaForTime(trackBuffer, trackID, currentTime);
+            } else
+                buffer.provideMediaData(trackBuffer, trackID);
+        }
+    });
 }
 
 static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, TrackBuffer& trackBuffer, ASCIILiteral logPrefix)
@@ -658,69 +766,113 @@ uint64_t SourceBufferPrivate::contentSize() const
 
 void SourceBufferPrivate::addTrackBuffer(TrackID trackId, RefPtr<MediaDescription>&& description)
 {
-    ASSERT(m_trackBufferMap.find(trackId) == m_trackBufferMap.end());
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([trackId, description = WTFMove(description)](auto& buffer) mutable {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        ASSERT(buffer.m_trackBufferMap.find(trackId) == buffer.m_trackBufferMap.end());
 
-    m_hasAudio = m_hasAudio || description->isAudio();
-    m_hasVideo = m_hasVideo || description->isVideo();
+        buffer.m_hasAudio = buffer.m_hasAudio || description->isAudio();
+        buffer.m_hasVideo = buffer.m_hasVideo || description->isVideo();
 
-    // 5.2.9 Add the track description for this track to the track buffer.
-    auto trackBuffer = TrackBuffer::create(WTFMove(description), discontinuityTolerance);
+        // 5.2.9 Add the track description for this track to the track buffer.
+        auto trackBuffer = TrackBuffer::create(WTFMove(description), discontinuityTolerance);
 #if !RELEASE_LOG_DISABLED
-    trackBuffer->setLogger(protectedLogger(), logIdentifier());
+        // False positive see webkit.org/b/302520
+        SUPPRESS_UNCOUNTED_ARG trackBuffer->setLogger(buffer.protectedLogger(), buffer.logIdentifier());
 #endif
-    m_trackBufferMap.try_emplace(trackId, WTFMove(trackBuffer));
-    if (RefPtr mediaSource = m_mediaSource.get()) {
-        MediaSourcePrivate::TracksType tracksType;
-        if (m_hasAudio)
-            tracksType |= TrackInfoTrackType::Audio;
-        if (m_hasVideo)
-            tracksType |= TrackInfoTrackType::Video;
-        mediaSource->tracksTypeChanged(*this, tracksType);
-    }
+        buffer.m_trackBufferMap.try_emplace(trackId, WTFMove(trackBuffer));
+        if (RefPtr mediaSource = buffer.m_mediaSource.get()) {
+            MediaSourcePrivate::TracksType tracksType;
+            if (buffer.m_hasAudio)
+                tracksType |= TrackInfoTrackType::Audio;
+            if (buffer.m_hasVideo)
+                tracksType |= TrackInfoTrackType::Video;
+            mediaSource->tracksTypeChanged(buffer, tracksType);
+        }
+    });
 }
 
 void SourceBufferPrivate::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs)
 {
-    assertIsCurrent(m_dispatcher);
+    // Called on SourceBuffer's thread or on dispatcher from SourceBufferPrivate override.
+    ASSERT(m_dispatcher->isCurrent() || isOnCreationThread());
+    ensureWeakOnDispatcher([trackIdPairs = WTFMove(trackIdPairs)](auto& buffer) mutable {
+        assertIsCurrent(buffer.m_dispatcher.get());
 
-    auto trackBufferMap = std::exchange(m_trackBufferMap, { });
-    for (auto& trackIdPair : trackIdPairs) {
-        auto oldId = trackIdPair.first;
-        auto newId = trackIdPair.second;
-        ASSERT(oldId != newId);
-        auto trackBufferNode = trackBufferMap.extract(oldId);
-        if (!trackBufferNode)
-            continue;
-        trackBufferNode.key() = newId;
-        m_trackBufferMap.insert(WTFMove(trackBufferNode));
-    }
+        auto trackBufferMap = std::exchange(buffer.m_trackBufferMap, { });
+        for (auto& trackIdPair : trackIdPairs) {
+            auto oldId = trackIdPair.first;
+            auto newId = trackIdPair.second;
+            ASSERT(oldId != newId);
+            auto trackBufferNode = trackBufferMap.extract(oldId);
+            if (!trackBufferNode)
+                continue;
+            trackBufferNode.key() = newId;
+            buffer.m_trackBufferMap.insert(WTFMove(trackBufferNode));
+        }
+    });
 }
 
 void SourceBufferPrivate::setAllTrackBuffersNeedRandomAccess()
 {
-    assertIsCurrent(m_dispatcher);
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([](auto& buffer) {
+        buffer.iterateTrackBuffers([&](auto& trackBuffer) {
+            trackBuffer.setNeedRandomAccessFlag(true);
+        });
+    });
+}
 
-    iterateTrackBuffers([&](auto& trackBuffer) {
-        trackBuffer.setNeedRandomAccessFlag(true);
+void SourceBufferPrivate::setGroupStartTimestamp(const MediaTime& mediaTime)
+{
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([mediaTime](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_groupStartTimestamp = mediaTime;
+    });
+}
+
+void SourceBufferPrivate::setGroupStartTimestampToEndTimestamp()
+{
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_groupStartTimestamp = buffer.m_groupEndTimestamp;
+    });
+}
+
+void SourceBufferPrivate::setShouldGenerateTimestamps(bool flag)
+{
+    // Called on SourceBuffer's thread.
+    ASSERT(isOnCreationThread());
+    ensureWeakOnDispatcher([flag](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        buffer.m_shouldGenerateTimestamps = flag;
     });
 }
 
 Ref<MediaPromise> SourceBufferPrivate::protectedCurrentAppendProcessing() const
 {
+    assertIsCurrent(m_dispatcher.get());
     return m_currentAppendProcessing;
 }
 
 void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&& segment)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(m_dispatcher.get());
 
     processPendingMediaSamples();
 
     auto segmentCopy = segment;
-    m_currentAppendProcessing = protectedCurrentAppendProcessing()->whenSettled(m_dispatcher, [segment = WTFMove(segment), weakThis = ThreadSafeWeakPtr { *this }, abortCount = m_abortCount](auto result) mutable {
+    m_currentAppendProcessing = protectedCurrentAppendProcessing()->whenSettled(m_dispatcher, [segment = WTFMove(segment), weakThis = ThreadSafeWeakPtr { *this }, abortCount = m_abortCount.load()](auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
         RefPtr client = protectedThis->client();
         if (!client)
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
@@ -739,6 +891,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
 
         // We don't check for abort here as we need to complete the already started initialization segment.
         protectedThis->m_receivedFirstInitializationSegment = true;
@@ -752,6 +905,8 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
 
 void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     m_currentAppendProcessing = protectedCurrentAppendProcessing()->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, formatDescription = WTFMove(formatDescription), trackId] (auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
@@ -763,6 +918,8 @@ void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& 
 
 bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& segment)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     //   * If more than one track for a single type are present (ie 2 audio tracks), then the Track
     //   IDs match the ones in the first initialization segment.
     if (segment.audioTracks.size() >= 2) {
@@ -791,6 +948,7 @@ bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivat
 
 void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
 {
+    assertIsCurrent(m_dispatcher.get());
     DEBUG_LOG(LOGIDENTIFIER, sample.get());
 
     m_pendingSamples.append(WTFMove(sample));
@@ -798,10 +956,11 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
 
 Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
-    m_currentSourceBufferOperation = protectedCurrentSourceBufferOperation()->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, buffer = WTFMove(buffer), abortCount = m_abortCount](auto result) mutable {
+    m_currentSourceBufferOperation = protectedCurrentSourceBufferOperation()->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, buffer = WTFMove(buffer), abortCount = m_abortCount.load()](auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
 
         // We have fully completed the previous append operation, we can start a new promise chain.
         protectedThis->m_currentAppendProcessing = MediaPromise::createAndResolve();
@@ -825,10 +984,11 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         return protectedThis->protectedCurrentAppendProcessing()->whenSettled(protectedThis->m_dispatcher, [previousResult = WTFMove(result)](auto result) {
             return (previousResult && result) ? OperationPromise::createAndResolve() : OperationPromise::createAndReject(!result ? result.error() : previousResult.error());
         });
-    })->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { * this }, abortCount = m_abortCount](auto result) mutable -> Ref<OperationPromise> {
+    })->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { * this }, abortCount = m_abortCount.load()](auto result) mutable -> Ref<OperationPromise> {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
             return OperationPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
 
         protectedThis->computeEvictionData();
 
@@ -857,10 +1017,12 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 
 void SourceBufferPrivate::processPendingMediaSamples()
 {
+    assertIsCurrent(m_dispatcher.get());
+
     if (m_pendingSamples.isEmpty())
         return;
     auto samples = std::exchange(m_pendingSamples, { });
-    m_currentAppendProcessing = protectedCurrentAppendProcessing()->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, samples = WTFMove(samples), abortCount = m_abortCount](auto result) mutable {
+    m_currentAppendProcessing = protectedCurrentAppendProcessing()->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, samples = WTFMove(samples), abortCount = m_abortCount.load()](auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
@@ -881,6 +1043,8 @@ void SourceBufferPrivate::processPendingMediaSamples()
 
 bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, Ref<MediaSample>&& sample)
 {
+    assertIsCurrent(m_dispatcher.get());
+
     // 3.5.1 Segment Parser Loop
     // 6.1 If the first initialization segment received flag is false, (Note: Issue # 155 & changeType()
     // algorithm) or the  pending initialization segment for changeType flag  is true, (End note)
@@ -1036,7 +1200,8 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
         // 1.9 If frame end timestamp is greater than appendWindowEnd, then set the need random access
         // point flag to true, drop the coded frame, and jump to the top of the loop to start processing
         // the next coded frame.
-        if (presentationTimestamp.isInvalid() || presentationTimestamp < m_appendWindowStart || frameEndTimestamp > m_appendWindowEnd) {
+        auto [appendWindowStart, appendWindowEnd] = appendWindow();
+        if (presentationTimestamp.isInvalid() || presentationTimestamp < appendWindowStart || frameEndTimestamp > appendWindowEnd) {
             // 1.8 Note.
             // Some implementations MAY choose to collect some of these coded frames with presentation
             // timestamp less than appendWindowStart and use them to generate a splice at the first coded
@@ -1055,13 +1220,13 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             // appendWindowStart, implementations MAY thus support gapless audio splicing.
             // Audio MediaSamples are typically made of packed audio samples. Trim sample to make it fit within the appendWindow.
             if (sample->isDivisable()) {
-                std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(m_appendWindowStart);
+                std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(appendWindowStart);
                 if (RefPtr endMediaSample = replacementSamples.second) {
-                    ASSERT(endMediaSample->presentationTime() >= m_appendWindowStart);
-                    replacementSamples = endMediaSample->divide(m_appendWindowEnd, MediaSample::UseEndTime::Use);
+                    ASSERT(endMediaSample->presentationTime() >= appendWindowStart);
+                    replacementSamples = endMediaSample->divide(appendWindowEnd, MediaSample::UseEndTime::Use);
                     if (replacementSamples.first) {
                         sample = replacementSamples.first.releaseNonNull();
-                        ASSERT(sample->presentationTime() >= m_appendWindowStart && sample->presentationTime() + sample->duration() <= m_appendWindowEnd);
+                        ASSERT(sample->presentationTime() >= appendWindowStart && sample->presentationTime() + sample->duration() <= appendWindowEnd);
                         if (m_appendMode != SourceBufferAppendMode::Sequence && trackBuffer.roundedTimestampOffset())
                             sample->offsetTimestampsBy(-trackBuffer.roundedTimestampOffset());
                         continue;
@@ -1298,6 +1463,7 @@ void SourceBufferPrivate::memoryPressure(const MediaTime& currentTime)
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return OperationPromise::createAndReject(PlatformMediaError::BufferRemoved);
+        assertIsCurrent(protectedThis->m_dispatcher.get());
         ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "isActive = ", protectedThis->m_isActive);
         if (protectedThis->m_isActive)
             protectedThis->evictFrames(protectedThis->m_maximumBufferSize, currentTime);
@@ -1313,11 +1479,15 @@ void SourceBufferPrivate::memoryPressure(const MediaTime& currentTime)
 
 auto SourceBufferPrivate::protectedCurrentSourceBufferOperation() const -> Ref<OperationPromise>
 {
+    ASSERT(m_dispatcher.ptr() == &WorkQueue::mainSingleton() || !m_dispatcher->isCurrent());
+
     return m_currentSourceBufferOperation;
 }
 
 MediaTime SourceBufferPrivate::minimumBufferedTime() const
 {
+    assertIsCurrent(m_dispatcher);
+
     MediaTime minimumTime = MediaTime::positiveInfiniteTime();
     iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
         minimumTime = std::min(minimumTime, trackBuffer.buffered().minimumBufferedTime());
@@ -1327,6 +1497,8 @@ MediaTime SourceBufferPrivate::minimumBufferedTime() const
 
 MediaTime SourceBufferPrivate::maximumBufferedTime() const
 {
+    assertIsCurrent(m_dispatcher);
+
     MediaTime maximumTime = MediaTime::negativeInfiniteTime();
     iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
         maximumTime = std::max(maximumTime, trackBuffer.buffered().maximumBufferedTime());
@@ -1336,6 +1508,8 @@ MediaTime SourceBufferPrivate::maximumBufferedTime() const
 
 bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& currentTime)
 {
+    assertIsCurrent(m_dispatcher);
+
     auto isBufferFull = true;
 
     // FIXME: All this is nice but we should take into account negative playback rate and begin from after current time
@@ -1414,23 +1588,25 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
 
 void SourceBufferPrivate::setActive(bool isActive)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, isActive);
-
-    ensureOnDispatcher([protectedThis = Ref { *this }, isActive] {
-        protectedThis->m_isActive = isActive;
-        if (RefPtr mediaSource = protectedThis->m_mediaSource.get())
-            mediaSource->sourceBufferPrivateDidChangeActiveState(protectedThis, isActive);
+    ensureWeakOnDispatcher([isActive](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+        ALWAYS_LOG_WITH_THIS(&buffer, LOGIDENTIFIER_WITH_THIS(&buffer), isActive);
+        buffer.m_isActive = isActive;
+        if (RefPtr mediaSource = buffer.m_mediaSource.get())
+            mediaSource->sourceBufferPrivateDidChangeActiveState(buffer, isActive);
     });
 }
 
 void SourceBufferPrivate::iterateTrackBuffers(NOESCAPE const Function<void(TrackBuffer&)>& func)
 {
+    assertIsCurrent(m_dispatcher.get());
     for (auto& pair : m_trackBufferMap)
         func(pair.second);
 }
 
 void SourceBufferPrivate::iterateTrackBuffers(NOESCAPE const Function<void(const TrackBuffer&)>& func) const
 {
+    assertIsCurrent(m_dispatcher.get());
     for (auto& pair : m_trackBufferMap)
         func(pair.second);
 }
@@ -1468,15 +1644,17 @@ void SourceBufferPrivate::ensureWeakOnDispatcher(Function<void(SourceBufferPriva
 
 void SourceBufferPrivate::attach()
 {
-    ensureOnDispatcher([protectedThis = Ref { *this }, this] {
-        if (!m_lastInitializationSegment)
+    ensureWeakOnDispatcher([](auto& buffer) {
+        assertIsCurrent(buffer.m_dispatcher.get());
+
+        if (!buffer.m_lastInitializationSegment)
             return;
-        RefPtr client = this->client();
+        RefPtr client = buffer.client();
         if (!client)
             return;
-        auto segment = *m_lastInitializationSegment;
+        auto segment = *buffer.m_lastInitializationSegment;
         client->sourceBufferPrivateDidAttach(WTFMove(segment))
-        ->whenSettled(m_dispatcher, [weakThis = ThreadSafeWeakPtr { *this }, segment = *m_lastInitializationSegment] (auto&& result) mutable {
+        ->whenSettled(buffer.m_dispatcher, [weakThis = ThreadSafeWeakPtr { buffer }, segment = *buffer.m_lastInitializationSegment] (auto&& result) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !result)
                 return;
@@ -1489,6 +1667,13 @@ void SourceBufferPrivate::attach()
         });
     });
 }
+
+#if ASSERT_ENABLED
+bool SourceBufferPrivate::isOnCreationThread() const
+{
+    return m_creationThreadId ? m_creationThreadId == Thread::currentSingleton().uid() : isMainThread();
+}
+#endif
 
 } // namespace WebCore
 

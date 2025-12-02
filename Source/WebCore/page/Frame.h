@@ -146,9 +146,11 @@ public:
     void stopForBackForwardCache();
 
     WEBCORE_EXPORT void updateFrameTreeSyncData(Ref<FrameTreeSyncData>&&);
+    WEBCORE_EXPORT void updateFrameTreeSyncData(const FrameTreeSyncSerializationData&);
 
     virtual bool frameCanCreatePaymentSession() const;
     FrameTreeSyncData& frameTreeSyncData() const { return m_frameTreeSyncData.get(); }
+    Ref<FrameTreeSyncData> protectedFrameTreeSyncData() const { return m_frameTreeSyncData.get(); }
     WEBCORE_EXPORT virtual RefPtr<SecurityOrigin> frameDocumentSecurityOrigin() const = 0;
     WEBCORE_EXPORT virtual String frameURLProtocol() const = 0;
 

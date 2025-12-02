@@ -220,7 +220,7 @@ namespace WebCore {
 static WTFLogChannel& logChannel() { return LogEME; }
 #endif
 
-static AtomString initTypeForRequest(AVContentKeyRequest* request)
+static String initTypeForRequest(AVContentKeyRequest* request)
 {
     if ([request.identifier isKindOfClass:NSString.class] && [request.identifier hasPrefix:@"skd://"])
         return CDMPrivateFairPlayStreaming::skdName();
@@ -233,7 +233,7 @@ static AtomString initTypeForRequest(AVContentKeyRequest* request)
         return CDMPrivateFairPlayStreaming::sinfName();
     }
 
-    return AtomString(nsInitType);
+    return String(nsInitType);
 }
 
 static Ref<SharedBuffer> initializationDataForRequest(AVContentKeyRequest* request)
@@ -279,7 +279,7 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     return m_session.get();
 }
 
-RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(const AtomString& initDataType, SharedBuffer& initData)
+RetainPtr<AVContentKeyRequest> CDMInstanceFairPlayStreamingAVFObjC::takeUnexpectedKeyRequestForInitializationData(const String& initDataType, SharedBuffer& initData)
 {
     for (auto requestIter = m_unexpectedKeyRequests.begin(); requestIter != m_unexpectedKeyRequests.end(); ++requestIter) {
         auto& request = *requestIter;
@@ -431,7 +431,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
 
 RefPtr<CDMInstanceSession> CDMInstanceFairPlayStreamingAVFObjC::createSession()
 {
-    auto session = adoptRef(*new CDMInstanceSessionFairPlayStreamingAVFObjC(*this));
+    Ref session = CDMInstanceSessionFairPlayStreamingAVFObjC::create(*this);
     m_sessions.append(session);
     return session;
 }
@@ -718,6 +718,11 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionKeyStatusesChanged(const CDMIns
     });
 }
 
+Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> CDMInstanceSessionFairPlayStreamingAVFObjC::create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&& instance)
+{
+    return adoptRef(*new CDMInstanceSessionFairPlayStreamingAVFObjC(WTFMove(instance)));
+}
+
 CDMInstanceSessionFairPlayStreamingAVFObjC::CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&& instance)
     : m_instance(WTFMove(instance))
     , m_delegate(adoptNS([[WebCoreFPSContentKeySessionDelegate alloc] initWithParent:*this]))
@@ -752,7 +757,7 @@ Keys CDMInstanceSessionFairPlayStreamingAVFObjC::keyIDs()
     return keyIDs;
 }
 
-void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, KeyGroupingStrategy keyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType licenseType, KeyGroupingStrategy keyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     if (!isLicenseTypeSupported(licenseType)) {
         ERROR_LOG(LOGIDENTIFIER, " false, licenseType \"", licenseType, "\" not supported");
@@ -1154,7 +1159,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::clearClient()
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyRequest *request)
 {
     auto initDataType = initTypeForRequest(request);
-    if (initDataType == emptyAtom()) {
+    if (initDataType.isEmpty()) {
         ERROR_LOG(LOGIDENTIFIER, "- request has empty initDataType");
         return;
     }
@@ -1359,7 +1364,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 {
     ASSERT(!m_requestLicenseCallback);
     auto initDataType = initTypeForRequest(request);
-    if (initDataType == emptyAtom())
+    if (initDataType.isEmpty())
         return;
 
     Request currentRequest = { initDataType, { request } };

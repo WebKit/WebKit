@@ -41,10 +41,11 @@ inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const Qualif
 {
     ASSERT(hasTagName(SVGNames::feComponentTransferTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEComponentTransferElement::m_in1>();
-    });
+    }
 }
 
 Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document& document)

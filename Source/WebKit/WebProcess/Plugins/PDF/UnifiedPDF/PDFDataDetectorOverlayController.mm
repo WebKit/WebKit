@@ -59,6 +59,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDataDetectorOverlayController);
 
+Ref<PDFDataDetectorOverlayController> PDFDataDetectorOverlayController::create(UnifiedPDFPlugin& plugin)
+{
+    return adoptRef(*new PDFDataDetectorOverlayController(plugin));
+}
+
 PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlugin& plugin)
     : m_plugin(plugin)
 {
@@ -259,7 +264,7 @@ void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
 void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
 {
     // Regardless of what we repaint, we don't need the stale data after this.
-    auto resetStaleDataDetectorWithHighlight = makeScopeExit([&] {
+    auto resetStaleDataDetectorWithHighlight = makeScopeExit([this, protectedThis = Ref { *this }] {
         m_staleDataDetectorItemWithHighlight = { { }, { } };
     });
 

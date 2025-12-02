@@ -34,48 +34,17 @@
 #import <wtf/MathExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
+#import <wtf/threads/BinarySemaphore.h>
 
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
 #import "WebGPUSwiftInternal.h"
 #endif
 
 namespace WebGPU {
 
-#if ENABLE(WEBGPU_SWIFT)
-static NSArray<DDBridgeVertexAttributeFormat*>* convertAttributes(const Vector<WGPUDDVertexAttributeFormat>& vertexAttributes)
-{
-    NSMutableArray<DDBridgeVertexAttributeFormat*>* result = [NSMutableArray array];
-    for (auto& a : vertexAttributes)
-        [result addObject:[[DDBridgeVertexAttributeFormat alloc] initWithSemantic:a.semantic format:a.format layoutIndex:a.layoutIndex offset:a.offset]];
-
-    return result;
-}
-static NSArray<DDBridgeVertexLayout*>* convertLayouts(const Vector<WGPUDDVertexLayout>& layouts)
-{
-    NSMutableArray<DDBridgeVertexLayout*>* result = [NSMutableArray array];
-    for (auto& a : layouts)
-        [result addObject:[[DDBridgeVertexLayout alloc] initWithBufferIndex:a.bufferIndex bufferOffset:a.bufferOffset bufferStride:a.bufferStride]];
-
-    return result;
-}
-
-static DDBridgeAddMeshRequest* convertDescriptor(const WGPUDDMeshDescriptor& descriptor)
-{
-    DDBridgeAddMeshRequest* result = [[DDBridgeAddMeshRequest alloc] initWithIndexCapacity:descriptor.indexCapacity
-        indexType:descriptor.indexType
-        vertexBufferCount:descriptor.vertexBufferCount
-        vertexCapacity:descriptor.vertexCapacity
-        vertexAttributes:convertAttributes(descriptor.vertexAttributes)
-        vertexLayouts:convertLayouts(descriptor.vertexLayouts)
-    ];
-
-    return result;
-}
-#endif
-
 Ref<DDMesh> Instance::createModelBacking(const WGPUDDCreateMeshDescriptor& descriptor)
 {
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     return DDMesh::create(descriptor, *this);
 #else
     UNUSED_PARAM(descriptor);
@@ -95,8 +64,12 @@ DDMesh::DDMesh(const WGPUDDCreateMeshDescriptor& descriptor, Instance& instance)
     for (RetainPtr ioSurface : descriptor.ioSurfaces)
         [m_textures addObject:[device newTextureWithDescriptor:textureDescriptor iosurface:ioSurface.get() plane:0]];
 
-#if ENABLE(WEBGPU_SWIFT)
-    m_ddReceiver = [[DDBridgeReceiver alloc] initWithDevice:instance.device()];
+#if ENABLE(GPU_PROCESS_MODEL)
+    DDBridgeReceiver* ddReceiver = [[DDBridgeReceiver alloc] initWithDevice:instance.device()];
+    Ref protectedThis = Ref { *this };
+    [ddReceiver initRenderer:m_textures[0] completionHandler:[protectedThis, ddReceiver] mutable {
+        protectedThis->m_ddReceiver = ddReceiver;
+    }];
 #endif
     m_ddMeshIdentifier = [[NSUUID alloc] init];
 }
@@ -122,442 +95,59 @@ id<MTLTexture> DDMesh::texture() const
 
 DDMesh::~DDMesh() = default;
 
-
-#if ENABLE(WEBGPU_SWIFT)
-static DDBridgeChainedFloat4x4 *convertFloats(const Vector<simd_float4x4>& fs)
-{
-    auto count = fs.size();
-    if (!count)
-        return nil;
-
-    DDBridgeChainedFloat4x4 *result = [[DDBridgeChainedFloat4x4 alloc] initWithTransform:fs[0]];
-    DDBridgeChainedFloat4x4 *current = result;
-
-    for (uint32_t i = 1; i < count; ++i) {
-        DDBridgeChainedFloat4x4 *next = [[DDBridgeChainedFloat4x4 alloc] initWithTransform:fs[i]];
-        current.next = next;
-    }
-
-    return result;
-}
-
-static DDBridgeMeshPart *convertPart(const WGPUDDMeshPart& part)
-{
-    return [[DDBridgeMeshPart alloc] initWithIndexOffset:part.indexOffset indexCount:part.indexCount topology:part.topology materialIndex:part.materialIndex boundsMin:part.boundsMin boundsMax:part.boundsMax];
-}
-
-static NSArray<DDBridgeSetPart*> *convertParts(const Vector<KeyValuePair<int32_t, WGPUDDMeshPart>>& parts)
-{
-    NSMutableArray<DDBridgeSetPart*>* result = [NSMutableArray array];
-    for (auto& kvp : parts) {
-        DDBridgeSetPart* part = [[DDBridgeSetPart alloc] initWithIndex:kvp.key part:convertPart(kvp.value)];
-        [result addObject:part];
-    }
-    return result;
-}
-
-static NSArray<NSUUID *> *convertMaterialIDs(const Vector<String>& ids)
-{
-    NSMutableArray<NSUUID *>* result = [NSMutableArray array];
-    for (auto& i : ids)
-        [result addObject:[[NSUUID alloc] initWithUUIDString:i.createNSString().get()]];
-    return result;
-}
-
-static NSData* convertUint8s(const Vector<uint8_t>& data)
-{
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    return [[NSData alloc] initWithBytes:data.span().data() length:data.sizeInBytes()];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-}
-
-static NSArray<DDBridgeSetRenderFlags*> *convertRenderFlags(const Vector<KeyValuePair<int32_t, uint64_t>>& renderFlags)
-{
-    NSMutableArray<DDBridgeSetRenderFlags*>* result = [NSMutableArray array];
-    for (auto& r : renderFlags)
-        [result addObject:[[DDBridgeSetRenderFlags alloc] initWithIndex:r.key renderFlags:r.value]];
-    return result;
-}
-
-static NSArray<DDBridgeReplaceVertices*> *convertVertices(const Vector<WGPUDDReplaceVertices>& vertices)
-{
-    NSMutableArray<DDBridgeReplaceVertices*>* result = [NSMutableArray array];
-    for (auto& v : vertices)
-        [result addObject:[[DDBridgeReplaceVertices alloc] initWithBufferIndex:v.bufferIndex buffer:convertUint8s(v.buffer)]];
-
-    return result;
-}
-
-static DDBridgeUpdateMesh *convertDescriptor(WGPUDDUpdateMeshDescriptor& descriptor)
-{
-    DDBridgeUpdateMesh *result = [[DDBridgeUpdateMesh alloc] initWithPartCount:descriptor.partCount
-        parts:convertParts(descriptor.parts)
-        renderFlags:convertRenderFlags(descriptor.renderFlags)
-        vertices:convertVertices(descriptor.vertices)
-        indices:convertUint8s(descriptor.indices)
-        transform:descriptor.transform
-        instanceTransforms:convertFloats(descriptor.instanceTransforms4x4)
-        materialIds:convertMaterialIDs(descriptor.materialIds)];
-
-    return result;
-}
-
-static DDBridgeSemantic convert(WGPUDDSemantic semantic)
-{
-    switch (semantic) {
-    case WGPUDDSemantic::Color:
-        return DDBridgeSemanticColor;
-    case WGPUDDSemantic::Vector:
-        return DDBridgeSemanticVector;
-    case WGPUDDSemantic::Scalar:
-        return DDBridgeSemanticScalar;
-    case WGPUDDSemantic::Unknown:
-    default:
-        return DDBridgeSemanticUnknown;
-    }
-}
-
-static DDBridgeImageAsset *convertDescriptor(WGPUDDImageAsset& imageAsset)
-{
-    return [[DDBridgeImageAsset alloc] initWithData:[NSData dataWithBytes:imageAsset.data.span().data() length:imageAsset.data.sizeInBytes()] width:imageAsset.width height:imageAsset.height bytesPerPixel:imageAsset.bytesPerPixel semantic:convert(imageAsset.semantic) path:imageAsset.path.createNSString().get()];
-}
-
-static NSArray<DDBridgePrimvar *> *convert(const Vector<WGPUDDPrimvar>& primvars)
-{
-    NSMutableArray<DDBridgePrimvar *> *result = [NSMutableArray array];
-    for (const auto& p : primvars)
-        [result addObject:[[DDBridgePrimvar alloc] initWithName:p.name.createNSString().get() referencedGeomPropName:p.referencedGeomPropName.createNSString().get() attributeFormat:p.attributeFormat]];
-
-    return result;
-}
-
-static DDBridgeDataType convert(WGPUDDDataType type)
-{
-    switch (type) {
-    case WGPUDDDataType::kBool:
-        return DDBridgeDataTypeBool;
-    case WGPUDDDataType::kInt:
-        return DDBridgeDataTypeInt;
-    case WGPUDDDataType::kInt2:
-        return DDBridgeDataTypeInt2;
-    case WGPUDDDataType::kInt3:
-        return DDBridgeDataTypeInt3;
-    case WGPUDDDataType::kInt4:
-        return DDBridgeDataTypeInt4;
-    case WGPUDDDataType::kFloat:
-        return DDBridgeDataTypeFloat;
-    case WGPUDDDataType::kColor3f:
-        return DDBridgeDataTypeColor3f;
-    case WGPUDDDataType::kColor3h:
-        return DDBridgeDataTypeColor3h;
-    case WGPUDDDataType::kColor4f:
-        return DDBridgeDataTypeColor4f;
-    case WGPUDDDataType::kColor4h:
-        return DDBridgeDataTypeColor4h;
-    case WGPUDDDataType::kFloat2:
-        return DDBridgeDataTypeFloat2;
-    case WGPUDDDataType::kFloat3:
-        return DDBridgeDataTypeFloat3;
-    case WGPUDDDataType::kFloat4:
-        return DDBridgeDataTypeFloat4;
-    case WGPUDDDataType::kHalf:
-        return DDBridgeDataTypeHalf;
-    case WGPUDDDataType::kHalf2:
-        return DDBridgeDataTypeHalf2;
-    case WGPUDDDataType::kHalf3:
-        return DDBridgeDataTypeHalf3;
-    case WGPUDDDataType::kHalf4:
-        return DDBridgeDataTypeHalf4;
-    case WGPUDDDataType::kMatrix2f:
-        return DDBridgeDataTypeMatrix2f;
-    case WGPUDDDataType::kMatrix3f:
-        return DDBridgeDataTypeMatrix3f;
-    case WGPUDDDataType::kMatrix4f:
-        return DDBridgeDataTypeMatrix4f;
-    case WGPUDDDataType::kSurfaceShader:
-        return DDBridgeDataTypeSurfaceShader;
-    case WGPUDDDataType::kGeometryModifier:
-        return DDBridgeDataTypeGeometryModifier;
-    case WGPUDDDataType::kString:
-        return DDBridgeDataTypeString;
-    case WGPUDDDataType::kToken:
-        return DDBridgeDataTypeToken;
-    case WGPUDDDataType::kAsset:
-        return DDBridgeDataTypeAsset;
-    }
-}
-
-static NSArray<DDBridgeInputOutput *> *convert(const Vector<WGPUDDInputOutput>& inputOutputs)
-{
-    NSMutableArray<DDBridgeInputOutput *> *result = [NSMutableArray array];
-    for (const auto& io : inputOutputs)
-        [result addObject:[[DDBridgeInputOutput alloc] initWithType:convert(io.type) name:io.name.createNSString().get()]];
-
-    return result;
-}
-
-static NSArray<DDBridgeEdge *> *convert(const Vector<WGPUDDEdge>& edges)
-{
-    NSMutableArray<DDBridgeEdge *> *result = [NSMutableArray array];
-    for (const auto& e : edges) {
-        [result addObject:[[DDBridgeEdge alloc] initWithUpstreamNodeIndex:e.upstreamNodeIndex
-            downstreamNodeIndex:e.downstreamNodeIndex
-            upstreamOutputName:e.upstreamOutputName.createNSString().get()
-            downstreamInputName:e.downstreamInputName.createNSString().get()]];
-    }
-
-    return result;
-}
-
-static DDBridgeNodeType convert(WGPUDDNodeType bridgeNodeType)
-{
-    switch (bridgeNodeType) {
-    case WGPUDDNodeType::Builtin:
-        return DDBridgeNodeTypeBuiltin;
-    case WGPUDDNodeType::Constant:
-        return DDBridgeNodeTypeConstant;
-    case WGPUDDNodeType::Arguments:
-        return DDBridgeNodeTypeArguments;
-    case WGPUDDNodeType::Results:
-        return DDBridgeNodeTypeResults;
-    }
-}
-
-static DDBridgeConstant convert(const WGPUDDConstant constant)
-{
-    switch (constant) {
-    case WGPUDDConstant::kBool:
-        return DDBridgeConstantBool;
-    case WGPUDDConstant::kUchar:
-        return DDBridgeConstantUchar;
-    case WGPUDDConstant::kInt:
-        return DDBridgeConstantInt;
-    case WGPUDDConstant::kUint:
-        return DDBridgeConstantUint;
-    case WGPUDDConstant::kHalf:
-        return DDBridgeConstantHalf;
-    case WGPUDDConstant::kFloat:
-        return DDBridgeConstantFloat;
-    case WGPUDDConstant::kTimecode:
-        return DDBridgeConstantTimecode;
-    case WGPUDDConstant::kString:
-        return DDBridgeConstantString;
-    case WGPUDDConstant::kToken:
-        return DDBridgeConstantToken;
-    case WGPUDDConstant::kAsset:
-        return DDBridgeConstantAsset;
-    case WGPUDDConstant::kMatrix2f:
-        return DDBridgeConstantMatrix2f;
-    case WGPUDDConstant::kMatrix3f:
-        return DDBridgeConstantMatrix3f;
-    case WGPUDDConstant::kMatrix4f:
-        return DDBridgeConstantMatrix4f;
-    case WGPUDDConstant::kQuatf:
-        return DDBridgeConstantQuatf;
-    case WGPUDDConstant::kQuath:
-        return DDBridgeConstantQuath;
-    case WGPUDDConstant::kFloat2:
-        return DDBridgeConstantFloat2;
-    case WGPUDDConstant::kHalf2:
-        return DDBridgeConstantHalf2;
-    case WGPUDDConstant::kInt2:
-        return DDBridgeConstantInt2;
-    case WGPUDDConstant::kFloat3:
-        return DDBridgeConstantFloat3;
-    case WGPUDDConstant::kHalf3:
-        return DDBridgeConstantHalf3;
-    case WGPUDDConstant::kInt3:
-        return DDBridgeConstantInt3;
-    case WGPUDDConstant::kFloat4:
-        return DDBridgeConstantFloat4;
-    case WGPUDDConstant::kHalf4:
-        return DDBridgeConstantHalf4;
-    case WGPUDDConstant::kInt4:
-        return DDBridgeConstantInt4;
-
-    // semantic:
-    case WGPUDDConstant::kPoint3f:
-        return DDBridgeConstantPoint3f;
-    case WGPUDDConstant::kPoint3h:
-        return DDBridgeConstantPoint3h;
-    case WGPUDDConstant::kNormal3f:
-        return DDBridgeConstantNormal3f;
-    case WGPUDDConstant::kNormal3h:
-        return DDBridgeConstantNormal3h;
-    case WGPUDDConstant::kVector3f:
-        return DDBridgeConstantVector3f;
-    case WGPUDDConstant::kVector3h:
-        return DDBridgeConstantVector3h;
-    case WGPUDDConstant::kColor3f:
-        return DDBridgeConstantColor3f;
-    case WGPUDDConstant::kColor3h:
-        return DDBridgeConstantColor3h;
-    case WGPUDDConstant::kColor4f:
-        return DDBridgeConstantColor4f;
-    case WGPUDDConstant::kColor4h:
-        return DDBridgeConstantColor4h;
-    case WGPUDDConstant::kTexCoord2h:
-        return DDBridgeConstantTexCoord2h;
-    case WGPUDDConstant::kTexCoord2f:
-        return DDBridgeConstantTexCoord2f;
-    case WGPUDDConstant::kTexCoord3h:
-        return DDBridgeConstantTexCoord3h;
-    case WGPUDDConstant::kTexCoord3f:
-        return DDBridgeConstantTexCoord3f;
-    }
-}
-
-static DDBridgeBuiltin *convert(const WGPUDDBuiltin& builtin)
-{
-    return [[DDBridgeBuiltin alloc] initWithDefinition:builtin.definition.createNSString().get() name:builtin.name.createNSString().get()];
-}
-
-static NSArray<DDValueString *> *convert(const Vector<Variant<String, double>>& constantValues)
-{
-    NSMutableArray<DDValueString *> *result = [NSMutableArray array];
-    for (auto& c : constantValues) {
-        [result addObject:WTF::switchOn(c, [&](const String& s) -> DDValueString * {
-            return [[DDValueString alloc] initWithString:s.createNSString().get()];
-        }, [&] (double d) -> DDValueString * {
-            return [[DDValueString alloc] initWithNumber:[[NSNumber alloc] initWithDouble:d]];
-        })];
-    }
-
-    return result;
-}
-
-static DDBridgeConstantContainer *convert(const WGPUDDConstantContainer& constant)
-{
-    return [[DDBridgeConstantContainer alloc] initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get()];
-}
-
-static NSArray<DDBridgeNode *> *convert(const Vector<WGPUDDNode>& nodes)
-{
-    NSMutableArray<DDBridgeNode *> *result = [NSMutableArray array];
-    for (auto& node : nodes)
-        [result addObject:[[DDBridgeNode alloc] initWithBridgeNodeType:convert(node.bridgeNodeType) builtin:convert(node.builtin) constant:convert(node.constant)]];
-    return result;
-}
-
-static DDBridgeMaterialGraph *convertDescriptor(WGPUDDMaterialGraph& material)
-{
-    return [[DDBridgeMaterialGraph alloc] initWithNodes:convert(material.nodes) edges:convert(material.edges) inputs:convert(material.inputs) outputs:convert(material.outputs) primvars:convert(material.primvars)];
-}
-
-static DDBridgeAddTextureRequest *convertDescriptor(WGPUDDTextureDescriptor& descriptor)
-{
-    DDBridgeAddTextureRequest *result = [[DDBridgeAddTextureRequest alloc] initWithImageAsset:convertDescriptor(descriptor.imageAsset)];
-
-    return result;
-}
-static DDBridgeUpdateTextureRequest *convertDescriptor(WGPUDDUpdateTextureDescriptor& descriptor)
-{
-    DDBridgeUpdateTextureRequest *result = [[DDBridgeUpdateTextureRequest alloc] initWithImageAsset:convertDescriptor(descriptor.imageAsset)];
-
-    return result;
-}
-
-static DDBridgeAddMaterialRequest *convertDescriptor(WGPUDDMaterialDescriptor& descriptor)
-{
-    DDBridgeAddMaterialRequest *result = [[DDBridgeAddMaterialRequest alloc] initWithMaterial:convertDescriptor(descriptor.materialGraph)];
-
-    return result;
-}
-static DDBridgeUpdateMaterialRequest *convertDescriptor(WGPUDDUpdateMaterialDescriptor& descriptor)
-{
-    DDBridgeUpdateMaterialRequest *result = [[DDBridgeUpdateMaterialRequest alloc] initWithMaterial:convertDescriptor(descriptor.materialGraph)];
-
-    return result;
-}
-#endif
-
 void DDMesh::render() const
 {
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     if (id<MTLTexture> modelBacking = texture())
         [m_ddReceiver renderWithTexture:modelBacking];
 #endif
 }
 
-void DDMesh::update(WGPUDDUpdateMeshDescriptor* desc)
+void DDMesh::update(DDBridgeUpdateMesh* descriptor)
 {
-#if ENABLE(WEBGPU_SWIFT)
-    if (desc) {
-        auto& descriptor = *desc;
-        descriptor.transform = m_transform;
-        NSString *identifierString = descriptor.identifier.createNSString().get();
-        [m_ddReceiver updateMesh:convertDescriptor(*desc) identifier:[[NSUUID alloc] initWithUUIDString:identifierString]];
-        render();
-    }
-#else
-    UNUSED_PARAM(desc);
+    if (!descriptor)
+        return;
+
+#if ENABLE(GPU_PROCESS_MODEL)
+    BinarySemaphore completion;
+    [m_ddReceiver updateMesh:descriptor completionHandler:[&] mutable {
+        completion.signal();
+    }];
+    completion.wait();
 #endif
 }
 
-void DDMesh::addMesh(WGPUDDMeshDescriptor* desc)
+void DDMesh::updateTexture(DDBridgeUpdateTexture* descriptor)
 {
-    if (!desc)
+    if (!descriptor)
         return;
 
-#if ENABLE(WEBGPU_SWIFT)
-    auto& descriptor = *desc;
-    NSString *identifierString = descriptor.identifier.createNSString().get();
-    [m_ddReceiver addMesh:convertDescriptor(descriptor) identifier:[[NSUUID alloc] initWithUUIDString:identifierString]];
+#if ENABLE(GPU_PROCESS_MODEL)
+    BinarySemaphore completion;
+    [m_ddReceiver updateTexture:descriptor completionHandler:[&] mutable {
+        completion.signal();
+    }];
+    completion.wait();
 #endif
 }
 
-void DDMesh::addTexture(WGPUDDTextureDescriptor* desc)
+void DDMesh::updateMaterial(DDBridgeUpdateMaterial* descriptor)
 {
-    if (!desc)
+    if (!descriptor)
         return;
 
-#if ENABLE(WEBGPU_SWIFT)
-    auto& descriptor = *desc;
-    NSString *identifierString = descriptor.imageAsset.identifier.createNSString().get();
-    [m_ddReceiver addTexture:convertDescriptor(descriptor) identifier:[[NSUUID alloc] initWithUUIDString:identifierString]];
-#endif
-}
-
-void DDMesh::updateTexture(WGPUDDUpdateTextureDescriptor* desc)
-{
-    if (!desc)
-        return;
-
-#if ENABLE(WEBGPU_SWIFT)
-    auto& descriptor = *desc;
-    NSString *identifierString = descriptor.imageAsset.identifier.createNSString().get();
-    [m_ddReceiver updateTexture:convertDescriptor(descriptor) identifier:[[NSUUID alloc] initWithUUIDString:identifierString]];
-#endif
-}
-
-void DDMesh::addMaterial(WGPUDDMaterialDescriptor* desc)
-{
-    if (!desc)
-        return;
-
-#if ENABLE(WEBGPU_SWIFT)
-    auto& descriptor = *desc;
-    NSString *identifierString = descriptor.materialGraph.identifier.createNSString().get();
-    DDBridgeAddMaterialRequest *convertedDecsriptor = convertDescriptor(descriptor);
-    [m_ddReceiver addMaterial:convertedDecsriptor identifier:[[NSUUID alloc] initWithUUIDString:identifierString]];
-#endif
-}
-
-void DDMesh::updateMaterial(WGPUDDUpdateMaterialDescriptor* desc)
-{
-    if (!desc)
-        return;
-
-#if ENABLE(WEBGPU_SWIFT)
-    auto& descriptor = *desc;
-    DDBridgeUpdateMaterialRequest *convertedDecsriptor = convertDescriptor(descriptor);
-    [m_ddReceiver updateMaterial:convertedDecsriptor identifier:[[NSUUID alloc] initWithUUIDString:descriptor.materialGraph.identifier.createNSString().get()]];
+#if ENABLE(GPU_PROCESS_MODEL)
+    BinarySemaphore completion;
+    [m_ddReceiver updateMaterial:descriptor completionHandler:[&] mutable {
+        completion.signal();
+    }];
+    completion.wait();
 #endif
 }
 
 void DDMesh::setTransform(const simd_float4x4& transform)
 {
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     m_transform = transform;
     [m_ddReceiver setTransform:transform];
 #else
@@ -567,8 +157,9 @@ void DDMesh::setTransform(const simd_float4x4& transform)
 
 void DDMesh::setCameraDistance(float distance)
 {
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     [m_ddReceiver setCameraDistance:distance];
+    render();
 #else
     UNUSED_PARAM(distance);
 #endif
@@ -576,7 +167,7 @@ void DDMesh::setCameraDistance(float distance)
 
 void DDMesh::play(bool play)
 {
-#if ENABLE(WEBGPU_SWIFT)
+#if ENABLE(GPU_PROCESS_MODEL)
     [m_ddReceiver setPlaying:play];
 #else
     UNUSED_PARAM(play);
@@ -597,14 +188,9 @@ void wgpuDDMeshRelease(WGPUDDMesh mesh)
     WebGPU::fromAPI(mesh).deref();
 }
 
-WGPU_EXPORT void wgpuDDMeshUpdate(WGPUDDMesh mesh, WGPUDDUpdateMeshDescriptor* desc)
+WGPU_EXPORT void wgpuDDMeshUpdate(WGPUDDMesh mesh, id desc)
 {
     WebGPU::protectedFromAPI(mesh)->update(desc);
-}
-
-WGPU_EXPORT void wgpuDDMeshAdd(WGPUDDMesh mesh, WGPUDDMeshDescriptor* desc)
-{
-    WebGPU::protectedFromAPI(mesh)->addMesh(desc);
 }
 
 WGPU_EXPORT void wgpuDDMeshRender(WGPUDDMesh mesh)
@@ -617,24 +203,14 @@ WGPU_EXPORT void wgpuDDMeshSetTransform(WGPUDDMesh mesh, const simd_float4x4& tr
     WebGPU::protectedFromAPI(mesh)->setTransform(transform);
 }
 
-WGPU_EXPORT void wgpuDDTextureUpdate(WGPUDDMesh mesh, WGPUDDUpdateTextureDescriptor* desc)
+WGPU_EXPORT void wgpuDDMeshTextureUpdate(WGPUDDMesh mesh, id desc)
 {
     WebGPU::protectedFromAPI(mesh)->updateTexture(desc);
 }
 
-WGPU_EXPORT void wgpuDDTextureAdd(WGPUDDMesh mesh, WGPUDDTextureDescriptor* desc)
-{
-    WebGPU::protectedFromAPI(mesh)->addTexture(desc);
-}
-
-WGPU_EXPORT void wgpuDDMaterialUpdate(WGPUDDMesh mesh, WGPUDDUpdateMaterialDescriptor* desc)
+WGPU_EXPORT void wgpuDDMeshMaterialUpdate(WGPUDDMesh mesh, id desc)
 {
     WebGPU::protectedFromAPI(mesh)->updateMaterial(desc);
-}
-
-WGPU_EXPORT void wgpuDDMaterialAdd(WGPUDDMesh mesh, WGPUDDMaterialDescriptor* desc)
-{
-    WebGPU::protectedFromAPI(mesh)->addMaterial(desc);
 }
 
 WGPU_EXPORT void wgpuDDMeshSetCameraDistance(WGPUDDMesh mesh, float distance)

@@ -2727,7 +2727,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias: {
+    case PutByValDirectResolved: {
         compilePutByVal(node);
         break;
     }
@@ -5006,7 +5006,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         JSValueRegs valueRegs = value.jsValueRegs();
         GPRReg storageReg = storage.gpr();
 
-        if (node->op() == PutByValAlias) {
+        if (node->op() == PutByValDirectResolved) {
             // Store the value to the array.
             GPRReg propertyReg = property.gpr();
             storeValue(valueRegs, BaseIndex(storageReg, propertyReg, TimesEight, ArrayStorage::vectorOffset()));

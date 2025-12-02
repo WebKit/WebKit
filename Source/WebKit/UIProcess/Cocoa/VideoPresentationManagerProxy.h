@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+#include "FrameInfoData.h"
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
@@ -123,6 +124,11 @@ private:
 #endif
     void setRequiresTextTrackRepresentation(bool) final;
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void requestShowCaptionDisplaySettingsPreview() final;
+    void requestHideCaptionDisplaySettingsPreview() final;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     uint64_t logIdentifier() const final;
@@ -255,6 +261,12 @@ private:
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
     void setRequiresTextTrackRepresentation(PlaybackSessionContextIdentifier, bool);
     void setTextTrackRepresentationBounds(PlaybackSessionContextIdentifier, const WebCore::IntRect&);
+
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    void requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier);
+    void requestHideCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier);
+    void performCaptionDisplaySettingsAction(PlaybackSessionContextIdentifier, Function<void(WebPageProxy&, const FrameInfoData&, WebCore::HTMLMediaElementIdentifier)>&& action);
+#endif
 
     // Messages to VideoPresentationManager
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);

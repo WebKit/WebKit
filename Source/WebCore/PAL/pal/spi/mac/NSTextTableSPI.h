@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
+
 #import <AppKit/NSTextTable.h>
 
 @interface NSTextBlock (Internal)
@@ -36,3 +40,5 @@ DECLARE_SYSTEM_HEADER
 @interface NSTextTab ()
 - (instancetype)initWithTextAlignment:(NSTextAlignment)alignment location:(CGFloat)loc options:(NSDictionary<NSTextTabOptionKey, id> *)options;
 @end
+
+#endif // PLATFORM(MAC)

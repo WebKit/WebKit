@@ -186,6 +186,9 @@ private:
     enum class SyncUpdate : bool { No, Yes };
     void updateMutedState(SyncUpdate = SyncUpdate::No);
 
+    static bool isAnyUnitCapturingExceptFor(CoreAudioCaptureUnit*);
+    static bool isAnyUnitCapturing();
+
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
     std::unique_ptr<InternalUnit> m_ioUnit;
@@ -229,7 +232,7 @@ private:
     CoreAudioSpeakerSamplesProducer* m_speakerSamplesProducer WTF_GUARDED_BY_LOCK(m_speakerSamplesProducerLock) { nullptr };
 
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<MediaCaptureStatusBarManager> m_statusBarManager;
+    RefPtr<MediaCaptureStatusBarManager> m_statusBarManager;
     Function<void(CompletionHandler<void()>&&)> m_statusBarWasTappedCallback;
 #endif
 

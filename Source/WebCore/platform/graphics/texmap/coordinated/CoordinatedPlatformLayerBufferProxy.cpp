@@ -99,7 +99,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
         Locker layerLocker { layer->lock() };
         layer->setContentsBuffer(WTFMove(buffer), std::nullopt, CoordinatedPlatformLayer::RequireComposition::No);
     }
-    layer->requestComposition();
+    layer->requestComposition(CompositionReason::VideoFrame);
 }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)

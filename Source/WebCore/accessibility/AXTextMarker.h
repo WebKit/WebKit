@@ -417,7 +417,7 @@ public:
     bool isCollapsed() const { return m_start.isEqual(m_end); }
     bool isConfinedTo(std::optional<AXID>) const;
     bool isConfined() const;
-    String toString(IncludeListMarkerText = IncludeListMarkerText::Yes) const;
+    String toString(IncludeListMarkerText = IncludeListMarkerText::Yes, IncludeImageAltText = IncludeImageAltText::No) const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     // Returns the bounds (frame) of the text in this range relative to the viewport.

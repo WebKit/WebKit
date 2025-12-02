@@ -52,7 +52,6 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
-#include "PositionTryFallback.h"
 #include "PositionTryOrder.h"
 #include "PositionedLayoutConstraints.h"
 #include "RenderBoxInlines.h"
@@ -66,6 +65,7 @@
 #include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleOriginatedTimelinesController.h"
+#include "StylePositionTryFallbackTactic.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Text.h"
@@ -1556,7 +1556,7 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
 {
     // https://drafts.csswg.org/css-anchor-position-1/#fallback-apply
 
-    if (!resolvedStyle.style || resolvedStyle.style->positionTryFallbacks().isEmpty())
+    if (!resolvedStyle.style || resolvedStyle.style->positionTryFallbacks().isNone())
         return;
 
     if (!resolvedStyle.style->hasOutOfFlowPosition())
@@ -1606,18 +1606,18 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
     if (!resolvedStyle.matchResult)
         return { };
 
-    auto resolveFallbackProperties = [&]() -> RefPtr<const StyleProperties> {
-        if (fallback.positionAreaProperties) {
-            ASSERT(!fallback.positionTryRuleName);
-            ASSERT(fallback.tactics.isEmpty());
-            return fallback.positionAreaProperties;
+    auto resolveFallbackProperties = [&] -> RefPtr<const StyleProperties> {
+        if (fallback.positionArea.properties) {
+            ASSERT(!fallback.ruleAndTactics.rule);
+            ASSERT(!fallback.ruleAndTactics.tactics);
+            return fallback.positionArea.properties;
         }
-        if (!fallback.positionTryRuleName)
+        if (!fallback.ruleAndTactics.rule)
             return nullptr;
 
         // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
         // https://drafts.csswg.org/css-scoping-1/#shadow-names
-        return Style::Scope::resolveTreeScopedReference(styleable.element, *fallback.positionTryRuleName, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
+        return Style::Scope::resolveTreeScopedReference(styleable.element, *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
             auto& ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
             auto rule = ruleSet.positionTryRuleForName(name);
             if (!rule)
@@ -1628,7 +1628,7 @@ std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const Position
 
     auto builderFallback = BuilderPositionTryFallback {
         .properties = resolveFallbackProperties(),
-        .tactics = fallback.tactics
+        .tactics = fallback.ruleAndTactics.tactics->value,
     };
 
     return resolveAgainInDifferentContext(resolvedStyle, styleable, *resolutionContext.parentStyle, PropertyCascade::normalPropertyTypes(), WTFMove(builderFallback), resolutionContext);
@@ -1904,7 +1904,7 @@ void TreeResolver::collectChangedAnchorNames(const RenderStyle& newStyle, const 
             case NameScope::Type::Ident:
                 // A scope change changes interpretation of these names.
                 for (auto& name : style.anchorScope().names)
-                    m_changedAnchorNames.add(name);
+                    m_changedAnchorNames.add(name.value);
                 break;
             }
         };

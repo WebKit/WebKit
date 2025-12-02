@@ -85,7 +85,7 @@ struct MemoryPressureHandlerConfiguration {
 
 class MemoryPressureHandler : public CanMakeWeakPtr<MemoryPressureHandler> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MemoryPressureHandler);
-    friend class WTF::LazyNeverDestroyed<MemoryPressureHandler>;
+    friend class WTF::NeverDestroyed<MemoryPressureHandler>;
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
 

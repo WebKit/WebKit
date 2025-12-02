@@ -570,17 +570,15 @@ void registerWebKitGStreamerElements()
         if (auto factory = adoptGRef(gst_element_factory_find("isofmp4mux")))
             gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_PRIMARY + 1);
 
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         // The VAAPI plugin is not much maintained anymore and prone to rendering issues. In the
         // mid-term we will leverage the new stateless VA decoders. Disable the legacy plugin,
         // unless the WEBKIT_GST_ENABLE_LEGACY_VAAPI environment variable is set to 1.
-        const char* enableLegacyVAAPIPlugin = getenv("WEBKIT_GST_ENABLE_LEGACY_VAAPI");
-        if (!enableLegacyVAAPIPlugin || !strcmp(enableLegacyVAAPIPlugin, "0")) {
+        auto enableLegacyVAAPIPlugin = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_ENABLE_LEGACY_VAAPI"));
+        if (enableLegacyVAAPIPlugin.isEmpty() || enableLegacyVAAPIPlugin == "0"_s) {
             auto* registry = gst_registry_get();
             if (auto vaapiPlugin = adoptGRef(gst_registry_find_plugin(registry, "vaapi")))
                 gst_registry_remove_plugin(registry, vaapiPlugin.get());
         }
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         // Make sure the quirks are created as early as possible.
         [[maybe_unused]] auto& quirksManager = GStreamerQuirksManager::singleton();
@@ -821,14 +819,16 @@ GstVideoFrame* GstMappedFrame::get()
     return &m_frame;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-
-uint8_t* GstMappedFrame::componentData(int comp) const
+std::span<uint8_t> GstMappedFrame::componentData(int comp) const
 {
     RELEASE_ASSERT(isValid());
-    return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+    auto data = byteCast<uint8_t>(GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+    return unsafeMakeSpan(data, componentStride(comp));
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
 int GstMappedFrame::componentStride(int stride) const
 {
     RELEASE_ASSERT(isValid());
@@ -840,6 +840,7 @@ int GstMappedFrame::componentWidth(int index) const
     RELEASE_ASSERT(isValid());
     return GST_VIDEO_FRAME_COMP_WIDTH(&m_frame, index);
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
 
 GstVideoInfo* GstMappedFrame::info()
 {
@@ -865,19 +866,22 @@ int GstMappedFrame::format() const
     return GST_VIDEO_FRAME_FORMAT(&m_frame);
 }
 
-void* GstMappedFrame::planeData(uint32_t planeIndex) const
+std::span<uint8_t> GstMappedFrame::planeData(uint32_t planeIndex) const
 {
     RELEASE_ASSERT(isValid());
-    return GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+    auto data = reinterpret_cast<uint8_t*>(GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+    return unsafeMakeSpan(data, height() * planeStride(planeIndex));
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
 int GstMappedFrame::planeStride(uint32_t planeIndex) const
 {
     RELEASE_ASSERT(isValid());
     return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
 
 GstMappedAudioBuffer::GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
 {

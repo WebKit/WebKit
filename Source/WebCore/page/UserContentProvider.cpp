@@ -82,8 +82,9 @@ void UserContentProvider::unregisterForUserMessageHandlerInvalidation(UserConten
 
 void UserContentProvider::invalidateAllRegisteredUserMessageHandlerInvalidationClients()
 {
-    for (auto& client : m_userMessageHandlerInvalidationClients)
+    m_userMessageHandlerInvalidationClients.forEach([&](auto& client) {
         client.didInvalidate(*this);
+    });
 }
 
 void UserContentProvider::invalidateInjectedStyleSheetCacheInAllFramesInAllPages()

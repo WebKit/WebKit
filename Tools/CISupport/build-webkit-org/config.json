@@ -739,9 +739,8 @@
                     "workernames": ["wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Cairo-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF", "--cmakeargs=-DUSE_GSTREAMER_WEBRTC=FALSE"],
                     "workernames": ["wpe-linux-bot-35"]
                   },
                   {
@@ -781,7 +780,7 @@
                                      "Windows-64-bit-Release-Build", "Windows-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
-                                     "WPE-Linux-64-bit-Release-Cairo-Build",
+                                     "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build",
                                      "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-64-bit-Release-Non-Unified-Build"]

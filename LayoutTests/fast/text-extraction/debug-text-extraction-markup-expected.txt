@@ -1,0 +1,69 @@
+<body>
+    <div role='banner'>
+        <h1 aria-label='Main Page Title'>Welcome to Test Page</h1>
+    </div>
+    <nav role='navigation' aria-label='Main navigation'>
+        <ul>
+            <li>
+                <a uid=… href='mailto:wenson_hsieh@apple.com'>Section 1</a>
+            </li>
+            <li>
+                <a uid=… href='https://example.com/'>Section 2</a>
+            </li>
+        </ul>
+    </nav>
+    <main role='main'>
+        <section aria-label='Interactive Elements'>
+            <button uid=… aria-describedby='This <button> does nothing' aria-label='Test button'>Click Me</button>
+            This &lt;button&gt; does nothing
+            <input type='text' uid=… placeholder='Enter text here'>
+            <div uid=… role='button'>Clickable Div</div>
+        </section>
+        <section aria-label='ARIA Labeling Examples'>
+            Name Field           Description
+            <input type='text' uid=… aria-labelledby='Name Field' placeholder='Your name'>
+            <div role='region' aria-labelledby='Description'>This region is labeled by another element.</div>
+            <input type='text' uid=… aria-labelledby='Name Field' placeholder='Full name'>
+            User Profile
+            <div role='group' aria-labelledby='User Profile'>
+                Username:
+                <input type='text' uid=… label='Username:'>
+            </div>
+        </section>
+        <section aria-label='Content with Roles'>
+            <article role='article'>Article Title                   January 1, 2024                            This is some article content with highlighted text.</article>
+            <aside role='complementary' aria-label='Related information'>
+                Related Links
+                <ul>
+                    <li>
+                        <a uid=… href='https://webkit.org/'>Example Link</a>
+                    </li>
+                    <li>
+                        <a uid=… href='https://apple.com/'>Test Link</a>
+                    </li>
+                </ul>
+            </aside>
+            <div role='region'>
+                <div role='status'>Ready</div>
+                <button uid=…>Update Status</button>
+            </div>
+            <div aria-label='Figure 1'>
+                <canvas uid=…>
+            </div>
+            <textarea uid=…>This is a text box</textarea>
+            Price: $11
+            <sup>99</sup>
+            Link to
+            <sub>
+                WebKit home page:
+                <a uid=… href='https://webkit.org/'>
+            </sub>
+        </section>
+    </main>
+    <footer role='contentinfo'>
+        Footer content with
+        <span role='img' aria-label='copyright symbol'>©</span>
+        2024 &amp; 2025
+    </footer>
+</body>
+<!-- version=2 -->

@@ -86,6 +86,7 @@ public:
     using Traits = IteratorTraits;
 
     using DOMWrapped = typename Wrapper::DOMWrapped;
+    using InternalIterator = Ref<typename DOMWrapped::Iterator>;
     using Prototype = JSDOMAsyncIteratorPrototype<Wrapper, Traits>;
 
     DECLARE_INFO;
@@ -104,9 +105,9 @@ public:
     JSC::JSPromise* getNextIterationResult(JSC::JSGlobalObject&);
 
 protected:
-    JSDOMAsyncIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
+    JSDOMAsyncIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind, InternalIterator&& iterator)
         : Base(structure, *iteratedObject.globalObject())
-        , m_iterator(iteratedObject.wrapped().createIterator(iteratedObject.globalObject()->protectedScriptExecutionContext().get()))
+        , m_iterator(WTFMove(iterator))
         , m_kind(kind)
     {
     }

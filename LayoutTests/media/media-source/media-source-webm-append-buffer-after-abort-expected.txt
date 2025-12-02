@@ -10,7 +10,6 @@ EVENT(update)
 EXPECTED (video.readyState == '1') OK
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
-EVENT(update)
 EVENT(loadeddata)
 EVENT(canplay)
 EXPECTED (video.readyState == '3') OK

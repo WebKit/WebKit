@@ -36,34 +36,34 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridData);
 
 StyleGridData::StyleGridData()
-    : m_gridAutoFlow(RenderStyle::initialGridAutoFlow())
-    , m_gridAutoColumns(RenderStyle::initialGridAutoColumns())
-    , m_gridAutoRows(RenderStyle::initialGridAutoRows())
-    , m_gridTemplateAreas(RenderStyle::initialGridTemplateAreas())
-    , m_gridTemplateColumns(RenderStyle::initialGridTemplateColumns())
-    , m_gridTemplateRows(RenderStyle::initialGridTemplateRows())
+    : gridAutoFlow(RenderStyle::initialGridAutoFlow())
+    , gridAutoColumns(RenderStyle::initialGridAutoColumns())
+    , gridAutoRows(RenderStyle::initialGridAutoRows())
+    , gridTemplateAreas(RenderStyle::initialGridTemplateAreas())
+    , gridTemplateColumns(RenderStyle::initialGridTemplateColumns())
+    , gridTemplateRows(RenderStyle::initialGridTemplateRows())
 {
 }
 
 inline StyleGridData::StyleGridData(const StyleGridData& o)
     : RefCounted<StyleGridData>()
-    , m_gridAutoFlow(o.m_gridAutoFlow)
-    , m_gridAutoColumns(o.m_gridAutoColumns)
-    , m_gridAutoRows(o.m_gridAutoRows)
-    , m_gridTemplateAreas(o.m_gridTemplateAreas)
-    , m_gridTemplateColumns(o.m_gridTemplateColumns)
-    , m_gridTemplateRows(o.m_gridTemplateRows)
+    , gridAutoFlow(o.gridAutoFlow)
+    , gridAutoColumns(o.gridAutoColumns)
+    , gridAutoRows(o.gridAutoRows)
+    , gridTemplateAreas(o.gridTemplateAreas)
+    , gridTemplateColumns(o.gridTemplateColumns)
+    , gridTemplateRows(o.gridTemplateRows)
 {
 }
 
 bool StyleGridData::operator==(const StyleGridData& o) const
 {
-    return m_gridAutoFlow == o.m_gridAutoFlow
-        && m_gridAutoColumns == o.m_gridAutoColumns
-        && m_gridAutoRows == o.m_gridAutoRows
-        && m_gridTemplateAreas == o.m_gridTemplateAreas
-        && m_gridTemplateColumns == o.m_gridTemplateColumns
-        && m_gridTemplateRows == o.m_gridTemplateRows;
+    return gridAutoFlow == o.gridAutoFlow
+        && gridAutoColumns == o.gridAutoColumns
+        && gridAutoRows == o.gridAutoRows
+        && gridTemplateAreas == o.gridTemplateAreas
+        && gridTemplateColumns == o.gridTemplateColumns
+        && gridTemplateRows == o.gridTemplateRows;
 }
 
 Ref<StyleGridData> StyleGridData::copy() const
@@ -74,12 +74,12 @@ Ref<StyleGridData> StyleGridData::copy() const
 #if !LOG_DISABLED
 void StyleGridData::dumpDifferences(TextStream& ts, const StyleGridData& other) const
 {
-    LOG_IF_DIFFERENT(m_gridAutoFlow);
-    LOG_IF_DIFFERENT(m_gridAutoColumns);
-    LOG_IF_DIFFERENT(m_gridAutoRows);
-    LOG_IF_DIFFERENT(m_gridTemplateAreas);
-    LOG_IF_DIFFERENT(m_gridTemplateColumns);
-    LOG_IF_DIFFERENT(m_gridTemplateRows);
+    LOG_IF_DIFFERENT(gridAutoFlow);
+    LOG_IF_DIFFERENT(gridAutoColumns);
+    LOG_IF_DIFFERENT(gridAutoRows);
+    LOG_IF_DIFFERENT(gridTemplateAreas);
+    LOG_IF_DIFFERENT(gridTemplateColumns);
+    LOG_IF_DIFFERENT(gridTemplateRows);
 }
 #endif // !LOG_DISABLED
 

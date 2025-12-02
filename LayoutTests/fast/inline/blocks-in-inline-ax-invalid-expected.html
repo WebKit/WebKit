@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div role="group" aria-label="container">
+    <div id="listbox" role="listbox" aria-label="Submenu for Products">
+        <ul>
+            <li><a href=#>Explore products</a></li>
+        </ul>
+        <ul>
+            <li><a href=#>Category A</a></li>
+            <li><a href=#>Category B</a></li>
+            <li><a href=#>Category C</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="option-wrapper">
+    <!-- Add some generic elements in-between to ensure our algorithm is smart enough to traverse through them to find an options. -->
+    <div>
+        <div>
+            <span>
+                <div role="group" aria-label="i'm a group that contains an option, which is a valid child for a listbox">
+                    <div role="option">Foo</div>
+                </div>
+            </span>
+        </div>
+    </div>
+</div>
+<pre id=log></pre>
+<script>
+var output = "This test ensures we don't expose invalid role='listbox' elements as platform-role listboxes, as that can cause bad behavior for ATs.\n\n";
+
+if (window.accessibilityController) {
+    testRunner.waitUntilDone();
+
+    // The listbox in its initial state is invalid — it has no `option` descendants. We should map it to group.
+    output += expect("accessibilityController.accessibleElementById('listbox').role", "'AXRole: AXGroup'");
+
+    // Let's add an option descendant and ensure the role is now reported to be a proper listbox.
+    document.getElementById("listbox").appendChild(document.getElementById("option-wrapper"));
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('listbox').role", "'AXRole: AXList'");
+
+        log.textContent = output;
+        testRunner.notifyDone();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

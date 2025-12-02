@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+body {
+  margin: 0px;
+}
+.margin {
+  margin-bottom: 100px; 
+  outline: 1px solid red;
+}
+.sibling {
+  border: 1px solid green;
+}
+</style>
+  <div class=margin>
+    <span>
+      <div></div>
+    </span>
+  </div>
+<div class=sibling></div>

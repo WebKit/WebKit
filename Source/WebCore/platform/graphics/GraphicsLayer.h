@@ -545,7 +545,12 @@ public:
     WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
 
-    virtual Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const { return { }; }
+    struct AcceleratedAnimationForTesting {
+        String property;
+        double speed;
+        bool isThreaded;
+    };
+    virtual Vector<AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const { return { }; }
 
     // Layer contents
     virtual void setContentsToImage(Image*) { }
@@ -565,6 +570,9 @@ public:
     virtual void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) { }
 #if ENABLE(MODEL_CONTEXT)
     virtual void setContentsToModelContext(Ref<ModelContext>, ContentsLayerPurpose) { }
+#endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    virtual void removeModelContents() { }
 #endif
     virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);

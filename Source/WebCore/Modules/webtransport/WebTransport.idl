@@ -35,6 +35,9 @@
     readonly attribute Promise<undefined> ready;
     readonly attribute WebTransportReliabilityMode reliability;
     readonly attribute WebTransportCongestionControl congestionControl;
+    attribute unsigned short? anticipatedConcurrentIncomingUnidirectionalStreams;
+    attribute unsigned short? anticipatedConcurrentIncomingBidirectionalStreams;
+    readonly attribute DOMString protocol;
     readonly attribute Promise<WebTransportCloseInfo> closed;
     readonly attribute Promise<undefined> draining;
     undefined close(optional WebTransportCloseInfo closeInfo = {});
@@ -47,4 +50,6 @@
     [CallWith=CurrentScriptExecutionContext] Promise<WebTransportSendStream> createUnidirectionalStream(optional WebTransportSendStreamOptions options = {});
     readonly attribute ReadableStream incomingUnidirectionalStreams;
     WebTransportSendGroup createSendGroup();
+
+    static readonly attribute boolean supportsReliableOnly;
 };

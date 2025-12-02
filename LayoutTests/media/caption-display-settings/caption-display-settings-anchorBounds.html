@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CaptionDisplaySettingsEnabled=true ] -->
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>caption-display-settings</title>
+	<script src="../video-test.js"></script>
+	<style>
+		#target {
+			position: absolute;
+			left: 10px;
+			top: 20px;
+			width: 30px;
+			height: 40px;
+			background-color: green;
+		}
+	</style>
+	<script>
+	async function runTest() {
+		findMediaElement();
+
+		if (!window.internals)
+			return;
+
+		window.options = null;
+		internals.setMockCaptionDisplaySettingsClientCallback(async (element, inOptions) => {
+			options = inOptions;
+		});
+
+		await run('video.showCaptionDisplaySettings({anchorNode: target})');
+
+		testExpected('options.anchorBounds.x', 10);
+		testExpected('options.anchorBounds.y', 20);
+		testExpected('options.anchorBounds.width', 30);
+		testExpected('options.anchorBounds.height', 40);
+	}
+
+	window.addEventListener('load', event => {
+		requestAnimationFrame(() => {
+			runTest().then(endTest).catch(failTest);	
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id=target></div>
+	<video muted autoplay></video>
+</body>
+</html>

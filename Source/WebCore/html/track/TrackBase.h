@@ -53,6 +53,10 @@ class TrackBase
 public:
     virtual ~TrackBase();
 
+    // ContextDestructionObserver.
+    void ref() const override { RefCounted::ref(); }
+    void deref() const override { RefCounted::deref(); }
+
     virtual void didMoveToNewDocument(Document&);
 
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };

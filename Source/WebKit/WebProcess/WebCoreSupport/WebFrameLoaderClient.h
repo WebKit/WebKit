@@ -41,11 +41,14 @@ enum class IsPerformingHTTPFallback : bool;
 class FloatSize;
 class FormState;
 class Frame;
+class FrameTreeSyncData;
 class HitTestResult;
 class NavigationAction;
 class ResourceRequest;
 class ResourceResponse;
 using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
+
+struct FrameTreeSyncSerializationData;
 }
 
 namespace WebKit {
@@ -74,6 +77,9 @@ protected:
     void updateReferrerPolicy(WebCore::ReferrerPolicy);
     void updateOpener(const WebCore::Frame&);
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize);
+
+    void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&);
+    void broadcastFrameTreeSyncDataToOtherProcesses(const WebCore::FrameTreeSyncSerializationData&);
 
     const Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

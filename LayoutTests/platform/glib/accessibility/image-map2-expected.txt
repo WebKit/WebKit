@@ -1,28 +1,9 @@
-Image map - test 2 - 2 Links (alt tags)
-----------------------
-AXRole: AXSection
-AXParent: AXWebArea
-AXChildren: 0
-AXPosition: { 8.00000, 8.00000 }
-AXSize: { 784.000, 36.0000 }
-AXTitle:
-AXDescription:
-AXValue: Image map - test 2 - 2 Links (alt tags)<\n>----------------------<\n>
-AXFocusable: 0
-AXFocused: 0
-AXSelectable: 0
-AXSelected: 0
-AXMultiSelectable: 0
-AXEnabled: 1
-AXExpanded: 0
-AXRequired: 0
-AXChecked: 0
-AXPlatformAttributes: computed-role:generic, tag:div
-------------
+This test ensures proper AX tree output for image map links with alt tags.
+
 AXRole: AXLink
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 18.0000, 54.0000 }
+AXPosition:  { 18.0000, 18.0000 }
 AXSize: { 123.000, 62.0000 }
 AXTitle: Link1
 AXDescription:
@@ -42,7 +23,7 @@ AXPlatformAttributes: computed-role:link, tag:area
 AXRole: AXLink
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 20.0000, 118.000 }
+AXPosition:  { 20.0000, 82.0000 }
 AXSize: { 122.000, 14.0000 }
 AXTitle: Link2
 AXDescription:
@@ -60,5 +41,7 @@ AXURL: http://www.apple.com/
 AXPlatformAttributes: computed-role:link, tag:area
 ------------
 
+PASS successfullyParsed is true
 
+TEST COMPLETE
 

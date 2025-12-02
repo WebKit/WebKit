@@ -65,9 +65,6 @@ class MediaStreamTrack
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrack);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     class Observer {
     public:
         virtual ~Observer() = default;
@@ -78,6 +75,11 @@ public:
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&, RegisterCaptureTrackToOwner = RegisterCaptureTrackToOwner::Yes);
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, UniqueRef<MediaStreamTrackDataHolder>&&);
     virtual ~MediaStreamTrack();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     static MediaProducerMediaStateFlags captureState(const RealtimeMediaSource&);
 

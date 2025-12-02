@@ -37,13 +37,15 @@
 #include "CachedScript.h"
 #include <WebCore/CachedStyleSheetClient.h>
 #include "CachedTextTrack.h"
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class LinkLoader;
 
-class LinkPreloadResourceClient {
+class LinkPreloadResourceClient : public AbstractRefCounted {
 public:
     virtual ~LinkPreloadResourceClient() = default;
 
@@ -75,31 +77,49 @@ private:
     CachedResourceHandle<CachedResource> m_resource;
 };
 
-class LinkPreloadDefaultResourceClient : public LinkPreloadResourceClient, CachedResourceClient {
+class LinkPreloadDefaultResourceClient : public LinkPreloadResourceClient, CachedResourceClient, public RefCounted<LinkPreloadDefaultResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadDefaultResourceClient, Loader);
 public:
+    static Ref<LinkPreloadDefaultResourceClient> create(LinkLoader& loader, CachedResource& resource)
+    {
+        return adoptRef(*new LinkPreloadDefaultResourceClient(loader, resource));
+    }
+
+    // LinkPreloadResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     LinkPreloadDefaultResourceClient(LinkLoader& loader, CachedResource& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
 
-private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadStyleResourceClient : public LinkPreloadResourceClient, public CachedStyleSheetClient {
+class LinkPreloadStyleResourceClient : public LinkPreloadResourceClient, public CachedStyleSheetClient, public RefCounted<LinkPreloadStyleResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadStyleResourceClient, Loader);
 public:
+    static Ref<LinkPreloadStyleResourceClient> create(LinkLoader& loader, CachedCSSStyleSheet& resource)
+    {
+        return adoptRef(*new LinkPreloadStyleResourceClient(loader, resource));
+    }
+
+    // LinkPreloadResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     LinkPreloadStyleResourceClient(LinkLoader& loader, CachedCSSStyleSheet& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
 
-private:
     void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet* resource) final
     {
         ASSERT(resource);
@@ -111,32 +131,49 @@ private:
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient {
+class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public CachedImageClient, public RefCounted<LinkPreloadImageResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadImageResourceClient, Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LinkPreloadImageResourceClient);
 public:
+    static Ref<LinkPreloadImageResourceClient> create(LinkLoader& loader, CachedImage& resource)
+    {
+        return adoptRef(*new LinkPreloadImageResourceClient(loader, resource));
+    }
+
+    // LinkPreloadResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     LinkPreloadImageResourceClient(LinkLoader& loader, CachedImage& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
 
-private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadFontResourceClient : public LinkPreloadResourceClient, public CachedFontClient {
+class LinkPreloadFontResourceClient : public LinkPreloadResourceClient, public CachedFontClient, public RefCounted<LinkPreloadFontResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadFontResourceClient, Loader);
 public:
+    static Ref<LinkPreloadFontResourceClient> create(LinkLoader& loader, CachedFont& resource)
+    {
+        return adoptRef(*new LinkPreloadFontResourceClient(loader, resource));
+    }
+
+    // LinkPreloadResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     LinkPreloadFontResourceClient(LinkLoader& loader, CachedFont& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
 
-private:
     void fontLoaded(CachedFont& resource) final
     {
         ASSERT(ownedResource() == &resource);
@@ -147,16 +184,25 @@ private:
     bool shouldMarkAsReferenced() const final { return false; }
 };
 
-class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient {
+class LinkPreloadRawResourceClient : public LinkPreloadResourceClient, public CachedRawResourceClient, public RefCounted<LinkPreloadRawResourceClient> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LinkPreloadRawResourceClient, Loader);
 public:
+    static Ref<LinkPreloadRawResourceClient> create(LinkLoader& loader, CachedRawResource& resource)
+    {
+        return adoptRef(*new LinkPreloadRawResourceClient(loader, resource));
+    }
+
+    // LinkPreloadResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     LinkPreloadRawResourceClient(LinkLoader& loader, CachedRawResource& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }
 
-private:
     void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final { triggerEvents(resource); }
     void clear() final { clearResource(*this); }
     bool shouldMarkAsReferenced() const final { return false; }

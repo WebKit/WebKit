@@ -1094,7 +1094,7 @@ static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const
 
 static NSArray *children(AXCoreObject& backingObject)
 {
-    const auto& unignoredChildren = backingObject.unignoredChildren();
+    const auto& unignoredChildren = backingObject.stitchedUnignoredChildren();
     RetainPtr<NSArray> specialChildren = transformSpecialChildrenCases(backingObject, unignoredChildren);
     if ([specialChildren count])
         return specialChildren.unsafeGet();
@@ -1778,8 +1778,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if ([attributeName isEqualToString:NSAccessibilityDatetimeValueAttribute])
         return backingObject->datetimeAttributeValue().createNSString().autorelease();
 
-    if ([attributeName isEqualToString:NSAccessibilityInlineTextAttribute])
+    if ([attributeName isEqualToString:NSAccessibilityInlineTextAttribute]) {
+        // FIXME: After the AccessibilityStitchedText feature ships, we can probably remove this
+        // and all related code (making sure not to break backported versions of WebKit which won't
+        // have the corresponding VoiceOver changes).
         return @(backingObject->isInlineText());
+    }
 
     // ARIA Live region attributes.
     if ([attributeName isEqualToString:NSAccessibilityARIALiveAttribute])
@@ -3626,7 +3630,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isTree())
         return [super accessibilityIndexOfChild:targetChild];
 
-    const auto& children = backingObject->unignoredChildren();
+    const auto& children = backingObject->stitchedUnignoredChildren();
     if (!children.size()) {
         if (RetainPtr widgetChildren = renderWidgetChildren(*backingObject))
             return [widgetChildren.get() indexOfObject:targetChild];
@@ -3664,7 +3668,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return children(*backingObject).count;
 
         // FIXME: this is duplicating the logic in children(AXCoreObject&) so it should be reworked.
-        size_t childrenSize = backingObject->unignoredChildren().size();
+        size_t childrenSize = backingObject->stitchedUnignoredChildren().size();
         if (!childrenSize) {
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
             if (backingObject->isModel())
@@ -3704,7 +3708,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!backingObject)
         return nil;
 
-    const auto& unignoredChildren = backingObject->unignoredChildren();
+    const auto& unignoredChildren = backingObject->stitchedUnignoredChildren();
     if (unignoredChildren.isEmpty()) {
         RetainPtr<NSArray> children = transformSpecialChildrenCases(*backingObject, unignoredChildren);
         if (!children)

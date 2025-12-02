@@ -46,7 +46,10 @@ public:
     virtual void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) = 0;
     virtual void receiveBidirectionalStream(Ref<WebTransportSendStreamSink>&&) = 0;
     virtual void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
-    virtual void didFail(std::optional<unsigned>&&, String&&) = 0;
+    virtual void streamReceiveError(WebTransportStreamIdentifier, uint64_t) = 0;
+    virtual void streamSendError(WebTransportStreamIdentifier, uint64_t) = 0;
+    virtual void didFail(std::optional<uint32_t>&&, String&&) = 0;
+    virtual void didDrain() = 0;
 };
 
 }

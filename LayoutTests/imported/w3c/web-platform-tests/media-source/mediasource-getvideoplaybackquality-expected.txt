@@ -1,4 +1,3 @@
 
 PASS Test HTMLVideoElement.getVideoPlaybackQuality() with MediaSource API
-PASS Test the totalFrameDelay attribute of HTMLVideoElement.getVideoPlaybackQuality() with MediaSource API
 

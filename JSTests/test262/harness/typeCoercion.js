@@ -149,6 +149,8 @@ function testPrimitiveWrappers(primitiveValue, hint, test) {
 }
 
 function testCoercibleToPrimitiveWithMethod(hint, method, test) {
+  var supportsToPrimitive = typeof Symbol !== "undefined" && !!Symbol.toPrimitive;
+
   var methodNames;
   if (hint === "number") {
     methodNames = ["valueOf", "toString"];
@@ -158,11 +160,13 @@ function testCoercibleToPrimitiveWithMethod(hint, method, test) {
     throw new Test262Error();
   }
   // precedence order
-  test({
-    [Symbol.toPrimitive]: method,
-    [methodNames[0]]: function() { throw new Test262Error(); },
-    [methodNames[1]]: function() { throw new Test262Error(); },
-  });
+  if (supportsToPrimitive) {
+    test({
+      [Symbol.toPrimitive]: method,
+      [methodNames[0]]: function() { throw new Test262Error(); },
+      [methodNames[1]]: function() { throw new Test262Error(); },
+    });
+  }
   test({
     [methodNames[0]]: method,
     [methodNames[1]]: function() { throw new Test262Error(); },
@@ -178,16 +182,18 @@ function testCoercibleToPrimitiveWithMethod(hint, method, test) {
   }
 
   // GetMethod: if func is undefined or null, return undefined.
-  test({
-    [Symbol.toPrimitive]: undefined,
-    [methodNames[0]]: method,
-    [methodNames[1]]: method,
-  });
-  test({
-    [Symbol.toPrimitive]: null,
-    [methodNames[0]]: method,
-    [methodNames[1]]: method,
-  });
+  if (supportsToPrimitive) {
+    test({
+      [Symbol.toPrimitive]: undefined,
+      [methodNames[0]]: method,
+      [methodNames[1]]: method,
+    });
+    test({
+      [Symbol.toPrimitive]: null,
+      [methodNames[0]]: method,
+      [methodNames[1]]: method,
+    });
+  }
 
   // if methodNames[0] is not callable, fallback to methodNames[1]
   test({
@@ -253,7 +259,9 @@ function testNotCoercibleToNumber(test) {
   }
 
   // ToNumber: Symbol -> TypeError
-  testPrimitiveValue(Symbol("1"));
+  if (typeof Symbol !== "undefined") {
+    testPrimitiveValue(Symbol("1"));
+  }
 
   if (typeof BigInt !== "undefined") {
     // ToNumber: BigInt -> TypeError
@@ -265,18 +273,22 @@ function testNotCoercibleToNumber(test) {
 }
 
 function testNotCoercibleToPrimitive(hint, test) {
+  var supportsToPrimitive = typeof Symbol !== "undefined" && !!Symbol.toPrimitive;
+
   function MyError() {}
 
   // ToPrimitive: input[@@toPrimitive] is not callable (and non-null)
-  test(TypeError, {[Symbol.toPrimitive]: 1});
-  test(TypeError, {[Symbol.toPrimitive]: {}});
+  if (supportsToPrimitive) {
+    test(TypeError, {[Symbol.toPrimitive]: 1});
+    test(TypeError, {[Symbol.toPrimitive]: {}});
 
-  // ToPrimitive: input[@@toPrimitive] returns object
-  test(TypeError, {[Symbol.toPrimitive]: function() { return Object(1); }});
-  test(TypeError, {[Symbol.toPrimitive]: function() { return {}; }});
+    // ToPrimitive: input[@@toPrimitive] returns object
+    test(TypeError, {[Symbol.toPrimitive]: function() { return Object(1); }});
+    test(TypeError, {[Symbol.toPrimitive]: function() { return {}; }});
 
-  // ToPrimitive: input[@@toPrimitive] throws
-  test(MyError, {[Symbol.toPrimitive]: function() { throw new MyError(); }});
+    // ToPrimitive: input[@@toPrimitive] throws
+    test(MyError, {[Symbol.toPrimitive]: function() { throw new MyError(); }});
+  }
 
   // OrdinaryToPrimitive: method throws
   testCoercibleToPrimitiveWithMethod(hint, function() {
@@ -341,7 +353,9 @@ function testNotCoercibleToString(test) {
   }
 
   // Symbol -> TypeError
-  testPrimitiveValue(Symbol("1"));
+  if (typeof Symbol !== "undefined") {
+    testPrimitiveValue(Symbol("1"));
+  }
 
   // ToPrimitive
   testNotCoercibleToPrimitive("string", test);
@@ -351,7 +365,9 @@ function testCoercibleToBooleanTrue(test) {
   test(true);
   test(1);
   test("string");
-  test(Symbol("1"));
+  if (typeof Symbol !== "undefined") {
+    test(Symbol("1"));
+  }
   test({});
 }
 
@@ -434,7 +450,9 @@ function testNotCoercibleToBigInt(test) {
   testPrimitiveValue(TypeError, 0);
   testPrimitiveValue(TypeError, NaN);
   testPrimitiveValue(TypeError, Infinity);
-  testPrimitiveValue(TypeError, Symbol("1"));
+  if (typeof Symbol !== "undefined") {
+    testPrimitiveValue(TypeError, Symbol("1"));
+  }
 
   // when a String parses to NaN -> SyntaxError
   function testStringValue(string) {

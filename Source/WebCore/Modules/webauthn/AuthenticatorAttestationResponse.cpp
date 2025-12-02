@@ -76,6 +76,14 @@ Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(c
     return create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTFMove(transports));
 }
 
+Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, std::optional<AuthenticationExtensionsClientOutputs>&& extensions, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
+{
+    auto response = create(ArrayBuffer::create(rawId), ArrayBuffer::create(attestationObject), attachment, WTFMove(transports));
+    if (extensions)
+        response->setExtensions(WTFMove(*extensions));
+    return response;
+}
+
 AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
     : AuthenticatorResponse(WTFMove(rawId), attachment)
     , m_attestationObject(WTFMove(attestationObject))

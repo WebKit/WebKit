@@ -551,6 +551,98 @@ static const String& macOSInlineMediaControlsStyleSheet()
 
     return macOSInlineMediaControlsStyleSheet;
 }
+
+static const String& macOSFullscreenMediaControlsStyleSheet()
+{
+    static NeverDestroyed<String> macOSFullscreenMediaControlsStyleSheet {
+        "/* Controls bar */"
+        ".media-controls.mac.fullscreen {"
+        "    --controls-bar-width: 458px; /* Keep in sync with `minVideoWidth`. */"
+        "    width: 100% !important;"
+        "    height: 100% !important;"
+        "}"
+        ".media-controls.mac.fullscreen > .controls-bar {"
+        "    left: calc((100% - var(--controls-bar-width)) / 2);"
+        "    bottom: 25px;"
+        "    width: var(--controls-bar-width);"
+        "    height: 100px;"
+        "    border-radius: 20px;"
+        "}"
+        ".media-controls.mac.fullscreen .controls-bar.bottom .background-tint > div {"
+        "    border-radius: 20px;"
+        "}"
+        "/* Volume controls */"
+        ".media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider {"
+        "    transform: scaleX(-1);"
+        "}"
+        "/* Button containers */"
+        ".media-controls.mac.fullscreen .buttons-container {"
+        "    height: 44px;"
+        "}"
+        ".media-controls.mac.fullscreen .buttons-container.left {"
+        "    top: 22.4px;"
+        "    height: 16px;"
+        "    width: 100px !important;"
+        "    left: 15.5px"
+        "}"
+        ".media-controls.mac.fullscreen .buttons-container.center {"
+        "    left: 50%;"
+        "    top: 9px;"
+        "    transform: translateX(-50%);"
+        "}"
+        "/* Make right container flush to the right */"
+        ".media-controls.mac.fullscreen .buttons-container.right {"
+        "    right: 11px;"
+        "    top: 5px;"
+        "}"
+        "/* Buttons placement for right container */"
+        ".media-controls.mac.fullscreen .buttons-container.right button {"
+        "    top: 18px;"
+        "}"
+        "/* Scrubber */"
+        ".media-controls.mac.fullscreen .time-control {"
+        "    position: absolute;"
+        "    left: 25px;"
+        "    top: 64px;"
+        "    height: 16px;"
+        "    width: 408px !important;"
+        "    display: flex;"
+        "    align-items: center;"
+        "}"
+        "/* Status Label */"
+        ".media-controls.mac.fullscreen > .controls-bar .status-label {"
+        "    position: absolute;"
+        "    left: 0;"
+        "    right: 0;"
+        "    bottom: 13px;"
+        "    font-size: 14px;"
+        "    text-align: center;"
+        "}"
+        ".media-controls.mac.fullscreen .buttons-container.left .slider {"
+        "    width: 78px;"
+        "}"
+        ".media-controls.mac.fullscreen .slider.default > .appearance {"
+        "    height: 6px;"
+        "}"
+        ".media-controls.mac.fullscreen .slider.default > .appearance > .fill > .primary {"
+        "    background-color: white;"
+        "}"
+        ".media-controls.mac.fullscreen .slider.default.allows-relative-scrubbing > .appearance > .fill > .primary {"
+        "    background-color: white;"
+        "}"
+        ".slider.default > .appearance > .fill > .knob.pill,"
+        ".media-controls.mac.fullscreen .buttons-container.left .slider.default > .appearance > .fill > .knob,"
+        ".media-controls.mac.fullscreen .time-control .slider.default > .appearance > .fill > .knob {"
+        "    top: -5px;"
+        "    width: 21px;"
+        "    height: 17px;"
+        "    border-radius: 8.5px;"
+        "    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);"
+        "    margin: -2px;"
+        "}"_s
+    };
+    return macOSFullscreenMediaControlsStyleSheet;
+}
 #endif // HAVE(MATERIAL_HOSTING)
 
 Vector<String, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElement& mediaElement)
@@ -566,8 +658,10 @@ Vector<String, 2> RenderThemeCocoa::mediaControlsStyleSheets(const HTMLMediaElem
     if (mediaElement.document().settings().hostedBlurMaterialInMediaControlsEnabled())
         mediaControlsStyleSheets.append(glassMaterialMediaControlsStyleSheet());
 
-    if (mediaElement.document().settings().mediaControlsMacInlineSizeSpecsEnabled())
+    if (mediaElement.document().settings().mediaControlsMacInlineSizeSpecsEnabled()) {
         mediaControlsStyleSheets.append(macOSInlineMediaControlsStyleSheet());
+        mediaControlsStyleSheets.append(macOSFullscreenMediaControlsStyleSheet());
+    }
 #else
     UNUSED_PARAM(mediaElement);
 #endif

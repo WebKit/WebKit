@@ -1,9 +1,0 @@
-
-PASS e.style['masonry-flow'] = "nowrap row nowrap" should not set the property value
-PASS e.style['masonry-flow'] = "column wrap column" should not set the property value
-PASS e.style['masonry-flow'] = "reverse-column column" should not set the property value
-PASS e.style['masonry-flow'] = "reverse-row, row" should not set the property value
-PASS e.style['masonry-flow'] = "normal row-reverse" should not set the property value
-PASS e.style['masonry-flow'] = "reverse column" should not set the property value
-PASS e.style['masonry-flow'] = "auto, auto" should not set the property value
-

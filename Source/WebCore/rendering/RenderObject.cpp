@@ -50,6 +50,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NodeInlines.h"
+#include "OutlinePainter.h"
 #include "Page.h"
 #include "PseudoElement.h"
 #include "ReferencedSVGResources.h"
@@ -104,6 +105,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_PREFERABLY_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(RenderObject);
 WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_IMPL(RenderObject::RenderObjectRareData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderObject::CachedImageListener);
 
 #if ASSERT_ENABLED
 
@@ -121,7 +123,7 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject final : public CachedImageClient {
+struct SameSizeAsRenderObject : public CanMakeSingleThreadWeakPtr<SameSizeAsRenderObject>, public CanMakeCheckedPtr<SameSizeAsRenderObject> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SameSizeAsRenderObject);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsRenderObject);
 
@@ -138,6 +140,7 @@ struct SameSizeAsRenderObject final : public CachedImageClient {
     uint8_t m_type;
     uint8_t m_typeSpecificFlags;
     CheckedPtr<Layout::Box> layoutBox;
+    void* cachedResourceClient;
 };
 
 #if CPU(ADDRESS64)
@@ -150,7 +153,7 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
 }
 
 RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags, TypeSpecificFlags typeSpecificFlags)
-    : CachedImageClient()
+    : CanMakeSingleThreadWeakPtr<RenderObject>()
 #if ASSERT_ENABLED
     , m_setNeedsLayoutForbidden(false)
 #endif
@@ -796,35 +799,6 @@ CheckedPtr<RenderBlock> RenderObject::checkedContainingBlock() const
     return containingBlock();
 }
 
-void RenderObject::addPDFURLRect(const PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
-{
-    Vector<LayoutRect> focusRingRects;
-    addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
-    LayoutRect urlRect = unionRect(focusRingRects);
-
-    if (urlRect.isEmpty())
-        return;
-
-    RefPtr element = dynamicDowncast<Element>(node());
-    if (!element || !element->isLink())
-        return;
-
-    const AtomString& href = element->getAttribute(hrefAttr);
-    if (href.isNull())
-        return;
-
-    if (paintInfo.context().supportsInternalLinks()) {
-        String outAnchorName;
-        RefPtr linkTarget = element->findAnchorElementForLink(outAnchorName);
-        if (linkTarget) {
-            paintInfo.context().setDestinationForRect(outAnchorName, urlRect);
-            return;
-        }
-    }
-
-    paintInfo.context().setURLForRect(element->protectedDocument()->completeURL(href), urlRect);
-}
-
 #if PLATFORM(IOS_FAMILY)
 // This function is similar in spirit to RenderText::absoluteRectsForRange, but returns rectangles
 // which are annotated with additional state which helps iOS draw selections in its unique way.
@@ -877,13 +851,16 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms, bool* wasFixed
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 {
-    Vector<LayoutRect> rects;
-    // FIXME: addFocusRingRects() needs to be passed this transform-unaware
-    // localToAbsolute() offset here because RenderInline::addFocusRingRects()
+    CheckedPtr elementRenderer = dynamicDowncast<RenderElement>(*this);
+    if (!elementRenderer)
+        return;
+
+    // FIXME: collectFocusRingRects() needs to be passed this transform-unaware
+    // localToAbsolute() offset here because OutlinePainter::collectFocusRingRects()
     // implicitly assumes that. This doesn't work correctly with transformed
     // descendants.
     FloatPoint absolutePoint = localToAbsolute();
-    addFocusRingRects(rects, flooredLayoutPoint(absolutePoint));
+    auto rects = OutlinePainter::collectFocusRingRects(*elementRenderer, flooredLayoutPoint(absolutePoint), nullptr);
     float deviceScaleFactor = document().deviceScaleFactor();
     for (auto rect : rects) {
         rect.moveBy(LayoutPoint(-absolutePoint));
@@ -1947,11 +1924,6 @@ int RenderObject::previousOffsetForBackwardDeletion(int current) const
 int RenderObject::nextOffset(int current) const
 {
     return current + 1;
-}
-
-void RenderObject::imageChanged(CachedImage* image, const IntRect* rect)
-{
-    imageChanged(static_cast<WrappedImagePtr>(image), rect);
 }
 
 PositionWithAffinity RenderObject::createPositionWithAffinity(int offset, Affinity affinity) const
@@ -3025,6 +2997,80 @@ TextStream& operator<<(TextStream& ts, const RenderObject::RepaintRects& repaint
     if (repaintRects.outlineBoundsRect && repaintRects.outlineBoundsRect != repaintRects.clippedOverflowRect)
         ts << " (outline bounds "_s << repaintRects.outlineBoundsRect << ')';
     return ts;
+}
+
+auto RenderObject::CachedImageListener::create(RenderObject& renderer) -> Ref<CachedImageListener>
+{
+    return adoptRef(*new CachedImageListener(renderer));
+}
+
+RenderObject::CachedImageListener::CachedImageListener(RenderObject& renderer)
+    : m_renderer(renderer)
+{
+}
+
+void RenderObject::CachedImageListener::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        renderer->notifyFinished(resource, metrics, loadWillContinueInAnotherProcess);
+}
+
+void RenderObject::CachedImageListener::imageChanged(CachedImage* image, const IntRect* rect)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        renderer->imageChanged(static_cast<WrappedImagePtr>(image), rect);
+}
+
+bool RenderObject::CachedImageListener::allowsAnimation() const
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        return renderer->allowsAnimation();
+    return true;
+}
+
+bool RenderObject::CachedImageListener::canDestroyDecodedData() const
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        return renderer->canDestroyDecodedData();
+    return true;
+}
+
+VisibleInViewportState RenderObject::CachedImageListener::imageFrameAvailable(CachedImage& image, ImageAnimatingState state, const IntRect* rect)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        return renderer->imageFrameAvailable(image, state, rect);
+    return VisibleInViewportState::No;
+}
+
+VisibleInViewportState RenderObject::CachedImageListener::imageVisibleInViewport(const Document& document) const
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        return renderer->imageVisibleInViewport(document);
+    return VisibleInViewportState::No;
+}
+
+void RenderObject::CachedImageListener::didRemoveCachedImageClient(CachedImage& image)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        renderer->didRemoveCachedImageClient(image);
+}
+
+void RenderObject::CachedImageListener::imageContentChanged(CachedImage& image)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        renderer->imageContentChanged(image);
+}
+
+void RenderObject::CachedImageListener::scheduleRenderingUpdateForImage(CachedImage& image)
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        renderer->scheduleRenderingUpdateForImage(image);
+}
+
+VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
+{
+    imageChanged(static_cast<WrappedImagePtr>(&image), changeRect);
+    return VisibleInViewportState::No;
 }
 
 #if ENABLE(TREE_DEBUGGING)

@@ -3049,12 +3049,11 @@ static bool didStartURLSchemeTaskForImportedScript = false;
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:finalURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerDictionary]);
     [task didReceiveResponse:response.get()];
 
-    if (auto data = _dataMappings.get([finalURL absoluteString]))
+    if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
         [task didReceiveData:data.get()];
-    else if (_bytes) {
-        RetainPtr data = toNSDataNoCopy(unsafeSpan8(_bytes), FreeWhenDone::No);
-        [task didReceiveData:data.get()];
-    } else
+    else if (_bytes)
+        [task didReceiveData:toNSData(byteCast<uint8_t>(unsafeSpan(_bytes))).get()];
+    else
         [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
 
     [task didFinish];

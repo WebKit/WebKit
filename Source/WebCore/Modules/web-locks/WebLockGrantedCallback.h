@@ -39,6 +39,10 @@ class WebLockGrantedCallback : public RefCounted<WebLockGrantedCallback>, public
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<RefPtr<DOMPromise>> invoke(WebLock*) = 0;
 
 private:

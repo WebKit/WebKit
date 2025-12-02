@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionControllerProxy);
 
 RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllerProxies().get(identifier).get();
+    return webExtensionControllerProxies().get(identifier);
 }
 
 Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const WebExtensionControllerParameters& parameters, WebPage* newPage)

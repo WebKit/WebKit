@@ -6,7 +6,10 @@
 </head>
 <body>
 
-<abbr role="group" id="abbr" title="a">Foo</abbr>
+<div>
+    <!-- <div> is added to break text stitching, so the test passes with and without accessibility text-stitching enabled. -->
+    <abbr role="group" id="abbr" title="a">Foo</abbr>
+</div>
 <acronym role="group" id="acronym" title="b">Bar</acronym>
 
 <script>

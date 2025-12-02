@@ -46,6 +46,10 @@ public:
     static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
     ~TrustedTypePolicyFactory();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
     bool isHTML(JSC::JSValue) const;
     bool isScript(JSC::JSValue) const;

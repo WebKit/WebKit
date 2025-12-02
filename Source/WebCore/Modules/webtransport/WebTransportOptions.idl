@@ -30,4 +30,8 @@
     boolean requireUnreliable = false;
     sequence<WebTransportHash> serverCertificateHashes;
     WebTransportCongestionControl congestionControl = "default";
+    unsigned short? anticipatedConcurrentIncomingUnidirectionalStreams;
+    unsigned short? anticipatedConcurrentIncomingBidirectionalStreams;
+    sequence<DOMString> protocols = [];
+    DatagramsReadableMode datagramsReadableMode;
 };

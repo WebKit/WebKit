@@ -151,6 +151,7 @@ NS_ASSUME_NONNULL_END
 @end
 #else
 #import <AppKit/NSResponder.h>
+@protocol NSUserInterfaceValidations;
 @interface AVPlayerController : NSResponder <NSUserInterfaceValidations>
 @end
 #endif
@@ -362,23 +363,17 @@ NS_ASSUME_NONNULL_END
 #import <AVKit/AVRoutePickerView_Private.h>
 #import <AVKit/AVRoutePickerView_WebKitOnly.h>
 #else
+
+#import <AVKit/AVRoutePickerView.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol AVRoutePickerViewDelegate;
+@interface AVRoutePickerView (SPI)
 
-@interface AVRoutePickerView : NSView
+- (void)showRoutePickingControlsForOutputContext:(AVOutputContext *)outputContext relativeToRect:(CGRect)positioningRect ofView:(NSView *)positioningView;
 
-- (void)showRoutePickingControlsForOutputContext:(AVOutputContext *)outputContext relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView;
-
-@property (nonatomic, nullable, weak) id<AVRoutePickerViewDelegate> delegate;
 @property (nonatomic) BOOL routeListAlwaysHasDarkAppearance;
 
-@end
-
-@protocol AVRoutePickerViewDelegate <NSObject>
-@optional
-- (void)routePickerViewWillBeginPresentingRoutes:(AVRoutePickerView *)routePickerView;
-- (void)routePickerViewDidEndPresentingRoutes:(AVRoutePickerView *)routePickerView;
 @end
 
 NS_ASSUME_NONNULL_END
@@ -408,8 +403,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) __kindof AVPictureInPictureContentViewController *activeContentViewController API_AVAILABLE(ios(16.0),tvos(16.0)) API_UNAVAILABLE(macos, watchos);
 @end
 
-NS_ASSUME_NONNULL_END
 
+NS_ASSUME_NONNULL_END
 #endif // PLATFORM(IOS_FAMILY)
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -626,3 +621,56 @@ NS_ASSUME_NONNULL_END
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // HAVE(AVKIT_CONTENT_SOURCE)
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#if !__has_include(<AVKit/AVLegibleMediaOptionsMenuController.h>)
+
+typedef NS_ENUM(NSInteger, AVLegibleMediaOptionsMenuType) {
+    AVLegibleMediaOptionsMenuTypeDefault,
+    AVLegibleMediaOptionsMenuTypeCaptionAppearance
+} API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
+
+typedef NS_ENUM(NSInteger, AVLegibleMediaOptionEnablementState) {
+    AVLegibleMediaOptionEnablementStateOff,
+    AVLegibleMediaOptionEnablementStateOn
+} API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol AVLegibleMediaOptionsMenuControllerDelegate;
+
+API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos)
+@interface AVLegibleMediaOptionsMenuController : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithPlayer:(nullable AVPlayer *)player NS_DESIGNATED_INITIALIZER;
+
+#if TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+- (nullable NSMenu *)buildMenuOfType:(AVLegibleMediaOptionsMenuType)type;
+#else
+- (nullable UIMenu *)buildMenuOfType:(AVLegibleMediaOptionsMenuType)type;
+#endif
+
+- (void)updatePlayer:(nullable AVPlayer *)player;
+
+@property (nonatomic, weak) id<AVLegibleMediaOptionsMenuControllerDelegate> delegate;
+@property (nonatomic, readonly) AVLegibleMediaOptionEnablementState currentEnablementState;
+
+@end
+
+API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos)
+@protocol AVLegibleMediaOptionsMenuControllerDelegate <NSObject>
+@optional
+
+- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didUpdateEnablementState:(AVLegibleMediaOptionEnablementState)enablementState;
+- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didRequestCaptionPreviewForProfileID:(NSString *)profileID;
+- (void)legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:(AVLegibleMediaOptionsMenuController *)menuController;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
+
+#endif // USE(APPLE_INTERNAL_SDK)

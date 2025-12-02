@@ -265,6 +265,15 @@ static void webViewTitleChanged(WebKitWebView* webView, GParamSpec*, WPEView* vi
     wpe_toplevel_set_title(wpe_view_get_toplevel(view), privateTitle ? privateTitle : title);
     g_free(privateTitle);
 }
+
+static void displayDisconnected(WPEDisplay*, GError* error)
+{
+    if (error)
+        g_warning("WPE display disconnected: %s", error->message);
+    else
+        g_warning("WPE display disconnected");
+    _exit(1);
+}
 #endif
 
 
@@ -617,6 +626,7 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
 
 #if ENABLE_WPE_PLATFORM
     if (auto* wpeView = webkit_web_view_get_wpe_view(webView)) {
+        g_signal_connect(wpe_view_get_display(wpeView), "disconnected", G_CALLBACK(displayDisconnected), nullptr);
         auto* wpeToplevel = wpe_view_get_toplevel(wpeView);
         if (windowWidth > 0 && windowHeight > 0)
             wpe_toplevel_resize(wpeToplevel, windowWidth, windowHeight);

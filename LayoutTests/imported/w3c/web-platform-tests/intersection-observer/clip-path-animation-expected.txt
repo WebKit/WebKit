@@ -1,3 +1,3 @@
 
-FAIL clip-path-animation assert_approx_equals: entries[1].intersectionRect.left expected 0 +/- 0 but got 8
+FAIL clip-path-animation assert_approx_equals: entries[1].intersectionRect.left expected 0 +/- 0 but got 28
 

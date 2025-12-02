@@ -45,11 +45,12 @@ SVGConditionalProcessingAttributes::SVGConditionalProcessingAttributes(SVGElemen
     : m_requiredExtensions(SVGStringList::create(&contextElement))
     , m_systemLanguage(SVGStringList::create(&contextElement))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         SVGTests::PropertyRegistry::registerConditionalProcessingAttributeProperty<SVGNames::requiredExtensionsAttr, &SVGConditionalProcessingAttributes::m_requiredExtensions>();
         SVGTests::PropertyRegistry::registerConditionalProcessingAttributeProperty<SVGNames::systemLanguageAttr, &SVGConditionalProcessingAttributes::m_systemLanguage>();
-    });
+    }
 }
 
 SVGTests::SVGTests(SVGElement* contextElement)

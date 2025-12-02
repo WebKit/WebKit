@@ -842,9 +842,9 @@ static void prewarmLogs()
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool shouldIgnoreLogMessage(std::span<const Latin1Character> logChannel)
+static bool shouldIgnoreLogMessage(std::span<const char> logChannel)
 {
-    return equalSpans(logChannel, "com.apple.xpc\0"_span8) || equalSpans(logChannel, "com.apple.CoreAnalytics\0"_span8);
+    return equalSpans(logChannel, "com.apple.xpc\0"_span) || equalSpans(logChannel, "com.apple.CoreAnalytics\0"_span);
 }
 
 static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogClient>&& newLogClient)
@@ -879,12 +879,12 @@ static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogCli
         if (Thread::currentThreadIsRealtime())
             return;
 
-        auto logChannel = unsafeSpan8IncludingNullTerminator(msg->subsystem);
+        auto logChannel = unsafeSpanIncludingNullTerminator(msg->subsystem);
         if (logChannel.size() > logSubsystemMaxSize)
             return;
         if (shouldIgnoreLogMessage(logChannel))
             return;
-        auto logCategory = unsafeSpan8IncludingNullTerminator(msg->category);
+        auto logCategory = unsafeSpanIncludingNullTerminator(msg->category);
         if (logCategory.size() > logCategoryMaxSize)
             return;
 
@@ -892,7 +892,7 @@ static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogCli
             type = OS_LOG_TYPE_ERROR;
 
         if (auto messageString = adoptSystemMalloc(os_log_copy_message_string(msg))) {
-            auto logString = spanConstCast<Latin1Character>(unsafeSpan8IncludingNullTerminator(messageString.get()));
+            auto logString = spanConstCast<char>(unsafeSpanIncludingNullTerminator(messageString.get()));
             if (logString.size() > logStringMaxSize) {
                 logString = logString.first(logStringMaxSize);
                 logString.back() = 0;

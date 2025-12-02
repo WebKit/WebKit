@@ -374,6 +374,7 @@ public:
     void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
+    void simulatePrivateClickMeasurementConversion(PAL::SessionID, int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
     void clearPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void()>&&);
     bool allowsPrivateClickMeasurementTestFunctionality() const;
@@ -396,7 +397,7 @@ public:
 
     NetworkConnectionToWebProcess* webProcessConnection(WebCore::ProcessIdentifier) const;
     RefPtr<NetworkConnectionToWebProcess> protectedWebProcessConnection(WebCore::ProcessIdentifier) const;
-    RefPtr<NetworkConnectionToWebProcess> webProcessConnection(const IPC::Connection&) const;
+    RefPtr<NetworkConnectionToWebProcess> protectedWebProcessConnection(const IPC::Connection&) const;
     WebCore::MessagePortChannelRegistry& messagePortChannelRegistry() { return m_messagePortChannelRegistry; }
     CheckedRef<WebCore::MessagePortChannelRegistry> checkedMessagePortChannelRegistry() { return m_messagePortChannelRegistry; }
 

@@ -30,5 +30,5 @@
 ] interface WritableStreamSink {
     [CallWith=CurrentScriptExecutionContext] Promise<undefined> write(any value);
     undefined close();
-    undefined error(DOMString message);
+    undefined abort(any reason);
 };

@@ -1,0 +1,15 @@
+This test passes if the child frame can modify the grandchild iframe's DOM (once the grandchild iframe has navigated away from a cross-origin site to about:blank).
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Child iframe
+
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+Hello from your parent

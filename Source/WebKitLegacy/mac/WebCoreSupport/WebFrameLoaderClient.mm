@@ -964,7 +964,7 @@ void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&
     CallFormDelegate(getWebView(m_webFrame.get()), @selector(willSendSubmitEventToForm:inFrame:withValues:), formElement, m_webFrame.get(), values);
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(WebCore::FormState& formState, CompletionHandler<void()>&& completionHandler)
+void WebFrameLoaderClient::dispatchWillSubmitForm(WebCore::FormState& formState, URL&&, String&&, CompletionHandler<void()>&& completionHandler)
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate) {
@@ -1993,10 +1993,9 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         }
 
         m_loadingIcon = true;
-        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [this, weakThis = WeakPtr { *this }] (WebCore::FragmentedSharedBuffer* buffer) {
-            if (!weakThis)
-                return;
-            finishedLoadingIcon(buffer);
+        documentLoader->didGetLoadDecisionForIcon(true, icon->second, [weakThis = WeakPtr { *this }] (WebCore::FragmentedSharedBuffer* buffer) {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->finishedLoadingIcon(buffer);
         });
     }
 #else

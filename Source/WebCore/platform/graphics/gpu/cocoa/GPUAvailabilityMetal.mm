@@ -34,12 +34,10 @@ namespace WebCore {
 
 bool isGPUAvailable()
 {
-    static dispatch_once_t once;
-    static bool metalAvailable = false;
-    dispatch_once(&once, ^{
+    static bool metalAvailable = [] {
         auto devices = adoptNS(MTLCopyAllDevices());
-        metalAvailable = devices && [devices.get() count] > 0;
-    });
+        return devices && [devices.get() count] > 0;
+    }();
     return metalAvailable;
 }
 

@@ -92,7 +92,7 @@ private:
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
-    virtual void willCommitLayerTree(MainFrameData&) { }
+    virtual void willCommitMainFrameData(MainFrameData&) { }
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond);

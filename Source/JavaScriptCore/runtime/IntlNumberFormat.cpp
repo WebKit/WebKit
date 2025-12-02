@@ -692,7 +692,7 @@ static Vector<IntlNumberFormatField> flattenFields(Vector<IntlNumberFormatField>
     //     H:    (14, 15) endRange   group ","
     //     I:    (15, 18) endRange   integer
 
-    std::sort(fields.begin(), fields.end(), [](auto& lhs, auto& rhs) {
+    std::ranges::sort(fields, [](auto& lhs, auto& rhs) {
         if (lhs.m_range.begin() < rhs.m_range.begin())
             return true;
         if (lhs.m_range.begin() > rhs.m_range.begin())

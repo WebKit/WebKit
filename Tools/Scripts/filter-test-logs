@@ -25,6 +25,27 @@ import os
 import argparse
 import sys
 import re
+import time
+
+# This prints the progress every interval_seconds to avoid that the step gets killed
+# by buildbot because "command timed out: XXX seconds without output running YYY"
+class KeepAliveStdoutProgress:
+
+    def __init__(self, interval_seconds=300, check_every_n_lines=100):
+        self.line_count = 0
+        self.last_progress_time = time.time()
+        self.interval_seconds = interval_seconds
+        self.check_every_n_lines = check_every_n_lines
+
+    def maybe_update_progress(self):
+        self.line_count += 1
+        # Only check time every N lines to avoid expensive system calls
+        if self.line_count % self.check_every_n_lines == 0:
+            current_time = time.time()
+            if current_time - self.last_progress_time >= self.interval_seconds:
+                print(f'filter-test-logs progress: {self.line_count} lines processed', flush=True)
+                self.last_progress_time = current_time
+
 
 def parser():
     parser = argparse.ArgumentParser(description='filter test output')
@@ -44,6 +65,7 @@ def parser():
 
 def filter_jsc_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
@@ -53,10 +75,13 @@ def filter_jsc_tests(log_file_name):
             elif line.startswith('** The following JSC') or line.startswith('Results'):
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def filter_layout_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
@@ -68,61 +93,73 @@ def filter_layout_tests(log_file_name):
             elif line.startswith('=> Results') or 'Exiting early' in line or 'leaks found' in line:
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def filter_scan_build(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
             f.write(line)
-            if line.startswith('====='):
-                print(line, end='')
-            if print_all_lines:
+            if line.startswith('=====') or print_all_lines:
                 print(line, end='')
             # A success or failure is always preceeded by **
-            if line.startswith('**'):
+            elif line.startswith('**'):
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def filter_webdriver_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
             f.write(line)
             if print_all_lines:
                 print(line, end='')
-            if 'tests ran as expected' in line:
+            elif 'tests ran as expected' in line:
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def filter_test262(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
             f.write(line)
             if print_all_lines or line.startswith('! NEW FAIL'):
                 print(line, end='')
-            if 'TESTS SUMMARY---' in line:
+            elif 'TESTS SUMMARY---' in line:
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def filter_minibrowser_tests(log_file_name):
     log_file = os.path.abspath(f'{log_file_name}')
+    keep_alive_stdout = KeepAliveStdoutProgress()
     with open(log_file, 'w') as f:
         print_all_lines = False
         for line in sys.stdin:
             f.write(line)
             if print_all_lines:
                 print(line, end='')
-            if 'Bundle passed tests on all this' in line:
+            elif 'Bundle passed tests on all this' in line:
                 print_all_lines = True
                 print(line, end='')
+            else:
+                keep_alive_stdout.maybe_update_progress()
 
 
 def main():

@@ -49,8 +49,7 @@ MetaAllocator::~MetaAllocator()
     for (CheckedPtr node = m_freeSpaceSizeMap.first(); node;) {
         CheckedPtr next = node->successor();
         m_freeSpaceSizeMap.remove(node.get());
-        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT
-        freeFreeSpaceNode(nodePtr);
+        freeFreeSpaceNode(WTFMove(node));
         node = WTFMove(next);
     }
 #ifndef NDEBUG
@@ -233,8 +232,7 @@ MetaAllocator::FreeSpacePtr MetaAllocator::findAndRemoveFreeSpace(size_t sizeInB
         
         m_freeSpaceStartAddressMap.remove(node->m_start);
         m_freeSpaceEndAddressMap.remove(node->m_end);
-        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT
-        freeFreeSpaceNode(nodePtr);
+        freeFreeSpaceNode(WTFMove(node));
     } else {
         // Try to be a good citizen and ensure that the returned chunk of memory
         // straddles as few pages as possible, but only insofar as doing so will
@@ -354,7 +352,7 @@ void MetaAllocator::addFreeSpace(FreeSpacePtr start, size_t sizeInBytes)
             m_freeSpaceStartAddressMap.remove(rightStart);
             m_freeSpaceEndAddressMap.remove(rightEnd);
             
-            freeFreeSpaceNode(rightNode.get());
+            freeFreeSpaceNode(WTFMove(rightNode));
 
             leftNode->m_end += (sizeInBytes + rightSize);
 
@@ -484,12 +482,13 @@ MetaAllocator::FreeSpaceNode* MetaAllocator::allocFreeSpaceNode()
     return new (NotNull, MetaAllocatorFreeSpaceMalloc::malloc(sizeof(FreeSpaceNode))) FreeSpaceNode();
 }
 
-void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
+void MetaAllocator::freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&& node)
 {
 #ifndef NDEBUG
     m_mallocBalance--;
 #endif
-    MetaAllocatorFreeSpaceMalloc::free(node);
+    SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT
+    MetaAllocatorFreeSpaceMalloc::free(nodePtr);
 }
 
 #if ENABLE(META_ALLOCATOR_PROFILE)

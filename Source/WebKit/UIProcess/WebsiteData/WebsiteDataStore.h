@@ -48,6 +48,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -178,6 +179,7 @@ public:
 
     void setPrivateClickMeasurementDebugMode(bool);
     void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
+    void simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);
 
     bool storageSiteValidationEnabled() const { return m_storageSiteValidationEnabled; }
     void setStorageSiteValidationEnabled(bool);
@@ -678,8 +680,18 @@ private:
 
     RemoveDataTaskCounter m_removeDataTaskCounter;
     uint64_t m_cookiesVersion { 0 };
-};
+} SWIFT_SHARED_REFERENCE(refDataStore, derefDataStore);
 
+}
+
+inline void refDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebsiteDataStore)

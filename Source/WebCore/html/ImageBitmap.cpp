@@ -775,6 +775,7 @@ class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public A
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(FileReaderLoaderClient);
 
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {

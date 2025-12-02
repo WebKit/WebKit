@@ -1285,7 +1285,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         {
             auto type = adoptSystemMalloc(method_copyArgumentType(method, 2));
-            structHandlers->add(StringImpl::createFromCString(type.get()), (StructTagHandler) { selector, 0 });
+            structHandlers->add(byteCast<Latin1Character>(unsafeSpan(type.get())), StructTagHandler { selector, nullptr });
         }
     });
 

@@ -78,11 +78,7 @@ static size_t computeRAMSize()
 
 size_t ramSize()
 {
-    static size_t ramSize;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        ramSize = computeRAMSize();
-    });
+    static size_t ramSize = computeRAMSize();
     return ramSize;
 }
 

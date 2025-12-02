@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ScrollingTreeStickyNodeCocoa.h"
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #import "Logging.h"
 #import "ScrollingStateStickyNode.h"
 #import "ScrollingThread.h"
@@ -122,5 +120,3 @@ FloatPoint ScrollingTreeStickyNodeCocoa::layerTopLeft() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ASYNC_SCROLLING)

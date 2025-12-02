@@ -40,6 +40,10 @@ class SQLTransactionErrorCallback : public ThreadSafeRefCounted<SQLTransactionEr
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(SQLError&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(SQLError&) = 0;
 

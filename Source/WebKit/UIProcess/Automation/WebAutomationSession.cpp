@@ -376,6 +376,33 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
         .release();
 }
 
+Expected<PageAndFrameHandle, AutomationCommandError> WebAutomationSession::extractBrowsingContextHandles(const String& handle)
+{
+    if (handle.isEmpty())
+        return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME_AND_MESSAGE(InvalidParameter, "Browsing context handles cannot be empty"_s));
+
+    if (m_handleWebPageMap.contains(handle))
+        return { { handle, emptyString() } };
+
+    bool notFound = false;
+    auto frameID = webFrameIDForHandle(handle, notFound);
+    if (!notFound && frameID) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+            // Main frames are expected to be handled by "page-" handles
+            ASSERT(!frame->isMainFrame());
+            if (RefPtr page = frame->page()) {
+                auto topLevelHandle = handleForWebPageProxy(*page);
+                if (!topLevelHandle.isEmpty())
+                    return { { topLevelHandle, handle } };
+            }
+        }
+    }
+
+    // WebDriver-BiDi's "get a navigable" algorithm uses just FrameNotFound for both top level and child contexts
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable
+    return makeUnexpected(AUTOMATION_COMMAND_ERROR_WITH_NAME(FrameNotFound));
+}
+
 // Platform-independent Commands.
 
 void WebAutomationSession::getNextContext(Vector<Ref<WebPageProxy>>&& pages, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>> contexts, CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&& callback)

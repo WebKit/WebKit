@@ -45,12 +45,13 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     : SVGElement(tagName, document, WTFMove(propertyRegistry))
     , SVGURIReference(this)
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::spreadMethodAttr, SVGSpreadMethodType, &SVGGradientElement::m_spreadMethod>();
         PropertyRegistry::registerProperty<SVGNames::gradientUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGGradientElement::m_gradientUnits>();
         PropertyRegistry::registerProperty<SVGNames::gradientTransformAttr, &SVGGradientElement::m_gradientTransform>();
-    });
+    }
 }
 
 void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

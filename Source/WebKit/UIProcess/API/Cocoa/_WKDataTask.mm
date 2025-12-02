@@ -139,7 +139,7 @@ private:
     RefPtr page = _dataTask->page();
     if (!page)
         return nil;
-    return page->cocoaView().unsafeGet();
+    return page->cocoaView().autorelease();
 }
 
 - (id <_WKDataTaskDelegate>)delegate

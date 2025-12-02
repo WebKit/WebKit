@@ -42,17 +42,17 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleFillData);
 
 StyleFillData::StyleFillData()
-    : opacity(RenderStyle::initialFillOpacity())
-    , paint(RenderStyle::initialFill())
-    , visitedLinkPaint(RenderStyle::initialFill())
+    : fillOpacity(RenderStyle::initialFillOpacity())
+    , fill(RenderStyle::initialFill())
+    , visitedLinkFill(RenderStyle::initialFill())
 {
 }
 
 inline StyleFillData::StyleFillData(const StyleFillData& other)
     : RefCounted<StyleFillData>()
-    , opacity(other.opacity)
-    , paint(other.paint)
-    , visitedLinkPaint(other.visitedLinkPaint)
+    , fillOpacity(other.fillOpacity)
+    , fill(other.fill)
+    , visitedLinkFill(other.visitedLinkFill)
 {
 }
 
@@ -64,37 +64,37 @@ Ref<StyleFillData> StyleFillData::copy() const
 #if !LOG_DISABLED
 void StyleFillData::dumpDifferences(TextStream& ts, const StyleFillData& other) const
 {
-    LOG_IF_DIFFERENT(opacity);
-    LOG_IF_DIFFERENT(paint);
-    LOG_IF_DIFFERENT(visitedLinkPaint);
+    LOG_IF_DIFFERENT(fillOpacity);
+    LOG_IF_DIFFERENT(fill);
+    LOG_IF_DIFFERENT(visitedLinkFill);
 }
 #endif
 
 bool StyleFillData::operator==(const StyleFillData& other) const
 {
-    return opacity == other.opacity
-        && paint == other.paint
-        && visitedLinkPaint == other.visitedLinkPaint;
+    return fillOpacity == other.fillOpacity
+        && fill == other.fill
+        && visitedLinkFill == other.visitedLinkFill;
 }
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStrokeData);
 
 StyleStrokeData::StyleStrokeData()
-    : opacity(RenderStyle::initialStrokeOpacity())
-    , paint(RenderStyle::initialStroke())
-    , visitedLinkPaint(RenderStyle::initialStroke())
-    , dashOffset(RenderStyle::initialStrokeDashOffset())
-    , dashArray(RenderStyle::initialStrokeDashArray())
+    : strokeOpacity(RenderStyle::initialStrokeOpacity())
+    , stroke(RenderStyle::initialStroke())
+    , visitedLinkStroke(RenderStyle::initialStroke())
+    , strokeDashOffset(RenderStyle::initialStrokeDashOffset())
+    , strokeDashArray(RenderStyle::initialStrokeDashArray())
 {
 }
 
 inline StyleStrokeData::StyleStrokeData(const StyleStrokeData& other)
     : RefCounted<StyleStrokeData>()
-    , opacity(other.opacity)
-    , paint(other.paint)
-    , visitedLinkPaint(other.visitedLinkPaint)
-    , dashOffset(other.dashOffset)
-    , dashArray(other.dashArray)
+    , strokeOpacity(other.strokeOpacity)
+    , stroke(other.stroke)
+    , visitedLinkStroke(other.visitedLinkStroke)
+    , strokeDashOffset(other.strokeDashOffset)
+    , strokeDashArray(other.strokeDashArray)
 {
 }
 
@@ -105,36 +105,36 @@ Ref<StyleStrokeData> StyleStrokeData::copy() const
 
 bool StyleStrokeData::operator==(const StyleStrokeData& other) const
 {
-    return opacity == other.opacity
-        && paint == other.paint
-        && visitedLinkPaint == other.visitedLinkPaint
-        && dashOffset == other.dashOffset
-        && dashArray == other.dashArray;
+    return strokeOpacity == other.strokeOpacity
+        && stroke == other.stroke
+        && visitedLinkStroke == other.visitedLinkStroke
+        && strokeDashOffset == other.strokeDashOffset
+        && strokeDashArray == other.strokeDashArray;
 }
 
 #if !LOG_DISABLED
 void StyleStrokeData::dumpDifferences(TextStream& ts, const StyleStrokeData& other) const
 {
-    LOG_IF_DIFFERENT(opacity);
-    LOG_IF_DIFFERENT(paint);
-    LOG_IF_DIFFERENT(visitedLinkPaint);
-    LOG_IF_DIFFERENT(dashOffset);
-    LOG_IF_DIFFERENT(dashArray);
+    LOG_IF_DIFFERENT(strokeOpacity);
+    LOG_IF_DIFFERENT(stroke);
+    LOG_IF_DIFFERENT(visitedLinkStroke);
+    LOG_IF_DIFFERENT(strokeDashOffset);
+    LOG_IF_DIFFERENT(strokeDashArray);
 }
 #endif
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleStopData);
 
 StyleStopData::StyleStopData()
-    : opacity(RenderStyle::initialStopOpacity())
-    , color(RenderStyle::initialStopColor())
+    : stopOpacity(RenderStyle::initialStopOpacity())
+    , stopColor(RenderStyle::initialStopColor())
 {
 }
 
 inline StyleStopData::StyleStopData(const StyleStopData& other)
     : RefCounted<StyleStopData>()
-    , opacity(other.opacity)
-    , color(other.color)
+    , stopOpacity(other.stopOpacity)
+    , stopColor(other.stopColor)
 {
 }
 
@@ -145,15 +145,15 @@ Ref<StyleStopData> StyleStopData::copy() const
 
 bool StyleStopData::operator==(const StyleStopData& other) const
 {
-    return opacity == other.opacity
-        && color == other.color;
+    return stopOpacity == other.stopOpacity
+        && stopColor == other.stopColor;
 }
 
 #if !LOG_DISABLED
 void StyleStopData::dumpDifferences(TextStream& ts, const StyleStopData& other) const
 {
-    LOG_IF_DIFFERENT(opacity);
-    LOG_IF_DIFFERENT(color);
+    LOG_IF_DIFFERENT(stopOpacity);
+    LOG_IF_DIFFERENT(stopColor);
 }
 #endif
 
@@ -327,26 +327,26 @@ void StyleLayoutData::dumpDifferences(TextStream& ts, const StyleLayoutData& oth
 
 TextStream& operator<<(TextStream& ts, const StyleFillData& data)
 {
-    ts.dumpProperty("opacity"_s, data.opacity);
-    ts.dumpProperty("paint"_s, data.paint);
-    ts.dumpProperty("visited link paint"_s, data.visitedLinkPaint);
+    ts.dumpProperty("opacity"_s, data.fillOpacity);
+    ts.dumpProperty("paint"_s, data.fill);
+    ts.dumpProperty("visited link paint"_s, data.visitedLinkFill);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleStrokeData& data)
 {
-    ts.dumpProperty("opacity"_s, data.opacity);
-    ts.dumpProperty("paint"_s, data.paint);
-    ts.dumpProperty("visited link paint"_s, data.visitedLinkPaint);
-    ts.dumpProperty("dashOffset"_s, data.dashOffset);
-    ts.dumpProperty("dash array"_s, data.dashArray);
+    ts.dumpProperty("opacity"_s, data.strokeOpacity);
+    ts.dumpProperty("paint"_s, data.stroke);
+    ts.dumpProperty("visited link paint"_s, data.visitedLinkStroke);
+    ts.dumpProperty("dashOffset"_s, data.strokeDashOffset);
+    ts.dumpProperty("dash array"_s, data.strokeDashArray);
     return ts;
 }
 
 TextStream& operator<<(TextStream& ts, const StyleStopData& data)
 {
-    ts.dumpProperty("opacity"_s, data.opacity);
-    ts.dumpProperty("color"_s, data.color);
+    ts.dumpProperty("opacity"_s, data.stopOpacity);
+    ts.dumpProperty("color"_s, data.stopColor);
     return ts;
 }
 

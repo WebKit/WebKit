@@ -881,7 +881,7 @@ public:
                 
                 // Check that there are no duplicate cases.
                 Vector<int64_t> caseValues = value->as<SwitchValue>()->caseValues();
-                std::sort(caseValues.begin(), caseValues.end());
+                std::ranges::sort(caseValues);
                 for (unsigned i = 1; i < caseValues.size(); ++i)
                     VALIDATE(caseValues[i - 1] != caseValues[i], ("At ", *value, ", caseValue = ", caseValues[i]));
                 break;

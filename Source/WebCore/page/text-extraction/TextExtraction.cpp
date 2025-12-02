@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "BoundaryPointInlines.h"
+#include "CommonVM.h"
 #include "ComposedTreeIterator.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentPage.h"
@@ -73,6 +74,8 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "RunJavaScriptParameters.h"
+#include "ScriptController.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include "Text.h"
@@ -82,13 +85,21 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleSelection.h"
 #include "WritingMode.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <ranges>
 #include <unicode/uchar.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace TextExtraction {
+
+using namespace JSC;
 
 static String normalizeText(const String& string, unsigned maxDescriptionLength = 512)
 {
@@ -177,7 +188,7 @@ using ClientNodeAttributesMap = WeakHashMap<Node, HashMap<String, String>, WeakP
 struct TraversalContext {
     const ClientNodeAttributesMap clientNodeAttributes;
     const TextAndSelectedRangeMap visibleText;
-    const std::optional<WebCore::FloatRect> rectInRootView;
+    const std::optional<FloatRect> rectInRootView;
     unsigned onlyCollectTextAndLinksCount { 0 };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
@@ -798,8 +809,8 @@ static void pruneEmptyContainersRecursive(Item& item)
 
 static Node* nodeFromJSHandle(JSHandleIdentifier identifier)
 {
-    auto [globalObject, object] = WebKitJSHandle::objectForIdentifier(identifier);
-    if (!globalObject || !object)
+    auto* object = WebKitJSHandle::objectForIdentifier(identifier);
+    if (!object)
         return nullptr;
 
     if (auto* jsNode = jsDynamicCast<JSNode*>(object))
@@ -1771,6 +1782,108 @@ std::optional<SimpleRange> rangeForExtractedText(const LocalFrame& frame, Extrac
         return { makeRangeSelectingNodeContents(*node) };
 
     return searchForText(*node, text);
+}
+
+Vector<FilterRule> extractRules(Vector<FilterRuleData>&& data)
+{
+    return WTF::map(WTFMove(data), [](auto&& data) -> FilterRule {
+        auto&& [name, urlPattern, scriptSource] = WTFMove(data);
+        if (urlPattern.isEmpty())
+            return { WTFMove(name), { FilterRulePattern::Global }, WTFMove(scriptSource) };
+
+        auto regex = Yarr::RegularExpression { urlPattern, { Yarr::Flags::IgnoreCase } };
+        if (!regex.isValid())
+            return { WTFMove(name), { FilterRulePattern::Global }, WTFMove(scriptSource) };
+
+        return { WTFMove(name), { WTFMove(regex) }, WTFMove(scriptSource) };
+    });
+}
+
+static DOMWrapperWorld& filteringWorld()
+{
+    static NeverDestroyed<RefPtr<DOMWrapperWorld>> world = DOMWrapperWorld::create(commonVM(), DOMWrapperWorld::Type::Internal, "Text Extraction Filtering Rules"_s);
+    return *world.get();
+}
+
+void applyRules(const String& input, std::optional<NodeIdentifier>&& containerNodeID, const Vector<FilterRule>& rules, Page& page, CompletionHandler<void(const String&)>&& completion)
+{
+    if (rules.isEmpty())
+        return completion(input);
+
+    RefPtr mainFrame = page.localMainFrame();
+    if (!mainFrame)
+        return completion(input);
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return completion(input);
+
+    RefPtr containerNode = resolveNodeWithBodyAsFallback(page, WTFMove(containerNodeID));
+    if (!containerNode)
+        return completion(input);
+
+    Ref world = filteringWorld();
+    auto arguments = [&] {
+        ArgumentMap argumentMap;
+        argumentMap.reserveInitialCapacity(2);
+        argumentMap.add("input"_s, [input](auto& lexicalGlobalObject) {
+            JSLockHolder lock { &lexicalGlobalObject };
+            return JSValue { jsString(commonVM(), input) };
+        });
+        argumentMap.add("containerNode"_s, [containerNode, mainFrame, world = world.copyRef()](auto& lexicalGlobalObject) {
+            if (!containerNode)
+                return jsNull();
+
+            JSLockHolder lock { &lexicalGlobalObject };
+            return toJS(&lexicalGlobalObject, mainFrame->checkedScript()->globalObject(world), *containerNode);
+        });
+        return std::make_optional(WTFMove(argumentMap));
+    }();
+
+    auto filteredStrings = Box<Vector<String>>::create();
+    auto aggregator = MainRunLoopCallbackAggregator::create([completion = WTFMove(completion), input, filteredStrings] mutable {
+        if (filteredStrings->isEmpty())
+            return completion(input);
+
+        auto shortestFilteredString = std::ranges::min(*filteredStrings, { }, [](auto& string) {
+            return string.length();
+        });
+        completion(WTFMove(shortestFilteredString));
+    });
+
+    auto urlString = document->url().string();
+    for (auto& [name, urlPattern, source] : rules) {
+        bool shouldApplyRule = WTF::switchOn(urlPattern, [](FilterRulePattern pattern) {
+            return pattern == FilterRulePattern::Global;
+        }, [&](const Yarr::RegularExpression& regex) {
+            return regex.match(urlString) >= 0;
+        });
+
+        if (!shouldApplyRule)
+            continue;
+
+        auto parameters = RunJavaScriptParameters {
+            source,
+            SourceTaintedOrigin::Untainted,
+            { },
+            true, // runAsAsyncFunction
+            WTFMove(arguments),
+            false, // forceUserGesture
+            RemoveTransientActivation::No
+        };
+
+        JSLockHolder lock(commonVM());
+        mainFrame->checkedScript()->executeAsynchronousUserAgentScriptInWorld(world, WTFMove(parameters), [document, aggregator, filteredStrings](auto valueOrException) {
+            if (!valueOrException)
+                return;
+
+            auto jsValue = valueOrException.value();
+            if (!jsValue.isString())
+                return;
+
+            filteredStrings->append(jsValue.getString(document->globalObject()));
+        });
+    }
 }
 
 } // namespace TextExtraction

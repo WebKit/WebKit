@@ -102,6 +102,7 @@ public:
 
     virtual IntSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;
+    virtual RefPtr<NativeImage> copyNativeImage() const = 0;
 
     virtual bool isRemoteProxy() const { return false; }
     virtual bool isLibWebRTC() const { return false; }
@@ -116,8 +117,6 @@ public:
     WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
-
-    void draw(GraphicsContext&, const FloatRect&, ImageOrientation, bool shouldDiscardAlpha);
 
     const PlatformVideoColorSpace& colorSpace() const { return m_colorSpace; }
 

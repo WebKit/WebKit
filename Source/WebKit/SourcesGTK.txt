@@ -56,6 +56,8 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
 
+NetworkProcess/webrtc/rice/RiceBackend.cpp
+
 Platform/IPC/glib/ConnectionGLib.cpp
 
 Platform/IPC/unix/ArgumentCodersUnix.cpp
@@ -311,6 +313,7 @@ UIProcess/gtk/WebTextCheckerClient.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/XR/openxr/OpenXRExtensions.cpp
+UIProcess/XR/openxr/OpenXRHitTestManager.cpp
 UIProcess/XR/openxr/OpenXRInput.cpp
 UIProcess/XR/openxr/OpenXRInputSource.cpp
 UIProcess/XR/openxr/OpenXRLayer.cpp
@@ -337,6 +340,8 @@ WebProcess/Inspector/gtk/RemoteWebInspectorUIGtk.cpp
 WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+
+WebProcess/Network/webrtc/rice/RiceBackendProxy.cpp
 
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 

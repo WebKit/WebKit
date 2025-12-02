@@ -44,11 +44,7 @@ namespace WebCore {
 
 ThreadSafeWeakHashSet<WorkerOrWorkletThread>& WorkerOrWorkletThread::workerOrWorkletThreads()
 {
-    static LazyNeverDestroyed<ThreadSafeWeakHashSet<WorkerOrWorkletThread>> workerOrWorkletThreads;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        workerOrWorkletThreads.construct();
-    });
+    static NeverDestroyed<ThreadSafeWeakHashSet<WorkerOrWorkletThread>> workerOrWorkletThreads;
     return workerOrWorkletThreads;
 }
 

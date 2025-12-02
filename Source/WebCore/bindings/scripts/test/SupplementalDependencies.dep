@@ -14,6 +14,7 @@ ShadowRealmGlobalScopeConstructors.idl:
 JSSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
 SharedWorkerGlobalScopeConstructors.idl:
 JSTestAsyncIterable.h: 
+JSTestAsyncIterableWithoutFlags.h: 
 JSTestAsyncKeyValueIterable.h: 
 JSTestCEReactions.h: 
 JSTestCEReactionsStringifier.h: 

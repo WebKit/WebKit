@@ -27,8 +27,8 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-#include "ScrollingNodeID.h"
-#include "WebAnimationTime.h"
+#include <WebCore/ScrollingNodeID.h>
+#include <WebCore/WebAnimationTime.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div aria-live="polite" id="region">
+    <h1>Important Title</h1>
+    <div id="hidden-content" aria-hidden="true">
+        Unimportant, hidden content.
+    </div>
+</div>
+
+<script>
+var output = "This tests that changes to aria-hidden regions don't result in live region changes.\n\n";    
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("team-list");
+
+    // Modifying the aria-hidden content shouldn't result in an announcement notification.
+    document.getElementById("hidden-content").textContent = "Extremely unimportant, hidden content.";
+ 
+    setTimeout(async function() {
+        await waitFor(() => accessibilityController.accessibleElementById("region") != null);
+        // We should speak a remove notification for this item because of aria-relevant="removals".
+        const newContent = document.createElement("p");
+        newContent.textContent = "More exposed content.";
+        document.getElementById("region").appendChild(newContent);
+    
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

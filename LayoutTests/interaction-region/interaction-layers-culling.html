@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
     #test a {
         display: block;
         margin: 50px;
@@ -11,8 +14,6 @@
 <script src="../resources/ui-helper.js"></script>
 <body>
 <section id="test">
-</div>
-
 </section>
 
 <pre id="results"></pre>
@@ -36,7 +37,7 @@ window.onload = async function () {
 
     await UIHelper.animationFrame();
     await UIHelper.ensureStablePresentationUpdate();
-    results.textContent = await UIHelper.getCALayerTree();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
     testEl.remove();
 
     testRunner.notifyDone();

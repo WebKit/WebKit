@@ -28,7 +28,6 @@
 #include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaPlaybackTargetPicker.h>
 #include <WebCore/MediaPlaybackTargetPickerMock.h>
 #include <WebCore/MediaProducer.h>
@@ -44,6 +43,7 @@ struct ClientState;
 class IntRect;
 class WebMediaSessionLogger;
 class WebMediaSessionManagerClient;
+enum class MediaPlaybackTargetMockState : uint8_t;
 
 class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client, public CanMakeCheckedPtr<WebMediaSessionManager> {
     WTF_MAKE_NONCOPYABLE(WebMediaSessionManager);
@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT static WebMediaSessionManager& singleton();
 
     WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerEnabled(bool);
-    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::MockState);
+    WEBCORE_EXPORT void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetMockState);
     WEBCORE_EXPORT void mockMediaPlaybackTargetPickerDismissPopup();
 
     WEBCORE_EXPORT std::optional<PlaybackTargetClientContextIdentifier> addPlaybackTargetPickerClient(WebMediaSessionManagerClient&, PlaybackTargetClientContextIdentifier);

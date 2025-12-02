@@ -1,0 +1,14 @@
+
+PASS e.style['grid-lanes'] = "\"a a\" 1fr row normal extra" should not set the property value
+PASS e.style['grid-lanes'] = "\"a a a\" \"b b b\" 1fr 1fr 1fr column normal" should not set the property value
+PASS e.style['grid-lanes'] = "row normal \"a a\" 1fr" should not set the property value
+PASS e.style['grid-lanes'] = "\"a a\" 1fr invalid normal" should not set the property value
+PASS e.style['grid-lanes'] = "10px reverse invalid" should not set the property value
+PASS e.style['grid-lanes'] = "fit-content(-10px)" should not set the property value
+PASS e.style['grid-lanes'] = "[] normal" should not set the property value
+PASS e.style['grid-lanes'] = "[] repeat(auto-fill, 10px) \"a\" row-reverse" should not set the property value
+PASS e.style['grid-lanes'] = "[one] 10px [two] [three]" should not set the property value
+PASS e.style['grid-lanes'] = "[auto] 1px" should not set the property value
+PASS e.style['grid-lanes'] = "20% 40% column, reverse" should not set the property value
+PASS e.style['grid-lanes'] = "none auto column-reverse reverse" should not set the property value
+

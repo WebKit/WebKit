@@ -159,7 +159,7 @@ ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdenti
     if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled())
         return nullptr;
 
-    return m_inlinePreviews.get(modelIdentifier.uuid).unsafeGet();
+    return m_inlinePreviews.get(modelIdentifier.uuid);
 }
 
 void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&& completionHandler)

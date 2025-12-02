@@ -67,8 +67,7 @@ public:
     SVGLengthValue(float valueInSpecifiedUnits, SVGLengthType, SVGLengthMode = SVGLengthMode::Other);
     SVGLengthValue(const SVGLengthContext&, float, SVGLengthType = SVGLengthType::Number, SVGLengthMode = SVGLengthMode::Other);
 
-    static std::optional<SVGLengthValue> construct(SVGLengthMode, StringView);
-    static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow);
+    static SVGLengthValue construct(SVGLengthMode, StringView, SVGParsingError&, SVGLengthNegativeValuesMode = SVGLengthNegativeValuesMode::Allow, ASCIILiteral = { });
 
     SVGLengthType lengthType() const;
     SVGLengthMode lengthMode() const { return m_lengthMode; }

@@ -1,0 +1,6 @@
+When prompted, accept to share your audio stream.
+
+
+PASS getUserMedia suports true
+PASS getUserMedia suports false
+

@@ -1,0 +1,11 @@
+{
+    "timeout": 1200,
+    "count": 5,
+    "git_repository": { "url": "https://github.com/WebKit/JetStream.git", "branch": "main" },
+    "entry_point": "index.html?report=true",
+    "output_file": "jetstream3.result",
+    "subtest_url_format": "test=${TEST}",
+    "subtests": {
+        "": ["WSL","UniPoker","uglify-js-wtb","typescript","tsf-wasm","tfjs-wasm-simd","tfjs-wasm","tagcloud-SP","sync-fs","string-unpack-code-SP","stanford-crypto-sha256","stanford-crypto-pbkdf2","stanford-crypto-aes","sqlite3-wasm","splay","richards-wasm","richards","regexp","regex-dna-SP","raytrace-public-class-fields","raytrace-private-class-fields","raytrace","quicksort-wasm","proxy-vue","proxy-mobx","prepack-wtb","pdfjs","OfflineAssembler","octane-zlib","octane-code-load","navier-stokes","n-body-SP","multi-inspector-code-load","ML","mandreel","lebab-wtb","lazy-collections","json-stringify-inspector","json-parse-inspector","jshint-wtb","js-tokens","HashSet-wasm","hash-map","gcc-loops-wasm","gbemu","gaussian-blur","FlightPlanner","first-inspector-code-load","espree-wtb","earley-boyer","doxbee-promise","doxbee-async","delta-blue","date-format-xparb-SP","date-format-tofte-SP","crypto-sha1-SP","crypto-md5-SP","crypto-aes-SP","crypto","coffeescript-wtb","chai-wtb","cdjs","Box2D","bigint-paillier","bigint-noble-secp256k1","bigint-noble-ed25519","bigint-noble-bls12-381","bigint-bigdenary","Basic","base64-SP","babylon-wtb","Babylon","async-fs","argon2-wasm-simd","argon2-wasm","Air","ai-astar","acorn-wtb","8bitbench-wasm","3d-raytrace-SP","3d-cube-SP"]
+    }
+}

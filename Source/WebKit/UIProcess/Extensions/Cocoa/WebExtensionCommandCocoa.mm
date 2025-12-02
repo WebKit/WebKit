@@ -113,9 +113,7 @@ bool WebExtensionCommand::setActivationKey(String activationKey, SuppressEvents 
     if (activationKey.length() > 1)
         return false;
 
-    static NSCharacterSet *notAllowedCharacterSet;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static NSCharacterSet *notAllowedCharacterSet = [] {
         auto *allowedCharacterSet = [NSMutableCharacterSet alphanumericCharacterSet];
         // F1-F12.
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF704, 12)];
@@ -127,8 +125,8 @@ bool WebExtensionCommand::setActivationKey(String activationKey, SuppressEvents 
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF700, 4)];
         [allowedCharacterSet addCharactersInString:@",. "];
 
-        notAllowedCharacterSet = allowedCharacterSet.invertedSet;
-    });
+        return allowedCharacterSet.invertedSet;
+    }();
 
     if ([activationKey.createNSString() rangeOfCharacterFromSet:notAllowedCharacterSet].location != NSNotFound)
         return false;

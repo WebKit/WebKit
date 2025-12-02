@@ -2149,6 +2149,13 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     if (siteIsolationEnabled && !m_hasUsedSiteIsolation)
         m_hasUsedSiteIsolation = true;
 
+    bool isMainFrameNavigation = frame.isMainFrame();
+    Ref sourceProcess = frame.process();
+    if (siteIsolationEnabled && !isMainFrameNavigation && page.didLoadWebArchive()) {
+        ASSERT(sourceProcess.ptr() == &page.protectedMainFrame()->process());
+        return completionHandler(sourceProcess.copyRef(), nullptr, "Navigation is treated as same-site (archive load)"_s);
+    }
+
     if (siteIsolationEnabled && !site.isEmpty()) {
         ASSERT(frameInfo.isMainFrame ? site == mainFrameSite : Site(URL(page.protectedPageLoadState()->activeURL())) == mainFrameSite);
         if (!frame.isMainFrame() && site == mainFrameSite) {
@@ -2167,7 +2174,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         }
     }
 
-    Ref sourceProcess = frame.process();
     ASSERT(isSharedProcess == IsSharedProcess::No);
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, isSharedProcess, mainFrameSite, processSwapRequestedByClient, lockdownMode, enhancedSecurity, frameInfo, dataStore.copyRef());
 
@@ -2190,7 +2196,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
     }
 
-    if (!frame.isMainFrame() && siteIsolationEnabled)
+    if (!isMainFrameNavigation && siteIsolationEnabled)
         return completionHandler(WTFMove(process), suspendedPage.get(), reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
@@ -2269,6 +2275,12 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !siteIsolationEnabled) {
         tryPrewarmWithDomainInformation(sourceProcess, targetSite.domain());
         return { WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s };
+    }
+
+    if (siteIsolationEnabled && navigation.currentRequest().url().isAboutBlank()) {
+        RefPtr navigationOriginatorFrame = navigation.originatingFrameInfo() ? WebFrameProxy::webFrame(navigation.originatingFrameInfo()->frameID) : nullptr;
+        if (navigationOriginatorFrame)
+            return { navigationOriginatorFrame->process(), nullptr, "Frame is navigating to about:blank from a cross site origin. Switching to process that originated navigation."_s };
     }
 
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.

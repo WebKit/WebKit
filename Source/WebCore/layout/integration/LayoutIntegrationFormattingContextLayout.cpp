@@ -27,11 +27,15 @@
 #include "LayoutIntegrationFormattingContextLayout.h"
 
 #include "BlockLayoutState.h"
+#include "InlineLayoutState.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
+#include "LayoutIntegrationUtils.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "TextBoxTrimmer.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -70,91 +74,133 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     updater.updateBoxGeometryAfterIntegrationLayout(box, widthConstraint.value_or(renderer.containingBlock()->contentBoxLogicalWidth()));
 }
 
-void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLogicalTopLeft, Layout::BlockLayoutState& parentBlockLayoutState, Layout::LayoutState& layoutState)
+static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContainer, auto& placedFloats)
 {
-    auto& placedFloats = parentBlockLayoutState.placedFloats();
+    auto blockFormattingContextRootWritingMode = placedFloats.blockFormattingContextRoot().style().writingMode();
+    for (auto& floatItem : placedFloats.list()) {
+        auto* layoutBox = floatItem.layoutBox();
+        if (!layoutBox) {
+            // Floats inherited by IFC do not have associated layout boxes.
+            continue;
+        }
+        auto& floatingObject = rootBlockContainer.insertFloatingBox(downcast<RenderBox>(*layoutBox->rendererForIntegration()));
+        if (floatingObject.isPlaced()) {
+            // We have already inserted this float when laying out a previous middle-block.
+            continue;
+        }
 
+        auto [marginBoxVisualRect, borderBoxVisualRect] = Layout::IntegrationUtils::toMarginAndBorderBoxVisualRect(floatItem.boxGeometry(), rootBlockContainer.size(), blockFormattingContextRootWritingMode);
+        floatingObject.setFrameRect(marginBoxVisualRect);
+        floatingObject.setMarginOffset({ borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
+        floatingObject.setIsPlaced(true);
+    }
+}
+
+static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& placedFloats, auto blockLogicalTopLeft)
+{
+    auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(blockRenderer);
+    if (!renderBlockFlow)
+        return;
+
+    if (!renderBlockFlow->containsFloats() || renderBlockFlow->createsNewFormattingContext())
+        return;
+
+    for (auto& floatingObject : *renderBlockFlow->floatingObjectSet()) {
+        if (!floatingObject->renderer())
+            continue;
+        if (!floatingObject->isDescendant())
+            continue;
+
+        auto floatRect = floatingObject->frameRect();
+
+        auto boxGeometry = Layout::BoxGeometry { };
+        boxGeometry.setTopLeft(blockLogicalTopLeft + floatRect.location());
+        boxGeometry.setContentBoxWidth(floatRect.width());
+        boxGeometry.setContentBoxHeight(floatRect.height());
+        boxGeometry.setBorder({ });
+        boxGeometry.setPadding({ });
+        boxGeometry.setHorizontalMargin({ });
+        boxGeometry.setVerticalMargin({ });
+
+        auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
+        RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
+
+        auto usedPosition = RenderStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
+        placedFloats.add({ usedPosition, boxGeometry, floatRect.location(), WTFMove(shape) });
+    }
+}
+
+static inline void updateRenderTreeLegacyLineClamp(auto& inlineLayoutState, auto& renderTreeLayoutState)
+{
+    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
+
+    if (!parentBlockLayoutState.lineClamp())
+        return;
+    auto legacyLineClamp = renderTreeLayoutState.legacyLineClamp();
+    if (!legacyLineClamp)
+        return;
+    legacyLineClamp->currentLineCount += inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks();
+    renderTreeLayoutState.setLegacyLineClamp(legacyLineClamp);
+}
+
+static inline void udpdateIFCLineClamp(auto& inlineLayoutState, auto& renderTreeLayoutState)
+{
+    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
+
+    if (!parentBlockLayoutState.lineClamp())
+        return;
+    auto legacyLineClamp = renderTreeLayoutState.legacyLineClamp();
+    if (!legacyLineClamp)
+        return;
+    auto newlyConstructedLineCount = legacyLineClamp->currentLineCount - inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks();
+    inlineLayoutState.setLineCountWithInlineContentIncludingNestedBlocks(inlineLayoutState.lineCountWithInlineContentIncludingNestedBlocks() + newlyConstructedLineCount);
+}
+
+void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
+{
+    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
+    auto& placedFloats = parentBlockLayoutState.placedFloats();
     auto& blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
     auto& rootBlockContainer = downcast<RenderBlockFlow>(*rootLayoutBox(block).rendererForIntegration());
+    auto& renderTreeLayoutState = *rootBlockContainer.view().frameView().layoutContext().layoutState();
 
-    auto populateRootRendererWithFloatsFromIFC = [&] {
-        for (auto& floatItem : placedFloats.list()) {
-            auto* layoutBox = floatItem.layoutBox();
-            if (!layoutBox) {
-                // Floats inherited by IFC do not have associated layout boxes.
-                continue;
-            }
-            auto& floatingObject = rootBlockContainer.insertFloatingBox(downcast<RenderBox>(*layoutBox->rendererForIntegration()));
-            if (floatingObject.isPlaced()) {
-                // We have already inserted this float when laying out a previous middle-block.
-                continue;
-            }
+    auto updateRenderTreeBeforeLayout = [&] {
+        populateRootRendererWithFloatsFromIFC(rootBlockContainer, placedFloats);
+        updateRenderTreeLegacyLineClamp(inlineLayoutState, renderTreeLayoutState);
+    };
+    updateRenderTreeBeforeLayout();
 
-            floatingObject.setFrameRect(Layout::BoxGeometry::marginBoxRect(floatItem.boxGeometry()));
-            floatingObject.setIsPlaced(true);
+    auto positionAndMargin = RenderBlockFlow::BlockPositionAndMargin { };
+    auto layoutBlockRenderer = [&] {
+        if (inlineLayoutState.lineCount()) {
+            auto textBoxTrimStartDisabler = TextBoxTrimStartDisabler { blockRenderer };
+            positionAndMargin = rootBlockContainer.layoutBlockChildFromInlineLayout(blockRenderer, blockLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
+            return;
         }
+        positionAndMargin = rootBlockContainer.layoutBlockChildFromInlineLayout(blockRenderer, blockLogicalTopLeft.y(), Layout::IntegrationUtils::toMarginInfo(parentBlockLayoutState.marginState()));
     };
-    populateRootRendererWithFloatsFromIFC();
+    layoutBlockRenderer();
+    ASSERT(!blockRenderer.needsLayout());
 
-    auto marginInfoForBlock = [&] {
-        auto& marginState = parentBlockLayoutState.marginState();
-        return RenderBlockFlow::MarginInfo { marginState.canCollapseWithChildren, marginState.canCollapseMarginBeforeWithChildren, marginState.canCollapseMarginAfterWithChildren, marginState.quirkContainer, marginState.atBeforeSideOfBlock, marginState.atAfterSideOfBlock, marginState.hasMarginBeforeQuirk, marginState.hasMarginAfterQuirk, marginState.determinedMarginBeforeQuirk, marginState.positiveMargin, marginState.negativeMargin };
-    };
-
-    auto positionAndMargin = rootBlockContainer.layoutBlockChildFromInlineLayout(blockRenderer, blockLogicalTopLeft.y(), marginInfoForBlock());
     if (blockRenderer.isSelfCollapsingBlock()) {
         // FIXME: This gets replaced by "handling the after side of the block with margin".
         positionAndMargin.marginInfo.setMargin({ }, { });
     }
 
-    auto updateMarginState = [&] {
-        auto& marginInfo = positionAndMargin.marginInfo;
-        parentBlockLayoutState.marginState() = { marginInfo.canCollapseWithChildren(), marginInfo.canCollapseMarginBeforeWithChildren(), marginInfo.canCollapseMarginAfterWithChildren(), marginInfo.quirkContainer(), marginInfo.atBeforeSideOfBlock(), marginInfo.atAfterSideOfBlock(), marginInfo.hasMarginBeforeQuirk(), marginInfo.hasMarginAfterQuirk(), marginInfo.determinedMarginBeforeQuirk(), marginInfo.positiveMargin(), marginInfo.negativeMargin() };
+    auto updateIFCAfterLayout = [&] {
+        auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(block) };
+        updater.updateBoxGeometryAfterIntegrationLayout(block, rootBlockContainer.contentBoxLogicalWidth());
+
+        auto& blockGeometry = layoutState.ensureGeometryForBox(block);
+        blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), positionAndMargin.logicalTop });
+        // FIXME: This is only valid under the assumption that the block is immediately followed by an inline (i.e. no margin collapsing).
+        blockGeometry.setVerticalMargin({ positionAndMargin.logicalTop, positionAndMargin.marginInfo.margin() });
+
+        udpdateIFCLineClamp(inlineLayoutState, renderTreeLayoutState);
+        populateIFCWithNewlyPlacedFloats(blockRenderer, placedFloats, blockLogicalTopLeft);
+        parentBlockLayoutState.marginState() = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
     };
-    updateMarginState();
-
-    auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox(block) };
-    updater.updateBoxGeometryAfterIntegrationLayout(block, rootBlockContainer.contentBoxLogicalWidth());
-
-    ASSERT(!blockRenderer.needsLayout());
-    auto& blockGeometry = layoutState.ensureGeometryForBox(block);
-    blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), positionAndMargin.logicalTop });
-    // FIXME: This is only valid under the assumption that the block is immediately followed by an inline (i.e. no margin collapsing).
-    blockGeometry.setVerticalMargin({ positionAndMargin.logicalTop, positionAndMargin.marginInfo.margin() });
-
-    auto populateIFCWithNewlyPlacedFloats = [&] {
-        auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(blockRenderer);
-        if (!renderBlockFlow)
-            return;
-
-        if (!renderBlockFlow->containsFloats() || renderBlockFlow->createsNewFormattingContext())
-            return;
-
-        for (auto& floatingObject : *renderBlockFlow->floatingObjectSet()) {
-            if (!floatingObject->renderer())
-                continue;
-            if (!floatingObject->isDescendant())
-                continue;
-
-            auto floatRect = floatingObject->frameRect();
-
-            auto boxGeometry = Layout::BoxGeometry { };
-            boxGeometry.setTopLeft(blockLogicalTopLeft + floatRect.location());
-            boxGeometry.setContentBoxWidth(floatRect.width());
-            boxGeometry.setContentBoxHeight(floatRect.height());
-            boxGeometry.setBorder({ });
-            boxGeometry.setPadding({ });
-            boxGeometry.setHorizontalMargin({ });
-            boxGeometry.setVerticalMargin({ });
-
-            auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
-            RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
-
-            auto usedPosition = RenderStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
-            placedFloats.add({ usedPosition, boxGeometry, floatRect.location(), WTFMove(shape) });
-        }
-    };
-    populateIFCWithNewlyPlacedFloats();
+    updateIFCAfterLayout();
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)

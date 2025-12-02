@@ -27,6 +27,7 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <PDFKit/PDFDocument.h>
 #import <QuartzCore/CATextLayer.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -278,6 +279,10 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SEL action = menuItem.action;
 
+    if (action == @selector(cloneSiteIsolatedWindow:))
+        return YES;
+    if (action == @selector(cloneNonIsolatedWindow:))
+        return YES;
     if (action == @selector(saveAsPDF:))
         return YES;
     if (action == @selector(saveAsImage:))
@@ -655,6 +660,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (_webView._editable)
         [subtitle appendString:@" ✏️"];
 
+    if (_webView.configuration.preferences._siteIsolationEnabled)
+        [subtitle appendString:@" (Site Isolated)"];
+
     self.window.subtitle = subtitle;
 }
 
@@ -877,17 +885,20 @@ static BOOL isJavaScriptURL(NSURL *url)
     }
 
     decisionHandler(WKNavigationActionPolicyCancel, preferences);
+    [self validateToolbar];
 }
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     LOG(@"decidePolicyForNavigationResponse");
     decisionHandler(WKNavigationResponsePolicyAllow);
+    [self validateToolbar];
 }
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     LOG(@"didStartProvisionalNavigation: %@", navigation);
+    [self validateToolbar];
 }
 
 - (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
@@ -1021,6 +1032,31 @@ static BOOL isJavaScriptURL(NSURL *url)
 {
 }
 
+- (void)_cloneWindowSiteIsolated:(BOOL)siteIsolated
+{
+    _WKSessionState *sessionState = [_webView _sessionState];
+
+    WKWebViewConfiguration *configuration = _webView.configuration;
+    _configuration.preferences._siteIsolationEnabled = siteIsolated;
+
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    [controller.window makeKeyAndOrderFront:self];
+
+    [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
+
+    [controller->_webView _restoreSessionState:sessionState andNavigate:YES];
+}
+
+- (IBAction)cloneSiteIsolatedWindow:(id)sender
+{
+    [self _cloneWindowSiteIsolated:YES];
+}
+
+- (IBAction)cloneNonIsolatedWindow:(id)sender
+{
+    [self _cloneWindowSiteIsolated:NO];
+}
+
 - (IBAction)saveAsPDF:(id)sender
 {
     NSSavePanel *panel = [NSSavePanel savePanel];
@@ -1030,7 +1066,8 @@ static BOOL isJavaScriptURL(NSURL *url)
         if (result != NSModalResponseOK)
             return;
         [self->_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
-            [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
+            PDFDocument *pdfDocument = [[PDFDocument alloc] initWithData:pdfSnapshotData];
+            [pdfDocument writeToURL:[panel URL]];
         }];
     }];
 }

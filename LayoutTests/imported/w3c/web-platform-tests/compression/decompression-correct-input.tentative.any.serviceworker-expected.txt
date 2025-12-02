@@ -1,5 +1,0 @@
-
-PASS decompressing deflated input should work
-PASS decompressing gzip input should work
-PASS decompressing deflated (with -raw) input should work
-

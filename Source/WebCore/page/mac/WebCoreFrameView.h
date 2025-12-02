@@ -28,7 +28,7 @@
 #import <wtf/NakedPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "WAKAppKitStubs.h"
+#import <WebCore/WAKAppKitStubs.h>
 #endif
 
 namespace WebCore {

@@ -46,6 +46,7 @@
 #include <WebCore/LinkIcon.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -85,7 +86,6 @@ class CachedResourceLoader;
 class ContentFilter;
 class SharedBuffer;
 struct CustomHeaderFields;
-class FormState;
 class FrameLoader;
 class IconLoader;
 class LocalFrame;
@@ -187,11 +187,6 @@ class DocumentLoader
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
     friend class ContentFilter;
 public:
-#if ENABLE(CONTENT_FILTERING)
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-#endif
-
     static Ref<DocumentLoader> create(ResourceRequest&& request, SubstituteData&& data)
     {
         return adoptRef(*new DocumentLoader(WTFMove(request), WTFMove(data)));
@@ -202,6 +197,10 @@ public:
     WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT virtual ~DocumentLoader();
+
+    // CachedResourceClient, FrameDestructionObserver, ContentFilterClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void attachToFrame(LocalFrame&);
 
@@ -544,6 +543,9 @@ public:
 
     WEBCORE_EXPORT void setNewResultingClientId(ScriptExecutionContextIdentifier);
 
+    const std::optional<NavigationRequester>& crossSiteRequester() const { return m_crossSiteRequester; }
+    void setCrossSiteRequester(NavigationRequester&& crossSiteRequester) { m_crossSiteRequester = WTFMove(crossSiteRequester); }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&);
 
@@ -709,11 +711,11 @@ private:
     Markable<ResourceLoaderIdentifier> m_identifierForLoadWithoutResourceLoader;
 
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
+    HashMap<RefPtr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    std::unique_ptr<ApplicationManifestLoader> m_applicationManifestLoader;
+    RefPtr<ApplicationManifestLoader> m_applicationManifestLoader;
     Vector<CompletionHandler<void(const std::optional<ApplicationManifest>&)>> m_loadApplicationManifestCallbacks;
 #endif
 
@@ -771,6 +773,8 @@ private:
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
     WebpagePreferences m_preferences;
+    // The triggering action's requester should take precedence. This is used for site-isolation situations that require a cross-site requester.
+    std::optional<NavigationRequester> m_crossSiteRequester;
 
     Function<void(Document*)> m_whenDocumentIsCreatedCallback;
 

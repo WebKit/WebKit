@@ -156,9 +156,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetControlledByAutomation(bool controlled)
 
-    ConnectInspector(String targetId, Inspector::FrontendChannel::ConnectionType connectionType)
-    DisconnectInspector(String targetId)
-    SendMessageToTargetBackend(String targetId, String message)
+    ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
+    DisconnectInspector()
+    SendMessageToTargetBackend(String message)
 
 #if ENABLE(REMOTE_INSPECTOR)
     SetIndicating(bool indicating);
@@ -203,10 +203,12 @@ messages -> WebPage WantsAsyncDispatchMessage {
     GetFrameTree() -> (struct std::optional<WebKit::FrameTreeNodeData> data)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
-    UpdateFrameTreeSyncData(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
     TopDocumentSyncDataChangedInAnotherProcess(struct WebCore::DocumentSyncSerializationData documentSyncData)
     AllTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData> documentSyncData)
+
+    FrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, struct WebCore::FrameTreeSyncSerializationData frameTreeSyncData)
+    AllFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
@@ -829,6 +831,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     HandleTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (bool succeeded, String description)
     DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
     TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)
+    UpdateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData> ruleData)
+    ApplyTextExtractionFilter(String input, std::optional<WebCore::NodeIdentifier> containerNodeID) -> (String output)
 
 #if PLATFORM(IOS_FAMILY)
     ShouldDismissKeyboardAfterTapAtPoint(WebCore::FloatPoint point) -> (bool shouldDismiss)

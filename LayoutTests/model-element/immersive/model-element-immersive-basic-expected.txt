@@ -1,0 +1,13 @@
+
+PASS Immersive API exists on model and document
+PASS Model immersive request fails without user activation
+FAIL Model enters immersive mode with user activation promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Document.exitImmersive() exits immersive model promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Immersivechange events fire when entering immersive promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Only one model can be immersive at a time promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Removing immersive model from DOM exits immersive mode promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+PASS Immersiveerror event fires when request fails
+FAIL CSS :immersive pseudo-class matches correctly promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Model is complete once presented as immersive promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+FAIL Multiple concurrent requestImmersive calls are handled correctly promise_test: Unhandled rejection with value: object "TypeError: Model Player created, but next steps are not implemented"
+

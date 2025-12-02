@@ -76,9 +76,9 @@ WebKitBufferNamespace& WebKitNamespace::buffers()
     return m_buffers;
 }
 
-Ref<WebKitJSHandle> WebKitNamespace::createJSHandle(JSC::JSGlobalObject& globalObject, JSC::Strong<JSC::JSObject> object)
+Ref<WebKitJSHandle> WebKitNamespace::createJSHandle(JSC::Strong<JSC::JSObject> object)
 {
-    return WebKitJSHandle::create(globalObject, object.get());
+    return WebKitJSHandle::create(object.get());
 }
 
 ExceptionOr<Ref<WebKitSerializedNode>> WebKitNamespace::serializeNode(Node& node, SerializedNodeInit&& init)

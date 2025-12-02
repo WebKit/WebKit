@@ -971,6 +971,9 @@ double parseDate(std::span<const Latin1Character> dateString, bool& isLocalTime)
     }
     ASSERT(year);
 
+    if (day <= 0 || day > 31)
+        return std::numeric_limits<double>::quiet_NaN();
+
     return ymdhmsToMilliseconds(year.value(), month + 1, day, hour, minute, second, 0) - offset * (secondsPerMinute * msPerSecond);
 }
 

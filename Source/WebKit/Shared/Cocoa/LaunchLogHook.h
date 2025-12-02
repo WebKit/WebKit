@@ -35,7 +35,7 @@
 namespace WebKit {
 
 class LaunchLogHook {
-    friend class LazyNeverDestroyed<LaunchLogHook>;
+    friend class NeverDestroyed<LaunchLogHook>;
 public:
     static LaunchLogHook& singleton();
 

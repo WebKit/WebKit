@@ -55,49 +55,29 @@ using namespace WebCore;
 
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
-#if ENABLE(SCROLLING_THREAD)
     , m_eventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageIDInMainFrameProcess()))
-#endif
 {
     m_eventDispatcher->setScrollingTree(&scrollingTree());
 }
 
 RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->invalidate();
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
-#else
-    UNUSED_PARAM(nativeWheelEvent);
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
-#else
-    UNUSED_PARAM(wheelEvent);
-    UNUSED_PARAM(rubberBandableEdges);
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, std::optional<ScrollingNodeID> scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
-#else
-    UNUSED_PARAM(wheelEvent);
-    UNUSED_PARAM(scrollingNodeID);
-    UNUSED_PARAM(gestureState);
-    UNUSED_PARAM(wasHandled);
-#endif
 }
 
 bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&)
@@ -114,15 +94,7 @@ bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsKeyboardScroll
 
 void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
-#else
-    RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
-    if (!drawingArea)
-        return;
-
-    drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
@@ -267,23 +239,17 @@ void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(co
 
 void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->mainThreadDisplayDidRefresh(displayID);
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
 {
-#if ENABLE(SCROLLING_THREAD)
     m_eventDispatcher->windowScreenWillChange();
-#endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::willCommitLayerAndScrollingTrees()

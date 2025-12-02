@@ -30,9 +30,13 @@
 
 @class WKTextExtractionItem;
 
+#if ENABLE(TEXT_EXTRACTION)
+
 @interface WKWebView (TextExtractionTesting)
 - (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
 @end
+
+#endif // ENABLE(TEXT_EXTRACTION)
 
 namespace WTR {
 

@@ -54,6 +54,8 @@ DECLARE_SYSTEM_HEADER
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+// FIXME: (rdar://165511706) This file is invalid in a module because AppKit has symbols with incorrect linkage.
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification;

@@ -1,0 +1,3 @@
+
+PASS IntersectionObserver generates notifications when a transform animation changes intersection state
+

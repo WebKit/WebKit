@@ -53,12 +53,14 @@ template<typename> class ExceptionOr;
 class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTarget, private FileReaderLoaderClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileReader);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static Ref<FileReader> create(ScriptExecutionContext&);
 
     virtual ~FileReader();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     enum ReadyState {
         EMPTY = 0,

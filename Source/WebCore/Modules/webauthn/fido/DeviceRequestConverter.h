@@ -49,15 +49,22 @@ struct PinParameters {
     Vector<uint8_t> auth;
 };
 
+struct HmacSecretParameters {
+    cbor::CBORValue::MapValue keyAgreement;
+    Vector<uint8_t> saltEnc;
+    Vector<uint8_t> saltAuth;
+    int protocol;
+};
+
 // Serializes MakeCredential request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorMakeCredential
-WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, AuthenticatorSupportedOptions::ResidentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& = std::nullopt, std::optional<Vector<WebCore::PublicKeyCredentialDescriptor>>&& = std::nullopt);
+WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, AuthenticatorSupportedOptions::ResidentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& = std::nullopt, std::optional<Vector<WebCore::PublicKeyCredentialDescriptor>>&& = std::nullopt, std::optional<HmacSecretParameters>&& = std::nullopt);
 
 // Serializes GetAssertion request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorGetAssertion
-WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt, std::optional<Vector<WebCore::PublicKeyCredentialDescriptor>>&& = std::nullopt);
+WEBCORE_EXPORT Vector<uint8_t> encodeGetAssertionRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> = std::nullopt, std::optional<Vector<WebCore::PublicKeyCredentialDescriptor>>&& = std::nullopt, std::optional<HmacSecretParameters>&& = std::nullopt);
 
 WEBCORE_EXPORT Vector<uint8_t> encodeBogusRequestForAuthenticatorSelection();
 WEBCORE_EXPORT Vector<uint8_t> encodeSilentGetAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<WebCore::PublicKeyCredentialDescriptor>& credentials, std::optional<PinParameters> = std::nullopt);

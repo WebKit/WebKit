@@ -71,7 +71,7 @@ AudioContext& DefaultAudioDestinationNode::context()
 
 bool DefaultAudioDestinationNode::isConnected() const
 {
-    auto* input = const_cast<DefaultAudioDestinationNode*>(this)->input(0);
+    CheckedPtr input = const_cast<DefaultAudioDestinationNode*>(this)->input(0);
     return input ? !!input->numberOfConnections() : false;
 }
 

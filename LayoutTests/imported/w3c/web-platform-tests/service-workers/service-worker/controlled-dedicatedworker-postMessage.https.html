@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta name="timeout" content="long">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="resources/test-helpers.sub.js"></script>
@@ -23,13 +24,19 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     const worker = new Worker('resources/controlled-worker-postMessage.js');
-    const event = await new Promise(resolve => worker.onmessage = resolve);
+    const event = await new Promise((resolve, reject) => {
+       test.step_timeout(() => reject("test timed out"), 3000);
+       worker.onmessage = resolve;
+    });
     assert_equals(event.data, 0);
 }, "Verify dedicated worker gets messages if setting event listener early");
 
 promise_test(async (test) => {
     const worker = new Worker('resources/controlled-worker-late-postMessage.js?repeatMessages');
-    const event = await new Promise(resolve => worker.onmessage = resolve);
+    const event = await new Promise((resolve, reject) => {
+       test.step_timeout(() => reject("test timed out"), 3000);
+       worker.onmessage = resolve;
+    });
     assert_not_equals(event.data, "No message received");
     assert_true(event.data > 0);
 }, "Verify dedicated worker does not get all messages if not setting event listener early");

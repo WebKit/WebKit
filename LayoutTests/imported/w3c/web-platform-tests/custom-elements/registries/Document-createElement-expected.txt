@@ -4,6 +4,9 @@ PASS createElement should use the specified scoped registry
 PASS createElement should create a builtin element regardless of a custom element registry specified
 PASS createElement should use the specified global registry
 PASS createElement should create an upgrade candidate when there is no matching definition in the specified registry
+PASS document.createElement should create a builtin element with null registry if customElementRegistry is set to null
+PASS document.createElement should create a custom element candidate with null registry if customElementRegistry is set to null
+PASS document.createElement should create a custom element candidate with null registry if customElementRegistry is set to null even if there is a custom element of the same name in the glboal registry
 PASS createElement should create an upgrade candidate and the candidate should be upgraded when the element is defined
 PASS createElement on a non-HTML document should still handle registries correctly
 

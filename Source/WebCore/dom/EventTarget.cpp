@@ -108,7 +108,14 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
         return jsEventListener && !jsEventListener->wasCreatedFromMarkup();
     }();
 
-    if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once }))
+    bool trustedOnly = false;
+    if (options.webkitTrustedOnly) {
+        auto* function = listener->jsFunction();
+        if (function && worldForDOMObject(*function).allowAutofill())
+            trustedOnly = true;
+    }
+
+    if (!ensureEventTargetData().eventListenerMap.add(eventType, listener.copyRef(), { options.capture, passive.value_or(false), options.once, trustedOnly }))
         return false;
 
     if (RefPtr signal = options.signal) {
@@ -345,6 +352,9 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         if (phase == EventInvokePhase::Capturing && !registeredListener->useCapture())
             continue;
         if (phase == EventInvokePhase::Bubbling && registeredListener->useCapture())
+            continue;
+
+        if (!event.isTrusted() && registeredListener->trustedOnly()) [[unlikely]]
             continue;
 
         Ref callback = registeredListener->callback();

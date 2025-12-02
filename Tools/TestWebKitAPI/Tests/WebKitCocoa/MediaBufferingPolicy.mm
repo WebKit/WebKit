@@ -47,12 +47,28 @@ static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* ex
     EXPECT_WK_STREQ(expected, observed);
 }
 
-// rdar://136704178
+static void setWebViewVisible(TestWKWebView* webView, BOOL isVisible)
+{
+    bool stateChanged = false;
+    [webView performAfterReceivingMessage:@"stateChanged" action:[&] { stateChanged = true; }];
+    NSString *script = [NSString stringWithFormat:
+        @"document.addEventListener('visibilitychange', \
+            event => { \
+                if (document.hidden == %@) \
+                    window.webkit.messageHandlers.testHandler.postMessage('stateChanged'); \
+                })", isVisible ? @"false" : @"true"];
+    [webView objectByEvaluatingJavaScript:script];
+
 #if PLATFORM(MAC)
-TEST(WebKit, DISABLED_MediaBufferingPolicy)
+    [webView.window setIsVisible:isVisible];
 #else
-TEST(WebKit, MediaBufferingPolicy)
+    webView.window.hidden = !isVisible;
 #endif
+
+    TestWebKitAPI::Util::run(&stateChanged);
+}
+
+TEST(WebKit, MediaBufferingPolicy)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
@@ -71,34 +87,60 @@ TEST(WebKit, MediaBufferingPolicy)
 
     [webView stringByEvaluatingJavaScript:@"document.querySelector('video').pause()"];
 
-    // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
-    [webView _processWillSuspendImminentlyForTesting];
-#if PLATFORM(MAC)
-    // On macOS, we don't run the memory pressure logic on suspension.
-    waitUntilBufferingPolicyIsEqualTo(webView.get(), "LimitReadAhead");
-#else
-    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
-#endif
-
-    // And should switch back to default when buffering is allowed.
-    [webView _processDidResumeForTesting];
-    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
-
     // All resources should be marked as purgeable when the document is hidden.
-#if PLATFORM(MAC)
-    [webView.get().window setIsVisible:NO];
-#else
-    webView.get().window.hidden = YES;
-#endif
+    setWebViewVisible(webView.get(), NO);
     waitUntilBufferingPolicyIsEqualTo(webView.get(), "MakeResourcesPurgeable");
 
-#if PLATFORM(MAC)
-    [webView.get().window setIsVisible:YES];
-#else
-    webView.get().window.hidden = NO;
-#endif
+    // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
+    [webView _processWillSuspendImminentlyForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
 
-    // Policy should go back to default when playback starts.
+    // Playing when the process is suspended should change the policy to LimitReadAhead
+    isPlaying = false;
+    [webView stringByEvaluatingJavaScript:@"go()"];
+    TestWebKitAPI::Util::run(&isPlaying);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "LimitReadAhead");
+
+    // Resuming the process when element is playing should set the policy to default
+    [webView _processDidResumeForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+}
+
+TEST(WebKit, MediaBufferingPolicyWhenSuspendedOrHidden)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    configuration.get()._mediaDataLoadsAutomatically = YES;
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    bool isPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:[&] { isPlaying = true; }];
+
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+    TestWebKitAPI::Util::run(&isPlaying);
+
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('video').pause()"];
+
+    // Suspending the process forces a memory warning, which sets buffering policy to PurgeResources
+    [webView _processWillSuspendImminentlyForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Resume the process and buffering policy should still not change because the video is paused
+    [webView _processDidResumeForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Hiding and showing the document should also not change buffering policy because the video is paused
+    setWebViewVisible(webView.get(), NO);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    setWebViewVisible(webView.get(), YES);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Policy should go back to default when playback starts
     isPlaying = false;
     [webView stringByEvaluatingJavaScript:@"go()"];
     TestWebKitAPI::Util::run(&isPlaying);

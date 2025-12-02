@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSSharingService_Private.h>
@@ -57,3 +61,5 @@ typedef NS_OPTIONS(NSUInteger, NSSharingServiceMask) {
 @end
 
 #endif
+
+#endif // PLATFORM(MAC)

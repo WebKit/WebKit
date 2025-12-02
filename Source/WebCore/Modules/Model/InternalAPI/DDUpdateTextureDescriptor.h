@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include "DDImageAsset.h"
+#include <WebCore/DDImageAsset.h>
 
 namespace WebCore::DDModel {
 
 struct DDUpdateTextureDescriptor {
     DDImageAsset imageAsset;
+    String identifier;
+    String hashString;
 };
 
 }

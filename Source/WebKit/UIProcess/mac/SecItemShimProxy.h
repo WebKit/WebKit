@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "WorkQueueMessageReceiver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
@@ -36,9 +37,11 @@ class SecItemRequestData;
 class SecItemResponseData;
 
 class SecItemShimProxy final : private IPC::MessageReceiver {
-WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
+    WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
+    WTF_MAKE_TZONE_ALLOCATED(SecItemShimProxy);
 public:
     static SecItemShimProxy& singleton();
+    ~SecItemShimProxy();
 
     void initializeConnection(IPC::Connection&);
 
@@ -47,8 +50,8 @@ public:
     void deref() const final { }
 
 private:
+    template<typename T, class... Args> friend WTF::UniqueRef<T> WTF::makeUniqueRefWithoutFastMallocCheck(Args&&...);
     SecItemShimProxy();
-    ~SecItemShimProxy();
 
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

@@ -62,10 +62,69 @@ LayoutUnit IntegrationUtils::minContentHeight(const ElementBox& box) const
     return m_globalLayoutState->logicalHeightWithFormattingContextForBox(box, LayoutIntegration::LogicalHeightType::MinContent);
 }
 
-void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLogicalTopLeft, const BlockLayoutState& parentBlockLayoutState) const
+LayoutUnit IntegrationUtils::preferredMinWidth(const ElementBox& box) const
+{
+    ASSERT(box.isGridItem());
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::PreferredMinimum);
+}
+
+
+LayoutUnit IntegrationUtils::preferredMaxWidth(const ElementBox& box) const
+{
+    ASSERT(box.isGridItem());
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::PreferredMaximum);
+}
+
+void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLogicalTopLeft, const InlineLayoutState& inlineLayoutState) const
 {
     ASSERT(block.isBlockLevelBox());
-    m_globalLayoutState->layoutWithFormattingContextForBlockInInline(block, blockLogicalTopLeft, parentBlockLayoutState);
+    m_globalLayoutState->layoutWithFormattingContextForBlockInInline(block, blockLogicalTopLeft, inlineLayoutState);
+}
+
+Layout::BlockLayoutState::MarginState IntegrationUtils::toMarginState(const RenderBlockFlow::MarginInfo& marginInfo)
+{
+    return { marginInfo.canCollapseWithChildren(), marginInfo.canCollapseMarginBeforeWithChildren(), marginInfo.canCollapseMarginAfterWithChildren(), marginInfo.quirkContainer(), marginInfo.atBeforeSideOfBlock(), marginInfo.atAfterSideOfBlock(), marginInfo.hasMarginBeforeQuirk(), marginInfo.hasMarginAfterQuirk(), marginInfo.determinedMarginBeforeQuirk(), marginInfo.positiveMargin(), marginInfo.negativeMargin() };
+}
+
+RenderBlockFlow::MarginInfo IntegrationUtils::toMarginInfo(const Layout::BlockLayoutState::MarginState& marginState)
+{
+    return { marginState.canCollapseWithChildren, marginState.canCollapseMarginBeforeWithChildren, marginState.canCollapseMarginAfterWithChildren, marginState.quirkContainer, marginState.atBeforeSideOfBlock, marginState.atAfterSideOfBlock, marginState.hasMarginBeforeQuirk, marginState.hasMarginAfterQuirk, marginState.determinedMarginBeforeQuirk, marginState.positiveMargin, marginState.negativeMargin };
+}
+
+std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode writingMode)
+{
+    // In certain writing modes, IFC gets the border box position wrong;
+    // but the margin box is correct, so use it to derive the border box.
+    auto marginBoxLogicalRect = BoxGeometry::marginBoxRect(logicalGeometry);
+    auto containerLogicalWidth = writingMode.isHorizontal() ? containerSize.width() : containerSize.height();
+    auto marginBoxLogicalX = writingMode.isInlineFlipped() ? containerLogicalWidth - marginBoxLogicalRect.right() : marginBoxLogicalRect.left();
+    auto marginBoxVisualRect = writingMode.isHorizontal()
+        ? LayoutRect { marginBoxLogicalX, marginBoxLogicalRect.top(), marginBoxLogicalRect.width(), marginBoxLogicalRect.height() }
+        : LayoutRect { marginBoxLogicalRect.top(), marginBoxLogicalX, marginBoxLogicalRect.height(), marginBoxLogicalRect.width() };
+
+    auto marginLeft = LayoutUnit { };
+    auto marginTop = LayoutUnit { };
+    auto marginWidth = LayoutUnit { };
+    auto marginHeight = LayoutUnit { };
+
+    if (writingMode.isHorizontal()) {
+        marginLeft = writingMode.isInlineLeftToRight() ? logicalGeometry.marginStart() : logicalGeometry.marginEnd();
+        marginTop = writingMode.isBlockTopToBottom() ? logicalGeometry.marginBefore() : logicalGeometry.marginAfter();
+        marginWidth = logicalGeometry.marginStart() + logicalGeometry.marginEnd();
+        marginHeight = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();
+    } else {
+        // Invert verticalLogicalMargin() and convert to unflipped coords.
+        marginLeft = writingMode.isLineInverted() ? logicalGeometry.marginAfter() : logicalGeometry.marginBefore();
+        marginTop = writingMode.isInlineTopToBottom() ? logicalGeometry.marginStart() : logicalGeometry.marginEnd();
+        marginWidth = logicalGeometry.marginBefore() + logicalGeometry.marginAfter();
+        marginHeight = logicalGeometry.marginStart() + logicalGeometry.marginEnd();
+    }
+
+    auto borderBoxVisualRect = marginBoxVisualRect;
+    borderBoxVisualRect.expand(-marginWidth, -marginHeight);
+    borderBoxVisualRect.move(marginLeft, marginTop);
+
+    return { marginBoxVisualRect, borderBoxVisualRect };
 }
 
 }

@@ -104,8 +104,8 @@ private:
 
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
-    RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(GStreamerRtpTransceiverBackend&)>&&);
-    RTCRtpTransceiver* newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type, String&&);
+    RefPtr<RTCRtpTransceiver> existingTransceiver(WTF::Function<bool(GStreamerRtpTransceiverBackend&)>&&);
+    Ref<RTCRtpTransceiver> newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type, String&&);
 
     void collectTransceivers() final;
 

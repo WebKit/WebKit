@@ -101,10 +101,11 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& do
 {
     ASSERT(hasTagName(SVGNames::pathTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::dAttr, &SVGPathElement::m_pathSegList>();
-    });
+    }
 }
 
 Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document& document)

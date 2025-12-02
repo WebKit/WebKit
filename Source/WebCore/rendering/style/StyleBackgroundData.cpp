@@ -34,14 +34,14 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
 
 StyleBackgroundData::StyleBackgroundData()
     : background(RenderStyle::initialBackgroundLayers())
-    , color(RenderStyle::initialBackgroundColor())
+    , backgroundColor(RenderStyle::initialBackgroundColor())
 {
 }
 
 inline StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData& other)
     : RefCounted<StyleBackgroundData>()
     , background(other.background)
-    , color(other.color)
+    , backgroundColor(other.backgroundColor)
     , outline(other.outline)
 {
 }
@@ -54,7 +54,7 @@ Ref<StyleBackgroundData> StyleBackgroundData::copy() const
 bool StyleBackgroundData::operator==(const StyleBackgroundData& other) const
 {
     return background == other.background
-        && color == other.color
+        && backgroundColor == other.backgroundColor
         && outline == other.outline;
 }
 
@@ -65,9 +65,9 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
         return !containsCurrentColor();
     }
 
-    if (background != other.background || color != other.color)
+    if (background != other.background || backgroundColor != other.backgroundColor)
         return false;
-    if (currentColorDiffers && color.containsCurrentColor())
+    if (currentColorDiffers && backgroundColor.containsCurrentColor())
         return false;
     if (!outline.isVisible() && !other.outline.isVisible())
         return true;
@@ -78,7 +78,7 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
 
 bool StyleBackgroundData::containsCurrentColor() const
 {
-    return color.containsCurrentColor()
+    return backgroundColor.containsCurrentColor()
         || outline.color().containsCurrentColor();
 }
 
@@ -86,8 +86,8 @@ void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 {
     if (behavior == DumpStyleValues::All || background != RenderStyle::initialBackgroundLayers())
         ts.dumpProperty("background-image"_s, background);
-    if (behavior == DumpStyleValues::All || color != RenderStyle::initialBackgroundColor())
-        ts.dumpProperty("background-color"_s, color);
+    if (behavior == DumpStyleValues::All || backgroundColor != RenderStyle::initialBackgroundColor())
+        ts.dumpProperty("background-color"_s, backgroundColor);
     if (behavior == DumpStyleValues::All || outline != OutlineValue())
         ts.dumpProperty("outline"_s, outline);
 }
@@ -96,7 +96,7 @@ void StyleBackgroundData::dump(TextStream& ts, DumpStyleValues behavior) const
 void StyleBackgroundData::dumpDifferences(TextStream& ts, const StyleBackgroundData& other) const
 {
     LOG_IF_DIFFERENT(background);
-    LOG_IF_DIFFERENT(color);
+    LOG_IF_DIFFERENT(backgroundColor);
     LOG_IF_DIFFERENT(outline);
 }
 #endif

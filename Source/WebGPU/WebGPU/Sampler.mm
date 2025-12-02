@@ -297,8 +297,8 @@ Sampler::Sampler(UniqueSamplerIdentifier&& samplerIdentifier, const WGPUSamplerD
     : m_samplerIdentifier(samplerIdentifier)
     , m_descriptor(descriptor)
     , m_device(device)
-    , m_cachedSamplerState(tryCacheSamplerState())
 {
+    tryCacheSamplerState();
 }
 
 Sampler::Sampler(Device& device)
@@ -324,8 +324,8 @@ bool Sampler::isValid() const
 
 id<MTLSamplerState> Sampler::tryCacheSamplerState() const
 {
-    if (m_cachedSamplerState)
-        return m_cachedSamplerState;
+    if (auto cachedSamplerState = m_cachedSamplerState)
+        return cachedSamplerState;
 
     if (!m_samplerIdentifier)
         return nil;
@@ -334,7 +334,8 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
     if (!device)
         return nil;
 
-    m_cachedSamplerState = WebGPU::tryCacheSamplerState(*m_samplerIdentifier, device, m_descriptor);
+    auto cachedSamplerState = WebGPU::tryCacheSamplerState(*m_samplerIdentifier, device, m_descriptor);
+    m_cachedSamplerState = cachedSamplerState;
     return m_cachedSamplerState;
 }
 

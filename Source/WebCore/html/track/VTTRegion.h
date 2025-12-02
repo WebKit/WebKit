@@ -45,7 +45,7 @@ class HTMLDivElement;
 class VTTCueBox;
 class VTTScanner;
 
-class WEBCORE_EXPORT VTTRegion final : public RefCountedAndCanMakeWeakPtr<VTTRegion>, public ContextDestructionObserver {
+class WEBCORE_EXPORT VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
 public:
     static Ref<VTTRegion> create(ScriptExecutionContext& context)
     {
@@ -53,6 +53,10 @@ public:
     }
 
     virtual ~VTTRegion();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     const String& id() const { return m_id; }
     void setId(const String&);

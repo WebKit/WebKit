@@ -2452,7 +2452,7 @@ void SpeculativeJIT::emitBranch(Node* node)
 template<typename MapOrSet>
 void SpeculativeJIT::compileMapGetImpl(Node* node)
 {
-    constexpr bool isMapObjectUse = std::is_same<MapOrSet, JSMap>::value;
+    constexpr bool isMapObjectUse = std::same_as<MapOrSet, JSMap>;
 
     SpeculateCellOperand map(this, node->child1());
     JSValueOperand key(this, node->child2(), ManualOperandSpeculation);
@@ -2614,7 +2614,7 @@ void SpeculativeJIT::compileMapGetImpl(Node* node)
     if (!slowPathCases.empty()) {
         JIT_COMMENT(*this, "The slow path should call the operation.");
         slowPathCases.link(this);
-        auto operation = std::is_same<MapOrSet, JSMap>::value ? operationMapGet : operationSetGet;
+        auto operation = std::same_as<MapOrSet, JSMap> ? operationMapGet : operationSetGet;
         callOperationWithSilentSpill(operation, entryKeySlotGPR, LinkableConstant::globalObject(*this, node), mapGPR, keyGPR, hashGPR);
         done.append(jump());
     }
@@ -3892,7 +3892,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias: {
+    case PutByValDirectResolved: {
         compilePutByVal(node);
         break;
     }
@@ -7435,7 +7435,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         JSValueRegs valueRegs = value.jsValueRegs();
         GPRReg storageReg = storage.gpr();
 
-        if (node->op() == PutByValAlias) {
+        if (node->op() == PutByValDirectResolved) {
             // Store the value to the array.
             GPRReg propertyReg = property.gpr();
             storeValue(valueRegs, BaseIndex(storageReg, propertyReg, TimesEight, ArrayStorage::vectorOffset()));

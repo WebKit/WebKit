@@ -131,6 +131,17 @@ void CoordinatedSceneState::waitUntilPaintingComplete()
         layer->waitUntilPaintingComplete();
 }
 
+void CoordinatedSceneState::willPaintTile()
+{
+    m_pendingTiles++;
+}
+
+void CoordinatedSceneState::didPaintTile()
+{
+    ASSERT(m_pendingTiles.load() > 0);
+    m_pendingTiles--;
+}
+
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)

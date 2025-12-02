@@ -1,0 +1,6 @@
+
+FAIL decompressing deflate input with extra pad should still give the output promise_test: Unhandled rejection with value: object "TypeError: Extra bytes past the end."
+FAIL decompressing gzip input with extra pad should still give the output promise_test: Unhandled rejection with value: object "TypeError: Extra bytes past the end."
+FAIL decompressing deflate-raw input with extra pad should still give the output promise_test: Unhandled rejection with value: object "TypeError: Extra bytes past the end."
+FAIL decompressing brotli input with extra pad should still give the output promise_test: Unhandled rejection with value: object "TypeError: Extra bytes past the end."
+

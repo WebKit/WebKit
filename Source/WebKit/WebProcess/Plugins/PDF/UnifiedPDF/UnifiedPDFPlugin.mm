@@ -181,7 +181,7 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     : PDFPluginBase(element)
     , m_pdfMutationObserver(adoptNS([[WKPDFFormMutationObserver alloc] initWithPlugin:this]))
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    , m_dataDetectorOverlayController { WTF::makeUnique<PDFDataDetectorOverlayController>(*this) }
+    , m_dataDetectorOverlayController(PDFDataDetectorOverlayController::create(*this))
 #endif
 {
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
@@ -422,6 +422,11 @@ void UnifiedPDFPlugin::enableDataDetection()
 #endif
 }
 
+Ref<PDFDataDetectorOverlayController> UnifiedPDFPlugin::protectedDataDetectorOverlayController()
+{
+    return dataDetectorOverlayController();
+}
+
 void UnifiedPDFPlugin::handleClickForDataDetectionResult(const DataDetectorElementInfo& dataDetectorElementInfo, const IntPoint& clickPointInPluginSpace)
 {
     RefPtr page = this->page();
@@ -440,7 +445,7 @@ void UnifiedPDFPlugin::didInvalidateDataDetectorHighlightOverlayRects()
 {
     auto lastKnownMousePositionInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
     auto pageIndex = protectedPresentationController()->pageIndexForDocumentPoint(lastKnownMousePositionInDocumentSpace);
-    dataDetectorOverlayController().didInvalidateHighlightOverlayRects(pageIndex);
+    protectedDataDetectorOverlayController()->didInvalidateHighlightOverlayRects(pageIndex);
 }
 
 #endif
@@ -1162,7 +1167,7 @@ void UnifiedPDFPlugin::didBeginMagnificationGesture()
     m_inMagnificationGesture = true;
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    dataDetectorOverlayController().hideActiveHighlightOverlay();
+    protectedDataDetectorOverlayController()->hideActiveHighlightOverlay();
 #endif
 }
 
@@ -2012,7 +2017,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
     }
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    if (dataDetectorOverlayController().handleMouseEvent(event, pageIndex))
+    if (protectedDataDetectorOverlayController()->handleMouseEvent(event, pageIndex))
         return true;
 #endif
 

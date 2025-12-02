@@ -1,0 +1,47 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body id="body">
+
+<script>
+var output = "This tests alerts that are added to the page dynamically are announced.\n\n";
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+
+        notificationCount++; 
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("polite-region");
+
+    // Add a live region, since this is an alert it should make an announcement.
+    const newRegion = document.createElement("div");
+    newRegion.setAttribute("role", "alert");
+    newRegion.setAttribute("id", "region");
+    newRegion.textContent = "This is an alert!!";
+    document.getElementById("body").appendChild(newRegion);
+ 
+    setTimeout(async function() {        
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -25,5 +25,5 @@
 
 dictionary StartViewTransitionOptions {
     ViewTransitionUpdateCallback? update = null;
-    [EnabledBySetting=ViewTransitionTypesEnabled] sequence<[AtomString] DOMString>? types = null;
+    sequence<[AtomString] DOMString>? types = null;
 };

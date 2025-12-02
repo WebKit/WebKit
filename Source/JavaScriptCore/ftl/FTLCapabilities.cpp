@@ -464,7 +464,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MultiGetByVal:
     case MultiPutByVal:
     case PutByVal:
-    case PutByValAlias:
+    case PutByValDirectResolved:
     case PutByValMegamorphic:
     case PutByValDirect:
     case PutByValWithThis:

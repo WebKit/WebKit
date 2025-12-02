@@ -1,0 +1,52 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-initial-item-tolerance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-initial-item-tolerance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-initial-item-tolerance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-item-tolerance-infinite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-item-tolerance-infinite-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/column-item-tolerance-infinite.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-column-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/item-tolerance-row-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-initial-item-tolerance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-initial-item-tolerance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-initial-item-tolerance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-item-tolerance-infinite-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-item-tolerance-infinite-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/item-tolerance/row-item-tolerance-infinite.html

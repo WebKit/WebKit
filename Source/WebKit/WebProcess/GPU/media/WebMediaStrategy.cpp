@@ -141,12 +141,4 @@ void WebMediaStrategy::enableMockMediaSource()
 }
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-void WebMediaStrategy::nativeImageFromVideoFrame(const WebCore::VideoFrame& frame, CompletionHandler<void(std::optional<RefPtr<WebCore::NativeImage>>&&)>&& completionHandler)
-{
-    // FIMXE: Move out of sync IPC.
-    completionHandler(WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(frame));
-}
-#endif
-
 } // namespace WebKit

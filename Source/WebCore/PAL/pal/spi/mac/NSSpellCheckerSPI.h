@@ -35,6 +35,8 @@ DECLARE_SYSTEM_HEADER
 
 #else
 
+@class NSColor;
+
 extern NSString *NSTextCheckingInsertionPointKey;
 extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 #if HAVE(INLINE_PREDICTIONS)
@@ -56,6 +58,10 @@ extern NSString *NSTextCompletionAttributeName;
 
 + (BOOL)grammarCheckingEnabled;
 
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
++ (NSColor *)correctionIndicatorUnderlineColor;
+#endif
+
 @end
 
 #if HAVE(INLINE_PREDICTIONS)
@@ -67,13 +73,8 @@ typedef NS_OPTIONS(uint64_t, NSTextCheckingTypeAppKitTemporary) {
 };
 #endif
 
-#endif // USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
-// FIXME: rdar://105853874 Remove staging code.
-@interface NSSpellChecker (Staging_105286196)
-+ (NSColor *)correctionIndicatorUnderlineColor;
-@end
-#endif
+
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // PLATFORM(MAC)

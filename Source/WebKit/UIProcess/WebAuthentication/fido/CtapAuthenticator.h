@@ -30,6 +30,7 @@
 #include "FidoAuthenticator.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
 #include <WebCore/CryptoKeyEC.h>
+#include <WebCore/Pin.h>
 #include <WebCore/PublicKeyCredentialDescriptor.h>
 
 namespace fido {
@@ -91,6 +92,7 @@ private:
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
     Vector<Vector<WebCore::PublicKeyCredentialDescriptor>> m_batches;
     Vector<uint8_t> m_pinAuth;
+    std::optional<fido::pin::HmacSecretRequest> m_hmacSecretRequest;
 };
 
 } // namespace WebKit

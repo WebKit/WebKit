@@ -645,18 +645,6 @@ void GraphicsContextGL::forceContextLost()
         m_client->forceContextLost();
 }
 
-#if ENABLE(VIDEO)
-RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
-{
-    IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
-    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!imageBuffer)
-        return { };
-    imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);
-    return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer)));
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

@@ -125,9 +125,6 @@ struct QuirksData {
 #if PLATFORM(MAC)
         NeedsZomatoEmailLoginLabelQuirk,
 #endif
-#if PLATFORM(IOS_FAMILY)
-        RequirePageVisibilityToPlayAudioQuirk,
-#endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         RequiresUserGestureToLoadInPictureInPictureQuirk,
         RequiresUserGestureToPauseInPictureInPictureQuirk,

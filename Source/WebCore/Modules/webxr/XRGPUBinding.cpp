@@ -119,7 +119,8 @@ ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& pro
     auto viewport = setupData->viewports[eyeIndex];
     if (eyeIndex)
         viewport.move(-setupData->viewports[0].width(), 0);
-    RefPtr subImage = m_backing->getViewSubImage(projectionLayer.backing());
+
+    RefPtr subImage = m_backing->getViewSubImage(static_cast<WebGPU::XRProjectionLayer&>(projectionLayer.backing()));
     return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(eye), WTFMove(physicalSize), WTFMove(viewport), m_device);
 }
 

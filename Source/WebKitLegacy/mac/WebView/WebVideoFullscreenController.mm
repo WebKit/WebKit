@@ -106,12 +106,10 @@ static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
 
 static WebAVPlayerView *allocWebAVPlayerViewInstance()
 {
-    static Class theClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static Class theClass = [] {
         ASSERT(getAVPlayerViewClassSingleton());
         Class aClass = objc_allocateClassPair(getAVPlayerViewClassSingleton(), "WebAVPlayerView", 0);
-        theClass = aClass;
+        Class theClass = aClass;
         class_addMethod(theClass, @selector(setWebDelegate:), (IMP)WebAVPlayerView_setWebDelegate, "v@:@");
         class_addMethod(theClass, @selector(webDelegate), (IMP)WebAVPlayerView_webDelegate, "@@:");
         class_addMethod(theClass, @selector(isFullScreen), (IMP)WebAVPlayerView_isFullScreen, "B@:");
@@ -122,7 +120,8 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
         class_addIvar(theClass, "_webIsFullScreen", sizeof(BOOL), log2(sizeof(BOOL)), "B");
 
         objc_registerClassPair(theClass);
-    });
+        return theClass;
+    }();
     return (WebAVPlayerView *)[theClass alloc];
 }
 

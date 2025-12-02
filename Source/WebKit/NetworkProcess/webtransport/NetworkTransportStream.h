@@ -76,7 +76,6 @@ protected:
 
 private:
     void receiveLoop();
-    void setErrorCodeForStream(std::optional<WebCore::WebTransportStreamErrorCode>);
 
     const WebCore::WebTransportStreamIdentifier m_identifier;
     WeakPtr<NetworkTransportSession> m_session;

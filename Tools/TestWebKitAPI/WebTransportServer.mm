@@ -77,10 +77,18 @@ WebTransportServer::WebTransportServer(Function<ConnectionTask(ConnectionGroup)>
     nw_listener_set_new_connection_group_handler(listener.get(), [data = m_data] (nw_connection_group_t incomingConnectionGroup) {
         ConnectionGroup connectionGroup = ConnectionGroup(incomingConnectionGroup);
         data->connectionGroups.append(connectionGroup);
+
         nw_connection_group_set_state_changed_handler(incomingConnectionGroup, [connectionGroup, data] (nw_connection_group_state_t state, nw_error_t error) mutable {
-            if (state != nw_connection_group_state_ready)
-                return;
-            data->coroutineHandles.append(data->connectionGroupHandler(connectionGroup).handle);
+            switch (state) {
+            case nw_connection_group_state_ready:
+                data->coroutineHandles.append(data->connectionGroupHandler(connectionGroup).handle);
+                break;
+            case nw_connection_group_state_failed:
+                connectionGroup.markAsFailed();
+                break;
+            default:
+                break;
+            }
         });
 
         nw_connection_group_set_new_connection_handler(incomingConnectionGroup, [connectionGroup] (nw_connection_t incomingConnection) mutable {

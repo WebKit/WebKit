@@ -182,7 +182,7 @@ private:
     size_t roundUp(size_t sizeInBytes);
     
     FreeSpaceNode* allocFreeSpaceNode();
-    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(FreeSpaceNode*);
+    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
     
     size_t m_allocationGranule;
     size_t m_pageSize;

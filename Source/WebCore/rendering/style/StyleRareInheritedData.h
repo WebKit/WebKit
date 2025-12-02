@@ -49,6 +49,7 @@
 #include <WebCore/StyleStrokeMiterlimit.h>
 #include <WebCore/StyleStrokeWidth.h>
 #include <WebCore/StyleTabSize.h>
+#include <WebCore/StyleTextAlignLast.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <WebCore/StyleTextEmphasisPosition.h>
 #include <WebCore/StyleTextEmphasisStyle.h>
@@ -160,7 +161,7 @@ public:
     Style::WebkitLineGrid lineGrid;
     Style::TabSize tabSize;
 
-    Style::StrokeMiterlimit miterLimit;
+    Style::StrokeMiterlimit strokeMiterLimit;
 
 #if ENABLE(TEXT_AUTOSIZING)
     Style::TextSizeAdjust textSizeAdjust;
@@ -198,9 +199,9 @@ public:
     PREFERRED_TYPE(LineSnap) unsigned lineSnap : 2;
     PREFERRED_TYPE(LineAlign) unsigned lineAlign : 1;
 #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
-    PREFERRED_TYPE(Style::WebkitOverflowScrolling) unsigned webkitOverflowScrolling: 1;
+    PREFERRED_TYPE(Style::WebkitOverflowScrolling) unsigned overflowScrolling: 1;
 #endif
-    PREFERRED_TYPE(TextAlignLast) unsigned textAlignLast : 3;
+    PREFERRED_TYPE(Style::TextAlignLast) unsigned textAlignLast : 3;
     PREFERRED_TYPE(TextJustify) unsigned textJustify : 2;
     PREFERRED_TYPE(TextDecorationSkipInk) unsigned textDecorationSkipInk : 2;
     PREFERRED_TYPE(MathShift) unsigned mathShift : 1;
@@ -210,14 +211,14 @@ public:
     PREFERRED_TYPE(RubyOverhang) unsigned rubyOverhang : 1;
     PREFERRED_TYPE(TextZoom) unsigned textZoom: 1;
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
-    PREFERRED_TYPE(Style::WebkitTouchCallout) unsigned webkitTouchCallout : 1;
+    PREFERRED_TYPE(Style::WebkitTouchCallout) unsigned touchCallout : 1;
 #endif
     PREFERRED_TYPE(Style::HangingPunctuation) unsigned hangingPunctuation : 4;
     PREFERRED_TYPE(Style::SVGPaintOrder::Type) unsigned paintOrder : 3;
     PREFERRED_TYPE(LineCap) unsigned capStyle : 2;
     PREFERRED_TYPE(LineJoin) unsigned joinStyle : 2;
-    PREFERRED_TYPE(bool) unsigned hasSetStrokeWidth : 1;
-    PREFERRED_TYPE(bool) unsigned hasSetStrokeColor : 1;
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeWidth : 1;
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
     PREFERRED_TYPE(bool) unsigned hasAutoCaretColor : 1;
     PREFERRED_TYPE(bool) unsigned hasVisitedLinkAutoCaretColor : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;

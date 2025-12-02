@@ -261,6 +261,10 @@ public:
     virtual void didEnterStandby(WebKit::WebPageProxy&) { }
     virtual void didExitStandby(WebKit::WebPageProxy&) { }
 #endif
+
+#if PLATFORM(VISION)
+    virtual void willPresentModalUI(WebKit::WebPageProxy&) { }
+#endif
 };
 
 } // namespace API

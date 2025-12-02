@@ -60,6 +60,7 @@ class NavigationAction : public FrameLoadRequestBase {
 public:
     NavigationAction();
     WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, bool, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomString& downloadAttribute = nullAtom(), Element* sourceElement = nullptr);
+    WEBCORE_EXPORT NavigationAction(const NavigationRequester&, const ResourceRequest&, InitiatedByMainFrame, bool, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomString& downloadAttribute = nullAtom(), Element* sourceElement = nullptr);
     NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, bool, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomString& downloadAttribute = nullAtom(), Element* sourceElement = nullptr);
     WEBCORE_EXPORT NavigationAction(FrameLoadRequest&, NavigationType = NavigationType::Other, Event* = nullptr);
 

@@ -148,20 +148,20 @@ static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned inde
     return arguments.argumentCount() > index ? arguments.argumentAt(index).getObject() : nullptr;
 }
 
-static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue target)
+static RefPtr<CanvasRenderingContext> canvasRenderingContext(JSC::VM& vm, JSC::JSValue target)
 {
 #if ENABLE(OFFSCREEN_CANVAS)
     if (RefPtr canvas = JSOffscreenCanvas::toWrapped(vm, target))
         return canvas->renderingContext();
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* context = JSOffscreenCanvasRenderingContext2D::toWrapped(vm, target))
+    if (RefPtr context = JSOffscreenCanvasRenderingContext2D::toWrapped(vm, target))
         return context;
 #endif
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* context = JSImageBitmapRenderingContext::toWrapped(vm, target))
+    if (RefPtr context = JSImageBitmapRenderingContext::toWrapped(vm, target))
         return context;
 #if ENABLE(WEBGL)
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* context = JSWebGLRenderingContext::toWrapped(vm, target))
+    if (RefPtr context = JSWebGLRenderingContext::toWrapped(vm, target))
         return context;
-    SUPPRESS_UNCOUNTED_LOCAL if (auto* context = JSWebGL2RenderingContext::toWrapped(vm, target))
+    if (RefPtr context = JSWebGL2RenderingContext::toWrapped(vm, target))
         return context;
 #endif
     return nullptr;
@@ -173,7 +173,7 @@ void WorkerConsoleClient::record(JSC::JSGlobalObject* lexicalGlobalObject, Ref<S
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
             InspectorInstrumentation::consoleStartRecordingCanvas(*context, *lexicalGlobalObject, objectArgumentAt(arguments, 1));
     }
 }
@@ -184,7 +184,7 @@ void WorkerConsoleClient::recordEnd(JSC::JSGlobalObject* lexicalGlobalObject, Re
         return;
 
     if (auto* target = objectArgumentAt(arguments, 0)) {
-        if (auto* context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
+        if (RefPtr context = canvasRenderingContext(lexicalGlobalObject->vm(), target))
             InspectorInstrumentation::consoleStopRecordingCanvas(*context);
     }
 }
@@ -207,7 +207,7 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
         if (RefPtr imageData = JSImageData::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-                if (auto imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     imageBuffer->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(IntPoint(), imageData->size()));
                     dataURL = imageBuffer->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
                 }

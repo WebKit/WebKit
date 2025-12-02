@@ -28,6 +28,9 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#import "MediaPlaybackTargetSerialized.h"
+#import <WebCore/MediaPlaybackTargetCocoa.h>
+#import <WebCore/MediaPlaybackTargetMock.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
@@ -41,51 +44,49 @@ using namespace WebCore;
 
 namespace WebKit {
 
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const MediaPlaybackTargetContext& context)
-    : MediaPlaybackTargetContext(MediaPlaybackTargetContextType::Serialized)
-    , m_deviceName(context.deviceName())
-    , m_hasActiveRoute(context.hasActiveRoute())
-    , m_supportsRemoteVideoPlayback(context.supportsRemoteVideoPlayback())
-    , m_targetType(is<MediaPlaybackTargetContextSerialized>(context) ? downcast<MediaPlaybackTargetContextSerialized>(context).targetType() : context.type())
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const MediaPlaybackTarget& target)
+    : m_deviceName { target.deviceName() }
+    , m_hasActiveRoute { target.hasActiveRoute() }
+    , m_supportsRemoteVideoPlayback { target.supportsRemoteVideoPlayback() }
+    , m_targetType { is<MediaPlaybackTargetSerialized>(target) ? downcast<MediaPlaybackTargetSerialized>(target).context().targetType() : target.type() }
+    , m_state { WebCore::MediaPlaybackTargetMockState::Unknown }
 {
-    if (is<MediaPlaybackTargetContextCocoa>(context)) {
+    if (is<MediaPlaybackTargetCocoa>(target)) {
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-        m_context = CoreIPCAVOutputContext { downcast<MediaPlaybackTargetContextCocoa>(context).outputContext().get() };
+        m_context = CoreIPCAVOutputContext { downcast<MediaPlaybackTargetCocoa>(target).outputContext().get() };
 #else
         auto archiver = adoptNS([WKKeyedCoder new]);
-        [downcast<MediaPlaybackTargetContextCocoa>(context).outputContext() encodeWithCoder:archiver.get()];
+        [downcast<MediaPlaybackTargetCocoa>(target).outputContext() encodeWithCoder:archiver.get()];
         RetainPtr dictionary = [archiver accumulatedDictionary];
         m_contextID = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"]);
         m_contextType = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"]);
 #endif
-    } else if (is<MediaPlaybackTargetContextMock>(context))
-        m_state = downcast<MediaPlaybackTargetContextMock>(context).state();
-    else if (is<MediaPlaybackTargetContextSerialized>(context)) {
-        m_state = downcast<MediaPlaybackTargetContextSerialized>(context).m_state;
+    } else if (is<MediaPlaybackTargetMock>(target))
+        m_state = downcast<MediaPlaybackTargetMock>(target).state();
+    else if (is<MediaPlaybackTargetSerialized>(target)) {
+        m_state = downcast<MediaPlaybackTargetSerialized>(target).context().mockState();
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-        m_context = downcast<MediaPlaybackTargetContextSerialized>(context).m_context;
+        m_context = downcast<MediaPlaybackTargetSerialized>(target).context().context();
 #else
-        m_contextID = downcast<MediaPlaybackTargetContextSerialized>(context).m_contextID;
-        m_contextType = downcast<MediaPlaybackTargetContextSerialized>(context).m_contextType;
+        m_contextID = downcast<MediaPlaybackTargetSerialized>(target).context().contextID();
+        m_contextType = downcast<MediaPlaybackTargetSerialized>(target).context().contextType();
 #endif
     }
 }
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetContextType targetType, MediaPlaybackTargetContextMockState state, CoreIPCAVOutputContext&& context)
-    : MediaPlaybackTargetContext(MediaPlaybackTargetContextType::Serialized)
-    , m_deviceName(WTFMove(deviceName))
-    , m_hasActiveRoute(hasActiveRoute)
-    , m_supportsRemoteVideoPlayback(supportsRemoteVideoPlayback)
-    , m_targetType(targetType)
-    , m_state(state)
-    , m_context(WTFMove(context))
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, CoreIPCAVOutputContext&& context)
+    : m_deviceName { WTFMove(deviceName) }
+    , m_hasActiveRoute { hasActiveRoute }
+    , m_supportsRemoteVideoPlayback { supportsRemoteVideoPlayback }
+    , m_targetType { targetType }
+    , m_state { state }
+    , m_context { WTFMove(context) }
 {
 }
 #else
-MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetContextType targetType, MediaPlaybackTargetContextMockState state, String&& contextID, String&& contextType)
-    : MediaPlaybackTargetContext(MediaPlaybackTargetContextType::Serialized)
-    , m_deviceName(WTFMove(deviceName))
+MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(String&& deviceName, bool hasActiveRoute, bool supportsRemoteVideoPlayback, MediaPlaybackTargetType targetType, MediaPlaybackTargetMockState state, String&& contextID, String&& contextType)
+    : m_deviceName(WTFMove(deviceName))
     , m_hasActiveRoute(hasActiveRoute)
     , m_supportsRemoteVideoPlayback(supportsRemoteVideoPlayback)
     , m_targetType(targetType)
@@ -96,24 +97,22 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(Strin
 }
 #endif
 
-Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> MediaPlaybackTargetContextSerialized::platformContext() const
+Ref<MediaPlaybackTarget> MediaPlaybackTargetContextSerialized::playbackTarget() const
 {
-    if (m_targetType == MediaPlaybackTargetContextType::Mock)
-        return MediaPlaybackTargetContextMock(m_deviceName, m_state);
+    if (m_targetType == MediaPlaybackTargetType::Mock)
+        return MediaPlaybackTargetMock::create(m_deviceName, m_state);
 
-    ASSERT(m_targetType == MediaPlaybackTargetContextType::AVOutputContext);
+    ASSERT(m_targetType == MediaPlaybackTargetType::AVOutputContext);
 
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
-    return MediaPlaybackTargetContextCocoa(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
+    return MediaPlaybackTargetCocoa::create(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
 #else
     auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
     propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();
     propertyList[@"AVOutputContextSerializationKeyContextType"] = m_contextType.createNSString().get();
     auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
     auto outputContext = adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] initWithCoder:unarchiver.get()]);
-    // Variant construction in older clang gives either an error, a vtable linkage error unless we construct it this way.
-    Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> variant { WTF::InPlaceType<MediaPlaybackTargetContextCocoa>, WTFMove(outputContext) };
-    return variant;
+    return MediaPlaybackTargetCocoa::create(WTFMove(outputContext));
 #endif
 }
 

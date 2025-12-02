@@ -24,7 +24,7 @@ const validStringsForOffsetUseIgnore = [
 
 for (const offset of ["use", "ignore"]) {
   for (const arg of validStringsForOffsetUseIgnore) {
-    Temporal.ZonedDateTime.from(arg, { offset: "use" });
+    Temporal.ZonedDateTime.from(arg, { offset });
   }
 }
 

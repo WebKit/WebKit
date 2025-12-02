@@ -80,7 +80,7 @@ inline TextBreakingPositionContext::TextBreakingPositionContext(const RenderStyl
     , lineBreak(style.lineBreak())
     , wordBreak(style.wordBreak())
     , nbspMode(style.nbspMode())
-    , locale(style.computedLocale())
+    , locale(Style::toPlatform(style.computedLocale()))
 {
 }
 

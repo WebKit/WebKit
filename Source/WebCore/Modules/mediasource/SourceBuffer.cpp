@@ -128,13 +128,6 @@ public:
         });
     }
 
-    void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final
-    {
-        ensureWeakOnDispatcher([errorCode](SourceBuffer& parent) {
-            parent.sourceBufferPrivateDidReceiveRenderingError(errorCode);
-        });
-    }
-
     void ensureWeakOnDispatcher(Function<void(SourceBuffer&)>&& function, bool forceAsync = false) const
     {
         auto weakWrapper = [function = WTFMove(function), weakParent = m_parent] {
@@ -728,18 +721,6 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
     ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->contentSize());
 }
 
-void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
-{
-#if RELEASE_LOG_DISABLED
-    UNUSED_PARAM(error);
-#endif
-
-    ERROR_LOG(LOGIDENTIFIER, error);
-
-    if (!isRemoved())
-        protectedSource()->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
-}
-
 uint64_t SourceBuffer::maximumBufferSize() const
 {
     if (isRemoved() || !scriptExecutionContext())
@@ -1118,49 +1099,9 @@ bool SourceBuffer::validateInitializationSegment(const SourceBufferPrivateClient
 
     // Note: those are checks from step 3.1
     //   * The number of audio, video, and text tracks match what was in the first initialization segment.
-    if (segment.audioTracks.size() != protectedAudioTracks()->length()
-        || segment.videoTracks.size() != protectedVideoTracks()->length()
-        || segment.textTracks.size() != protectedTextTracks()->length())
-        return false;
-
-    //   * The codecs for each track, match what was specified in the first initialization segment.
-    // (Note: Issue #155 strikes out this check. For broad compatibility when this experimental feature
-    // is not enabled, only perform this check if the "pending initialization segment for changeType flag"
-    // is not set.)
-    for (auto& audioTrackInfo : segment.audioTracks) {
-        auto audioCodec = RefPtr { audioTrackInfo.description }->codec().toAtomString();
-        if (m_audioCodecs.contains(audioCodec))
-            continue;
-
-        if (!m_pendingInitializationSegmentForChangeType)
-            return false;
-
-        m_audioCodecs.append(WTFMove(audioCodec));
-    }
-
-    for (auto& videoTrackInfo : segment.videoTracks) {
-        auto videoCodec = RefPtr { videoTrackInfo.description }->codec().toAtomString();
-        if (m_videoCodecs.contains(videoCodec))
-            continue;
-
-        if (!m_pendingInitializationSegmentForChangeType)
-            return false;
-
-        m_videoCodecs.append(WTFMove(videoCodec));
-    }
-
-    for (auto& textTrackInfo : segment.textTracks) {
-        auto textCodec = RefPtr { textTrackInfo.description }->codec().toAtomString();
-        if (m_textCodecs.contains(textCodec))
-            continue;
-
-        if (!m_pendingInitializationSegmentForChangeType)
-            return false;
-
-        m_textCodecs.append(WTFMove(textCodec));
-    }
-
-    return true;
+    return segment.audioTracks.size() == protectedAudioTracks()->length()
+        && segment.videoTracks.size() == protectedVideoTracks()->length()
+        && segment.textTracks.size() == protectedTextTracks()->length();
 }
 
 void SourceBuffer::appendError(bool decodeError)

@@ -303,7 +303,7 @@ InitDataRegistry::InitDataRegistry()
 
 InitDataRegistry::~InitDataRegistry() = default;
 
-RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const AtomString& initDataType, const SharedBuffer& buffer)
+RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const String& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -311,7 +311,7 @@ RefPtr<SharedBuffer> InitDataRegistry::sanitizeInitData(const AtomString& initDa
     return iter->value.sanitizeInitData(buffer);
 }
 
-std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const AtomString& initDataType, const SharedBuffer& buffer)
+std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const String& initDataType, const SharedBuffer& buffer)
 {
     auto iter = m_types.find(initDataType);
     if (iter == m_types.end() || !iter->value.sanitizeInitData)
@@ -319,28 +319,28 @@ std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDs(const A
     return iter->value.extractKeyIDs(buffer);
 }
 
-void InitDataRegistry::registerInitDataType(const AtomString& initDataType, InitDataTypeCallbacks&& callbacks)
+void InitDataRegistry::registerInitDataType(const String& initDataType, InitDataTypeCallbacks&& callbacks)
 {
     ASSERT(!m_types.contains(initDataType));
     m_types.set(initDataType, WTFMove(callbacks));
 }
 
-const AtomString& InitDataRegistry::cencName()
+const String& InitDataRegistry::cencName()
 {
-    static MainThreadNeverDestroyed<const AtomString> sinf { MAKE_STATIC_STRING_IMPL("cenc") };
-    return sinf;
+    static NeverDestroyed<const String> staticCencName(MAKE_STATIC_STRING_IMPL("cenc"));
+    return staticCencName;
 }
 
-const AtomString& InitDataRegistry::keyidsName()
+const String& InitDataRegistry::keyidsName()
 {
-    static MainThreadNeverDestroyed<const AtomString> sinf { MAKE_STATIC_STRING_IMPL("keyids") };
-    return sinf;
+    static NeverDestroyed<const String> staticKeyidsName(MAKE_STATIC_STRING_IMPL("keyids"));
+    return staticKeyidsName;
 }
 
-const AtomString& InitDataRegistry::webmName()
+const String& InitDataRegistry::webmName()
 {
-    static MainThreadNeverDestroyed<const AtomString> sinf { MAKE_STATIC_STRING_IMPL("webm") };
-    return sinf;
+    static NeverDestroyed<const String> staticWebmName(MAKE_STATIC_STRING_IMPL("webm"));
+    return staticWebmName;
 }
 
 }

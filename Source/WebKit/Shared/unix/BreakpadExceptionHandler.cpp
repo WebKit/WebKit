@@ -38,8 +38,6 @@ namespace WebKit {
 
 void installBreakpadExceptionHandler()
 {
-    static std::once_flag onceFlag;
-    static MainThreadLazyNeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler;
     static String breakpadMinidumpDir = String::fromUTF8(getenv("BREAKPAD_MINIDUMP_DIR"));
 
 #ifdef BREAKPAD_MINIDUMP_DIR
@@ -55,11 +53,10 @@ void installBreakpadExceptionHandler()
         return;
     }
 
-    std::call_once(onceFlag, []() {
-        exceptionHandler.construct(google_breakpad::MinidumpDescriptor(breakpadMinidumpDir.utf8().data()), nullptr,
-            [](const google_breakpad::MinidumpDescriptor&, void*, bool succeeded) -> bool {
-                return succeeded;
-            }, nullptr, true, -1);
+    static MainRunLoopNeverDestroyed<google_breakpad::ExceptionHandler> exceptionHandler = google_breakpad::MinidumpDescriptor(breakpadMinidumpDir.utf8().data()), nullptr,
+        [](const google_breakpad::MinidumpDescriptor&, void*, bool succeeded) -> bool {
+            return succeeded;
+        }, nullptr, true, -1);
     });
 }
 }

@@ -267,11 +267,14 @@ Expected<RetainPtr<VTDecompressionSessionRef>, OSStatus> WebCoreDecompressionSes
     if (isInvalidated())
         return makeUnexpected(kVTInvalidSessionErr);
 
-    if (m_videoDecoder)
-        return RetainPtr<VTDecompressionSessionRef> { };
-
     RetainPtr videoFormatDescription = PAL::CMSampleBufferGetFormatDescription(cmSample);
     bool videoFormatDescriptionChanged = !m_lastFormatDescription || !PAL::CMFormatDescriptionEqual(videoFormatDescription.get(), m_lastFormatDescription.get());
+
+    if (videoFormatDescriptionChanged && m_videoDecoder)
+        std::exchange(m_videoDecoder, nullptr)->close();
+
+    if (m_videoDecoder)
+        return RetainPtr<VTDecompressionSessionRef> { };
 
     if (m_decompressionSession && videoFormatDescriptionChanged && !VTDecompressionSessionCanAcceptFormatDescription(m_decompressionSession.get(), videoFormatDescription.get())) {
         auto status = VTDecompressionSessionWaitForAsynchronousFrames(m_decompressionSession.get());

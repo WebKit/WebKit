@@ -5,5 +5,8 @@ PASS Subresource built from a ReadableStream - delayed
 PASS Main resource built from a ReadableStream - delayed
 PASS Subresource built from a ReadableStream - fetch stream
 PASS Main resource built from a ReadableStream - fetch stream
-PASS Cancellation in the page should be observable in the service worker
+PASS Cancellation in the page should be observable in the service worker with nonempty stream
+PASS Abort in the page should be observable in the service worker with nonempty stream
+PASS Cancellation in the page should be observable in the service worker with empty stream
+PASS Abort in the page should be observable in the service worker with empty stream
 

@@ -40,6 +40,10 @@ class VideoFrameRequestCallback : public RefCounted<VideoFrameRequestCallback>, 
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(double, const VideoFrameMetadata&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double, const VideoFrameMetadata&) = 0;
 

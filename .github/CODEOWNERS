@@ -167,6 +167,7 @@ AllowedSPI*.toml @emw-apple
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
+/Source/WebKit/Scripts/webkit/opaque_ipc_types.* @sheeparegreat
 
 # ================================================================================
 # WebDriver

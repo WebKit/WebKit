@@ -96,9 +96,7 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 + (NSString *)_storageDirectoryPath
 {
-    static NeverDestroyed<RetainPtr<NSString>> sLocalStoragePath;
-    static dispatch_once_t flag;
-    dispatch_once(&flag, ^{
+    static NeverDestroyed<RetainPtr<NSString>> sLocalStoragePath = [] {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         RetainPtr<NSString> localStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];
         if (!localStoragePath || ![localStoragePath isKindOfClass:[NSString class]]) {
@@ -106,8 +104,8 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
             NSString *libraryDirectory = [paths objectAtIndex:0];
             localStoragePath = [libraryDirectory stringByAppendingPathComponent:@"WebKit/LocalStorage"];
         }
-        sLocalStoragePath.get() = [localStoragePath stringByStandardizingPath];
-    });
+        return [localStoragePath stringByStandardizingPath];
+    }();
     return sLocalStoragePath.get().get();
 }
 

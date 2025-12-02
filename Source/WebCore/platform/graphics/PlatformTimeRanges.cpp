@@ -271,6 +271,39 @@ bool PlatformTimeRanges::containWithEpsilon(const MediaTime& time, const MediaTi
     return findWithEpsilon(time, epsilon) != notFound;
 }
 
+bool PlatformTimeRanges::containWithEpsilon(const PlatformTimeRanges& ranges, const MediaTime& epsilon) const
+{
+    if (ranges.length() < 1)
+        return true;
+
+    if (!length() || ranges.length() != 1)
+        return false;
+
+    PlatformTimeRanges bufferedRanges = *this;
+    bufferedRanges.intersectWith(ranges);
+
+    if (!bufferedRanges.length())
+        return false;
+
+    auto hasBufferedTime = [&] (const MediaTime& time) {
+        return abs(bufferedRanges.nearest(time) - time) <= epsilon;
+    };
+
+    if (!hasBufferedTime(ranges.minimumBufferedTime()) || !hasBufferedTime(ranges.maximumBufferedTime()))
+        return false;
+
+    if (bufferedRanges.length() == 1)
+        return true;
+
+    // Ensure that if we have a gap in the buffered range, it is smaller than the fudge factor;
+    for (unsigned i = 1; i < bufferedRanges.length(); i++) {
+        if (bufferedRanges.end(i) - bufferedRanges.start(i-1) > epsilon)
+            return false;
+    }
+
+    return true;
+}
+
 size_t PlatformTimeRanges::find(const MediaTime& time) const
 {
     bool ignoreInvalid;

@@ -262,12 +262,12 @@ TEST(WTF, CStringStdStringInterop)
 
 TEST(WTF, CStringViewASCIICaseConversions)
 {
-    EXPECT_EQ(WTF::convertToASCIILowercase("Test"_spanChar8), CString("test"));
-    EXPECT_EQ(WTF::convertToASCIIUppercase("Test"_spanChar8), CString("TEST"));
-    EXPECT_EQ(WTF::convertToASCIILowercase(unsafeSpanChar8("Water🍉Melon")), CString("water🍉melon"));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(unsafeSpanChar8("Water🍉Melon")), CString("WATER🍉MELON"));
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Test"_span), CString("test"));
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Test"_span), CString("TEST"));
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Water🍉Melon"_span), CString("water🍉melon"));
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Water🍉Melon"_span), CString("WATER🍉MELON"));
     EXPECT_EQ(WTF::convertToASCIILowercase(std::span<const char8_t>()), CString(""_s));
     EXPECT_EQ(WTF::convertToASCIIUppercase(std::span<const char8_t>()), CString(""_s));
-    EXPECT_EQ(WTF::convertToASCIILowercase(""_spanChar8), CString(""_s));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(""_spanChar8), CString(""_s));
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8""_span), CString(""_s));
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8""_span), CString(""_s));
 }

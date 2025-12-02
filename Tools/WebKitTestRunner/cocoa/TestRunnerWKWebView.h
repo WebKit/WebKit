@@ -95,6 +95,10 @@
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+@property (nonatomic, assign) BOOL shouldAcceptImmersiveEnvironmentRequests;
+#endif
+
 - (void)dismissActiveMenu;
 - (void)resetInteractionCallbacks;
 - (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;

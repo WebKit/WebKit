@@ -210,7 +210,7 @@ private:
     static bool itemGridAreaIsWithinImplicitGrid(const GridArea& area, unsigned gridAxisLinesCount, Style::GridTrackSizingDirection gridAxisDirection)
     {
         auto itemSpan = area.span(gridAxisDirection);
-        return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
+        return itemSpan.startLine() < gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
     }
 
     bool canPerformSimplifiedLayout() const final;

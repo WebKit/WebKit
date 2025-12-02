@@ -141,7 +141,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
 #include "WebPageInlines.h"
-#include "WebPageInspectorTargetController.h"
+#include "WebPageInspectorTarget.h"
 #include "WebPageInternals.h"
 #include "WebPageMessages.h"
 #include "WebPageOverlay.h"
@@ -614,7 +614,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_shouldRenderDOMInGPUProcess { parameters.shouldRenderDOMInGPUProcess }
     , m_shouldPlayMediaInGPUProcess { parameters.shouldPlayMediaInGPUProcess }
 #if ENABLE(WEBGL)
-    , m_shouldRenderWebGLInGPUProcess { parameters.shouldRenderWebGLInGPUProcess}
+    , m_shouldRenderWebGLInGPUProcess { parameters.shouldRenderWebGLInGPUProcess }
 #endif
     , m_shouldSendConsoleLogsToUIProcessForTesting(parameters.shouldSendConsoleLogsToUIProcessForTesting)
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
@@ -639,7 +639,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_uiClient(makeUnique<API::InjectedBundle::PageUIClient>())
     , m_findController(makeUniqueRef<FindController>(this))
     , m_foundTextRangeController(makeUniqueRef<WebFoundTextRangeController>(*this))
-    , m_inspectorTargetController(makeUniqueRef<WebPageInspectorTargetController>(*this))
     , m_userContentController(WebUserContentController::getOrCreate(WTFMove(parameters.userContentControllerParameters)))
     , m_screenOrientationManager(makeUniqueRefWithoutRefCountedCheck<WebScreenOrientationManager>(*this))
 #if ENABLE(GEOLOCATION)
@@ -1275,7 +1274,34 @@ void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
     frame->removeFromTree();
 }
 
-void WebPage::updateFrameTreeSyncData(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)
+void WebPage::topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData& data)
+{
+    if (RefPtr page = corePage())
+        page->updateTopDocumentSyncData(data);
+}
+
+void WebPage::allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&& data)
+{
+    if (RefPtr page = corePage())
+        page->updateTopDocumentSyncData(WTFMove(data));
+}
+
+void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+{
+    ASSERT(m_page->settings().siteIsolationEnabled());
+
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    ASSERT(frame->page() == this);
+
+    RefPtr coreFrame = frame->coreFrame();
+    if (coreFrame)
+        coreFrame->updateFrameTreeSyncData(data);
+}
+
+void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)
 {
     ASSERT(m_page->settings().siteIsolationEnabled());
 
@@ -1288,18 +1314,6 @@ void WebPage::updateFrameTreeSyncData(WebCore::FrameIdentifier frameID, Ref<WebC
     RefPtr coreFrame = frame->coreFrame();
     if (coreFrame)
         coreFrame->updateFrameTreeSyncData(WTFMove(data));
-}
-
-void WebPage::topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData& data)
-{
-    if (RefPtr page = corePage())
-        page->updateTopDocumentSyncData(data);
-}
-
-void WebPage::allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&& data)
-{
-    if (RefPtr page = corePage())
-        page->updateTopDocumentSyncData(WTFMove(data));
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -2200,7 +2214,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
 
     localFrame->loader().setHTTPFallbackInProgress(loadParameters.isPerformingHTTPFallback);
     localFrame->loader().setRequiredCookiesVersion(loadParameters.requiredCookiesVersion);
-    localFrame->loader().load(WTFMove(frameLoadRequest));
+    localFrame->loader().load(WTFMove(frameLoadRequest), WTFMove(loadParameters.requester));
 
     ASSERT(!m_pendingNavigationID);
     ASSERT(!m_internals->pendingWebsitePolicies);
@@ -4063,19 +4077,26 @@ void WebPage::setControlledByAutomation(bool controlled)
     m_page->setControlledByAutomation(controlled);
 }
 
-void WebPage::connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
+WebPageInspectorTarget& WebPage::ensureInspectorTarget()
 {
-    m_inspectorTargetController->connectInspector(targetId, connectionType);
+    if (!m_inspectorTarget)
+        m_inspectorTarget = makeUnique<WebPageInspectorTarget>(*this);
+    return *m_inspectorTarget;
 }
 
-void WebPage::disconnectInspector(const String& targetId)
+void WebPage::connectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    m_inspectorTargetController->disconnectInspector(targetId);
+    ensureInspectorTarget().connect(connectionType);
 }
 
-void WebPage::sendMessageToTargetBackend(const String& targetId, const String& message)
+void WebPage::disconnectInspector()
 {
-    m_inspectorTargetController->sendMessageToTargetBackend(targetId, message);
+    ensureInspectorTarget().disconnect();
+}
+
+void WebPage::sendMessageToTargetBackend(const String& message)
+{
+    ensureInspectorTarget().sendMessageToTargetBackend(message);
 }
 
 void WebPage::insertNewlineInQuotedContent()
@@ -6404,26 +6425,28 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 #endif
 
     if (!m_printContext) {
-        m_printContext = makeUnique<PrintContext>(coreFrame.get());
+        m_printContext = PrintContext::create(coreFrame.get());
         protectedCorePage()->dispatchBeforePrintEvent();
     }
+    RefPtr printContext = m_printContext;
 
     freezeLayerTree(LayerTreeFreezeReason::Printing);
 
-    auto computedPageSize = m_printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
+    auto computedPageSize = printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
 
-    m_printContext->begin(computedPageSize.width(), computedPageSize.height());
+    printContext->begin(computedPageSize.width(), computedPageSize.height());
 
     // PrintContext::begin() performed a synchronous layout which might have executed a
     // script that closed the WebPage, clearing m_printContext.
     // See <rdar://problem/49731211> for cases of this happening.
-    if (!m_printContext) {
+    printContext = m_printContext;
+    if (!printContext) {
         unfreezeLayerTree(LayerTreeFreezeReason::Printing);
         return;
     }
 
     float fullPageHeight;
-    m_printContext->computePageRects(FloatRect(0, 0, computedPageSize.width(), computedPageSize.height()), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
+    printContext->computePageRects(FloatRect(0, 0, computedPageSize.width(), computedPageSize.height()), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
 
 #if PLATFORM(GTK)
     if (!m_printOperation)
@@ -6473,12 +6496,12 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 
     beginPrinting(frameID, printInfo);
 
-    if (m_printContext) {
+    if (RefPtr printContext = m_printContext) {
         PrintContextAccessScope scope { *this };
-        resultPageRects = m_printContext->pageRects();
-        computedPageMargin = m_printContext->computedPageMargin(printInfo.margin);
-        auto computedPageSize = m_printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
-        resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(computedPageSize) * printInfo.pageSetupScaleFactor;
+        resultPageRects = printContext->pageRects();
+        computedPageMargin = printContext->computedPageMargin(printInfo.margin);
+        auto computedPageSize = printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
+        resultTotalScaleFactorForPrinting = printContext->computeAutomaticScaleFactor(computedPageSize) * printInfo.pageSetupScaleFactor;
     }
 #if PLATFORM(COCOA)
     else
@@ -6648,8 +6671,8 @@ void WebPage::pdfSnapshotAtSize(LocalFrame& localMainFrame, GraphicsContext& con
 void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&& completionHandler)
 {
     beginPrinting(frameID, printInfo);
-    if (m_printContext && m_printOperation) {
-        m_printOperation->startPrint(m_printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::FragmentedSharedBuffer>&& data, WebCore::ResourceError&& error) mutable {
+    if (RefPtr printContext = m_printContext; printContext && m_printOperation) {
+        m_printOperation->startPrint(printContext.get(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (RefPtr<WebCore::FragmentedSharedBuffer>&& data, WebCore::ResourceError&& error) mutable {
             m_printOperation = nullptr;
             std::optional<SharedMemory::Handle> ipcHandle;
             if (error.isNull()) {
@@ -7864,6 +7887,14 @@ void WebPage::spatialBackdropSourceChanged()
     RefPtr page = m_page;
     if (page->settings().webPageSpatialBackdropEnabled())
         send(Messages::WebPageProxy::SpatialBackdropSourceChanged(page->spatialBackdropSource()));
+}
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void WebPage::canEnterImmersiveElement(const Element& element, CompletionHandler<void(bool)>&& completion)
+{
+    auto url = element.document().url();
+    sendWithAsyncReply(Messages::WebPageProxy::CanEnterImmersiveElementFromURL(url), WTFMove(completion));
 }
 #endif
 
@@ -9722,6 +9753,16 @@ void WebPage::handleTextExtractionInteraction(TextExtraction::Interaction&& inte
     TextExtraction::handleInteraction(WTFMove(interaction), Ref { *corePage() }, WTFMove(completion));
 }
 
+void WebPage::updateTextExtractionFilterRules(Vector<WebCore::TextExtraction::FilterRuleData>&& ruleData)
+{
+    m_textExtractionFilterRules = TextExtraction::extractRules(WTFMove(ruleData));
+}
+
+void WebPage::applyTextExtractionFilter(const String& input, std::optional<NodeIdentifier>&& containerNodeID, CompletionHandler<void(const String&)>&& completion)
+{
+    TextExtraction::applyRules(input, WTFMove(containerNodeID), m_textExtractionFilterRules, Ref { *corePage() }, WTFMove(completion));
+}
+
 template<typename T> T WebPage::contentsToRootView(WebCore::FrameIdentifier frameID, T geometry)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
@@ -9835,8 +9876,9 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
         RELEASE_ASSERT(lexicalGlobalObject->template inherits<WebCore::JSDOMGlobalObject>());
         auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(lexicalGlobalObject);
         JSLockHolder locker(lexicalGlobalObject);
-        return WebCore::WebKitJSHandle::create(*lexicalGlobalObject, WebCore::toJS(lexicalGlobalObject, domGlobalObject, *node).toObject(lexicalGlobalObject));
+        return WebCore::WebKitJSHandle::create(WebCore::toJS(lexicalGlobalObject, domGlobalObject, *node).toObject(lexicalGlobalObject));
     }();
+    WebCore::WebKitJSHandle::jsHandleSentToAnotherProcess(nodeHandle->identifier());
     completionHandler({ JSHandleInfo { nodeHandle->identifier(), pageContentWorldIdentifier(), nodeWebFrame->info(), nodeHandle->windowFrameIdentifier() } });
 }
 

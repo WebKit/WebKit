@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-direction-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-fill-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-fill-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-fill-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-flow-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-flow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-flow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-shorthand-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-shorthand-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-shorthand-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/grid-lanes-shorthand-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/item-tolerance-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/item-tolerance-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/parsing/item-tolerance-valid.html

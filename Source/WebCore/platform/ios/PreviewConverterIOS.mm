@@ -61,21 +61,21 @@
     ASSERT_UNUSED(connection, !connection);
     ASSERT_UNUSED(lengthReceived, lengthReceived >= 0);
     ASSERT(data.length == static_cast<NSUInteger>(lengthReceived));
-    if (auto delegate = _delegate.get())
+    if (RefPtr delegate = _delegate.get())
         delegate->delegateDidReceiveData(WebCore::SharedBuffer::create(data).get());
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     ASSERT_UNUSED(connection, !connection);
-    if (auto delegate = _delegate.get())
+    if (RefPtr delegate = _delegate.get())
         delegate->delegateDidFinishLoading();
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     ASSERT_UNUSED(connection, !connection);
-    if (auto delegate = _delegate.get())
+    if (RefPtr delegate = _delegate.get())
         delegate->delegateDidFailWithError(error);
 }
 

@@ -30,15 +30,19 @@
 
 namespace WebCore {
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetMock::create(MediaPlaybackTargetContextMock&& context)
+Ref<MediaPlaybackTargetMock> MediaPlaybackTargetMock::create(const String& mockDeviceName, State mockState)
 {
-    return adoptRef(*new MediaPlaybackTargetMock(WTFMove(context)));
+    return adoptRef(*new MediaPlaybackTargetMock(mockDeviceName, mockState));
 }
 
-MediaPlaybackTargetMock::MediaPlaybackTargetMock(MediaPlaybackTargetContextMock&& context)
-    : m_context(context.deviceName(), context.state())
+MediaPlaybackTargetMock::MediaPlaybackTargetMock(const String& mockDeviceName, State mockState)
+    : MediaPlaybackTarget { Type::Mock }
+    , m_mockDeviceName { mockDeviceName }
+    , m_mockState { mockState }
 {
 }
+
+MediaPlaybackTargetMock::~MediaPlaybackTargetMock() = default;
 
 } // namespace WebCore
 

@@ -112,10 +112,6 @@ void VideoFrame::copyTo(std::span<uint8_t>, VideoPixelFormat, Vector<ComputedPla
     callback({ });
 }
 
-void VideoFrame::draw(GraphicsContext&, const FloatRect&, ImageOrientation, bool)
-{
-    // FIXME: Add support.
-}
 #endif // !PLATFORM(COCOA)
 
 }

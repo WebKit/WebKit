@@ -58,7 +58,7 @@ public:
     void pause() override;
     void willSeekToTarget(const MediaTime&) override;
     void seekToTarget(const SeekTarget&) override;
-    bool doSeek(const SeekTarget&, float rate, bool isAsync = false) override;
+    bool doSeek(const SeekTarget&, float rate, bool isAsync = false, bool isSegment = false) override;
 
     void updatePipelineState(GstState);
 
@@ -78,7 +78,8 @@ public:
     bool supportsProgressMonitoring() const override { return false; }
 
     void setNetworkState(MediaPlayer::NetworkState);
-    void setReadyState(MediaPlayer::ReadyState);
+    void readyStateFromMediaSourceChanged() final;
+    void mediaSourceHasRetrievedAllData() final;
 
     void setInitialVideoSize(const FloatSize&);
 

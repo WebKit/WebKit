@@ -106,8 +106,14 @@ Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target
 
 void MediaSourcePrivate::seekToTime(const MediaTime& seekTime)
 {
-    for (RefPtr sourceBuffer : m_activeSourceBuffers)
-        sourceBuffer->seekToTime(seekTime);
+    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }, seekTime] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        assertIsCurrent(protectedThis->m_dispatcher.get());
+        for (RefPtr sourceBuffer : protectedThis->m_activeSourceBuffers)
+            sourceBuffer->seekToTime(seekTime);
+    });
 }
 
 void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
@@ -128,14 +134,24 @@ void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
     m_tracksTypes.remove(&sourceBuffer);
     updateTracksType();
 
-    // sourceBuffer will be deleted here, reference will be stale.
-    ASSERT(m_sourceBuffers.contains(&sourceBuffer));
-    m_sourceBuffers.removeFirst(&sourceBuffer);
+    {
+        Locker locker { m_lock };
+        ASSERT(m_sourceBuffers.contains(&sourceBuffer));
+        m_sourceBuffers.removeFirst(&sourceBuffer);
+    }
+}
+
+Vector<Ref<SourceBufferPrivate>> MediaSourcePrivate::sourceBuffers() const
+{
+    Locker locker { m_lock };
+    return m_sourceBuffers.map([](auto& sourceBuffer) -> Ref<SourceBufferPrivate> {
+        return *sourceBuffer;
+    });
 }
 
 void MediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate& sourceBuffer, bool active)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(m_dispatcher.get());
 
     size_t position = m_activeSourceBuffers.find(&sourceBuffer);
     if (active && position == notFound) {
@@ -185,10 +201,8 @@ void MediaSourcePrivate::durationChanged(const MediaTime& duration)
         Locker locker { m_lock };
         m_duration = duration;
     }
-    ensureOnDispatcher([protectedThis = Ref { *this }, this, duration] {
-        for (auto& sourceBuffer : m_sourceBuffers)
-            sourceBuffer->setMediaSourceDuration(duration);
-    });
+    for (Ref sourceBuffer : sourceBuffers())
+        sourceBuffer->setMediaSourceDuration(duration);
 }
 
 void MediaSourcePrivate::bufferedChanged(const PlatformTimeRanges& buffered)
@@ -234,6 +248,37 @@ bool MediaSourcePrivate::hasBufferedData() const
     Locker locker { m_lock };
 
     return m_buffered.length();
+}
+
+MediaPlayer::ReadyState MediaSourcePrivate::mediaPlayerReadyState() const
+{
+    return m_mediaPlayerReadyState;
+}
+
+void MediaSourcePrivate::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
+{
+    m_mediaPlayerReadyState = readyState;
+    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (RefPtr player = protectedThis->player())
+            player->readyStateFromMediaSourceChanged();
+    });
+}
+
+void MediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
+{
+    m_isEnded = true;
+    if (status != EndOfStreamStatus::NoError)
+        return;
+    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (RefPtr player = protectedThis->player())
+            player->mediaSourceHasRetrievedAllData();
+    });
 }
 
 PlatformTimeRanges MediaSourcePrivate::seekable() const

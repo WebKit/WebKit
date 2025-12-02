@@ -188,8 +188,9 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one
     // heap allocation from this call.
-    if (length > maxInternalLength<CharacterType>())
+    if (!isValidLength<CharacterType>(length))
         CRASH();
+
     SUPPRESS_UNCOUNTED_LOCAL StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
     data = unsafeMakeSpan(string->tailPointer<CharacterType>(), length);
     return constructInternal<CharacterType>(*string, length);
@@ -219,7 +220,7 @@ template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8Conversion
     }
 
     // Same as createUninitialized() except here we use fastRealloc.
-    if (length > maxInternalLength<CharacterType>())
+    if (!isValidLength<CharacterType>(length))
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     originalString->~StringImpl();
@@ -279,7 +280,7 @@ Ref<StringImpl> StringImpl::create(std::span<const Latin1Character> characters)
 
 RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
 {
-    RELEASE_ASSERT(codeUnits.size() <= String::MaxLength);
+    RELEASE_ASSERT(isValidLength<char8_t>(codeUnits.size()));
 
     if (!codeUnits.data())
         return nullptr;
@@ -416,8 +417,6 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
         return newImpl;
     }
 
-    if (m_length > MaxLength)
-        CRASH();
     int32_t length = m_length;
 
     // Do a slower implementation for cases that include non-ASCII characters.
@@ -896,7 +895,7 @@ float StringImpl::toFloat(bool* ok)
 size_t StringImpl::find(std::span<const Latin1Character> matchString, size_t start)
 {
     ASSERT(!matchString.empty());
-    ASSERT(matchString.size() <= static_cast<size_t>(MaxLength));
+    ASSERT(isValidLength<Latin1Character>(matchString.size()));
 
     // Check start & matchLength are in range.
     if (start > length())

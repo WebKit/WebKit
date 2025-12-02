@@ -446,7 +446,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             title.append(before + " ", idElement, " " + after);
         }
 
-        function appendPath(path) {
+        function appendPath(path, dominatorNodeIdentifier) {
             let tableContainer = popoverContentElement.appendChild(document.createElement("div"));
             tableContainer.classList.add("table-container");
 
@@ -458,36 +458,53 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             });
 
             let edge = null;
+            let isDominated = false;
             for (let i = windowIndex === -1 ? 0 : windowIndex; i < path.length; ++i) {
                 let component = path[i];
                 if (component instanceof WI.HeapSnapshotEdgeProxy) {
                     edge = component;
                     continue;
                 }
-                appendPathRow(tableElement, edge, component);
+
+                let isDominator = dominatorNodeIdentifier === component.id;
+
+                appendPathRow(tableElement, edge, component, isDominator, isDominated);
+
                 edge = null;
+                if (isDominator)
+                    isDominated = true;
             }
         }
 
-        function appendPathRow(tableElement, edge, node) {
+        function appendPathRow(tableElement, edge, node, isDominator, isDominated) {
             let tableRow = tableElement.appendChild(document.createElement("tr"));
 
-            // Edge name.
+            let dominatorElement = tableRow.appendChild(document.createElement("td"));
+            if (isDominator) {
+                dominatorElement.classList.add("dominator");
+                dominatorElement.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Dominator.svg", "glyph", WI.UIString("This object is the highest dominator")));
+            }
+            if (isDominated) {
+                dominatorElement.classList.add("dominated");
+                dominatorElement.title = WI.UIString("This object is dominated by the object above");
+            }
+
             let pathDataElement = tableRow.appendChild(document.createElement("td"));
             pathDataElement.classList.add("edge-name");
 
+            let pathDataText;
             if (node.className === rootClassName)
-                pathDataElement.textContent = rootObjectName;
+                pathDataText = rootObjectName;
             else if (edge) {
                 let edgeString = stringifyEdge(edge);
-                pathDataElement.textContent = typeof edgeString === "string" ? edgeString : emDash;
+                pathDataText = typeof edgeString === "string" ? edgeString : emDash;
             } else
-                pathDataElement.textContent = emDash;
+                pathDataText = emDash;
+            pathDataElement.appendChild(document.createTextNode(pathDataText));
 
-            if (pathDataElement.textContent.length > 10)
-                pathDataElement.title = pathDataElement.textContent;
+            if (pathDataText.length > 10)
+                pathDataElement.title = pathDataText;
 
-            // Object.
             let objectDataElement = tableRow.appendChild(document.createElement("td"));
             objectDataElement.classList.add("object-data");
 
@@ -558,7 +575,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
 
             if (path.length) {
                 appendTitle(this._node);
-                appendPath(path);
+                appendPath(path, this._node.dominatorNodeIdentifier);
             } else if (this._node.gcRoot) {
                 let textElement = popoverContentElement.appendChild(document.createElement("div"));
                 textElement.textContent = WI.UIString("This object is a root");

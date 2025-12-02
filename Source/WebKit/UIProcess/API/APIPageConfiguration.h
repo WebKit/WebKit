@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "WebPreferencesDefaultValues.h"
+#include "WebPreferencesDefinitions.h"
 #include "WebURLSchemeHandler.h"
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/FrameIdentifier.h>
@@ -41,6 +42,14 @@
 #include <wtf/Markable.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include "ClassStructPtr.h"
+#endif
+
+#if ENABLE(DATA_DETECTION)
+#include <WebCore/DataDetectorType.h>
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_PROTOCOL(_UIClickInteractionDriving);

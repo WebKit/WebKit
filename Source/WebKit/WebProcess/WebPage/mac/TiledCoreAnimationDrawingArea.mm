@@ -46,6 +46,7 @@
 #import "WebProcess.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/AsyncScrollingCoordinator.h>
 #import <WebCore/DebugPageOverlays.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/FrameInlines.h>
@@ -58,6 +59,8 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollbarTheme.h>
+#import <WebCore/ScrollingThread.h>
+#import <WebCore/ScrollingTree.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -67,12 +70,6 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
-
-#if ENABLE(ASYNC_SCROLLING)
-#import <WebCore/AsyncScrollingCoordinator.h>
-#import <WebCore/ScrollingThread.h>
-#import <WebCore/ScrollingTree.h>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -279,7 +276,6 @@ void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(WebCore::FrameId
 
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&& function)
 {
-#if ENABLE(ASYNC_SCROLLING)
     RefPtr corePage = m_webPage->corePage();
     ASSERT(corePage);
     if (!corePage->scrollingCoordinator()) {
@@ -308,9 +304,6 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
         if (!protectedThis->m_layerTreeStateIsFrozen)
             protectedThis->scheduleRenderingUpdateRunLoopObserver();
     });
-#else
-    function();
-#endif
 }
 
 void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()

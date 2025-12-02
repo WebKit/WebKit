@@ -582,6 +582,8 @@ public:
     void dispatchSubtreeModifiedEvent();
     void dispatchDOMActivateEvent(Event& underlyingClickEvent);
 
+    void dispatchWebKitSubmitEvent(Event& underlyingSubmitEvent);
+
 #if ENABLE(TOUCH_EVENTS)
     virtual bool allowsDoubleTapGesture() const { return true; }
 #endif

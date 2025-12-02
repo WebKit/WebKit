@@ -28,31 +28,36 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "CoreIPCAVOutputContext.h"
-#include <WebCore/MediaPlaybackTargetCocoa.h>
-#include <WebCore/MediaPlaybackTargetMock.h>
+#include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+enum class MediaPlaybackTargetMockState : uint8_t;
+}
 
 namespace WebKit {
 
-class MediaPlaybackTargetContextSerialized final : public WebCore::MediaPlaybackTargetContext {
+class MediaPlaybackTargetContextSerialized {
 public:
-    explicit MediaPlaybackTargetContextSerialized(const WebCore::MediaPlaybackTargetContext&);
+    explicit MediaPlaybackTargetContextSerialized(const WebCore::MediaPlaybackTarget&);
 
-    String deviceName() const final { return m_deviceName; }
-    bool hasActiveRoute() const final { return m_hasActiveRoute; }
+    String deviceName() const { return m_deviceName; }
+    bool hasActiveRoute() const { return m_hasActiveRoute; }
     bool supportsRemoteVideoPlayback() const { return m_supportsRemoteVideoPlayback; }
 
-    Variant<WebCore::MediaPlaybackTargetContextCocoa, WebCore::MediaPlaybackTargetContextMock> platformContext() const;
+    Ref<WebCore::MediaPlaybackTarget> playbackTarget() const;
 
     // Used by IPC serializer.
-    WebCore::MediaPlaybackTargetContextType targetType() const { return m_targetType; }
-    WebCore::MediaPlaybackTargetContextMockState mockState() const { return m_state; }
+    WebCore::MediaPlaybackTargetType targetType() const { return m_targetType; }
+    WebCore::MediaPlaybackTargetMockState mockState() const { return m_state; }
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     CoreIPCAVOutputContext context() const { return m_context; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetContextType, WebCore::MediaPlaybackTargetContextMockState, CoreIPCAVOutputContext&&);
+    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, CoreIPCAVOutputContext&&);
 #else
     String contextID() const { return m_contextID; }
     String contextType() const { return m_contextType; }
-    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetContextType, WebCore::MediaPlaybackTargetContextMockState, String&&, String&&);
+    MediaPlaybackTargetContextSerialized(String&&, bool, bool, WebCore::MediaPlaybackTargetType, WebCore::MediaPlaybackTargetMockState, String&&, String&&);
 #endif
 
 private:
@@ -60,8 +65,8 @@ private:
     bool m_hasActiveRoute { false };
     bool m_supportsRemoteVideoPlayback { false };
     // This should be const, however IPC's Decoder's handling doesn't allow for const member.
-    WebCore::MediaPlaybackTargetContextType m_targetType;
-    WebCore::MediaPlaybackTargetContextMockState m_state { WebCore::MediaPlaybackTargetContextMockState::Unknown };
+    WebCore::MediaPlaybackTargetType m_targetType;
+    WebCore::MediaPlaybackTargetMockState m_state;
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     CoreIPCAVOutputContext m_context;
 #else
@@ -70,39 +75,6 @@ private:
 #endif
 };
 
-class MediaPlaybackTargetSerialized final : public WebCore::MediaPlaybackTarget {
-public:
-    static Ref<MediaPlaybackTarget> create(MediaPlaybackTargetContextSerialized&& context)
-    {
-        return adoptRef(*new MediaPlaybackTargetSerialized(WTFMove(context)));
-    }
-
-    TargetType targetType() const final { return TargetType::Serialized; }
-    const WebCore::MediaPlaybackTargetContext& targetContext() const final { return m_context; }
-
-private:
-    explicit MediaPlaybackTargetSerialized(MediaPlaybackTargetContextSerialized&& context)
-        : m_context(WTFMove(context))
-    {
-    }
-
-    MediaPlaybackTargetContextSerialized m_context;
-};
-
 } // namespace WebKit
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::MediaPlaybackTargetContextSerialized)
-static bool isType(const WebCore::MediaPlaybackTargetContext& context)
-{
-    return context.type() ==  WebCore::MediaPlaybackTargetContextType::Serialized;
-}
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::MediaPlaybackTargetSerialized)
-static bool isType(const WebCore::MediaPlaybackTarget& target)
-{
-    return target.targetType() ==  WebCore::MediaPlaybackTarget::TargetType::Serialized;
-}
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

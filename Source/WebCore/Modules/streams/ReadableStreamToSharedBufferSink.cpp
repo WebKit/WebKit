@@ -111,8 +111,8 @@ void ReadableStreamToSharedBufferSink::pipeFrom(ReadableStream& stream)
 {
     RefPtr context = stream.scriptExecutionContext();
     auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()): nullptr;
-    if (!context) {
-        error(Exception { ExceptionCode::InvalidStateError, "no global object"_s });
+    if (!globalObject) {
+        error(Exception { ExceptionCode::TypeError, "no global object"_s });
         return;
     }
 

@@ -43,7 +43,7 @@ private:
     // WritableStreamSink
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
     void close() final;
-    void error(String&&) final;
+    void abort(JSC::JSValue) final;
 
     FileSystemWritableFileStreamIdentifier m_identifier;
     const Ref<FileSystemFileHandle> m_source;

@@ -97,6 +97,8 @@ class BaseAudioContext
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BaseAudioContext);
 public:
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     virtual ~BaseAudioContext();
 
     // This is used for lifetime testing.
@@ -188,8 +190,8 @@ public:
     // Thread Safety and Graph Locking:
     //
     
-    void setAudioThread(Thread& thread) { m_audioThread = &thread; } // FIXME: check either not initialized or the same
-    bool isAudioThread() const { return m_audioThread == &Thread::currentSingleton(); }
+    void setAudioThread(Thread& thread) { m_audioThreadUID = thread.uid(); } // FIXME: check either not initialized or the same
+    bool isAudioThread() const { return m_audioThreadUID == Thread::currentSingleton().uid(); }
 
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() const { return m_isAudioThreadFinished; }
@@ -314,7 +316,7 @@ private:
     // This is copied to m_nodesToDelete at the end of a render cycle in handlePostRenderTasks(), where we're assured of a stable graph
     // state which will have no references to any of the nodes in m_nodesToDelete once the context lock is released
     // (when handlePostRenderTasks() has completed).
-    Vector<AudioNode*> m_nodesMarkedForDeletion;
+    Vector<CheckedPtr<AudioNode>> m_nodesMarkedForDeletion;
 
     class TailProcessingNode {
     public:
@@ -334,6 +336,7 @@ private:
         }
         TailProcessingNode& operator=(const TailProcessingNode&) = delete;
         TailProcessingNode& operator=(TailProcessingNode&&) = delete;
+        CheckedPtr<AudioNode> checkedNode() const { return m_node.get(); }
         AudioNode* operator->() const { return m_node.get(); }
         friend bool operator==(const TailProcessingNode&, const TailProcessingNode&) = default;
         bool operator==(const AudioNode& node) const { return m_node == &node; }
@@ -348,23 +351,23 @@ private:
     Vector<TailProcessingNode> m_finishedTailProcessingNodes;
 
     // They will be scheduled for deletion (on the main thread) at the end of a render cycle (in realtime thread).
-    Vector<AudioNode*> m_nodesToDelete;
+    Vector<CheckedPtr<AudioNode>> m_nodesToDelete;
 
     // Only accessed when the graph lock is held.
-    HashSet<AudioSummingJunction*> m_dirtySummingJunctions;
-    HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
+    HashSet<CheckedPtr<AudioSummingJunction>> m_dirtySummingJunctions;
+    HashSet<CheckedPtr<AudioNodeOutput>> m_dirtyAudioNodeOutputs;
 
     // For the sake of thread safety, we maintain a seperate Vector of automatic pull nodes for rendering in m_renderingAutomaticPullNodes.
     // It will be copied from m_automaticPullNodes by updateAutomaticPullNodes() at the very start or end of the rendering quantum.
-    HashSet<AudioNode*> m_automaticPullNodes;
-    Vector<AudioNode*> m_renderingAutomaticPullNodes;
+    HashSet<CheckedPtr<AudioNode>> m_automaticPullNodes;
+    Vector<CheckedPtr<AudioNode>> m_renderingAutomaticPullNodes;
     // Only accessed in the audio thread.
-    Vector<AudioNode*> m_deferredBreakConnectionList;
+    Vector<CheckedPtr<AudioNode>> m_deferredBreakConnectionList;
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     const Ref<AudioListener> m_listener;
 
-    std::atomic<Thread*> m_audioThread;
+    std::atomic<uint32_t> m_audioThreadUID { 0 };
 
     mutable RecursiveLock m_graphLock;
 

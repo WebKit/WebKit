@@ -1,96 +1,61 @@
 
 (CALayer tree root
-  (layer bounds [x: 0 y: 0 width: 800 height: 600])
-  (layer anchorPoint [x: 0 y: 0])
+  (layer bounds [x: 0 y: 0 width: 800 height: 293])
+  (layer position [x: 400 y: 400])
   (sublayers
     (
-      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-      (layer anchorPoint [x: 0 y: 0])
+      (layer bounds [x: 0 y: 0 width: 352 height: 288])
+      (layer position [x: 176 y: 176])
+      (separated 1)
+      (layer cornerRadius 24)
       (sublayers
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 600])
-          (layer position [x: 400 y: 400])
+          (layer bounds [x: 0 y: 0 width: 0 height: 0])
           (sublayers
             (
-              (layer bounds [x: 0 y: 0 width: 800 height: 600])
-              (layer position [x: 400 y: 400])
+              (type 0)
+              (layer bounds [x: 0 y: 0 width: 352 height: 288])
+              (layer position [x: 176 y: 176])
+              (layer cornerRadius 24))))
+        (
+          (layer bounds [x: 0 y: 0 width: 352 height: 288])
+          (layer anchorPoint [x: 0 y: 0])
+          (sublayers
+            (
+              (layer bounds [x: 0 y: 0 width: 352 height: 288])
+              (layer anchorPoint [x: 0 y: 0])
               (sublayers
                 (
-                  (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                  (layer anchorPoint [x: 0 y: 0])
+                  (layer bounds [x: 0 y: 0 width: 352 height: 288])
+                  (layer position [x: 176 y: 176])
                   (sublayers
                     (
-                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                      (layer anchorPoint [x: 0 y: 0])
+                      (layer bounds [x: 0 y: 0 width: 300 height: 150])
+                      (layer position [x: 176 y: 176]))))))
+            (
+              (layer bounds [x: 0 y: 0 width: 352 height: 288])
+              (layer position [x: 176 y: 176])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 352 height: 288])
+                  (layer position [x: 176 y: 176])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 51 height: 51])
+                      (layer position [x: 201.5 y: 201.5])
                       (sublayers
                         (
-                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                          (layer bounds [x: 0 y: 0 width: 31 height: 31])
+                          (layer position [x: 25.5 y: 25.5])
                           (sublayers
                             (
-                              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                              (layer bounds [x: 0 y: 0 width: 31 height: 31])
                               (layer anchorPoint [x: 0 y: 0]))))
                         (
                           (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                          (layer anchorPoint [x: 0 y: 0])
                           (sublayers
                             (
-                              (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                              (layer position [x: 176 y: 176])
-                              (separated 1)
-                              (layer cornerRadius 24)
-                              (sublayers
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                  (sublayers
-                                    (
-                                      (type 0)
-                                      (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                      (layer position [x: 176 y: 176])
-                                      (layer cornerRadius 24))))
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                  (layer anchorPoint [x: 0 y: 0])
-                                  (sublayers
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                      (layer anchorPoint [x: 0 y: 0])
-                                      (sublayers
-                                        (
-                                          (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                          (layer position [x: 176 y: 176])
-                                          (sublayers
-                                            (
-                                              (layer bounds [x: 0 y: 0 width: 300 height: 150])
-                                              (layer position [x: 176 y: 176]))))))
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                      (layer position [x: 176 y: 176])
-                                      (sublayers
-                                        (
-                                          (layer bounds [x: 0 y: 0 width: 352 height: 288])
-                                          (layer position [x: 176 y: 176])
-                                          (sublayers
-                                            (
-                                              (layer bounds [x: 0 y: 0 width: 51 height: 51])
-                                              (layer position [x: 201.5 y: 201.5])
-                                              (sublayers
-                                                (
-                                                  (layer bounds [x: 0 y: 0 width: 31 height: 31])
-                                                  (layer position [x: 25.5 y: 25.5])
-                                                  (sublayers
-                                                    (
-                                                      (layer bounds [x: 0 y: 0 width: 31 height: 31])
-                                                      (layer anchorPoint [x: 0 y: 0]))))
-                                                (
-                                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                                  (sublayers
-                                                    (
-                                                      (type 0)
-                                                      (layer bounds [x: 0 y: 0 width: 51 height: 51])
-                                                      (layer position [x: 25.5 y: 25.5])
-                                                      (layer cornerRadius 25.5))))))))))))))))))))))))))
-    (
-      (layer bounds [x: 0 y: 0 width: 0 height: 0])
-      (layer position [x: 400 y: 400]))
-    (
-      (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+                              (type 0)
+                              (layer bounds [x: 0 y: 0 width: 51 height: 51])
+                              (layer position [x: 25.5 y: 25.5])
+                              (layer cornerRadius 25.5))))))))))))))))

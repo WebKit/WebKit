@@ -57,6 +57,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -115,18 +116,27 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT, GObject)
 
 static void webFrameDestroyed(WebFrame*);
 
-class WebKitFrameWrapper final: public FrameDestructionObserver {
+class WebKitFrameWrapper final: public FrameDestructionObserver, public RefCounted<WebKitFrameWrapper> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitFrameWrapper);
 public:
+    static Ref<WebKitFrameWrapper> create(WebFrame& webFrame)
+    {
+        return adoptRef(*new WebKitFrameWrapper(webFrame));
+    }
+
+    WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
+
+    // FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
     WebKitFrameWrapper(WebFrame& webFrame)
         : FrameDestructionObserver(webFrame.coreLocalFrame())
         , m_webkitFrame(adoptGRef(webkitFrameCreate(&webFrame)))
     {
     }
 
-    WebKitFrame* webkitFrame() const { return m_webkitFrame.get(); }
-
-private:
     void frameDestroyed() override
     {
         FrameDestructionObserver::frameDestroyed();
@@ -136,7 +146,7 @@ private:
     GRefPtr<WebKitFrame> m_webkitFrame;
 };
 
-typedef HashMap<WebFrame*, std::unique_ptr<WebKitFrameWrapper>> WebFrameMap;
+typedef HashMap<WebFrame*, Ref<WebKitFrameWrapper>> WebFrameMap;
 
 static WebFrameMap& webFrameMap()
 {
@@ -158,11 +168,10 @@ static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
     if (auto* webKitFrame = webkitFrameGet(webFrame))
         return webKitFrame;
 
-    std::unique_ptr<WebKitFrameWrapper> wrapper = makeUnique<WebKitFrameWrapper>(*webFrame);
-    auto wrapperPtr = wrapper.get();
-    webFrameMap().set(webFrame, WTFMove(wrapper));
+    Ref wrapper = WebKitFrameWrapper::create(*webFrame);
+    webFrameMap().set(webFrame, wrapper.copyRef());
 
-    return wrapperPtr->webkitFrame();
+    return wrapper->webkitFrame();
 }
 
 static void webFrameDestroyed(WebFrame* webFrame)

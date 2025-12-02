@@ -62,7 +62,7 @@
 
 - (NSString *)name
 {
-    return Ref { *_scriptMessage }->cocoaName().unsafeGet();
+    return Ref { *_scriptMessage }->cocoaName();
 }
 
 - (WKContentWorld *)world

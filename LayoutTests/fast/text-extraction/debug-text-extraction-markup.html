@@ -1,0 +1,168 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+.clickable {
+    background-color: lightblue;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.focusable {
+    border: 2px solid green;
+    padding: 5px;
+    margin: 3px;
+}
+
+.interactive {
+    background-color: lightyellow;
+    padding: 8px;
+}
+
+canvas {
+    width: 200px;
+    height: 200px;
+}
+
+.canvas-container {
+    border: 1px dashed gray;
+    padding: 1em;
+}
+
+#error-text {
+    display: none;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div role="banner">
+    <h1 id="main-title" aria-label="Main Page Title">Welcome to Test Page</h1>
+</div>
+<nav role="navigation" aria-label="Main navigation">
+    <ul>
+        <li><a href="mailto:wenson_hsieh@apple.com" onclick="return false;">Section 1</a></li>
+        <li><a href="https://example.com/" onclick="return false;">Section 2</a></li>
+    </ul>
+</nav>
+<main role="main">
+    <section id="section1" aria-label="Interactive Elements">
+        <button class="clickable" onclick="console.log('clicked')" aria-label="Test button" aria-describedby="btn-help">Click Me</button>
+        <div id="btn-help" aria-hidden="true">This &lt;button&gt; does nothing</div>
+        <input type="text" class="focusable" placeholder="Enter text here" onfocus="this.style.backgroundColor='yellow'" onblur="this.style.backgroundColor=''" aria-required="true" aria-invalid="false" />
+        <div class="interactive" tabindex="0"  role="button" onclick="this.textContent = 'Clicked!'" onkeydown="if(event.key==='Enter') this.click()" aria-pressed="false">Clickable Div</div>
+    </section>
+    <section id="section2" aria-label="ARIA Labeling Examples">
+        <div id="label1">Name Field</div>
+        <div id="label2">Description</div>
+        <input type="text" aria-labelledby="label1" placeholder="Your name" />
+        <div aria-labelledby="label2" role="region">
+            <p>This region is labeled by another element.</p>
+        </div>
+        <div id="error-text">Name not found.</div>
+        <input type="text" aria-labelledby="label1" aria-describedby="error-text" placeholder="Full name" />
+        <div id="title-label">User Profile</div>
+        <div role="group" aria-labelledby="title-label">
+            <label for="username">Username:</label>
+            <input type="text" id="username" />
+        </div>
+    </section>
+    <section id="section3" aria-label="Content with Roles">
+        <article role="article">
+            <header>
+                <h3>Article Title</h3>
+                <time datetime="2024-01-01">January 1, 2024</time>
+            </header>
+            <p>This is some article content with <mark>highlighted text</mark>.</p>
+        </article>
+        <aside role="complementary" aria-label="Related information">
+            <h4>Related Links</h4>
+            <ul>
+                <li><a href="https://webkit.org" onmouseover="this.style.color='red'">Example Link</a></li>
+                <li><a href="https://apple.com" onmouseout="this.style.color=''">Test Link</a></li>
+            </ul>
+        </aside>
+        <div role="region">
+            <div role="status" aria-live="polite" id="status-msg">Ready</div>
+            <button onclick="document.getElementById('status-msg').textContent = 'Updated!'">Update Status</button>
+        </div>
+        <div class="canvas-container" aria-label="Figure 1">
+            <canvas width="400" height="400"></canvas>
+        </div>
+        <textarea rows="15" cols="40">This is a text box</textarea>
+        Price: $11<sup>99</sup>
+        Link to <sub>WebKit home page:<a href="https://webkit.org">webkit.org</a></sub>
+    </section>
+</main>
+<footer role="contentinfo">
+    <p>Footer content with <span role="img" aria-label="copyright symbol">©</span> 2024 &amp; 2025</p>
+</footer>
+<div role="dialog" aria-hidden="true" style="display: none;">
+    <p>This dialog is hidden and should not be extracted.</p>
+</div>
+
+<script>
+function paintIntoCanvas() {
+    const context = document.querySelector("canvas").getContext("2d");
+    context.save();
+    context.clearRect(0, 0, 400, 400);
+    context.beginPath();
+    context.strokeStyle = "black";
+    context.rect(20, 20, 160, 160);
+    context.stroke();
+
+    context.beginPath();
+    context.strokeStyle = "red";
+    context.rect(220, 20, 160, 160);
+    context.stroke();
+    context.fillStyle = "red";
+    context.fill();
+
+    context.beginPath();
+    context.rect(20, 220, 160, 160);
+    context.fillStyle = "green";
+    context.fill();
+
+    context.beginPath();
+    context.strokeStyle = "black";
+    context.lineWidth = 20;
+    context.rect(230, 230, 140, 140);
+    context.stroke();
+    context.fillStyle = "gray";
+    context.fill();
+    context.restore();
+}
+
+addEventListener("load", async () => {
+    paintIntoCanvas();
+
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeRects: true,
+        includeURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeEventListeners: true,
+        includeAccessibilityAttributes: true,
+        includeTextInAutoFilledControls: true,
+        outputFormat: "html",
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

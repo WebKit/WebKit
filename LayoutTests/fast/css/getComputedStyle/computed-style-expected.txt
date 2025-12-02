@@ -95,7 +95,7 @@ font-weight: 400;
 glyph-orientation-horizontal: 0deg;
 glyph-orientation-vertical: auto;
 grid-auto-columns: auto;
-grid-auto-flow: row;
+grid-auto-flow: normal;
 grid-auto-rows: auto;
 grid-column-end: auto;
 grid-column-start: auto;

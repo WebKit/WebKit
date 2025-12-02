@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
 
     .transformed {
       width: 200px;
@@ -36,9 +39,11 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     await UIHelper.ensureStablePresentationUpdate();
-    results.textContent = await UIHelper.getCALayerTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };

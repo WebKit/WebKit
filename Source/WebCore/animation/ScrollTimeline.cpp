@@ -28,6 +28,7 @@
 
 #include "AnimationTimelinesController.h"
 #include "ContainerNodeInlines.h"
+#include "Document.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderElementInlines.h"
@@ -40,6 +41,10 @@
 #include "StylableInlines.h"
 #include "StyleSingleAnimationRange.h"
 #include "WebAnimation.h"
+
+#ifndef NDEBUG
+#include "Settings.h"
+#endif
 
 namespace WebCore {
 
@@ -239,26 +244,29 @@ ScrollTimeline::ResolvedScrollDirection ScrollTimeline::resolvedScrollDirection(
     return { isVertical, isReversed };
 }
 
+auto ScrollTimeline::computeCurrentTimeData() const -> CurrentTimeData
+{
+    RefPtr source = this->source();
+    if (!source)
+        return { };
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
+    if (!sourceScrollableArea)
+        return { };
+    auto scrollDirection = resolvedScrollDirection();
+    float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
+    float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
+    // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
+    // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
+    if (maxScrollOffset > 0)
+        scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
+    return { scrollOffset, maxScrollOffset };
+}
+
 void ScrollTimeline::cacheCurrentTime()
 {
     auto previousMaxScrollOffset = m_cachedCurrentTimeData.maxScrollOffset;
 
-    m_cachedCurrentTimeData = [&] -> CurrentTimeData {
-        RefPtr source = this->source();
-        if (!source)
-            return { };
-        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
-        if (!sourceScrollableArea)
-            return { };
-        auto scrollDirection = resolvedScrollDirection();
-        float scrollOffset = scrollDirection.isVertical ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
-        float maxScrollOffset = scrollDirection.isVertical ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
-        // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
-        // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
-        if (maxScrollOffset > 0)
-            scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
-        return { scrollOffset, maxScrollOffset };
-    }();
+    m_cachedCurrentTimeData = computeCurrentTimeData();
 
     if (previousMaxScrollOffset != m_cachedCurrentTimeData.maxScrollOffset) {
         for (auto& animation : m_animations)
@@ -326,14 +334,15 @@ Style::SingleAnimationRange ScrollTimeline::defaultRange() const
     return Style::SingleAnimationRange::defaultForScrollTimeline();
 }
 
-ScrollTimeline::Data ScrollTimeline::computeTimelineData() const
+ScrollTimeline::Data ScrollTimeline::computeTimelineData(UseCachedCurrentTime useCachedCurrentTime) const
 {
-    if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.maxScrollOffset)
+    auto currentTimeData = useCachedCurrentTime == UseCachedCurrentTime::Yes ? m_cachedCurrentTimeData : computeCurrentTimeData();
+    if (!currentTimeData.scrollOffset && !currentTimeData.maxScrollOffset)
         return { };
     return {
-        m_cachedCurrentTimeData.scrollOffset,
+        currentTimeData.scrollOffset,
         0.f,
-        m_cachedCurrentTimeData.maxScrollOffset
+        currentTimeData.maxScrollOffset
     };
 }
 
@@ -357,12 +366,12 @@ std::pair<WebAnimationTime, WebAnimationTime> ScrollTimeline::intervalForAttachm
     };
 }
 
-std::optional<WebAnimationTime> ScrollTimeline::currentTime(UseCachedCurrentTime)
+std::optional<WebAnimationTime> ScrollTimeline::currentTime(UseCachedCurrentTime useCachedCurrentTime)
 {
     // https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-progress
     // Progress (the current time) for a scroll progress timeline is calculated as:
     // scroll offset ÷ (scrollable overflow size − scroll container size)
-    auto data = computeTimelineData();
+    auto data = computeTimelineData(useCachedCurrentTime);
     auto range = data.rangeEnd - data.rangeStart;
     if (!range)
         return { };
@@ -386,9 +395,22 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation()
+bool ScrollTimeline::computeCanBeAccelerated() const
+{
+    RefPtr source = this->source();
+    if (!source)
+        return false;
+
+    ASSERT(source->document().settings().threadedScrollDrivenAnimationsEnabled());
+
+    CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
+    return sourceScrollableArea && !!sourceScrollableArea->scrollingNodeID();
+}
+
+Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation() const
 {
     ASSERT(this->source());
+    ASSERT(this->source()->document().settings().threadedScrollDrivenAnimationsEnabled());
     Ref source = *this->source();
     CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
     ASSERT(sourceScrollableArea);

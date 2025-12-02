@@ -65,7 +65,6 @@ GCC_NO_COMMON_BLOCKS = YES;
 GCC_OBJC_CALL_CXX_CDTORS = YES;
 GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 // FIXME: <http://webkit.org/b/109847> WebKit2 should build with -Wshorten-64-to-32
@@ -120,7 +119,7 @@ SWIFT_VERSION = $(SWIFT_VERSION$(WK_XCODE_16));
 SWIFT_VERSION_XCODE_BEFORE_16 = 5.0;
 SWIFT_VERSION_XCODE_SINCE_16 = 6.0;
 
-OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/swift-tba-availability-macros.resp;
+OTHER_SWIFT_FLAGS = $(inherited) -Xfrontend -experimental-spi-only-imports $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/swift-tba-availability-macros.resp;
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;
 
 WK_ENABLE_SWIFTUI = YES;
@@ -131,8 +130,6 @@ WK_ENABLE_SWIFTUI[sdk=watch*] = NO;
 WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xros2.*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xrsimulator2.*] = NO;
-
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 SUPPORTS_TEXT_BASED_API = $(SUPPORTS_TEXT_BASED_API_$(OVERRIDE_SUPPORTS_TEXT_BASED_API));
 SUPPORTS_TEXT_BASED_API_ = $(TAPI_USE_SRCROOT);

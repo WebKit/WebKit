@@ -35,13 +35,16 @@ namespace WebCore {
 
 class StyleFilterImage final : public StyleGeneratedImage, private CachedImageClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleFilterImage);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleFilterImage);
 public:
     static Ref<StyleFilterImage> create(RefPtr<StyleImage> image, Style::Filter filter)
     {
         return adoptRef(*new StyleFilterImage(WTFMove(image), WTFMove(filter)));
     }
     virtual ~StyleFilterImage();
+
+    // CachedResourceClient.
+    void ref() const final { StyleGeneratedImage::ref(); }
+    void deref() const final { StyleGeneratedImage::deref(); }
 
     bool operator==(const StyleImage& other) const final;
     bool equals(const StyleFilterImage&) const;

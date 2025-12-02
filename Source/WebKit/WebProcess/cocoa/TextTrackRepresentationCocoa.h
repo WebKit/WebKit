@@ -39,6 +39,8 @@ namespace WebKit {
 class WebPage;
 
 class WebTextTrackRepresentationCocoa final : public WebCore::TextTrackRepresentationCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(WebTextTrackRepresentationCocoa);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebTextTrackRepresentationCocoa);
 public:
     explicit WebTextTrackRepresentationCocoa(WebCore::TextTrackRepresentationClient&, WebCore::HTMLMediaElement&);
     virtual ~WebTextTrackRepresentationCocoa() = default;

@@ -611,7 +611,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
     if (!result.dataDetectors.isEmpty()) {
         RefPtr page = document->page();
-        if (auto* overlayController = page ? page->imageOverlayControllerIfExists() : nullptr)
+        if (RefPtr overlayController = page ? page->imageOverlayControllerIfExists() : nullptr)
             overlayController->textRecognitionResultsChanged(element);
     }
 #endif // ENABLE(DATA_DETECTION)

@@ -54,6 +54,7 @@ function checkGridAutoFlowSetCSSValue(elementId, expectedValue) {
 
 function checkGridAutoFlowSetJSValue(newValue, expectedStyleValue, expectedComputedStyleValue) {
     element = document.createElement("div");
+    element.style.display = 'grid';
     document.body.appendChild(element);
     if (newValue)
         element.style.gridAutoFlow = newValue;

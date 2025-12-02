@@ -66,7 +66,7 @@
 #define Backdropfilter_feature_status Testable
 #endif
 
-#if defined(ENABLE_MODEL_ELEMENT) && ENABLE_MODEL_ELEMENT && PLATFORM(VISION)
+#if defined(ENABLE_MODEL_ELEMENT) && ENABLE_MODEL_ELEMENT && (PLATFORM(VISION) || ENABLE(GPU_PROCESS_MODEL))
 #define Modelelement_feature_status Stable
 #else
 #define Modelelement_feature_status Testable
@@ -155,6 +155,7 @@ bool defaultUseGPUProcessForDOMRenderingEnabled();
 #if USE(LIBWEBRTC)
 bool defaultPeerConnectionEnabledAvailable();
 #endif
+bool defaultWebRTCSocketsServiceClassEnabled();
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 bool defaultBuiltInNotificationsEnabled();

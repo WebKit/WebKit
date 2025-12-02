@@ -71,6 +71,11 @@
 
 namespace WebCore {
 
+Ref<LinkLoader> LinkLoader::create(LinkLoaderClient& client)
+{
+    return adoptRef(*new LinkLoader(client));
+}
+
 LinkLoader::LinkLoader(LinkLoaderClient& client)
     : m_client(client)
 {
@@ -80,21 +85,26 @@ LinkLoader::~LinkLoader()
 {
     if (CachedResourceHandle cachedLinkResource = m_cachedLinkResource)
         cachedLinkResource->removeClient(*this);
-    if (m_preloadResourceClient)
-        m_preloadResourceClient->clear();
+    if (RefPtr client = m_preloadResourceClient)
+        client->clear();
 }
 
 void LinkLoader::triggerEvents(const CachedResource& resource)
 {
+    RefPtr client = m_client.get();
+    if (!client)
+        return;
+
     if (resource.errorOccurred())
-        m_client->linkLoadingErrored();
+        client->linkLoadingErrored();
     else
-        m_client->linkLoaded();
+        client->linkLoaded();
 }
 
 void LinkLoader::triggerError()
 {
-    m_client->linkLoadingErrored();
+    if (RefPtr client = m_client.get())
+        client->linkLoadingErrored();
 }
 
 void LinkLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
@@ -209,27 +219,27 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     return std::nullopt;
 }
 
-static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader, Document& document)
+static RefPtr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader, Document& document)
 {
     switch (resource.type()) {
     case CachedResource::Type::ImageResource:
-        return makeUnique<LinkPreloadImageResourceClient>(loader, downcast<CachedImage>(resource));
+        return LinkPreloadImageResourceClient::create(loader, downcast<CachedImage>(resource));
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
-        return makeUnique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedScript>(resource));
+        return LinkPreloadDefaultResourceClient::create(loader, downcast<CachedScript>(resource));
     case CachedResource::Type::CSSStyleSheet:
-        return makeUnique<LinkPreloadStyleResourceClient>(loader, downcast<CachedCSSStyleSheet>(resource));
+        return LinkPreloadStyleResourceClient::create(loader, downcast<CachedCSSStyleSheet>(resource));
     case CachedResource::Type::FontResource:
-        return makeUnique<LinkPreloadFontResourceClient>(loader, downcast<CachedFont>(resource));
+        return LinkPreloadFontResourceClient::create(loader, downcast<CachedFont>(resource));
 #if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
-        return makeUnique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedTextTrack>(resource));
+        return LinkPreloadDefaultResourceClient::create(loader, downcast<CachedTextTrack>(resource));
 #endif
     case CachedResource::Type::MediaResource:
         ASSERT_UNUSED(document, document.settings().mediaPreloadingEnabled());
         [[fallthrough]];
     case CachedResource::Type::RawResource:
-        return makeUnique<LinkPreloadRawResourceClient>(loader, downcast<CachedRawResource>(resource));
+        return LinkPreloadRawResourceClient::create(loader, downcast<CachedRawResource>(resource));
     case CachedResource::Type::MainResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::SVGFontResource:
@@ -323,7 +333,7 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
     });
 }
 
-std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadParameters& params, Document& document, LinkLoader* loader)
+RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadParameters& params, Document& document, LinkLoader* loader)
 {
     std::optional<CachedResource::Type> type;
     if (!document.loader())
@@ -437,8 +447,8 @@ void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& do
 
 void LinkLoader::cancelLoad()
 {
-    if (m_preloadResourceClient)
-        m_preloadResourceClient->clear();
+    if (RefPtr client = m_preloadResourceClient)
+        client->clear();
 }
 
 void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
@@ -453,10 +463,10 @@ void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
         return;
     }
 
-    if (m_client->shouldLoadLink()) {
+    if (RefPtr client = m_client.get(); client && client->shouldLoadLink()) {
         auto resourceClient = preloadIfNeeded(params, document, this);
-        if (m_preloadResourceClient)
-            m_preloadResourceClient->clear();
+        if (RefPtr client = m_preloadResourceClient)
+            client->clear();
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
     }

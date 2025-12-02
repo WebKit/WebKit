@@ -1,0 +1,36 @@
+XXX XX
+XX
+XX
+
+PASS 'masonry' with: grid-template-columns: auto;
+PASS 'masonry' with: grid-template-columns: min-content;
+PASS 'masonry' with: grid-template-columns: max-content;
+PASS 'masonry' with: grid-template-columns: minmax(0, auto);
+PASS 'masonry' with: grid-template-columns: minmax(0, min-content);
+PASS 'masonry' with: grid-template-columns: minmax(0, max-content);
+PASS 'masonry' with: grid-template-columns: minmax(auto, 10px);
+PASS 'masonry' with: grid-template-columns: minmax(min-content, 10px);
+PASS 'masonry' with: grid-template-columns: minmax(max-content, 10px);
+PASS 'masonry' with: grid-template-columns: auto auto;
+PASS 'masonry' with: grid-template-columns: min-content min-content;
+PASS 'masonry' with: grid-template-columns: max-content max-content;
+PASS 'masonry' with: grid-template-columns: minmax(0, auto) minmax(0, auto);
+PASS 'masonry' with: grid-template-columns: minmax(0, min-content) minmax(0, min-content);
+PASS 'masonry' with: grid-template-columns: minmax(0, max-content) minmax(0, max-content);
+PASS 'masonry' with: grid-template-columns: minmax(auto, 4px) minmax(auto, 4px);
+PASS 'masonry' with: grid-template-columns: minmax(auto, 10px) minmax(auto, 10px);
+PASS 'masonry' with: grid-template-columns: minmax(min-content, 10px) minmax(min-content, 10px);
+PASS 'masonry' with: grid-template-columns: minmax(max-content, 10px) minmax(max-content, 10px);
+PASS 'masonry' with: grid-template-columns: 20px auto;
+PASS 'masonry' with: grid-template-columns: 20px min-content;
+PASS 'masonry' with: grid-template-columns: 20px max-content;
+PASS 'masonry' with: grid-template-columns: 20px minmax(0, auto);
+PASS 'masonry' with: grid-template-columns: 20px minmax(0, min-content);
+PASS 'masonry' with: grid-template-columns: 20px minmax(0, max-content);
+PASS 'masonry' with: grid-template-columns: 20px minmax(auto, 30px);
+PASS 'masonry' with: grid-template-columns: 20px minmax(min-content, 6px);
+PASS 'masonry' with: grid-template-columns: 20px minmax(min-content, 40px);
+PASS 'masonry' with: grid-template-columns: 20px minmax(max-content, 6px);
+PASS 'masonry' with: grid-template-columns: 20px minmax(max-content, 30px);
+PASS 'masonry' with: grid-template-columns: max-content min-content;
+

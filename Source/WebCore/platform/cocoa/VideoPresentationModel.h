@@ -95,6 +95,11 @@ public:
     virtual void setRequiresTextTrackRepresentation(bool) { }
     virtual void setTextTrackRepresentationBounds(const IntRect&) { }
 
+#if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+    virtual void requestShowCaptionDisplaySettingsPreview() { }
+    virtual void requestHideCaptionDisplaySettingsPreview() { }
+#endif
+
     virtual void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler) { completionHandler(RouteSharingPolicy::Default, emptyString()); }
 
 #if PLATFORM(IOS_FAMILY)

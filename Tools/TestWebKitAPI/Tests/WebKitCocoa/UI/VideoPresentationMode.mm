@@ -33,6 +33,10 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WebKit.h>
 
+#if HAVE(AVKIT)
+#import <WebCore/WebAVPlayerLayer.h>
+#endif
+
 @interface VideoPresentationModeUIDelegate : NSObject <WKUIDelegate>
 - (void)waitForDidEnterFullscreen;
 - (void)waitForDidExitFullscreen;
@@ -342,6 +346,74 @@ TEST(VideoPresentationMode, PictureInPicture)
 
     [uiDelegate waitForDidExitFullscreen];
 }
+
+#if HAVE(AVKIT)
+TEST(VideoPresentationMode, CaptionPreview)
+{
+    if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"org.webkit.TestWebKitAPI"])
+        return;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setAllowsInlineMediaPlayback:YES];
+    RetainPtr uiDelegate = adoptNS([[VideoPresentationModeUIDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 playsinline loop controls></video>"];
+    [webView evaluateJavaScript:@"document.querySelector('video').play()" completionHandler:nil];
+    [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('fullscreen')" completionHandler:nil];
+
+    [uiDelegate waitForDidEnterFullscreen];
+
+    RetainPtr<UIView> playerLayerView;
+    UIApplication *application = UIApplication.sharedApplication;
+    UIScene *scene = application.connectedScenes.anyObject;
+    RELEASE_ASSERT([scene isKindOfClass:UIWindowScene.class]);
+
+    for (UIWindow *window in [(UIWindowScene *)scene windows]) {
+        RetainPtr viewStack = adoptNS([[NSMutableArray alloc] initWithObjects:window, nil]);
+        while ([viewStack count]) {
+            RetainPtr view = (UIView *)[viewStack lastObject];
+            [viewStack removeLastObject];
+            if ([view isKindOfClass:NSClassFromString(@"WebAVPlayerLayerView")]) {
+                playerLayerView = WTFMove(view);
+                break;
+            }
+            [viewStack addObjectsFromArray:[view subviews]];
+        }
+        if (playerLayerView)
+            break;
+    }
+
+    EXPECT_TRUE(!!playerLayerView);
+
+    WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayerView layer];
+    EXPECT_TRUE([webAVPlayerLayer isKindOfClass:[WebAVPlayerLayer class]]);
+
+    EXPECT_FALSE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer setCaptionPreviewProfileID:@"test-profile" position:CGPointMake(10, 20) text:@"Test caption text"];
+    EXPECT_TRUE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer stopShowingCaptionPreview];
+    EXPECT_FALSE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer setCaptionPreviewProfileID:@"another-profile" position:CGPointMake(50, 100) text:@"Another test"];
+    EXPECT_TRUE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer setCaptionPreviewProfileID:@"third-profile" position:CGPointMake(0, 0) text:nil];
+    EXPECT_TRUE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer stopShowingCaptionPreview];
+    EXPECT_FALSE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webAVPlayerLayer stopShowingCaptionPreview];
+    EXPECT_FALSE([webAVPlayerLayer showingCaptionPreview]);
+
+    [webView evaluateJavaScript:@"document.querySelector('video').webkitSetPresentationMode('inline')" completionHandler:nil];
+    [uiDelegate waitForDidExitFullscreen];
+}
+#endif // HAVE(AVKIT)
 
 #endif // !PLATFORM(IOS_SIMULATOR)
 

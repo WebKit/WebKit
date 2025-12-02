@@ -193,6 +193,14 @@ void GridMasonryLayout::updateItemOffset(const RenderBox& gridItem, LayoutUnit o
     m_itemOffsets.set(gridItem, offset);
 }
 
+LayoutUnit GridMasonryLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
+{
+    LayoutUnit maxPosition;
+    for (unsigned lineOffset = 0; lineOffset < spanLength; lineOffset++)
+        maxPosition = std::max(maxPosition, m_runningPositions[startLine + lineOffset]);
+    return maxPosition;
+}
+
 GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
 {
     auto itemSpanLength = Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection());
@@ -244,12 +252,8 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     // Step 1: Find the absolute shortest position across all tracks
     auto maxStartingLine = gridAxisLines - itemSpanLength;
     LayoutUnit absoluteShortest = LayoutUnit::max();
-    for (unsigned i = 0; i < maxStartingLine; i++) {
-        LayoutUnit maxPosForTrack;
-        for (unsigned lineOffset = 0; lineOffset < itemSpanLength; lineOffset++)
-            maxPosForTrack = std::max(maxPosForTrack, m_runningPositions[i + lineOffset]);
-        absoluteShortest = std::min(absoluteShortest, maxPosForTrack);
-    }
+    for (unsigned i = 0; i < maxStartingLine; i++)
+        absoluteShortest = std::min(absoluteShortest, maxRunningPositionForSpan(i, itemSpanLength));
 
     // Step 2: Find first position within tolerance of shortest
     unsigned smallestMaxPosLine = 0;
@@ -257,9 +261,7 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
         // Start from cursor position and wrap around
         auto startingLine = (m_autoFlowNextCursor + i) % maxStartingLine;
 
-        LayoutUnit maxPosForCurrentStartingLine;
-        for (unsigned lineOffset = 0; lineOffset < itemSpanLength; lineOffset++)
-            maxPosForCurrentStartingLine = std::max(maxPosForCurrentStartingLine, m_runningPositions[startingLine + lineOffset]);
+        auto maxPosForCurrentStartingLine = maxRunningPositionForSpan(startingLine, itemSpanLength);
 
         // Accept first position within tolerance of the absolute shortest
         if (maxPosForCurrentStartingLine <= absoluteShortest + toleranceValue) {

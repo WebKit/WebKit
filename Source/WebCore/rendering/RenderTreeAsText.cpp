@@ -840,9 +840,9 @@ String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> beh
     if (!renderer)
         return String();
 
-    PrintContext printContext(frame);
+    Ref printContext = PrintContext::create(frame);
     if (behavior.contains(RenderAsTextFlag::PrintingMode))
-        printContext.begin(renderer->width());
+        printContext->begin(renderer->width());
 
     return externalRepresentation(*renderer, behavior);
 }

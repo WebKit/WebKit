@@ -35,6 +35,10 @@ class NavigationInterceptHandler : public ThreadSafeRefCounted<NavigationInterce
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     virtual CallbackResult<WTF::RefPtr<DOMPromise>> invoke() = 0;
 
 private:

@@ -408,7 +408,7 @@ void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection&
 {
     MESSAGE_CHECK(ObjectIdentifier<FetchIdentifierType>::isValidIdentifier(decoder.destinationID()));
 
-    RefPtr fetch = m_ongoingFetches.get(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID())).get();
+    RefPtr fetch = m_ongoingFetches.get(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID()));
     if (!fetch)
         return;
 

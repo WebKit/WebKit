@@ -52,7 +52,7 @@ public:
 #endif
 
 private:
-    friend LazyNeverDestroyed<PublicSuffixStore>;
+    friend NeverDestroyed<PublicSuffixStore>;
     PublicSuffixStore() = default;
 
     bool platformIsPublicSuffix(StringView domain) const;

@@ -41,6 +41,10 @@ class WebCodecsEncodedVideoChunkOutputCallback : public RefCounted<WebCodecsEnco
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(WebCodecsEncodedVideoChunk&, const WebCodecsEncodedVideoChunkMetadata&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(WebCodecsEncodedVideoChunk&, const WebCodecsEncodedVideoChunkMetadata&) = 0;
 

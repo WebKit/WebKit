@@ -53,7 +53,7 @@ Data::Data(Vector<uint8_t>&& data)
 {
 }
 
-RetainPtr<dispatch_data_t> Data::protectedDispatchData() const
+OSObjectPtr<dispatch_data_t> Data::protectedDispatchData() const
 {
     return dispatchData();
 }

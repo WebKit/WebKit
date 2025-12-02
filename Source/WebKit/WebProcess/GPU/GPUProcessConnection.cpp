@@ -153,11 +153,14 @@ std::optional<audit_token_t> GPUProcessConnection::auditToken()
 }
 #endif
 
-Ref<RemoteSharedResourceCacheProxy> GPUProcessConnection::sharedResourceCache()
+RemoteSharedResourceCacheProxy& GPUProcessConnection::sharedResourceCache()
 {
-    if (!m_sharedResourceCache)
-        m_sharedResourceCache = RemoteSharedResourceCacheProxy::create();
-    return *m_sharedResourceCache;
+    return WebProcess::singleton().gpuProcessSharedResourceCache();
+}
+
+Ref<RemoteSharedResourceCacheProxy> GPUProcessConnection::protectedSharedResourceCache()
+{
+    return sharedResourceCache();
 }
 
 void GPUProcessConnection::invalidate()
@@ -211,9 +214,7 @@ void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioM
 #if ENABLE(VIDEO)
 RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy()
 {
-    if (!m_videoFrameObjectHeapProxy)
-        m_videoFrameObjectHeapProxy = RemoteVideoFrameObjectHeapProxy::create(*this);
-    return *m_videoFrameObjectHeapProxy;
+    return protectedSharedResourceCache()->videoFrameObjectHeapProxy();
 }
 
 Ref<RemoteVideoFrameObjectHeapProxy> GPUProcessConnection::protectedVideoFrameObjectHeapProxy()

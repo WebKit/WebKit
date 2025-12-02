@@ -58,8 +58,8 @@ void SMILTimeContainer::schedule(SVGSMILElement* animation, SVGElement* target, 
 
     ElementAttributePair key(target, attributeName);
     auto& animations = m_scheduledAnimations.add(key, AnimationsVector()).iterator->value;
-    ASSERT(!animations.contains(animation));
-    animations.append(animation);
+    ASSERT(!animations.containsIf([&](auto& item) { return item.ptr() == animation; }));
+    animations.append(*animation);
 
     SMILTime nextFireTime = animation->nextProgressTime();
     if (nextFireTime.isFinite())
@@ -72,8 +72,8 @@ void SMILTimeContainer::unschedule(SVGSMILElement* animation, SVGElement* target
 
     ElementAttributePair key(target, attributeName);
     auto& animations = m_scheduledAnimations.find(key)->value;
-    ASSERT(animations.contains(animation));
-    animations.removeFirst(animation);
+    bool wasRemoved = animations.removeFirstMatching([&](auto& item) { return item.ptr() == animation; });
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
 void SMILTimeContainer::notifyIntervalsChanged()
@@ -228,7 +228,7 @@ void SMILTimeContainer::updateDocumentOrderIndexes()
 
 struct PriorityCompare {
     PriorityCompare(SMILTime elapsed) : m_elapsed(elapsed) {}
-    bool operator()(SVGSMILElement* a, SVGSMILElement* b)
+    bool operator()(auto& a, auto& b)
     {
         // FIXME: This should also consider possible timing relations between the elements.
         SMILTime aBegin = a->intervalBegin();
@@ -253,8 +253,8 @@ void SMILTimeContainer::sortByPriority(AnimationsVector& animations, SMILTime el
 void SMILTimeContainer::processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>& callback)
 {
     for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
-        for (RefPtr animation : animations)
-            callback(*animation);
+        for (auto& weakAnimation : animations)
+            callback(Ref { weakAnimation.get() });
     }
 }
 
@@ -272,7 +272,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
             animation.connectConditions();
     });
 
-    AnimationsVector animationsToApply;
+    Vector<Ref<SVGSMILElement>> animationsToApply;
     SMILTime earliestFireTime = SMILTime::unresolved();
 
     for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
@@ -283,7 +283,8 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         sortByPriority(animations, elapsed);
 
         RefPtr<SVGSMILElement> firstAnimation;
-        for (RefPtr animation : animations) {
+        for (auto& weakAnimation : animations) {
+            Ref animation = weakAnimation.get();
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
             ASSERT(animation->hasValidAttributeName());
@@ -292,11 +293,11 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
             if (!firstAnimation) {
                 if (!animation->hasValidAttributeType())
                     return;
-                firstAnimation = animation;
+                firstAnimation = animation.copyRef();
             }
 
             // This will calculate the contribution from the animation and add it to the resultsElement.
-            if (!animation->progress(elapsed, *firstAnimation, seekToTime) && firstAnimation == animation)
+            if (!animation->progress(elapsed, *firstAnimation, seekToTime) && firstAnimation == animation.ptr())
                 firstAnimation = nullptr;
 
             SMILTime nextFireTime = animation->nextProgressTime();
@@ -305,11 +306,11 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         }
 
         if (firstAnimation)
-            animationsToApply.append(firstAnimation.get());
+            animationsToApply.append(firstAnimation.releaseNonNull());
     }
 
     // Apply results to target elements.
-    for (RefPtr animation : animationsToApply)
+    for (auto& animation : animationsToApply)
         animation->applyResultsToTarget();
 
     startTimer(elapsed, earliestFireTime, animationFrameDelay());

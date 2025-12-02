@@ -1,0 +1,3912 @@
+Test HTML SourceMap with inline script with inline and block comments
+
+
+== Running test suite: SourceMaps.HTML
+-- Running test case: SourceMaps.HTML.4
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body><script>
+  2| /*
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body><script>
+  2| /*
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body><script>
+  2| /*
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body><script>
+  2| /*
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body><script>
+  2| /*
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body>
+  2|     <script>
+
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body><script>
+  2| /*
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body>
+  2|     <script>
+
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body><script>
+  2| /*
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body>
+  2|     <script>
+
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body><script>
+  2| /*
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body>
+  2|     <script>
+
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body><script>
+  2| /*
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body>
+  2|     <script>
+
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body><script>
+  2| /*
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body>
+  2|     <script>
+
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body><script>
+  2| /*
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body>
+  2|     <script>
+
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body><script>
+  2| /*
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body>
+  2|     <script>
+
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body><script>
+  2| /*
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body>
+  2|     <script>
+
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body><script>
+  2| /*
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body>
+  2|     <script>
+
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body><script>
+  2| /*
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body>
+  2|     <script>
+
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body>
+  2|     <script>
+  3|     /*
+
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body>
+  2|     <script>
+  3|     /*
+
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody>
+  2|     <script>
+  3|     /*
+
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy>
+  2|     <script>
+  3|     /*
+
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y>
+  2|     <script>
+  3|     /*
+
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#><script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#>
+  2|     <script>
+  3|     /*
+
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 21 (2, 4)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     #<script>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <body><#script>
+  2| /*
+  3| * Multi-line comment
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <#script>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <body><s#cript>
+  2| /*
+  3| * Multi-line comment
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <s#cript>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <body><sc#ript>
+  2| /*
+  3| * Multi-line comment
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <sc#ript>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <body><scr#ipt>
+  2| /*
+  3| * Multi-line comment
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scr#ipt>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <body><scri#pt>
+  2| /*
+  3| * Multi-line comment
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scri#pt>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <body><scrip#t>
+  2| /*
+  3| * Multi-line comment
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scrip#t>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <body><script#>
+  2| /*
+  3| * Multi-line comment
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script#>
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <body><script>#
+  2| /*
+  3| * Multi-line comment
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script>#
+  3|     /*
+  4|     * Multi-line comment
+
+Original: 30 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+Formatted: 35 (3, 4)
+  1| <body>
+  2|     <script>
+  3|     #/*
+  4|     * Multi-line comment
+  5|     */
+
+Original: 31 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| /#*
+  3| * Multi-line comment
+  4| */
+Formatted: 40 (3, 5)
+  1| <body>
+  2|     <script>
+  3|     /#*
+  4|     * Multi-line comment
+  5|     */
+
+Original: 32 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| /*#
+  3| * Multi-line comment
+  4| */
+Formatted: 41 (3, 6)
+  1| <body>
+  2|     <script>
+  3|     /*#
+  4|     * Multi-line comment
+  5|     */
+
+Original: 33 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 42 (4, 4)
+  2|     <script>
+  3|     /*
+  4|     #* Multi-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 34 (3, 1)
+  1| <body><script>
+  2| /*
+  3| *# Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 47 (4, 5)
+  2|     <script>
+  3|     /*
+  4|     *# Multi-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 35 (3, 2)
+  1| <body><script>
+  2| /*
+  3| * #Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 48 (4, 6)
+  2|     <script>
+  3|     /*
+  4|     * #Multi-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 36 (3, 3)
+  1| <body><script>
+  2| /*
+  3| * M#ulti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 49 (4, 7)
+  2|     <script>
+  3|     /*
+  4|     * M#ulti-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 37 (3, 4)
+  1| <body><script>
+  2| /*
+  3| * Mu#lti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 50 (4, 8)
+  2|     <script>
+  3|     /*
+  4|     * Mu#lti-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 38 (3, 5)
+  1| <body><script>
+  2| /*
+  3| * Mul#ti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 51 (4, 9)
+  2|     <script>
+  3|     /*
+  4|     * Mul#ti-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 39 (3, 6)
+  1| <body><script>
+  2| /*
+  3| * Mult#i-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 52 (4, 10)
+  2|     <script>
+  3|     /*
+  4|     * Mult#i-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 40 (3, 7)
+  1| <body><script>
+  2| /*
+  3| * Multi#-line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 53 (4, 11)
+  2|     <script>
+  3|     /*
+  4|     * Multi#-line comment
+  5|     */
+  6|     a = 1,
+
+Original: 41 (3, 8)
+  1| <body><script>
+  2| /*
+  3| * Multi-#line comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 54 (4, 12)
+  2|     <script>
+  3|     /*
+  4|     * Multi-#line comment
+  5|     */
+  6|     a = 1,
+
+Original: 42 (3, 9)
+  1| <body><script>
+  2| /*
+  3| * Multi-l#ine comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 55 (4, 13)
+  2|     <script>
+  3|     /*
+  4|     * Multi-l#ine comment
+  5|     */
+  6|     a = 1,
+
+Original: 43 (3, 10)
+  1| <body><script>
+  2| /*
+  3| * Multi-li#ne comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 56 (4, 14)
+  2|     <script>
+  3|     /*
+  4|     * Multi-li#ne comment
+  5|     */
+  6|     a = 1,
+
+Original: 44 (3, 11)
+  1| <body><script>
+  2| /*
+  3| * Multi-lin#e comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 57 (4, 15)
+  2|     <script>
+  3|     /*
+  4|     * Multi-lin#e comment
+  5|     */
+  6|     a = 1,
+
+Original: 45 (3, 12)
+  1| <body><script>
+  2| /*
+  3| * Multi-line# comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 58 (4, 16)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line# comment
+  5|     */
+  6|     a = 1,
+
+Original: 46 (3, 13)
+  1| <body><script>
+  2| /*
+  3| * Multi-line #comment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 59 (4, 17)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line #comment
+  5|     */
+  6|     a = 1,
+
+Original: 47 (3, 14)
+  1| <body><script>
+  2| /*
+  3| * Multi-line c#omment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 60 (4, 18)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line c#omment
+  5|     */
+  6|     a = 1,
+
+Original: 48 (3, 15)
+  1| <body><script>
+  2| /*
+  3| * Multi-line co#mment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 61 (4, 19)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line co#mment
+  5|     */
+  6|     a = 1,
+
+Original: 49 (3, 16)
+  1| <body><script>
+  2| /*
+  3| * Multi-line com#ment
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 62 (4, 20)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line com#ment
+  5|     */
+  6|     a = 1,
+
+Original: 50 (3, 17)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comm#ent
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 63 (4, 21)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comm#ent
+  5|     */
+  6|     a = 1,
+
+Original: 51 (3, 18)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comme#nt
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 64 (4, 22)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comme#nt
+  5|     */
+  6|     a = 1,
+
+Original: 52 (3, 19)
+  1| <body><script>
+  2| /*
+  3| * Multi-line commen#t
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 65 (4, 23)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line commen#t
+  5|     */
+  6|     a = 1,
+
+Original: 53 (3, 20)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comment#
+  4| */
+  5| a=1,b=2,c=3;
+Formatted: 66 (4, 24)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comment#
+  5|     */
+  6|     a = 1,
+
+Original: 54 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+Formatted: 67 (5, 4)
+  3|     /*
+  4|     * Multi-line comment
+  5|     #*/
+  6|     a = 1,
+  7|     b = 2,
+
+Original: 55 (4, 1)
+  2| /*
+  3| * Multi-line comment
+  4| *#/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+Formatted: 72 (5, 5)
+  3|     /*
+  4|     * Multi-line comment
+  5|     *#/
+  6|     a = 1,
+  7|     b = 2,
+
+Original: 56 (4, 2)
+  2| /*
+  3| * Multi-line comment
+  4| */#
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+Formatted: 73 (5, 6)
+  3|     /*
+  4|     * Multi-line comment
+  5|     */#
+  6|     a = 1,
+  7|     b = 2,
+
+Original: 57 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 74 (6, 4)
+  4|     * Multi-line comment
+  5|     */
+  6|     #a = 1,
+  7|     b = 2,
+  8|     c = 3;
+
+Original: 58 (5, 1)
+  3| * Multi-line comment
+  4| */
+  5| a#=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 79 (6, 6)
+  4|     * Multi-line comment
+  5|     */
+  6|     a #= 1,
+  7|     b = 2,
+  8|     c = 3;
+
+Original: 59 (5, 2)
+  3| * Multi-line comment
+  4| */
+  5| a=#1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 81 (6, 8)
+  4|     * Multi-line comment
+  5|     */
+  6|     a = #1,
+  7|     b = 2,
+  8|     c = 3;
+
+Original: 60 (5, 3)
+  3| * Multi-line comment
+  4| */
+  5| a=1#,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 83 (6, 9)
+  4|     * Multi-line comment
+  5|     */
+  6|     a = 1#,
+  7|     b = 2,
+  8|     c = 3;
+
+Original: 61 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 84 (7, 4)
+  5|     */
+  6|     a = 1,
+  7|     #b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+
+Original: 62 (5, 5)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b#=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 90 (7, 6)
+  5|     */
+  6|     a = 1,
+  7|     b #= 2,
+  8|     c = 3;
+  9|     // Inline comment
+
+Original: 63 (5, 6)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=#2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 92 (7, 8)
+  5|     */
+  6|     a = 1,
+  7|     b = #2,
+  8|     c = 3;
+  9|     // Inline comment
+
+Original: 64 (5, 7)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2#,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 94 (7, 9)
+  5|     */
+  6|     a = 1,
+  7|     b = 2#,
+  8|     c = 3;
+  9|     // Inline comment
+
+Original: 65 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 95 (8, 4)
+  6|     a = 1,
+  7|     b = 2,
+  8|     #c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+
+Original: 66 (5, 9)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c#=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 101 (8, 6)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c #= 3;
+  9|     // Inline comment
+ 10|     a = 1,
+
+Original: 67 (5, 10)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=#3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 103 (8, 8)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = #3;
+  9|     // Inline comment
+ 10|     a = 1,
+
+Original: 68 (5, 11)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=3#;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 105 (8, 9)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = 3#;
+  9|     // Inline comment
+ 10|     a = 1,
+
+Original: 69 (5, 12)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;#
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+Formatted: 106 (8, 10)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = 3;#
+  9|     // Inline comment
+ 10|     a = 1,
+
+Original: 70 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 107 (9, 4)
+  7|     b = 2,
+  8|     c = 3;
+  9|     #// Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 71 (6, 1)
+  4| */
+  5| a=1,b=2,c=3;
+  6| /#/ Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 112 (9, 5)
+  7|     b = 2,
+  8|     c = 3;
+  9|     /#/ Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 72 (6, 2)
+  4| */
+  5| a=1,b=2,c=3;
+  6| //# Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 113 (9, 6)
+  7|     b = 2,
+  8|     c = 3;
+  9|     //# Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 73 (6, 3)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // #Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 114 (9, 7)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // #Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 74 (6, 4)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // I#nline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 115 (9, 8)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // I#nline comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 75 (6, 5)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // In#line comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 116 (9, 9)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // In#line comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 76 (6, 6)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inl#ine comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 117 (9, 10)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inl#ine comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 77 (6, 7)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inli#ne comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 118 (9, 11)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inli#ne comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 78 (6, 8)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inlin#e comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 119 (9, 12)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inlin#e comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 79 (6, 9)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline# comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 120 (9, 13)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline# comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 80 (6, 10)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline #comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 121 (9, 14)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline #comment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 81 (6, 11)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline c#omment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 122 (9, 15)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline c#omment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 82 (6, 12)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline co#mment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 123 (9, 16)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline co#mment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 83 (6, 13)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline com#ment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 124 (9, 17)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline com#ment
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 84 (6, 14)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comm#ent
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 125 (9, 18)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comm#ent
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 85 (6, 15)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comme#nt
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 126 (9, 19)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comme#nt
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 86 (6, 16)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline commen#t
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 127 (9, 20)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline commen#t
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 87 (6, 17)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comment#
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+Formatted: 128 (9, 21)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comment#
+ 10|     a = 1,
+ 11|     b = 2,
+
+Original: 88 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 129 (10, 4)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     #a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+
+Original: 89 (7, 1)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a#=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 134 (10, 6)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a #= 1,
+ 11|     b = 2,
+ 12|     c = 3;
+
+Original: 90 (7, 2)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=#1,b=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 136 (10, 8)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a = #1,
+ 11|     b = 2,
+ 12|     c = 3;
+
+Original: 91 (7, 3)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1#,b=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 138 (10, 9)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a = 1#,
+ 11|     b = 2,
+ 12|     c = 3;
+
+Original: 92 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 139 (11, 4)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     #b = 2,
+ 12|     c = 3;
+ 13|     </script>
+
+Original: 93 (7, 5)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b#=2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 145 (11, 6)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b #= 2,
+ 12|     c = 3;
+ 13|     </script>
+
+Original: 94 (7, 6)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=#2,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 147 (11, 8)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b = #2,
+ 12|     c = 3;
+ 13|     </script>
+
+Original: 95 (7, 7)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2#,c=3;
+  8| </script></body></html>
+  9|
+Formatted: 149 (11, 9)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b = 2#,
+ 12|     c = 3;
+ 13|     </script>
+
+Original: 96 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+Formatted: 150 (12, 4)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     #c = 3;
+ 13|     </script>
+ 14| </body>
+
+Original: 97 (7, 9)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c#=3;
+  8| </script></body></html>
+  9|
+Formatted: 156 (12, 6)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c #= 3;
+ 13|     </script>
+ 14| </body>
+
+Original: 98 (7, 10)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=#3;
+  8| </script></body></html>
+  9|
+Formatted: 158 (12, 8)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = #3;
+ 13|     </script>
+ 14| </body>
+
+Original: 99 (7, 11)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3#;
+  8| </script></body></html>
+  9|
+Formatted: 160 (12, 9)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = 3#;
+ 13|     </script>
+ 14| </body>
+
+Original: 100 (7, 12)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;#
+  8| </script></body></html>
+  9|
+Formatted: 161 (12, 10)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = 3;#
+ 13|     </script>
+ 14| </body>
+
+Original: 101 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+Formatted: 162 (13, 4)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     #</script>
+ 14| </body>
+ 15| </html>
+
+Original: 102 (8, 1)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| <#/script></body></html>
+  9|
+Formatted: 167 (13, 5)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     <#/script>
+ 14| </body>
+ 15| </html>
+
+Original: 103 (8, 2)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </#script></body></html>
+  9|
+Formatted: 168 (13, 6)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </#script>
+ 14| </body>
+ 15| </html>
+
+Original: 104 (8, 3)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </s#cript></body></html>
+  9|
+Formatted: 169 (13, 7)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </s#cript>
+ 14| </body>
+ 15| </html>
+
+Original: 105 (8, 4)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </sc#ript></body></html>
+  9|
+Formatted: 170 (13, 8)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </sc#ript>
+ 14| </body>
+ 15| </html>
+
+Original: 106 (8, 5)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scr#ipt></body></html>
+  9|
+Formatted: 171 (13, 9)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scr#ipt>
+ 14| </body>
+ 15| </html>
+
+Original: 107 (8, 6)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scri#pt></body></html>
+  9|
+Formatted: 172 (13, 10)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scri#pt>
+ 14| </body>
+ 15| </html>
+
+Original: 108 (8, 7)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scrip#t></body></html>
+  9|
+Formatted: 173 (13, 11)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scrip#t>
+ 14| </body>
+ 15| </html>
+
+Original: 109 (8, 8)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script#></body></html>
+  9|
+Formatted: 174 (13, 12)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </script#>
+ 14| </body>
+ 15| </html>
+
+Original: 110 (8, 9)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script>#</body></html>
+  9|
+Formatted: 175 (14, 0)
+ 12|     c = 3;
+ 13|     </script>
+ 14| #</body>
+ 15| </html>
+ 16|
+
+Original: 111 (8, 10)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script><#/body></html>
+  9|
+Formatted: 177 (14, 1)
+ 12|     c = 3;
+ 13|     </script>
+ 14| <#/body>
+ 15| </html>
+ 16|
+
+Original: 112 (8, 11)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></#body></html>
+  9|
+Formatted: 178 (14, 2)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </#body>
+ 15| </html>
+ 16|
+
+Original: 113 (8, 12)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></b#ody></html>
+  9|
+Formatted: 179 (14, 3)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </b#ody>
+ 15| </html>
+ 16|
+
+Original: 114 (8, 13)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></bo#dy></html>
+  9|
+Formatted: 180 (14, 4)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </bo#dy>
+ 15| </html>
+ 16|
+
+Original: 115 (8, 14)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></bod#y></html>
+  9|
+Formatted: 181 (14, 5)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </bod#y>
+ 15| </html>
+ 16|
+
+Original: 116 (8, 15)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body#></html>
+  9|
+Formatted: 182 (14, 6)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </body#>
+ 15| </html>
+ 16|
+
+Original: 117 (8, 16)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body>#</html>
+  9|
+Formatted: 183 (15, 0)
+ 13|     </script>
+ 14| </body>
+ 15| #</html>
+ 16|
+
+Original: 118 (8, 17)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body><#/html>
+  9|
+Formatted: 185 (15, 1)
+ 13|     </script>
+ 14| </body>
+ 15| <#/html>
+ 16|
+
+Original: 119 (8, 18)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></#html>
+  9|
+Formatted: 186 (15, 2)
+ 13|     </script>
+ 14| </body>
+ 15| </#html>
+ 16|
+
+Original: 120 (8, 19)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></h#tml>
+  9|
+Formatted: 187 (15, 3)
+ 13|     </script>
+ 14| </body>
+ 15| </h#tml>
+ 16|
+
+Original: 121 (8, 20)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></ht#ml>
+  9|
+Formatted: 188 (15, 4)
+ 13|     </script>
+ 14| </body>
+ 15| </ht#ml>
+ 16|
+
+Original: 122 (8, 21)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></htm#l>
+  9|
+Formatted: 189 (15, 5)
+ 13|     </script>
+ 14| </body>
+ 15| </htm#l>
+ 16|
+
+Original: 123 (8, 22)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html#>
+  9|
+Formatted: 190 (15, 6)
+ 13|     </script>
+ 14| </body>
+ 15| </html#>
+ 16|
+
+Original: 124 (8, 23)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>#
+  9|
+Formatted: 191 (15, 7)
+ 13|     </script>
+ 14| </body>
+ 15| </html>#
+ 16|
+
+Original: 125 (9, 0)
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+  9| #
+Formatted: 192 (16, 0)
+ 14| </body>
+ 15| </html>
+ 16| #
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body>
+  2|     <script>
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body>
+  2|     <script>
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body>
+  2|     <script>
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body>
+  2|     <script>
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body>
+  2|     <script>
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <body><script>
+  2| /*
+
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body>
+  2|     <script>
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <body><script>
+  2| /*
+
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body>
+  2|     <script>
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <body><script>
+  2| /*
+
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body>
+  2|     <script>
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <body><script>
+  2| /*
+
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body>
+  2|     <script>
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <body><script>
+  2| /*
+
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body>
+  2|     <script>
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <body><script>
+  2| /*
+
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body>
+  2|     <script>
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <body><script>
+  2| /*
+
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body>
+  2|     <script>
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <body><script>
+  2| /*
+
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body>
+  2|     <script>
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <body><script>
+  2| /*
+
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body>
+  2|     <script>
+  3|     /*
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<body><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body>
+  2|     <script>
+  3|     /*
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#body><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody>
+  2|     <script>
+  3|     /*
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <b#ody><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy>
+  2|     <script>
+  3|     /*
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <bo#dy><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y>
+  2|     <script>
+  3|     /*
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <bod#y><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#>
+  2|     <script>
+  3|     /*
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <body#><script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#
+  2|     <script>
+  3|     /*
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 22 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body>
+  2| #    <script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 23 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|  #   <script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 24 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|   #  <script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 25 (2, 3)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|    # <script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 26 (2, 4)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     #<script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <body>#<script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <#script>
+  3|     /*
+  4|     * Multi-line comment
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <body><#script>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <s#cript>
+  3|     /*
+  4|     * Multi-line comment
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <body><s#cript>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <sc#ript>
+  3|     /*
+  4|     * Multi-line comment
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <body><sc#ript>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scr#ipt>
+  3|     /*
+  4|     * Multi-line comment
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <body><scr#ipt>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scri#pt>
+  3|     /*
+  4|     * Multi-line comment
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <body><scri#pt>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <scrip#t>
+  3|     /*
+  4|     * Multi-line comment
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <body><scrip#t>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script#>
+  3|     /*
+  4|     * Multi-line comment
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <body><script#>
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <body>
+  2|     <script>#
+  3|     /*
+  4|     * Multi-line comment
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <body><script>#
+  2| /*
+  3| * Multi-line comment
+
+Formatted: 35 (3, 0)
+  1| <body>
+  2|     <script>
+  3| #    /*
+  4|     * Multi-line comment
+  5|     */
+Original: 30 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 36 (3, 1)
+  1| <body>
+  2|     <script>
+  3|  #   /*
+  4|     * Multi-line comment
+  5|     */
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 37 (3, 2)
+  1| <body>
+  2|     <script>
+  3|   #  /*
+  4|     * Multi-line comment
+  5|     */
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 38 (3, 3)
+  1| <body>
+  2|     <script>
+  3|    # /*
+  4|     * Multi-line comment
+  5|     */
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 39 (3, 4)
+  1| <body>
+  2|     <script>
+  3|     #/*
+  4|     * Multi-line comment
+  5|     */
+Original: 31 (2, 0)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| #/*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 40 (3, 5)
+  1| <body>
+  2|     <script>
+  3|     /#*
+  4|     * Multi-line comment
+  5|     */
+Original: 31 (2, 1)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| /#*
+  3| * Multi-line comment
+  4| */
+
+Formatted: 41 (3, 6)
+  1| <body>
+  2|     <script>
+  3|     /*#
+  4|     * Multi-line comment
+  5|     */
+Original: 32 (2, 2)
+  0| <!DOCTYPE html>
+  1| <body><script>
+  2| /*#
+  3| * Multi-line comment
+  4| */
+
+Formatted: 42 (4, 0)
+  2|     <script>
+  3|     /*
+  4| #    * Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 33 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 43 (4, 1)
+  2|     <script>
+  3|     /*
+  4|  #   * Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 44 (4, 2)
+  2|     <script>
+  3|     /*
+  4|   #  * Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 45 (4, 3)
+  2|     <script>
+  3|     /*
+  4|    # * Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 46 (4, 4)
+  2|     <script>
+  3|     /*
+  4|     #* Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 34 (3, 0)
+  1| <body><script>
+  2| /*
+  3| #* Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 47 (4, 5)
+  2|     <script>
+  3|     /*
+  4|     *# Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 34 (3, 1)
+  1| <body><script>
+  2| /*
+  3| *# Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 48 (4, 6)
+  2|     <script>
+  3|     /*
+  4|     * #Multi-line comment
+  5|     */
+  6|     a = 1,
+Original: 35 (3, 2)
+  1| <body><script>
+  2| /*
+  3| * #Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 49 (4, 7)
+  2|     <script>
+  3|     /*
+  4|     * M#ulti-line comment
+  5|     */
+  6|     a = 1,
+Original: 36 (3, 3)
+  1| <body><script>
+  2| /*
+  3| * M#ulti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 50 (4, 8)
+  2|     <script>
+  3|     /*
+  4|     * Mu#lti-line comment
+  5|     */
+  6|     a = 1,
+Original: 37 (3, 4)
+  1| <body><script>
+  2| /*
+  3| * Mu#lti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 51 (4, 9)
+  2|     <script>
+  3|     /*
+  4|     * Mul#ti-line comment
+  5|     */
+  6|     a = 1,
+Original: 38 (3, 5)
+  1| <body><script>
+  2| /*
+  3| * Mul#ti-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 52 (4, 10)
+  2|     <script>
+  3|     /*
+  4|     * Mult#i-line comment
+  5|     */
+  6|     a = 1,
+Original: 39 (3, 6)
+  1| <body><script>
+  2| /*
+  3| * Mult#i-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 53 (4, 11)
+  2|     <script>
+  3|     /*
+  4|     * Multi#-line comment
+  5|     */
+  6|     a = 1,
+Original: 40 (3, 7)
+  1| <body><script>
+  2| /*
+  3| * Multi#-line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 54 (4, 12)
+  2|     <script>
+  3|     /*
+  4|     * Multi-#line comment
+  5|     */
+  6|     a = 1,
+Original: 41 (3, 8)
+  1| <body><script>
+  2| /*
+  3| * Multi-#line comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 55 (4, 13)
+  2|     <script>
+  3|     /*
+  4|     * Multi-l#ine comment
+  5|     */
+  6|     a = 1,
+Original: 42 (3, 9)
+  1| <body><script>
+  2| /*
+  3| * Multi-l#ine comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 56 (4, 14)
+  2|     <script>
+  3|     /*
+  4|     * Multi-li#ne comment
+  5|     */
+  6|     a = 1,
+Original: 43 (3, 10)
+  1| <body><script>
+  2| /*
+  3| * Multi-li#ne comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 57 (4, 15)
+  2|     <script>
+  3|     /*
+  4|     * Multi-lin#e comment
+  5|     */
+  6|     a = 1,
+Original: 44 (3, 11)
+  1| <body><script>
+  2| /*
+  3| * Multi-lin#e comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 58 (4, 16)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line# comment
+  5|     */
+  6|     a = 1,
+Original: 45 (3, 12)
+  1| <body><script>
+  2| /*
+  3| * Multi-line# comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 59 (4, 17)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line #comment
+  5|     */
+  6|     a = 1,
+Original: 46 (3, 13)
+  1| <body><script>
+  2| /*
+  3| * Multi-line #comment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 60 (4, 18)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line c#omment
+  5|     */
+  6|     a = 1,
+Original: 47 (3, 14)
+  1| <body><script>
+  2| /*
+  3| * Multi-line c#omment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 61 (4, 19)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line co#mment
+  5|     */
+  6|     a = 1,
+Original: 48 (3, 15)
+  1| <body><script>
+  2| /*
+  3| * Multi-line co#mment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 62 (4, 20)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line com#ment
+  5|     */
+  6|     a = 1,
+Original: 49 (3, 16)
+  1| <body><script>
+  2| /*
+  3| * Multi-line com#ment
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 63 (4, 21)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comm#ent
+  5|     */
+  6|     a = 1,
+Original: 50 (3, 17)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comm#ent
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 64 (4, 22)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comme#nt
+  5|     */
+  6|     a = 1,
+Original: 51 (3, 18)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comme#nt
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 65 (4, 23)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line commen#t
+  5|     */
+  6|     a = 1,
+Original: 52 (3, 19)
+  1| <body><script>
+  2| /*
+  3| * Multi-line commen#t
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 66 (4, 24)
+  2|     <script>
+  3|     /*
+  4|     * Multi-line comment#
+  5|     */
+  6|     a = 1,
+Original: 53 (3, 20)
+  1| <body><script>
+  2| /*
+  3| * Multi-line comment#
+  4| */
+  5| a=1,b=2,c=3;
+
+Formatted: 67 (5, 0)
+  3|     /*
+  4|     * Multi-line comment
+  5| #    */
+  6|     a = 1,
+  7|     b = 2,
+Original: 54 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 68 (5, 1)
+  3|     /*
+  4|     * Multi-line comment
+  5|  #   */
+  6|     a = 1,
+  7|     b = 2,
+Original: 55 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 69 (5, 2)
+  3|     /*
+  4|     * Multi-line comment
+  5|   #  */
+  6|     a = 1,
+  7|     b = 2,
+Original: 55 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 70 (5, 3)
+  3|     /*
+  4|     * Multi-line comment
+  5|    # */
+  6|     a = 1,
+  7|     b = 2,
+Original: 55 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 71 (5, 4)
+  3|     /*
+  4|     * Multi-line comment
+  5|     #*/
+  6|     a = 1,
+  7|     b = 2,
+Original: 55 (4, 0)
+  2| /*
+  3| * Multi-line comment
+  4| #*/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 72 (5, 5)
+  3|     /*
+  4|     * Multi-line comment
+  5|     *#/
+  6|     a = 1,
+  7|     b = 2,
+Original: 55 (4, 1)
+  2| /*
+  3| * Multi-line comment
+  4| *#/
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 73 (5, 6)
+  3|     /*
+  4|     * Multi-line comment
+  5|     */#
+  6|     a = 1,
+  7|     b = 2,
+Original: 56 (4, 2)
+  2| /*
+  3| * Multi-line comment
+  4| */#
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+
+Formatted: 74 (6, 0)
+  4|     * Multi-line comment
+  5|     */
+  6| #    a = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 57 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 75 (6, 1)
+  4|     * Multi-line comment
+  5|     */
+  6|  #   a = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 58 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 76 (6, 2)
+  4|     * Multi-line comment
+  5|     */
+  6|   #  a = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 58 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 77 (6, 3)
+  4|     * Multi-line comment
+  5|     */
+  6|    # a = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 58 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 78 (6, 4)
+  4|     * Multi-line comment
+  5|     */
+  6|     #a = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 58 (5, 0)
+  3| * Multi-line comment
+  4| */
+  5| #a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 79 (6, 5)
+  4|     * Multi-line comment
+  5|     */
+  6|     a# = 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 58 (5, 1)
+  3| * Multi-line comment
+  4| */
+  5| a#=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 80 (6, 6)
+  4|     * Multi-line comment
+  5|     */
+  6|     a #= 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 59 (5, 1)
+  3| * Multi-line comment
+  4| */
+  5| a#=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 81 (6, 7)
+  4|     * Multi-line comment
+  5|     */
+  6|     a =# 1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 59 (5, 2)
+  3| * Multi-line comment
+  4| */
+  5| a=#1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 82 (6, 8)
+  4|     * Multi-line comment
+  5|     */
+  6|     a = #1,
+  7|     b = 2,
+  8|     c = 3;
+Original: 60 (5, 2)
+  3| * Multi-line comment
+  4| */
+  5| a=#1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 83 (6, 9)
+  4|     * Multi-line comment
+  5|     */
+  6|     a = 1#,
+  7|     b = 2,
+  8|     c = 3;
+Original: 60 (5, 3)
+  3| * Multi-line comment
+  4| */
+  5| a=1#,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 84 (6, 10)
+  4|     * Multi-line comment
+  5|     */
+  6|     a = 1,#
+  7|     b = 2,
+  8|     c = 3;
+Original: 61 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 85 (7, 0)
+  5|     */
+  6|     a = 1,
+  7| #    b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 86 (7, 1)
+  5|     */
+  6|     a = 1,
+  7|  #   b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 87 (7, 2)
+  5|     */
+  6|     a = 1,
+  7|   #  b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 88 (7, 3)
+  5|     */
+  6|     a = 1,
+  7|    # b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 89 (7, 4)
+  5|     */
+  6|     a = 1,
+  7|     #b = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 4)
+  3| * Multi-line comment
+  4| */
+  5| a=1,#b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 90 (7, 5)
+  5|     */
+  6|     a = 1,
+  7|     b# = 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 62 (5, 5)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b#=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 91 (7, 6)
+  5|     */
+  6|     a = 1,
+  7|     b #= 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 63 (5, 5)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b#=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 92 (7, 7)
+  5|     */
+  6|     a = 1,
+  7|     b =# 2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 63 (5, 6)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=#2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 93 (7, 8)
+  5|     */
+  6|     a = 1,
+  7|     b = #2,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 64 (5, 6)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=#2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 94 (7, 9)
+  5|     */
+  6|     a = 1,
+  7|     b = 2#,
+  8|     c = 3;
+  9|     // Inline comment
+Original: 64 (5, 7)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2#,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 95 (7, 10)
+  5|     */
+  6|     a = 1,
+  7|     b = 2,#
+  8|     c = 3;
+  9|     // Inline comment
+Original: 65 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 96 (8, 0)
+  6|     a = 1,
+  7|     b = 2,
+  8| #    c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 97 (8, 1)
+  6|     a = 1,
+  7|     b = 2,
+  8|  #   c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 98 (8, 2)
+  6|     a = 1,
+  7|     b = 2,
+  8|   #  c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 99 (8, 3)
+  6|     a = 1,
+  7|     b = 2,
+  8|    # c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 100 (8, 4)
+  6|     a = 1,
+  7|     b = 2,
+  8|     #c = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 8)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,#c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 101 (8, 5)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c# = 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 66 (5, 9)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c#=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 102 (8, 6)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c #= 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 67 (5, 9)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c#=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 103 (8, 7)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c =# 3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 67 (5, 10)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=#3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 104 (8, 8)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = #3;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 68 (5, 10)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=#3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 105 (8, 9)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = 3#;
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 68 (5, 11)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=3#;
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 106 (8, 10)
+  6|     a = 1,
+  7|     b = 2,
+  8|     c = 3;#
+  9|     // Inline comment
+ 10|     a = 1,
+Original: 69 (5, 12)
+  3| * Multi-line comment
+  4| */
+  5| a=1,b=2,c=3;#
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+
+Formatted: 107 (9, 0)
+  7|     b = 2,
+  8|     c = 3;
+  9| #    // Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 70 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 108 (9, 1)
+  7|     b = 2,
+  8|     c = 3;
+  9|  #   // Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 71 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 109 (9, 2)
+  7|     b = 2,
+  8|     c = 3;
+  9|   #  // Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 71 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 110 (9, 3)
+  7|     b = 2,
+  8|     c = 3;
+  9|    # // Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 71 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 111 (9, 4)
+  7|     b = 2,
+  8|     c = 3;
+  9|     #// Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 71 (6, 0)
+  4| */
+  5| a=1,b=2,c=3;
+  6| #// Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 112 (9, 5)
+  7|     b = 2,
+  8|     c = 3;
+  9|     /#/ Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 71 (6, 1)
+  4| */
+  5| a=1,b=2,c=3;
+  6| /#/ Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 113 (9, 6)
+  7|     b = 2,
+  8|     c = 3;
+  9|     //# Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 72 (6, 2)
+  4| */
+  5| a=1,b=2,c=3;
+  6| //# Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 114 (9, 7)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // #Inline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 73 (6, 3)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // #Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 115 (9, 8)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // I#nline comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 74 (6, 4)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // I#nline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 116 (9, 9)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // In#line comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 75 (6, 5)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // In#line comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 117 (9, 10)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inl#ine comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 76 (6, 6)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inl#ine comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 118 (9, 11)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inli#ne comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 77 (6, 7)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inli#ne comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 119 (9, 12)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inlin#e comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 78 (6, 8)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inlin#e comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 120 (9, 13)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline# comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 79 (6, 9)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline# comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 121 (9, 14)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline #comment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 80 (6, 10)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline #comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 122 (9, 15)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline c#omment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 81 (6, 11)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline c#omment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 123 (9, 16)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline co#mment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 82 (6, 12)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline co#mment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 124 (9, 17)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline com#ment
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 83 (6, 13)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline com#ment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 125 (9, 18)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comm#ent
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 84 (6, 14)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comm#ent
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 126 (9, 19)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comme#nt
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 85 (6, 15)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comme#nt
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 127 (9, 20)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline commen#t
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 86 (6, 16)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline commen#t
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 128 (9, 21)
+  7|     b = 2,
+  8|     c = 3;
+  9|     // Inline comment#
+ 10|     a = 1,
+ 11|     b = 2,
+Original: 87 (6, 17)
+  4| */
+  5| a=1,b=2,c=3;
+  6| // Inline comment#
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+
+Formatted: 129 (10, 0)
+  8|     c = 3;
+  9|     // Inline comment
+ 10| #    a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 88 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 130 (10, 1)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|  #   a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 89 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 131 (10, 2)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|   #  a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 89 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 132 (10, 3)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|    # a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 89 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 133 (10, 4)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     #a = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 89 (7, 0)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| #a=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 134 (10, 5)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a# = 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 89 (7, 1)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a#=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 135 (10, 6)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a #= 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 90 (7, 1)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a#=1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 136 (10, 7)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a =# 1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 90 (7, 2)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=#1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 137 (10, 8)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a = #1,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 91 (7, 2)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=#1,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 138 (10, 9)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a = 1#,
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 91 (7, 3)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1#,b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 139 (10, 10)
+  8|     c = 3;
+  9|     // Inline comment
+ 10|     a = 1,#
+ 11|     b = 2,
+ 12|     c = 3;
+Original: 92 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 140 (11, 0)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11| #    b = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 141 (11, 1)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|  #   b = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 142 (11, 2)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|   #  b = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 143 (11, 3)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|    # b = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 144 (11, 4)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     #b = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 4)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,#b=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 145 (11, 5)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b# = 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 93 (7, 5)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b#=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 146 (11, 6)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b #= 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 94 (7, 5)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b#=2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 147 (11, 7)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b =# 2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 94 (7, 6)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=#2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 148 (11, 8)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b = #2,
+ 12|     c = 3;
+ 13|     </script>
+Original: 95 (7, 6)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=#2,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 149 (11, 9)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b = 2#,
+ 12|     c = 3;
+ 13|     </script>
+Original: 95 (7, 7)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2#,c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 150 (11, 10)
+  9|     // Inline comment
+ 10|     a = 1,
+ 11|     b = 2,#
+ 12|     c = 3;
+ 13|     </script>
+Original: 96 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 151 (12, 0)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12| #    c = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 152 (12, 1)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|  #   c = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 153 (12, 2)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|   #  c = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 154 (12, 3)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|    # c = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 155 (12, 4)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     #c = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 8)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,#c=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 156 (12, 5)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c# = 3;
+ 13|     </script>
+ 14| </body>
+Original: 97 (7, 9)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c#=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 157 (12, 6)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c #= 3;
+ 13|     </script>
+ 14| </body>
+Original: 98 (7, 9)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c#=3;
+  8| </script></body></html>
+  9|
+
+Formatted: 158 (12, 7)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c =# 3;
+ 13|     </script>
+ 14| </body>
+Original: 98 (7, 10)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=#3;
+  8| </script></body></html>
+  9|
+
+Formatted: 159 (12, 8)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = #3;
+ 13|     </script>
+ 14| </body>
+Original: 99 (7, 10)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=#3;
+  8| </script></body></html>
+  9|
+
+Formatted: 160 (12, 9)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = 3#;
+ 13|     </script>
+ 14| </body>
+Original: 99 (7, 11)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3#;
+  8| </script></body></html>
+  9|
+
+Formatted: 161 (12, 10)
+ 10|     a = 1,
+ 11|     b = 2,
+ 12|     c = 3;#
+ 13|     </script>
+ 14| </body>
+Original: 100 (7, 12)
+  5| a=1,b=2,c=3;
+  6| // Inline comment
+  7| a=1,b=2,c=3;#
+  8| </script></body></html>
+  9|
+
+Formatted: 162 (13, 0)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13| #    </script>
+ 14| </body>
+ 15| </html>
+Original: 101 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+
+Formatted: 163 (13, 1)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|  #   </script>
+ 14| </body>
+ 15| </html>
+Original: 102 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+
+Formatted: 164 (13, 2)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|   #  </script>
+ 14| </body>
+ 15| </html>
+Original: 102 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+
+Formatted: 165 (13, 3)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|    # </script>
+ 14| </body>
+ 15| </html>
+Original: 102 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+
+Formatted: 166 (13, 4)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     #</script>
+ 14| </body>
+ 15| </html>
+Original: 102 (8, 0)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| #</script></body></html>
+  9|
+
+Formatted: 167 (13, 5)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     <#/script>
+ 14| </body>
+ 15| </html>
+Original: 102 (8, 1)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| <#/script></body></html>
+  9|
+
+Formatted: 168 (13, 6)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </#script>
+ 14| </body>
+ 15| </html>
+Original: 103 (8, 2)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </#script></body></html>
+  9|
+
+Formatted: 169 (13, 7)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </s#cript>
+ 14| </body>
+ 15| </html>
+Original: 104 (8, 3)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </s#cript></body></html>
+  9|
+
+Formatted: 170 (13, 8)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </sc#ript>
+ 14| </body>
+ 15| </html>
+Original: 105 (8, 4)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </sc#ript></body></html>
+  9|
+
+Formatted: 171 (13, 9)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scr#ipt>
+ 14| </body>
+ 15| </html>
+Original: 106 (8, 5)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scr#ipt></body></html>
+  9|
+
+Formatted: 172 (13, 10)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scri#pt>
+ 14| </body>
+ 15| </html>
+Original: 107 (8, 6)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scri#pt></body></html>
+  9|
+
+Formatted: 173 (13, 11)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </scrip#t>
+ 14| </body>
+ 15| </html>
+Original: 108 (8, 7)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </scrip#t></body></html>
+  9|
+
+Formatted: 174 (13, 12)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </script#>
+ 14| </body>
+ 15| </html>
+Original: 109 (8, 8)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script#></body></html>
+  9|
+
+Formatted: 175 (13, 13)
+ 11|     b = 2,
+ 12|     c = 3;
+ 13|     </script>#
+ 14| </body>
+ 15| </html>
+Original: 110 (8, 9)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script>#</body></html>
+  9|
+
+Formatted: 176 (14, 0)
+ 12|     c = 3;
+ 13|     </script>
+ 14| #</body>
+ 15| </html>
+ 16|
+Original: 111 (8, 9)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script>#</body></html>
+  9|
+
+Formatted: 177 (14, 1)
+ 12|     c = 3;
+ 13|     </script>
+ 14| <#/body>
+ 15| </html>
+ 16|
+Original: 111 (8, 10)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script><#/body></html>
+  9|
+
+Formatted: 178 (14, 2)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </#body>
+ 15| </html>
+ 16|
+Original: 112 (8, 11)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></#body></html>
+  9|
+
+Formatted: 179 (14, 3)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </b#ody>
+ 15| </html>
+ 16|
+Original: 113 (8, 12)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></b#ody></html>
+  9|
+
+Formatted: 180 (14, 4)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </bo#dy>
+ 15| </html>
+ 16|
+Original: 114 (8, 13)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></bo#dy></html>
+  9|
+
+Formatted: 181 (14, 5)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </bod#y>
+ 15| </html>
+ 16|
+Original: 115 (8, 14)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></bod#y></html>
+  9|
+
+Formatted: 182 (14, 6)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </body#>
+ 15| </html>
+ 16|
+Original: 116 (8, 15)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body#></html>
+  9|
+
+Formatted: 183 (14, 7)
+ 12|     c = 3;
+ 13|     </script>
+ 14| </body>#
+ 15| </html>
+ 16|
+Original: 117 (8, 16)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body>#</html>
+  9|
+
+Formatted: 184 (15, 0)
+ 13|     </script>
+ 14| </body>
+ 15| #</html>
+ 16|
+Original: 118 (8, 16)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body>#</html>
+  9|
+
+Formatted: 185 (15, 1)
+ 13|     </script>
+ 14| </body>
+ 15| <#/html>
+ 16|
+Original: 118 (8, 17)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body><#/html>
+  9|
+
+Formatted: 186 (15, 2)
+ 13|     </script>
+ 14| </body>
+ 15| </#html>
+ 16|
+Original: 119 (8, 18)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></#html>
+  9|
+
+Formatted: 187 (15, 3)
+ 13|     </script>
+ 14| </body>
+ 15| </h#tml>
+ 16|
+Original: 120 (8, 19)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></h#tml>
+  9|
+
+Formatted: 188 (15, 4)
+ 13|     </script>
+ 14| </body>
+ 15| </ht#ml>
+ 16|
+Original: 121 (8, 20)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></ht#ml>
+  9|
+
+Formatted: 189 (15, 5)
+ 13|     </script>
+ 14| </body>
+ 15| </htm#l>
+ 16|
+Original: 122 (8, 21)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></htm#l>
+  9|
+
+Formatted: 190 (15, 6)
+ 13|     </script>
+ 14| </body>
+ 15| </html#>
+ 16|
+Original: 123 (8, 22)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html#>
+  9|
+
+Formatted: 191 (15, 7)
+ 13|     </script>
+ 14| </body>
+ 15| </html>#
+ 16|
+Original: 124 (8, 23)
+  6| // Inline comment
+  7| a=1,b=2,c=3;
+  8| </script></body></html>#
+  9|
+
+Formatted: 192 (16, 0)
+ 14| </body>
+ 15| </html>
+ 16| #
+Original: 125 (9, 0)
+  7| a=1,b=2,c=3;
+  8| </script></body></html>
+  9| #
+
+

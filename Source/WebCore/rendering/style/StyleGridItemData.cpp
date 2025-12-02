@@ -39,19 +39,19 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridItemData);
 
 StyleGridItemData::StyleGridItemData()
-    : gridColumnStart(RenderStyle::initialGridItemColumnStart())
-    , gridColumnEnd(RenderStyle::initialGridItemColumnEnd())
-    , gridRowStart(RenderStyle::initialGridItemRowStart())
-    , gridRowEnd(RenderStyle::initialGridItemRowEnd())
+    : gridItemColumnStart(RenderStyle::initialGridItemColumnStart())
+    , gridItemColumnEnd(RenderStyle::initialGridItemColumnEnd())
+    , gridItemRowStart(RenderStyle::initialGridItemRowStart())
+    , gridItemRowEnd(RenderStyle::initialGridItemRowEnd())
 {
 }
 
 inline StyleGridItemData::StyleGridItemData(const StyleGridItemData& o)
     : RefCounted<StyleGridItemData>()
-    , gridColumnStart(o.gridColumnStart)
-    , gridColumnEnd(o.gridColumnEnd)
-    , gridRowStart(o.gridRowStart)
-    , gridRowEnd(o.gridRowEnd)
+    , gridItemColumnStart(o.gridItemColumnStart)
+    , gridItemColumnEnd(o.gridItemColumnEnd)
+    , gridItemRowStart(o.gridItemRowStart)
+    , gridItemRowEnd(o.gridItemRowEnd)
 {
 }
 
@@ -63,10 +63,10 @@ Ref<StyleGridItemData> StyleGridItemData::copy() const
 #if !LOG_DISABLED
 void StyleGridItemData::dumpDifferences(TextStream& ts, const StyleGridItemData& other) const
 {
-    LOG_IF_DIFFERENT(gridColumnStart);
-    LOG_IF_DIFFERENT(gridColumnEnd);
-    LOG_IF_DIFFERENT(gridRowStart);
-    LOG_IF_DIFFERENT(gridRowEnd);
+    LOG_IF_DIFFERENT(gridItemColumnStart);
+    LOG_IF_DIFFERENT(gridItemColumnEnd);
+    LOG_IF_DIFFERENT(gridItemRowStart);
+    LOG_IF_DIFFERENT(gridItemRowEnd);
 }
 #endif
 

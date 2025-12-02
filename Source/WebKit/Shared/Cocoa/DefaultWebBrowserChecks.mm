@@ -69,16 +69,14 @@ std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const Stri
 #if ASSERT_ENABLED
 static bool isInWebKitChildProcess()
 {
-    static bool isInSubProcess;
-
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static bool isInSubProcess = [] {
+        bool isInSubProcess = false;
 #if USE(EXTENSIONKIT)
         isInSubProcess |= WTF::processHasEntitlement("com.apple.developer.web-browser-engine.networking"_s)
             || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s)
             || WTF::processHasEntitlement("com.apple.developer.web-browser-engine.webcontent"_s);
         if (isInSubProcess)
-            return;
+            return true;
 #endif // USE(EXTENSIONKIT)
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
@@ -87,7 +85,8 @@ static bool isInWebKitChildProcess()
 #if ENABLE(MODEL_PROCESS)
         isInSubProcess = isInSubProcess || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Model"];
 #endif // ENABLE(MODEL_PROCESS)
-    });
+        return isInSubProcess;
+    }();
 
     return isInSubProcess;
 }
@@ -175,29 +174,26 @@ bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess& auxiliaryP
     if (!isParentProcessAFullWebBrowser(auxiliaryProcess) && !hasRequestedCrossWebsiteTrackingPermission)
         return true;
 
-    static bool trackingPreventionEnabled { true };
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-
+    static bool trackingPreventionEnabled = [&] {
         TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
         RefPtr<IPC::Connection> connection = auxiliaryProcess.parentProcessConnection();
         if (!connection) {
             ASSERT_NOT_REACHED();
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process connection");
-            return;
+            return true;
         }
 
         auto auditToken = connection->getAuditToken();
         if (!auditToken) {
             ASSERT_NOT_REACHED();
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process audit token");
-            return;
+            return true;
         }
         result = TCCAccessPreflightWithAuditToken(get_TCC_kTCCServiceWebKitIntelligentTrackingPreventionSingleton(), auditToken.value(), nullptr);
 #endif
-        trackingPreventionEnabled = result != kTCCAccessPreflightDenied;
-    });
+        return result != kTCCAccessPreflightDenied;
+    }();
     return trackingPreventionEnabled;
 }
 
@@ -241,25 +237,23 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
 {
     ASSERT(isInWebKitChildProcess());
 
-    static bool fullWebBrowser { false };
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    static bool fullWebBrowser = [&] {
         RefPtr<IPC::Connection> connection = auxiliaryProcess.parentProcessConnection();
         if (!connection) {
             ASSERT_NOT_REACHED();
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process connection");
-            return;
+            return false;
         }
 
         auto auditToken = connection->getAuditToken();
         if (!auditToken) {
             ASSERT_NOT_REACHED();
             RELEASE_LOG_ERROR(IPC, "Unable to get parent process audit token");
-            return;
+            return false;
         }
 
-        fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
-    });
+        return WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
+    }();
 
     auto bundleID = applicationBundleIdentifier();
 
@@ -276,16 +270,14 @@ bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
 #if ENABLE(APP_BOUND_DOMAINS)
     static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser"_s);
 #elif PLATFORM(MAC)
-    static bool fullWebBrowser;
-    static std::once_flag once;
-    std::call_once(once, [] {
+    static bool fullWebBrowser = [] {
         RetainPtr<NSURL> currentURL = [[NSBundle mainBundle] bundleURL];
         RetainPtr<NSArray<NSURL *>> httpURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"http:"]];
         bool canOpenHTTP = [httpURLs containsObject:currentURL.get()];
         RetainPtr<NSArray<NSURL *>> httpsURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"https:"]];
         bool canOpenHTTPS = [httpsURLs containsObject:currentURL.get()];
-        fullWebBrowser = canOpenHTTPS && canOpenHTTP;
-    });
+        return canOpenHTTPS && canOpenHTTP;
+    }();
 #else
     ASSERT_NOT_REACHED();
     static bool fullWebBrowser = false;

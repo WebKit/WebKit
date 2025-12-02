@@ -147,6 +147,41 @@ const testCcidNoUidBase64 = "aIE=";
 const testCcidValidUidBase64 = "CH+d1ZAA";
 const testCreateMessageFullKeyStoreBase64 = "KA==";
 
+// hmac-secret test constants
+const testHmacSecretSalt1Base64 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; // 32 bytes of zeros
+const testHmacSecretSalt2Base64 = "//////////////////////////////////////////8="; // 32 bytes of 0xFF
+const testHmacSecretOutput32Base64 = "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA="; // 32 bytes test output
+const testHmacSecretOutput64Base64 = "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QA=="; // 64 bytes test output
+
+// CBOR-encoded makeCredential response with hmac-secret: true extension
+// AuthenticatorData has ED flag (0x80) set and extensions CBOR map with {"hmac-secret": true}
+const testHmacSecretMakeCredentialMessageBase64 =
+    "AKMBZnBhY2tlZAJYskmWDeWIDoxodDQXD2R2YFuP5K65ooYyx5lc87qDHZdjxQAA" +
+    "AAAAAAAAAAAAAAAAAAAAAAAAACBJraBr9VPzVX0Tm7IC3AXGFHdYh+T/Q+2y06P3" +
+    "7BrdLaUBAgMmIAEhWCC0tyF7dc57Obrb9p6hlEDFtUQ+s0F3rO5jh9E7RRAX6CJY" +
+    "ICNr1+NwfafPwu5/ISMZcPGbXEsqAHSQ+TiCJk6LfJBloWtobWFjLXNlY3JldPUD" +
+    "oA==";
+
+// CBOR-encoded getAssertion response with hmac-secret output (32 bytes)
+// Extensions map has {"hmac-secret": <32 byte test output>}
+const testHmacSecretGetAssertionMessageBase64 =
+    "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWFRGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2IEAAABQoWtobWFjLXNlY3JldFgg" +
+    "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyADWEcwRQIhAJIVO64FaAHj" +
+    "8XRUHsOVRUzT0gc+bF7UzMdTBGgJFlsIAiAYqi/rGgDHYwR/r/qo2zw663OE/YJC" +
+    "gnUvsV7rgb24Fw==";
+
+// CBOR-encoded getAssertion response with hmac-secret output (64 bytes)
+// Extensions map has {"hmac-secret": <64 byte test output>}
+const testHmacSecretGetAssertion64MessageBase64 =
+    "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+    "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWHRGzH+5" +
+    "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2IEAAABQoWtobWFjLXNlY3JldFhA" +
+    "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8w" +
+    "MTIzNDU2Nzg5Ojs8PT4/QANYRzBFAiEAkhU7rgVoAePxdFQew5VFTNPSBz5sXtTM" +
+    "x1MEaAkWWwgCIBiqL+saAMdjBH+v+qjbPDrrc4T9gkKCdS+xXuuBvbgX";
+
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 
 function asciiToUint8Array(str)

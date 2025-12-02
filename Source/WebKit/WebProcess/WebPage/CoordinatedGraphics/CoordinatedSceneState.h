@@ -62,6 +62,10 @@ public:
 
     void waitUntilPaintingComplete();
 
+    void willPaintTile();
+    void didPaintTile();
+    unsigned pendingTiles() const { return m_pendingTiles.load(); }
+
 private:
     CoordinatedSceneState();
 
@@ -71,6 +75,7 @@ private:
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayers WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     std::atomic<bool> m_didChangeLayers { false };
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
+    std::atomic<unsigned> m_pendingTiles { 0 };
 };
 
 } // namespace WebKit

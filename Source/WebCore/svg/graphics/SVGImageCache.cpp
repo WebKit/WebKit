@@ -69,7 +69,7 @@ void SVGImageCache::setContainerContextForClient(const CachedImageClient& client
 
 Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
 {
-    return renderer ? m_imageForContainerMap.get(renderer) : nullptr;
+    return renderer ? m_imageForContainerMap.get(&renderer->cachedImageClient()) : nullptr;
 }
 
 RefPtr<SVGImage> SVGImageCache::protectedSVGImage() const

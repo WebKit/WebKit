@@ -43,10 +43,12 @@ using TrackID = uint64_t;
 class TrackListBase : public RefCounted<TrackListBase>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrackListBase);
 public:
+    virtual ~TrackListBase();
+
+    // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-
-    virtual ~TrackListBase();
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     enum Type { BaseTrackList, TextTrackList, AudioTrackList, VideoTrackList };
     Type type() const { return m_type; }

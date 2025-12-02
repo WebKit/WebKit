@@ -71,7 +71,6 @@ public:
     void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;
-    WebCore::MediaPlayer::ReadyState mediaPlayerReadyState() const final;
     void setMediaPlayerReadyState(WebCore::MediaPlayer::ReadyState) final;
     void setPlayer(WebCore::MediaPlayerPrivateInterface*) final;
     void shutdown() final;
@@ -116,7 +115,6 @@ private:
     const CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
-    std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateRemote"_s; }

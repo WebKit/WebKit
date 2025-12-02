@@ -178,7 +178,6 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
 void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 {
     static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
-    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> globalSource;
 
     // Because we don't use RunningBoard on macOS, we leak an OS transaction to control the lifetime of our XPC
     // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
@@ -186,14 +185,15 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // XPC_EXIT_REASON_SIGTERM_TIMEOUT as termination reason (rdar://88940229). To address the issue, we now set our
     // own SIGTERM handler that calls exitProcess(0). In the future, we should likely adopt RunningBoard on macOS and
     // control our lifetime via process assertions instead of leaking this OS transaction.
-    static dispatch_once_t flag;
-    dispatch_once(&flag, ^{
-        globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, mainDispatchQueueSingleton()));
-        dispatch_source_set_event_handler(globalSource.get().get(), ^{
+    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> globalSource = [] {
+        auto globalSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, mainDispatchQueueSingleton()));
+        dispatch_source_set_event_handler(globalSource.get(), ^{
             exitProcess(0);
         });
-        dispatch_resume(globalSource.get().get());
-    });
+        dispatch_resume(globalSource.get());
+        return globalSource;
+    }();
+    UNUSED_PARAM(globalSource);
 
     globalTransaction.get() = WTFMove(transaction);
 }

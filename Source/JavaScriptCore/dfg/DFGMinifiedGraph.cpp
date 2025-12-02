@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 void MinifiedGraph::prepareAndShrink()
 {
-    std::sort(m_list.begin(), m_list.end(), MinifiedNode::compareByNodeIndex);
+    std::ranges::sort(m_list, MinifiedNode::compareByNodeIndex);
     m_list.shrinkToFit();
 }
 

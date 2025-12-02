@@ -35,6 +35,10 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticationExtensionsClientInputs : NSObject
 
 @property (nullable, nonatomic, copy) NSString *appid;
+@property (nonatomic) BOOL prf;
+@property (nonatomic) BOOL credProps;
+@property (nullable, nonatomic, copy) NSData *prfSalt1;
+@property (nullable, nonatomic, copy) NSData *prfSalt2;
 
 @end
 

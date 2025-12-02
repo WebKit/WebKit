@@ -371,7 +371,7 @@ bottom
 -webkit-baseline-middle
 //
 // CSS_PROP_TEXT_ALIGN:
-// The order here must match the order of the TextAlignMode enum in RenderStyleConstants.h.
+// The order here must match the order of the Style::TextAlign enum in StyleTextAlign.h.
 //
 -webkit-auto
 left
@@ -929,6 +929,7 @@ attachment enable-if=ENABLE_ATTACHMENT_ELEMENT
 borderless-attachment enable-if=ENABLE_ATTACHMENT_ELEMENT
 textarea
 textfield
+-internal-auto-base
 
 //
 // CSS_PROP_BORDER_IMAGE

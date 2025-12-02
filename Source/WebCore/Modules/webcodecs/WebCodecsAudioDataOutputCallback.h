@@ -41,6 +41,10 @@ class WebCodecsAudioDataOutputCallback : public RefCounted<WebCodecsAudioDataOut
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(WebCodecsAudioData&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(WebCodecsAudioData&) = 0;
 

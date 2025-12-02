@@ -157,7 +157,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
         case GetByVal:
         case GetByValMegamorphic:
@@ -1231,7 +1231,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias:
+    case PutByValDirectResolved:
     case PutByValMegamorphic: {
         ArrayMode mode = node->arrayMode();
         Node* base = graph.varArgChild(node, 0).node();

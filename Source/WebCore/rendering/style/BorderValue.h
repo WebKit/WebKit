@@ -31,9 +31,11 @@
 
 namespace WebCore {
 
+class BorderData;
 class RenderStyle;
 
-class BorderValue {
+class BorderValue final {
+    friend class BorderData;
     friend class RenderStyle;
 public:
     BorderValue()
@@ -51,7 +53,7 @@ public:
 
     bool operator==(const BorderValue&) const = default;
 
-protected:
+private:
     Style::Color m_color { Style::Color::currentColor() };
     Style::LineWidth m_width { Style::LineWidth::Length { 3.0f } };
     PREFERRED_TYPE(BorderStyle) unsigned m_style : 4;

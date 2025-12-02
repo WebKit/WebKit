@@ -55,6 +55,7 @@
 #include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
+#include "HTMLInputElementInlines.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
@@ -634,29 +635,6 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
 
     addToRadioButtonGroup();
 }
-
-#if ENABLE(TOUCH_EVENTS)
-inline void HTMLInputElement::updateTouchEventHandler()
-{
-    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
-    if (hasTouchEventHandler != m_hasTouchEventHandler) {
-        if (hasTouchEventHandler) {
-#if ENABLE(IOS_TOUCH_EVENTS)
-            document().addTouchEventHandler(*this);
-#else
-            document().didAddTouchEventHandler(*this);
-#endif
-        } else {
-#if ENABLE(IOS_TOUCH_EVENTS)
-            document().removeTouchEventHandler(*this);
-#else
-            document().didRemoveTouchEventHandler(*this);
-#endif
-        }
-        m_hasTouchEventHandler = hasTouchEventHandler;
-    }
-}
-#endif
 
 void HTMLInputElement::subtreeHasChanged()
 {

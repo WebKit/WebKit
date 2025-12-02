@@ -71,10 +71,16 @@ public:
 
     void themeColorWillChange() final;
     void themeColorDidChange() final;
+
 #if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
     void spatialBackdropSourceWillChange() final;
     void spatialBackdropSourceDidChange() final;
 #endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    void canEnterImmersiveElementFromURL(const URL&, CompletionHandler<void(bool)>&&) final;
+#endif
+
     void underPageBackgroundColorWillChange() final;
     void underPageBackgroundColorDidChange() final;
     void sampledPageTopColorWillChange() final;
@@ -102,7 +108,8 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&) override;
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&) override;
+    void didCommitMainFrameData(const MainFrameData&) override;
 
     void microphoneCaptureWillChange() final;
     void cameraCaptureWillChange() final;

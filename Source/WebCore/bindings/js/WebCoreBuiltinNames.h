@@ -307,6 +307,7 @@ namespace WebCore {
     macro(MediaCapabilities) \
     macro(MediaCapabilitiesInfo) \
     macro(MediaDevices) \
+    macro(MediaDeviceInfo) \
     macro(MediaElementAudioSourceNode) \
     macro(MediaEncryptedEvent) \
     macro(MediaKeyMessageEvent) \

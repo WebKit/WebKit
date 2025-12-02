@@ -102,6 +102,11 @@ void WritableStream::errorIfPossible(Exception&& e)
     m_internalWritableStream->errorIfPossible(WTFMove(e));
 }
 
+void WritableStream::errorIfPossible(JSC::JSGlobalObject& globalObject, JSC::JSValue reason)
+{
+    m_internalWritableStream->errorIfPossible(globalObject, reason);
+}
+
 WritableStream::State WritableStream::state() const
 {
     auto* globalObject = m_internalWritableStream->globalObject();

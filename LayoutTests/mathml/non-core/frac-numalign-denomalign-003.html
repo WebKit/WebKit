@@ -1,0 +1,76 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>mfrac numalign dynamic changes</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+function NumAlign(aId) {
+    var mfrac = document.getElementById(aId);
+    var num = mfrac.firstElementChild;
+
+    var mfracBox = mfrac.getBoundingClientRect();
+    var numBox = num.getBoundingClientRect();
+
+    var mfracCenter = (mfracBox.left + mfracBox.right) / 2;
+    var numCenter = (numBox.left + numBox.right) / 2;
+
+    var epsilon = 2;
+
+    if (Math.abs(numBox.left - mfracBox.left) < epsilon)
+        return "left";
+    if (Math.abs(numBox.right - mfracBox.right) < epsilon)
+        return "right";
+    if (Math.abs(numCenter - mfracCenter) < epsilon)
+        return "center";
+
+    return "unknown";
+}
+
+setup({ explicit_done: true });
+window.addEventListener("load", runTests);
+
+function runTests() {
+    test(function() {
+        // Attach
+        document.getElementById("attach").setAttribute("numalign", "left");
+        assert_equals(NumAlign("attach"), "left", "attach numalign");
+
+        // Modify
+        document.getElementById("modify").setAttribute("numalign", "right");
+        assert_equals(NumAlign("modify"), "right", "modify numalign");
+
+        // Remove
+        document.getElementById("remove").removeAttribute("numalign");
+        assert_equals(NumAlign("remove"), "center", "remove numalign");
+
+    }, "Dynamic numalign");
+
+    done();
+}
+</script>
+</head>
+<body>
+<math>
+  <mfrac id="attach">
+    <mspace width="10px" height="10px" style="background: blue"></mspace>
+    <mspace width="40px" height="10px" style="background: cyan"></mspace>
+  </mfrac>
+</math>
+
+<math>
+  <mfrac id="modify" numalign="center">
+    <mspace width="10px" height="10px" style="background: blue"></mspace>
+    <mspace width="40px" height="10px" style="background: cyan"></mspace>
+  </mfrac>
+</math>
+
+<math>
+  <mfrac id="remove" numalign="left">
+    <mspace width="10px" height="10px" style="background: blue"></mspace>
+    <mspace width="40px" height="10px" style="background: cyan"></mspace>
+  </mfrac>
+</math>
+</body>
+</html>

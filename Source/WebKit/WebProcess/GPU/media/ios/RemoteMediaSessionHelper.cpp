@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "MediaPlaybackTargetContextSerialized.h"
+#include "MediaPlaybackTargetSerialized.h"
 #include "RemoteMediaSessionHelperMessages.h"
 #include "RemoteMediaSessionHelperProxyMessages.h"
 #include "WebProcess.h"
@@ -78,11 +79,14 @@ void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
 
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContextSerialized&& targetContext)
 {
-    WTF::switchOn(targetContext.platformContext(), [](WebCore::MediaPlaybackTargetContextMock&&) {
-        return;
-    }, [&](WebCore::MediaPlaybackTargetContextCocoa&& context) {
-        WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(WTFMove(context)));
-    });
+    switch (targetContext.targetType()) {
+    case WebCore::MediaPlaybackTargetType::AVOutputContext:
+        WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, MediaPlaybackTargetSerialized::create(WTFMove(targetContext)));
+        break;
+    case WebCore::MediaPlaybackTargetType::Mock:
+    case WebCore::MediaPlaybackTargetType::Serialized:
+        break;
+    }
 }
 
 void RemoteMediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialAudioPlayback)

@@ -45,7 +45,9 @@
 #include "RemoteAudioSession.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
+#include "RemoteMediaSessionManagerProxyMessages.h"
 #include "RemoteRemoteCommandListener.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerType.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
@@ -257,6 +259,10 @@
 
 #if PLATFORM(COCOA)
 #import <pal/cocoa/EnhancedSecurityCocoa.h>
+#endif
+
+#if USE(LIBRICE)
+#include "RiceBackendProxy.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -815,6 +821,19 @@ void WebProcess::updateIsBroadcastChannelEnabled()
     }
 }
 
+#if USE(AUDIO_SESSION)
+void WebProcess::remoteAudioSessionConfigurationChanged(const RemoteAudioSessionConfiguration& configuration)
+{
+    for (auto& page : m_pageMap.values()) {
+        RefPtr manager = page->mediaSessionManagerIfExists();
+        if (!manager)
+            continue;
+
+        send(Messages::RemoteMediaSessionManagerProxy::RemoteAudioConfigurationChanged(configuration), page->identifier().toUInt64());
+    }
+}
+#endif
+
 void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
 {
     ASSERT(m_hasSuspendedPageProxy != hasSuspendedPageProxy);
@@ -1133,7 +1152,7 @@ void WebProcess::didClose(IPC::Connection& connection)
 
 WebFrame* WebProcess::webFrame(std::optional<FrameIdentifier> frameID) const
 {
-    return frameID ? m_frameMap.get(*frameID).get() : nullptr;
+    return frameID ? m_frameMap.get(*frameID) : nullptr;
 }
 
 void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
@@ -1430,7 +1449,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
     for (auto key : copyToVector(m_storageAreaMaps.keys())) {
-        if (RefPtr map = m_storageAreaMaps.get(key).get())
+        if (RefPtr map = m_storageAreaMaps.get(key))
             map->disconnect();
     }
 
@@ -1529,10 +1548,13 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         if (gpuConnection->ignoreInvalidMessageForTesting())
             gpuConnection->setIgnoreInvalidMessageForTesting();
 #endif
-        m_gpuProcessConnection = GPUProcessConnection::create(WTFMove(gpuConnection));
+        Ref gpuProcessConnection = GPUProcessConnection::create(WTFMove(gpuConnection));
+        m_gpuProcessConnection = gpuProcessConnection.ptr();
         protectedParentProcessConnection()->send(Messages::WebProcessProxy::CreateGPUProcessConnection(m_gpuProcessConnection->identifier(),  WTFMove(connectionIdentifiers->client)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         for (auto& page : m_pageMap.values())
-            page->gpuProcessConnectionDidBecomeAvailable(Ref { *m_gpuProcessConnection });
+            page->gpuProcessConnectionDidBecomeAvailable(gpuProcessConnection);
+        if (m_sharedResourceCache)
+            Ref { *m_sharedResourceCache }->gpuProcessConnectionDidBecomeAvailable(gpuProcessConnection);
     }
     return *m_gpuProcessConnection;
 }
@@ -1591,6 +1613,15 @@ AudioMediaStreamTrackRendererInternalUnitManager& WebProcess::audioMediaStreamTr
 }
 #endif
 
+RemoteSharedResourceCacheProxy& WebProcess::gpuProcessSharedResourceCache()
+{
+    if (!m_sharedResourceCache) {
+        m_sharedResourceCache = RemoteSharedResourceCacheProxy::create();
+        if (m_gpuProcessConnection)
+            Ref { *m_sharedResourceCache }->gpuProcessConnectionDidBecomeAvailable(Ref { *m_gpuProcessConnection });
+    }
+    return *m_sharedResourceCache;
+}
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MODEL_PROCESS)
@@ -2031,7 +2062,7 @@ void WebProcess::unregisterStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
     auto identifier = storageAreaMap.identifier();
     ASSERT(m_storageAreaMaps.contains(identifier));
-    ASSERT(m_storageAreaMaps.get(identifier).get() == &storageAreaMap);
+    ASSERT(m_storageAreaMaps.get(identifier) == &storageAreaMap);
     m_storageAreaMaps.remove(identifier);
 }
 
@@ -2480,7 +2511,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if USE(AUDIO_SESSION)
     if (useGPUProcessForMedia)
-        AudioSession::setSharedSession(RemoteAudioSession::create());
+        AudioSession::setSharedSession(RemoteAudioSession::create(*this));
     else
         AudioSession::setSharedSession(AudioSession::create());
 #endif
@@ -2643,6 +2674,28 @@ void WebProcess::removeWebTransportSession(WebTransportSessionIdentifier identif
     ASSERT(m_webTransportSessions.contains(identifier));
     m_webTransportSessions.remove(identifier);
 }
+
+#if USE(LIBRICE)
+RefPtr<RiceBackendProxy> WebProcess::gstreamerIceBackend(RiceBackendIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    return m_gstreamerIceBackends.get(identifier).get();
+}
+
+void WebProcess::addRiceBackend(RiceBackendIdentifier identifier, RiceBackendProxy& backend)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.set(identifier, backend);
+}
+
+void WebProcess::removeRiceBackend(RiceBackendIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.remove(identifier);
+}
+#endif // USE(LIBRICE)
 
 void WebProcess::updateCachedCookiesEnabled()
 {

@@ -47,8 +47,9 @@ const scrollAndCheckTimeline = async (scroller, progress) => {
 
     const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
     assert_equals(remoteAnimationStack.animations.length, 1);
-    const timelineTime = remoteAnimationStack.animations[0].timeline.currentTime;
-    assert_equals(timelineTime, expectedTimelineTime, `After scrolling to ${scrollTop}, the timeline time is ${expectedTimelineTime}`);
+    const remoteAnimation = remoteAnimationStack.animations[0];
+    assert_equals(remoteAnimation.timeline.currentTime, expectedTimelineTime, `After scrolling to ${scrollTop}, the timeline time is ${expectedTimelineTime}`);
+    assert_equals(remoteAnimation.progress, progress, `After scrolling to ${scrollTop}, the animation progress is ${progress}`);
 };
 
 promise_test(async t => { 

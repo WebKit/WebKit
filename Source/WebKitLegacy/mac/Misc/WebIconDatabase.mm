@@ -103,14 +103,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (WebIconDatabase *)sharedIconDatabase
 {
-    static NeverDestroyed<RetainPtr<WebIconDatabase>> database;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^ {
+    static NeverDestroyed<RetainPtr<WebIconDatabase>> database = [] {
         if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WebIconDatabaseWarning))
             NSLog(@"+[WebIconDatabase sharedIconDatabase] is not API and should not be used. WebIconDatabase no longer handles icon loading and it will be removed in a future release.");
 
-        database.get() = adoptNS([[WebIconDatabase alloc] init]);
-    });
+        return adoptNS([[WebIconDatabase alloc] init]);
+    }();
 
     return database.get().get();
 }
@@ -135,13 +133,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
-    static NeverDestroyed<RetainPtr<NSImage>> defaultImage;
-
-    static dispatch_once_t once;
-    dispatch_once(&once, ^ {
-        auto imageData = adoptNS([[NSData alloc] initWithBytes:defaultIconData length:sizeof(defaultIconData)]);
-        defaultImage.get() = adoptNS([[NSImage alloc] initWithData:imageData.get()]);
-    });
+    static NeverDestroyed<RetainPtr<NSImage>> defaultImage = [] {
+        RetainPtr imageData = adoptNS([[NSData alloc] initWithBytes:defaultIconData length:sizeof(defaultIconData)]);
+        return adoptNS([[NSImage alloc] initWithData:imageData.get()]);
+    }();
     
     return defaultImage.get().get();
 }

@@ -28,40 +28,27 @@
 
 #include "CommonCryptoUtilities.h"
 #include "CryptoKeyEC.h"
-#if HAVE(SWIFT_CPP_INTEROP)
 #include <pal/PALSwift.h>
-#endif
 
 namespace WebCore {
 
-#if !HAVE(SWIFT_CPP_INTEROP)
-static std::optional<Vector<uint8_t>> platformDeriveBitsCC(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
-{
-    std::optional<Vector<uint8_t>> result = std::nullopt;
-    Vector<uint8_t> derivedKey(baseKey.keySizeInBytes()); // Per https://tools.ietf.org/html/rfc6090#section-4.
-    size_t size = derivedKey.size();
-
-    if (!CCECCryptorComputeSharedSecret(baseKey.platformKey().get(), publicKey.platformKey().get(), derivedKey.mutableSpan().data(), &size))
-        result = std::make_optional(WTFMove(derivedKey));
-    return result;
-}
-#else
 static std::optional<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     auto rv = baseKey.platformKey()->deriveBits(publicKey.platformKey());
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return std::nullopt;
     return std::make_optional(WTFMove(rv.result));
-}
+#else
+    UNUSED_PARAM(baseKey);
+    UNUSED_PARAM(publicKey);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
+}
 
 std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return platformDeriveBitsCryptoKit(baseKey, publicKey);
-#else
-    return platformDeriveBitsCC(baseKey, publicKey);
-#endif
 }
 
 } // namespace WebCore

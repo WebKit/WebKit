@@ -47,7 +47,6 @@ class MacOSFullscreenMediaControls extends MediaControls
         this.fullscreenButton.isFullscreen = true;
 
         this.volumeSlider = new Slider(this, "volume");
-        this.volumeSlider.width = 60;
 
         this._leftContainer = new ButtonsContainer({
             children: this._volumeControlsForCurrentDirection(),
@@ -168,7 +167,7 @@ class MacOSFullscreenMediaControls extends MediaControls
     _handleMousedown(event)
     {
         // We don't allow dragging when the interaction is initiated on an interactive element. 
-        if (event.target.localName === "button" || event.target.parentNode.localName === "button" || event.target.localName === "input")
+        if (event.target.localName === "button" || event.target.parentNode.localName === "button" || event.target.localName === "input" || event.target.closest("button") || event.target.closest(".buttons-container"))
             return;
 
         event.preventDefault();

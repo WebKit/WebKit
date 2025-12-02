@@ -41,6 +41,7 @@
 #include <WebCore/StyleObjectPosition.h>
 #include <WebCore/StyleOpacity.h>
 #include <WebCore/StyleOrder.h>
+#include <WebCore/StyleResize.h>
 #include <WebCore/StyleTransitions.h>
 #include <memory>
 #include <wtf/DataRef.h>
@@ -118,7 +119,7 @@ public:
     PREFERRED_TYPE(bool) unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     PREFERRED_TYPE(UserDrag) unsigned userDrag : 2;
     PREFERRED_TYPE(ObjectFit) unsigned objectFit : 3;
-    PREFERRED_TYPE(Resize) unsigned resize : 3;
+    PREFERRED_TYPE(Style::Resize) unsigned resize : 3;
 
 private:
     StyleMiscNonInheritedData();

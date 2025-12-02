@@ -51,7 +51,7 @@ public:
 
 #if PLATFORM(COCOA)
     const RetainPtr<id>& body() const { return m_body; }
-    const RetainPtr<NSString> cocoaName() const { return m_cocoaName; }
+    NSString *cocoaName() const { return m_cocoaName.get(); }
 #endif
     API::Object* apiBody() const { return m_apiBody.get(); }
     WebKit::WebPageProxy* page() const;

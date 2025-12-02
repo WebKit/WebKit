@@ -110,8 +110,10 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
     auto result = m_line.close();
 
     auto isLastInlineContent = isLastLineWithInlineContent(placedContentEnd, lineInput.needsLayoutRange.endIndex());
+    auto lineEndsWithForcedLineBreak = Line::hasTrailingForcedLineBreak(result.runs);
+    auto isLastLineOrLineEndsWithForcedLineBreak = isLastInlineContent || lineEndsWithForcedLineBreak;
     auto inlineContentEnding = result.isContentful ? InlineFormattingUtils::inlineContentEnding(result) : std::nullopt;
-    auto contentLogicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, result.runs, isLastInlineContent);
+    auto contentLogicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle, result.contentLogicalRight, m_lineLogicalRect.width(), result.hangingTrailingContentWidth, isLastLineOrLineEndsWithForcedLineBreak);
 
     return { { lineInput.needsLayoutRange.start, placedContentEnd }
         , WTFMove(result.runs)
@@ -172,7 +174,7 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
     Line::RunList singleRun;
     singleRun.append({ Line::Run(*inlineTextItem, inlineTextItem->style(), { }, contentWidth) });
 
-    auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), contentWidth, lineRect.width(), { }, singleRun, true);
+    auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), contentWidth, lineRect.width(), { }, true);
     auto contentRight = contentLeft + contentWidth;
 
     return LineLayoutResult { lineInput.needsLayoutRange
@@ -505,7 +507,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const
             return false;
         if (style.textIndent() != RenderStyle::initialTextIndent())
             return false;
-        if (style.textAlignLast() == TextAlignLast::Justify || style.textAlign() == TextAlignMode::Justify || style.display() == DisplayType::RubyAnnotation)
+        if (style.textAlignLast() == Style::TextAlignLast::Justify || style.textAlign() == Style::TextAlign::Justify || style.display() == DisplayType::RubyAnnotation)
             return false;
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
             return false;

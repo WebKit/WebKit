@@ -31,12 +31,9 @@
 messages -> RemoteDDMesh Stream {
     void SetLabel(String label)
     void Destruct()
-    void AddMesh(WebCore::DDModel::DDMeshDescriptor descriptor)
     void Update(WebCore::DDModel::DDUpdateMeshDescriptor descriptor)
     void Render()
-    void AddTexture(WebCore::DDModel::DDTextureDescriptor descriptor)
     void UpdateTexture(WebCore::DDModel::DDUpdateTextureDescriptor descriptor)
-    void AddMaterial(WebCore::DDModel::DDMaterialDescriptor descriptor)
     void UpdateMaterial(WebCore::DDModel::DDUpdateMaterialDescriptor descriptor)
     void UpdateTransform(WebCore::DDModel::DDFloat4x4 transform)
     void SetCameraDistance(float distance)

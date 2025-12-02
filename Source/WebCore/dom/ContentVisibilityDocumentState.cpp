@@ -259,8 +259,8 @@ void ContentVisibilityDocumentState::updateAnimations(const Element& element, Is
 {
     if (wasSkipped == IsSkippedContent::No || becomesSkipped == IsSkippedContent::Yes)
         return;
-    for (RefPtr animation : WebAnimation::instances()) {
-        RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.releaseNonNull());
+    for (auto& animation : WebAnimation::instances()) {
+        RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation);
         if (!styleOriginatedAnimation)
             continue;
         auto owningElement = styleOriginatedAnimation->owningElement();

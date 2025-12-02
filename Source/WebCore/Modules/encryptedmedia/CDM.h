@@ -54,13 +54,17 @@ class Document;
 class ScriptExecutionContext;
 class SharedBuffer;
 
-class CDM : public RefCountedAndCanMakeWeakPtr<CDM>, public CDMPrivateClient, private ContextDestructionObserver {
+class CDM : public RefCounted<CDM>, public CDMPrivateClient, private ContextDestructionObserver {
 public:
     static bool supportsKeySystem(const String&);
     static bool isPersistentType(MediaKeySessionType);
 
     static Ref<CDM> create(Document&, const String& keySystem, const String& mediaKeysHashSalt);
     ~CDM();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     using SupportedConfigurationCallback = Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
@@ -98,7 +102,7 @@ private:
 #endif
     String m_keySystem;
     String m_mediaKeysHashSalt;
-    std::unique_ptr<CDMPrivate> m_private;
+    const std::unique_ptr<CDMPrivate> m_private;
 };
 
 }

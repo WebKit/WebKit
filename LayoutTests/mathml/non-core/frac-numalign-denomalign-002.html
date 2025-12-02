@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>mfrac denomalign dynamic changes</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+function DenomAlign(aId) {
+    var mfrac = document.getElementById(aId);
+    var den = mfrac.lastElementChild;
+    var mfracBox = mfrac.getBoundingClientRect();
+    var denBox = den.getBoundingClientRect();
+    var mfracCenter = (mfracBox.left + mfracBox.right) / 2;
+    var denCenter = (denBox.left + denBox.right) / 2;
+    var epsilon = 2;
+
+    if (Math.abs(denBox.left - mfracBox.left) < epsilon)
+        return "left";
+    if (Math.abs(denBox.right - mfracBox.right) < epsilon)
+        return "right";
+    if (Math.abs(denCenter - mfracCenter) < epsilon)
+        return "center";
+
+    return "unknown";
+}
+
+setup({ explicit_done: true });
+window.addEventListener("load", runTests);
+
+function runTests() {
+    test(function() {
+        // Attach
+        document.getElementById("attach").setAttribute("denomalign", "right");
+        assert_equals(DenomAlign("attach"), "right", "attach denomalign");
+
+        // Modify
+        document.getElementById("modify").setAttribute("denomalign", "left");
+        assert_equals(DenomAlign("modify"), "left", "modify denomalign");
+
+        // Remove
+        document.getElementById("remove").removeAttribute("denomalign");
+        assert_equals(DenomAlign("remove"), "center", "remove denomalign");
+    }, "Dynamic denomalign");
+
+    done();
+}
+</script>
+</head>
+<body>
+<math>
+<mfrac id="attach">
+    <mspace width="40px" height="10px" style="background: blue"></mspace>
+    <mspace width="10px" height="10px" style="background: cyan"></mspace>
+</mfrac>
+</math>
+
+<math>
+<mfrac id="modify" denomalign="center">
+    <mspace width="40px" height="10px" style="background: blue"></mspace>
+    <mspace width="10px" height="10px" style="background: cyan"></mspace>
+</mfrac>
+</math>
+
+<math>
+<mfrac id="remove" denomalign="right">
+    <mspace width="40px" height="10px" style="background: blue"></mspace>
+    <mspace width="10px" height="10px" style="background: cyan"></mspace>
+</mfrac>
+</math>
+</body>
+</html>

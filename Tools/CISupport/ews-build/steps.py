@@ -2637,7 +2637,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
     MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc', 'jsc-arm64']
-    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo', 'wpe-wk2', 'api-wpe']
+    LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo-libwebrtc', 'wpe-wk2', 'api-wpe']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
     EWS_WEBKIT_PASSED = 1
@@ -3710,6 +3710,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
     command_extra = ['--treat-failing-as-flaky=0.6,10,200']
     prefix = 'jsc_'
     NUM_FAILURES_TO_DISPLAY_IN_STATUS = 5
+    FAILURE_THRESHOLD = 1000
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, sigtermTime=10, timeout=3 * 60 * 60, **kwargs)
@@ -3771,15 +3772,19 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.binaryFailures.append('testdfg')
         if jsc_results.get('allApiTestsPassed') is False:
             self.binaryFailures.append('testapi')
-        self.stressTestFailures = jsc_results.get('stressTestFailures')
-        if self.stressTestFailures:
-            self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
         self.flaky = jsc_results.get('flakyAndPassed')
         if self.flaky:
             self.setProperty(self.prefix + 'flaky_and_passed', self.flaky)
         if self.binaryFailures:
             self.setProperty(self.prefix + 'binary_failures', self.binaryFailures)
 
+        self.stressTestFailures = jsc_results.get('stressTestFailures', [])
+        if len(self.stressTestFailures) > self.FAILURE_THRESHOLD:
+            self.setProperty(self.prefix + 'stress_test_failures', [f'Too many failures: {len(self.stressTestFailures)} jsc tests failed'])
+            yield self._addToLog('stderr', f'Too many failures: {len(self.stressTestFailures)} jsc tests failed\n')
+            defer.returnValue(rc)
+
+        self.setProperty(self.prefix + 'stress_test_failures', self.stressTestFailures)
         is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
         if is_main and (self.stressTestFailures or self.binaryFailures):
             yield self.filter_failures_using_results_db(self.stressTestFailures, self.binaryFailures)
@@ -4866,6 +4871,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 rc = yield self.report_failure(set())
                 return defer.returnValue(rc)
             self.send_email_for_infrastructure_issue('Both first and second layout-test runs with patch generated no list of results but exited with error, and the clean_tree without change retry also failed.')
+            if (self.getProperty('first_run_flakies', False) or self.getProperty('second_run_flakies', False)) and self.getProperty('clean_tree_run_flakies', False):
+                self.build.results = SUCCESS
+                message = 'Passed layout tests with flaky tests'
+                self.descriptionDone = message
+                self.setProperty('build_summary', message)
+                return defer.returnValue(SUCCESS)
             return defer.returnValue(self.retry_build('Unexpected infrastructure issue, retrying build'))
 
         if first_results_did_exceed_test_failure_limit and second_results_did_exceed_test_failure_limit:

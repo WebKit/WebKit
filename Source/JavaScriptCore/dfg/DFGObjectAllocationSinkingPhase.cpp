@@ -2804,12 +2804,9 @@ escapeChildren:
             if (structures.isEmpty())
                 return m_graph.addNode(ForceOSRExit, origin.takeValidExit(canExit));
 
-            std::sort(
-                structures.begin(),
-                structures.end(),
-                [uid] (RegisteredStructure a, RegisteredStructure b) -> bool {
-                    return a->getConcurrently(uid) < b->getConcurrently(uid);
-                });
+            std::ranges::sort(structures, [uid](auto a, auto b) {
+                return a->getConcurrently(uid) < b->getConcurrently(uid);
+            });
 
             RELEASE_ASSERT(structures.size());
             PropertyOffset firstOffset = structures[0]->getConcurrently(uid);
@@ -2905,7 +2902,13 @@ escapeChildren:
             // We should have a sane chain so this doesn't matter.
             ECMAMode strict = ECMAMode::strict();
 
-            return m_graph.addNode(Node::VarArg, PutByVal, origin.takeValidExit(canExit),
+            // We use PutByValDirectResolved here over PutByVal because we know the index is in bounds of
+            // the PublicLength for the array so:
+            // 1) The Put node does not say it has to exit, which breaks validation if `!origin.exitOK`
+            // 2) We don't emit a branch in that we're in bounds for B3 to subsequently spend time removing.
+            // The main motivation is 1 but 2 is a nice additional benefit that wouldn't be worth it on its
+            // own.
+            return m_graph.addNode(Node::VarArg, PutByValDirectResolved, origin.takeValidExit(canExit),
                 OpInfo(mode.asWord()), OpInfo(strict),
                 start, m_graph.m_varArgChildren.size() - start);
         }

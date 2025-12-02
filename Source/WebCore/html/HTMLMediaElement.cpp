@@ -705,7 +705,7 @@ void HTMLMediaElement::initializeMediaSession()
     if (document->settings().invisibleAutoplayNotPermitted())
         mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
-    if (document->settings().requiresPageVisibilityToPlayAudio() || document->quirks().requirePageVisibilityToPlayAudioQuirk())
+    if (document->settings().requiresPageVisibilityToPlayAudio())
         mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageVisibilityToPlayAudio);
 
     if (document->ownerElement() || !document->isMediaDocument()) {

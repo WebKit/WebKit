@@ -115,22 +115,19 @@ SVGLengthValue::SVGLengthValue(const SVGLengthContext& context, float value, SVG
     setValue(context, value);
 }
 
-std::optional<SVGLengthValue> SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString)
-{
-    SVGLengthValue length { lengthMode };
-    if (length.setValueAsString(valueAsString).hasException())
-        return std::nullopt;
-    return length;
-}
-
-SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode)
+SVGLengthValue SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode, ASCIILiteral fallbackValue)
 {
     SVGLengthValue length(lengthMode);
 
+    parseError = SVGParsingError::None;
     if (length.setValueAsString(valueAsString).hasException())
         parseError = SVGParsingError::ParsingFailed;
     else if (negativeValuesMode == SVGLengthNegativeValuesMode::Forbid && length.valueInSpecifiedUnits() < 0)
         parseError = SVGParsingError::ForbiddenNegativeValue;
+
+    // If parsing failed or value is null, and we have a fallback, use it
+    if (!fallbackValue.isNull() && (parseError != SVGParsingError::None || valueAsString.isNull()))
+        return SVGLengthValue(lengthMode, fallbackValue);
 
     return length;
 }
@@ -328,7 +325,7 @@ ExceptionOr<void> SVGLengthValue::setValue(const SVGLengthContext& context, floa
 ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
 {
     if (string.isEmpty())
-        return { };
+        return Exception { ExceptionCode::SyntaxError };
 
     // CSS::Range only clamps to boundaries, but we historically handled
     // overflow values like "-45e58" to 0 instead of FLT_MAX.

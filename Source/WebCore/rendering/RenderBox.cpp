@@ -169,7 +169,7 @@ void RenderBox::willBeDestroyed()
             view().unregisterContainerQueryBox(*this);
         if (!style().anchorNames().isNone())
             view().unregisterAnchor(*this);
-        if (!style().positionTryFallbacks().isEmpty())
+        if (!style().positionTryFallbacks().isNone())
             view().unregisterPositionTryBox(*this);
         if (Style::AnchorPositionEvaluator::isAnchorPositioned(style())) // Keep this in sync with styleDidChange().
             layoutContext().unregisterAnchorScrollAdjusterFor(*this);
@@ -304,9 +304,9 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
     else if (oldStyle && oldStyle->containerType() != ContainerType::Normal)
         view().unregisterContainerQueryBox(*this);
 
-    if (!newStyle.positionTryFallbacks().isEmpty() && newStyle.hasOutOfFlowPosition())
+    if (!newStyle.positionTryFallbacks().isNone() && newStyle.hasOutOfFlowPosition())
         view().registerPositionTryBox(*this);
-    else if (oldStyle && !oldStyle->positionTryFallbacks().isEmpty() && oldStyle->hasOutOfFlowPosition())
+    else if (oldStyle && !oldStyle->positionTryFallbacks().isNone() && oldStyle->hasOutOfFlowPosition())
         view().unregisterPositionTryBox(*this);
 
     if (oldStyle && Style::AnchorPositionEvaluator::isAnchorPositioned(newStyle) != Style::AnchorPositionEvaluator::isAnchorPositioned(*oldStyle))
@@ -369,9 +369,9 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     if (layer() && oldStyle && oldStyle->scrollbarWidth() != newStyle.scrollbarWidth()) {
         if (isDocElementRenderer)
-            view().frameView().scrollbarWidthChanged(newStyle.scrollbarWidth().platform());
+            view().frameView().scrollbarWidthChanged(Style::toPlatform(newStyle.scrollbarWidth()));
         else if (CheckedPtr scrollableArea = layer()->scrollableArea())
-            scrollableArea->scrollbarWidthChanged(newStyle.scrollbarWidth().platform());
+            scrollableArea->scrollbarWidthChanged(Style::toPlatform(newStyle.scrollbarWidth()));
     }
 
     if (layer() && oldStyle && oldStyle->scrollbarColor() != newStyle.scrollbarColor()) {
@@ -932,12 +932,6 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
     return LayoutRect(snapRectToDevicePixels(box, document().deviceScaleFactor()));
 }
 
-void RenderBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const
-{
-    if (!size().isEmpty())
-        rects.append(LayoutRect(additionalOffset, size()));
-}
-
 int RenderBox::reflectionOffset() const
 {
     auto reflection = style().boxReflect().tryReflection();
@@ -1103,7 +1097,7 @@ bool RenderBox::requiresLayerWithScrollableArea() const
     if (hasPotentiallyScrollableOverflow())
         return true;
 
-    if (style().resize() != Resize::None)
+    if (style().resize() != Style::Resize::None)
         return true;
 
     if (isHTMLMarquee() && style().marqueeBehavior() != MarqueeBehavior::None)
@@ -3229,7 +3223,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         auto containerWidthForMarginAuto = availableSpaceAdjustedWithFloats.value_or(containerWidth);
         // Case One: The object is being centered in the containing block's available logical width.
         auto marginAutoCenter = marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidthForMarginAuto;
-        auto alignModeCenter = containingBlock.style().textAlign() == TextAlignMode::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
+        auto alignModeCenter = containingBlock.style().textAlign() == Style::TextAlign::WebKitCenter && !marginStartLength.isAuto() && !marginEndLength.isAuto();
         if (marginAutoCenter || alignModeCenter) {
             // Other browsers center the margin box for align=center elements so we match them here.
             marginStart = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::InlineStart, [&] {
@@ -3253,8 +3247,8 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         }
 
         // Case Three: The object is being pushed to the end of the containing block's available logical width.
-        auto pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == TextAlignMode::WebKitLeft)
-            || (containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == TextAlignMode::WebKitRight));
+        auto pushToEndFromTextAlign = !marginEndLength.isAuto() && ((!containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == Style::TextAlign::WebKitLeft)
+            || (containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == Style::TextAlign::WebKitRight));
         if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidthForMarginAuto) {
             marginEnd = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::InlineEnd, [&] {
                 return Style::evaluate<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, zoomFactor);

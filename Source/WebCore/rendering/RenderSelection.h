@@ -50,7 +50,7 @@ public:
     IntRect boundsClippedToVisibleContent() const { return collectBounds(ClipToVisibleContent::Yes); }
     
 private:
-    const RenderView& m_renderView;
+    const CheckedRef<const RenderView> m_renderView;
 #if ENABLE(SERVICE_CONTROLS)
     SelectionGeometryGatherer m_selectionGeometryGatherer;
 #endif

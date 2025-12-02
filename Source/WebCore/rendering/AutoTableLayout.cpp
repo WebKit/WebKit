@@ -2,7 +2,7 @@
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
- * Copyright (C) 2015-2017 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -268,8 +268,18 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
     if (auto fixedTableLogicalWidth = m_table->style().logicalWidth().tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive()) {
-        minWidth = std::max(minWidth, m_table->overridingBorderBoxLogicalWidth().value_or(LayoutUnit { fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength()) }));
-        maxWidth = minWidth;
+        LayoutUnit minContentWidth = minWidth;
+        LayoutUnit tableFixedWidth = m_table->overridingBorderBoxLogicalWidth().value_or(LayoutUnit { fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength()) });
+        LayoutUnit clampedWidth = std::max(minContentWidth, std::max(minWidth, tableFixedWidth));
+        minWidth = clampedWidth;
+        maxWidth = clampedWidth;
+
+        if (auto fixedMaxWidth = m_table->style().logicalMaxWidth().tryFixed()) {
+            LayoutUnit maxAllowedWidth { fixedMaxWidth->resolveZoom(m_table->style().usedZoomForLength()) };
+            minWidth = std::min(minWidth, maxAllowedWidth);
+            minWidth = std::max(minWidth, minContentWidth);
+            maxWidth = minWidth;
+        }
     }
 }
 

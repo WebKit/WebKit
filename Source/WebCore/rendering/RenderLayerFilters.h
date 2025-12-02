@@ -44,11 +44,17 @@ class Element;
 class FilterOperations;
 class GraphicsContextSwitcher;
 
-class RenderLayerFilters final : private CachedSVGDocumentClient {
+class RenderLayerFilters final : public RefCounted<RenderLayerFilters>, private CachedSVGDocumentClient {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
-    explicit RenderLayerFilters(RenderLayer&);
+    static Ref<RenderLayerFilters> create(RenderLayer&);
     virtual ~RenderLayerFilters();
+
+    void detachFromLayer() { m_layer = nullptr; }
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
@@ -75,10 +81,12 @@ public:
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
+    explicit RenderLayerFilters(RenderLayer&);
+
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
-    const CheckedRef<RenderLayer> m_layer;
+    CheckedPtr<RenderLayer> m_layer;
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 

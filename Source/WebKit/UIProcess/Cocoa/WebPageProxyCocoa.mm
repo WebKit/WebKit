@@ -51,10 +51,12 @@
 #import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "SafeBrowsingSPI.h"
+#import "SafeBrowsingUtilities.h"
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
 #import "VideoPresentationManagerProxy.h"
 #import "WKErrorInternal.h"
+#import "WKHistoryDelegatePrivate.h"
 #import "WKWebView.h"
 #import "WebContextMenuProxy.h"
 #import "WebFrameProxy.h"
@@ -179,40 +181,41 @@ static bool exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, uint64_t 
     return committedSize > thresholdSize * thesholdSizeFraction;
 }
 
-void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData)
+void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData, const PageData& pageData, const TransactionID& transactionID)
 {
-    if (layerTreeTransaction.isMainFrameProcessTransaction()) {
-        if (!m_hasUpdatedRenderingAfterDidCommitLoad
-            && (internals().firstLayerTreeTransactionIdAfterDidCommitLoad && layerTreeTransaction.transactionID().greaterThanOrEqualSameProcess(*internals().firstLayerTreeTransactionIdAfterDidCommitLoad))) {
-            m_hasUpdatedRenderingAfterDidCommitLoad = true;
-#if ENABLE(SCREEN_TIME)
-            if (RefPtr pageClient = this->pageClient())
-                pageClient->didChangeScreenTimeWebpageControllerURL();
-#endif
-            stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
-            internals().lastVisibleContentRectUpdate = { };
-        }
-
-        if (std::exchange(internals().needsFixedContainerEdgesUpdateAfterNextCommit, false))
-            protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetNeedsFixedContainerEdgesUpdate(), webPageIDInMainFrameProcess());
-    }
-
     if (RefPtr pageClient = this->pageClient())
-        pageClient->didCommitLayerTree(layerTreeTransaction, mainFrameData);
+        pageClient->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
     if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold
-        && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, layerTreeTransaction.renderTreeSize())) {
+        && exceedsRenderTreeSizeSizeThreshold(m_sessionRestorationRenderTreeSize, pageData.renderTreeSize)) {
         m_hitRenderTreeSizeThreshold = true;
         didReachLayoutMilestone(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold, WallTime::now());
     }
 }
 
-void WebPageProxy::didCommitMainFrameData(const MainFrameData& mainFrameData)
+void WebPageProxy::didCommitMainFrameData(const MainFrameData& mainFrameData, const TransactionID& transactionID)
 {
     themeColorChanged(mainFrameData.themeColor);
     pageExtendedBackgroundColorDidChange(mainFrameData.pageExtendedBackgroundColor);
     sampledPageTopColorChanged(mainFrameData.sampledPageTopColor);
+
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad
+        && (internals().firstLayerTreeTransactionIdAfterDidCommitLoad && transactionID.greaterThanOrEqualSameProcess(*internals().firstLayerTreeTransactionIdAfterDidCommitLoad))) {
+        m_hasUpdatedRenderingAfterDidCommitLoad = true;
+#if ENABLE(SCREEN_TIME)
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->didChangeScreenTimeWebpageControllerURL();
+#endif
+        stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
+        internals().lastVisibleContentRectUpdate = { };
+    }
+
+    if (std::exchange(internals().needsFixedContainerEdgesUpdateAfterNextCommit, false))
+        protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetNeedsFixedContainerEdgesUpdate(), webPageIDInMainFrameProcess());
+
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->didCommitMainFrameData(mainFrameData);
 }
 
 void WebPageProxy::layerTreeCommitComplete()
@@ -266,21 +269,34 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardDat
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navigation, bool forMainFrameNavigation)
 {
 #if HAVE(SAFE_BROWSING)
-    RetainPtr context = [SSBLookupContext sharedLookupContext];
-    if (!url.isValid() || !context)
+    if (!SafeBrowsingUtilities::canLookUp(url))
         return;
+
     size_t redirectChainIndex = navigation.redirectChainIndex(url);
 
     navigation.setSafeBrowsingCheckOngoing(redirectChainIndex, true);
 
-    auto completionHandler = makeBlockPtr([weakThis = WeakPtr { *this }, navigation = Ref { navigation }, forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex] (SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), navigation = WTFMove(navigation), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url).isolatedCopy(), redirectChainIndex] {
+    auto performLookup = [weakThis = WeakPtr { *this }, navigation = Ref { navigation }, forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex](RetainPtr<SSBLookupResult> cachedResult) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        auto navigationType = forMainFrameNavigation ? SafeBrowsingUtilities::NavigationType::MainFrame : SafeBrowsingUtilities::NavigationType::SubFrame;
+        SafeBrowsingUtilities::lookUp(url, navigationType, cachedResult.get(), [weakThis = WTFMove(weakThis), navigation = WTFMove(navigation), forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex](SSBLookupResult *result, NSError *error) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
+
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
             if (error)
                 return;
+
+            RefPtr navigationState = NavigationState::fromWebPage(*protectedThis);
+            auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
+            if (historyDelegate && [historyDelegate respondsToSelector:@selector(_webView:didReceiveSafeBrowsingResult:forURL:)]) {
+                if (auto webView = protectedThis->cocoaView())
+                    [historyDelegate _webView:webView.get() didReceiveSafeBrowsingResult:result forURL:url.createNSURL().get()];
+            }
 
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
@@ -288,15 +304,24 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                     break;
                 }
             }
+
             if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning() && navigation->safeBrowsingCheckTimedOut())
                 protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
         });
-    });
+    };
 
-    if ([context respondsToSelector:@selector(lookUpURL:isMainFrame:hasHighConfidenceOfSafety:completionHandler:)])
-        [context lookUpURL:url.createNSURL().get() isMainFrame:forMainFrameNavigation hasHighConfidenceOfSafety:NO completionHandler:completionHandler.get()];
-    else
-        [context lookUpURL:url.createNSURL().get() completionHandler:completionHandler.get()];
+    RefPtr navigationState = NavigationState::fromWebPage(*this);
+    auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
+    if (!historyDelegate || ![historyDelegate respondsToSelector:@selector(_webView:cachedSafeBrowsingResultForURL:completionHandler:)]) {
+        performLookup(nullptr);
+        return;
+    }
+
+    auto webView = cocoaView();
+    auto cacheCompletionHandler = makeBlockPtr([performLookup = WTFMove(performLookup)] (SSBLookupResult *cachedResult, NSError *error) mutable {
+        performLookup(retainPtr(cachedResult));
+    });
+    [historyDelegate _webView:webView.get() cachedSafeBrowsingResultForURL:url.createNSURL().get() completionHandler:cacheCompletionHandler.get()];
 #endif
 }
 

@@ -133,7 +133,6 @@
 #define NSAccessibilityHeadingLevelAttribute @"AXHeadingLevel"
 #define NSAccessibilityLanguageAttribute @"AXLanguage"
 #define NSAccessibilityPathAttribute @"AXPath"
-#define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
 #define NSAccessibilityTextCompletionAttribute @"AXTextCompletion"
 #define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
 #define NSAccessibilityVisitedAttribute @"AXVisited"
@@ -504,3 +503,5 @@
 
 // User info key to specify an announcment's language.
 #define NSAccessibilityAnnouncementLanguageKey @"AXAnnouncementLanguageKey"
+
+#define NSAccessibilityAnnouncementIsLiveRegionKey @"AXAnnouncementIsLiveRegionKey"

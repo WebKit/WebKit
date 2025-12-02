@@ -57,6 +57,7 @@
 #include "runtime_object.h"
 #include <mutex>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(COCOA)
 #include "objc_runtime.h"
@@ -109,12 +110,8 @@ JSHeapData* JSHeapData::ensureHeapData(Heap& heap)
     if (!Options::useGlobalGC())
         return new JSHeapData(heap);
 
-    static JSHeapData* singleton = nullptr;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        singleton = new JSHeapData(heap);
-    });
-    return singleton;
+    static NeverDestroyed<UniqueRef<JSHeapData>> singleton = makeUniqueRef<JSHeapData>(heap);
+    return singleton.get().ptr();
 }
 
 #define CLIENT_ISO_SUBSPACE_INIT(subspace) subspace(m_heapData->subspace)

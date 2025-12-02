@@ -42,8 +42,11 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(bool hasInflowContent, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
+    Line(bool hasInflowContent, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection, bool hasBlockContent);
 
+    // FIXME: We should consider having 2 APIs here where (webkit.org/b/302804)
+    // "hasInflowContent" returns true for all inflow content including non-contentful inflow content e.g. <span></span>
+    // "isContentful" returns true only if the inflow content is considered contentful.
     bool hasInflowContent() const { return m_hasInflowContent; }
 
     float left() const { return m_lineBoxRect.x(); }
@@ -87,7 +90,8 @@ public:
     size_t boxCount() const { return m_boxCount; }
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 
-    void moveInBlockDirection(float offset, bool isHorizontalWritingMode);
+    void moveInBlockDirection(float offset);
+    void shrinkInBlockDirection(float delta);
     struct Ellipsis {
         enum class Type : uint8_t { Inline, Block };
         Type type { Type::Inline };
@@ -103,6 +107,9 @@ public:
 
     bool hasContentAfterEllipsisBox() const { return m_hasContentAfterEllipsisBox; }
     void setHasContentAfterEllipsisBox() { m_hasContentAfterEllipsisBox = true; }
+
+    bool hasInlineContent() const { return hasInflowContent() && !hasBlockContent(); }
+    bool hasBlockContent() const { return m_hasBlockContent; }
 
     void setFirstBoxIndex(size_t firstBoxIndex) { m_firstBoxIndex = firstBoxIndex; }
     void setBoxCount(size_t boxCount) { m_boxCount = boxCount; }
@@ -140,10 +147,11 @@ private:
     bool m_isFullyTruncatedInBlockDirection : 1 { false };
     bool m_hasContentAfterEllipsisBox : 1 { false };
     bool m_hasInflowContent : 1 { false };
+    bool m_hasBlockContent : 1 { false };
     std::optional<Ellipsis> m_ellipsis { };
 };
 
-inline Line::Line(bool hasInflowContent, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
+inline Line::Line(bool hasInflowContent, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection, bool hasBlockContent)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_contentOverflow(contentOverflow)
@@ -157,17 +165,16 @@ inline Line::Line(bool hasInflowContent, const FloatRect& lineBoxLogicalRect, co
     , m_isHorizontal(isHorizontal)
     , m_isFullyTruncatedInBlockDirection(isTruncatedInBlockDirection)
     , m_hasInflowContent(hasInflowContent)
+    , m_hasBlockContent(hasBlockContent)
 {
 }
 
-inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMode)
+inline void Line::moveInBlockDirection(float offset)
 {
-    ASSERT(isHorizontalWritingMode == m_isHorizontal);
-
     if (!offset)
         return;
 
-    auto physicalOffset = isHorizontalWritingMode ? FloatSize { { }, offset } : FloatSize { offset, { } };
+    auto physicalOffset = isHorizontal() ? FloatSize { { }, offset } : FloatSize { offset, { } };
 
     m_lineBoxRect.move(physicalOffset);
     m_scrollableOverflow.move(physicalOffset);
@@ -179,6 +186,24 @@ inline void Line::moveInBlockDirection(float offset, bool isHorizontalWritingMod
     m_lineBoxLogicalRect.move({ { }, offset });
     m_enclosingLogicalTopAndBottom.top += offset;
     m_enclosingLogicalTopAndBottom.bottom += offset;
+}
+
+inline void Line::shrinkInBlockDirection(float delta)
+{
+    if (!delta)
+        return;
+
+    auto physicalDelta = isHorizontal() ? FloatSize { { }, delta } : FloatSize { delta, { } };
+
+    m_lineBoxRect.contract(physicalDelta);
+    m_scrollableOverflow.contract(physicalDelta);
+    m_contentOverflow.contract(physicalDelta);
+    m_inkOverflow.contract(physicalDelta);
+    if (m_ellipsis)
+        m_ellipsis->visualRect.contract(physicalDelta);
+
+    m_lineBoxLogicalRect.contract({ { }, delta });
+    m_enclosingLogicalTopAndBottom.bottom -= delta;
 }
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const

@@ -730,23 +730,17 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
 
 static NSSet<NSString *> *validRequestMethods(void)
 {
-    static NSSet<NSString *> *validRequestMethods;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        validRequestMethods = [NSSet setWithObjects:@"get", @"head", @"options", @"trace", @"put", @"delete", @"post", @"patch", @"connect", nil];
-    });
+    static NSSet<NSString *> *validRequestMethods = [NSSet setWithObjects:@"get", @"head", @"options", @"trace", @"put", @"delete", @"post", @"patch", @"connect", nil];
     return validRequestMethods;
 }
 
 static NSString *validRequestMethodsString(void)
 {
-    static NSString *validRequestMethodsString;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    static NSString *validRequestMethodsString = [] {
         NSArray *validRequestMethodsArray = validRequestMethods().allObjects;
-        validRequestMethodsString = [[validRequestMethodsArray subarrayWithRange:NSMakeRange(0, validRequestMethodsArray.count - 1)] componentsJoinedByString:@", "];
-        validRequestMethodsString = [NSString stringWithFormat:@"%@, and %@", validRequestMethodsString, validRequestMethodsArray.lastObject];
-    });
+        NSString* validRequestMethodsString = [[validRequestMethodsArray subarrayWithRange:NSMakeRange(0, validRequestMethodsArray.count - 1)] componentsJoinedByString:@", "];
+        return [NSString stringWithFormat:@"%@, and %@", validRequestMethodsString, validRequestMethodsArray.lastObject];
+    }();
     return validRequestMethodsString;
 }
 

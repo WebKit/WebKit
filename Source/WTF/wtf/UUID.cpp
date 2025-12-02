@@ -192,16 +192,14 @@ String createVersion4UUIDStringWeak()
 String bootSessionUUIDString()
 {
 #if OS(DARWIN)
-    static LazyNeverDestroyed<String> bootSessionUUID;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
+    static NeverDestroyed<String> bootSessionUUID = []() -> String {
         constexpr size_t maxUUIDLength = 37;
         std::array<char, maxUUIDLength> uuid;
         size_t uuidLength = maxUUIDLength;
         if (sysctlbyname("kern.bootsessionuuid", uuid.data(), &uuidLength, nullptr, 0))
-            return;
-        bootSessionUUID.construct(std::span<const char> { uuid }.first(uuidLength - 1));
-    });
+            return { };
+        return std::span<const char> { uuid }.first(uuidLength - 1);
+    }();
     return bootSessionUUID;
 #else
     return String();

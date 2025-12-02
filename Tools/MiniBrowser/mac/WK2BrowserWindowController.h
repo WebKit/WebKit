@@ -28,6 +28,8 @@
 
 @interface WK2BrowserWindowController : BrowserWindowController
 
+@property (readonly) WKWebView *webView;
+
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
 @end

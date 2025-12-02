@@ -109,6 +109,7 @@ WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(const String&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
 WTF_EXPORT_PRIVATE String extractTemporaryZipArchive(const String& filePath);
+WTF_EXPORT_PRIVATE FileHandle createDumpFile(StringView filename, StringView path = StringView());
 
 enum class FileType { Regular, Directory, SymbolicLink };
 WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);

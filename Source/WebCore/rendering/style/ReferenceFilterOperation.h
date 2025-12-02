@@ -75,7 +75,7 @@ private:
     URL m_url;
     AtomString m_fragment;
 
-    std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
+    const RefPtr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
 };
 
 } // Style

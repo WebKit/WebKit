@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 WK_EXTERN
 @interface WKCaptionStyleMenuController : NSObject
+
++ (instancetype)menuController;
+
 @property (weak, nonatomic) id<WKCaptionStyleMenuControllerDelegate> delegate;
 @property (readonly, nonatomic) PlatformMenu *captionStyleMenu;
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH

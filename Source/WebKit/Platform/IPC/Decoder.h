@@ -42,6 +42,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 
+#if PLATFORM(COCOA)
+#include "ClassStructPtr.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
 #endif
@@ -49,12 +53,6 @@
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/TZoneHeap.h>
 #include <bmalloc/bmalloc.h>
-#endif
-
-#ifdef __OBJC__
-typedef Class ClassStructPtr;
-#else
-typedef struct objc_class* ClassStructPtr;
 #endif
 
 namespace IPC {

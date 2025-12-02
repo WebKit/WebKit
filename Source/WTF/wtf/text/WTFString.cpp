@@ -65,7 +65,7 @@ String::String(std::span<const char> characters)
 
 // Construct a string with Latin-1 data, from a null-terminated source.
 String::String(const char* nullTerminatedString)
-    : m_impl(nullTerminatedString ? RefPtr { StringImpl::createFromCString(nullTerminatedString) } : nullptr)
+    : m_impl(nullTerminatedString ? RefPtr { StringImpl::create(byteCast<Latin1Character>(unsafeSpan(nullTerminatedString))) } : nullptr)
 {
 }
 

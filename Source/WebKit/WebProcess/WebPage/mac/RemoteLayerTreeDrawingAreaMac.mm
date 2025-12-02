@@ -84,7 +84,7 @@ void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::F
     prepopulateRectForZoom(totalScale, origin);
 }
 
-void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(MainFrameData& data)
+void RemoteLayerTreeDrawingAreaMac::willCommitMainFrameData(MainFrameData& data)
 {
     // FIXME: Probably need something here for PDF.
     RefPtr frameView = protectedWebPage()->localMainFrameView();

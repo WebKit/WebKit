@@ -88,6 +88,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.h
+        platform/graphics/texmap/coordinated/CoordinatedCompositionReason.h
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayer.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h

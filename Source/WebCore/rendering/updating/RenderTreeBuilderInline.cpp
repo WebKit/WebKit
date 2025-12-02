@@ -462,37 +462,57 @@ void RenderTreeBuilder::Inline::wrapRunsOfBlocksInAnonymousBlock(RenderInline& p
 
     SingleThreadWeakPtr<RenderBox> firstInRun;
     SingleThreadWeakPtr<RenderBox> lastInRun;
+    auto isSingleAnonymousBlockRun = false;
 
     auto wrapRunInAnonymousBlockIfNeeded = [&] {
         // FIXME: Removing wrapping requires changes how RenderBlockFlow handles block formatting state.
         if (!firstInRun)
             return;
 
-        auto newBlock = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
+        auto newBlock = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.containingBlock()->style());
         newBlock->setChildrenInline(false);
         CheckedRef block = *newBlock;
         m_builder.attachToRenderElementInternal(parent, WTFMove(newBlock), firstInRun.get());
         m_builder.moveChildren(parent, block, firstInRun.get(), lastInRun->nextSibling(), RenderTreeBuilder::NormalizeAfterInsertion::No);
 
-        // We might have wrapped existing anonymous blocks and they are now nested. Get rid of them,
+        // We might have wrapped existing anonymous blocks and they are now nested. Get rid of them.
         dropNestedAnonymousBlocks(block);
+    };
+
+    auto dropSingleAnonymousBlockIfNotNeeded = [&] {
+        ASSERT(firstInRun == lastInRun);
+        ASSERT(firstInRun->isAnonymousBlock());
+
+        auto hasInFlowChild = [&] {
+            for (auto& child : childrenOfType<RenderObject>(*firstInRun)) {
+                if (child.isInFlow())
+                    return true;
+            }
+            return false;
+        };
+        if (hasInFlowChild())
+            return;
+        m_builder.moveAllChildren(*firstInRun, parent, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        auto emptyAnonymousBlock = m_builder.detachFromRenderElement(parent, *firstInRun, WillBeDestroyed::Yes);
     };
 
     for (CheckedPtr child = parent.firstChild() ; child; child = child->nextSibling()) {
         if (child->isInline()) {
-            wrapRunInAnonymousBlockIfNeeded();
+            !isSingleAnonymousBlockRun ? wrapRunInAnonymousBlockIfNeeded() : dropSingleAnonymousBlockIfNotNeeded();
             firstInRun = nullptr;
             lastInRun = nullptr;
+            isSingleAnonymousBlockRun = false;
             continue;
         }
         if (auto* blockChild = dynamicDowncast<RenderBox>(*child); blockChild && blockChild->isInFlow()) {
             // Floats and out-of-flow boxes are wrapped if they are in the middle of a block run.
+            isSingleAnonymousBlockRun = !firstInRun && blockChild->isAnonymousBlock();
             if (!firstInRun)
                 firstInRun = blockChild;
             lastInRun = blockChild;
         }
     }
-    wrapRunInAnonymousBlockIfNeeded();
+    !isSingleAnonymousBlockRun ? wrapRunInAnonymousBlockIfNeeded() : dropSingleAnonymousBlockIfNotNeeded();
 }
 
 }

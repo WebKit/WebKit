@@ -26,6 +26,7 @@
 #pragma once
 
 #include <functional>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
@@ -35,15 +36,6 @@
 #include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/ContentRuleListResults.h>
 #endif
-
-namespace WebCore {
-class UserContentProviderInvalidationClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::UserContentProviderInvalidationClient> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -56,7 +48,7 @@ class UserScript;
 class UserStyleSheet;
 class WebKitBuffer;
 
-class UserContentProviderInvalidationClient : public CanMakeWeakPtr<UserContentProviderInvalidationClient> {
+class UserContentProviderInvalidationClient : public AbstractRefCountedAndCanMakeWeakPtr<UserContentProviderInvalidationClient> {
 public:
     virtual ~UserContentProviderInvalidationClient()
     {

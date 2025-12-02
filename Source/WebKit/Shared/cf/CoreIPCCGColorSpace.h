@@ -27,56 +27,55 @@
 
 #if PLATFORM(COCOA)
 
+#import "ArgumentCodersCocoa.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/Color.h>
 #import <WebCore/ColorSpace.h>
 #import <WebCore/ColorSpaceCG.h>
+#import <wtf/Box.h>
 #import <wtf/RetainPtr.h>
 
-using CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, RetainPtr<CFTypeRef>>;
+static const CFStringRef kCGIndexedBaseColorSpaceKey = CFSTR("kCGIndexedBaseColorSpaceKey");
+static const CFStringRef kCGLastIndexKey = CFSTR("kCGLastIndexKey");
+static const CFStringRef kCGIndexedColorTableKey = CFSTR("kCGIndexedColorTableKey");
+static const CFStringRef kCGColorSpaceICCData = CFSTR("kCGColorSpaceICCData");
+static const CFStringRef kCGColorSpaceDisplayReferredDerivative = CFSTR("kCGColorSpaceDisplayReferredDerivative");
+static const CFStringRef kCGColorSpaceSceneReferredDerivative = CFSTR("kCGColorSpaceSceneReferredDerivative");
 
 namespace WebKit {
+class CoreIPCCGColorSpace;
+
+enum class ExtendedRangeDerivative : uint8_t {
+    kNone,
+    kExtendedRange,
+    kExtendedRangeDisplayReferredDerivative,
+    kExtendedRangeSceneReferredDerivative
+};
+
+struct ICCData {
+    Vector<uint8_t> data;
+    ExtendedRangeDerivative derivative { ExtendedRangeDerivative::kNone };
+};
+
+struct IndexedColorSpace {
+    int8_t index;
+    Vector<uint8_t> table;
+    Box<CoreIPCCGColorSpace> colorSpace;
+};
+
+using CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
+
 class CoreIPCCGColorSpace {
 public:
-    CoreIPCCGColorSpace(CGColorSpaceRef cgColorSpace)
-    {
-        if (auto colorSpace = WebCore::colorSpaceForCGColorSpace(cgColorSpace))
-            m_cgColorSpace = *colorSpace;
-        else if (RetainPtr<CFStringRef> name = CGColorSpaceGetName(cgColorSpace))
-            m_cgColorSpace = WTFMove(name);
-        else if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(cgColorSpace)))
-            m_cgColorSpace = WTFMove(propertyList);
-        else
-            // FIXME: This should be removed once we can prove only non-null cgColorSpaces.
-            m_cgColorSpace = WebCore::ColorSpace::SRGB;
-    }
+    CoreIPCCGColorSpace(CGColorSpaceRef);
+    CoreIPCCGColorSpace(CGColorSpaceSerialization);
 
-    CoreIPCCGColorSpace(CGColorSpaceSerialization data)
-        : m_cgColorSpace(data)
-    {
-    }
-
-    RetainPtr<CGColorSpaceRef> toCF() const
-    {
-        auto colorSpace = WTF::switchOn(m_cgColorSpace,
-            [](WebCore::ColorSpace colorSpace) -> RetainPtr<CGColorSpaceRef> {
-                return RetainPtr { cachedNullableCGColorSpaceSingleton(colorSpace) };
-            },
-            [](RetainPtr<CFStringRef> name) -> RetainPtr<CGColorSpaceRef> {
-                return adoptCF(CGColorSpaceCreateWithName(name.get()));
-            },
-            [](RetainPtr<CFTypeRef> propertyList) -> RetainPtr<CGColorSpaceRef> {
-                return adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
-            }
-        );
-        if (!colorSpace) [[unlikely]]
-            return nullptr;
-        return colorSpace;
-    }
+    static CGColorSpaceSerialization serializableColorSpace(CGColorSpaceRef);
+    RetainPtr<CGColorSpaceRef> toCF() const;
 
     CGColorSpaceSerialization m_cgColorSpace;
 };
 
 }
 
-#endif
+#endif // PLATFORM(COCOA)

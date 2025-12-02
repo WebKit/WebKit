@@ -36,6 +36,7 @@ G_DECLARE_FINAL_TYPE(WPEDisplayMock, wpe_display_mock, WPE, DISPLAY_MOCK, WPEDis
 
 void wpeDisplayMockRegister(GIOModule*);
 WPEDisplay* wpeDisplayMockNew();
+void wpeDisplayMockDisconnect(WPEDisplayMock*);
 void wpeDisplayMockUseFakeDRMNodes(WPEDisplayMock*, gboolean);
 void wpeDisplayMockUseFakeDMABufFormats(WPEDisplayMock*, gboolean);
 void wpeDisplayMockSetUseExplicitSync(WPEDisplayMock*, gboolean);

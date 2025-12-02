@@ -55,15 +55,17 @@ template<typename> class ExceptionOr;
 class PaymentRequest final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentRequest> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentRequest);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
     using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
 
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
     ~PaymentRequest();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     void show(Document&, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&&);
     void abort(AbortPromise&&);

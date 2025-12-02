@@ -58,6 +58,8 @@ public:
     JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD
 
+    ISO8601::PlainDate with(JSGlobalObject*, JSObject*, JSValue);
+
     String monthCode() const;
 
     String toString(JSGlobalObject*, JSValue options) const;

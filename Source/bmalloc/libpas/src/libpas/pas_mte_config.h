@@ -113,7 +113,7 @@ extern Slot g_config[];
 #define PAS_USE_COMPACT_ONLY_TZONE_HEAP PAS_USE_MTE
 #endif
 
-#define PAS_MTE_FEATURE_RETAG_ON_FREE 0
+#define PAS_MTE_FEATURE_RETAG_ON_SCAVENGE 0
 #define PAS_MTE_FEATURE_LOG_ON_TAG 1
 #define PAS_MTE_FEATURE_LOG_ON_PURIFY 2
 #define PAS_MTE_FEATURE_LOG_PAGE_ALLOC 3
@@ -122,7 +122,7 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT 6
 
 #define PAS_MTE_FEATURE_FORCED(feature) (0)
-#define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
+#define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_RETAG_ON_SCAVENGE || feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
 #define PAS_MTE_FEATURE_DEBUG_FORCED(feature) (feature == PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)
 
 #define PAS_MTE_FEATURE_FORCED_IN_RELEASE_BUILD(feature) \
@@ -140,10 +140,49 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_ENABLED(feature) (PAS_USE_MTE && PAS_MTE_FEATURE_FORCED_IN_RELEASE_BUILD(feature))
 #endif
 
+/*
+ * These are defined here rather than in pas_mte.h because they are needed by
+ * pas_zero_memory.h, which is a transitive depencency of pas_mte.h
+ */
+#define PAS_MTE_CHECK_TAG_AND_SET_TCO(ptr) do { \
+        /* We're only checking one tag-granule, so it's not perfect, \
+         * but it does mean that a potential attacker would at least \
+         * need to know the tag for some of their target range. */ \
+        asm volatile( \
+            ".arch_extension memtag\n\t" \
+            "ldr xzr, [%0]\n\t" \
+            "msr tco, #1" \
+            : \
+            : "r"(ptr) \
+            : "memory" \
+        ); \
+    } while (0)
+#define PAS_MTE_SET_TCO_UNCHECKED do { \
+        asm volatile( \
+            ".arch_extension memtag\n\t" \
+            "msr tco, #1" \
+            : \
+            : \
+            : "memory" \
+        ); \
+    } while (0)
+#define PAS_MTE_CLEAR_TCO do { \
+        asm volatile( \
+            ".arch_extension memtag\n\t" \
+            "msr tco, #0" \
+            : \
+            : \
+            : "memory" \
+        ); \
+    } while (0)
+
 #else // !PAS_ENABLE_MTE
 #define PAS_USE_MTE (0)
 #define PAS_USE_MTE_IN_WEBCONTENT (0)
 #define PAS_MTE_FEATURE_ENABLED(feature) (0)
+#define PAS_MTE_CHECK_TAG_AND_SET_TCO(ptr) do { (void)ptr; } while (0)
+#define PAS_MTE_SET_TCO_UNCHECKED do { } while (0)
+#define PAS_MTE_CLEAR_TCO do { } while (0)
 #endif // PAS_ENABLE_MTE
 
 #ifdef __cplusplus

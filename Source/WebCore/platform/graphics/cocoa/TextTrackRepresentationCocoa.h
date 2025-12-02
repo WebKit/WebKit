@@ -30,6 +30,7 @@
 
 #include <QuartzCore/CALayer.h>
 #include <WebCore/TextTrackRepresentation.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -38,19 +39,15 @@ namespace WebCore {
 class TextTrackRepresentationCocoa;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextTrackRepresentationCocoa> : std::true_type { };
-}
-
 @class WebCoreTextTrackRepresentationCocoaHelper;
 
 namespace WebCore {
 
 class HTMLMediaElement;
 
-class TextTrackRepresentationCocoa : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager> {
+class TextTrackRepresentationCocoa : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager>, public CanMakeCheckedPtr<TextTrackRepresentationCocoa> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextTrackRepresentationCocoa, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackRepresentationCocoa);
 public:
     WEBCORE_EXPORT explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
     WEBCORE_EXPORT virtual ~TextTrackRepresentationCocoa();

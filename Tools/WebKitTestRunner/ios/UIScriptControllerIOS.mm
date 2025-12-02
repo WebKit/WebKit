@@ -1100,6 +1100,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerIOS::uiViewTreeAsText() const
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsText]));
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::uiViewTreeAsTextForViewWithLayerID(unsigned long long layerID) const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsTextForViewWithLayerID:layerID]));
+}
+
 bool UIScriptControllerIOS::mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height)
 {
     auto contentRect = CGRectMake(x, y, width, height);

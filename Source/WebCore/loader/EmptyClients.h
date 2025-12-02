@@ -127,6 +127,7 @@ class EmptyChromeClient : public ChromeClient {
 #if PLATFORM(IOS_FAMILY)
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final { };
     void relayAriaNotifyNotification(AriaNotifyData&&) const final { };
+    void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const final { };
 #endif
 
     void didFinishLoadingImageForElement(HTMLImageElement&) final { }

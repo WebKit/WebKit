@@ -48,6 +48,24 @@ static void testDisplayConnect(WPEMockPlatformTest* test, gconstpointer)
     g_assert_error(error.get(), WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED);
 }
 
+static void testDisplayDisconnected(WPEMockPlatformTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    g_assert_true(wpe_display_connect(test->display(), &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    gboolean displayDisconnected = FALSE;
+    auto displayDisconnectedID = g_signal_connect(test->display(), "disconnected", G_CALLBACK(+[](WPEDisplay*, GError* error, gboolean* displayDisconnected) {
+        *displayDisconnected = TRUE;
+        g_assert_error(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST);
+    }), &displayDisconnected);
+
+    wpeDisplayMockDisconnect(WPE_DISPLAY_MOCK(test->display()));
+    g_assert_true(displayDisconnected);
+
+    g_signal_handler_disconnect(test->display(), displayDisconnectedID);
+}
+
 static void testDisplayPrimary(WPEMockPlatformTest* test, gconstpointer)
 {
     // The first created display is always the primary.
@@ -294,6 +312,7 @@ static void testDisplayCreateView(WPEMockPlatformTest* test, gconstpointer)
 void beforeAll()
 {
     WPEMockPlatformTest::add("Display", "connect", testDisplayConnect);
+    WPEMockPlatformTest::add("Display", "disconnected", testDisplayDisconnected);
     WPEMockPlatformTest::add("Display", "primary", testDisplayPrimary);
     WPEMockPlatformTest::add("Display", "keymap", testDisplayKeymap);
     WPEMockPlatformTest::add("Display", "drm-nodes", testDisplayDRMNodes);

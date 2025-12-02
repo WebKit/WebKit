@@ -1002,10 +1002,10 @@ class YarrGenerator final : public YarrJITInfo {
             return lhs.begin < rhs.begin;
         }));
 
-        std::sort(unifiedMatches.begin(), unifiedMatches.end(), [](auto& lhs, auto& rhs) {
+        std::ranges::sort(unifiedMatches, [](auto& lhs, auto& rhs) {
             return lhs < rhs;
         });
-        std::sort(unifiedRanges.begin(), unifiedRanges.end(), [](auto& lhs, auto& rhs) {
+        std::ranges::sort(unifiedRanges, [](auto& lhs, auto& rhs) {
             return lhs.begin < rhs.begin;
         });
 
@@ -4555,7 +4555,7 @@ class YarrGenerator final : public YarrJITInfo {
                     PatternDisjunction* nestedDisjunction = term->parentheses.disjunction;
                     nestedDisjunction->m_alternatives.last()->m_isLastAlternative = false;
 
-                    std::sort(nestedDisjunction->m_alternatives.begin(), nestedDisjunction->m_alternatives.end(), [](auto& l, auto& r) -> bool {
+                    std::ranges::sort(nestedDisjunction->m_alternatives, [](auto& l, auto& r) {
                         return l->m_terms.size() > r->m_terms.size();
                     });
                     nestedDisjunction->m_alternatives.last()->m_isLastAlternative = true;

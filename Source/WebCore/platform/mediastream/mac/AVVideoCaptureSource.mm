@@ -49,6 +49,7 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -114,12 +115,8 @@ static CMVideoDimensions toCMVideoDimensions(const IntSize& size)
 
 static dispatch_queue_t globaVideoCaptureSerialQueue()
 {
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create_with_target("WebCoreAVVideoCaptureSource video capture queue", DISPATCH_QUEUE_SERIAL, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
-    });
-    return globalQueue;
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create_with_target("WebCoreAVVideoCaptureSource video capture queue", DISPATCH_QUEUE_SERIAL, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_HIGH, 0)));
+    return globalQueue.get().get();
 }
 
 static FillLightMode toFillLightMode(AVCaptureTorchMode mode)

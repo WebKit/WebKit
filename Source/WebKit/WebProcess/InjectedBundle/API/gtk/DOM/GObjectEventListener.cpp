@@ -32,7 +32,7 @@ GObjectEventListener::GObjectEventListener(GObject* target, EventTarget* coreTar
     : EventListener(GObjectEventListenerType)
     , m_target(target)
     , m_coreTarget(coreTarget)
-    , m_domEventName(domEventName)
+    , m_eventType(byteCast<Latin1Character>(unsafeSpan(domEventName)))
     , m_handler(handler)
     , m_capture(capture)
 {
@@ -58,7 +58,7 @@ void GObjectEventListener::gobjectDestroyed()
     // and later use-after-free with the m_handler = 0; assignment.
     RefPtr<GObjectEventListener> protectedThis(this);
 
-    m_coreTarget->removeEventListener(AtomString(m_domEventName.span()), *this, m_capture);
+    m_coreTarget->removeEventListener(m_eventType, *this, m_capture);
     m_coreTarget = nullptr;
     m_handler = nullptr;
 }

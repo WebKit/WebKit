@@ -110,6 +110,9 @@
 #include "WPEUtilities.h"
 #include "WPEWebViewLegacy.h"
 #include "WPEWebViewPlatform.h"
+#if ENABLE(2022_GLIB_API)
+#include "WebKitImagePrivate.h"
+#endif
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"
@@ -3501,7 +3504,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(unsafeSpan8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(byteCast<uint8_t>(unsafeSpan(plainText))), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**
@@ -5110,7 +5113,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
     return !!certificateInfo.certificate();
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 #if USE(GTK4)
 #define SNAPSHOT_TYPE GdkTexture*
 #if USE(CAIRO)
@@ -5118,8 +5121,10 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
 #else
 #define PLATFORM_IMAGE_TO_TEXTURE(image) skiaImageToGdkTexture(*image)
 #endif
-#else
+#elif PLATFORM(GTK) && !USE(GTK4)
 #define SNAPSHOT_TYPE cairo_surface_t*
+#else
+#define SNAPSHOT_TYPE WebKitImage*
 #endif
 
 /**
@@ -5162,6 +5167,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
     getPage(webView).takeSnapshotLegacy({ }, { }, snapshotOptions, [task = WTFMove(task)](std::optional<ShareableBitmap::Handle>&& handle) {
         if (handle) {
             if (auto bitmap = ShareableBitmap::create(WTFMove(*handle), SharedMemory::Protection::ReadOnly)) {
+#if PLATFORM(GTK)
 #if USE(GTK4)
                 if (auto texture = PLATFORM_IMAGE_TO_TEXTURE(bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore).get())) {
                     g_task_return_pointer(task.get(), texture.leakRef(), g_object_unref);
@@ -5178,6 +5184,16 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
                     return;
                 }
 #endif
+#else
+                RELEASE_ASSERT(bitmap->bytesPerRow() <= std::numeric_limits<guint>::max());
+                bitmap->ref();
+                auto imageBytes = adoptGRef(g_bytes_new_with_free_func(bitmap->span().data(), bitmap->span().size(), [](void* data) {
+                    static_cast<ShareableBitmap*>(data)->deref();
+                }, bitmap.get()));
+                auto* image = webkitImageNew(bitmap->size().width(), bitmap->size().height(), bitmap->bytesPerRow(), WTFMove(imageBytes));
+                g_task_return_pointer(task.get(), image, g_object_unref);
+                return;
+#endif
             }
         }
         g_task_return_new_error(task.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
@@ -5190,7 +5206,8 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
  * @result: a #GAsyncResult
  * @error: return location for error or %NULL to ignore
  *
- * Finishes an asynchronous operation started with webkit_web_view_get_snapshot().
+ * Finishes an asynchronous operation started with webkit_web_view_get_snapshot(), producing
+ * an image of the snapshot using the BGRA8888 pixel format.
  *
  * Returns: (transfer full): an image with the retrieved snapshot, or %NULL in case of error.
  */
@@ -5207,7 +5224,7 @@ SNAPSHOT_TYPE webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsync
         g_set_error_literal(error, WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE, _("There was an error creating the snapshot"));
     return nullptr;
 }
-#endif // PLATFORM(GTK)
+#endif // PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 
 void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessTerminationReason reason)
 {

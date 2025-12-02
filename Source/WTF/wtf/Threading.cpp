@@ -172,11 +172,7 @@ public:
 
 ThreadSafeWeakHashSet<Thread>& Thread::allThreads()
 {
-    static LazyNeverDestroyed<ThreadSafeWeakHashSet<Thread>> allThreads;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        allThreads.construct();
-    });
+    static NeverDestroyed<ThreadSafeWeakHashSet<Thread>> allThreads;
     return allThreads;
 }
 
@@ -222,11 +218,7 @@ void Thread::initializeInThread()
 #if USE(WEB_THREAD)
     // On iOS, one AtomStringTable is shared between the main UI thread and the WebThread.
     if (isWebThread() || isUIThread()) {
-        static LazyNeverDestroyed<AtomStringTable> sharedStringTable;
-        static std::once_flag onceKey;
-        std::call_once(onceKey, [&] {
-            sharedStringTable.construct();
-        });
+        static NeverDestroyed<AtomStringTable> sharedStringTable;
         m_currentAtomStringTable = &sharedStringTable.get();
     }
 #endif

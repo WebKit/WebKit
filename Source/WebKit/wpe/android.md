@@ -47,10 +47,10 @@ adb logcat -s WPEWebKit
 ```
 
 The `WEBKIT_DEBUG` [environment variable](environment.html) is replaced by the
-`debug.log.WPEWebKit` system property to configure logging channels:
+`debug.WPEWebKit.log` system property to configure logging channels:
 
 ```sh
-adb shell setprop debug.log.WPEWebKit 'Process,Media=error'
+adb shell setprop debug.WPEWebKit.log 'Process,Media=error'
 ```
 
 Using the `persist.` prefix may be added to system properties to store

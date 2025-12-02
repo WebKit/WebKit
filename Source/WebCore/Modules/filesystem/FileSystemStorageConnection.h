@@ -92,6 +92,8 @@ public:
     void registerFileSystemWritable(FileSystemWritableFileStreamIdentifier, FileSystemWritableFileStream&);
     void unregisterFileSystemWritable(FileSystemWritableFileStreamIdentifier);
 
+    size_t handleCount() const { return m_writables.size(); }
+
 private:
     HashMap<FileSystemWritableFileStreamIdentifier, WeakPtr<FileSystemWritableFileStream>> m_writables;
 };

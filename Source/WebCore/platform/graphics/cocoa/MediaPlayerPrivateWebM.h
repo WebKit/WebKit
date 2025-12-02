@@ -305,6 +305,8 @@ private:
     void maybeFinishLoading();
     void readyToProcessData();
 
+    void monitorReadyState();
+
     static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier);
 
     URL m_assetURL;
@@ -359,6 +361,7 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
     bool m_hasAvailableVideoFrame { false };
+    bool m_readyStateIsWaitingForAvailableFrame { true };
     bool m_visible { false };
     mutable bool m_loadingProgressed { false };
     bool m_loadFinished { false };

@@ -96,9 +96,7 @@ public:
     void backForwardAddItemShared(IPC::Connection&, Ref<FrameState>&&, LoadedWebArchive);
     void backForwardGoToItemShared(WebCore::BackForwardItemIdentifier, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
 
-#if !LOG_DISABLED
     String loggingString();
-#endif
 
 private:
     explicit WebBackForwardList(WebPageProxy&);

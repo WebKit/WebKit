@@ -32,11 +32,7 @@
 
 + (instancetype)shared
 {
-    static NeverDestroyed<RetainPtr<WebActionDisablingCALayerDelegate>> controller;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        controller.get() = adoptNS([[WebActionDisablingCALayerDelegate alloc] init]);
-    });
+    static NeverDestroyed<RetainPtr<WebActionDisablingCALayerDelegate>> controller = adoptNS([[WebActionDisablingCALayerDelegate alloc] init]);
     return controller.get().get();
 }
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/DatagramsReadableMode.h>
 #include <WebCore/WebTransportCongestionControl.h>
 #include <WebCore/WebTransportHash.h>
 
@@ -35,6 +36,10 @@ struct WebTransportOptions {
     bool requireUnreliable { false };
     Vector<WebTransportHash> serverCertificateHashes;
     WebTransportCongestionControl congestionControl { WebTransportCongestionControl::Default };
+    std::optional<uint16_t> anticipatedConcurrentIncomingUnidirectionalStreams;
+    std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams;
+    Vector<String> protocols { };
+    std::optional<DatagramsReadableMode> datagramsReadableMode;
 };
 
 }

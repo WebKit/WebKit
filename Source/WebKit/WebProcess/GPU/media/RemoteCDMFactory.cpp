@@ -111,7 +111,7 @@ void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+        if (RefPtr session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
             session->didReceiveMessage(connection, decoder);
     }
 }

@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/chunked-encoding.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/content-encoding.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/empty-preload-response-body.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/get-state.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/navigationPreload.https.html
@@ -23,3 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/request-headers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/samesite-cookies.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/samesite-iframe.https.html

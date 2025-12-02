@@ -35,10 +35,12 @@ class PlacedGridItem;
 
 namespace GridLayoutUtils {
 
+LayoutUnit computeGapValue(const Style::GapGutter&);
+
 LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&);
 LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&);
 
-LayoutUnit computeTrackSizesBefore(size_t trackIndex, const TrackSizes&);
+LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
 
 } // namespace GridLayoutUtils
 } // namespace Layout

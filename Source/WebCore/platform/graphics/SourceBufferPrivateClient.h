@@ -103,7 +103,6 @@ public:
     virtual Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) = 0;
     virtual void sourceBufferPrivateDidDropSample() = 0;
-    virtual void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) = 0;
     virtual void sourceBufferPrivateEvictionDataChanged(const SourceBufferEvictionData&) { }
     virtual Ref<MediaPromise> sourceBufferPrivateDidAttach(InitializationSegment&&) = 0;
 };

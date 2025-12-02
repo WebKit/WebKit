@@ -399,6 +399,8 @@ void DropTarget::drop(IntPoint&& position, unsigned)
     DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())));
     page->performDragOperation(dragData, { }, { }, { });
     gdk_drop_finish(m_drop.get(), gdk_drop_get_actions(m_drop.get()));
+
+    m_drop = nullptr;
 }
 
 } // namespace WebKit

@@ -581,10 +581,10 @@ bool testPreloadScannerViewportSupport(Document* document)
     ASSERT(document);
     HTMLParserOptions options(*document);
     HTMLPreloadScanner scanner(options, document->url());
-    HTMLResourcePreloader preloader(*document);
+    Ref preloader = HTMLResourcePreloader::create(*document);
     scanner.appendToEnd(String("<meta name=viewport content='width=400'>"_s));
     scanner.scan(preloader, *document);
-    return (document->viewportArguments().width == 400);
+    return document->viewportArguments().width == 400;
 }
 
 }

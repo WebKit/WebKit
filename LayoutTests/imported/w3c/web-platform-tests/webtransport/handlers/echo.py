@@ -22,7 +22,7 @@ def stream_data_received(session,
                                  data,
                                  end_stream=stream_ended)
         if (stream_ended):
-            del streams_dict[(session.session_id, stream_id)]
+          del streams_dict[(session.session_id, stream_id)]
         return
     # Otherwise (e.g. if the stream is bidirectional), echo back the data on the
     # same stream.

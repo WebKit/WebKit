@@ -180,11 +180,6 @@ void HTMLTrackElement::scheduleLoad()
 
         SetForScope loadPending { track.m_loadPending, true, false };
 
-        if (!track.hasAttributeWithoutSynchronization(srcAttr)) {
-            track.track().removeAllCues();
-            return;
-        }
-
         // 6. Set the text track readiness state to loading.
         track.setReadyState(HTMLTrackElement::LOADING);
 

@@ -509,6 +509,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
 
+        if (WI.isEngineeringBuild) {
+            engineeringSettingsView.addSeparator();
+            engineeringSettingsView.addSetting(WI.unlocalizedString("Debug UI:"), WI.showDebugUISetting, WI.unlocalizedString("Show Debug UI"));
+        }
+
         this.addSettingsView(engineeringSettingsView);
     }
 

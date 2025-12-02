@@ -28,9 +28,9 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WAKView.h"
-#import "WebCoreFrameView.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/WAKView.h>
+#import <WebCore/WebCoreFrameView.h>
 
 @class WAKClipView;
 

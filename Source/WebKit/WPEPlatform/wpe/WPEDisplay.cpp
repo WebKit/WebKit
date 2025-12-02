@@ -86,6 +86,8 @@ enum {
     SCREEN_ADDED,
     SCREEN_REMOVED,
 
+    DISCONNECTED,
+
     LAST_SIGNAL
 };
 
@@ -205,6 +207,22 @@ static void wpe_display_class_init(WPEDisplayClass* displayClass)
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 1,
         WPE_TYPE_SCREEN);
+
+    /**
+     * WPEDisplay::disconnected:
+     * @display: a #WPEDisplay
+     * @error: (nullable): a #GError or %NULL
+     *
+     * Emitted when the @display is disconnected from the platform display.
+     */
+    signals[DISCONNECTED] = g_signal_new(
+        "disconnected",
+        G_TYPE_FROM_CLASS(displayClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        G_TYPE_ERROR);
 }
 
 WPEView* wpeDisplayCreateView(WPEDisplay* display)
@@ -320,6 +338,23 @@ gboolean wpe_display_connect(WPEDisplay* display, GError** error)
 
     auto* wpeDisplayClass = WPE_DISPLAY_GET_CLASS(display);
     return wpeDisplayClass->connect(display, error);
+}
+
+/**
+ * wpe_display_disconnected:
+ * @display: a #WPEDisplay
+ * @error: (nullable): a #GError or %NULL
+ *
+ * Emit the signal #WPEDisplay::disconnected with the given @error
+ *
+ * This function should only be called by platform implementations.
+ */
+void wpe_display_disconnected(WPEDisplay* display, GError* error)
+{
+    g_return_if_fail(WPE_IS_DISPLAY(display));
+    g_return_if_fail(!error || g_error_matches(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_LOST));
+
+    g_signal_emit(display, signals[DISCONNECTED], 0, error);
 }
 
 /**

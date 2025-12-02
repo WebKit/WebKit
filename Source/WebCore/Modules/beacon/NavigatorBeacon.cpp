@@ -53,15 +53,25 @@ NavigatorBeacon::~NavigatorBeacon()
         beacon->removeClient(*this);
 }
 
-NavigatorBeacon* NavigatorBeacon::from(Navigator& navigator)
+void NavigatorBeacon::ref() const
 {
-    auto* supplement = downcast<NavigatorBeacon>(Supplement<Navigator>::from(&navigator, supplementName()));
+    m_navigator->ref();
+}
+
+void NavigatorBeacon::deref() const
+{
+    m_navigator->deref();
+}
+
+Ref<NavigatorBeacon> NavigatorBeacon::from(Navigator& navigator)
+{
+    RefPtr supplement = downcast<NavigatorBeacon>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
-        auto newSupplement = makeUnique<NavigatorBeacon>(navigator);
+        auto newSupplement = makeUniqueWithoutRefCountedCheck<NavigatorBeacon>(navigator);
         supplement = newSupplement.get();
         provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }
-    return supplement;
+    return supplement.releaseNonNull();
 }
 
 void NavigatorBeacon::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)

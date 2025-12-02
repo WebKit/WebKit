@@ -28,17 +28,9 @@
 #include "CachedResource.h"
 #include "CachedResourceRequest.h"
 #include "ScriptType.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
-
-namespace WebCore {
-class HTMLResourcePreloader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::HTMLResourcePreloader> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -86,20 +78,20 @@ private:
 
 typedef Vector<std::unique_ptr<PreloadRequest>> PreloadRequestStream;
 
-class HTMLResourcePreloader : public CanMakeWeakPtr<HTMLResourcePreloader> {
+class HTMLResourcePreloader : public RefCountedAndCanMakeWeakPtr<HTMLResourcePreloader> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLResourcePreloader);
     WTF_MAKE_NONCOPYABLE(HTMLResourcePreloader);
 public:
-    explicit HTMLResourcePreloader(Document& document)
-        : m_document(document)
-    {
-    }
+    static Ref<HTMLResourcePreloader> create(Document&);
+    ~HTMLResourcePreloader();
 
     void preload(PreloadRequestStream);
     void preload(std::unique_ptr<PreloadRequest>);
 
 private:
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    explicit HTMLResourcePreloader(Document&);
+
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

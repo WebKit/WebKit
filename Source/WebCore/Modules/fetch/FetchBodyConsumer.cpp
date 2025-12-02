@@ -422,7 +422,8 @@ void FetchBodyConsumer::append(const SharedBuffer& buffer)
 
 void FetchBodyConsumer::setData(Ref<FragmentedSharedBuffer>&& data)
 {
-    m_buffer = WTFMove(data);
+    m_buffer.reset();
+    m_buffer.append(WTFMove(data));
 }
 
 RefPtr<FragmentedSharedBuffer> FetchBodyConsumer::takeData()
@@ -435,6 +436,11 @@ RefPtr<FragmentedSharedBuffer> FetchBodyConsumer::takeData()
 RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
 {
     return m_buffer.takeAsArrayBuffer();
+}
+
+RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::asArrayBuffer()
+{
+    return m_buffer.tryCreateArrayBuffer();
 }
 
 Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context, const String& contentType)

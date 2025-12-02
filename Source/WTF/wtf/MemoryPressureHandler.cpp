@@ -53,16 +53,11 @@ static const double s_strictThresholdFraction = 0.5;
 static const std::optional<double> s_killThresholdFraction;
 static const Seconds s_pollInterval = 30_s;
 
-static std::atomic<bool> s_hasCreatedMemoryPressureHandler;
+static std::atomic<bool> s_hasCreatedMemoryPressureHandler { true };
 
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
-    static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        memoryPressureHandler.construct();
-        s_hasCreatedMemoryPressureHandler.store(true);
-    });
+    static NeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
     return memoryPressureHandler;
 }
 

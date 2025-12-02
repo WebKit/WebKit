@@ -142,11 +142,6 @@ void QueueImpl::setLabelInternal(const String& label)
     wgpuQueueSetLabel(m_backing.get(), label.utf8().data());
 }
 
-RefPtr<WebCore::NativeImage> QueueImpl::getNativeImage(WebCore::VideoFrame&)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 } // namespace WebCore::WebGPU
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

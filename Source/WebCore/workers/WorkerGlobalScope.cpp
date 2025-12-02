@@ -628,9 +628,9 @@ Ref<FontFaceSet> WorkerGlobalScope::fonts()
     return cssFontSelector()->fontFaceSet();
 }
 
-std::unique_ptr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+RefPtr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(const String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    return makeUnique<WorkerFontLoadRequest>(completeURL(url), loadedFromOpaqueSource);
+    return WorkerFontLoadRequest::create(completeURL(url), loadedFromOpaqueSource);
 }
 
 void WorkerGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)

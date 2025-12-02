@@ -86,7 +86,9 @@ public:
     virtual RefPtr<VideoFrame> currentVideoFrame() const = 0;
     virtual void paintCurrentVideoFrameInContext(GraphicsContext&, const FloatRect&) { }
     virtual RefPtr<NativeImage> currentNativeImage() const { return nullptr; }
+#if ENABLE(VIDEO)
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() = 0;
+#endif
     virtual PlatformLayer* platformVideoLayer() const { return nullptr; }
 
     using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
@@ -142,8 +144,8 @@ public:
 
     virtual void enqueueSample(TrackIdentifier, Ref<MediaSample>&&, std::optional<MediaTime> = std::nullopt) = 0;
     virtual bool isReadyForMoreSamples(TrackIdentifier) = 0;
-    virtual void requestMediaDataWhenReady(TrackIdentifier, Function<void(TrackIdentifier)>&&) = 0;
-    virtual void stopRequestingMediaData(TrackIdentifier) = 0;
+    using RequestPromise = NativePromise<TrackIdentifier, PlatformMediaError>;
+    virtual Ref<RequestPromise> requestMediaDataWhenReady(TrackIdentifier) = 0;
     virtual void notifyTrackNeedsReenqueuing(TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>&&) { }
 
     virtual bool timeIsProgressing() const = 0;

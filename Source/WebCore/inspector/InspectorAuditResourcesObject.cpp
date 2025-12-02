@@ -50,7 +50,12 @@ using namespace Inspector;
 
 InspectorAuditResourcesObject::InspectorAuditResourcesObject(InspectorAuditAgent& auditAgent)
     : m_auditAgent(auditAgent)
-    , m_cachedImageClient(makeUniqueRef<InspectorAuditCachedImageClient>())
+    , m_cachedResourceClient(*this)
+    , m_cachedFontClient(*this)
+    , m_cachedImageClient(*this)
+    , m_cachedRawResourceClient(*this)
+    , m_cachedSVGDocumentClient(*this)
+    , m_cachedStyleSheetClient(*this)
 {
 }
 
@@ -117,7 +122,7 @@ ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResour
     return resourceContent;
 }
 
-CachedResourceClient& InspectorAuditResourcesObject::clientForResource(const CachedResource& cachedResource)
+Ref<CachedResourceClient> InspectorAuditResourcesObject::clientForResource(const CachedResource& cachedResource)
 {
     if (is<CachedCSSStyleSheet>(cachedResource))
         return m_cachedStyleSheetClient;
@@ -126,7 +131,7 @@ CachedResourceClient& InspectorAuditResourcesObject::clientForResource(const Cac
         return m_cachedFontClient;
 
     if (is<CachedImage>(cachedResource))
-        return m_cachedImageClient.get();
+        return m_cachedImageClient;
 
     if (is<CachedRawResource>(cachedResource))
         return m_cachedRawResourceClient;

@@ -1,125 +1,90 @@
 
 (CALayer tree root
-  (layer bounds [x: 0 y: 0 width: 800 height: 600])
-  (layer anchorPoint [x: 0 y: 0])
+  (layer bounds [x: 0 y: 0 width: 800 height: 550])
+  (layer position [x: 400 y: 400])
   (sublayers
     (
-      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-      (layer anchorPoint [x: 0 y: 0])
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
       (sublayers
         (
-          (layer bounds [x: 0 y: 0 width: 800 height: 600])
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 58.5 height: 20])
+          (layer position [x: 29.25 y: 29.25])
+          (layer cornerRadius 10))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 284 height: 192])
+          (layer position [x: 152 y: 152])
+          (layer cornerRadius 8))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 200 height: 100])
+          (layer position [x: 100 y: 100]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 50 y: 50]))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 150 y: 150])
+          (layer cornerRadius 16))
+        (
+          (type 0)
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 250 y: 250])
+          (layer cornerRadius 14)
+          (layer masked corners 5))
+        (
+          (type 0)
+          (mask
+            (frame [x: 0 y: 0 width: 100 height: 100]))
+          (layer bounds [x: 0 y: 0 width: 100 height: 100])
+          (layer position [x: 350 y: 350]))))
+    (
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 100 y: 100])
+      (layer opacity 0)
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+          (sublayers
+            (
+              (type 0)
+              (layer bounds [x: 0 y: 0 width: 75.9921875 height: 27])
+              (layer position [x: 33.99609375 y: 33.99609375])
+              (layer cornerRadius 8))))))
+    (
+      (layer bounds [x: 0 y: 0 width: 800 height: 600])
+      (layer position [x: 400 y: 400])
+      (layer opacity 0.8)
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 800 height: 20])
+          (layer position [x: 400 y: 400]))
+        (
+          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+          (sublayers
+            (
+              (type 0)
+              (layer bounds [x: 0 y: 0 width: 32.890625 height: 27])
+              (layer position [x: 12.4453125 y: 12.4453125])
+              (layer cornerRadius 8))))
+        (
+          (layer bounds [x: 0 y: 0 width: 800 height: 40])
           (layer position [x: 400 y: 400])
           (sublayers
             (
-              (layer bounds [x: 0 y: 0 width: 800 height: 600])
-              (layer position [x: 400 y: 400])
+              (layer bounds [x: 0 y: 0 width: 800 height: 20])
+              (layer position [x: 400 y: 400]))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
               (sublayers
                 (
-                  (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                  (layer anchorPoint [x: 0 y: 0])
-                  (sublayers
-                    (
-                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                      (layer anchorPoint [x: 0 y: 0])
-                      (sublayers
-                        (
-                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                          (sublayers
-                            (
-                              (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                              (layer anchorPoint [x: 0 y: 0]))))
-                        (
-                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                          (sublayers
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 58.5 height: 20])
-                              (layer position [x: 29.25 y: 29.25])
-                              (layer cornerRadius 10))
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 284 height: 192])
-                              (layer position [x: 152 y: 152])
-                              (layer cornerRadius 8))
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 200 height: 100])
-                              (layer position [x: 100 y: 100]))
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 100 height: 100])
-                              (layer position [x: 50 y: 50]))
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 100 height: 100])
-                              (layer position [x: 150 y: 150])
-                              (layer cornerRadius 16))
-                            (
-                              (type 0)
-                              (layer bounds [x: 0 y: 0 width: 100 height: 100])
-                              (layer position [x: 250 y: 250])
-                              (layer cornerRadius 14)
-                              (layer masked corners 5))
-                            (
-                              (type 0)
-                              (mask
-                                (frame [x: 0 y: 0 width: 100 height: 100]))
-                              (layer bounds [x: 0 y: 0 width: 100 height: 100])
-                              (layer position [x: 350 y: 350]))))
-                        (
-                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                          (layer anchorPoint [x: 0 y: 0])
-                          (sublayers
-                            (
-                              (layer bounds [x: 0 y: 0 width: 200 height: 200])
-                              (layer position [x: 100 y: 100])
-                              (layer opacity 0)
-                              (sublayers
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                  (sublayers
-                                    (
-                                      (type 0)
-                                      (layer bounds [x: 0 y: 0 width: 75.9921875 height: 27])
-                                      (layer position [x: 33.99609375 y: 33.99609375])
-                                      (layer cornerRadius 8))))))
-                            (
-                              (layer bounds [x: 0 y: 0 width: 800 height: 600])
-                              (layer position [x: 400 y: 400])
-                              (layer opacity 0.8)
-                              (sublayers
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 800 height: 20])
-                                  (layer position [x: 400 y: 400]))
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                  (sublayers
-                                    (
-                                      (type 0)
-                                      (layer bounds [x: 0 y: 0 width: 32.890625 height: 27])
-                                      (layer position [x: 12.4453125 y: 12.4453125])
-                                      (layer cornerRadius 8))))
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 800 height: 40])
-                                  (layer position [x: 400 y: 400])
-                                  (sublayers
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 800 height: 20])
-                                      (layer position [x: 400 y: 400]))
-                                    (
-                                      (layer bounds [x: 0 y: 0 width: 0 height: 0])
-                                      (sublayers
-                                        (
-                                          (type 0)
-                                          (layer bounds [x: 0 y: 0 width: 115.0859375 height: 27])
-                                          (layer position [x: 155.71484375 y: 155.71484375])
-                                          (layer cornerRadius 8))))))
-                                (
-                                  (layer bounds [x: 0 y: 0 width: 800 height: 20])
-                                  (layer position [x: 400 y: 400]))))))))))))))))
-    (
-      (layer bounds [x: 0 y: 0 width: 0 height: 0])
-      (layer position [x: 400 y: 400]))
-    (
-      (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+                  (type 0)
+                  (layer bounds [x: 0 y: 0 width: 115.0859375 height: 27])
+                  (layer position [x: 155.71484375 y: 155.71484375])
+                  (layer cornerRadius 8))))))
+        (
+          (layer bounds [x: 0 y: 0 width: 800 height: 20])
+          (layer position [x: 400 y: 400]))))))

@@ -18,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/broken-chunked-encoding-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/chunked-encoding-scope.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/chunked-encoding-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/content-encoding-scope.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/content-encoding-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-scope.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/empty-preload-response-body-worker.js
@@ -31,4 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/request-headers-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/resource-timing-scope.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/resource-timing-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/samesite-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/samesite-sw-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/samesite-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/resources/wait-for-activate-worker.js

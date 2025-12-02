@@ -196,6 +196,48 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
     Util::run(&done);
 }
 
+#if PLATFORM(MAC)
+void runManualPCMTest(WKWebViewConfiguration *configuration, NSURL *sourceURL, NSURL *destinationURL, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
+{
+    [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
+    bool done = false;
+    HTTPServer server([&done] (Connection connection) mutable {
+        connection.receiveHTTPRequest([&done] (Vector<char>&& request) {
+            EXPECT_FALSE(contains(request.span(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n"_span));
+            EXPECT_TRUE(contains(request.span(), "POST / HTTP/1.1\r\n"_span));
+            size_t bodyBegin = find(request.span(), "\r\n\r\n"_span) + strlen("\r\n\r\n");
+            EXPECT_TRUE(equalSpans(request.subspan(bodyBegin), "{\"source_engagement_type\":\"click\",\"source_site\":\"pcmsource.example\",\"source_id\":42,\"attributed_on_site\":\"pcmdestination.example\",\"trigger_data\":12,\"version\":3}"_span));
+            done = true;
+        });
+    }, HTTPServer::Protocol::Https);
+    NSURL *serverURL = server.request().URL;
+
+    auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]) : webViewWithoutUsingDaemon();
+    webView.get().navigationDelegate = delegateAllowingAllTLS();
+    [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+    [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
+    // Clear existing data.
+    __block bool cleared = false;
+    [[webView configuration].websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        cleared = true;
+    }];
+    Util::run(&cleared);
+    addAttributionToWebView(webView.get(), server);
+    [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
+        [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
+
+            if (setTestAppBundleID) {
+                [webView _setPrivateClickMeasurementAppBundleIDForTesting:@"test.bundle.id" completionHandler:^{
+                    [webView _storeSimulatedPrivateClickMeasurementConversionWithPriority:0 triggerData:12 sourceURL:sourceURL destinationURL:destinationURL];
+                }];
+            } else
+                [webView _storeSimulatedPrivateClickMeasurementConversionWithPriority:0 triggerData:12 sourceURL:sourceURL destinationURL:destinationURL];
+        }];
+    }];
+    Util::run(&done);
+}
+#endif
+
 #if HAVE(RSA_BSSA)
 
 enum class TokenSigningParty : bool { Source, Destination };
@@ -387,12 +429,13 @@ TEST(PrivateClickMeasurement, Basic)
 }
 
 #if PLATFORM(MAC)
-TEST(PrivateClickMeasurement, MeasureSafariIsDefault)
+TEST(PrivateClickMeasurement, ManualAttributionAndConversion)
 {
-    runBasicPCMTest(nil, [](WKWebView *webView, const HTTPServer& server) {
-        // register an ad click (source)
-        [webView _storePrivateClickMeasurementWithSourceID:42 destinationURL:exampleURL() reportEndpoint:server.request().URL];
-    });
+    NSURL *sourceURL = [NSURL URLWithString:@"https://site.pcmsource.example/"];
+    NSURL *destinationURL = [NSURL URLWithString:@"https://site.pcmdestination.example/"];
+    runManualPCMTest(nil, sourceURL, destinationURL, [&sourceURL, &destinationURL](WKWebView *webView, const HTTPServer& server) {
+        [webView _storePrivateClickMeasurementWithSourceID:42 destinationURL:destinationURL reportEndpoint:sourceURL];
+    }, false);
 }
 #endif
 

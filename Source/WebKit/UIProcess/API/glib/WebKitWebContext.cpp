@@ -439,23 +439,23 @@ static void webkitWebContextConstructed(GObject* object)
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
 
-    API::ProcessPoolConfiguration configuration;
-    configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
-    configuration.setUsesWebProcessCache(true);
+    Ref configuration = API::ProcessPoolConfiguration::create();
+    configuration->setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
+    configuration->setUsesWebProcessCache(true);
 #if PLATFORM(GTK) && !USE(GTK4)
-    configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+    configuration->setProcessSwapsOnNavigation(priv->psonEnabled);
 #if USE(CAIRO)
-    configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
+    configuration->setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
 #endif
 #else
-    configuration.setProcessSwapsOnNavigation(true);
+    configuration->setProcessSwapsOnNavigation(true);
 #endif
     if (priv->memoryPressureSettings) {
-        configuration.setMemoryPressureHandlerConfiguration(webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration(priv->memoryPressureSettings));
+        configuration->setMemoryPressureHandlerConfiguration(webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration(priv->memoryPressureSettings));
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.span()));
+    configuration->setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.span()));
 
 #if !ENABLE(2022_GLIB_API)
     if (!priv->websiteDataManager)

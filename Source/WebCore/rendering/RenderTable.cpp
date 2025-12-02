@@ -958,8 +958,18 @@ void RenderTable::computePreferredLogicalWidths()
 
     m_tableLayout->applyPreferredLogicalWidthQuirks(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-    for (unsigned i = 0; i < m_captions.size(); i++)
-        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());
+    for (unsigned i = 0; i < m_captions.size(); i++) {
+        LayoutUnit captionMinWidth = m_captions[i]->minPreferredLogicalWidth();
+
+        // Only add fixed margins during preferred width calculation
+        auto& captionStyle = m_captions[i]->style();
+        if (auto fixedMarginStart = captionStyle.marginStart().tryFixed())
+            captionMinWidth += fixedMarginStart->resolveZoom(captionStyle.usedZoomForLength());
+        if (auto fixedMarginEnd = captionStyle.marginEnd().tryFixed())
+            captionMinWidth += fixedMarginEnd->resolveZoom(captionStyle.usedZoomForLength());
+
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, captionMinWidth);
+    }
     m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, m_minPreferredLogicalWidth);
 
     auto& styleToUse = style();

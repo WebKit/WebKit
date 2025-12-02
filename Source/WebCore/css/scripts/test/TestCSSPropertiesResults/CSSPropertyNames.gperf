@@ -24,7 +24,7 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 105> computedPropertyIDs {
+const std::array<CSSPropertyID, 113> computedPropertyIDs {
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete,
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestThreeWithConverter,
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo,
@@ -113,6 +113,14 @@ const std::array<CSSPropertyID, 105> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestMediumPriority,
     CSSPropertyID::CSSPropertyTestNumericValueRange,
     CSSPropertyID::CSSPropertyTestProperty,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference,
+    CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue,
     CSSPropertyID::CSSPropertyTestSettingsOne,
     CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter,
     CSSPropertyID::CSSPropertyTestSinkPriority,
@@ -220,6 +228,14 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-match-one-with-settings-flag"_s,
     "test-numeric-value-range"_s,
     "test-property"_s,
+    "test-render-style-storage-one-level-enum"_s,
+    "test-render-style-storage-one-level-raw"_s,
+    "test-render-style-storage-one-level-reference"_s,
+    "test-render-style-storage-one-level-value"_s,
+    "test-render-style-storage-two-level-enum"_s,
+    "test-render-style-storage-two-level-raw"_s,
+    "test-render-style-storage-two-level-reference"_s,
+    "test-render-style-storage-two-level-value"_s,
     "test-settings-one"_s,
     "test-shared-builder-extractor-converter"_s,
     "test-unbounded-repetition-with-commas-with-min"_s,
@@ -353,6 +369,14 @@ test-match-one-with-settings-flag, CSSPropertyID::CSSPropertyTestMatchOneWithSet
 test-medium-priority, CSSPropertyID::CSSPropertyTestMediumPriority
 test-numeric-value-range, CSSPropertyID::CSSPropertyTestNumericValueRange
 test-property, CSSPropertyID::CSSPropertyTestProperty
+test-render-style-storage-one-level-enum, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
+test-render-style-storage-one-level-raw, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
+test-render-style-storage-one-level-reference, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
+test-render-style-storage-one-level-value, CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue
+test-render-style-storage-two-level-enum, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
+test-render-style-storage-two-level-raw, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
+test-render-style-storage-two-level-reference, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
+test-render-style-storage-two-level-value, CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue
 test-settings-one, CSSPropertyID::CSSPropertyTestSettingsOne
 test-shared-builder-extractor-converter, CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter
 test-shorthand-one, CSSPropertyID::CSSPropertyTestShorthandOne
@@ -586,6 +610,14 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag
     false, // CSSPropertyID::CSSPropertyTestNumericValueRange
     false, // CSSPropertyID::CSSPropertyTestProperty
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelRaw
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue
     false, // CSSPropertyID::CSSPropertyTestSettingsOne
     false, // CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter
     false, // CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMin
@@ -707,6 +739,10 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelReference:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelValue:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelReference:
+    case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelValue:
     case CSSPropertyID::CSSPropertyTestSettingsOne:
     case CSSPropertyID::CSSPropertyTestSharedBuilderExtractorConverter:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithCommasWithMinNoSingleItemOpt:

@@ -118,7 +118,7 @@ void ExpectIdTargetObserver::idTargetChanged(Element& element)
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
-    , m_linkLoader(*this)
+    , m_linkLoader(LinkLoader::create(*this))
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
@@ -333,7 +333,7 @@ void HTMLLinkElement::process()
         fetchPriority(),
     };
 
-    m_linkLoader.loadLink(params, document);
+    m_linkLoader->loadLink(params, document);
 
     bool treatAsStyleSheet = false;
     if (m_relAttribute.isStyleSheet) {
@@ -539,7 +539,7 @@ void HTMLLinkElement::removedFromAncestor(RemovalType removalType, ContainerNode
     if (!removalType.disconnectedFromDocument)
         return;
 
-    m_linkLoader.cancelLoad();
+    m_linkLoader->cancelLoad();
 
     bool wasLoading = styleSheetIsLoading();
 

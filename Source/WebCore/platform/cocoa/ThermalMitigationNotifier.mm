@@ -67,8 +67,8 @@ static bool isThermalMitigationEnabled()
 - (void)thermalStateDidChange
 {
     callOnMainThread([self, protectedSelf = RetainPtr<WebThermalMitigationObserver>(self)] {
-        if (_notifier)
-            notifyThermalMitigationChanged(*_notifier, self.thermalMitigationEnabled);
+        if (CheckedPtr notifier = _notifier.get())
+            notifyThermalMitigationChanged(*notifier, self.thermalMitigationEnabled);
     });
 }
 

@@ -40,13 +40,14 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
 {
     ASSERT(hasTagName(SVGNames::ellipseTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGEllipseElement::m_cx>();
         PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGEllipseElement::m_cy>();
         PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
         PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
-    });
+    }
 }    
 
 Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)

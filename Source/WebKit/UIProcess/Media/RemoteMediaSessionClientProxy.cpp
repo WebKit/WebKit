@@ -69,8 +69,7 @@ void RemoteMediaSessionClientProxy::suspendPlayback()
 
 void RemoteMediaSessionClientProxy::didReceiveRemoteControlCommand(WebCore::PlatformMediaSessionRemoteControlCommandType command, const WebCore::PlatformMediaSessionRemoteCommandArgument& argument)
 {
-    if (RefPtr manager = m_manager.get())
-        manager->send(Messages::RemoteMediaSessionManager::ClientDidReceiveRemoteControlCommand(sessionIdentifier(), command, argument));
+    ASSERT_NOT_REACHED();
 }
 
 bool RemoteMediaSessionClientProxy::shouldOverrideBackgroundPlaybackRestriction(WebCore::PlatformMediaSessionInterruptionType) const

@@ -28,76 +28,50 @@
 
 #include "CryptoKeyOKP.h"
 #include "ExceptionOr.h"
-#if HAVE(SWIFT_CPP_INTEROP)
 #include <pal/PALSwift.h>
-#endif
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
 namespace WebCore {
 
-#if !HAVE(SWIFT_CPP_INTEROP)
-static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const Vector<uint8_t>& data)
-{
-    if (sk.size() != ed25519KeySize)
-        return Exception { ExceptionCode::OperationError };
-    ccec25519pubkey pk;
-    const struct ccdigest_info* di = ccsha512_di();
-    if (cced25519_make_pub(di, pk, sk.span().data()))
-        return Exception { ExceptionCode::OperationError };
-    ccec25519signature newSignature;
-
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-    if (cced25519_sign(di, newSignature, data.size(), data.span().data(), pk, sk.span().data()))
-        return Exception { ExceptionCode::OperationError };
-#else
-    cced25519_sign(di, newSignature, data.size(), data.span().data(), pk, sk.span().data());
-#endif
-    return Vector<uint8_t> { std::span { newSignature } };
-}
-
-static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
-{
-    if (key.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
-        return false;
-    const struct ccdigest_info* di = ccsha512_di();
-    return !cced25519_verify(di, data.size(), data.span().data(), signature.span().data(), key.span().data());
-}
-#else
 static ExceptionOr<Vector<uint8_t>> signEd25519CryptoKit(const Vector<uint8_t>&sk, const Vector<uint8_t>& data)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (sk.size() != ed25519KeySize)
         return Exception { ExceptionCode::OperationError };
     auto rv = PAL::EdKey::sign(PAL::EdSigningAlgorithm::ed25519(), sk.span(), data.span());
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(rv.result);
+#else
+    UNUSED_PARAM(sk);
+    UNUSED_PARAM(data);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
+#endif
 }
 
 static ExceptionOr<bool>  verifyEd25519CryptoKit(const Vector<uint8_t>& pubKey, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (pubKey.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;
     auto rv = PAL::EdKey::verify(PAL::EdSigningAlgorithm::ed25519(), pubKey.span(), signature.span(), data.span());
     return rv.errorCode == Cpp::ErrorCodes::Success;
-}
+#else
+    UNUSED_PARAM(pubKey);
+    UNUSED_PARAM(signature);
+    UNUSED_PARAM(data);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
+}
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmEd25519::platformSign(const CryptoKeyOKP& key, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return signEd25519CryptoKit(key.platformKey(), data);
-#else
-    return signEd25519(key.platformKey(), data);
-#endif
 }
 
 ExceptionOr<bool> CryptoAlgorithmEd25519::platformVerify(const CryptoKeyOKP& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return verifyEd25519CryptoKit(key.platformKey(), signature, data);
-#else
-    return verifyEd25519(key.platformKey(), signature, data);
-#endif
 }
 
 } // namespace WebCore

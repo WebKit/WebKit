@@ -154,10 +154,19 @@ JSFormatter = class JSFormatter
 
             this._insertComment(node, comment);
 
-            // Remove line endings for this comment.
-            while (comment.range[1] > this._lineEndings[this._lineEndingsIndex])
-                this._lineEndingsIndex++;
+            // Advance to the last line ending for this comment.
+            this._advanceLineEndingsIndexToEndOfToken(comment);
         }
+    }
+
+    _advanceLineEndingsIndexToEndOfToken(token)
+    {
+        // For multi-line tokens, like block comments or template literals,
+        // it's important to move the current line endings index to the last line of the token
+        // to prevent adding multiple newlines (one for each additional line ending in the multi-line token),
+        // before adding the next token in `JSFormatter.prototype._insertNewlinesBeforeToken()`
+        while (token?.range[1] > this._lineEndings[this._lineEndingsIndex])
+            this._lineEndingsIndex++;
     }
 
     _before(node)
@@ -857,6 +866,16 @@ JSFormatter = class JSFormatter
             return;
         }
 
+        if (nodeType === "TemplateLiteral" || nodeType === "TemplateElement") {
+            if (tokenValue?.includes("\n")) {
+                builder.appendStringWithPossibleNewlines(tokenValue, tokenOffset);
+                this._advanceLineEndingsIndexToEndOfToken(token);
+            } else
+                builder.appendToken(tokenValue, tokenOffset);
+
+            return;
+        }
+
         // Include these here so we get only get warnings about unhandled nodes.
         if (nodeType === "ExpressionStatement"
             || nodeType === "SpreadElement"
@@ -865,8 +884,6 @@ JSFormatter = class JSFormatter
             || nodeType === "Super"
             || nodeType === "MetaProperty"
             || nodeType === "RestElement"
-            || nodeType === "TemplateElement"
-            || nodeType === "TemplateLiteral"
             || nodeType === "DebuggerStatement"
             || nodeType === "AssignmentPattern"
             || nodeType === "ChainExpression") {

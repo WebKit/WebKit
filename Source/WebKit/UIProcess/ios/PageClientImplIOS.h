@@ -134,6 +134,7 @@ private:
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) override;
     void relayAriaNotifyNotification(const WebCore::AriaNotifyData&) override;
+    void relayLiveRegionNotification(const WebCore::LiveRegionAnnouncementData&) override;
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 #if ENABLE(TOUCH_EVENTS)
     void doneWithTouchEvent(const WebTouchEvent&, bool wasEventHandled) override;
@@ -179,7 +180,8 @@ private:
     void commitPotentialTapFailed() override;
     void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) override;
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&) final;
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&) final;
+    void didCommitMainFrameData(const MainFrameData&) final;
     void layerTreeCommitComplete() override;
         
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
@@ -380,6 +382,10 @@ private:
 #if ENABLE(POINTER_LOCK)
     void beginPointerLockMouseTracking() final;
     void endPointerLockMouseTracking() final;
+#endif
+
+#if ENABLE(VIDEO)
+    void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(Expected<void, WebCore::ExceptionData>&&)>&&) final;
 #endif
 
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }

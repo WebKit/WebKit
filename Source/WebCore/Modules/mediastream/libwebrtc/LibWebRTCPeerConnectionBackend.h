@@ -92,7 +92,7 @@ private:
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
 
-    RTCRtpTransceiver* existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
+    RefPtr<RTCRtpTransceiver> existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&&);
     Ref<RTCRtpTransceiver> newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&&, RealtimeMediaSource::Type);
 
     void collectTransceivers() final;

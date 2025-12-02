@@ -205,6 +205,8 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
         return;
     }
     Vector<String> authenticatorSupportedExtensions;
+    if (m_info.extensions())
+        authenticatorSupportedExtensions = *m_info.extensions();
     if (m_isKeyStoreFull || (m_info.remainingDiscoverableCredentials() && !m_info.remainingDiscoverableCredentials())) {
         if (options.authenticatorSelection && (options.authenticatorSelection->requireResidentKey || options.authenticatorSelection->residentKey() == ResidentKeyRequirement::Required)) {
             protectedObserver()->authenticatorStatusUpdated(WebAuthenticationStatus::KeyStoreFull);
@@ -339,6 +341,8 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
 
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
     Vector<String> authenticatorSupportedExtensions;
+    if (m_info.extensions())
+        authenticatorSupportedExtensions = *m_info.extensions();
     std::optional<Vector<PublicKeyCredentialDescriptor>> overrideAllowCredentials;
     if (options.allowCredentials.size() > 1 && m_currentBatch < m_batches.size())
         overrideAllowCredentials = m_batches[m_currentBatch];

@@ -57,6 +57,10 @@ public:
     PFN_xrDestroyHandTrackerEXT xrDestroyHandTrackerEXT { nullptr };
     PFN_xrLocateHandJointsEXT xrLocateHandJointsEXT { nullptr };
 #endif
+#if defined(XR_ANDROID_raycast)
+    PFN_xrRaycastANDROID xrRaycastANDROID { nullptr };
+    PFN_xrCreateTrackableTrackerANDROID xrCreateTrackableTrackerANDROID { nullptr };
+#endif
 };
 
 class OpenXRExtensions final {

@@ -93,6 +93,25 @@ std::optional<CBORValue> CBORReader::read(const Bytes& data, DecoderError* error
     return decodedCbor;
 }
 
+// static
+std::optional<std::pair<CBORValue, size_t>> CBORReader::readWithBytesConsumed(const Bytes& data, DecoderError* errorCodeOut, int maxNestingLevel)
+{
+    CBORReader reader(data);
+    std::optional<CBORValue> decodedCbor = reader.decodeCBOR(maxNestingLevel);
+
+    if (errorCodeOut)
+        *errorCodeOut = reader.getErrorCode();
+
+    if (reader.getErrorCode() != DecoderError::CBORNoError)
+        return std::nullopt;
+
+    if (!decodedCbor)
+        return std::nullopt;
+
+    size_t bytesConsumed = reader.m_it - reader.m_data.begin();
+    return std::make_pair(WTFMove(*decodedCbor), bytesConsumed);
+}
+
 std::optional<CBORValue> CBORReader::decodeCBOR(int maxNestingLevel)
 {
     if (maxNestingLevel < 0 || maxNestingLevel > kCBORMaxDepth) {

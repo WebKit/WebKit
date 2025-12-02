@@ -1096,15 +1096,15 @@ static unsigned loadCount;
     HashMap<String, RetainPtr<NSData>> _dataMappings;
     Function<void(id <WKURLSchemeTask>)> _taskHandler;
 }
-- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
+- (void)addMappingFromURLString:(NSString *)urlString toData:(ASCIILiteral)data;
 - (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler;
 @end
 
 @implementation DataMappingSchemeHandler
 
-- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data
+- (void)addMappingFromURLString:(NSString *)urlString toData:(ASCIILiteral)data
 {
-    _dataMappings.set(urlString, toNSDataNoCopy(unsafeSpan8(data), FreeWhenDone::No));
+    _dataMappings.set(urlString, toNSData(data.span8()));
 }
 
 - (void)setTaskHandler:(Function<void(id <WKURLSchemeTask>)>&&)handler
@@ -1123,7 +1123,7 @@ static unsigned loadCount;
     auto response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
-    if (auto data = _dataMappings.get([finalURL absoluteString]))
+    if (RetainPtr data = _dataMappings.get([finalURL absoluteString]))
         [task didReceiveData:data.get()];
     else
         [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -1136,7 +1136,7 @@ static unsigned loadCount;
 
 @end
 
-constexpr const char* customUserAgent = "Foo Custom UserAgent";
+constexpr auto customUserAgent = "Foo Custom UserAgent"_s;
 
 @interface CustomUserAgentDelegate : NSObject <WKNavigationDelegate> {
 }
@@ -1160,7 +1160,7 @@ constexpr const char* customUserAgent = "Foo Custom UserAgent";
 
 @end
 
-static const char* customUserAgentMainFrameTestBytes = R"TESTRESOURCE(
+constexpr auto customUserAgentMainFrameTestBytes = R"TESTRESOURCE(
 <script src="test://www.webkit.org/script.js"></script>
 <img src="test://www.webkit.org/image.png"></img>
 <iframe src="test://www.apple.com/subframe.html"></iframe>
@@ -1174,9 +1174,9 @@ onmessage = (event) => {
     window.subframeUserAgent = event.data;
 }
 </script>
-)TESTRESOURCE";
+)TESTRESOURCE"_s;
 
-static const char* customUserAgentSubFrameTestBytes = R"TESTRESOURCE(
+constexpr auto customUserAgentSubFrameTestBytes = R"TESTRESOURCE(
 <script src="test://www.apple.com/script.js"></script>
 <img src="test://www.apple.com/image.png"></img>
 <iframe src="test://www.apple.com/subframe2.html"></iframe>
@@ -1188,7 +1188,7 @@ onload = () => {
     top.postMessage(navigator.userAgent, '*');
 }
 </script>
-)TESTRESOURCE";
+)TESTRESOURCE"_s;
 
 TEST(WebpagePreferences, WebsitePoliciesCustomUserAgent)
 {
@@ -1228,7 +1228,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgent)
     loadCount = 0;
 }
 
-constexpr const char* customUserAgentAsSiteSpecificQuirk = "Foo Site Specific Quirks UserAgent";
+constexpr auto customUserAgentAsSiteSpecificQuirk = "Foo Site Specific Quirks UserAgent"_s;
 
 @interface CustomJavaScriptUserAgentDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL setCustomUserAgent;
@@ -1399,13 +1399,13 @@ TEST(WebpagePreferences, WebsitePoliciesCustomNavigatorPlatform)
 
 #if PLATFORM(IOS_FAMILY)
 
-static const char* deviceOrientationEventTestBytes = R"TESTRESOURCE(
+static constexpr auto deviceOrientationEventTestBytes = R"TESTRESOURCE(
 <script>
 addEventListener("deviceorientation", (event) => {
     webkit.messageHandlers.testHandler.postMessage("received-device-orientation-event");
 });
 </script>
-)TESTRESOURCE";
+)TESTRESOURCE"_s;
 
 @interface WebsitePoliciesDeviceOrientationDelegate : NSObject <WKNavigationDelegate> {
     _WKWebsiteDeviceOrientationAndMotionAccessPolicy _accessPolicy;

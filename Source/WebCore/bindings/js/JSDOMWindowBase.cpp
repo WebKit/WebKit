@@ -264,7 +264,7 @@ public:
     {
         auto runnability = currentRunnability();
         if (runnability == JSC::QueuedTask::Result::Executed) {
-            UserGestureIndicator gestureIndicator(m_userGestureToken.ptr(), UserGestureToken::GestureScope::MediaOnly, UserGestureToken::ShouldPropagateToMicroTask::Yes);
+            UserGestureIndicator gestureIndicator(m_userGestureToken.ptr(), m_userGestureToken->scope(), UserGestureToken::ShouldPropagateToMicroTask::Yes);
             JSExecState::runTaskWithDebugger(task.globalObject(), task);
         }
         return runnability;

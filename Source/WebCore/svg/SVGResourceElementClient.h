@@ -25,23 +25,21 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class RenderElement;
-class SVGResourceElementClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SVGResourceElementClient> : std::true_type { };
 }
 
 namespace WebCore {
 
 class SVGElement;
 
-class SVGResourceElementClient : public CanMakeWeakPtr<SVGResourceElementClient> {
+class SVGResourceElementClient : public CanMakeWeakPtr<SVGResourceElementClient>, public CanMakeCheckedPtr<SVGResourceElementClient> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SVGResourceElementClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGResourceElementClient);
 public:
     virtual ~SVGResourceElementClient() = default;
 

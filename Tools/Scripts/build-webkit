@@ -278,6 +278,19 @@ if (isCMakeBuild() && !isAnyWindows()) {
     # Allow ccache to hit when building on different directories
     $ENV{"CCACHE_BASEDIR"} //= sourceDir();
 
+    if (isGtk() || isWPE()) {
+        use constant VIDEO_DECODING_LIMIT => "-DVIDEO_DECODING_LIMIT=7680x4320\@60";
+        my $videoDecodingLimitFound = 0;
+        foreach my $cmakeArg (@cmakeArgs) {
+            if (!rindex $cmakeArg, "-DVIDEO_DECODING_LIMIT", 0) {
+                $videoDecodingLimitFound = 1;
+            }
+        }
+        if (!$videoDecodingLimitFound) {
+            push @cmakeArgs, VIDEO_DECODING_LIMIT;
+        }
+    }
+
     buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, @featureArgs, @cmakeArgs);
 }
 

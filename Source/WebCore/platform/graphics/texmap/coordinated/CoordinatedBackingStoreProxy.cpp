@@ -23,6 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayer.h"
 #include "CoordinatedTileBuffer.h"
+#include "PlatformDisplay.h"
 #include "ProcessCapabilities.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
@@ -363,7 +364,11 @@ IntSize CoordinatedBackingStoreProxy::computeTileSize(const IntSize& viewportSiz
         return overridenTileSize;
 
     IntSize tileSize;
+#if USE(SKIA)
+    if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext()) {
+#else
     if (ProcessCapabilities::canUseAcceleratedBuffers()) {
+#endif
         static constexpr int minGPUTileHeight = 256;
 
         auto gpuTileSize = [&](const IntSize& baseSize) -> IntSize {

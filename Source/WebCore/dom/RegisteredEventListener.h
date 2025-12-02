@@ -36,15 +36,17 @@ namespace WebCore {
 class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
 public:
     struct Options {
-        Options(bool capture = false, bool passive = false, bool once = false)
+        Options(bool capture = false, bool passive = false, bool once = false, bool trustedOnly = false)
             : capture(capture)
             , passive(passive)
             , once(once)
+            , trustedOnly(trustedOnly)
         { }
 
         bool capture;
         bool passive;
         bool once;
+        bool trustedOnly;
     };
 
     static Ref<RegisteredEventListener> create(Ref<EventListener>&& listener, const Options& options)
@@ -57,6 +59,7 @@ public:
     bool isPassive() const { return m_isPassive; }
     bool isOnce() const { return m_isOnce; }
     bool wasRemoved() const { return m_wasRemoved; }
+    bool trustedOnly() const { return m_trustedOnly; }
 
     void markAsRemoved() { m_wasRemoved = true; }
 
@@ -66,6 +69,7 @@ private:
         , m_isPassive(options.passive)
         , m_isOnce(options.once)
         , m_wasRemoved(false)
+        , m_trustedOnly(options.trustedOnly)
         , m_callback(WTFMove(listener))
     {
     }
@@ -74,6 +78,7 @@ private:
     bool m_isPassive : 1;
     bool m_isOnce : 1;
     bool m_wasRemoved : 1;
+    bool m_trustedOnly : 1;
     const Ref<EventListener> m_callback;
 };
 

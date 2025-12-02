@@ -39,10 +39,12 @@
 #import "_WKCaptionStyleMenuController.h"
 #import "_WKElementActionInternal.h"
 #import <UIKit/UIView.h>
+#import <WebCore/CaptionDisplaySettingsOptions.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
+#import <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
 #import <WebCore/UIViewControllerUtilities.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Markable.h>
@@ -120,6 +122,9 @@ static LSAppLink *appLinkForURL(NSURL *url)
     Markable<WebCore::HTMLMediaElementIdentifier> _mediaElementIdentifier;
     std::unique_ptr<WebKit::FrameInfoData> _frameInfo;
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+#if ENABLE(VIDEO)
+    CompletionHandler<void(Expected<void, WebCore::ExceptionData>)> _captionDisplaySettingsMenuCompletionHandler;
+#endif
 #endif // USE(UICONTEXTMENU)
     WeakObjCPtr<UIView> _view;
     RetainPtr<WKCaptionStyleMenuController> _captionStyleMenuController;
@@ -737,6 +742,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto mediaControlsContextMenuCallback = std::exchange(_mediaControlsContextMenuCallback, { }))
         mediaControlsContextMenuCallback(WebCore::MediaControlsContextMenuItem::invalidID);
 
+    if (_captionDisplaySettingsMenuCompletionHandler)
+        _captionDisplaySettingsMenuCompletionHandler({ });
+
     if ([_delegate respondsToSelector:@selector(removeContextMenuViewIfPossibleForActionSheetAssistant:)])
         [_delegate removeContextMenuViewIfPossibleForActionSheetAssistant:self];
 }
@@ -893,7 +901,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    _captionStyleMenuController = adoptNS([[WKCaptionStyleMenuController alloc] init]);
+    _captionStyleMenuController = adoptNS([WKCaptionStyleMenuController menuController]);
     [_captionStyleMenuController setDelegate:self];
 
     NSArray<UIMenuElement *> *menuItems = [self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(itemsToPresent)];
@@ -918,9 +926,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if ([_delegate respondsToSelector:@selector(captionStyleMenuWillOpenWithFrameInfo:identifier:)] && _mediaElementIdentifier && _frameInfo)
         [_delegate captionStyleMenuDidCloseWithFrameInfo:*_frameInfo identifier:*_mediaElementIdentifier];
+
+    if (_captionDisplaySettingsMenuCompletionHandler)
+        _captionDisplaySettingsMenuCompletionHandler({ });
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
+
+#if ENABLE(VIDEO) && USE(UICONTEXTMENU)
+- (void)showCaptionDisplaySettingsMenu:(WebCore::HTMLMediaElementIdentifier)identifier withOptions:(const WebCore::ResolvedCaptionDisplaySettingsOptions&)options completionHandler:(CompletionHandler<void(Expected<void, WebCore::ExceptionData>)>&&)completionHandler
+{
+    _captionStyleMenuController = adoptNS([WKCaptionStyleMenuController menuController]);
+    [_captionStyleMenuController setDelegate:self];
+
+    _mediaControlsContextMenu = [_captionStyleMenuController captionStyleMenu];
+    _mediaControlsContextMenuTargetFrame = options.anchorBounds.value_or(WebCore::FloatRect { });
+    _mediaElementIdentifier = identifier;
+    _captionDisplaySettingsMenuCompletionHandler = WTFMove(completionHandler);
+
+    self._mediaControlsContextMenuPresenter.present(_mediaControlsContextMenuTargetFrame);
+}
+#endif
 
 static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
 {
@@ -1040,6 +1066,9 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     if (_mediaControlsContextMenuPresenter && interaction == _mediaControlsContextMenuPresenter->interaction())
         [self _resetMediaControlsContextMenuPresenter];
+
+    if (_mediaElementIdentifier && _frameInfo)
+        [self captionStyleMenuDidClose:nil];
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self)] {

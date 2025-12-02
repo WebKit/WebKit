@@ -47,10 +47,11 @@ struct FontCustomPlatformData;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFaceSource);
 class CSSFontFaceSource final : public FontLoadRequestClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSFontFaceSource, CSSFontFaceSource);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontFaceSource);
 public:
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName);
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement&);
-    CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, UniqueRef<FontLoadRequest>);
+    CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, Ref<FontLoadRequest>&&);
     CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
 
@@ -89,7 +90,7 @@ private:
     AtomString m_fontFaceName; // Font name for local fonts
     WeakRef<CSSFontFace> m_owningCSSFontFace; // Our owning font face.
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
-    const std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
+    const RefPtr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;

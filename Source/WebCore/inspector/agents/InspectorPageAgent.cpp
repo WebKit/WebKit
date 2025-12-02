@@ -691,7 +691,7 @@ void InspectorPageAgent::frameDetached(LocalFrame& frame)
 
 Frame* InspectorPageAgent::frameForId(const Inspector::Protocol::Network::FrameId& frameId)
 {
-    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId).get();
+    return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)

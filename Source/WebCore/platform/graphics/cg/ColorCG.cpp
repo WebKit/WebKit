@@ -102,13 +102,7 @@ std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
 template<ColorSpace space>
 static CGColorTransformRef cachedCGColorTransform()
 {
-    static LazyNeverDestroyed<RetainPtr<CGColorTransformRef>> transform;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        transform.construct(adoptCF(CGColorTransformCreate(cachedCGColorSpaceSingleton<space>(), nullptr)));
-    });
-
+    static NeverDestroyed<RetainPtr<CGColorTransformRef>> transform = adoptCF(CGColorTransformCreate(cachedCGColorSpaceSingleton<space>(), nullptr));
     return transform->get();
 }
 
@@ -186,27 +180,15 @@ RetainPtr<CGColorRef> cachedCGColor(const Color& color)
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
-            static LazyNeverDestroyed<RetainPtr<CGColorRef>> transparentCGColor;
-            static std::once_flag onceFlag;
-            std::call_once(onceFlag, [] {
-                transparentCGColor.construct(createCGColor(Color::transparentBlack));
-            });
+            static NeverDestroyed<RetainPtr<CGColorRef>> transparentCGColor = createCGColor(Color::transparentBlack);
             return transparentCGColor.get();
         }
         case PackedColor::RGBA { Color::black }.value: {
-            static LazyNeverDestroyed<RetainPtr<CGColorRef>> blackCGColor;
-            static std::once_flag onceFlag;
-            std::call_once(onceFlag, [] {
-                blackCGColor.construct(createCGColor(Color::black));
-            });
+            static NeverDestroyed<RetainPtr<CGColorRef>> blackCGColor = createCGColor(Color::black);
             return blackCGColor.get();
         }
         case PackedColor::RGBA { Color::white }.value: {
-            static LazyNeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor;
-            static std::once_flag onceFlag;
-            std::call_once(onceFlag, [] {
-                whiteCGColor.construct(createCGColor(Color::white));
-            });
+            static NeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor = createCGColor(Color::white);
             return whiteCGColor.get();
         }
         }

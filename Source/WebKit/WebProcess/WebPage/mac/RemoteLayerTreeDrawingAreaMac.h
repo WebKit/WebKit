@@ -62,7 +62,7 @@ private:
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) final;
 
-    void willCommitLayerTree(MainFrameData&) final;
+    void willCommitMainFrameData(MainFrameData&) final;
 };
 
 } // namespace WebKit

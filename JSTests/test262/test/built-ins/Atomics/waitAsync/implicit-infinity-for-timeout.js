@@ -4,7 +4,7 @@
 /*---
 esid: sec-atomics.waitasync
 description: >
-  Undefined timeout arg is coerced to zero
+  Undefined timeout arg should result in an infinite timeout
 info: |
   Atomics.waitAsync( typedArray, index, value, timeout )
 

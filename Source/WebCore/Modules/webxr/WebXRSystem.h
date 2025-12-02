@@ -60,14 +60,16 @@ struct XRSessionInit;
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebXRSystem);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     using IsSessionSupportedPromise = DOMPromiseDeferred<IDLBoolean>;
     using RequestSessionPromise = DOMPromiseDeferred<IDLInterface<WebXRSession>>;
 
     static Ref<WebXRSystem> create(Navigator&);
     ~WebXRSystem();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     void isSessionSupported(XRSessionMode, IsSessionSupportedPromise&&);
     void requestSession(Document&, XRSessionMode, const XRSessionInit&, RequestSessionPromise&&);
@@ -116,6 +118,10 @@ private:
     public:
         static Ref<DummyInlineDevice> create(ScriptExecutionContext&);
         virtual ~DummyInlineDevice() = default;
+
+        // ContextDestructionObserver.
+        void ref() const final { PlatformXR::Device::ref(); }
+        void deref() const final { PlatformXR::Device::deref(); }
 
     private:
         DummyInlineDevice(ScriptExecutionContext&);

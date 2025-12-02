@@ -517,7 +517,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
             Vector<BlockIndex> sortedBlockList;
             for (unsigned i = 0; i < loop->size(); ++i)
                 sortedBlockList.append(unboxLoopNode(loop->at(i))->index);
-            std::sort(sortedBlockList.begin(), sortedBlockList.end());
+            std::ranges::sort(sortedBlockList);
             for (unsigned i = 0; i < sortedBlockList.size(); ++i)
                 out.print(" #", sortedBlockList[i]);
             out.print("\n");

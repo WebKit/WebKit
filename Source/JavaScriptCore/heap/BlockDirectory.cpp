@@ -28,6 +28,7 @@
 
 #include "BlockDirectoryInlines.h"
 #include "Heap.h"
+#include "HeapInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"

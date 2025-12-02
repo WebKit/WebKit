@@ -79,7 +79,7 @@ void GStreamerWebRTCLogSink::start()
     }), this, nullptr);
 
     // Do not include webrtcstats in the list, because stats are logged using a different code path by the endpoint.
-    gst_debug_set_threshold_from_string("webrtcbin:5,webrtcdatachannel:5,webrtctransport*:5,webrtcsctp*:5,nice*:6", FALSE);
+    gst_debug_set_threshold_from_string("webrtcbin:5,webrtcdatachannel:5,webrtctransport*:5,webrtcsctp*:5,nice*:6,webkitwebrtcrice*:9", FALSE);
 #endif
 }
 

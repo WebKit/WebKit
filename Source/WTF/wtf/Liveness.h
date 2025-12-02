@@ -242,7 +242,7 @@ public:
                 if (!block)
                     continue;
                 
-                std::sort(m_liveness.m_liveAtHead[block].begin(), m_liveness.m_liveAtHead[block].end());
+                std::ranges::sort(m_liveness.m_liveAtHead[block]);
             }
         }
         

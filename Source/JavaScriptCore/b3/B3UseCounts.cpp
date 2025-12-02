@@ -43,7 +43,7 @@ UseCounts::UseCounts(Procedure& procedure)
             m_counts[child].numUses++;
             children.append(child);
         }
-        std::sort(children.begin(), children.end());
+        std::ranges::sort(children);
         Value* last = nullptr;
         for (Value* child : children) {
             if (child == last)

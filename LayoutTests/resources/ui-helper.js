@@ -1992,6 +1992,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static getUIViewTreeForCompositedElement(element)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const layerID = window.internals?.layerIDForElement(element);
+        const script = `uiController.uiScriptComplete(uiController.uiViewTreeAsTextForViewWithLayerID(${layerID}))`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, resolve);
+        });
+    }
+
     static propertiesOfLayerWithID(layerID)
     {
         if (!this.isWebKit2())
@@ -2012,6 +2024,18 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`(() => {
                 return uiController.caLayerTreeAsText;
             })()`, resolve);
+        });
+    }
+
+    static getCALayerTreeForCompositedElement(element)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const layerID = window.internals?.layerIDForElement(element);
+        const script = `uiController.uiScriptComplete(uiController.caLayerTreeAsTextForLayerWithID(${layerID}))`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, resolve);
         });
     }
 

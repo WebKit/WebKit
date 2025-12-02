@@ -1,4 +1,3 @@
 Storage/StorageAreaImpl.cpp
 Storage/StorageThread.cpp
 WebCoreSupport/WebResourceLoadScheduler.cpp
-[ Mac ] mac/WebCoreSupport/WebFrameLoaderClient.mm

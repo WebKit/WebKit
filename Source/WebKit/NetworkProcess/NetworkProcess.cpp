@@ -2848,6 +2848,12 @@ void NetworkProcess::storePrivateClickMeasurement(PAL::SessionID sessionID, WebC
         session->storePrivateClickMeasurement(WTFMove(privateClickMeasurement));
 }
 
+void NetworkProcess::simulatePrivateClickMeasurementConversion(PAL::SessionID sessionID, int priority, int triggerData, const URL& sourceURL, const URL& destinationURL)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->simulatePrivateClickMeasurementConversion(priority, triggerData, sourceURL, destinationURL);
+}
+
 void NetworkProcess::dumpPrivateClickMeasurement(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (CheckedPtr session = networkSession(sessionID))
@@ -3031,7 +3037,7 @@ RefPtr<NetworkConnectionToWebProcess> NetworkProcess::protectedWebProcessConnect
     return webProcessConnection(identifier);
 }
 
-RefPtr<NetworkConnectionToWebProcess> NetworkProcess::webProcessConnection(const IPC::Connection& connection) const
+RefPtr<NetworkConnectionToWebProcess> NetworkProcess::protectedWebProcessConnection(const IPC::Connection& connection) const
 {
     for (Ref webProcessConnection : m_webProcessConnections.values()) {
         if (webProcessConnection->connection().uniqueID() == connection.uniqueID())

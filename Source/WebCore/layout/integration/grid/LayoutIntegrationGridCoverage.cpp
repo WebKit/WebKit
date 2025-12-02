@@ -53,7 +53,7 @@ enum class GridAvoidanceReason : uint64_t {
     GridNeedsBaseline                           = 1LLU << 5,
     GridHasOutOfFlowChild                       = 1LLU << 6,
     GridHasNonVisibleOverflow                   = 1LLU << 7,
-    // Unused                                   = 1LLU << 8,
+    GridHasUnsupportedRenderer                  = 1LLU << 8,
     GridIsEmpty                                 = 1LLU << 9,
     GridHasNonInitialMinWidth                   = 1LLU << 10,
     GridHasNonInitialMaxWidth                   = 1LLU << 11,
@@ -62,7 +62,7 @@ enum class GridAvoidanceReason : uint64_t {
     GridHasNonZeroMinWidth                      = 1LLU << 14,
     GridHasGridTemplateAreas                    = 1LLU << 15,
     GridHasNonInitialGridAutoFlow               = 1LLU << 16,
-    GridHasGaps                                 = 1LLU << 17,
+    GridHasNonFixedGaps                         = 1LLU << 17,
     GridIsOutOfFlow                             = 1LLU << 18,
     GridHasContainsSize                         = 1LLU << 19,
     GridHasUnsupportedGridTemplateColumns       = 1LLU << 20,
@@ -134,11 +134,19 @@ static OptionSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid
     if (!renderGrid.firstInFlowChild())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridIsEmpty, reasons, reasonCollectionMode);
 
-    if (renderGridStyle->gridAutoFlow() != RenderStyle::initialGridAutoFlow())
+    if (!renderGridStyle->gridAutoFlow().isRow() || !renderGridStyle->gridAutoFlow().isSparse())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonInitialGridAutoFlow, reasons, reasonCollectionMode);
 
-    if (!renderGridStyle->rowGap().isNormal() || !renderGridStyle->columnGap().isNormal())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridHasGaps, reasons, reasonCollectionMode);
+    // Check for non-fixed gaps. GFC currently only supports fixed-length gaps.
+    if (!renderGridStyle->rowGap().isNormal()) {
+        if (!renderGridStyle->rowGap().tryFixed())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedGaps, reasons, reasonCollectionMode);
+    }
+
+    if (!renderGridStyle->columnGap().isNormal()) {
+        if (!renderGridStyle->columnGap().tryFixed())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedGaps, reasons, reasonCollectionMode);
+    }
 
     if (renderGrid.isOutOfFlowPositioned())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridIsOutOfFlow, reasons, reasonCollectionMode);
@@ -403,8 +411,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridHasNonInitialGridAutoFlow:
         stream << "grid has non-initial grid-auto-flow";
         break;
-    case GridAvoidanceReason::GridHasGaps:
-        stream << "grid has gaps";
+    case GridAvoidanceReason::GridHasNonFixedGaps:
+        stream << "grid has non-fixed gaps";
         break;
     case GridAvoidanceReason::GridIsOutOfFlow:
         stream << "grid is out-of-flow";

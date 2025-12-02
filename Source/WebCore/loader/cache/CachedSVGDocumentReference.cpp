@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+Ref<CachedSVGDocumentReference> CachedSVGDocumentReference::create(const Style::URL& location)
+{
+    return adoptRef(*new CachedSVGDocumentReference(location));
+}
+
 CachedSVGDocumentReference::CachedSVGDocumentReference(const Style::URL& location)
     : m_location { location }
 {

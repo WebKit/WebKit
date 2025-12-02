@@ -51,8 +51,10 @@ public:
 
     ~NavigationHistoryEntry();
 
+    // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     const String& url() const;
     String key() const;

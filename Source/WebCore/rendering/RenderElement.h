@@ -308,7 +308,6 @@ public:
     bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
 
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
-    void paintFocusRing(const PaintInfo&, const RenderStyle&, const Vector<LayoutRect>& focusRingRects) const;
 
     static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution);
 

@@ -30,17 +30,10 @@
 #include <WebCore/CDMInstance.h>
 #include <WebCore/CDMRequirement.h>
 #include <WebCore/CDMSessionType.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class CDMPrivate;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMPrivate> : std::true_type { };
-}
 
 #if !RELEASE_LOG_DISABLED
 namespace WTF {
@@ -69,7 +62,9 @@ public:
 #endif
 };
 
-class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
+class CDMPrivate : public CanMakeWeakPtr<CDMPrivate>, public CanMakeCheckedPtr<CDMPrivate> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CDMPrivate, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CDMPrivate);
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();
 
@@ -82,11 +77,11 @@ public:
     using SupportedConfigurationCallback = Function<void(std::optional<CDMKeySystemConfiguration>)>;
     WEBCORE_EXPORT virtual void getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess, SupportedConfigurationCallback&&);
 
-    virtual Vector<AtomString> supportedInitDataTypes() const = 0;
+    virtual Vector<String> supportedInitDataTypes() const = 0;
     virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;
     virtual bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const = 0;
-    virtual Vector<AtomString> supportedRobustnesses() const = 0;
+    virtual Vector<String> supportedRobustnesses() const = 0;
     virtual CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const = 0;
@@ -94,7 +89,7 @@ public:
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
-    virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
+    virtual bool supportsInitData(const String&, const SharedBuffer&) const = 0;
     virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
     virtual std::optional<String> sanitizeSessionId(const String&) const = 0;
 

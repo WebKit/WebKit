@@ -99,11 +99,7 @@ const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
 static const String& fullyQualifiedInfoTableName()
 {
-    static LazyNeverDestroyed<String> qualifiedName;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        qualifiedName.construct(MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__"));
-    });
+    static NeverDestroyed<String> qualifiedName { MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__") };
     return qualifiedName;
 }
 

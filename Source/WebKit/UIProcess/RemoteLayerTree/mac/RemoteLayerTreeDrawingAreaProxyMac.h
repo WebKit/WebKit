@@ -70,7 +70,7 @@ private:
 
     void layoutBannerLayers(const RemoteLayerTreeTransaction&);
 
-    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&) override;
+    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
     void commitTransientZoom(double, WebCore::FloatPoint) override;

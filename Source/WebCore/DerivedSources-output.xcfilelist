@@ -608,6 +608,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaptionDisplaySettingsOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaptionDisplaySettingsOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPosition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPosition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPositionFromPointOptions.cpp
@@ -864,6 +866,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabaseCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatabaseCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatagramsReadableMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDatagramsReadableMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStreamDecoder.cpp
@@ -918,6 +922,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTML.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTML.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTMLObsolete.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTMLObsolete.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Immersive.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Immersive.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PageVisibility.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PageVisibility.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+PictureInPicture.cpp
@@ -1680,6 +1686,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUListElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUListElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLUnknownElement.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+CaptionDisplaySettings.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+CaptionDisplaySettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+PictureInPicture.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+PictureInPicture.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSHTMLVideoElement+RequestVideoFrameCallback.cpp
@@ -1990,6 +1998,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMobileDocumentRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMobileDocumentRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCDMFactory.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCaptionDisplaySettingsClientCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockCaptionDisplaySettingsClientCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockContentFilterSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.cpp
@@ -2616,6 +2626,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverSize.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverSize.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResolvedCaptionDisplaySettingsOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResolvedCaptionDisplaySettingsOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRouterCondition.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRouterCondition.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRouterRule.cpp
@@ -3725,6 +3737,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamDefaultReaderBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableStreamInternalsBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleInlinesGenerated.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/RenderStyleSettersGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementTypeHelpers.h

@@ -3,9 +3,7 @@ When prompted, accept to share your video stream.
 
 PASS A device can be opened twice and have the same device ID
 PASS A device can be opened twice with different resolutions requested
-PASS groupId is correctly reported by getSettings() for all input devices
-PASS deviceId is reported by getSettings() for getUserMedia() audio tracks
-PASS groupId is reported by getSettings() for getUserMedia() audio tracks
+PASS deviceId and groupId are correctly reported by getSettings() for all input devices
 PASS sampleRate is reported by getSettings() for getUserMedia() audio tracks
 FAIL sampleSize is reported by getSettings() for getUserMedia() audio tracks assert_equals: sampleSize should exist and it should be a number. expected "number" but got "undefined"
 PASS echoCancellation is reported by getSettings() for getUserMedia() audio tracks
@@ -14,8 +12,6 @@ FAIL noiseSuppression is reported by getSettings() for getUserMedia() audio trac
 FAIL voiceIsolation is reported by getSettings() for getUserMedia() audio tracks assert_equals: voiceIsolation should exist and it should be a boolean. expected "boolean" but got "undefined"
 FAIL latency is reported by getSettings() for getUserMedia() audio tracks assert_equals: latency should exist and it should be a number. expected "number" but got "undefined"
 FAIL channelCount is reported by getSettings() for getUserMedia() audio tracks assert_equals: channelCount should exist and it should be a number. expected "number" but got "undefined"
-PASS deviceId is reported by getSettings() for getUserMedia() video tracks
-PASS groupId is reported by getSettings() for getUserMedia() video tracks
 PASS width is reported by getSettings() for getUserMedia() video tracks
 PASS height is reported by getSettings() for getUserMedia() video tracks
 PASS aspectRatio is reported by getSettings() for getUserMedia() video tracks

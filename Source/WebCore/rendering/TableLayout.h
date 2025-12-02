@@ -21,12 +21,12 @@
 #pragma once
 
 #include "LayoutUnit.h"
+#include "RenderTable.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
-
-class RenderTable;
 
 enum class TableIntrinsics : uint8_t;
 
@@ -52,7 +52,7 @@ protected:
     // Until then though, using nearlyMax causes overflow in some tests, so we just pick a large number.
     static constexpr int tableMaxWidth = 1000000;
 
-    RenderTable* m_table;
+    CheckedPtr<RenderTable> m_table;
 };
 
 } // namespace WebCore

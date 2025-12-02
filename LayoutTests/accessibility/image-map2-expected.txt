@@ -1,36 +1,5 @@
-Image map - test 2 - 2 Links (alt tags)
-----------------------
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 2>
-AXChildrenInNavigationOrder: <array of size 2>
-AXHelp:
-AXParent: <AXGroup>
-AXSize: NSSize: {784, 36}
-AXTitle:
-AXDescription:
-AXValue:
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: <array of size 0>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXLanguage:
-AXDOMIdentifier: result
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXGroup>
-AXEditableAncestor: (null)
-AXHighestEditableAncestor: (null)
-AXElementBusy: 0
+This test ensures proper AX tree output for image map links with alt tags.
 
-------------
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
@@ -102,5 +71,7 @@ AXPath: <AXLink>
 
 ------------
 
+PASS successfullyParsed is true
 
+TEST COMPLETE
 

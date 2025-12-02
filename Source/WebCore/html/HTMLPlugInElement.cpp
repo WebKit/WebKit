@@ -248,15 +248,19 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
 
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
-    CheckedPtr renderer = dynamicDowncast<RenderWidget>(this->renderer());
-    if (!renderer)
-        return;
+    {
+        CheckedPtr renderer = dynamicDowncast<RenderWidget>(this->renderer());
+        if (!renderer)
+            return;
 
-    if (CheckedPtr renderEmbedded = dynamicDowncast<RenderEmbeddedObject>(*renderer); renderEmbedded && renderEmbedded->isPluginUnavailable())
-        renderEmbedded->handleUnavailablePluginIndicatorEvent(&event);
+        if (CheckedPtr renderEmbedded = dynamicDowncast<RenderEmbeddedObject>(*renderer); renderEmbedded && renderEmbedded->isPluginUnavailable())
+            renderEmbedded->handleUnavailablePluginIndicatorEvent(&event);
 
-    if (RefPtr widget = renderer->widget())
-        widget->handleEvent(event);
+        if (RefPtr widget = renderer->widget()) {
+            renderer = nullptr;
+            widget->handleEvent(event);
+        }
+    }
     if (event.defaultHandled())
         return;
 

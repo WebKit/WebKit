@@ -200,12 +200,12 @@ void DragDropInteractionState::addDefaultDropPreview(UIDragItem *item, UITargete
 
 UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *item) const
 {
-    return m_defaultDropPreviews.get(item).unsafeGet();
+    return m_defaultDropPreviews.get(item);
 }
 
 UITargetedDragPreview *DragDropInteractionState::finalDropPreview(UIDragItem *item) const
 {
-    return m_finalDropPreviews.get(item).unsafeGet();
+    return m_finalDropPreviews.get(item);
 }
 
 void DragDropInteractionState::deliverDelayedDropPreview(UIView *contentView, UIView *previewContainer, RefPtr<WebCore::TextIndicator>&& textIndicator)

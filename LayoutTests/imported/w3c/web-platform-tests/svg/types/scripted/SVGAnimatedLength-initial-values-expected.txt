@@ -13,22 +13,22 @@ PASS SVGAnimatedLength, initial values, SVGEllipseElement.prototype.rx (remove)
 PASS SVGAnimatedLength, initial values, SVGEllipseElement.prototype.rx (invalid value)
 PASS SVGAnimatedLength, initial values, SVGEllipseElement.prototype.ry (remove)
 PASS SVGAnimatedLength, initial values, SVGEllipseElement.prototype.ry (invalid value)
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.x (remove) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.x (invalid value) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.y (remove) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.y (invalid value) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.width (remove) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.width (invalid value) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.height (remove) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterElement.prototype.height (invalid value) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.x (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.x (invalid value) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.y (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.y (invalid value) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.width (remove) assert_equals: initial after expected "100%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.width (invalid value) assert_equals: initial after expected "100%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.height (remove) assert_equals: initial after expected "100%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.height (invalid value) assert_equals: initial after expected "100%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.x (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.x (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.y (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.y (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.width (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.width (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.height (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterElement.prototype.height (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.x (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.x (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.y (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.y (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.width (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.width (invalid value)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.height (remove)
+PASS SVGAnimatedLength, initial values, SVGFilterPrimitiveStandardAttributes.prototype.height (invalid value)
 PASS SVGAnimatedLength, initial values, SVGForeignObjectElement.prototype.x (remove)
 PASS SVGAnimatedLength, initial values, SVGForeignObjectElement.prototype.x (invalid value)
 PASS SVGAnimatedLength, initial values, SVGForeignObjectElement.prototype.y (remove)
@@ -53,30 +53,30 @@ PASS SVGAnimatedLength, initial values, SVGLineElement.prototype.x2 (remove)
 PASS SVGAnimatedLength, initial values, SVGLineElement.prototype.x2 (invalid value)
 PASS SVGAnimatedLength, initial values, SVGLineElement.prototype.y2 (remove)
 PASS SVGAnimatedLength, initial values, SVGLineElement.prototype.y2 (invalid value)
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x1 (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x1 (invalid value) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y1 (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y1 (invalid value) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x2 (remove) assert_equals: initial after expected "100%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x2 (invalid value) assert_equals: initial after expected "100%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y2 (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y2 (invalid value) assert_equals: initial after expected "0%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x1 (remove)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x1 (invalid value)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y1 (remove)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y1 (invalid value)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x2 (remove)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.x2 (invalid value)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y2 (remove)
+PASS SVGAnimatedLength, initial values, SVGLinearGradientElement.prototype.y2 (invalid value)
 PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.refX (remove)
 PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.refX (invalid value)
 PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.refY (remove)
 PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.refY (invalid value)
-FAIL SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerWidth (remove) assert_equals: initial after expected "3" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerWidth (invalid value) assert_equals: initial after expected "3" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerHeight (remove) assert_equals: initial after expected "3" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerHeight (invalid value) assert_equals: initial after expected "3" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.x (remove) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.x (invalid value) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.y (remove) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.y (invalid value) assert_equals: initial after expected "-10%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.width (remove) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.width (invalid value) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.height (remove) assert_equals: initial after expected "120%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGMaskElement.prototype.height (invalid value) assert_equals: initial after expected "120%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerWidth (remove)
+PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerWidth (invalid value)
+PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerHeight (remove)
+PASS SVGAnimatedLength, initial values, SVGMarkerElement.prototype.markerHeight (invalid value)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.x (remove)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.x (invalid value)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.y (remove)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.y (invalid value)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.width (remove)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.width (invalid value)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.height (remove)
+PASS SVGAnimatedLength, initial values, SVGMaskElement.prototype.height (invalid value)
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.x (remove)
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.x (invalid value)
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.y (remove)
@@ -85,18 +85,18 @@ PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.width (remov
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.width (invalid value)
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.height (remove)
 PASS SVGAnimatedLength, initial values, SVGPatternElement.prototype.height (invalid value)
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cx (remove) assert_equals: initial after expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cx (invalid value) assert_equals: initial after expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (remove) assert_equals: initial after expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (invalid value) assert_equals: initial after expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (remove) assert_equals: initial after expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (invalid value) assert_equals: initial after expected "50%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cx (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cx (invalid value)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (invalid value)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (invalid value)
 FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (remove) assert_equals: initial before expected "50%" but got "0"
 FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (invalid value) assert_equals: initial before expected "50%" but got "0"
 FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (remove) assert_equals: initial before expected "50%" but got "0"
 FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (invalid value) assert_equals: initial before expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (remove) assert_equals: initial after expected "0%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (invalid value) assert_equals: initial after expected "0%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (invalid value)
 PASS SVGAnimatedLength, initial values, SVGRectElement.prototype.x (remove)
 PASS SVGAnimatedLength, initial values, SVGRectElement.prototype.x (invalid value)
 PASS SVGAnimatedLength, initial values, SVGRectElement.prototype.y (remove)

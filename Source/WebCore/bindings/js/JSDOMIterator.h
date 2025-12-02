@@ -91,6 +91,7 @@ public:
     using Traits = IteratorTraits;
 
     using DOMWrapped = typename Wrapper::DOMWrapped;
+    using InternalIterator = typename DOMWrapped::Iterator;
     using Prototype = JSDOMIteratorPrototype<Wrapper, Traits>;
 
     DECLARE_INFO;
@@ -107,9 +108,9 @@ public:
     static void createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue); // Make use of createStructure for this compile-error.
 
 protected:
-    JSDOMIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind)
+    template<typename... ArgTypes> JSDOMIteratorBase(JSC::Structure* structure, JSWrapper& iteratedObject, IterationKind kind, InternalIterator&& iterator)
         : Base(structure, *iteratedObject.globalObject())
-        , m_iterator(iteratedObject.wrapped().createIterator(iteratedObject.globalObject()->protectedScriptExecutionContext().get()))
+        , m_iterator(WTFMove(iterator))
         , m_kind(kind)
     {
     }
@@ -119,7 +120,7 @@ protected:
 
     static void destroy(JSC::JSCell*);
 
-    std::optional<typename DOMWrapped::Iterator> m_iterator;
+    std::optional<InternalIterator> m_iterator;
     IterationKind m_kind;
 };
 
@@ -138,14 +139,24 @@ inline JSC::JSValue jsPair(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
     return jsPair(lexicalGlobalObject, globalObject, toJS<FirstType>(lexicalGlobalObject, globalObject, value1), toJS<SecondType>(lexicalGlobalObject, globalObject, value2));
 }
 
-template<typename JSIterator> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper&, IterationKind);
+template<typename JSIterator, typename... ArgTypes> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper&, JSC::JSGlobalObject&, JSC::ThrowScope&, IterationKind, ArgTypes...);
 template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject&, JSC::CallFrame&, typename JSIterator::Wrapper&);
 
-template<typename JSIterator> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, IterationKind kind)
+template<typename JSIterator, typename... ArgTypes> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& throwScope, IterationKind kind, ArgTypes... args)
 {
     ASSERT(thisObject.globalObject());
     JSDOMGlobalObject& globalObject = *thisObject.globalObject();
-    return JSIterator::create(globalObject.vm(), getDOMStructure<JSIterator>(globalObject.vm(), globalObject), thisObject, kind);
+
+    auto result = thisObject.wrapped().createIterator(globalObject.protectedScriptExecutionContext().get(), std::forward<ArgTypes>(args)...);
+
+    if constexpr (IsExceptionOr<decltype(result)>) {
+        if (result.hasException()) [[unlikely]] {
+            propagateException(lexicalGlobalObject, throwScope, result.releaseException());
+            return { };
+        }
+        return JSIterator::create(globalObject.vm(), getDOMStructure<JSIterator>(globalObject.vm(), globalObject), thisObject, kind, result.releaseReturnValue());
+    } else
+        return JSIterator::create(globalObject.vm(), getDOMStructure<JSIterator>(globalObject.vm(), globalObject), thisObject, kind, WTFMove(result));
 }
 
 template<typename JSWrapper, typename IteratorTraits>

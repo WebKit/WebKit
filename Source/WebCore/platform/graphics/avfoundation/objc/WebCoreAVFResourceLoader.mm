@@ -55,11 +55,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCoreAVFResourceLoader);
 
-class CachedResourceMediaLoader final : CachedRawResourceClient {
+class CachedResourceMediaLoader final : public RefCounted<CachedResourceMediaLoader>, CachedRawResourceClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(CachedResourceMediaLoader);
 public:
-    static std::unique_ptr<CachedResourceMediaLoader> create(WebCoreAVFResourceLoader&, CachedResourceLoader&, ResourceRequest&&);
+    static RefPtr<CachedResourceMediaLoader> create(WebCoreAVFResourceLoader&, CachedResourceLoader&, ResourceRequest&&);
     ~CachedResourceMediaLoader() { stop(); }
+
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     CachedResourceMediaLoader(WebCoreAVFResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
@@ -77,7 +81,7 @@ private:
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 
-std::unique_ptr<CachedResourceMediaLoader> CachedResourceMediaLoader::create(WebCoreAVFResourceLoader& parent, CachedResourceLoader& loader, ResourceRequest&& resourceRequest)
+RefPtr<CachedResourceMediaLoader> CachedResourceMediaLoader::create(WebCoreAVFResourceLoader& parent, CachedResourceLoader& loader, ResourceRequest&& resourceRequest)
 {
     // FIXME: Skip Content Security Policy check if the element that inititated this request
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=173498>.
@@ -101,7 +105,7 @@ std::unique_ptr<CachedResourceMediaLoader> CachedResourceMediaLoader::create(Web
     auto resource = loader.requestMedia(WTFMove(request)).value_or(nullptr);
     if (!resource)
         return nullptr;
-    return std::unique_ptr<CachedResourceMediaLoader>(new CachedResourceMediaLoader { parent, WTFMove(resource) });
+    return adoptRef(*new CachedResourceMediaLoader { parent, WTFMove(resource) });
 }
 
 CachedResourceMediaLoader::CachedResourceMediaLoader(WebCoreAVFResourceLoader& parent, CachedResourceHandle<CachedRawResource>&& resource)

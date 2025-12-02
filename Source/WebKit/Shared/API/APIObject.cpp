@@ -43,11 +43,7 @@ namespace API {
 
 HashMap<Object*, CFTypeRef>& Object::apiObjectsUnderConstruction()
 {
-    static LazyNeverDestroyed<ThreadSpecific<HashMap<Object*, CFTypeRef>>> s_apiObjectsUnderConstruction;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        s_apiObjectsUnderConstruction.construct();
-    });
+    static NeverDestroyed<ThreadSpecific<HashMap<Object*, CFTypeRef>>> s_apiObjectsUnderConstruction;
     return *s_apiObjectsUnderConstruction.get();
 }
 

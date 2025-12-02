@@ -53,6 +53,7 @@ class BaseAudioContext;
 
 class PannerNode final : public AudioNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PannerNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PannerNode);
 public:
     static ExceptionOr<Ref<PannerNode>> create(BaseAudioContext&, const PannerOptions& = { });
 

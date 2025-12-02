@@ -43,7 +43,7 @@ class DeferredPromise;
 class Document;
 class MediaKeys;
 
-class MediaKeySystemAccess : public RefCountedAndCanMakeWeakPtr<MediaKeySystemAccess>, public ActiveDOMObject {
+class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess>, public ActiveDOMObject {
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

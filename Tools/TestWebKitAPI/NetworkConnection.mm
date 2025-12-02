@@ -30,12 +30,18 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SHA1.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringToIntegerConversion.h>
+
+#if HAVE(WEB_TRANSPORT)
+SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
+#endif
 
 namespace TestWebKitAPI {
 
@@ -50,12 +56,12 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
     return request;
 }
 
-static RetainPtr<dispatch_data_t> dataFromString(String&& s)
+static OSObjectPtr<dispatch_data_t> dataFromString(String&& s)
 {
     auto impl = s.releaseImpl();
     ASSERT(impl->is8Bit());
     auto characters = impl->span8();
-    return adoptNS(dispatch_data_create(characters.data(), characters.size(), mainDispatchQueueSingleton(), ^{
+    return adoptOSObject(dispatch_data_create(characters.data(), characters.size(), mainDispatchQueueSingleton(), ^{
         (void)impl;
     }));
 }
@@ -129,7 +135,7 @@ SendOperation Connection::awaitableSend(String&& message)
     return { dataFromString(WTFMove(message)), *this };
 }
 
-SendOperation Connection::awaitableSend(RetainPtr<dispatch_data_t>&& data)
+SendOperation Connection::awaitableSend(OSObjectPtr<dispatch_data_t>&& data)
 {
     return { WTFMove(data), *this };
 }
@@ -155,7 +161,7 @@ void Connection::sendAndReportError(Vector<uint8_t>&& message, CompletionHandler
     send(makeDispatchData(WTFMove(message)), WTFMove(completionHandler));
 }
 
-void Connection::send(RetainPtr<dispatch_data_t>&& message, CompletionHandler<void(bool)>&& completionHandler) const
+void Connection::send(OSObjectPtr<dispatch_data_t>&& message, CompletionHandler<void(bool)>&& completionHandler) const
 {
     nw_connection_send(m_connection.get(), message.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([completionHandler = WTFMove(completionHandler)](nw_error_t error) mutable {
         if (completionHandler)
@@ -214,6 +220,7 @@ struct ConnectionGroup::Data : public ThreadSafeRefCounted<ConnectionGroup::Data
     RetainPtr<nw_connection_group_t> group;
     CompletionHandler<void(Connection)> connectionHandler;
     Vector<Connection> connections;
+    CompletionHandler<void()> failureCompletionHandler;
 };
 
 ConnectionGroup::ConnectionGroup(nw_connection_group_t group)
@@ -222,6 +229,19 @@ ConnectionGroup::ConnectionGroup(nw_connection_group_t group)
 ConnectionGroup::~ConnectionGroup() = default;
 
 ConnectionGroup::ConnectionGroup(const ConnectionGroup&) = default;
+
+void ConnectionGroup::markAsFailed()
+{
+    if (auto handler = std::exchange(m_data->failureCompletionHandler, nullptr))
+        handler();
+}
+
+Awaitable<void> ConnectionGroup::awaitableFailure()
+{
+    co_return co_await AwaitableFromCompletionHandler<void> { [data = m_data] (auto completionHandler) {
+        data->failureCompletionHandler = WTFMove(completionHandler);
+    } };
+}
 
 Connection ConnectionGroup::createWebTransportConnection(ConnectionType type) const
 {
@@ -270,6 +290,13 @@ void ConnectionGroup::receiveIncomingConnection(Connection connection)
     });
     nw_connection_set_queue(connection.m_connection.get(), mainDispatchQueueSingleton());
     nw_connection_start(connection.m_connection.get());
+}
+
+void ConnectionGroup::drainWebTransportSession()
+{
+    RetainPtr metadata = nw_connection_group_copy_protocol_metadata(m_data->group.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get());
+    if (metadata && canLoadnw_webtransport_metadata_set_local_draining())
+        nw_webtransport_metadata_set_local_draining(metadata.get());
 }
 
 #endif // HAVE(WEB_TRANSPORT)

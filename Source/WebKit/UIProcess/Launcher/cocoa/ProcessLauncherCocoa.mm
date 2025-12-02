@@ -113,13 +113,9 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
 bool ProcessLauncher::hasExtensionsInAppBundle()
 {
 #if PLATFORM(IOS)
-    static bool hasExtensions = false;
-    static dispatch_once_t flag;
-    dispatch_once(&flag, ^{
-        hasExtensions = [[NSBundle mainBundle] pathForResource:@"WebContentExtension" ofType:@"appex" inDirectory:@"Extensions"]
+    static bool hasExtensions = [[NSBundle mainBundle] pathForResource:@"WebContentExtension" ofType:@"appex" inDirectory:@"Extensions"]
             && [[NSBundle mainBundle] pathForResource:@"NetworkingExtension" ofType:@"appex" inDirectory:@"Extensions"]
             && [[NSBundle mainBundle] pathForResource:@"GPUExtension" ofType:@"appex" inDirectory:@"Extensions"];
-    });
     return hasExtensions;
 #else
     return false;

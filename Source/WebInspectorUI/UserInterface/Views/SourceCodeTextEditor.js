@@ -52,7 +52,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         this._basicBlockAnnotator = null;
         this._editingController = null;
 
-        this._autoFormat = false;
+        // If the source code was formatted before (aka pretty-printed), any breakpoint and source code text ranges for search results will use the formatted line and column numbers.
+        // See WI.SourceCodeLocation.prototype._sourceCodeFormatterDidChange()
+        // If this is a new editor view associated with a previously formatted WI.SourceCode, automatically format its contents so the correct locations are highlighted.
+        this._autoFormat = !!this._sourceCode.formatterSourceMap;
         this._isProbablyMinified = false;
 
         this._ignoreContentDidChange = 0;

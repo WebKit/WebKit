@@ -127,11 +127,7 @@ struct ThreadInfo {
 
 static HashMap<pid_t, ThreadInfo>& threadInfoMap()
 {
-    static LazyNeverDestroyed<HashMap<pid_t, ThreadInfo>> map;
-    static std::once_flag flag;
-    std::call_once(flag, [&] {
-        map.construct();
-    });
+    static NeverDestroyed<HashMap<pid_t, ThreadInfo>> map;
     return map;
 }
 

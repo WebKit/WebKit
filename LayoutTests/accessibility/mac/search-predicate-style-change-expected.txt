@@ -14,4 +14,20 @@ PASS: Returned the right element after a dynamic page change.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-OneEight Skip Two Skip Three Skip Four Skip Five Skip Six Skip Seven Skip SkipLast text
+One
+Eight
+Skip
+Two
+Skip
+Three
+Skip
+Four
+Skip
+Five
+Skip
+Six
+Skip
+Seven
+Skip
+Skip
+Last text

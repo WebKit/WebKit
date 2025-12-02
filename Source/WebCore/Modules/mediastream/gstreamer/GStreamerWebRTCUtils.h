@@ -286,7 +286,9 @@ private:
 
 std::optional<int> payloadTypeForEncodingName(const String& encodingName);
 
-WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
+using RTPHeaderExtensionMapping = HashMap<String, uint8_t>;
+
+WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromRtpCapabilities(const RTPHeaderExtensionMapping&, const RTCRtpCapabilities&, Function<void(GstStructure*)> supplementCapsCallback);
 
 GstWebRTCRTPTransceiverDirection getDirectionFromSDPMedia(const GstSDPMedia*);
 WARN_UNUSED_RETURN GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia*);

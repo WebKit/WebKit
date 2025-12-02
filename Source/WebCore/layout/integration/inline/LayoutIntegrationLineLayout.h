@@ -93,7 +93,7 @@ public:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
     enum class ForceFullLayout : bool { No, Yes };
-    std::optional<LayoutRect> layout(ForceFullLayout = ForceFullLayout::No);
+    std::optional<LayoutRect> layout(RenderBlockFlow::MarginInfo&, ForceFullLayout = ForceFullLayout::No);
     void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderInline* layerRenderer = nullptr);
     void adjustForPagination();
@@ -110,6 +110,7 @@ public:
 
     bool isPaginated() const;
     size_t lineCount() const;
+    bool isSelfCollapsingContent() const;
     bool hasInkOverflow() const;
     LayoutUnit firstLineBaseline() const;
     LayoutUnit lastLineBaseline() const;
@@ -141,6 +142,8 @@ public:
 #endif
 
     FloatRect applySVGTextFragments(SVGTextFragmentMap&&);
+
+    bool hasBlocks() const;
 
 private:
     void preparePlacedFloats();

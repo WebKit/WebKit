@@ -124,6 +124,7 @@ public:
     virtual bool isPaymentMethodChangeEvent() const { return false; }
     virtual bool isPointerEvent() const { return false; }
     virtual bool isSpeechSynthesisErrorEvent() const { return false; }
+    virtual bool isSubmitEvent() const { return false; }
     virtual bool isTextEvent() const { return false; }
     virtual bool isToggleEvent() const { return false; }
     virtual bool isTouchEvent() const { return false; }

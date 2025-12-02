@@ -30,22 +30,17 @@
 #include "AnimationTimelinesController.h"
 #include "CSSProperty.h"
 #include "CSSTransition.h"
-#include "ContainerNodeInlines.h"
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"
 #include "CustomEffectCallback.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "Node.h"
 #include "Page.h"
-#include "RenderBoxModelObject.h"
 #include "RenderElement.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
 #include "RenderObjectInlines.h"
 #include "Settings.h"
 #include "StyleOriginatedAnimation.h"
@@ -484,18 +479,6 @@ AnimationEvents DocumentTimeline::prepareForPendingAnimationEventsDispatch()
     return std::exchange(m_pendingAnimationEvents, { });
 }
 
-Vector<std::pair<String, double>> DocumentTimeline::acceleratedAnimationsForElement(Element& element) const
-{
-    ASSERT(m_document);
-    auto* renderer = element.renderer();
-    if (renderer && renderer->isComposited()) {
-        auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
-        if (RefPtr graphicsLayer = compositedRenderer->layer()->backing()->graphicsLayer())
-            return graphicsLayer->acceleratedAnimationsForTesting(m_document->settings());
-    }
-    return { };
-}
-
 unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() const
 {
     return m_numberOfAnimationTimelineInvalidationsForTesting;
@@ -553,13 +536,14 @@ Seconds DocumentTimeline::convertTimelineTimeToOriginRelativeTime(Seconds timeli
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-Ref<AcceleratedTimeline> DocumentTimeline::createAcceleratedRepresentation()
+Ref<AcceleratedTimeline> DocumentTimeline::createAcceleratedRepresentation() const
 {
     // The origin time of a document timeline is relative to the time origin
     // of the document's associated performance object. We must convert this
     // origin time back to the time scale used in the remote layer tree.
     ASSERT(m_document);
     ASSERT(m_document->window());
+    ASSERT(m_document->settings().threadedTimeBasedAnimationsEnabled());
     Ref window = *Ref { *m_document }->window();
     auto monotonicOriginTime = MonotonicTime::fromRawSeconds(m_originTime.seconds());
     auto convertedOriginTime = m_originTime - window->performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(monotonicOriginTime);

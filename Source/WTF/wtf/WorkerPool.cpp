@@ -44,8 +44,16 @@ public:
     {
     }
 
+    void finalize()
+    {
+        join();
+        m_pool = nullptr;
+    }
+
+    // Called with the lock held.
     PollResult poll(const AbstractLocker&) final
     {
+        ASSERT(m_pool);
         if (m_pool->m_tasks.isEmpty())
             return PollResult::Wait;
         m_task = m_pool->m_tasks.takeFirst();
@@ -63,27 +71,33 @@ public:
 
     void threadDidStart() final
     {
+        ASSERT(m_pool);
         Locker locker { *m_pool->m_lock };
         m_pool->m_numberOfActiveWorkers++;
     }
 
+    // Called with the lock held.
     void threadIsStopping(const AbstractLocker&) final
     {
+        ASSERT(m_pool);
         m_pool->m_numberOfActiveWorkers--;
     }
 
+    // Called with the lock held.
     bool shouldSleep(const AbstractLocker& locker) final
     {
-        return m_pool->shouldSleep(locker);
+        ASSERT(m_pool);
+        return Ref { *m_pool }->shouldSleep(locker);
     }
 
     ASCIILiteral name() const final
     {
+        ASSERT(m_pool);
         return m_pool->name();
     }
 
 private:
-    const CheckedRef<WorkerPool> m_pool;
+    CheckedPtr<WorkerPool> m_pool;
     Function<void()> m_task;
 };
 
@@ -107,7 +121,7 @@ WorkerPool::~WorkerPool()
         m_condition->notifyAll(locker);
     }
     for (auto& worker : m_workers)
-        worker->join();
+        worker->finalize();
     ASSERT(!m_numberOfActiveWorkers);
 }
 

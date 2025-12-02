@@ -77,7 +77,7 @@
         },
         "active-view-transition-type": {
             "argument": "required",
-            "settings-flag": "viewTransitionTypesEnabled"
+            "settings-flag": "viewTransitionsEnabled"
         },
         "any-link": {
             "aliases": [
@@ -142,6 +142,9 @@
             "argument": "optional"
         },
         "hover": {},
+        "immersive": {
+            "conditional": "ENABLE(MODEL_ELEMENT_IMMERSIVE)"
+        },
         "in-range": {},
         "increment": {
             "comment": "For scrollbar styling.",

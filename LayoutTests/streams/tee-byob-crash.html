@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    const fileBits = [new BigUint64Array(2 ** 16), new Int8Array(2 ** 20)];
+    const fileName = `\u{1f6b0}\u{1fce1}\u{1fb1f}\u1ce7\u02cf`;
+    const file = new File(fileBits, fileName)
+    file.stream().tee();
+}, "Stopping a teed byte ReadableStream");
+</script>
+</body>
+</html>
+

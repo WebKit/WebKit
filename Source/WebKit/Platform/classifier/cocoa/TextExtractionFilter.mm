@@ -46,11 +46,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextExtractionFilter);
 
 TextExtractionFilter& TextExtractionFilter::singleton()
 {
-    if (RefPtr instance = WebKit::singleton())
-        return *instance.unsafeGet();
-
-    WebKit::singleton() = adoptRef(*new TextExtractionFilter);
-    return singleton();
+    if (auto& instance = WebKit::singleton(); !instance)
+        instance = adoptRef(*new TextExtractionFilter);
+    return *WebKit::singleton();
 }
 
 TextExtractionFilter* TextExtractionFilter::singletonIfCreated()

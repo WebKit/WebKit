@@ -112,6 +112,13 @@ void PageClientImplCocoa::spatialBackdropSourceDidChange()
 }
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void PageClientImplCocoa::canEnterImmersiveElementFromURL(const URL& url, CompletionHandler<void(bool)>&& completion)
+{
+    [m_webView _canEnterImmersiveElementFromURL:url completion:WTFMove(completion)];
+}
+#endif
+
 void PageClientImplCocoa::isPlayingAudioWillChange()
 {
     [webView() willChangeValueForKey:RetainPtr { NSStringFromSelector(@selector(_isPlayingAudio)) }.get()];
@@ -451,11 +458,15 @@ void PageClientImplCocoa::setFullScreenClientForTesting(std::unique_ptr<WebFullS
 }
 #endif
 
-void PageClientImplCocoa::didCommitLayerTree(const RemoteLayerTreeTransaction& transaction, const std::optional<MainFrameData>& mainFrameData)
+void PageClientImplCocoa::didCommitLayerTree(const RemoteLayerTreeTransaction& transaction, const std::optional<MainFrameData>&, const PageData&, const TransactionID&)
 {
-    if (mainFrameData && mainFrameData->fixedContainerEdges)
-        [webView() _updateFixedContainerEdges:*mainFrameData->fixedContainerEdges];
     [webView() _updateScrollGeometryWithContentOffset:transaction.scrollPosition() contentSize:transaction.scrollGeometryContentSize()];
+}
+
+void PageClientImplCocoa::didCommitMainFrameData(const MainFrameData& mainFrameData)
+{
+    if (mainFrameData.fixedContainerEdges)
+        [webView() _updateFixedContainerEdges:*mainFrameData.fixedContainerEdges];
 }
 
 } // namespace WebKit

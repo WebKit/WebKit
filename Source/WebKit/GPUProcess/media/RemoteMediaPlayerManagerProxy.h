@@ -74,6 +74,7 @@ public:
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
     void clear();
+    void connectionToWebProcessClosed();
 
 #if !RELEASE_LOG_DISABLED
     Logger& logger() { return m_logger; }
@@ -120,7 +121,7 @@ private:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 
 #if ENABLE(MEDIA_SOURCE)
-    HashMap<RemoteMediaSourceIdentifier, RefPtr<RemoteMediaSourceProxy>> m_pendingMediaSources;
+    HashMap<RemoteMediaSourceIdentifier, Ref<RemoteMediaSourceProxy>> m_pendingMediaSources;
 #endif
 
 #if !RELEASE_LOG_DISABLED

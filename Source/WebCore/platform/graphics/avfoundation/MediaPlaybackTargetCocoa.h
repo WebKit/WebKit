@@ -25,23 +25,34 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVOutputContext;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT MediaPlaybackTargetContextCocoa final : public MediaPlaybackTargetContext {
+class MediaPlaybackTargetCocoa final : public MediaPlaybackTarget {
 public:
-    explicit MediaPlaybackTargetContextCocoa(RetainPtr<AVOutputContext>&&);
-    ~MediaPlaybackTargetContextCocoa();
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> create(RetainPtr<AVOutputContext>&&);
 
-    RetainPtr<AVOutputContext> outputContext() const;
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> create();
+#endif
+
+    ~MediaPlaybackTargetCocoa();
+
+    RetainPtr<AVOutputContext> outputContext() const { return m_outputContext.get(); }
+
 private:
+    explicit MediaPlaybackTargetCocoa(RetainPtr<AVOutputContext>&&);
+
+    // MediaPlaybackTarget
     String deviceName() const final;
     bool hasActiveRoute() const final;
     bool supportsRemoteVideoPlayback() const final;
@@ -49,38 +60,12 @@ private:
     RetainPtr<AVOutputContext> m_outputContext;
 };
 
-class MediaPlaybackTargetCocoa final : public MediaPlaybackTarget {
-public:
-    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(MediaPlaybackTargetContextCocoa&&);
-
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
-    WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> create();
-#endif
-
-    TargetType targetType() const final { return TargetType::AVFoundation; }
-    const MediaPlaybackTargetContext& targetContext() const final { return m_context; }
-
-    AVOutputContext* outputContext() { return m_context.outputContext().unsafeGet(); }
-
-private:
-    explicit MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa&&);
-
-    MediaPlaybackTargetContextCocoa m_context;
-};
-
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlaybackTargetContextCocoa)
-static bool isType(const WebCore::MediaPlaybackTargetContext& context)
-{
-    return context.type() ==  WebCore::MediaPlaybackTargetContextType::AVOutputContext;
-}
-SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlaybackTargetCocoa)
 static bool isType(const WebCore::MediaPlaybackTarget& target)
 {
-    return target.targetType() ==  WebCore::MediaPlaybackTarget::TargetType::AVFoundation;
+    return target.type() ==  WebCore::MediaPlaybackTargetType::AVOutputContext;
 }
 SPECIALIZE_TYPE_TRAITS_END()
 

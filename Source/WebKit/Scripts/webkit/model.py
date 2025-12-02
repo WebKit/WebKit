@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,6 +23,7 @@
 import itertools
 
 from collections import Counter, defaultdict
+from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
 
 BUILTIN_ATTRIBUTE = "Builtin"
 MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
@@ -62,6 +63,18 @@ class MessageReceiver(object):
             raise Exception("ERROR: %s not annotated with 'DispatchedFrom=' attribute" % self.name)
         if not self.receiver_dispatched_to and not self.receiver_dispatched_to_exception:
             raise Exception("ERROR: %s not annotated with 'DispatchedTo=' attribute" % self.name)
+
+    def enforce_opaque_ipc_types_usage(self):
+        for message in self.messages:
+            for parameter in message.parameters:
+                if is_opaque_type(parameter.type):
+                    if not opaque_ipc_types.message_param_tracked(self.name, message.name, parameter.name, parameter.type):
+                        raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] MessageParam {self.name}.{message.name} {parameter.name} {parameter.type}")
+            if message.reply_parameters is not None:
+                for parameter in message.reply_parameters:
+                    if is_opaque_type(parameter.type):
+                        if not opaque_ipc_types.message_param_reply_tracked(self.name, message.name, parameter.name, parameter.type):
+                            raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] MessageParamReply {self.name}.{message.name} {parameter.name} {parameter.type}")
 
 
 class Message(object):

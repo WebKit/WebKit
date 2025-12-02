@@ -497,4 +497,27 @@ std::optional<CursorType> cursorTypeFrom(const StyleProperties& properties)
     return std::nullopt;
 }
 
+RefPtr<Node> lastNode(const Vector<AXID>& group, AXObjectCache& cache)
+{
+    ASSERT(isMainThread());
+
+    for (auto axID = group.rbegin(); axID != group.rend(); ++axID) {
+        if (RefPtr object = cache.objectForID(*axID)) {
+            if (RefPtr node = object->node())
+                return node;
+        }
+    }
+
+    return nullptr;
+}
+
+RefPtr<AccessibilityObject> lastObject(const Vector<AXID>& group, AXObjectCache& cache)
+{
+    for (auto axID = group.rbegin(); axID != group.rend(); ++axID) {
+        if (RefPtr object = cache.objectForID(*axID))
+            return object;
+    }
+    return nullptr;
+}
+
 } // namespace WebCore

@@ -2128,7 +2128,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         WallTime::now(),
         WebCore::PCM::AttributionEphemeral::No
     );
-    _page->setPrivateClickMeasurement(WTFMove(measurement));
+    _page->setPrivateClickMeasurementImmediately(WTFMove(measurement));
+}
+
+- (void)_storeSimulatedPrivateClickMeasurementConversionWithPriority:(uint8_t)priority triggerData:(uint8_t)triggerData sourceURL:(NSURL *)sourceURL destinationURL:(NSURL *)destinationURL
+{
+    _page->simulatePrivateClickMeasurementConversion(priority, triggerData, sourceURL, destinationURL);
 }
 
 @end // WKWebView (WKPrivateMac)

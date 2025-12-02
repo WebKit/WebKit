@@ -31,6 +31,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
@@ -454,16 +455,9 @@ ThreadData::~ThreadData()
 
 ThreadData* myThreadData()
 {
-    static ThreadSpecific<RefPtr<ThreadData>, CanBeGCThread::True>* threadData;
-    static std::once_flag initializeOnce;
-    std::call_once(
-        initializeOnce,
-        [] {
-            threadData = new ThreadSpecific<RefPtr<ThreadData>, CanBeGCThread::True>();
-        });
+    static NeverDestroyed<ThreadSpecific<RefPtr<ThreadData>, CanBeGCThread::True>> threadData;
     
-    RefPtr<ThreadData>& result = **threadData;
-    
+    RefPtr<ThreadData>& result = *threadData.get();
     if (!result)
         result = adoptRef(new ThreadData());
     

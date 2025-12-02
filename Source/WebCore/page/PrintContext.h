@@ -39,11 +39,15 @@ class IntRect;
 class LocalFrame;
 class Node;
 
-class PrintContext : public FrameDestructionObserver {
+class PrintContext : public FrameDestructionObserver, public RefCounted<PrintContext> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PrintContext, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT explicit PrintContext(LocalFrame*);
-    WEBCORE_EXPORT ~PrintContext();
+    WEBCORE_EXPORT static Ref<PrintContext> create(LocalFrame*);
+    ~PrintContext();
+
+    // FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     // Break up a page into rects without relayout.
     // FIXME: This means that CSS page breaks won't be on page boundary if the size is different than what was passed to begin(). That's probably not always desirable.
@@ -99,19 +103,18 @@ public:
     // behavior matches MacIE and Mozilla, at least)
     static constexpr float maximumShrinkFactor() { return 2; }
 
-protected:
-    Vector<IntRect> m_pageRects;
-
 private:
+    explicit PrintContext(LocalFrame*);
+
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
     bool beginAndComputePageRectsWithPageSize(LocalFrame&, const FloatSize& pageSizeInPixels);
     void collectLinkedDestinations(Document&);
     void outputLinkedDestinations(GraphicsContext&, Document&, const IntRect& pageRect);
 
+    Vector<IntRect> m_pageRects;
+    std::unique_ptr<HashMap<String, Ref<Element>>> m_linkedDestinations;
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting { false };
-
-    std::unique_ptr<HashMap<String, Ref<Element>>> m_linkedDestinations;
 };
 
 } // namespace WebCore

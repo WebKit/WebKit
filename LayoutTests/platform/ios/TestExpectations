@@ -2325,6 +2325,7 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 accessibility/table-exposure-updates-dynamically.html [ Pass ]
 accessibility/accessibility-node-reparent.html [ Pass ]
 accessibility/area-element-bounding-box.html [ Pass ]
+accessibility/aria-owns-text-stitching.html [ Pass ]
 accessibility/aria-braillelabel.html [ Pass ]
 accessibility/aria-brailleroledescription.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
@@ -2365,6 +2366,7 @@ accessibility/dynamic-datetime-attribute.html [ Pass ]
 accessibility/dynamic-font-change-dirty-style-and-relations.html [ Pass ]
 accessibility/dynamic-speak-as.html [ Pass ]
 accessibility/dynamic-text.html [ Pass ]
+accessibility/dynamic-text-stitching.html [ Pass ]
 accessibility/dynamic-text-color-change-dirty-style-and-relations.html [ Pass ]
 accessibility/dynamically-ignored-canvas.html [ Pass ]
 accessibility/editable-webpage-focused-ui-element.html [ Pass ]
@@ -3389,7 +3391,7 @@ webkit.org/b/212227 imported/w3c/web-platform-tests/css/css-grid/alignment/self-
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-001.html [ Skip ]
-webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-cols-006.html
+webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html
 
 
 fast/text/text-styles/-apple-system [ Pass ]
@@ -3612,8 +3614,6 @@ fast/text/design-system-ui-13.html [ Pass ]
 fast/text/design-system-ui-14.html [ Pass ]
 fast/text/design-system-ui-15.html [ Pass ]
 fast/text/design-system-ui-16.html [ Pass ]
-
-webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html [ Pass Failure ]
 
 webkit.org/b/237987 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html [ Pass Failure ]
 
@@ -4593,7 +4593,6 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 # These tests require compile-time flags in WebKit that are only enabled in iOS17. They were marked as Skip in
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
 fast/images/animations-resume-from-last-displayed-frame.html [ Pass ]
-fast/images/individual-animation-toggle.html [ Pass ]
 fast/images/pagewide-play-pause-animateTransform-svg-animation.html [ Pass ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass ]
 
@@ -7405,7 +7404,7 @@ webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navig
 # These failures are happening only in iOS simulator on an arm64 host
 webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
-webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]
+
 # This passes only on the arm64 host
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 
@@ -7643,6 +7642,9 @@ media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
 # webkit.org/b/278349 [ iOS ] imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block-in-inline-start-001.html [ Pass ImageOnlyFailure ]
 
+# Bug does not show with Ahem while Monospace has different metrics on iOS.
+fast/inline/text-box-trim-with-underline3.html [ ImageOnlyFailure ]
+
 # webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
 
@@ -7729,7 +7731,9 @@ webkit.org/b/283993 imported/w3c/web-platform-tests/css/css-contain/content-visi
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-and-scroll.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/284595 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-rows-005.html [ ImageOnlyFailure ]
+webkit.org/b/284595 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/track-sizing/auto-repeat/row-auto-repeat-009.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-rows-004-mix2.html [ ImageOnlyFailure ]
 
 # webkit.org/b/284096 (REGRESSION (286687@main): [ iOS ] 2 imported scroll-animations tests are consistently failing.)
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-responsiveness-from-endpoint.html [ Pass Failure ]
@@ -8341,8 +8345,6 @@ imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html [ Fa
 # webkit.org/b/301602 [ iOS 26 ] imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html is a constant text failure
 imported/w3c/web-platform-tests/inert/inert-pseudo-element-hittest.html [ Failure ]
 
-webkit.org/b/301655 fast/images/page-wide-animation-toggle.html [ Pass Timeout ]
-
 webkit.org/b/301670 imported/w3c/web-platform-tests/css/css-anchor-position/popover-implicit-anchor.html [ Failure ]
 
 # webkit.org/b/301869 [iOS] 5 tests in fast/forms/ios are constant failuring with text diff
@@ -8379,3 +8381,28 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-012.xht [ ImageOnly
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnlyFailure ]
 
 webkit.org/b/302741 imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html [ Failure ]
+
+# webkit.org/b/301655 Internals animation toggle causes the Image global preference to change, unpausing animations in tests
+fast/images/page-wide-animation-toggle.html [ Pass Timeout ]
+fast/images/individual-animation-toggle.html [ Pass Timeout ]
+
+webkit.org/b/301175 editing/selection/ios/become-first-responder-after-relinquishing-focus.html [ Pass Timeout ]
+
+webkit.org/b/302893 imported/w3c/web-platform-tests/html/interaction/focus/focus-input-type-switch.html [ Failure ]
+
+webkit.org/b/302898 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Failure ]
+
+webkit.org/b/302899 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-toggle-source.html [ Failure ]
+
+webkit.org/b/302901 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-formatting-contexts-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/max-width-014.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/min-width-014.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/width-014.xht [ ImageOnlyFailure ]
+
+# webkit.org/b/303325 REGRESSION(303533@main): Caused webrtc/vp9-profile2.html to time out
+webrtc/vp9-profile2.html [ Pass Timeout ]
+fast/mediastream/captureStream/canvas3d.html [ Pass Crash ]
+
+webkit.org/b/303341 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-intrinsic-size-001.html [ Pass ImageOnlyFailure ]

@@ -1,0 +1,38 @@
+
+PASS chunk of type undefined should error the stream for deflate
+PASS chunk of type null should error the stream for deflate
+PASS chunk of type numeric should error the stream for deflate
+PASS chunk of type object, not BufferSource should error the stream for deflate
+PASS chunk of type array should error the stream for deflate
+PASS chunk of type SharedArrayBuffer should error the stream for deflate
+PASS chunk of type shared Uint8Array should error the stream for deflate
+PASS chunk of type invalid deflate bytes should error the stream for deflate
+PASS chunk of type invalid gzip bytes should error the stream for deflate
+PASS chunk of type undefined should error the stream for deflate-raw
+PASS chunk of type null should error the stream for deflate-raw
+PASS chunk of type numeric should error the stream for deflate-raw
+PASS chunk of type object, not BufferSource should error the stream for deflate-raw
+PASS chunk of type array should error the stream for deflate-raw
+PASS chunk of type SharedArrayBuffer should error the stream for deflate-raw
+PASS chunk of type shared Uint8Array should error the stream for deflate-raw
+PASS chunk of type invalid deflate bytes should error the stream for deflate-raw
+PASS chunk of type invalid gzip bytes should error the stream for deflate-raw
+PASS chunk of type undefined should error the stream for gzip
+PASS chunk of type null should error the stream for gzip
+PASS chunk of type numeric should error the stream for gzip
+PASS chunk of type object, not BufferSource should error the stream for gzip
+PASS chunk of type array should error the stream for gzip
+PASS chunk of type SharedArrayBuffer should error the stream for gzip
+PASS chunk of type shared Uint8Array should error the stream for gzip
+PASS chunk of type invalid deflate bytes should error the stream for gzip
+PASS chunk of type invalid gzip bytes should error the stream for gzip
+PASS chunk of type undefined should error the stream for brotli
+PASS chunk of type null should error the stream for brotli
+PASS chunk of type numeric should error the stream for brotli
+PASS chunk of type object, not BufferSource should error the stream for brotli
+PASS chunk of type array should error the stream for brotli
+PASS chunk of type SharedArrayBuffer should error the stream for brotli
+PASS chunk of type shared Uint8Array should error the stream for brotli
+PASS chunk of type invalid deflate bytes should error the stream for brotli
+PASS chunk of type invalid gzip bytes should error the stream for brotli
+

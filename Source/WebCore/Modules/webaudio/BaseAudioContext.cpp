@@ -226,6 +226,7 @@ void BaseAudioContext::uninitialize()
         // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
         // before the BaseAudioContext gets destroyed.
         derefFinishedSourceNodes();
+        m_renderingAutomaticPullNodes.clear();
     }
 
     // Get rid of the sources which may still be playing.
@@ -668,7 +669,7 @@ void BaseAudioContext::updateTailProcessingNodes()
     // We are on the audio thread so we want to avoid allocations as much as possible.
     for (auto i = m_tailProcessingNodes.size(); i > 0; --i) {
         auto& node = m_tailProcessingNodes[i - 1];
-        if (!node->propagatesSilence())
+        if (!node.checkedNode()->propagatesSilence())
             continue; // Node is not done processing its tail.
 
         // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
@@ -702,7 +703,7 @@ void BaseAudioContext::disableOutputsForFinishedTailProcessingNodes()
     ASSERT(isMainThread());
     ASSERT(isGraphOwner());
     for (auto& finishedTailProcessingNode : std::exchange(m_finishedTailProcessingNodes, { }))
-        finishedTailProcessingNode->disableOutputs();
+        finishedTailProcessingNode.checkedNode()->disableOutputs();
 }
 
 void BaseAudioContext::finishTailProcessing()
@@ -713,7 +714,7 @@ void BaseAudioContext::finishTailProcessing()
     // disableOutputs() can cause new nodes to start tail processing so we need to loop until both vectors are empty.
     while (!m_tailProcessingNodes.isEmpty() || !m_finishedTailProcessingNodes.isEmpty()) {
         for (auto& tailProcessingNode : std::exchange(m_tailProcessingNodes, { }))
-            tailProcessingNode->disableOutputs();
+            tailProcessingNode.checkedNode()->disableOutputs();
         disableOutputsForFinishedTailProcessingNodes();
     }
 }
@@ -781,22 +782,23 @@ void BaseAudioContext::deleteMarkedNodes()
     Locker locker { graphLock() };
 
     while (m_nodesToDelete.size()) {
-        AudioNode* node = m_nodesToDelete.takeLast();
+        CheckedPtr node = m_nodesToDelete.takeLast();
 
         // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
         unsigned numberOfInputs = node->numberOfInputs();
         for (unsigned i = 0; i < numberOfInputs; ++i)
-            m_dirtySummingJunctions.remove(node->input(i));
+            m_dirtySummingJunctions.remove(node->checkedInput(i).get());
 
         // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
         unsigned numberOfOutputs = node->numberOfOutputs();
         for (unsigned i = 0; i < numberOfOutputs; ++i)
-            m_dirtyAudioNodeOutputs.remove(node->output(i));
+            m_dirtyAudioNodeOutputs.remove(node->checkedOutput(i).get());
 
         ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
 
         // Finally, delete it.
-        delete node;
+        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT.
+        delete nodePtr;
     }
     m_isDeletionScheduled = false;
 }

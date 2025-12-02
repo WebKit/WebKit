@@ -141,6 +141,7 @@ enum class WebCore::MediaSessionReadyState : uint8_t {
 };
 #endif // ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#if ENABLE(WEB_RTC)
 header: <WebCore/RTCErrorDetailType.h>
 enum class WebCore::RTCErrorDetailType : uint8_t {
     DataChannelFailure,
@@ -149,6 +150,20 @@ enum class WebCore::RTCErrorDetailType : uint8_t {
     SctpFailure,
     SdpSyntaxError
 };
+
+header: <WebCore/RTCIceComponent.h>
+enum class WebCore::RTCIceComponent : uint8_t {
+     Rtp,
+     Rtcp
+};
+
+header: <WebCore/RTCIceProtocol.h>
+enum class WebCore::RTCIceProtocol : uint8_t {
+     Udp,
+     Tcp
+};
+
+#endif // ENABLE(WEB_RTC)
 
 enum class WebCore::NotificationEventType : bool;
 
@@ -6073,17 +6088,9 @@ struct WebCore::ServiceWorkerImportedScript {
     String mimeType;
 };
 
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-[CreateUsing=fromIPCData] class WebCore::ScriptBuffer {
-    Variant<WebCore::ShareableResourceHandle, RefPtr<WebCore::FragmentedSharedBuffer>> ipcData();
+class WebCore::ScriptBuffer {
+    RefPtr<const WebCore::FragmentedSharedBuffer> buffer();
 };
-#endif
-
-#if !ENABLE(SHAREABLE_RESOURCE) || !PLATFORM(COCOA)
-[CreateUsing=fromIPCData] class WebCore::ScriptBuffer {
-    RefPtr<WebCore::FragmentedSharedBuffer> ipcData();
-};
-#endif
 
 header: <wtf/RobinHoodHashTable.h>
 struct WebCore::ServiceWorkerContextData {
@@ -6856,6 +6863,13 @@ header: <WebCore/TextExtractionTypes.h>
     HashMap<String, String> clientAttributes;
 };
 
+header: <WebCore/TextExtractionTypes.h>
+[CustomHeader] struct WebCore::TextExtraction::FilterRuleData {
+    String name;
+    String urlPatternString;
+    String scriptSource;
+};
+
 #if ENABLE(WRITING_TOOLS)
 header: <WebCore/WritingToolsTypes.h>
 [CustomHeader] enum class WebCore::WritingTools::Behavior : uint8_t {
@@ -7380,14 +7394,15 @@ class WebCore::NetworkLoadMetrics {
 
     uint16_t redirectCount;
 
-    bool isComplete();
-    bool isCellular();
-    bool isExpensive();
-    bool isConstrained();
-    bool isMultipath();
-    bool reusedConnection();
-    bool doesFailTAOCheck();
-    bool crossOriginRedirect();
+    [BitField] bool complete;
+    [BitField] bool cellular;
+    [BitField] bool expensive;
+    [BitField] bool constrained;
+    [BitField] bool multipath;
+    [BitField] bool isReusedConnection;
+    [BitField] bool failsTAOCheck;
+    [BitField] bool hasCrossOriginRedirect;
+    [BitField] bool fromPrefetch;
 
     WebCore::PrivacyStance privacyStance;
 
@@ -8034,6 +8049,12 @@ using WebCore::SourceBufferPrivate::SamplesPromise::Result = Expected<Vector<Str
 header: <WebCore/MediaSourceConfiguration.h>
 struct WebCore::MediaSourceConfiguration {
     bool textTracksEnabled;
+#if USE(MEDIAPARSERD)
+    bool demuxInProcess;
+#endif
+#if ENABLE(MEDIA_RECORDER_WEBM)
+    bool supportsLimitedMatroska;
+#endif
 };
 
 #endif
@@ -8964,6 +8985,13 @@ header: <WebCore/AXObjectCache.h>
 };
 
 header: <WebCore/AXObjectCache.h>
+[CustomHeader] enum class WebCore::LiveRegionStatus : uint8_t {
+    Off,
+    Polite,
+    Assertive
+};
+
+header: <WebCore/AXObjectCache.h>
 [CustomHeader] struct WebCore::AXDebugInfo {
     bool isAccessibilityEnabled;
     bool isAccessibilityThreadInitialized;
@@ -8980,6 +9008,14 @@ header: <WebCore/AXObjectCache.h>
     WebCore::InterruptBehavior interrupt;
     String language;
 };
+
+#if PLATFORM(COCOA)
+header: <WebCore/AXObjectCache.h>
+[CustomHeader] struct WebCore::LiveRegionAnnouncementData {
+    WebCore::AttributedString message;
+    WebCore::LiveRegionStatus status;
+};
+#endif
 
 header: <WebCore/ScriptTrackingPrivacyCategory.h>
 [OptionSet] enum class WebCore::ScriptTrackingPrivacyFlag : uint16_t {
@@ -9044,4 +9080,27 @@ struct WebCore::FocusOptions {
     WebCore::FocusVisibility visibility;
     bool preventScroll;
     std::optional<bool> focusVisible;
+};
+
+enum class WebKit::CommitTiming : bool;
+
+header: <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
+[CustomHeader] enum class WebCore::ResolvedCaptionDisplaySettingsOptionsXPositionArea : uint8_t {
+    Center,
+    Left,
+    Right,
+};
+
+header: <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
+[CustomHeader] enum class WebCore::ResolvedCaptionDisplaySettingsOptionsYPositionArea : uint8_t {
+    Center,
+    Top,
+    Bottom,
+};
+
+header: <WebCore/ResolvedCaptionDisplaySettingsOptions.h>
+[CustomHeader] struct WebCore::ResolvedCaptionDisplaySettingsOptions {
+    std::optional<WebCore::FloatRect> anchorBounds;
+    std::optional<WebCore::ResolvedCaptionDisplaySettingsOptionsXPositionArea> xPositionArea;
+    std::optional<WebCore::ResolvedCaptionDisplaySettingsOptionsYPositionArea> yPositionArea;
 };

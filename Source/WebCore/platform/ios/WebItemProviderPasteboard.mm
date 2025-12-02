@@ -506,11 +506,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 + (instancetype)sharedInstance
 {
-    static NeverDestroyed<RetainPtr<WebItemProviderPasteboard>> sharedPasteboard;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^() {
-        sharedPasteboard.get() = adoptNS([[WebItemProviderPasteboard alloc] init]);
-    });
+    static NeverDestroyed<RetainPtr<WebItemProviderPasteboard>> sharedPasteboard = adoptNS([[WebItemProviderPasteboard alloc] init]);
     return sharedPasteboard.get().get();
 }
 

@@ -177,7 +177,20 @@ MediaPlayer::NetworkState MockMediaPlayerMediaSource::networkState() const
 
 MediaPlayer::ReadyState MockMediaPlayerMediaSource::readyState() const
 {
-    return m_readyState;
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate ? mediaSourcePrivate->mediaPlayerReadyState() : MediaPlayer::ReadyState::HaveNothing;
+}
+
+void MockMediaPlayerMediaSource::readyStateFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->readyStateChanged();
+}
+
+void MockMediaPlayerMediaSource::mediaSourceHasRetrievedAllData()
+{
+    setNetworkState(MediaPlayer::NetworkState::Loaded);
 }
 
 MediaTime MockMediaPlayerMediaSource::maxTimeSeekable() const
@@ -285,16 +298,6 @@ void MockMediaPlayerMediaSource::updateDuration(const MediaTime& duration)
     m_duration = duration;
     if (auto player = m_player.get())
         player->durationChanged();
-}
-
-void MockMediaPlayerMediaSource::setReadyState(MediaPlayer::ReadyState readyState)
-{
-    if (readyState == m_readyState)
-        return;
-
-    m_readyState = readyState;
-    if (auto player = m_player.get())
-        player->readyStateChanged();
 }
 
 void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState networkState)

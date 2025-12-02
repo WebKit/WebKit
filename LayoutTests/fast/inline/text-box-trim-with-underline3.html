@@ -1,0 +1,41 @@
+<meta name="fuzzy" content="maxDifference=0-62; totalPixels=0-16" />
+<style>
+div {
+    font-family: Monospace;
+    font-size: 20px;
+    text-box: trim-start cap alphabetic;
+    text-decoration: underline;
+    margin-bottom: 30px;
+}
+</style>
+<!-- Underline placement relative to the content should not change when trim is applied. -->
+
+<div>PASS if underline forms a single line</div>
+<div>
+  <span>PASS if underline forms a single line</span>
+</div>
+<div>
+  <span>PASS if underline forms a single
+    <span style="text-decoration: underline;">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline;">PASS if underline forms a single
+    <span style="text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline;">PASS if underline forms a single
+    <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
+    <span style="text-decoration: underline;">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
+    <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>

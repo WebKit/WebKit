@@ -67,7 +67,7 @@ struct _WebKitImagePrivate {
  *
  * Image objects are always created by WebKit, and considered immutable:
  * a copy of the image data needs to be made before modifying the image.
- * Pixel data can be obtained with [id@webkit_image_as_rgba_bytes].
+ * Pixel data can be obtained with [id@webkit_image_as_bytes].
  *
  * Since: 2.52
  */
@@ -247,21 +247,20 @@ guint webkit_image_get_stride(WebKitImage* image)
 }
 
 /**
- * webkit_image_as_rgba_bytes:
+ * webkit_image_as_bytes:
  * @image: a #WebKitImage
  *
  * Get the @image pixel data as an array of bytes.
  *
  * The pixel format for the returned byte buffer is 32-bit per pixel
  * with 8-bit premultiplied alpha, in the preferred byte order for
- * the architecture (typically ABGR8888 on little-endian hosts, and
- * RGBA8888 on big-endian ones).
+ * the architecture.
  *
  * Returns: (transfer none): a #GBytes
  *
  * Since: 2.52
  */
-GBytes* webkit_image_as_rgba_bytes(WebKitImage* image)
+GBytes* webkit_image_as_bytes(WebKitImage* image)
 {
     g_return_val_if_fail(WEBKIT_IS_IMAGE(image), nullptr);
 
@@ -276,7 +275,7 @@ static guint webkitImageHash(GIcon* icon)
 
     Hasher hasher;
 
-    auto* bytes = webkit_image_as_rgba_bytes(image);
+    auto* bytes = webkit_image_as_bytes(image);
     auto dataSpan = span(bytes);
 
     gsize rowBytes = image->priv->width * RGBA8BytesPerPixel;
@@ -306,8 +305,8 @@ static gboolean webkitImageEqual(GIcon* icon1, GIcon* icon2)
         || image1->priv->height != image2->priv->height)
         return false;
 
-    auto* bytes1 = webkit_image_as_rgba_bytes(image1);
-    auto* bytes2 = webkit_image_as_rgba_bytes(image2);
+    auto* bytes1 = webkit_image_as_bytes(image1);
+    auto* bytes2 = webkit_image_as_bytes(image2);
 
     auto dataSpan1 = span(bytes1);
     auto dataSpan2 = span(bytes2);
@@ -333,7 +332,7 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
     g_return_val_if_fail(WEBKIT_IS_IMAGE(icon), nullptr);
 
     auto* image = WEBKIT_IMAGE(icon);
-    auto* bytes = webkit_image_as_rgba_bytes(image);
+    auto* bytes = webkit_image_as_bytes(image);
     if (!bytes) {
         LOG_ERROR("Failed to retrieve image RGBA bytes");
         g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to encode image as PNG");
@@ -347,7 +346,7 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
     SkImageInfo info = SkImageInfo::Make(
         image->priv->width,
         image->priv->height,
-        kRGBA_8888_SkColorType,
+        kBGRA_8888_SkColorType,
         kUnpremul_SkAlphaType
     );
 

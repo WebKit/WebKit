@@ -50,7 +50,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , touchAction(RenderStyle::initialTouchAction())
     , initialLetter(RenderStyle::initialInitialLetter())
     , marquee(StyleMarqueeData::create())
-    , backdropFilter(StyleFilterData::create())
+    , backdropFilter(StyleBackdropFilterData::create())
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
     , clip(RenderStyle::initialClip())
@@ -92,7 +92,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , viewTimelineInsets(RenderStyle::initialViewTimelineInsets())
     , viewTimelineAxes(RenderStyle::initialViewTimelineAxes())
     , viewTimelineNames(RenderStyle::initialViewTimelineNames())
-    // timelineScope
+    , timelineScope(RenderStyle::initialTimelineScope())
     , scrollbarGutter(RenderStyle::initialScrollbarGutter())
     , scrollSnapType(RenderStyle::initialScrollSnapType())
     , scrollSnapAlign(RenderStyle::initialScrollSnapAlign())
@@ -137,7 +137,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if HAVE(CORE_MATERIAL)
     , appleVisualEffect(static_cast<unsigned>(RenderStyle::initialAppleVisualEffect()))
 #endif
-    , scrollbarWidth(static_cast<unsigned>(RenderStyle::initialScrollbarWidth().platform()))
+    , scrollbarWidth(static_cast<unsigned>(RenderStyle::initialScrollbarWidth()))
     , usesAnchorFunctions(false)
     , anchorFunctionScrollCompensatedAxes(0)
     , isPopoverInvoker(false)
@@ -389,7 +389,7 @@ Style::Contain StyleRareNonInheritedData::usedContain() const
 
 bool StyleRareNonInheritedData::hasBackdropFilters() const
 {
-    return !backdropFilter->filter.isNone();
+    return !backdropFilter->backdropFilter.isNone();
 }
 
 #if !LOG_DISABLED

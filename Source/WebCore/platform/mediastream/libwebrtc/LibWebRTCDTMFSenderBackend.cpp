@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 

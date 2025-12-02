@@ -205,8 +205,10 @@ void WebBackForwardListItem::setWasRestoredFromSession()
 
 WebBackForwardListFrameItem& WebBackForwardListItem::navigatedFrameItem() const
 {
-    if (RefPtr childItem = m_navigatedFrameID ? m_mainFrameItem->childItemForFrameID(*m_navigatedFrameID) : nullptr)
-        return childItem.releaseNonNull().unsafeGet();
+    if (m_navigatedFrameID) {
+        if (auto* childItem = m_mainFrameItem->childItemForFrameID(*m_navigatedFrameID))
+            return *childItem;
+    }
     return m_mainFrameItem;
 }
 
@@ -225,11 +227,9 @@ Ref<WebBackForwardListFrameItem> WebBackForwardListItem::protectedMainFrameItem(
     return m_mainFrameItem;
 }
 
-#if !LOG_DISABLED
 String WebBackForwardListItem::loggingString()
 {
     return m_mainFrameItem->loggingString();
 }
-#endif // !LOG_DISABLED
 
 } // namespace WebKit

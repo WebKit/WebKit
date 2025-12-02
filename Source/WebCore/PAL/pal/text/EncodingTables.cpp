@@ -28,6 +28,7 @@
 
 #include "TextCodecICU.h"
 #include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -1070,12 +1071,10 @@ constexpr std::array<std::pair<uint16_t, char16_t>, 388> jis0208Extras { {
 const std::array<std::pair<uint16_t, char16_t>, 7724>& jis0208()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static std::array<std::pair<uint16_t, char16_t>, 7724>* array;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        array = new std::array<std::pair<uint16_t, char16_t>, 7724>;
+    static NeverDestroyed<std::unique_ptr<std::array<std::pair<uint16_t, char16_t>, 7724>>> array = [] {
+        auto array = std::make_unique<std::array<std::pair<uint16_t, char16_t>, 7724>>(); // NOLINT.
         size_t arrayIndex = 0;
-        
+
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error) };
         ASSERT(!error);
@@ -1095,13 +1094,14 @@ const std::array<std::pair<uint16_t, char16_t>, 7724>& jis0208()
                 }
             }
         }
-        
+
         for (auto& extra : jis0208Extras)
             (*array)[arrayIndex++] = extra;
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(arrayIndex == 7724);
         ASSERT(*array == jis0208Reference);
-    });
-    return *array;
+        return array;
+    }();
+    return *array.get();
 }
 
 #if ASSERT_ENABLED
@@ -1877,7 +1877,7 @@ const std::array<std::pair<uint16_t, char16_t>, 6067>& jis0212()
     std::call_once(flag, [] {
         array = new std::array<std::pair<uint16_t, char16_t>, 6067>();
         size_t arrayIndex = 0;
-        
+
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("EUC-JP", &error) };
         ASSERT(!error);
@@ -4885,7 +4885,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
     std::call_once(flag, [] {
         array = new std::array<std::pair<uint16_t, char32_t>, 18590>();
         size_t arrayIndex = 0;
-        
+
         UErrorCode error = U_ZERO_ERROR;
         auto icuConverter = ICUConverterPtr { ucnv_open("Big-5", &error) };
         ASSERT(!error);
@@ -4917,13 +4917,13 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5()
                 (*array)[arrayIndex++] = { pointer, icuOutput };
             }
         }
-        
+
         for (auto& pair : big5Extras) {
             auto range = std::equal_range(array->begin(), array->end(), pair, CompareFirst { });
             ASSERT(range.second - range.first == 1);
             range.first->second = pair.second;
         }
-        
+
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(arrayIndex == 18590);
         ASSERT(*array == big5Reference);
     });
@@ -8625,7 +8625,7 @@ const std::array<char16_t, 23940>& gb18030()
             ASSERT(icuOutput != 0xFFFD);
             (*array)[pointer] = icuOutput;
         }
-        
+
         if (WTF::ICU::majorVersion() < 74) {
             // This is a difference between ICU and the encoding specification.
             ASSERT((*array)[6555] == 0xe5e5);

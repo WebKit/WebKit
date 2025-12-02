@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
+#if USE(AUDIO_SESSION)
 
 struct WebKit::RemoteAudioSessionConfiguration {
     String routingContextUID;
@@ -34,6 +34,7 @@ struct WebKit::RemoteAudioSessionConfiguration {
     bool isActive;
     String sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize;
+    WebCore::AudioSessionCategory categoryOverride;
 };
 
 #endif

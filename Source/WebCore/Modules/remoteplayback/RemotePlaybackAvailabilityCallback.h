@@ -38,6 +38,10 @@ class RemotePlaybackAvailabilityCallback : public RefCounted<RemotePlaybackAvail
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<bool> invoke(bool) = 0;
     virtual CallbackResult<bool> invokeRethrowingException(bool) = 0;
 

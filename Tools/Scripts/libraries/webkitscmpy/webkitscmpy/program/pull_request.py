@@ -125,6 +125,12 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
+            '--update-title', '--no-update-title',
+            dest='update_title', default=True,
+            help="When updating a pull request, update (or do not update) its title with the commits' common prefix.",
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
             '--no-issue', '--no-bug',
             dest='update_issue', default=True,
             help='Disable automatic bug creation and updates',
@@ -686,7 +692,7 @@ class PullRequest(Command):
             log.info("Updating pull-request for '{}'...".format(repository.branch))
             pr = remote_repo.pull_requests.update(
                 pull_request=existing_pr,
-                title=cls.title_for(commits),
+                title=cls.title_for(commits) if args.update_title else existing_pr.title,
                 commits=commits,
                 base=branch_point.branch,
                 head=repository.branch,
@@ -699,6 +705,9 @@ class PullRequest(Command):
             print("Updated '{}'!".format(pr))
         else:
             log.info("Creating pull-request for '{}'...".format(repository.branch))
+            if not args.update_title:
+                sys.stderr.write("'--no-update-title' cannot be used when creating a new pull-request.\n")
+                return 1
             pr = remote_repo.pull_requests.create(
                 title=cls.title_for(commits),
                 commits=commits,

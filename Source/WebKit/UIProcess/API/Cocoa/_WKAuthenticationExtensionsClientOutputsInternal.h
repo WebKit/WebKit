@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _WKAuthenticationExtensionsClientOutputs ()
 
 - (instancetype)initWithAppid:(BOOL)appid;
+- (instancetype)initWithAppid:(BOOL)appid prfEnabled:(BOOL)prfEnabled prfFirst:(NSData *)prfFirst prfSecond:(NSData *)prfSecond;
 
 @end
 

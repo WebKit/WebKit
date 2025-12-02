@@ -91,7 +91,8 @@ struct _WPEDisplayClass
  */
 typedef enum {
     WPE_DISPLAY_ERROR_NOT_SUPPORTED,
-    WPE_DISPLAY_ERROR_CONNECTION_FAILED
+    WPE_DISPLAY_ERROR_CONNECTION_FAILED,
+    WPE_DISPLAY_ERROR_CONNECTION_LOST
 } WPEDisplayError;
 
 WPE_API GQuark                   wpe_display_error_quark                   (void);
@@ -100,6 +101,8 @@ WPE_API WPEDisplay              *wpe_display_get_primary                   (void
 WPE_API void                     wpe_display_set_primary                   (WPEDisplay *display);
 WPE_API gboolean                 wpe_display_connect                       (WPEDisplay *display,
                                                                             GError    **error);
+WPE_API void                     wpe_display_disconnected                  (WPEDisplay *display,
+                                                                            GError     *error);
 WPE_API gpointer                 wpe_display_get_egl_display               (WPEDisplay *display,
                                                                             GError    **error);
 WPE_API WPEKeymap               *wpe_display_get_keymap                    (WPEDisplay *display);

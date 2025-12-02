@@ -39,6 +39,8 @@
 #include <WebCore/VideoFrameCV.h>
 #include <wtf/MainThread.h>
 #include <wtf/threads/BinarySemaphore.h>
+#else
+#include <WebCore/ImageBuffer.h>
 #endif
 
 namespace WebKit {
@@ -79,7 +81,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
     , m_referenceTracker(properties.reference)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
-    , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
+    , m_videoFrameObjectHeapProxy(videoFrameObjectHeapProxy)
 {
 }
 
@@ -88,6 +90,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
     , m_baseVideoFrame(&baseVideoFrame)
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
+    , m_videoFrameObjectHeapProxy(baseVideoFrame.m_videoFrameObjectHeapProxy)
 {
 }
 
@@ -112,6 +115,17 @@ uint32_t RemoteVideoFrameProxy::pixelFormat() const
     return m_pixelFormat;
 }
 
+RefPtr<WebCore::NativeImage> RemoteVideoFrameProxy::copyNativeImage() const
+{
+    // FIXME: This will change in the future to create GPUP side reference.
+#if PLATFORM(COCOA)
+    Ref frame = m_baseVideoFrame ? *m_baseVideoFrame : const_cast<RemoteVideoFrameProxy&>(*this);
+    return m_videoFrameObjectHeapProxy->getNativeImage(frame.get());
+#else
+    return nullptr;
+#endif
+}
+
 #if PLATFORM(COCOA)
 CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
@@ -119,15 +133,13 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
         return m_baseVideoFrame->pixelBuffer();
 
     Locker lock(m_pixelBufferLock);
-    if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
-        auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
-
+    if (!m_pixelBuffer) {
         bool canSendSync = isMainRunLoop(); // FIXME: we should be able to sendSync from other threads too.
         bool canUseIOSurface = !WebProcess::singleton().shouldUseRemoteRenderingForWebGL();
         if (!canUseIOSurface || !canSendSync) {
             Ref protectedThis { *this };
             BinarySemaphore semaphore;
-            videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
+            m_videoFrameObjectHeapProxy->getVideoFrameBuffer(*this, canUseIOSurface, [&protectedThis, &semaphore](auto pixelBuffer) {
                 protectedThis->m_pixelBuffer = WTFMove(pixelBuffer);
                 semaphore.signal();
             });

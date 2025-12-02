@@ -1977,6 +1977,11 @@ void WebsiteDataStore::storePrivateClickMeasurement(const WebCore::PrivateClickM
     protectedNetworkProcess()->send(Messages::NetworkProcess::StorePrivateClickMeasurement(sessionID(), privateClickMeasurement), 0);
 }
 
+void WebsiteDataStore::simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL)
+{
+    protectedNetworkProcess()->send(Messages::NetworkProcess::SimulatePrivateClickMeasurementConversion(sessionID(), priority, triggerData, sourceURL, destinationURL), 0);
+}
+
 void WebsiteDataStore::setStorageSiteValidationEnabled(bool enabled)
 {
     if (m_storageSiteValidationEnabled == enabled)

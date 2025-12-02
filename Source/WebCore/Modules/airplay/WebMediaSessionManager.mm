@@ -174,7 +174,7 @@ void WebMediaSessionManager::setMockMediaPlaybackTargetPickerEnabled(bool enable
     m_mockPickerEnabled = enabled;
 }
 
-void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
+void WebMediaSessionManager::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
 {
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__);
     checkedMockPicker()->setState(name, state);

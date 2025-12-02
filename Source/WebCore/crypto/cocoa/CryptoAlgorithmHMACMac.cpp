@@ -29,84 +29,49 @@
 #include "CryptoKeyHMAC.h"
 #include "CryptoUtilitiesCocoa.h"
 #include <CommonCrypto/CommonHMAC.h>
+
 #if HAVE(SWIFT_CPP_INTEROP)
-#include <pal/PALSwiftUtils.h>
+#include <pal/PALSwift.h>
 #endif
+
 #include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
-#if HAVE(SWIFT_CPP_INTEROP)
 static ExceptionOr<Vector<uint8_t>> platformSignCryptoKit(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (!isValidHashParameter(key.hashAlgorithmIdentifier()))
         return Exception { ExceptionCode::OperationError };
-    return PAL::HMAC::sign(key.key().span(), data.span(), toCKHashFunction(key.hashAlgorithmIdentifier()));
+    return PAL::HMAC::sign(key.key().span(), data.span(), std::to_underlying(toCKHashFunction(key.hashAlgorithmIdentifier())));
+#else
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(data);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
+#endif
 }
+
 static ExceptionOr<bool> platformVerifyCryptoKit(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (!isValidHashParameter(key.hashAlgorithmIdentifier()))
         return Exception { ExceptionCode::OperationError };
-    return PAL::HMAC::verify(signature.span(), key.key().span(), data.span(), toCKHashFunction(key.hashAlgorithmIdentifier()));
-}
-
+    return PAL::HMAC::verify(signature.span(), key.key().span(), data.span(), std::to_underlying(toCKHashFunction(key.hashAlgorithmIdentifier())));
 #else
-
-static std::optional<CCHmacAlgorithm> commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction)
-{
-    switch (hashFunction) {
-    case CryptoAlgorithmIdentifier::SHA_1:
-        return kCCHmacAlgSHA1;
-    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
-        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
-        return kCCHmacAlgSHA256;
-    case CryptoAlgorithmIdentifier::SHA_256:
-        return kCCHmacAlgSHA256;
-    case CryptoAlgorithmIdentifier::SHA_384:
-        return kCCHmacAlgSHA384;
-    case CryptoAlgorithmIdentifier::SHA_512:
-        return kCCHmacAlgSHA512;
-    default:
-        return std::nullopt;
-    }
-}
-
-static ExceptionOr<Vector<uint8_t>> platformSignCC(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
-{
-    auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
-    if (!algorithm)
-        return Exception { ExceptionCode::OperationError };
-
-    return calculateHMACSignature(*algorithm, key.key(), data.span());
-}
-
-static ExceptionOr<bool> platformVerifyCC(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
-{
-    auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
-    if (!algorithm)
-        return Exception { ExceptionCode::OperationError };
-
-    auto expectedSignature = calculateHMACSignature(*algorithm, key.key(), data.span());
-    // Using a constant time comparison to prevent timing attacks.
-    return signature.size() == expectedSignature.size() && !constantTimeMemcmp(expectedSignature.span(), signature.span());
-}
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(signature);
+    UNUSED_PARAM(data);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
+}
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return platformSignCryptoKit(key, data);
-#else
-    return platformSignCC(key, data);
-#endif
 }
 
 ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return platformVerifyCryptoKit(key, signature, data);
-#else
-    return platformVerifyCC(key, signature, data);
-#endif
 }
 } // namespace WebCore

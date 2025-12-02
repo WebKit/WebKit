@@ -48,6 +48,10 @@ public:
     static Ref<LoadableSpeculationRules> create(Document&, const URL&);
     ~LoadableSpeculationRules();
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     bool load(Document&, const URL&);
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;
 

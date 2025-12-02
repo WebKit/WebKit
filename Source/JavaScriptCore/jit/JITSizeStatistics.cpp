@@ -67,7 +67,7 @@ void JITSizeStatistics::dump(PrintStream& out) const
     for (auto pair : m_data)
         entries.append(std::make_pair(pair.key, pair.value));
 
-    std::sort(entries.begin(), entries.end(), [] (const auto& lhs, const auto& rhs) {
+    std::ranges::sort(entries, [](const auto& lhs, const auto& rhs) {
         return lhs.second.totalBytes > rhs.second.totalBytes;
     });
 

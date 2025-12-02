@@ -39,11 +39,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGURIReference);
 SVGURIReference::SVGURIReference(SVGElement* contextElement)
     : m_href(SVGAnimatedString::create(contextElement, IsHrefProperty::Yes))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::hrefAttr, &SVGURIReference::m_href>();
         PropertyRegistry::registerProperty<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
-    });
+    }
 }
 
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)

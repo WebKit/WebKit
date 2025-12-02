@@ -184,13 +184,13 @@ inline void BuilderState::setFontDescriptionOpticalSizing(FontOpticalSizing opti
     m_style.mutableFontDescriptionWithoutUpdate().setOpticalSizing(opticalSizing);
 }
 
-inline void BuilderState::setFontDescriptionSpecifiedLocale(const AtomString& specifiedLocale)
+inline void BuilderState::setFontDescriptionSpecifiedLocale(WebkitLocale&& specifiedLocale)
 {
-    if (m_style.fontDescription().specifiedLocale() == specifiedLocale)
+    if (m_style.fontDescription().specifiedLocale() == specifiedLocale.platform())
         return;
 
     m_fontDirty = true;
-    m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedLocale(specifiedLocale);
+    m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedLocale(specifiedLocale.takePlatform());
 }
 
 inline void BuilderState::setFontDescriptionTextAutospace(TextAutospace textAutospace)

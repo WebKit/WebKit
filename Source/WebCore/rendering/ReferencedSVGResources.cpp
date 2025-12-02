@@ -48,6 +48,7 @@ namespace WebCore {
 
 class CSSSVGResourceElementClient final : public SVGResourceElementClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSSVGResourceElementClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSSVGResourceElementClient);
 public:
     CSSSVGResourceElementClient(RenderElement& clientRenderer)
         : m_clientRenderer(clientRenderer)

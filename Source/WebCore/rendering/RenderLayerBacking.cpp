@@ -3991,7 +3991,7 @@ static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType
         case EventListenerRegionType::TouchMove:
         case EventListenerRegionType::TouchEnd:
         case EventListenerRegionType::TouchCancel:
-            return { "touch"_s, { }, Color::lightGray.colorWithAlphaByte(128) };
+            return { "touch"_s, { }, Color::gray.colorWithAlphaByte(128) };
         case EventListenerRegionType::NonPassiveTouchStart:
         case EventListenerRegionType::NonPassiveTouchEnd:
         case EventListenerRegionType::NonPassiveTouchCancel:
@@ -4004,7 +4004,7 @@ static RefPtr<Pattern> patternForEventListenerRegionType(EventListenerRegionType
         case EventListenerRegionType::PointerOut:
         case EventListenerRegionType::PointerOver:
         case EventListenerRegionType::PointerUp:
-            return { "pointer"_s, { }, Color::lightGray.colorWithAlphaByte(128) };
+            return { "pointer"_s, { }, Color::gray.colorWithAlphaByte(128) };
         case EventListenerRegionType::NonPassivePointerDown:
         case EventListenerRegionType::NonPassivePointerEnter:
         case EventListenerRegionType::NonPassivePointerLeave:
@@ -4052,6 +4052,13 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
             context.fillRect(rect);
     }
 
+    if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::TouchEventRegion)) {
+        static constexpr auto regionColor = Color::red.colorWithAlphaByte(50);
+        context.setFillColor(regionColor);
+        for (auto rect : eventRegion.region().rects())
+            context.fillRect(rect);
+    }
+
 #if ENABLE(TOUCH_ACTION_REGIONS)
     if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::TouchActionRegion)) {
         const TouchAction touchActionList[] = {
@@ -4087,6 +4094,49 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
             auto& region = graphicsLayer->eventRegion().eventListenerRegionForType(type);
             for (auto rect : region.rects())
                 context.fillRect(rect);
+        }
+    }
+#endif
+
+#if ENABLE(TOUCH_EVENT_REGIONS)
+    if (visibleDebugOverlayRegions.contains(DebugOverlayRegions::TouchEventRegion)) {
+        const auto& touchEventRegion = graphicsLayer->eventRegion().touchEventListenerRegion();
+
+        if (!touchEventRegion.asynchronousDispatchRegion.isEmpty()) {
+            if (RefPtr fillPattern = patternForEventListenerRegionType(EventListenerRegionType::TouchStart, graphicsLayer->offsetFromRenderer(), context)) {
+                context.setFillPattern(fillPattern.releaseNonNull());
+                for (auto rect : touchEventRegion.asynchronousDispatchRegion.rects())
+                    context.fillRect(rect);
+            }
+        }
+
+        for (const auto& [eventType, region] : touchEventRegion.eventSpecificSynchronousDispatchRegions) {
+            if (region.isEmpty())
+                continue;
+
+            EventListenerRegionType regionType;
+            switch (eventType) {
+            case EventTrackingRegionsEventType::Touchstart:
+                regionType = EventListenerRegionType::NonPassiveTouchStart;
+                break;
+            case EventTrackingRegionsEventType::Touchend:
+                regionType = EventListenerRegionType::NonPassiveTouchEnd;
+                break;
+            case EventTrackingRegionsEventType::Touchmove:
+                regionType = EventListenerRegionType::NonPassiveTouchMove;
+                break;
+            case EventTrackingRegionsEventType::Touchforcechange:
+                regionType = EventListenerRegionType::NonPassiveTouchCancel;
+                break;
+            default:
+                continue;
+            }
+
+            if (RefPtr fillPattern = patternForEventListenerRegionType(regionType, graphicsLayer->offsetFromRenderer(), context)) {
+                context.setFillPattern(fillPattern.releaseNonNull());
+                for (auto rect : region.rects())
+                    context.fillRect(rect);
+            }
         }
     }
 #endif
@@ -4170,7 +4220,8 @@ void RenderLayerBacking::paintContents(const GraphicsLayer& graphicsLayer, Graph
         paintIntoLayer(&graphicsLayer, context, dirtyRect, behavior);
 
         auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
-        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion, DebugOverlayRegions::InteractionRegion }))
+
+        if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::TouchEventRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion, DebugOverlayRegions::InteractionRegion }))
             paintDebugOverlays(&graphicsLayer, context);
 
     } else if (&graphicsLayer == layerForHorizontalScrollbar()) {
@@ -4460,30 +4511,31 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     }();
 
     AcceleratedEffects acceleratedEffects;
-    WeakListHashSet<AcceleratedEffect> weakAcceleratedEffects;
     if (auto* effectStack = target->keyframeEffectStack()) {
-        auto animatesWidth = effectStack->containsProperty(CSSPropertyWidth);
-        auto animatesHeight = effectStack->containsProperty(CSSPropertyHeight);
-        for (const auto& effect : effectStack->sortedEffects()) {
-            if (!effect || !effect->canBeAccelerated())
-                continue;
-            if (animatesWidth || animatesHeight) {
-                auto& blendingKeyframes = effect->blendingKeyframes();
-                if ((animatesWidth && blendingKeyframes.hasWidthDependentTransform()) || (animatesHeight && blendingKeyframes.hasHeightDependentTransform()))
-                    disallowedAcceleratedProperties.add(transformRelatedAcceleratedProperties);
+        WeakListHashSet<AcceleratedEffect> weakAcceleratedEffects;
+        if (effectStack->allowsAcceleration()) {
+            auto animatesWidth = effectStack->containsProperty(CSSPropertyWidth);
+            auto animatesHeight = effectStack->containsProperty(CSSPropertyHeight);
+            for (const auto& effect : effectStack->sortedEffects()) {
+                if (!effect || !effect->canHaveAcceleratedRepresentation() || !effect->canBeAccelerated())
+                    continue;
+                if (animatesWidth || animatesHeight) {
+                    auto& blendingKeyframes = effect->blendingKeyframes();
+                    if ((animatesWidth && blendingKeyframes.hasWidthDependentTransform()) || (animatesHeight && blendingKeyframes.hasHeightDependentTransform()))
+                        disallowedAcceleratedProperties.add(transformRelatedAcceleratedProperties);
+                }
+                ASSERT(effect->animation());
+                ASSERT(effect->animation()->timeline());
+                Ref acceleratedTimeline = Ref { *effect->animation()->timeline() }->acceleratedRepresentation();
+                RefPtr acceleratedEffect = effect->updatedAcceleratedRepresentation(acceleratedTimeline->identifier(), borderBoxRect, baseValues, disallowedAcceleratedProperties);
+                if (!acceleratedEffect)
+                    continue;
+                if (!hasInterpolatingEffect && effect->isRunningAccelerated())
+                    hasInterpolatingEffect = true;
+                weakAcceleratedEffects.add(*acceleratedEffect);
+                acceleratedEffects.append(acceleratedEffect.releaseNonNull());
+                timelines.add(WTFMove(acceleratedTimeline));
             }
-            ASSERT(effect->animation());
-            ASSERT(effect->animation()->timeline());
-            Ref acceleratedTimeline = Ref { *effect->animation()->timeline() }->acceleratedRepresentation();
-            auto acceleratedEffect = AcceleratedEffect::create(*effect, acceleratedTimeline->identifier(), borderBoxRect, baseValues, disallowedAcceleratedProperties);
-            if (!acceleratedEffect)
-                continue;
-            if (!hasInterpolatingEffect && effect->isRunningAccelerated())
-                hasInterpolatingEffect = true;
-            effect->setAcceleratedRepresentation(acceleratedEffect.get());
-            weakAcceleratedEffects.add(*acceleratedEffect);
-            acceleratedEffects.append(acceleratedEffect.releaseNonNull());
-            timelines.add(WTFMove(acceleratedTimeline));
         }
         effectStack->setAcceleratedEffects(WTFMove(weakAcceleratedEffects));
     }

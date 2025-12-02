@@ -149,10 +149,9 @@ promise_test(async () => {
     const iframeWindow = iframe.contentWindow;
     const iframeDevicePixelRatio = iframeWindow.devicePixelRatio;
 
-    // The ratio between iframe and main window devicePixelRatio should reflect the combined zoom effect
-    // Page zoom (zoomFactor) * iframe zoom (2)
+    // The ratio between iframe and main window devicePixelRatio should reflect the combined CSS zoom on the iframe
     const ratio = iframeDevicePixelRatio / mainDevicePixelRatio;
-    assert_approx_equals(ratio, zoomFactor * 2, 0.01);
+    assert_approx_equals(ratio, iframeZoom * zoomFactor , 0.01);
 }, 'devicePixelRatio ratio should reflect combined zoom effect');
 </script>
 </body>

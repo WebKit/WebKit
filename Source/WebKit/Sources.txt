@@ -747,7 +747,6 @@ WebProcess/Inspector/WebInspectorUI.cpp
 WebProcess/Inspector/WasmDebuggerDispatcher.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
 WebProcess/Inspector/WebPageInspectorTarget.cpp
-WebProcess/Inspector/WebPageInspectorTargetController.cpp
 WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp
 
 WebProcess/Media/RemoteMediaSessionManager.cpp

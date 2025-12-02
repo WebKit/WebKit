@@ -142,6 +142,33 @@ auto GridLayout::placeGridItems(UnplacedGridItems& unplacedGridItems, const Vect
     return Result { implicitGrid.gridAreas(), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
 }
 
+auto computeGridItemRects = [](const PlacedGridItems& placedGridItems, const BorderBoxPositions& inlineAxisPositions,
+    const BorderBoxPositions& blockAxisPositions, const UsedInlineSizes& usedInlineSizes, const UsedBlockSizes& usedBlockSizes,
+    const Vector<UsedMargins>& usedInlineMargins, const Vector<UsedMargins>& usedBlockMargins)
+{
+    GridItemRects gridItemRects;
+    gridItemRects.reserveInitialCapacity(placedGridItems.size());
+
+    for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
+        auto borderBoxRect = LayoutRect { inlineAxisPositions[gridItemIndex], blockAxisPositions[gridItemIndex],
+            usedInlineSizes[gridItemIndex], usedBlockSizes[gridItemIndex]
+        };
+
+        auto& gridItemInlineMargins = usedInlineMargins[gridItemIndex];
+        auto& gridItemBlockMargins = usedBlockMargins[gridItemIndex];
+        auto marginEdges = RectEdges<LayoutUnit> {
+            gridItemBlockMargins.marginStart,
+            gridItemInlineMargins.marginEnd,
+            gridItemBlockMargins.marginEnd,
+            gridItemInlineMargins.marginStart
+        };
+
+        auto& placedGridItem = placedGridItems[gridItemIndex];
+        gridItemRects.append({ borderBoxRect, marginEdges, placedGridItem.gridAreaLines(), placedGridItem.layoutBox() });
+    }
+    return gridItemRects;
+};
+
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
 std::pair<UsedTrackSizes, GridItemRects> GridLayout::layout(GridFormattingContext::GridLayoutConstraints, UnplacedGridItems& unplacedGridItems)
 {
@@ -178,31 +205,12 @@ std::pair<UsedTrackSizes, GridItemRects> GridLayout::layout(GridFormattingContex
     auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins);
     auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins);
 
-    GridItemRects gridItemRects;
-    gridItemRects.reserveInitialCapacity(placedGridItems.size());
-
-    for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
-        auto borderBoxRect =  LayoutRect { inlineAxisPositions[gridItemIndex], blockAxisPositions[gridItemIndex],
-            usedInlineSizes[gridItemIndex], usedBlockSizes[gridItemIndex]
-        };
-
-        auto& gridItemInlineMargins = usedInlineMargins[gridItemIndex];
-        auto& gridItemBlockMargins = usedBlockMargins[gridItemIndex];
-        auto marginEdges = RectEdges<LayoutUnit> {
-            gridItemBlockMargins.marginStart,
-            gridItemInlineMargins.marginEnd,
-            gridItemBlockMargins.marginEnd,
-            gridItemInlineMargins.marginStart
-        };
-
-        auto& placedGridItem = placedGridItems[gridItemIndex];
-        gridItemRects.append({ borderBoxRect, marginEdges, placedGridItem.gridAreaLines(), placedGridItem.layoutBox() });
-    }
+    auto gridItemRects = computeGridItemRects(placedGridItems, inlineAxisPositions, blockAxisPositions, usedInlineSizes, usedBlockSizes, usedInlineMargins, usedBlockMargins);
 
     return { usedTrackSizes, gridItemRects };
 }
 
-GridLayout::BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins)
+BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins)
 {
     BorderBoxPositions borderBoxPositions;
     borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
@@ -228,7 +236,7 @@ GridLayout::BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const 
     return borderBoxPositions;
 }
 
-GridLayout::BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& blockMargins)
+BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& blockMargins)
 {
     BorderBoxPositions borderBoxPositions;
     borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
@@ -378,7 +386,7 @@ Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& place
 }
 
 // https://drafts.csswg.org/css-grid-1/#grid-item-sizing
-std::pair<GridLayout::UsedInlineSizes, GridLayout::UsedBlockSizes> GridLayout::layoutGridItems(const PlacedGridItems& placedGridItems, const UsedTrackSizes&) const
+std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const PlacedGridItems& placedGridItems, const UsedTrackSizes&) const
 {
     UsedInlineSizes usedInlineSizes;
     UsedBlockSizes usedBlockSizes;

@@ -1795,7 +1795,9 @@ localizedStrings["This is what the result of a warning test with no data looks l
 localizedStrings["This is what the result of an unsupported test with no data looks like."] = "This is what the result of an unsupported test with no data looks like.";
 localizedStrings["This means all of the Console Command Line API is available <https://webkit.org/web-inspector/console-command-line-api/>."] = "This means all of the Console Command Line API is available <https://webkit.org/web-inspector/console-command-line-api/>.";
 localizedStrings["This object is a root"] = "This object is a root";
+localizedStrings["This object is dominated by the object above"] = "This object is dominated by the object above";
 localizedStrings["This object is referenced by internal objects"] = "This object is referenced by internal objects";
+localizedStrings["This object is the highest dominator"] = "This object is the highest dominator";
 localizedStrings["This resource came from a local override"] = "This resource came from a local override";
 localizedStrings["This resource was blocked by a local override"] = "This resource was blocked by a local override";
 localizedStrings["This resource was loaded from a local override"] = "This resource was loaded from a local override";

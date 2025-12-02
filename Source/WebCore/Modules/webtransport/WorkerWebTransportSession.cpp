@@ -68,7 +68,7 @@ void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, b
     });
 }
 
-void WorkerWebTransportSession::didFail(std::optional<unsigned>&& code, String&& message)
+void WorkerWebTransportSession::didFail(std::optional<uint32_t>&& code, String&& message)
 {
     ASSERT(RunLoop::isMain());
     ScriptExecutionContext::postTaskTo(m_contextID, [weakClient = m_client, code = WTFMove(code), message = WTFMove(message)] (auto&) mutable {
@@ -76,6 +76,17 @@ void WorkerWebTransportSession::didFail(std::optional<unsigned>&& code, String&&
         if (!client)
             return;
         client->didFail(WTFMove(code), WTFMove(message));
+    });
+}
+
+void WorkerWebTransportSession::didDrain()
+{
+    ASSERT(RunLoop::isMain());
+    ScriptExecutionContext::postTaskTo(m_contextID, [weakClient = m_client] (auto&) mutable {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
+        client->didDrain();
     });
 }
 
@@ -109,6 +120,28 @@ void WorkerWebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier 
         if (!client)
             return;
         client->streamReceiveBytes(identifier, data.span(), withFin, WTFMove(exception));
+    });
+}
+
+void WorkerWebTransportSession::streamReceiveError(WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    ASSERT(RunLoop::isMain());
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, errorCode, weakClient = m_client] (auto&) mutable {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
+        client->streamReceiveError(identifier, errorCode);
+    });
+}
+
+void WorkerWebTransportSession::streamSendError(WebTransportStreamIdentifier identifier, uint64_t errorCode)
+{
+    ASSERT(RunLoop::isMain());
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, errorCode, weakClient = m_client] (auto&) mutable {
+        RefPtr client = weakClient.get();
+        if (!client)
+            return;
+        client->streamSendError(identifier, errorCode);
     });
 }
 

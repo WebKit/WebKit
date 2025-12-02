@@ -70,26 +70,26 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     enum CaretAlignment { AlignLogicalLeft, AlignLogicalRight, AlignCenter };
     CaretAlignment alignment;
     switch (currentStyle.textAlign()) {
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
+    case Style::TextAlign::Left:
+    case Style::TextAlign::WebKitLeft:
         alignment = writingMode.isLogicalLeftLineLeft()
             ? AlignLogicalLeft : AlignLogicalRight;
         break;
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
+    case Style::TextAlign::Center:
+    case Style::TextAlign::WebKitCenter:
         alignment = AlignCenter;
         break;
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
+    case Style::TextAlign::Right:
+    case Style::TextAlign::WebKitRight:
         alignment = writingMode.isLogicalLeftLineLeft()
             ? AlignLogicalRight : AlignLogicalLeft;
         break;
-    case TextAlignMode::Justify:
-    case TextAlignMode::Start:
+    case Style::TextAlign::Justify:
+    case Style::TextAlign::Start:
         alignment = writingMode.isLogicalLeftInlineStart()
             ? AlignLogicalLeft : AlignLogicalRight;
         break;
-    case TextAlignMode::End:
+    case Style::TextAlign::End:
         alignment = writingMode.isLogicalLeftInlineStart()
             ? AlignLogicalRight : AlignLogicalLeft;
         break;
@@ -151,21 +151,21 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
 
     bool rightAligned = false;
     switch (root.style().textAlign()) {
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
+    case Style::TextAlign::Right:
+    case Style::TextAlign::WebKitRight:
         rightAligned = writingMode.isLogicalLeftLineLeft();
         break;
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
+    case Style::TextAlign::Left:
+    case Style::TextAlign::WebKitLeft:
+    case Style::TextAlign::Center:
+    case Style::TextAlign::WebKitCenter:
         rightAligned = !writingMode.isLogicalLeftLineLeft();
         break;
-    case TextAlignMode::Justify:
-    case TextAlignMode::Start:
+    case Style::TextAlign::Justify:
+    case Style::TextAlign::Start:
         rightAligned = !writingMode.isLogicalLeftInlineStart();
         break;
-    case TextAlignMode::End:
+    case Style::TextAlign::End:
         rightAligned = writingMode.isLogicalLeftInlineStart();
         break;
     }

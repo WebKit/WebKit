@@ -86,8 +86,8 @@ AnchorScrollAdjuster::AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxM
     m_needsYAdjustment = compensatedAxes.contains(BoxAxis::Vertical);
 
     auto containingWritingMode = anchored.container()->style().writingMode();
-    if (auto positionArea = style.positionArea()) {
-        if (positionArea->coordMatchedTrackForAxis(BoxAxis::Horizontal, containingWritingMode, style.writingMode()) != PositionAreaTrack::SpanAll)
+    if (auto positionAreaValue = style.positionArea().tryValue()) {
+        if (positionAreaValue->coordMatchedTrackForAxis(BoxAxis::Horizontal, containingWritingMode, style.writingMode()) != Style::PositionAreaTrack::SpanAll)
             m_needsXAdjustment |= true;
         else {
             if (containingWritingMode.isHorizontal()) {
@@ -98,7 +98,7 @@ AnchorScrollAdjuster::AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxM
                 m_needsXAdjustment |= alignment.isAuto() || alignment.isNormal() || alignment.isAnchorCenter();
             }
         }
-        if (positionArea->coordMatchedTrackForAxis(BoxAxis::Vertical, containingWritingMode, style.writingMode()) != PositionAreaTrack::SpanAll)
+        if (positionAreaValue->coordMatchedTrackForAxis(BoxAxis::Vertical, containingWritingMode, style.writingMode()) != Style::PositionAreaTrack::SpanAll)
             m_needsYAdjustment |= true;
         else {
             if (containingWritingMode.isHorizontal()) {
@@ -281,7 +281,7 @@ void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool i
     if (adjuster.isEmpty())
         return clearAnchorScrollSnapshots(anchored);
 
-    if (!anchored.style().positionTryFallbacks().isEmpty()
+    if (!anchored.style().positionTryFallbacks().isNone()
         || anchored.style().positionVisibility().contains(PositionVisibilityValue::NoOverflow))
         adjuster.setFallbackLimits(anchored);
 
@@ -315,7 +315,7 @@ void AnchorPositionEvaluator::updateScrollAdjustments(RenderView& renderView)
         bool needsInvalidation = false;
         if (adjuster.hasFallbackLimits()) {
             if (adjuster.exceedsFallbackLimits(scrollOffset)) {
-                if (!anchored->style().positionTryFallbacks().isEmpty()) {
+                if (!anchored->style().positionTryFallbacks().isNone()) {
                     anchored->setNeedsLayout();
                     needsInvalidation = true;
                 } else
@@ -802,7 +802,7 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFun
 
     // Anchor value may now be resolved using layout information
 
-    RefPtr anchorElement = anchorPositionedState.anchorElements.get(resolvedAnchorName).get();
+    RefPtr anchorElement = anchorPositionedState.anchorElements.get(resolvedAnchorName);
     if (!anchorElement) {
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -1068,7 +1068,7 @@ static CheckedPtr<const Element> anchorScopeForAnchorName(const RenderBoxModelOb
             continue;
         const auto& currentAncestorAnchorScope = currentAncestorStyle->anchorScope();
 
-        if (NameScope::Type::None == currentAncestorAnchorScope.type)
+        if (Style::NameScope::Type::None == currentAncestorAnchorScope.type)
             continue;
 
         auto styleScope = Scope::forOrdinal(*currentAncestor, currentAncestorAnchorScope.scopeOrdinal);
@@ -1076,8 +1076,8 @@ static CheckedPtr<const Element> anchorScopeForAnchorName(const RenderBoxModelOb
         if (anchorName.scopeIdentifier() != styleScope->identifier())
             continue;
 
-        if (NameScope::Type::All == currentAncestorAnchorScope.type
-            || currentAncestorAnchorScope.names.contains(anchorName.name()))
+        if (Style::NameScope::Type::All == currentAncestorAnchorScope.type
+            || currentAncestorAnchorScope.names.contains(CustomIdentifier { anchorName.name() }))
             return currentAncestor;
     }
 
@@ -1378,7 +1378,7 @@ bool AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(const RenderStyle& st
     if (!generatesBox(style) || !style.hasOutOfFlowPosition())
         return false;
 
-    if (style.positionArea())
+    if (!style.positionArea().isNone())
         return true;
 
     return style.justifySelf().isAnchorCenter() || style.alignSelf().isAnchorCenter();
@@ -1663,7 +1663,7 @@ bool AnchorPositionEvaluator::isImplicitAnchor(const RenderStyle& style)
         if (!pseudoElementStyle)
             return false;
         // If we have an explicit anchor name then there is no need for an implicit anchor.
-        if (pseudoElementStyle->positionAnchor())
+        if (!pseudoElementStyle->positionAnchor().isAuto())
             return false;
 
         return pseudoElementStyle->usesAnchorFunctions() || isLayoutTimeAnchorPositioned(*pseudoElementStyle);
@@ -1673,8 +1673,8 @@ bool AnchorPositionEvaluator::isImplicitAnchor(const RenderStyle& style)
 
 ScopedName AnchorPositionEvaluator::defaultAnchorName(const RenderStyle& style)
 {
-    if (style.positionAnchor())
-        return *style.positionAnchor();
+    if (auto name = style.positionAnchor().tryName())
+        return *name;
     return implicitAnchorElementName();
 }
 

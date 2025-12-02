@@ -37,6 +37,10 @@ class SubscriberCallback : public RefCounted<SubscriberCallback>, public ActiveD
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(Subscriber&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Subscriber&) = 0;
 

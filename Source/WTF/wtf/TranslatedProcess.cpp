@@ -35,15 +35,13 @@ namespace WTF {
 
 bool isX86BinaryRunningOnARM()
 {
-    static bool result;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    static bool result = [] {
         int value = 0;
         size_t size = sizeof(value);
         if (sysctlbyname("sysctl.proc_translated", &value, &size, nullptr, 0) < 0)
-            return;
-        result = !!value;        
-    });
+            return false;
+        return !!value;
+    }();
     return result;
 }
 

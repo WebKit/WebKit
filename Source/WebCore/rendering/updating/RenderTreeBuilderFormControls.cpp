@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeBuilderFormControls.h"
 
+#include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderButton.h"
 #include "RenderMenuList.h"

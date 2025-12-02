@@ -39,6 +39,10 @@ class BlobCallback : public RefCounted<BlobCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(Blob*) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Blob*) = 0;
 

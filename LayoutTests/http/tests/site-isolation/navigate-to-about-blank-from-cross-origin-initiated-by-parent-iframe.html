@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<script>
+// Have the main frame navigate a cross-origin child iframe
+// to about:blank.
+// The about:blank iframe should inherit the origin of it's parent,
+// or it's opener if the parent doesn't exist.
+// https://dev.w3.org/html5/spec-LC/origin-0.html
+// https://dev.w3.org/html5/spec-LC/browsers.html#about-blank-origin
+
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+</script>
+<body>
+<p>This test passes if the child frame can modify the grandchild iframe's DOM (once the grandchild iframe has navigated away from a cross-origin site to about:blank).</p>
+<iframe src="http://localhost:8000/site-isolation/resources/frame-child-navigate-to-about-blank-from-cross-origin-initiated-by-parent-iframe.html" style="border:5px solid red;"></iframe>
+</body>
+</html>

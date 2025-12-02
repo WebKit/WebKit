@@ -56,6 +56,7 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS_FAMILY)
     RelayAccessibilityNotification(String notificationName, std::span<const uint8_t> notificationData)
     RelayAriaNotifyNotification(struct WebCore::AriaNotifyData notificationData)
+    RelayLiveRegionNotification(struct WebCore::LiveRegionAnnouncementData notificationData)
 #endif
     EnableAccessibilityForAllProcesses()
 
@@ -95,6 +96,10 @@ messages -> WebPageProxy {
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
     SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    [EnabledBy=ModelElementImmersiveEnabled] CanEnterImmersiveElementFromURL(URL url) -> (bool canEnterImmersive)
+#endif
 
     DidChangeContentSize(WebCore::IntSize newSize)
     DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
@@ -177,7 +182,7 @@ messages -> WebPageProxy {
     DidFinishLoadingDataForCustomContentProvider(String suggestedFilename, std::span<const uint8_t> data)
 
     # Forms messages
-    WillSubmitForm(struct WebKit::FrameInfoData frame, struct WebKit::FrameInfoData sourceFrame, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData) -> ()
+    WillSubmitForm(struct WebKit::FrameInfoData frame, struct WebKit::FrameInfoData sourceFrame, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData, URL requestURL, String method) -> ()
 
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, struct WebKit::KeyEventInterpretationContext context) -> (bool handled) Synchronous
@@ -481,7 +486,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, OptionSet<WebCore::MediaProducerMediaState> mediaState)
     SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
-    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContextMockState pickerState)
+    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetMockState pickerState)
     MockMediaPlaybackTargetPickerDismissPopup()
 #endif
 
@@ -639,6 +644,9 @@ messages -> WebPageProxy {
     [EnabledBy=SiteIsolationEnabled] BroadcastDocumentSyncData(struct WebCore::DocumentSyncSerializationData processSyncData)
     [EnabledBy=SiteIsolationEnabled] BroadcastAllDocumentSyncData(Ref<WebCore::DocumentSyncData> documentSyncData)
 
+    [EnabledBy=SiteIsolationEnabled] BroadcastFrameTreeSyncData(WebCore::FrameIdentifier frameID, struct WebCore::FrameTreeSyncSerializationData frameTreeSyncData)
+    [EnabledBy=SiteIsolationEnabled] BroadcastAllFrameTreeSyncData(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
+
     [EnabledBy=SiteIsolationEnabled] DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 
     [EnabledBy=SiteIsolationEnabled] FocusRemoteFrame(WebCore::FrameIdentifier frameID)
@@ -672,6 +680,6 @@ messages -> WebPageProxy {
     SetAllowsLayoutViewportHeightExpansion(bool newValue)
 
 #if ENABLE(VIDEO)
-    ShowCaptionDisplaySettings() -> (bool success)
+    ShowCaptionDisplaySettings(WebCore::MediaPlayerClientIdentifier identifier, struct WebCore::ResolvedCaptionDisplaySettingsOptions options) -> (Expected<void, WebCore::ExceptionData> response)
 #endif
 }

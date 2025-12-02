@@ -44,17 +44,8 @@ JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSC::initialize();
-    if (string) {
-        auto stringSpan = unsafeSpan8(string);
-        Vector<char16_t, 1024> buffer(stringSpan.size());
-        auto result = WTF::Unicode::convert(spanReinterpretCast<const char8_t>(stringSpan), buffer.mutableSpan());
-        if (result.code == WTF::Unicode::ConversionResultCode::Success) {
-            if (result.isAllASCII)
-                return &OpaqueJSString::create(stringSpan).leakRef();
-            return &OpaqueJSString::create(result.buffer).leakRef();
-        }
-    }
-
+    if (auto result = OpaqueJSString::tryCreate(byteCast<char8_t>(unsafeSpan(string))))
+        return result.leakRef();
     return &OpaqueJSString::create().leakRef();
 }
 

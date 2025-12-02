@@ -62,11 +62,7 @@ void CompletionHandlerCallChecker::didCallCompletionHandler()
 
 static bool shouldThrowExceptionForDuplicateCompletionHandlerCall()
 {
-    static bool shouldThrowException;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        shouldThrowException = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForDuplicateCompletionHandlerCalls);
-    });
+    static bool shouldThrowException = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForDuplicateCompletionHandlerCalls);
     return shouldThrowException;
 }
 

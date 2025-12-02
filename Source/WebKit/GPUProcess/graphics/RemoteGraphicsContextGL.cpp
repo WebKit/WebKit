@@ -63,11 +63,8 @@ Vector<S> vectorCopyCast(const T& arrayReference)
 // Currently we have one global WebGL processing instance.
 IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueueSingleton()
 {
-    static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        instance.construct("RemoteGraphicsContextGL work queue"_s); // LazyNeverDestroyed owns the initial ref.
-    });
+    // NeverDestroyed owns the initial ref.
+    static NeverDestroyed<IPC::StreamConnectionWorkQueue> instance { "RemoteGraphicsContextGL work queue"_s };
     return instance.get();
 }
 

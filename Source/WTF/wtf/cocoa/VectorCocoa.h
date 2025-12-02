@@ -32,6 +32,7 @@
 
 #include <wtf/BlockPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/SpanCocoa.h>
 #include <wtf/darwin/DispatchExtras.h>
@@ -113,11 +114,11 @@ inline Vector<uint8_t> makeVector(NSData *data)
 }
 
 template<typename T>
-inline RetainPtr<dispatch_data_t> makeDispatchData(Vector<T>&& vector)
+inline OSObjectPtr<dispatch_data_t> makeDispatchData(Vector<T>&& vector)
 {
     auto buffer = vector.releaseBuffer();
     auto span = buffer.span();
-    return adoptNS(dispatch_data_create(span.data(), span.size_bytes(), mainDispatchQueueSingleton(), makeBlockPtr([buffer = WTFMove(buffer)] { }).get()));
+    return adoptOSObject(dispatch_data_create(span.data(), span.size_bytes(), mainDispatchQueueSingleton(), makeBlockPtr([buffer = WTFMove(buffer)] { }).get()));
 }
 
 } // namespace WTF

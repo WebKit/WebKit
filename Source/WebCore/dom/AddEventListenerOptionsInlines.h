@@ -31,18 +31,20 @@
 
 namespace WebCore {
 
-inline AddEventListenerOptions::AddEventListenerOptions(bool capture, std::optional<bool> passive, bool once, RefPtr<AbortSignal>&& signal)
+inline AddEventListenerOptions::AddEventListenerOptions(bool capture, std::optional<bool> passive, bool once, RefPtr<AbortSignal>&& signal, bool webkitTrustedOnly)
     : EventListenerOptions(capture)
     , passive(passive)
     , once(once)
     , signal(WTFMove(signal))
+    , webkitTrustedOnly(webkitTrustedOnly)
 {
 }
 
-inline AddEventListenerOptions::AddEventListenerOptions(bool capture, std::optional<bool> passive, bool once)
+inline AddEventListenerOptions::AddEventListenerOptions(bool capture, std::optional<bool> passive, bool once, bool webkitTrustedOnly)
     : EventListenerOptions(capture)
     , passive(passive)
     , once(once)
+    , webkitTrustedOnly(webkitTrustedOnly)
 {
 }
 

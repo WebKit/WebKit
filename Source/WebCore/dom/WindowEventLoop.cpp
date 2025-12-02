@@ -39,14 +39,17 @@
 #include "ThreadTimers.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
-static MemoryCompactRobinHoodHashMap<String, WindowEventLoop*>& windowEventLoopMap()
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowEventLoop);
+
+static MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>& windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, WindowEventLoop*>> map;
+    static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, CheckedPtr<WindowEventLoop>>> map;
     return map.get();
 }
 

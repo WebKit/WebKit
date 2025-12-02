@@ -288,11 +288,9 @@ void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 
 id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    static id<MTLFunction> function = nil;
-    id<MTLDevice> mtlDevice = m_device->device();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [protectedThis = Ref { *this }, &mtlDevice] {
-        auto dimensionMax = protectedThis->m_device->limits().maxComputeWorkgroupsPerDimension;
+    static id<MTLFunction> function = [this] {
+        id<MTLDevice> mtlDevice = m_device->device();
+        auto dimensionMax = m_device->limits().maxComputeWorkgroupsPerDimension;
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
@@ -302,8 +300,8 @@ id<MTLBuffer> ComputePassEncoder::runPredispatchIndirectCallValidation(const Buf
         if (error)
             WTFLogAlways("%@", error); // NOLINT
 
-        function = [library newFunctionWithName:@"csDispatchClamp"];
-    });
+        return [library newFunctionWithName:@"csDispatchClamp"];
+    }();
     RELEASE_ASSERT(function);
 
     auto device = m_device;

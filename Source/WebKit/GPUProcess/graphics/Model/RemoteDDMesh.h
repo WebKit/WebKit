@@ -91,11 +91,8 @@ private:
     void destruct();
 
     void setLabel(String&&);
-    void addMesh(const WebCore::DDModel::DDMeshDescriptor&);
     void update(const WebCore::DDModel::DDUpdateMeshDescriptor&);
-    void addTexture(const WebCore::DDModel::DDTextureDescriptor&);
     void updateTexture(const WebCore::DDModel::DDUpdateTextureDescriptor&);
-    void addMaterial(const WebCore::DDModel::DDMaterialDescriptor&);
     void updateMaterial(const WebCore::DDModel::DDUpdateMaterialDescriptor&);
     void updateTransform(const WebCore::DDModel::DDFloat4x4& transform);
     void setCameraDistance(float);

@@ -249,11 +249,7 @@ namespace WebCore {
 
 static bool canCreateRevealItems()
 {
-    static bool result;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        result = PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClassSingleton();
-    });
+    static bool result = PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClassSingleton();
     return result;
 }
 

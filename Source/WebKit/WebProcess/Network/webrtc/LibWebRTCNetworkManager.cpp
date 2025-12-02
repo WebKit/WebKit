@@ -179,7 +179,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
         }
 #endif
         for (auto& network : networks) {
-            if (std::ranges::any_of(network.ips, [&](const auto& ip) { return ipv4.rtcAddress() == ip.rtcAddress() || ipv6.rtcAddress() == ip.rtcAddress(); }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(String::fromUTF8(network.name))))
+            if (std::ranges::any_of(network.ips, [&](const auto& ip) { return ipv4.rtcAddress() == ip.rtcAddress() || ipv6.rtcAddress() == ip.rtcAddress(); }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(network.name)))
                 filteredNetworks.append(network);
         }
     }

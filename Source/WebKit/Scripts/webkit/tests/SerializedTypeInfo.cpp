@@ -65,6 +65,7 @@
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#include <WebCore/OpaqueTypeObject.h>
 #if USE(APPKIT)
 #include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #endif
@@ -96,6 +97,9 @@ static_assert(std::is_same_v<WTF::ProcessID,
     pid_t
 >);
 #endif
+static_assert(std::is_same_v<WebCore::AliasOpaqueTypeWrapper,
+    Variant<int, Vector<uint8_t>>
+>);
 static_assert(std::is_same_v<WebCore::ConditionalVariant,
     Variant<
         int,
@@ -560,6 +564,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "left()"_s
             },
         } },
+        { "WebCore::OpaqueTypeObject"_s, {
+            {
+                "NotDispatchableFromWebContent"_s,
+                "member"_s
+            },
+        } },
 #if USE(PASSKIT)
         { "PKPaymentMethod"_s, {
             { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }
@@ -592,6 +602,11 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             , "alias"_s }
         } },
 #endif
+        { "WebCore::AliasOpaqueTypeWrapper"_s, {
+        {
+            "Variant<int, Vector<uint8_t>>"_s
+            , "alias"_s }
+        } },
         { "WebCore::ConditionalVariant"_s, {
         {
             "Variant<"

@@ -88,7 +88,7 @@ void WebTransportSendStreamSink::close()
     m_isClosed = true;
 }
 
-void WebTransportSendStreamSink::error(String&&)
+void WebTransportSendStreamSink::abort(JSC::JSValue)
 {
     if (m_isCancelled)
         return;

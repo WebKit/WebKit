@@ -33,7 +33,6 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebProcess.h"
 #include <WebCore/NativeImage.h>
-#include <WebCore/WebCodecsVideoFrame.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
@@ -45,14 +44,6 @@ RemoteQueueProxy::RemoteQueueProxy(RemoteAdapterProxy& parent, ConvertToBackingC
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
 {
-#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> videoFrameObjectHeapProxy;
-    callOnMainRunLoopAndWait([&videoFrameObjectHeapProxy] {
-        videoFrameObjectHeapProxy = WebProcess::singleton().ensureProtectedGPUProcessConnection()->videoFrameObjectHeapProxy();
-    });
-
-    m_videoFrameObjectHeapProxy = videoFrameObjectHeapProxy;
-#endif
 }
 
 RemoteQueueProxy::~RemoteQueueProxy()
@@ -91,12 +82,8 @@ void RemoteQueueProxy::writeBuffer(
 
     size_t actualSourceSize = static_cast<size_t>(size.value_or(source.size() - dataOffset));
     if (actualSourceSize > maxCrossProcessResourceCopySize) {
-        auto sharedMemory = WebCore::SharedMemory::copySpan(source.subspan(dataOffset, actualSourceSize));
-        std::optional<WebCore::SharedMemoryHandle> handle;
-        if (sharedMemory)
-            handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTFMove(handle)), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
-            RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+        auto handle = WebCore::SharedMemoryHandle::createCopy(source.subspan(dataOffset, actualSourceSize), WebCore::SharedMemoryProtection::ReadOnly);
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, WTFMove(handle)), [](auto) mutable {
         });
         UNUSED_VARIABLE(sendResult);
     } else {
@@ -121,12 +108,8 @@ void RemoteQueueProxy::writeTexture(
         return;
 
     if (source.size() > maxCrossProcessResourceCopySize) {
-        auto sharedMemory = WebCore::SharedMemory::copySpan(source);
-        std::optional<WebCore::SharedMemoryHandle> handle;
-        if (sharedMemory)
-            handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
-        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTFMove(handle), *convertedDataLayout, *convertedSize), [sharedMemory = sharedMemory.copyRef(), handleHasValue = handle.has_value()](auto) mutable {
-            RELEASE_ASSERT(sharedMemory.get() || !handleHasValue);
+        auto handle = WebCore::SharedMemoryHandle::createCopy(source, WebCore::SharedMemoryProtection::ReadOnly);
+        auto sendResult = sendWithAsyncReply(Messages::RemoteQueue::WriteTexture(*convertedDestination, WTFMove(handle), *convertedDataLayout, *convertedSize), [](auto) mutable {
         });
         UNUSED_VARIABLE(sendResult);
     } else {
@@ -178,25 +161,6 @@ void RemoteQueueProxy::setLabelInternal(const String& label)
     auto sendResult = send(Messages::RemoteQueue::SetLabel(label));
     UNUSED_VARIABLE(sendResult);
 }
-
-RefPtr<WebCore::NativeImage> RemoteQueueProxy::getNativeImage(WebCore::VideoFrame& videoFrame)
-{
-    RefPtr<WebCore::NativeImage> nativeImage;
-#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    callOnMainRunLoopAndWait([&nativeImage, videoFrame = Ref { videoFrame }, videoFrameHeap = protectedVideoFrameObjectHeapProxy()] {
-        nativeImage = videoFrameHeap->getNativeImage(videoFrame);
-    });
-#endif
-    return nativeImage;
-}
-
-#if ENABLE(VIDEO)
-RefPtr<RemoteVideoFrameObjectHeapProxy> RemoteQueueProxy::protectedVideoFrameObjectHeapProxy() const
-{
-    return m_videoFrameObjectHeapProxy;
-}
-#endif
-
 
 } // namespace WebKit::WebGPU
 

@@ -119,7 +119,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<Val
                 GPRInfo::regT1);
         }
 
-        static_assert(std::is_same<decltype(operationCreateDirectArgumentsDuringExit), decltype(operationCreateClonedArgumentsDuringExit)>::value, "We assume these functions have the same signature below.");
+        static_assert(std::same_as<decltype(operationCreateDirectArgumentsDuringExit), decltype(operationCreateClonedArgumentsDuringExit)>, "We assume these functions have the same signature below.");
         jit.setupArguments<decltype(operationCreateDirectArgumentsDuringExit)>(
             AssemblyHelpers::TrustedImmPtr(&vm), AssemblyHelpers::TrustedImmPtr(inlineCallFrame), GPRInfo::regT0, GPRInfo::regT1);
         jit.prepareCallOperation(vm);

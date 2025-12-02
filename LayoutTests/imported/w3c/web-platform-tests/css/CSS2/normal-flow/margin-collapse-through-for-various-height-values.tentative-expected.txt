@@ -1,0 +1,146 @@
+
+PASS {"height":"auto"}
+PASS {"height":"0px"}
+PASS {"height":"1px"}
+PASS {"height":"0%","parentHeight":"auto"}
+PASS {"height":"0%","parentHeight":"0px"}
+PASS {"height":"0%","parentHeight":"100px"}
+PASS {"height":"1%","parentHeight":"auto"}
+FAIL {"height":"1%","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1%","parentHeight":"100px"}
+PASS {"height":"calc(0px + 0%)","parentHeight":"auto"}
+FAIL {"height":"calc(0px + 0%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"height":"calc(0px + 0%)","parentHeight":"100px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"calc(0px + 1%)","parentHeight":"auto"}
+FAIL {"height":"calc(0px + 1%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"calc(0px + 1%)","parentHeight":"100px"}
+PASS {"height":"calc(1px + 0%)","parentHeight":"auto"}
+PASS {"height":"calc(1px + 0%)","parentHeight":"0px"}
+PASS {"height":"calc(1px + 0%)","parentHeight":"100px"}
+PASS {"height":"calc(1px + 1%)","parentHeight":"auto"}
+PASS {"height":"calc(1px + 1%)","parentHeight":"0px"}
+PASS {"height":"calc(1px + 1%)","parentHeight":"100px"}
+PASS {"height":"stretch","parentHeight":"auto"}
+PASS {"height":"stretch","parentHeight":"0px"}
+PASS {"height":"stretch","parentHeight":"100px"}
+PASS {"minHeight":"auto"}
+PASS {"minHeight":"0px"}
+PASS {"minHeight":"1px"}
+PASS {"minHeight":"0%","parentHeight":"auto"}
+PASS {"minHeight":"0%","parentHeight":"0px"}
+PASS {"minHeight":"0%","parentHeight":"100px"}
+FAIL {"minHeight":"1%","parentHeight":"auto"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"minHeight":"1%","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"minHeight":"1%","parentHeight":"100px"}
+FAIL {"minHeight":"calc(0px + 0%)","parentHeight":"auto"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"minHeight":"calc(0px + 0%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"minHeight":"calc(0px + 0%)","parentHeight":"100px"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"minHeight":"calc(0px + 1%)","parentHeight":"auto"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"minHeight":"calc(0px + 1%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"minHeight":"calc(0px + 1%)","parentHeight":"100px"}
+FAIL {"minHeight":"calc(1px + 0%)","parentHeight":"auto"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"minHeight":"calc(1px + 0%)","parentHeight":"0px"}
+PASS {"minHeight":"calc(1px + 0%)","parentHeight":"100px"}
+FAIL {"minHeight":"calc(1px + 1%)","parentHeight":"auto"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"minHeight":"calc(1px + 1%)","parentHeight":"0px"}
+PASS {"minHeight":"calc(1px + 1%)","parentHeight":"100px"}
+PASS {"minHeight":"stretch","parentHeight":"auto"}
+PASS {"minHeight":"stretch","parentHeight":"0px"}
+PASS {"minHeight":"stretch","parentHeight":"100px"}
+PASS {"height":"1px","maxHeight":"none"}
+FAIL {"height":"1px","maxHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1px","maxHeight":"1px"}
+PASS {"height":"1px","maxHeight":"0%","parentHeight":"auto"}
+FAIL {"height":"1px","maxHeight":"0%","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"height":"1px","maxHeight":"0%","parentHeight":"100px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1px","maxHeight":"1%","parentHeight":"auto"}
+FAIL {"height":"1px","maxHeight":"1%","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1px","maxHeight":"1%","parentHeight":"100px"}
+PASS {"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"auto"}
+FAIL {"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+FAIL {"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"100px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"auto"}
+FAIL {"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"0px"} assert_equals: margins should collapse through expected 50 but got 100
+PASS {"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"100px"}
+PASS {"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"auto"}
+PASS {"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"0px"}
+PASS {"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"100px"}
+PASS {"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"auto"}
+PASS {"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"0px"}
+PASS {"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"100px"}
+PASS {"height":"1px","maxHeight":"stretch","parentHeight":"auto"}
+PASS {"height":"1px","maxHeight":"stretch","parentHeight":"0px"}
+PASS {"height":"1px","maxHeight":"stretch","parentHeight":"100px"}
+{"height":"auto"}
+{"height":"0px"}
+{"height":"1px"}
+{"height":"0%","parentHeight":"auto"}
+{"height":"0%","parentHeight":"0px"}
+{"height":"0%","parentHeight":"100px"}
+{"height":"1%","parentHeight":"auto"}
+{"height":"1%","parentHeight":"0px"}
+{"height":"1%","parentHeight":"100px"}
+{"height":"calc(0px + 0%)","parentHeight":"auto"}
+{"height":"calc(0px + 0%)","parentHeight":"0px"}
+{"height":"calc(0px + 0%)","parentHeight":"100px"}
+{"height":"calc(0px + 1%)","parentHeight":"auto"}
+{"height":"calc(0px + 1%)","parentHeight":"0px"}
+{"height":"calc(0px + 1%)","parentHeight":"100px"}
+{"height":"calc(1px + 0%)","parentHeight":"auto"}
+{"height":"calc(1px + 0%)","parentHeight":"0px"}
+{"height":"calc(1px + 0%)","parentHeight":"100px"}
+{"height":"calc(1px + 1%)","parentHeight":"auto"}
+{"height":"calc(1px + 1%)","parentHeight":"0px"}
+{"height":"calc(1px + 1%)","parentHeight":"100px"}
+{"height":"stretch","parentHeight":"auto"}
+{"height":"stretch","parentHeight":"0px"}
+{"height":"stretch","parentHeight":"100px"}
+{"minHeight":"auto"}
+{"minHeight":"0px"}
+{"minHeight":"1px"}
+{"minHeight":"0%","parentHeight":"auto"}
+{"minHeight":"0%","parentHeight":"0px"}
+{"minHeight":"0%","parentHeight":"100px"}
+{"minHeight":"1%","parentHeight":"auto"}
+{"minHeight":"1%","parentHeight":"0px"}
+{"minHeight":"1%","parentHeight":"100px"}
+{"minHeight":"calc(0px + 0%)","parentHeight":"auto"}
+{"minHeight":"calc(0px + 0%)","parentHeight":"0px"}
+{"minHeight":"calc(0px + 0%)","parentHeight":"100px"}
+{"minHeight":"calc(0px + 1%)","parentHeight":"auto"}
+{"minHeight":"calc(0px + 1%)","parentHeight":"0px"}
+{"minHeight":"calc(0px + 1%)","parentHeight":"100px"}
+{"minHeight":"calc(1px + 0%)","parentHeight":"auto"}
+{"minHeight":"calc(1px + 0%)","parentHeight":"0px"}
+{"minHeight":"calc(1px + 0%)","parentHeight":"100px"}
+{"minHeight":"calc(1px + 1%)","parentHeight":"auto"}
+{"minHeight":"calc(1px + 1%)","parentHeight":"0px"}
+{"minHeight":"calc(1px + 1%)","parentHeight":"100px"}
+{"minHeight":"stretch","parentHeight":"auto"}
+{"minHeight":"stretch","parentHeight":"0px"}
+{"minHeight":"stretch","parentHeight":"100px"}
+{"height":"1px","maxHeight":"none"}
+{"height":"1px","maxHeight":"0px"}
+{"height":"1px","maxHeight":"1px"}
+{"height":"1px","maxHeight":"0%","parentHeight":"auto"}
+{"height":"1px","maxHeight":"0%","parentHeight":"0px"}
+{"height":"1px","maxHeight":"0%","parentHeight":"100px"}
+{"height":"1px","maxHeight":"1%","parentHeight":"auto"}
+{"height":"1px","maxHeight":"1%","parentHeight":"0px"}
+{"height":"1px","maxHeight":"1%","parentHeight":"100px"}
+{"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"auto"}
+{"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"0px"}
+{"height":"1px","maxHeight":"calc(0px + 0%)","parentHeight":"100px"}
+{"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"auto"}
+{"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"0px"}
+{"height":"1px","maxHeight":"calc(0px + 1%)","parentHeight":"100px"}
+{"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"auto"}
+{"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"0px"}
+{"height":"1px","maxHeight":"calc(1px + 0%)","parentHeight":"100px"}
+{"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"auto"}
+{"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"0px"}
+{"height":"1px","maxHeight":"calc(1px + 1%)","parentHeight":"100px"}
+{"height":"1px","maxHeight":"stretch","parentHeight":"auto"}
+{"height":"1px","maxHeight":"stretch","parentHeight":"0px"}
+{"height":"1px","maxHeight":"stretch","parentHeight":"100px"}
+

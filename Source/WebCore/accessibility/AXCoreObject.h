@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/AXID.h>
 #include <WebCore/AXTextRun.h>
 #include <WebCore/AccessibilityRole.h>
 #include <WebCore/CharacterRange.h>
@@ -124,9 +125,6 @@ enum class ClickHandlerFilter : bool {
 enum class PreSortedObjectType : uint8_t { LiveRegion, WebArea };
 
 enum class DateComponentsType : uint8_t;
-
-enum class AXIDType { };
-using AXID = ObjectIdentifier<AXIDType>;
 
 enum class AXAncestorFlag : uint8_t {
     // When the flags aren't initialized, it means the object hasn't been inserted into the tree,
@@ -258,6 +256,7 @@ enum class AccessibilityOrientation : uint8_t {
 
 enum class DidTimeout : bool { No, Yes };
 enum class IncludeListMarkerText : bool { No, Yes };
+enum class IncludeImageAltText : bool { No, Yes };
 enum class TrimWhitespace : bool { No, Yes };
 
 struct TextUnderElementMode {
@@ -1011,6 +1010,41 @@ public:
         return children.size() ? children[0].ptr() : nullptr;
     }
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    AccessibilityChildrenVector stitchedUnignoredChildren();
+
+    virtual bool isBlockFlow() const { return false; }
+    bool hasStitchableRole() const
+    {
+        // FIXME: We probably want to stitch list markers too.
+        return role() == AccessibilityRole::StaticText;
+    }
+    AXCoreObject* blockFlowAncestor() const;
+    AXCoreObject* blockFlowAncestorForStitchable() const
+    {
+        return hasStitchableRole() ? blockFlowAncestor() : nullptr;
+    }
+    struct StitchState {
+        // Given object |A| that produced this StitchState, |stitchedIntoID| represents
+        // the ID of the object that |A| is stitched into. This can be |A|'s own ID if
+        // it is the first member of its stitch group (and is thus what is stitched into).
+        // If std::nullopt, |A| is not stitched into any other object, nor is any other object
+        // stitched into it.
+        const std::optional<AXID> stitchedIntoID { std::nullopt };
+        // The stitch group that |A| belongs to, if any.
+        Vector<AXID> group;
+
+        StitchState() = default;
+        StitchState(std::optional<AXID> stitchedIntoID, const Vector<AXID>& group)
+            : stitchedIntoID(stitchedIntoID)
+            , group(group)
+        { }
+    };
+    enum class IncludeStitchGroup : bool { No, Yes };
+    virtual StitchState stitchState(IncludeStitchGroup = IncludeStitchGroup::Yes) const { return { }; }
+    std::optional<AXID> stitchedIntoID() const
+    {
+        return stitchState(IncludeStitchGroup::No).stitchedIntoID;
+    }
 
     // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns IDs of ignored children.
     // When it is not, it returns IDs of unignored children. After ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
@@ -1280,6 +1314,8 @@ protected:
         , m_getsGeometryFromChildren(getsGeometryFromChildren)
         , m_id(axID)
     { }
+
+    StitchState stitchStateFromGroups(const Vector<Vector<AXID>>*, IncludeStitchGroup) const;
 
 private:
     virtual String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const = 0;

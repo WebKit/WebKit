@@ -39,6 +39,10 @@ dictionary ReadableWritablePair {
     required WritableStream writable;
 };
 
+dictionary ReadableStreamIteratorOptions {
+    boolean preventCancel = false;
+};
+
 typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStreamReader;
 
 [
@@ -50,11 +54,13 @@ typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStream
 ] interface ReadableStream {
     [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
 
+    [ImplementedAs=isLocked] readonly attribute boolean locked;
+
     [CallWith=CurrentGlobalObject, ReturnsOwnPromise, ImplementedAs=cancelForBindings] Promise<undefined> cancel(optional any reason);
     [CallWith=CurrentGlobalObject] ReadableStreamReader getReader(optional ReadableStreamGetReaderOptions options = { });
     [CallWith=CurrentGlobalObject] Promise<undefined> pipeTo(WritableStream destination, optional StreamPipeOptions options = {});
     [CallWith=CurrentGlobalObject] ReadableStream pipeThrough(ReadableWritablePair transform, optional StreamPipeOptions options = {});
     [CallWith=CurrentGlobalObject] sequence<ReadableStream> tee();
 
-    [ImplementedAs=isLocked] readonly attribute boolean locked;
+    [EnabledBySetting=ReadableStreamIterableEnabled] async iterable<any>(optional ReadableStreamIteratorOptions options = {});
 };

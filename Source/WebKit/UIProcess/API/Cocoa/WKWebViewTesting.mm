@@ -128,21 +128,37 @@
     return sampledFixedPositionContentColor(_fixedContainerEdges, WebCore::BoxSide::Right);
 }
 
-- (NSString *)_caLayerTreeAsText
+- (NSString *)_caLayerTreeAsTextForLayerWithID:(unsigned long long)layerID
+{
+    if (!layerID)
+        return nil;
+    RetainPtr layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->protectedDrawingArea())->layerWithIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    if (!layer)
+        return nil;
+
+    return [self _caLayerTreeAsTextForLayer:layer.get()];
+}
+
+- (NSString *)_caLayerTreeAsTextForLayer:(CALayer *)layer
 {
     TextStream ts(TextStream::LineMode::MultipleLine);
 
     {
         TextStream::GroupScope scope(ts);
         ts << "CALayer tree root "_s;
-#if PLATFORM(IOS_FAMILY)
-        dumpCALayer(ts, [_contentView layer], true);
-#else
-        dumpCALayer(ts, retainPtr(self.layer).get(), true);
-#endif
+        dumpCALayer(ts, layer, true);
     }
 
     return ts.release().createNSString().autorelease();
+}
+
+- (NSString *)_caLayerTreeAsText
+{
+#if PLATFORM(IOS_FAMILY)
+        return [self _caLayerTreeAsTextForLayer:[_contentView layer]];
+#else
+        return [self _caLayerTreeAsTextForLayer:retainPtr(self.layer).get()];
+#endif
 }
 
 static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)

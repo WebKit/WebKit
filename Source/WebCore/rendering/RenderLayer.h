@@ -1465,7 +1465,7 @@ private:
 
     IntRect m_blockSelectionGapsBounds;
 
-    std::unique_ptr<RenderLayerFilters> m_filters;
+    RefPtr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
     std::unique_ptr<RenderLayerScrollableArea> m_scrollableArea;
 

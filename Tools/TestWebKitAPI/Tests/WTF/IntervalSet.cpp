@@ -327,7 +327,7 @@ static void stressTest(IntervalOrdering ordering)
     }
 
     // Sort currentlyInserted by interval start for correct expected value calculation
-    std::sort(currentlyInserted.begin(), currentlyInserted.end(), [](const TestCase& a, const TestCase& b) {
+    std::ranges::sort(currentlyInserted, [](const TestCase& a, const TestCase& b) {
         return a.first.begin() < b.first.begin();
     });
 

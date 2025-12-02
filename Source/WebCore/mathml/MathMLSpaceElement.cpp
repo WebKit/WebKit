@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  * Copyright (C) 2016 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@
 
 #include "NodeName.h"
 #include "RenderMathMLSpace.h"
+#include "RenderObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -66,19 +68,29 @@ const MathMLElement::Length& MathMLSpaceElement::depth()
 
 void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    bool affectsLayout = false;
     switch (name.nodeName()) {
     case AttributeNames::widthAttr:
         m_width = std::nullopt;
+        affectsLayout = true;
         break;
     case AttributeNames::heightAttr:
         m_height = std::nullopt;
+        affectsLayout = true;
         break;
     case AttributeNames::depthAttr:
         m_depth = std::nullopt;
+        affectsLayout = true;
         break;
     default:
         break;
     }
+
+    if (affectsLayout) {
+        if (CheckedPtr renderer = this->renderer())
+            renderer->setNeedsLayoutAndPreferredWidthsUpdate();
+    }
+
     MathMLPresentationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

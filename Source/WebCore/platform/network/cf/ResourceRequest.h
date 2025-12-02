@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/ResourceRequestBase.h>
+#include <optional>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 

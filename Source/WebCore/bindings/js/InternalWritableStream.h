@@ -49,6 +49,7 @@ public:
 
     void closeIfPossible();
     void errorIfPossible(Exception&&);
+    JSC::JSValue errorIfPossible(JSC::JSGlobalObject&, JSC::JSValue);
 
     JSC::JSValue abort(JSC::JSGlobalObject&, JSC::JSValue);
     String state(JSC::JSGlobalObject& globalObject) const;

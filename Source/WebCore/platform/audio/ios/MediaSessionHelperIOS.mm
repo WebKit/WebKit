@@ -366,7 +366,7 @@ void MediaSessionHelperIOS::activeAudioRouteDidChange(bool shouldPause)
 
 void MediaSessionHelperIOS::activeVideoRouteDidChange()
 {
-    auto target = MediaPlaybackTargetCocoa::create();
+    Ref<MediaPlaybackTarget> target = MediaPlaybackTargetCocoa::create();
     auto supportsRemoteVideoPlayback = target->supportsRemoteVideoPlayback() ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No;
     MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTFMove(target));
 }

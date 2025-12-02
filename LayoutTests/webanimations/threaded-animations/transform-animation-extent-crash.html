@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedScrollDrivenAnimationsEnabled=true ] -->
+<style>
+
+body {
+    height: 2000px;
+}
+
+@keyframes anim {
+	entry 0% { transform: translateY(100px) }
+}
+
+div {
+	animation: anim;
+	animation-timeline: view();
+}
+
+</style>
+
+<div>PASS if this does not crash.</div>
+
+<script>
+
+window.testRunner?.dumpAsText();
+
+</script>

@@ -75,7 +75,7 @@ private:
     ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;
     std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
-    std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
+    RefPtr<CachedResourceMediaLoader> m_resourceMediaLoader;
     RefPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
     bool m_isBlob { false };
     size_t m_responseOffset { 0 };

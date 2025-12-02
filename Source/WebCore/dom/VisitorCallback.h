@@ -35,6 +35,10 @@ class VisitorCallback : public RefCounted<VisitorCallback>, public ActiveDOMCall
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(JSC::JSValue, uint64_t) = 0;
     virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue, uint64_t) = 0;
 

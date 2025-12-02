@@ -201,10 +201,6 @@ namespace JSC { namespace DFG {
     macro(StrCat, NodeResultJS | NodeMustGenerate) \
     \
     /* Property access. */\
-    /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
-    /* Since a put to 'length' may invalidate optimizations here, */\
-    /* this must be the directly subsequent property put. Note that PutByVal */\
-    /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValMegamorphic, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValWithThis, NodeResultJS | NodeMustGenerate) \
@@ -215,9 +211,17 @@ namespace JSC { namespace DFG {
     macro(VarargsLength, NodeMustGenerate | NodeResultInt32) \
     macro(LoadVarargs, NodeMustGenerate) \
     macro(ForwardVarargs, NodeMustGenerate) \
-    macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
+    /* Note that PutByVal opcodes use VarArgs because they may have up to */\
+    /* 5 children (? means optional): <cell>, <key>, <value>, <storage>?, and <length>?. */\
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
-    macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
+    macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
+    /* TODO: PutByValDirectResolved indicates a 'put' will be to some indexed property that is already */\
+    /* known to be in bounds. e.g. this is used when: */\
+    /* 1) When materializing an Array and we need to break a cycle with some other materialized object. */\
+    /* 2) A PutByVal directly follows a prior access with the same key. Since a put to 'length' may invalidate */\
+    /*    optimizations here, this must be the directly subsequent property access. */\
+    /* FIXME: This could probably just be an ArrayMode on PutByValDirect. */\
+    macro(PutByValDirectResolved, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValMegamorphic, NodeMustGenerate | NodeHasVarArgs) \
     macro(MultiPutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutPrivateName, NodeMustGenerate) \

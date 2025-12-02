@@ -53,12 +53,11 @@ static bool isValidBCP47LanguageTag(const String&);
 #if !RELEASE_LOG_DISABLED
 static Ref<Logger> nullLogger(TrackBase& track)
 {
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<Ref<Logger>> logger;
-    std::call_once(onceKey, [&] {
-        logger.construct(Logger::create(&track));
-        logger.get()->setEnabled(&track, false);
-    });
+    static NeverDestroyed<Ref<Logger>> logger = [&] {
+        Ref logger = Logger::create(&track);
+        logger->setEnabled(&track, false);
+        return logger;
+    }();
     return logger.get();
 }
 #endif

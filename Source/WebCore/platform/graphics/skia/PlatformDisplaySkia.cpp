@@ -293,7 +293,7 @@ GLContext* PlatformDisplay::skiaGLContext()
 #endif
 }
 
-GrDirectContext* PlatformDisplay::skiaGrContext()
+GrDirectContext* PlatformDisplay::skiaGrContext() const
 {
     RELEASE_ASSERT(s_skiaGLContext);
     return s_skiaGLContext->skiaGrContext();

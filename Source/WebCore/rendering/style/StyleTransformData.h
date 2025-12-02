@@ -49,7 +49,7 @@ public:
 
     Style::Transform transform;
     Style::TransformOrigin origin;
-    TransformBox transformBox;
+    PREFERRED_TYPE(TransformBox) unsigned transformBox : 3;
 
 private:
     StyleTransformData();

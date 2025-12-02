@@ -58,5 +58,33 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange& range)
     return contents;
 }
 
+std::optional<CSSParserTokenRange> consumeArgument(CSSParserTokenRange& range, unsigned index)
+{
+    if (range.atEnd())
+        return std::nullopt;
+
+    if (index) {
+        ASSERT(range.peek().type() == CommaToken);
+        range.consume();
+    }
+
+    range.consumeWhitespace();
+
+    auto argumentStart = range;
+    while (!range.atEnd()) {
+        if (range.peek().type() == CommaToken)
+            break;
+
+        if (range.peek().getBlockType() == CSSParserToken::BlockStart) {
+            range.consumeBlock();
+            continue;
+        }
+
+        range.consume();
+    }
+
+    return argumentStart.rangeUntil(range);
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -24,110 +24,80 @@
  */
 #pragma once
 
-#import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
 
+#if ENABLE(GPU_PROCESS_MODEL)
+
+#import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
 #import <simd/simd.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
+enum class DDBridgeDataUpdateType : uint8_t {
+    kInitial,
+    kDelta
+};
+
 @interface DDBridgeVertexAttributeFormat : NSObject
 
-@property (nonatomic, readonly) int32_t semantic;
-@property (nonatomic, readonly) int32_t format;
-@property (nonatomic, readonly) int32_t layoutIndex;
-@property (nonatomic, readonly) int32_t offset;
+@property (nonatomic, readonly) long semantic;
+@property (nonatomic, readonly) unsigned long format;
+@property (nonatomic, readonly) long layoutIndex;
+@property (nonatomic, readonly) long offset;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithSemantic:(int32_t)semantic format:(int32_t)format layoutIndex:(int32_t)layoutIndex offset:(int32_t)offset NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSemantic:(long)semantic format:(unsigned long)format layoutIndex:(long)layoutIndex offset:(long)offset NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @interface DDBridgeVertexLayout : NSObject
 
-@property (nonatomic, readonly) int32_t bufferIndex;
-@property (nonatomic, readonly) int32_t bufferOffset;
-@property (nonatomic, readonly) int32_t bufferStride;
+@property (nonatomic, readonly) long bufferIndex;
+@property (nonatomic, readonly) long bufferOffset;
+@property (nonatomic, readonly) long bufferStride;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithBufferIndex:(int32_t)bufferIndex bufferOffset:(int32_t)bufferOffset bufferStride:(int32_t)bufferStride NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeAddMeshRequest : NSObject
-
-@property (nonatomic, readonly) int32_t indexCapacity;
-@property (nonatomic, readonly) int32_t indexType;
-@property (nonatomic, readonly) int32_t vertexBufferCount;
-@property (nonatomic, readonly) int32_t vertexCapacity;
-@property (nonatomic, readonly, nullable) NSArray<DDBridgeVertexAttributeFormat*>* vertexAttributes;
-@property (nonatomic, readonly, nullable) NSArray<DDBridgeVertexLayout*>* vertexLayouts;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-- (instancetype)initWithIndexCapacity:(int32_t)indexCapacity
-    indexType:(int32_t)indexType
-    vertexBufferCount:(int32_t)vertexBufferCount
-    vertexCapacity:(int32_t)vertexCapacity
-    vertexAttributes:(nullable NSArray<DDBridgeVertexAttributeFormat*>*)vertexAttributes
-    vertexLayouts:(nullable NSArray<DDBridgeVertexLayout*>*)vertexLayouts NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithBufferIndex:(long)bufferIndex bufferOffset:(long)bufferOffset bufferStride:(long)bufferStride NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @interface DDBridgeMeshPart : NSObject
 
-@property (nonatomic, readonly) unsigned long indexOffset;
-@property (nonatomic, readonly) unsigned long indexCount;
-@property (nonatomic, readonly) unsigned long topology;
-@property (nonatomic, readonly) unsigned long materialIndex;
+@property (nonatomic, readonly) long indexOffset;
+@property (nonatomic, readonly) long indexCount;
+@property (nonatomic, readonly) MTLPrimitiveType topology;
+@property (nonatomic, readonly) long materialIndex;
 @property (nonatomic, readonly) simd_float3 boundsMin;
 @property (nonatomic, readonly) simd_float3 boundsMax;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithIndexOffset:(unsigned long)indexOffset indexCount:(unsigned long)indexCount topology:(unsigned long)topology materialIndex:(unsigned long)materialIndex boundsMin:(simd_float3)boundsMin boundsMax:(simd_float3)boundsMax NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIndexOffset:(long)indexOffset indexCount:(long)indexCount topology:(MTLPrimitiveType)topology materialIndex:(long)materialIndex boundsMin:(simd_float3)boundsMin boundsMax:(simd_float3)boundsMax NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DDBridgeSetPart : NSObject
+@interface DDBridgeMeshDescriptor : NSObject
 
-@property (nonatomic, readonly) long partIndex;
-@property (nonatomic, readonly, strong) DDBridgeMeshPart *part;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-- (instancetype)initWithIndex:(long)index part:(DDBridgeMeshPart*)part NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeSetRenderFlags : NSObject
-
-@property (nonatomic, readonly) long partIndex;
-@property (nonatomic, readonly) uint64_t renderFlags;
+@property (nonatomic, readonly) long vertexBufferCount;
+@property (nonatomic, readonly) long vertexCapacity;
+@property (nonatomic, readonly) NSArray<DDBridgeVertexAttributeFormat *> *vertexAttributes;
+@property (nonatomic, readonly) NSArray<DDBridgeVertexLayout *> *vertexLayouts;
+@property (nonatomic, readonly) long indexCapacity;
+@property (nonatomic, readonly) MTLIndexType indexType;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithIndex:(long)index renderFlags:(uint64_t)renderFlags NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeReplaceVertices : NSObject
-
-@property (nonatomic, readonly) long bufferIndex;
-
-@property (nonatomic, readonly, strong) NSData* buffer;
-
-- (instancetype)init NS_UNAVAILABLE;
-
-- (instancetype)initWithBufferIndex:(long)bufferIndex buffer:(NSData*)buffer NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithVertexBufferCount:(long)vertexBufferCount vertexCapacity:(long)vertexCapacity vertexAttributes:(NSArray<DDBridgeVertexAttributeFormat *> *)vertexAttributes vertexLayouts:(NSArray<DDBridgeVertexLayout *> *)vertexLayouts indexCapacity:(long)indexCapacity indexType:(MTLIndexType)indexType NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @interface DDBridgeChainedFloat4x4 : NSObject
 
 @property (nonatomic) simd_float4x4 transform;
-@property (nonatomic, nullable) DDBridgeChainedFloat4x4 *next;
+@property (nonatomic, strong, nullable) DDBridgeChainedFloat4x4 *next;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -137,24 +107,26 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface DDBridgeUpdateMesh : NSObject
 
-@property (nonatomic, readonly) long partCount;
-@property (nonatomic, readonly) NSArray<DDBridgeSetPart*> *parts;
-@property (nonatomic, readonly) NSArray<DDBridgeSetRenderFlags*> *renderFlags;
-@property (nonatomic, readonly) NSArray<DDBridgeReplaceVertices*> *vertices;
-@property (nonatomic, readonly, nullable) NSData *indices;
-@property (nonatomic, readonly) simd_float4x4 transform;
-@property (nonatomic, readonly, nullable) DDBridgeChainedFloat4x4 *instanceTransforms;
-@property (nonatomic, readonly) NSArray<NSUUID *> *materialIds;
+@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, readonly) DDBridgeDataUpdateType updateType;
+@property (nonatomic, strong, readonly, nullable) DDBridgeMeshDescriptor *descriptor;
+@property (nonatomic, strong, readonly) NSArray<DDBridgeMeshPart*> *parts;
+@property (nonatomic, strong, readonly, nullable) NSData *indexData;
+@property (nonatomic, strong, readonly) NSArray<NSData *> *vertexData;
+@property (nonatomic, strong, readonly, nullable) DDBridgeChainedFloat4x4 *instanceTransforms;
+@property (nonatomic, readonly) long instanceTransformsCount;
+@property (nonatomic, strong, readonly) NSArray<NSString *> *materialPrims;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithPartCount:(long)partCount
-    parts:(NSArray<DDBridgeSetPart *> *)WebSetPart
-    renderFlags:(NSArray<DDBridgeSetRenderFlags *> *)renderFlags
-    vertices:(NSArray<DDBridgeReplaceVertices *> *)vertices
-    indices:(nullable NSData *)indices
-    transform:(simd_float4x4)transform
+- (instancetype)initWithIdentifier:(NSString *)identifier
+    updateType:(DDBridgeDataUpdateType)updateType
+    descriptor:(nullable DDBridgeMeshDescriptor *)descriptor
+    parts:(NSArray<DDBridgeMeshPart*> *)parts
+    indexData:(nullable NSData *)indexData
+    vertexData:(NSArray<NSData *> *)vertexData
     instanceTransforms:(nullable DDBridgeChainedFloat4x4 *)instanceTransforms
-    materialIds:(NSArray<NSUUID *> *)materialIds NS_DESIGNATED_INITIALIZER;
+    instanceTransformsCount:(long)instanceTransformsCount
+    materialPrims:(NSArray<NSString *> *)materialPrims NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -168,32 +140,30 @@ typedef NS_ENUM(NSInteger, DDBridgeSemantic) {
 @interface DDBridgeImageAsset : NSObject
 
 @property (nonatomic, nullable, strong, readonly) NSData *data;
-@property (nonatomic, readonly) unsigned long width;
-@property (nonatomic, readonly) unsigned long height;
-@property (nonatomic, readonly) unsigned long bytesPerPixel;
-@property (nonatomic, readonly) DDBridgeSemantic semantic;
-@property (nonatomic, readonly, strong) NSString *path;
+@property (nonatomic, readonly) long width;
+@property (nonatomic, readonly) long height;
+@property (nonatomic, readonly) long depth;
+@property (nonatomic, readonly) long bytesPerPixel;
+@property (nonatomic, readonly) MTLTextureType textureType;
+@property (nonatomic, readonly) MTLPixelFormat pixelFormat;
+@property (nonatomic, readonly) long mipmapLevelCount;
+@property (nonatomic, readonly) long arrayLength;
+@property (nonatomic, readonly) MTLTextureUsage textureUsage;
+@property (nonatomic, readonly) MTLTextureSwizzleChannels swizzle;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithData:(nullable NSData *)data width:(unsigned long)width height:(unsigned long)height bytesPerPixel:(unsigned long)bytesPerPixel semantic:(DDBridgeSemantic)semantic path:(NSString *)path NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithData:(nullable NSData *)data width:(long)width height:(long)height depth:(long)depth bytesPerPixel:(long)bytesPerPixel textureType:(MTLTextureType)textureType pixelFormat:(MTLPixelFormat)pixelFormat mipmapLevelCount:(long)mipmapLevelCount arrayLength:(long)arrayLength textureUsage:(MTLTextureUsage)textureUsage swizzle:(MTLTextureSwizzleChannels)swizzle NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DDBridgeUpdateTextureRequest : NSObject
+@interface DDBridgeUpdateTexture : NSObject
 
 @property (nonatomic, readonly, strong, nullable) DDBridgeImageAsset *imageAsset;
+@property (nonatomic, readonly, strong) NSString *identifier;
+@property (nonatomic, readonly, strong) NSString *hashString;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithImageAsset:(nullable DDBridgeImageAsset *)imageAsset NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeAddTextureRequest : NSObject
-
-@property (nonatomic, readonly, strong, nullable) DDBridgeImageAsset *imageAsset;
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithImageAsset:(nullable DDBridgeImageAsset *)imageAsset NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithImageAsset:(nullable DDBridgeImageAsset *)imageAsset identifier:(NSString *)identifier hashString:(NSString *)hashString NS_DESIGNATED_INITIALIZER;
 
 @end
 
@@ -239,17 +209,6 @@ typedef NS_ENUM(NSInteger, DDBridgeDataType) {
     DDBridgeDataTypeToken,
     DDBridgeDataTypeAsset
 };
-
-@interface DDBridgePrimvar : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) NSString *referencedGeomPropName;
-@property (nonatomic, readonly) unsigned long attributeFormat;
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithName:(NSString *)name referencedGeomPropName:(NSString *)referencedGeomPropName attributeFormat:(unsigned long)attributeFormat NS_DESIGNATED_INITIALIZER;
-
-@end
 
 @interface DDBridgeInputOutput : NSObject
 
@@ -354,46 +313,23 @@ typedef NS_ENUM(NSInteger, DDBridgeNodeType) {
 
 @end
 
-@interface DDBridgeMaterialGraph : NSObject
+@interface DDBridgeUpdateMaterial : NSObject
 
-@property (nonatomic, strong, readonly) NSArray<DDBridgeNode *> *nodes;
-@property (nonatomic, strong, readonly) NSArray<DDBridgeEdge *> *edges;
-@property (nonatomic, strong, readonly) NSArray<DDBridgeInputOutput *> *inputs;
-@property (nonatomic, strong, readonly) NSArray<DDBridgeInputOutput *> *outputs;
-@property (nonatomic, strong, readonly) NSArray<DDBridgePrimvar *> *primvars;
+@property (nonatomic, strong, readonly, nullable) NSData *materialGraph;
+@property (nonatomic, strong, readonly) NSString *identifier;
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithNodes:(NSArray<DDBridgeNode *> *)nodes edges:(NSArray<DDBridgeEdge *> *)edges inputs:(NSArray<DDBridgeInputOutput *> *)inputs outputs:(NSArray<DDBridgeInputOutput *> *)outputs primvars:(NSArray<DDBridgePrimvar *> *)primvars NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeUpdateMaterialRequest : NSObject
-
-@property (nonatomic, strong, readonly) DDBridgeMaterialGraph *material;
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithMaterial:(DDBridgeMaterialGraph *)material NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface DDBridgeAddMaterialRequest : NSObject
-
-@property (nonatomic, strong, readonly) DDBridgeMaterialGraph *material;
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithMaterial:(DDBridgeMaterialGraph *)material NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithMaterialGraph:(nullable NSData *)materialGraph identifier:(NSString *)identifier NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @interface DDBridgeReceiver : NSObject
 
+- (void)initRenderer:(id<MTLTexture>)texture completionHandler:(void (^)(void))completionHandler;
 - (void)renderWithTexture:(id<MTLTexture>)texture;
-- (bool)addMesh:(DDBridgeAddMeshRequest *)descriptor identifier:(NSUUID*)identifier;
-- (void)updateMesh:(DDBridgeUpdateMesh *)descriptor identifier:(NSUUID*)identifier;
-- (bool)addTexture:(DDBridgeAddTextureRequest *)descriptor identifier:(NSUUID*)identifier;
-- (void)updateTexture:(DDBridgeUpdateTextureRequest *)descriptor identifier:(NSUUID*)identifier;
-- (bool)addMaterial:(DDBridgeAddMaterialRequest *)descriptor identifier:(NSUUID*)identifier;
-- (void)updateMaterial:(DDBridgeUpdateMaterialRequest *)descriptor identifier:(NSUUID*)identifier;
+- (void)updateMesh:(DDBridgeUpdateMesh *)descriptor completionHandler:(void (^)(void))completionHandler;
+- (void)updateTexture:(DDBridgeUpdateTexture *)descriptor completionHandler:(void (^)(void))completionHandler;
+- (void)updateMaterial:(DDBridgeUpdateMaterial *)descriptor completionHandler:(void (^)(void))completionHandler;
 - (void)setTransform:(simd_float4x4)transform;
 - (void)setCameraDistance:(float)distance;
 - (void)setPlaying:(BOOL)play;
@@ -403,4 +339,18 @@ typedef NS_ENUM(NSInteger, DDBridgeNodeType) {
 
 @end
 
+@interface DDBridgeModelLoader : NSObject
+
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
+
+- (void)loadModelFrom:(NSURL *)url;
+- (void)update:(double)deltaTime;
+- (void)requestCompleted:(NSObject *)request;
+- (void)setCallbacksWithModelUpdatedCallback:(void (^)(DDBridgeUpdateMesh *))modelUpdatedCallback textureUpdatedCallback:(void (^)(DDBridgeUpdateTexture *))textureUpdatedCallback materialUpdatedCallback:(void (^)(DDBridgeUpdateMaterial *))materialUpdatedCallback;
+
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)
+
+#endif
+

@@ -56,7 +56,7 @@ void FileSystemStorageHandleRegistry::unregisterHandle(WebCore::FileSystemHandle
 
 FileSystemStorageHandle* FileSystemStorageHandleRegistry::getHandle(WebCore::FileSystemHandleIdentifier identifier)
 {
-    return m_handles.get(identifier).get();
+    return m_handles.get(identifier);
 }
 
 } // namespace WebKit

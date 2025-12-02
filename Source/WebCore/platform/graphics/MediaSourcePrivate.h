@@ -78,19 +78,23 @@ public:
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
     virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
     virtual void shutdown();
+    // Implementation override must be thread-safe. For the base implementation to be thread-safe, player() must be a ThreadSafeRefCounted object.
+    virtual MediaTime currentTime() const;
+    virtual bool timeIsProgressing() const;
 
     virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) = 0;
     virtual void removeSourceBuffer(SourceBufferPrivate&);
+    Vector<Ref<SourceBufferPrivate>> sourceBuffers() const;
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
     virtual void notifyActiveSourceBuffersChanged() = 0;
     virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides. Must be thread-safe
     virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides. Must be thread-safe.
     void trackBufferedChanged(SourceBufferPrivate&, Vector<PlatformTimeRanges>&&);
 
-    virtual MediaPlayer::ReadyState mediaPlayerReadyState() const = 0;
-    virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState) = 0;
-    virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
+    MediaPlayer::ReadyState mediaPlayerReadyState() const;
+    virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState);
+    virtual void markEndOfStream(EndOfStreamStatus);
     virtual void unmarkEndOfStream() { m_isEnded = false; }
     bool isEnded() const { return m_isEnded; }
 
@@ -99,8 +103,6 @@ public:
     void setLiveSeekableRange(const PlatformTimeRanges&);
     const PlatformTimeRanges& liveSeekableRange() const;
     void clearLiveSeekableRange();
-
-    MediaTime currentTime() const;
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
     void seekToTime(const MediaTime&);
@@ -114,7 +116,6 @@ public:
 
     bool hasBufferedData() const;
     bool hasFutureTime(const MediaTime& currentTime) const;
-    bool timeIsProgressing() const;
     static constexpr MediaTime futureDataThreshold() { return MediaTime { 1001, 24000 }; }
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& threshold) const;
     bool hasAudio() const;
@@ -133,17 +134,20 @@ protected:
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
 
-    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
-    Vector<SourceBufferPrivate*> m_activeSourceBuffers;
+    mutable Lock m_lock;
+    // FIXME: This should be a Vector<Ref<SourceBufferPrivate>>
+    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<SourceBufferPrivate*> m_activeSourceBuffers WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::atomic<bool> m_isEnded { false }; // Set on MediaSource's dispatcher.
     std::atomic<MediaSourceReadyState> m_readyState; // Set on MediaSource's dispatcher.
+    std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
+
     const Ref<WorkQueue> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
 
 private:
     void updateBufferedRanges();
     void updateTracksType();
 
-    mutable Lock m_lock;
     MediaTime m_duration WTF_GUARDED_BY_LOCK(m_lock) { MediaTime::invalidTime() };
     PlatformTimeRanges m_buffered WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;

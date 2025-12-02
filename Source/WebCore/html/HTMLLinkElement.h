@@ -55,6 +55,10 @@ public:
     static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
 
+    // CachedResourceClient.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+
     URL href() const;
     WEBCORE_EXPORT const AtomString& rel() const;
 
@@ -152,7 +156,7 @@ private:
 
     CheckedPtr<Style::Scope> checkedStyleScope();
 
-    LinkLoader m_linkLoader;
+    const Ref<LinkLoader> m_linkLoader;
     CheckedPtr<Style::Scope> m_styleScope;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;

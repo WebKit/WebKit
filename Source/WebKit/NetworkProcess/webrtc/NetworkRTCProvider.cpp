@@ -310,15 +310,14 @@ void NetworkRTCProvider::assertIsRTCNetworkThread()
 #else // PLATFORM(COCOA)
 webrtc::Thread& NetworkRTCProvider::rtcNetworkThread()
 {
-    static NeverDestroyed<std::unique_ptr<webrtc::Thread>> networkThread;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        networkThread.get() = webrtc::Thread::CreateWithSocketServer();
-        networkThread.get()->SetName("RTC Network Thread", nullptr);
+    static NeverDestroyed<std::unique_ptr<webrtc::Thread>> networkThread = [] {
+        auto networkThread = webrtc::Thread::CreateWithSocketServer();
+        networkThread->SetName("RTC Network Thread", nullptr);
 
-        auto result = networkThread.get()->Start();
+        auto result = networkThread->Start();
         ASSERT_UNUSED(result, result);
-    });
+        return networkThread;
+    }();
     return *networkThread.get();
 }
 

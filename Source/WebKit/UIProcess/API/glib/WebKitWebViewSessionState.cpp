@@ -325,12 +325,10 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     frameState.originalURLString = String::fromUTF8(originalURLString);
     // frameState.referrer must not be an empty string since we never want to
     // send an empty Referer header. Bug #159606.
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    if (strlen(referrer))
-        frameState.referrer = String::fromUTF8(referrer);
-    if (strlen(target))
-        frameState.target = AtomString::fromUTF8(target);
-    IGNORE_CLANG_WARNINGS_END
+    if (auto referrerString = String::fromUTF8(referrer); !referrerString.isEmpty())
+        frameState.referrer = WTFMove(referrerString);
+    if (auto targetString = AtomString::fromUTF8(target); !targetString.isEmpty())
+        frameState.target = WTFMove(targetString);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);
@@ -407,22 +405,19 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
 
 static bool decodeSessionState(GBytes* data, SessionState& sessionState)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    static const char* sessionStateTypeStringVersions[] = {
+    static constexpr std::array<ASCIILiteral, 2> sessionStateTypeStringVersions = {
         SESSION_STATE_TYPE_STRING_V2,
         SESSION_STATE_TYPE_STRING_V1,
-        nullptr
     };
-    const char* sessionStateTypeString = nullptr;
+
     GRefPtr<GVariant> variant;
-    for (unsigned i = 0; sessionStateTypeStringVersions[i]; ++i) {
-        sessionStateTypeString = sessionStateTypeStringVersions[i];
-        variant = g_variant_new_from_bytes(G_VARIANT_TYPE(sessionStateTypeString), data, FALSE);
-        if (g_variant_is_normal_form(variant.get()))
+    for (const auto& typeString : sessionStateTypeStringVersions) {
+        GRefPtr<GVariant> variantToCheck = g_variant_new_from_bytes(G_VARIANT_TYPE(typeString), data, FALSE);
+        if (g_variant_is_normal_form(variantToCheck.get())) {
+            variant = WTFMove(variantToCheck);
             break;
-        variant = nullptr;
+        }
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!variant)
         return false;
@@ -431,7 +426,7 @@ static bool decodeSessionState(GBytes* data, SessionState& sessionState)
     GUniqueOutPtr<GVariantIter> backForwardListStateIter;
     gboolean hasCurrentIndex;
     guint32 currentIndex;
-    g_variant_get(variant.get(), sessionStateTypeString, &version, &backForwardListStateIter.outPtr(), &hasCurrentIndex, &currentIndex);
+    g_variant_get(variant.get(), g_variant_get_type_string(variant.get()) , &version, &backForwardListStateIter.outPtr(), &hasCurrentIndex, &currentIndex);
     if (!version || version > g_sessionStateVersion)
         return false;
 

@@ -33,30 +33,33 @@ namespace Style {
 
 // <'scrollbar-width'> = auto | thin | none
 // https://drafts.csswg.org/css-scrollbars/#propdef-scrollbar-width
-struct ScrollbarWidth {
-    constexpr ScrollbarWidth(CSS::Keyword::Auto) : value { WebCore::ScrollbarWidth::Auto } { }
-    constexpr ScrollbarWidth(CSS::Keyword::Thin) : value { WebCore::ScrollbarWidth::Thin } { }
-    constexpr ScrollbarWidth(CSS::Keyword::None) : value { WebCore::ScrollbarWidth::None } { }
-
-    constexpr ScrollbarWidth(WebCore::ScrollbarWidth platform) : value { platform } { }
-    constexpr WebCore::ScrollbarWidth platform() const { return value; }
-
-    constexpr bool isAuto() const { return value == WebCore::ScrollbarWidth::Auto; }
-    constexpr bool isThin() const { return value == WebCore::ScrollbarWidth::Thin; }
-    constexpr bool isNone() const { return value == WebCore::ScrollbarWidth::None; }
-
-    constexpr bool operator==(const ScrollbarWidth&) const = default;
-
-    WebCore::ScrollbarWidth value;
+enum class ScrollbarWidth : uint8_t {
+    Auto,
+    Thin,
+    None
 };
-DEFINE_TYPE_WRAPPER_GET(ScrollbarWidth, value);
 
 // MARK: - Conversion
 
 // `ScrollbarWidth` is special-cased to apply `needsScrollbarWidthThinDisabledQuirk` quirk.
 template<> struct CSSValueConversion<ScrollbarWidth> { auto operator()(BuilderState&, const CSSValue&) -> ScrollbarWidth; };
 
+// MARK: - Platform
+
+template<> struct ToPlatform<ScrollbarWidth> {
+    auto operator()(ScrollbarWidth value) -> WebCore::ScrollbarWidth
+    {
+        switch (value) {
+        case ScrollbarWidth::Auto:
+            return WebCore::ScrollbarWidth::Auto;
+        case ScrollbarWidth::Thin:
+            return WebCore::ScrollbarWidth::Thin;
+        case ScrollbarWidth::None:
+            return WebCore::ScrollbarWidth::None;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+};
+
 } // namespace Style
 } // namespace WebCore
-
-DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::ScrollbarWidth);

@@ -27,6 +27,7 @@
 #include "AudioBus.h"
 #include "AudioNode.h"
 #include "AudioParam.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -40,16 +41,18 @@ class AudioNodeInput;
 // AudioNodeOutput represents a single output for an AudioNode.
 // It may be connected to one or more AudioNodeInputs.
 
-class AudioNodeOutput {
+class AudioNodeOutput final : public CanMakeThreadSafeCheckedPtr<AudioNodeOutput> {
     WTF_MAKE_TZONE_ALLOCATED(AudioNodeOutput);
     WTF_MAKE_NONCOPYABLE(AudioNodeOutput);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioNodeOutput);
 public:
     // It's OK to pass 0 for numberOfChannels in which case setNumberOfChannels() must be called later on.
     AudioNodeOutput(AudioNode*, unsigned numberOfChannels);
 
     // Can be called from any thread.
     AudioNode* node() const { return m_node.get(); }
-    BaseAudioContext& context() { return m_node->context(); }
+    CheckedPtr<AudioNode> checkedNode() const { return m_node.get(); }
+    BaseAudioContext& context() { return checkedNode()->context(); }
     
     // Causes our AudioNode to process if it hasn't already for this render quantum.
     // It returns the bus containing the processed audio for this output, returning inPlaceBus if in-place processing was possible.
@@ -58,7 +61,7 @@ public:
 
     // bus() will contain the rendered audio after pull() is called for each rendering time quantum.
     // Called from context's audio thread.
-    AudioBus& bus() const;
+    AudioBus& bus() const LIFETIME_BOUND;
 
     // renderingFanOutCount() is the number of AudioNodeInputs that we're connected to during rendering.
     // Unlike fanOutCount() it will not change during the course of a render quantum.
@@ -152,7 +155,7 @@ private:
     unsigned m_renderingFanOutCount { 0 };
     unsigned m_renderingParamFanOutCount { 0 };
 
-    HashSet<RefPtr<AudioParam>> m_params;
+    HashSet<Ref<AudioParam>> m_params;
     typedef HashSet<RefPtr<AudioParam>>::iterator ParamsIterator;
 };
 

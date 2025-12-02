@@ -33,9 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 
-#if HAVE(SWIFT_CPP_INTEROP)
 #include <pal/PALSwift.h>
-#endif
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
 namespace WebCore {
@@ -47,53 +45,10 @@ bool CryptoKeyOKP::supportsNamedCurve()
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (!supportsNamedCurve())
         return { };
-#if !HAVE(SWIFT_CPP_INTEROP)
-    ccec25519pubkey ccPublicKey;
-    ccec25519secretkey ccPrivateKey;
-    switch (identifier) {
-    case CryptoAlgorithmIdentifier::Ed25519: {
-        int ccerror = 0;
-        const struct ccdigest_info* di = ccsha512_di();
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        if (cced25519_make_key_pair(di, ccrng(&ccerror),  ccPublicKey, ccPrivateKey))
-            return { };
-#else
-        cced25519_make_key_pair(di, ccrng(&ccerror),  ccPublicKey, ccPrivateKey);
-#endif
-        if (ccerror) {
-            RELEASE_LOG_ERROR(Crypto, "Cannot generate Ed25519 key pair, error is %d", ccerror);
-            return { };
-        }
-        break;
-    }
-    case CryptoAlgorithmIdentifier::X25519: {
-        int ccerror = 0;
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        if (cccurve25519_make_key_pair(ccrng(&ccerror), ccPublicKey, ccPrivateKey))
-            return { };
-#else
-        cccurve25519_make_key_pair(ccrng(&ccerror), ccPublicKey, ccPrivateKey);
-#endif
-        if (ccerror) {
-            RELEASE_LOG_ERROR(Crypto, "Cannot generate curve 25519 key pair, error is %d", ccerror);
-            return { };
-        }
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
 
-    bool isPublicKeyExtractable = true;
-    auto publicKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Public, Vector<uint8_t>(std::span { ccPublicKey }), isPublicKeyExtractable, usages);
-    ASSERT(publicKey);
-    auto privateKey = CryptoKeyOKP::create(identifier, namedCurve, CryptoKeyType::Private, Vector<uint8_t>(std::span { ccPrivateKey }), extractable, usages);
-    ASSERT(privateKey);
-    return CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) };
-#else
     switch (identifier) {
     case CryptoAlgorithmIdentifier::Ed25519: {
         auto privateKeyPlatform = PAL::EdKey::generatePrivateKey(PAL::EdSigningAlgorithm::ed25519());
@@ -125,43 +80,24 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
         RELEASE_ASSERT_NOT_REACHED();
         return std::nullopt;
     }
-
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(namedCurve);
+    UNUSED_PARAM(extractable);
+    UNUSED_PARAM(usages);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
 }
 
 bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier, NamedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (!supportsNamedCurve())
         return false;
 
     if (privateKey.size() != 32 || publicKey.size() != 32)
         return false;
-#if !HAVE(SWIFT_CPP_INTEROP)
-    ccec25519pubkey ccPublicKey;
-    static_assert(sizeof(ccPublicKey) == 32);
 
-    switch (identifier) {
-    case CryptoAlgorithmIdentifier::Ed25519: {
-        auto* di = ccsha512_di();
-        if (cced25519_make_pub(di, ccPublicKey, privateKey.span().data()))
-            return false;
-        break;
-    }
-    case CryptoAlgorithmIdentifier::X25519: {
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        if (cccurve25519_make_pub(ccPublicKey, privateKey.span().data()))
-            return false;
-#else
-        cccurve25519_make_pub(ccPublicKey, privateKey.span().data());
-#endif
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-    return equalSpans(asByteSpan(ccPublicKey), publicKey.span());
-#else // HAVE(SWIFT_CPP_INTEROP)
     switch (identifier) {
     case CryptoAlgorithmIdentifier::Ed25519:
         return PAL::EdKey::validateKeyPair(PAL::EdSigningAlgorithm::ed25519(), privateKey.span(), publicKey.span());
@@ -171,6 +107,11 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(privateKey);
+    UNUSED_PARAM(publicKey);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
 }
 
@@ -425,32 +366,11 @@ String CryptoKeyOKP::generateJwkD() const
 
 String CryptoKeyOKP::generateJwkX() const
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (type() == CryptoKeyType::Public)
         return base64URLEncodeToString(m_data);
 
     ASSERT(type() == CryptoKeyType::Private);
-#if !HAVE(SWIFT_CPP_INTEROP)
-    ccec25519pubkey publicKey;
-    switch (namedCurve()) {
-    case NamedCurve::Ed25519: {
-        auto* di = ccsha512_di();
-        RELEASE_ASSERT_WITH_MESSAGE(!cced25519_make_pub(di, publicKey, m_data.span().data()), "cced25519_make_pub failed");
-        break;
-    }
-    case NamedCurve::X25519: {
-#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
-        RELEASE_ASSERT_WITH_MESSAGE(!cccurve25519_make_pub(publicKey, m_data.span().data()), "cccurve25519_make_pub failed.");
-#else
-        cccurve25519_make_pub(publicKey, m_data.span().data());
-#endif
-        break;
-    }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return String(""_s);
-    }
-    return base64URLEncodeToString(std::span { publicKey });
-#else
     switch (namedCurve()) {
     case NamedCurve::Ed25519: {
         auto publicKeyPlatformRv = PAL::EdKey::privateToPublic(PAL::EdSigningAlgorithm::ed25519(), platformKey().span());
@@ -466,6 +386,8 @@ String CryptoKeyOKP::generateJwkX() const
         RELEASE_ASSERT_NOT_REACHED();
         return String(""_s);
     }
+#else
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
 }
 

@@ -139,8 +139,6 @@ WK_GAMECONTROLLER_LDFLAGS_iphonesimulator = -framework GameController
 WK_GAMECONTROLLER_LDFLAGS_xros = -framework GameController
 WK_GAMECONTROLLER_LDFLAGS_xrsimulator = -framework GameController
 
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-
 OTHER_LDFLAGS = $(inherited) $(GTEST_LDFLAGS) -lxml2 -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices -framework CFNetwork -framework CoreGraphics -framework CoreLocation -framework CoreText -framework IOKit -lboringssl -licucore -framework LocalAuthentication -framework QuartzCore -framework Security -framework AVKit $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(WK_WRITING_TOOLS_LDFLAGS) $(WK_WRITING_TOOLS_UI_LDFLAGS) $(WK_GAMECONTROLLER_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_ENTITLEMENTS);
 
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;

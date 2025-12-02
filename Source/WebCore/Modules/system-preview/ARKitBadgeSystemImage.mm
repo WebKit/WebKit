@@ -44,19 +44,15 @@ namespace WebCore {
 
 static NSBundle *arKitBundle()
 {
-    static NSBundle *arKitBundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        arKitBundle = []() {
+    static NeverDestroyed<RetainPtr<NSBundle>> arKitBundle = []() {
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-            dlopen("/System/Library/PrivateFrameworks/AssetViewer.framework/AssetViewer", RTLD_NOW);
-            return [NSBundle bundleForClass:NSClassFromString(@"ASVThumbnailView")];
+        dlopen("/System/Library/PrivateFrameworks/AssetViewer.framework/AssetViewer", RTLD_NOW);
+        return [NSBundle bundleForClass:NSClassFromString(@"ASVThumbnailView")];
 #else
-            return [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/AssetViewer.framework"]];
+        return [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/AssetViewer.framework"]];
 #endif
-        }();
-    });
-    return arKitBundle;
+    }();
+    return arKitBundle.get().get();
 }
 
 static RetainPtr<CGPDFPageRef> loadARKitPDFPage(NSString *imageName)
@@ -74,11 +70,7 @@ static RetainPtr<CGPDFPageRef> loadARKitPDFPage(NSString *imageName)
 
 static RetainPtr<CGPDFPageRef> systemPreviewLogo()
 {
-    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage.get() = loadARKitPDFPage(@"ARKitBadge");
-    });
+    static NeverDestroyed<RetainPtr<CGPDFPageRef>> logoPage = loadARKitPDFPage(@"ARKitBadge");
     return logoPage;
 }
 

@@ -419,7 +419,7 @@ public:
         // Sort the incoming Unicode matches, since Unicode case folding canonicalization may cause
         // characters to be added to rhsMatches out of code point order.
         Vector<char32_t> rhsSortedMatchesUnicode(rhsMatchesUnicode);
-        std::sort(rhsSortedMatchesUnicode.begin(), rhsSortedMatchesUnicode.end());
+        std::ranges::sort(rhsSortedMatchesUnicode);
 
         unicodeOpSorted(rhsSortedMatchesUnicode, rhsRangesUnicode);
     }
@@ -449,10 +449,9 @@ public:
 
     static void sort(Vector<Vector<char32_t>>& utf32Strings)
     {
-        std::sort(utf32Strings.begin(), utf32Strings.end(), [](const Vector<char32_t>& a, const Vector<char32_t>& b)
-            {
-                return compareUTF32Strings(a, b) < 0;
-            });
+        std::ranges::sort(utf32Strings, [](const auto& a, const auto& b) {
+            return compareUTF32Strings(a, b) < 0;
+        });
     }
 
     std::unique_ptr<CharacterClass> charClass()

@@ -27,6 +27,7 @@
 
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemStorageConnection.h>
 #include <WebCore/IDLTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -34,8 +35,6 @@
 namespace WebCore {
 
 template<typename> class DOMPromiseDeferred;
-
-class FileSystemStorageConnection;
 
 class FileSystemHandle : public ActiveDOMObject, public RefCounted<FileSystemHandle> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FileSystemHandle);
@@ -57,6 +56,8 @@ public:
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void move(FileSystemHandle&, const String& newName, DOMPromiseDeferred<void>&&);
+
+    size_t connectionHandleCount() const { return m_connection->handleCount(); }
 
 protected:
     FileSystemHandle(ScriptExecutionContext&, Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

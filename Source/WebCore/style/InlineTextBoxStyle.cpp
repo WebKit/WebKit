@@ -355,7 +355,7 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
         underlineOffset = computedUnderlineOffset({ style, TextUnderlinePositionUnder { inlineBoxContentBoxHeight(inlineBox), textRunOffset } });
     }
 
-    return underlineOffset - textBoxEdgeAdjustmentForUnderline(style);
+    return underlineOffset - (!inlineBox.isRootInlineBox() ? textBoxEdgeAdjustmentForUnderline(style) : 0.f);
 }
 
 float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBox, const RenderStyle& style)

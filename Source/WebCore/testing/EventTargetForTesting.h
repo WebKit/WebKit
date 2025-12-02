@@ -48,6 +48,7 @@ public:
     // MessageClientForTesting, ActiveDOMObject
     void ref() const final { return RefCounted::ref(); }
     void deref() const final { return RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
 private:
     EventTargetForTesting(ScriptExecutionContext&, MessageTargetForTesting&);

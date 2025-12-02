@@ -15,11 +15,15 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/error-message-event-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/error-message-event.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/fetch-on-the-right-interface.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.serviceworker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/message-event-ports-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/message-event-ports.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/service-worker-error-event.https.html

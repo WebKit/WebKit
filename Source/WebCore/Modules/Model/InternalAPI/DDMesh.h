@@ -64,11 +64,8 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void addMesh(const DDMeshDescriptor&) = 0;
     virtual void update(const DDUpdateMeshDescriptor&) = 0;
-    virtual void addTexture(const DDTextureDescriptor&) = 0;
     virtual void updateTexture(const DDUpdateTextureDescriptor&) = 0;
-    virtual void addMaterial(const DDMaterialDescriptor&) = 0;
     virtual void updateMaterial(const DDUpdateMaterialDescriptor&) = 0;
     virtual bool isRemoteDDMeshProxy() const { return false; }
     virtual void setEntityTransform(const DDFloat4x4&) = 0;

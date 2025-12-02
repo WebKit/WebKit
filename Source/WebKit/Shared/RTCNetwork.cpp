@@ -45,7 +45,7 @@ static_assert
 
  */
 
-RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
+RTCNetwork::RTCNetwork(String&& name, String&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips)
     : name(WTFMove(name))
     , description(WTFMove(description))
     , prefix(prefix)
@@ -60,7 +60,9 @@ RTCNetwork::RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddres
 
 webrtc::Network RTCNetwork::value() const
 {
-    webrtc::Network network({ name.span().data(), name.size() }, { description.span().data(), description.size() }, prefix.rtcAddress(), prefixLength, webrtc::AdapterType(type));
+    auto nameUTF8 = name.utf8();
+    auto descriptionUTF8 = description.utf8();
+    webrtc::Network network({ nameUTF8.span().data(), nameUTF8.span().size() }, { descriptionUTF8.span().data(), descriptionUTF8.span().size() }, prefix.rtcAddress(), prefixLength, webrtc::AdapterType(type));
     network.set_id(id);
     network.set_preference(preference);
     network.set_active(active);
@@ -100,7 +102,8 @@ webrtc::SocketAddress SocketAddress::rtcAddress() const
     webrtc::SocketAddress result;
     result.SetPort(port);
     result.SetScopeID(scopeID);
-    result.SetIP({ hostname.span().data(), hostname.size() });
+    auto hostnameUTF8 = hostname.utf8();
+    result.SetIP({ hostnameUTF8.span().data(), hostnameUTF8.span().size() });
     if (ipAddress)
         result.SetResolvedIP(ipAddress->rtcAddress());
     return result;
@@ -109,7 +112,7 @@ webrtc::SocketAddress SocketAddress::rtcAddress() const
 SocketAddress::SocketAddress(const webrtc::SocketAddress& value)
     : port(value.port())
     , scopeID(value.scope_id())
-    , hostname(std::span { value.hostname() })
+    , hostname(value.hostname())
     , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr())))
 {
 }

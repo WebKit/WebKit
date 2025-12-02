@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
@@ -54,6 +55,7 @@ class ProcessIdentity;
 class SharedBuffer;
 
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+enum class SharedMemoryProtection : bool { ReadOnly, ReadWrite };
 
 WEBCORE_EXPORT bool isMemoryAttributionDisabled();
 
@@ -67,6 +69,16 @@ public:
 #elif OS(WINDOWS)
         Win32Handle;
 #endif
+
+    // Note: this function should not be used to share writable arbitrary malloc memory to
+    // another process, as a misbehaving process needs to be destroyed before the memory
+    // can be reused by malloc. Typically this is not possible to guarantee.
+    // The memory objects must be controllable by the caller.
+    WEBCORE_EXPORT static std::optional<SharedMemoryHandle> createVMShare(std::span<const uint8_t>, SharedMemoryProtection);
+    // Creates copy that reuses current virtual memory mappings.
+    WEBCORE_EXPORT static std::optional<SharedMemoryHandle> createVMCopy(std::span<const uint8_t>, SharedMemoryProtection);
+    // Creates copy with new memory mappings.
+    WEBCORE_EXPORT static std::optional<SharedMemoryHandle> createCopy(std::span<const uint8_t>, SharedMemoryProtection);
 
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -100,13 +112,11 @@ private:
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     using Handle = SharedMemoryHandle;
-
-    enum class Protection : bool { ReadOnly, ReadWrite };
+    using Protection = SharedMemoryProtection;
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     WEBCORE_EXPORT static RefPtr<SharedMemory> allocate(size_t);
     WEBCORE_EXPORT static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
-    WEBCORE_EXPORT static RefPtr<SharedMemory> copySpan(std::span<const uint8_t>);
     WEBCORE_EXPORT static RefPtr<SharedMemory> map(Handle&&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
     WEBCORE_EXPORT static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);

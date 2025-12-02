@@ -40,6 +40,7 @@
 #include <webrtc/rtc_base/async_packet_socket.h>
 #include <webrtc/rtc_base/time_utils.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/SystemFree.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -105,11 +106,7 @@ private:
 
 static dispatch_queue_t udpSocketQueueSingleton()
 {
-    static LazyNeverDestroyed<RetainPtr<dispatch_queue_t>> queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        queue.construct(adoptNS(dispatch_queue_create("WebRTC UDP socket queue", RetainPtr { DISPATCH_QUEUE_CONCURRENT }.get())));
-    });
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC UDP socket queue", OSObjectPtr { DISPATCH_QUEUE_CONCURRENT }.get()));
     return queue.get().get();
 }
 
@@ -308,7 +305,7 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     nw_parameters_set_reuse_local_address(parameters, true);
 
     if (m_enableServiceClass) {
-        fprintf(stderr, "m_enableServiceClass\n");
+        RELEASE_LOG_INFO(WebRTC, "NetworkRTCUDPSocketCocoaConnections: serviceClass is set to interactive video\n");
         nw_parameters_set_service_class(parameters, nw_service_class_interactive_video);
     }
 }
@@ -333,7 +330,7 @@ void NetworkRTCUDPSocketCocoaConnections::setOption(int option, int value)
     if (option != webrtc::Socket::OPT_DSCP)
         return;
 
-    auto trafficClass = trafficClassFromDSCP(static_cast<webrtc::DiffServCodePoint>(value));
+    auto trafficClass = trafficClassFromDSCP(static_cast<webrtc::DiffServCodePoint>(value), m_enableServiceClass);
     if (!trafficClass) {
         RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections has an unexpected DSCP value %d", value);
         return;
@@ -428,7 +425,7 @@ void NetworkRTCUDPSocketCocoaConnections::sendTo(std::span<const uint8_t> data, 
         }).iterator->value.first.get();
     }
 
-    RetainPtr value = adoptNS(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    OSObjectPtr value = adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
     nw_connection_send(nwConnection.get(), value.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t error) {
         RELEASE_LOG_ERROR_IF(error, WebRTC, "NetworkRTCUDPSocketCocoaConnections::sendTo failed with error %d", error ? nw_error_get_error_code(error) : 0);
         connection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, webrtc::TimeMillis() }, 0);

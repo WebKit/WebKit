@@ -339,11 +339,7 @@ class SharedBufferBuilder {
 public:
     SharedBufferBuilder() = default;
     SharedBufferBuilder(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT explicit SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>&&);
-    explicit SharedBufferBuilder(Ref<FragmentedSharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
-    explicit SharedBufferBuilder(RefPtr<SharedBuffer>&& buffer)
-        : SharedBufferBuilder(RefPtr<FragmentedSharedBuffer>{ WTFMove(buffer) }) { }
-    explicit SharedBufferBuilder(Ref<SharedBuffer>&& buffer) { initialize(WTFMove(buffer)); }
+    SharedBufferBuilder(const FragmentedSharedBuffer& buffer) { append(buffer); }
 
     template <typename... Args>
     SharedBufferBuilder(std::in_place_t, Args&&... arg)
@@ -353,7 +349,6 @@ public:
     }
 
     SharedBufferBuilder& operator=(SharedBufferBuilder&&) = default;
-    WEBCORE_EXPORT SharedBufferBuilder& operator=(RefPtr<FragmentedSharedBuffer>&&);
 
     WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
     WEBCORE_EXPORT void append(std::span<const uint8_t>);

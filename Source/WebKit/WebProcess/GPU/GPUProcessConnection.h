@@ -88,7 +88,8 @@ public:
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken();
 #endif
-    Ref<RemoteSharedResourceCacheProxy> sharedResourceCache();
+    RemoteSharedResourceCacheProxy& sharedResourceCache();
+    Ref<RemoteSharedResourceCacheProxy> protectedSharedResourceCache();
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     SampleBufferDisplayLayerManager& sampleBufferDisplayLayerManager();
     Ref<SampleBufferDisplayLayerManager> protectedSampleBufferDisplayLayerManager();
@@ -165,15 +166,11 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
     GPUProcessConnectionIdentifier m_identifier { GPUProcessConnectionIdentifier::generate() };
     bool m_hasInitialized { false };
-    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> m_auditToken;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     const std::unique_ptr<SampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
-#endif
-#if ENABLE(VIDEO)
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;

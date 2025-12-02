@@ -99,7 +99,8 @@ AudioBufferSourceNode::~AudioBufferSourceNode()
 
 void AudioBufferSourceNode::process(size_t framesToProcess)
 {
-    auto& outputBus = output(0)->bus();
+    CheckedPtr firstOutput = output(0);
+    auto& outputBus = firstOutput->bus();
 
     if (!isInitialized()) {
         outputBus.zero();
@@ -459,7 +460,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
         unsigned numberOfChannels = buffer->numberOfChannels();
         ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels);
 
-        output(0)->setNumberOfChannels(numberOfChannels);
+        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
 
         m_sourceChannels = FixedVector<std::span<const float>>(numberOfChannels);
         m_destinationChannels = FixedVector<std::span<float>>(numberOfChannels);

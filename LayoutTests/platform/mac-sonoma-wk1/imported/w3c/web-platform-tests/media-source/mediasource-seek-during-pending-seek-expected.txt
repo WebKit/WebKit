@@ -1,4 +1,4 @@
 
-FAIL Test seeking to a new location before transitioning beyond HAVE_METADATA. assert_equals: Event types match. expected "seeked" but got "playing"
+PASS Test seeking to a new location before transitioning beyond HAVE_METADATA.
 PASS Test seeking to a new location during a pending seek.
 

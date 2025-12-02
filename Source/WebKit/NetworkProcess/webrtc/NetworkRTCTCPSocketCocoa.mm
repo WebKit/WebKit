@@ -37,6 +37,7 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/OSObjectPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/cocoa/VectorCocoa.h>
@@ -52,11 +53,7 @@ using namespace WebCore;
 
 static dispatch_queue_t tcpSocketQueueSingleton()
 {
-    static LazyNeverDestroyed<RetainPtr<dispatch_queue_t>> queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        queue.construct(adoptNS(dispatch_queue_create("WebRTC TCP socket queue", RetainPtr { DISPATCH_QUEUE_CONCURRENT }.get())));
-    });
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("WebRTC TCP socket queue", OSObjectPtr { DISPATCH_QUEUE_CONCURRENT }.get()));
     return queue.get().get();
 }
 
@@ -100,8 +97,10 @@ static RetainPtr<nw_connection_t> createNWConnection(NetworkRTCProvider& rtcProv
     setNWParametersApplicationIdentifiers(tcpTLS.get(), rtcProvider.applicationBundleIdentifier(), rtcProvider.sourceApplicationAuditToken(), attributedBundleIdentifier);
     setNWParametersTrackerOptions(tcpTLS.get(), flags.isRelayDisabled, flags.isFirstParty, isKnownTracker(domain));
 
-    if (flags.enableServiceClass)
+    if (flags.enableServiceClass) {
+        RELEASE_LOG_INFO(WebRTC, "NetworkRTCTCPSocketCocoa: serviceClass is set to interactive video\n");
         nw_parameters_set_service_class(tcpTLS.get(), nw_service_class_interactive_video);
+    }
 
     return adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 }
@@ -111,6 +110,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     , m_rtcProvider(rtcProvider)
     , m_connection(WTFMove(connection))
     , m_isSTUN(options & webrtc::PacketSocketFactory::OPT_STUN)
+    , m_enableServiceClass(flags.enableServiceClass)
 {
     auto hostName = remoteAddress.hostname();
     if (hostName.empty())
@@ -177,7 +177,7 @@ void NetworkRTCTCPSocketCocoa::setOption(int option, int value)
     if (option != webrtc::Socket::OPT_DSCP)
         return;
 
-    auto trafficClass = trafficClassFromDSCP(static_cast<webrtc::DiffServCodePoint>(value));
+    auto trafficClass = trafficClassFromDSCP(static_cast<webrtc::DiffServCodePoint>(value), m_enableServiceClass);
     if (!trafficClass) {
         RELEASE_LOG_ERROR(WebRTC, "NetworkRTCTCPSocketCocoa has an unexpected DSCP value %d", value);
         return;

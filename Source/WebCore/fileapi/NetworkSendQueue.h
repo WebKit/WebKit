@@ -30,6 +30,7 @@
 #include <span>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>
@@ -44,14 +45,18 @@ class Blob;
 class BlobLoader;
 class FragmentedSharedBuffer;
 
-class WEBCORE_EXPORT NetworkSendQueue : public ContextDestructionObserver {
+class WEBCORE_EXPORT NetworkSendQueue : public RefCounted<NetworkSendQueue>, public ContextDestructionObserver {
 public:
     using WriteString = Function<void(const CString& utf8)>;
     using WriteRawData = Function<void(std::span<const uint8_t>)>;
     enum class Continue : bool { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
-    NetworkSendQueue(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);
+    static Ref<NetworkSendQueue> create(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);
     ~NetworkSendQueue();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void enqueue(CString&& utf8);
     void enqueue(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
@@ -60,6 +65,8 @@ public:
     void clear();
 
 private:
+    NetworkSendQueue(ScriptExecutionContext&, WriteString&&, WriteRawData&&, ProcessError&&);
+
     void processMessages();
 
     using Message = Variant<CString, Ref<FragmentedSharedBuffer>, Ref<BlobLoader>>;

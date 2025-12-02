@@ -245,9 +245,13 @@ void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
     doSeek(target, m_playbackRate);
 }
 
-bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate, bool isAsync)
+bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate, bool isAsync, bool isSegment)
 {
     UNUSED_PARAM(isAsync);
+    RefPtr player = m_player.get();
+    if (!player)
+        return false;
+
     // This method should only be called outside of MediaPlayerPrivateGStreamerMSE by MediaPlayerPrivateGStreamer::setRate().
 
     // Note: An important difference between seek with WebKitMediaSrc and regular playback is that seeking before
@@ -265,6 +269,16 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
     m_isWaitingForPreroll = true;
     m_isEndReached = false;
 
+    auto flag = (player->isLooping() && isSegment) ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
+    if (paused() && !m_isEndReached && player->isLooping()) {
+        GST_DEBUG_OBJECT(pipeline(), "Segment non-flushing seek attempt not supported on a paused pipeline, enabling flush");
+        m_isSegmentSeekAllowed = false;
+        flag = GST_SEEK_FLAG_FLUSH;
+    }
+    auto seekFlags = static_cast<GstSeekFlags>(flag | GST_SEEK_FLAG_ACCURATE);
+    auto seekStart = toGstClockTime(target.time);
+    int64_t seekStop = 0;
+
     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
     // to the source element, rather than letting playbin do the routing.
     {
@@ -277,9 +291,16 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
         // the seek event, but since we're sending the event directly to the source element we need to take the
         // STATE_LOCK on the pipeline ourselves.
         auto locker = GstStateLocker(pipeline());
-        gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
-            GST_SEEK_TYPE_SET, toGstClockTime(target.time), GST_SEEK_TYPE_NONE, 0);
+        gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
+            GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_NONE, seekStop);
     }
+
+    if (!isSegment && player->isLooping()) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming segment playback");
+        seekFlags = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_ACCURATE);
+        gst_element_send_event(m_pipeline.get(), gst_event_new_seek(rate, GST_FORMAT_TIME, seekFlags, GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_SET, seekStop));
+    }
+
     invalidateCachedPosition();
 
     // Notify MediaSource and have new frames enqueued (when they're available).
@@ -350,14 +371,17 @@ void MediaPlayerPrivateGStreamerMSE::setNetworkState(MediaPlayer::NetworkState n
         player->networkStateChanged();
 }
 
-void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState mediaSourceReadyState)
+void MediaPlayerPrivateGStreamerMSE::readyStateFromMediaSourceChanged()
 {
+    assertIsMainThread();
     // Something important to bear in mind is that the readyState we get here comes from MediaSource.
     // From MediaSource perspective, as long as the sample for currentTime exists in the sample map, we are >= HaveCurrentData.
     // This is NOT true from the player perspective though, because there needs to pass some time since we have the first frame
     // (>=HaveCurrentData for MediaSource) and we have decoded it and sent it to the sink/compositor (>=HaveCurrentData in HTMLMediaElement).
     // The way we implement this is by keeping track of the MediaSource readyState internally in m_mediaSourceReadyState but not
     // spreading states >= HaveCurrentData to the player until prerolled.
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    auto mediaSourceReadyState = mediaSourcePrivate ? mediaSourcePrivate->mediaPlayerReadyState() : MediaPlayer::ReadyState::HaveNothing;
     if (mediaSourceReadyState == m_mediaSourceReadyState)
         return;
 
@@ -365,20 +389,20 @@ void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState media
         dumpReadyState(m_mediaSourceReadyState), dumpReadyState(mediaSourceReadyState), dumpReadyState(m_readyState), boolForPrinting(m_isWaitingForPreroll));
     m_mediaSourceReadyState = mediaSourceReadyState;
 
-    if (mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !m_isWaitingForPreroll)
+    if (mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll)
         propagateReadyStateToPlayer();
 }
 
 void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 {
-    ASSERT(m_mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !m_isWaitingForPreroll);
+    ASSERT(m_mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll);
     if (m_readyState == m_mediaSourceReadyState)
         return;
     GST_DEBUG("Propagating MediaSource readyState %s to player ready state (currently %s)", dumpReadyState(m_mediaSourceReadyState), dumpReadyState(m_readyState));
 
     m_readyState = m_mediaSourceReadyState;
     updateStates(); // Set the pipeline to PLAYING or PAUSED if necessary.
-    auto player = m_player.get();
+    RefPtr player = m_player.get();
     if (player)
         player->readyStateChanged();
 
@@ -386,6 +410,11 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
     // should cause the video to be marked as ended. Let's have the player check that.
     if (player && (!m_isWaitingForPreroll || currentTime() == duration()))
         player->timeChanged();
+}
+
+void MediaPlayerPrivateGStreamerMSE::mediaSourceHasRetrievedAllData()
+{
+    setNetworkState(MediaPlayer::NetworkState::Loaded);
 }
 
 void MediaPlayerPrivateGStreamerMSE::didPreroll()

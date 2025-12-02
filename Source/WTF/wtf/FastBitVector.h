@@ -91,6 +91,9 @@ public:
     
     FastBitVectorWordOwner& operator=(const FastBitVectorWordOwner& other)
     {
+        if (&other == this)
+            return *this;
+
         if (arrayLength() != other.arrayLength())
             setEqualsSlow(other);
         else {

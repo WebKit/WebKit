@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedScrollDrivenAnimationsEnabled=true ] -->
+<style>
+
+@keyframes fade {
+	0% { opacity: 0 }
+	100% { opacity: 1 }
+}
+
+div {
+	animation-name: fade;
+	animation-timeline: scroll();
+}
+
+</style>
+
+<div>PASS if this does not crash.</div>
+
+<script>
+
+(async function () {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    await new Promise(requestAnimationFrame);
+    await new Promise(setTimeout);
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>

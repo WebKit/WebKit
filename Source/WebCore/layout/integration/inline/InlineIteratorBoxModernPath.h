@@ -52,6 +52,7 @@ public:
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
     // Blocks-in-inline.
     bool isBlockLevelBox() const { return box().isBlockLevelBox(); }
+    bool isAtomicInlineBox() const { return box().isAtomicInlineBox(); }
 
     FloatRect visualRectIgnoringBlockDirection() const { return box().visualRectIgnoringBlockDirection(); }
 

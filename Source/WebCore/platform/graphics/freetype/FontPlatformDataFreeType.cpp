@@ -205,7 +205,7 @@ String FontPlatformData::familyName() const
 {
     FcChar8* family = nullptr;
     FcPatternGetString(m_pattern.get(), FC_FAMILY, 0, &family);
-    return String::fromUTF8(unsafeSpan8(reinterpret_cast<const char*>(family)));
+    return byteCast<char8_t>(unsafeSpan(byteCast<char>(family)));
 }
 
 Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(ShouldLocalizeAxisNames shouldLocalizeAxisNames) const
@@ -351,7 +351,7 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern));
     }
 
-    return FontPlatformData(fontFace.get(), adoptRef(pattern), data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
+    return FontPlatformData(fontFace.get(), pattern, data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const

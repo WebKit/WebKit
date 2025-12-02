@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div>
+    <!-- The triple-deep span is intentional to make sure we're not checking only one level above the text for an aria-owns relationship. -->
+    Foo <span id="outer-span"><span id="owned-span"><span id="inner-span">Bar</span></span></span> Baz
+</div>
+
+<div role="group" aria-label="sample text" aria-owns="owned-span" id="owner"></div>
+
+<script>
+var output = "This test ensures we handle text stitching appropriately for text within aria-owns.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var initialTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+
+    output += initialTraversalOutput;
+    output += "\nSecond traversal:\n";
+
+    var newTraversalOutput;
+    document.getElementById("owner").removeAttribute("aria-owns");
+    setTimeout(async function() {
+        await waitFor(() => {
+            newTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+            return newTraversalOutput !== initialTraversalOutput;
+        });
+        output += newTraversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

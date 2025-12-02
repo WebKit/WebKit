@@ -329,6 +329,11 @@ void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
     m_frameTreeSyncData = WTFMove(data);
 }
 
+void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
+{
+    protectedFrameTreeSyncData()->update(data);
+}
+
 bool Frame::frameCanCreatePaymentSession() const
 {
     // Prefer the LocalFrame code path when site isolation is disabled.

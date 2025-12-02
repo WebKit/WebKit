@@ -28,6 +28,9 @@
 DECLARE_SYSTEM_HEADER
 
 #import <Foundation/Foundation.h>
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -60,3 +63,5 @@ enum {
 - (NSUInteger)getParameter:(EAGLContextParameter)pname to:(int32_t *)params;
 @end
 #endif
+
+#endif // PLATFORM(IOS_FAMILY)

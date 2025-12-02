@@ -66,7 +66,7 @@ RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<C
 
 RemoteCDMProxy::~RemoteCDMProxy() = default;
 
-bool RemoteCDMProxy::supportsInitData(const AtomString& type, const SharedBuffer& data)
+bool RemoteCDMProxy::supportsInitData(const String& type, const SharedBuffer& data)
 {
     return m_private->supportsInitData(type, data);
 }

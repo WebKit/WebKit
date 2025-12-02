@@ -28,6 +28,8 @@ import os
 import re
 import sys
 
+from webkit.opaque_ipc_types import is_opaque_type, opaque_ipc_types
+
 # Supported type attributes:
 #
 # AdditionalEncoder - generate serializers for StreamConnectionEncoder in addition to IPC::Encoder.
@@ -255,6 +257,13 @@ class SerializedType(object):
         copied_type.dictionary_members = None
         return copied_type
 
+    def enforce_opaque_ipc_types_usage(self):
+        for member in self.members:
+            if is_opaque_type(member.type):
+                namespace_and_name = self.namespace_and_name()
+                if not opaque_ipc_types.structure_param_tracked(namespace_and_name, member.name, member.type):
+                    raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] StructureParam {namespace_and_name}.{member.name} {member.type}")
+
 
 class SerializedEnum(object):
     def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
@@ -464,6 +473,21 @@ class UsingStatement(object):
         self.name = name
         self.alias_lines = alias_lines
         self.condition = condition
+
+    def enforce_opaque_ipc_types_usage(self):
+        for alias_line in self.alias_lines:
+            if alias_line.strip().startswith('#'):
+                continue
+
+            cleaned_line = alias_line.strip().rstrip(',;')
+
+            # Support multi-line using statements
+            if not cleaned_line or cleaned_line in ['Variant<', '>']:
+                continue
+
+            if is_opaque_type(cleaned_line):
+                if not opaque_ipc_types.alias_param_tracked(self.name, cleaned_line):
+                    raise Exception(f"Justification needed in opaque_ipc_types.tracking.in: [] AliasParam {self.name} {cleaned_line}")
 
 
 class ObjCWrappedType(object):
@@ -832,6 +856,8 @@ def encode_type(type):
             result.append(f'    if (instance.{bits_variable_name} & {member.optional_tuple_bit()})')
             result.append(f'        encoder << instance.{member.name};')
         else:
+            if not opaque_ipc_types.structure_webcontent_dispatchable(type.namespace_and_name(), member.name, member.type):
+                result.append('    ASSERT(!isInWebProcess());')
             if type.rvalue and '()' not in member.name:
                 if 'EncodeRequestBody' in member.attributes:
                     result.append(f'    RefPtr {member.name}Body = instance.{member.name}.httpBody();')
@@ -2004,10 +2030,12 @@ def main(argv):
         with open(argv[i]) as file:
             new_types, new_enums, new_headers, new_using_statements, new_additional_forward_declarations, new_objc_wrapped_types = parse_serialized_types(file)
             for type in new_types:
+                type.enforce_opaque_ipc_types_usage()
                 serialized_types.append(type)
             for enum in new_enums:
                 serialized_enums.append(enum)
             for using_statement in new_using_statements:
+                using_statement.enforce_opaque_ipc_types_usage()
                 using_statements.append(using_statement)
             for header in new_headers:
                 header_set.add(header)

@@ -688,6 +688,11 @@ void RenderTableSection::layoutRows()
     computeOverflowFromCells(numberOfRows, numberOfEffectiveColumns);
 }
 
+bool RenderTableSection::hasOverflowingCell() const
+{
+    return m_overflowingCells.computeSize() || m_forceSlowPaintPathWithOverflowingCell;
+}
+
 void RenderTableSection::computeOverflowFromCells()
 {
     unsigned totalRows = m_grid.size();

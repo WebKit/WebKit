@@ -92,11 +92,7 @@ String formatLocalizedString(const char* format, ...)
 #if PLATFORM(COCOA)
 static CFBundleRef webCoreBundleSingleton()
 {
-    static LazyNeverDestroyed<RetainPtr<CFBundleRef>> bundle;
-    static std::once_flag flag;
-    std::call_once(flag, [&] mutable {
-        bundle.construct(CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore")));
-    });
+    static NeverDestroyed<RetainPtr<CFBundleRef>> bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
     ASSERT(bundle.get());
     return bundle.get().get();
 }
@@ -713,7 +709,12 @@ String AXAttachmentRoleText()
 {
     return WEB_UI_STRING("attachment", "accessibility role description for an attachment element");
 }
-    
+
+String AXRemovedText()
+{
+    return WEB_UI_STRING("removed", "prefix for announcing removed content in live regions");
+}
+
 String AXSearchFieldCancelButtonText()
 {
     return WEB_UI_STRING("cancel", "accessibility description for a search field cancel button");

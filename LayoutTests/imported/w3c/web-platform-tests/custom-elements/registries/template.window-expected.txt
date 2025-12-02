@@ -1,5 +1,10 @@
 
 PASS shadowRootCustomElementRegistry reflects as string
 PASS Serializing a ShadowRoot with a null registry
-PASS Serializing a ShadowRoot with a registry that differs from its host
+PASS Serializing a ShadowRoot with a global registry
+PASS Serializing a ShadowRoot with a registry that differs from its host document
+PASS Serializing a ShadowRoot with a null registry with a null registry host document
+PASS Serializing a ShadowRoot with a registry with a null registry host document
+PASS Serializing a ShadowRoot with a null registry with a scoped registry host document
+PASS A declarative shadow root gets its default registry from its node document
 

@@ -144,11 +144,7 @@ public:
     bool isPrivateName() const { return isSymbol() && static_cast<const SymbolImpl*>(impl())->isPrivate(); }
 
     friend bool operator==(const Identifier&, const Identifier&);
-    friend bool operator==(const Identifier&, const Latin1Character*);
-    friend bool operator==(const Identifier&, const char*);
 
-    static bool equal(const StringImpl*, const Latin1Character*);
-    static inline bool equal(const StringImpl* a, const char* b) { return Identifier::equal(a, byteCast<Latin1Character>(b)); };
     static bool equal(const StringImpl*, std::span<const Latin1Character>);
     static bool equal(const StringImpl*, std::span<const char16_t>);
     static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
@@ -175,7 +171,6 @@ private:
     { }
 
     static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
-    static bool equal(const Identifier& a, const Latin1Character* b) { return equal(a.m_string.impl(), b); }
 
     template <typename T> inline static Ref<AtomStringImpl> add(VM&, std::span<const T>); // Defined in IdentifierInlines.h
     static Ref<AtomStringImpl> add8(VM&, std::span<const char16_t>);
@@ -205,21 +200,6 @@ template <> ALWAYS_INLINE constexpr bool Identifier::canUseSingleCharacterString
 inline bool operator==(const Identifier& a, const Identifier& b)
 {
     return Identifier::equal(a, b);
-}
-
-inline bool operator==(const Identifier& a, const Latin1Character* b)
-{
-    return Identifier::equal(a, b);
-}
-
-inline bool operator==(const Identifier& a, const char* b)
-{
-    return Identifier::equal(a, byteCast<Latin1Character>(b));
-}
-
-inline bool Identifier::equal(const StringImpl* r, const Latin1Character* s)
-{
-    return WTF::equal(r, s);
 }
 
 inline bool Identifier::equal(const StringImpl* r, std::span<const Latin1Character> s)

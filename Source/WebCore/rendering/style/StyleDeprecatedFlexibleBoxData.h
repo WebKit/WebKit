@@ -46,14 +46,14 @@ public:
     void dumpDifferences(TextStream&, const StyleDeprecatedFlexibleBoxData&) const;
 #endif
 
-    Style::WebkitBoxFlex flex;
-    Style::WebkitBoxFlexGroup flexGroup;
-    Style::WebkitBoxOrdinalGroup ordinalGroup;
+    Style::WebkitBoxFlex boxFlex;
+    Style::WebkitBoxFlexGroup boxFlexGroup;
+    Style::WebkitBoxOrdinalGroup boxOrdinalGroup;
 
-    PREFERRED_TYPE(BoxAlignment) unsigned align : 3;
-    PREFERRED_TYPE(BoxPack) unsigned pack: 2;
-    PREFERRED_TYPE(BoxOrient) unsigned orient: 1;
-    PREFERRED_TYPE(BoxLines) unsigned lines : 1;
+    PREFERRED_TYPE(BoxAlignment) unsigned boxAlign : 3;
+    PREFERRED_TYPE(BoxPack) unsigned boxPack: 2;
+    PREFERRED_TYPE(BoxOrient) unsigned boxOrient: 1;
+    PREFERRED_TYPE(BoxLines) unsigned boxLines : 1;
 
 private:
     StyleDeprecatedFlexibleBoxData();

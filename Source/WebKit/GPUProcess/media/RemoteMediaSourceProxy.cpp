@@ -51,7 +51,7 @@ RemoteMediaSourceProxy::RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy& ma
     , m_identifier(identifier)
     , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
 
     connectionToWebProcess()->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSourceProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
     manager.registerMediaSource(m_identifier, *this);
@@ -179,7 +179,7 @@ void RemoteMediaSourceProxy::attached()
 
 void RemoteMediaSourceProxy::shutdown()
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
 
     disconnect();
 
@@ -189,7 +189,7 @@ void RemoteMediaSourceProxy::shutdown()
 
 RefPtr<GPUConnectionToWebProcess> RemoteMediaSourceProxy::connectionToWebProcess() const
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
 
     RefPtr manager = m_manager.get();
     return manager ? manager->gpuConnectionToWebProcess() : nullptr;
@@ -201,6 +201,13 @@ std::optional<SharedPreferencesForWebProcess> RemoteMediaSourceProxy::sharedPref
         return connection->sharedPreferencesForWebProcess();
 
     return std::nullopt;
+}
+
+void RemoteMediaSourceProxy::connectionToWebProcessClosed()
+{
+    assertIsMainRunLoop();
+    for (RefPtr sourceBuffer : std::exchange(m_sourceBuffers, { }))
+        sourceBuffer->connectionToWebProcessClosed();
 }
 
 } // namespace WebKit

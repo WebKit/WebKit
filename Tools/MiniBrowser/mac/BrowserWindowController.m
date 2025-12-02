@@ -114,6 +114,16 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (IBAction)cloneSiteIsolatedWindow:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)cloneNonIsolatedWindow:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (IBAction)saveAsPDF:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];

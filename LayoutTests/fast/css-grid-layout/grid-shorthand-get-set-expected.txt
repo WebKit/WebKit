@@ -271,13 +271,13 @@ Test the initial value
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is "row"
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is "normal"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-areas') is 'none'
-PASS getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+PASS getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'normal'
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-columns') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('grid-auto-rows') is 'auto'
 

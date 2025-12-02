@@ -27,8 +27,6 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
-#include <WebCore/MediaPlaybackTarget.h>
-#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/WebMediaSessionManagerClient.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,6 +39,7 @@ namespace WebCore {
 class FloatRect;
 class MediaPlaybackTarget;
 class Page;
+enum class MediaPlaybackTargetMockState : uint8_t;
 }
 
 class WebMediaPlaybackTargetPicker : public WebCore::WebMediaSessionManagerClient {
@@ -56,7 +55,7 @@ public:
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::FloatRect&, bool hasVideo);
     void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducerMediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
-    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::MockState);
+    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetMockState);
     void mockMediaPlaybackTargetPickerDismissPopup();
 
     void invalidate();

@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(MAC)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSSharingService_Private.h>
@@ -52,3 +56,5 @@ typedef NS_ENUM(NSInteger, NSSharingServicePickerStyle) {
 @end
 
 #endif
+
+#endif // PLATFORM(MAC)

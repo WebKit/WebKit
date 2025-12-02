@@ -116,6 +116,7 @@ namespace WebCore {
     M(IOSurface) \
     M(IconDatabase) \
     M(Images) \
+    M(Immersive) \
     M(IndexedDB) \
     M(IndexedDBOperations) \
     M(Inspector) \

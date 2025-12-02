@@ -29,6 +29,7 @@
 #include "EncodingTables.h"
 #include <mutex>
 #include <ranges>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/MakeString.h>
@@ -171,16 +172,15 @@ using JIS0208EncodeIndex = std::array<std::pair<char16_t, uint16_t>, sizeof(jis0
 static const JIS0208EncodeIndex& jis0208EncodeIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static JIS0208EncodeIndex* table;
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        table = new JIS0208EncodeIndex;
+    static NeverDestroyed<std::unique_ptr<JIS0208EncodeIndex>> table = [] {
+        auto table = std::make_unique<JIS0208EncodeIndex>(); // NOLINT.
         auto& index = jis0208();
         for (size_t i = 0; i < index.size(); i++)
             (*table)[i] = { index[i].second, index[i].first };
         stableSortByFirst(*table);
-    });
-    return *table;
+        return table;
+    }();
+    return *table.get();
 }
 
 String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError, NOESCAPE const Function<SawError(uint8_t, StringBuilder&)>& byteParser)
@@ -697,17 +697,16 @@ using EUCKREncodingIndex = std::array<std::pair<char16_t, uint16_t>, sizeof(eucK
 static const EUCKREncodingIndex& eucKREncodingIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static EUCKREncodingIndex* table;
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        table = new EUCKREncodingIndex;
+    static NeverDestroyed<std::unique_ptr<EUCKREncodingIndex>> table = [] {
+        auto table = std::make_unique<EUCKREncodingIndex>(); // NOLINT.
         auto& index = eucKR();
         for (size_t i = 0; i < index.size(); i++)
             (*table)[i] = { index[i].second, index[i].first };
         sortByFirst(*table);
         ASSERT(sortedFirstsAreUnique(*table));
-    });
-    return *table;
+        return table;
+    }();
+    return *table.get();
 }
 
 // https://encoding.spec.whatwg.org/#euc-kr-encoder
@@ -766,10 +765,8 @@ using Big5EncodeIndex = std::array<std::pair<char32_t, uint16_t>, sizeof(big5())
 static const Big5EncodeIndex& big5EncodeIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static Big5EncodeIndex* table;
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        table = new Big5EncodeIndex;
+    static NeverDestroyed<std::unique_ptr<Big5EncodeIndex>> table = [] {
+        auto table = std::make_unique<Big5EncodeIndex>(); // NOLINT.
         auto& index = big5();
         // Remove the first 3094 elements because of https://encoding.spec.whatwg.org/#index-big5-pointer
         ASSERT(index[3903].first == (0xA1 - 0x81) * 157 - 1);
@@ -777,8 +774,9 @@ static const Big5EncodeIndex& big5EncodeIndex()
         for (size_t i = 3904; i < index.size(); i++)
             (*table)[i - 3904] = { index[i].second, index[i].first };
         stableSortByFirst(*table);
-    });
-    return *table;
+        return table;
+    }();
+    return *table.get();
 }
 
 // https://encoding.spec.whatwg.org/#big5-encoder
@@ -885,16 +883,15 @@ using GB18030EncodeIndex = std::array<std::pair<char16_t, uint16_t>, 23940>;
 static const GB18030EncodeIndex& gb18030EncodeIndex()
 {
     // Allocate this at runtime because building it at compile time would make the binary much larger and this is often not used.
-    static GB18030EncodeIndex* table;
-    static std::once_flag once;
-    std::call_once(once, [&] {
-        table = new GB18030EncodeIndex;
+    static NeverDestroyed<std::unique_ptr<GB18030EncodeIndex>> table = [] {
+        auto table = std::make_unique<GB18030EncodeIndex>(); // NOLINT.
         auto& index = gb18030();
         for (uint16_t i = 0; i < index.size(); i++)
             (*table)[i] = { index[i], i };
         stableSortByFirst(*table);
-    });
-    return *table;
+        return table;
+    }();
+    return *table.get();
 }
 
 // https://unicode-org.atlassian.net/browse/ICU-22357

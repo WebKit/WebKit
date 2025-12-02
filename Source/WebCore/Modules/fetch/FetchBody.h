@@ -93,6 +93,7 @@ public:
     bool hasConsumerPendingActivity() const { SUPPRESS_UNCHECKED_ARG return m_consumer && m_consumer->hasPendingActivity(); }
 
     FetchBody clone(JSDOMGlobalObject&);
+    FetchBody createProxy(JSDOMGlobalObject&);
 
     bool hasReadableStream() const { return !!m_readableStream; }
     const ReadableStream* readableStream() const { return m_readableStream.get(); }

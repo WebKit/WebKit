@@ -100,9 +100,6 @@ private:
 class OffscreenCanvas final : public ActiveDOMObject, public CanvasBase, public RefCounted<OffscreenCanvas>, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(OffscreenCanvas, WEBCORE_EXPORT);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     struct ImageEncodeOptions {
         String type = "image/png"_s;
         double quality = 1.0;
@@ -122,6 +119,11 @@ public:
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, PlaceholderRenderingContext&);
     WEBCORE_EXPORT virtual ~OffscreenCanvas();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     void setWidth(unsigned);
     void setHeight(unsigned);

@@ -373,7 +373,7 @@ void RecorderImpl::fillEllipse(const FloatRect& rect)
 }
 
 #if ENABLE(VIDEO)
-void RecorderImpl::drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool)
+void RecorderImpl::drawVideoFrame(const VideoFrame&, const FloatRect&, ImageOrientation, bool)
 {
     appendStateChangeItemIfNecessary();
     // FIXME: TODO

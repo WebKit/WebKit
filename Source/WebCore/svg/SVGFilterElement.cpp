@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,15 +51,16 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::filterTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::filterUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_filterUnits>();
         PropertyRegistry::registerProperty<SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_primitiveUnits>();
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGFilterElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGFilterElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGFilterElement::m_width>();
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGFilterElement::m_height>();
-    });
+    }
 }
 
 Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
@@ -85,16 +86,16 @@ void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     case AttributeNames::xAttr:
-        Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "-10%"_s));
         break;
     case AttributeNames::yAttr:
-        Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "-10%"_s));
         break;
     case AttributeNames::widthAttr:
-        Ref { m_width }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_width }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "120%"_s));
         break;
     case AttributeNames::heightAttr:
-        Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "120%"_s));
         break;
     default:
         break;

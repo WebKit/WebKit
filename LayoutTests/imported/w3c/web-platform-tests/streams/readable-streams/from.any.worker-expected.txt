@@ -11,25 +11,7 @@ FAIL ReadableStream.from accepts a sync iterable of values promise_test: Unhandl
 FAIL ReadableStream.from accepts a sync iterable of promises promise_test: Unhandled rejection with value: object "TypeError: ReadableStream.from is not a function. (In 'ReadableStream.from(iterable)', 'ReadableStream.from' is undefined)"
 FAIL ReadableStream.from accepts an async iterable promise_test: Unhandled rejection with value: object "TypeError: ReadableStream.from is not a function. (In 'ReadableStream.from(iterable)', 'ReadableStream.from' is undefined)"
 FAIL ReadableStream.from accepts a ReadableStream promise_test: Unhandled rejection with value: object "TypeError: ReadableStream.from is not a function. (In 'ReadableStream.from(iterable)', 'ReadableStream.from' is undefined)"
-FAIL ReadableStream.from accepts a ReadableStream async iterator promise_test: Unhandled rejection with value: object "TypeError: new ReadableStream({
-      start(c) {
-        c.enqueue('a');
-        c.enqueue('b');
-        c.close();
-      }
-    })[Symbol.asyncIterator] is not a function. (In 'new ReadableStream({
-      start(c) {
-        c.enqueue('a');
-        c.enqueue('b');
-        c.close();
-      }
-    })[Symbol.asyncIterator]()', 'new ReadableStream({
-      start(c) {
-        c.enqueue('a');
-        c.enqueue('b');
-        c.close();
-      }
-    })[Symbol.asyncIterator]' is undefined)"
+FAIL ReadableStream.from accepts a ReadableStream async iterator promise_test: Unhandled rejection with value: object "TypeError: ReadableStream.from is not a function. (In 'ReadableStream.from(iterable)', 'ReadableStream.from' is undefined)"
 PASS ReadableStream.from throws on invalid iterables; specifically null
 PASS ReadableStream.from throws on invalid iterables; specifically undefined
 PASS ReadableStream.from throws on invalid iterables; specifically 0

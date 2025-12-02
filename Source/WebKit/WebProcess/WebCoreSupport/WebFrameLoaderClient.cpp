@@ -155,8 +155,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
         { },
-        requester.securityOrigin->data(),
-        requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
         navigationAction.sourceBackForwardItemIdentifier(),
         navigationAction.lockHistory(),
@@ -178,6 +176,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.originalRequest(),
         request,
         request.url().isValid() ? String() : request.url().string(),
+        requester,
     };
 }
 
@@ -251,6 +250,18 @@ void WebFrameLoaderClient::setPrinting(bool printing, FloatSize pageSize, FloatS
 {
     if (RefPtr webPage = m_frame->page())
         webPage->send(Messages::WebPageProxy::SetFramePrinting(m_frame->frameID(), printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize));
+}
+
+void WebFrameLoaderClient::broadcastAllFrameTreeSyncDataToOtherProcesses(FrameTreeSyncData& data)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::BroadcastAllFrameTreeSyncData(m_frame->frameID(), data));
+}
+
+void WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(const FrameTreeSyncSerializationData& data)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::BroadcastFrameTreeSyncData(m_frame->frameID(), data));
 }
 
 }

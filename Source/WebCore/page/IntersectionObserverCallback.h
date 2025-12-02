@@ -39,6 +39,10 @@ class IntersectionObserverCallback : public RefCounted<IntersectionObserverCallb
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual bool hasCallback() const = 0;
 
     virtual CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;

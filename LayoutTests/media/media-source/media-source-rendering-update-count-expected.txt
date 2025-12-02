@@ -11,18 +11,15 @@ Wait for the rendering count to settle down
 Append first media segment
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)
-EVENT(progress)
 EXPECTED (internals.renderingUpdateCount() > '0') OK
 
 Append second media segment
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
 EVENT(update)
-EVENT(progress)
 EXPECTED (Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout == 'true') OK
 
 Append third media segment
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
 EVENT(update)
-EVENT(progress)
 EXPECTED (Math.abs(internals.renderingUpdateCount() - initialRenderingUpdateCount) <= maxUpdatesCausedByMediaSizeChangeLayout == 'true') OK
 

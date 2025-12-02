@@ -192,7 +192,7 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
         m_clearCacheDispatchGroup = adoptOSObject(dispatch_group_create());
 
     RetainPtr group = m_clearCacheDispatchGroup.get();
-    dispatch_group_async(group.get(), RetainPtr { mainDispatchQueueSingleton() }.get(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
+    dispatch_group_async(group.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, protectedThis = Ref { *this }, modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
         forEachNetworkSession([modifiedSince, &aggregator](NetworkSession& session) {
             if (RefPtr cache = session.cache())

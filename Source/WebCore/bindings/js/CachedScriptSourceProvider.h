@@ -43,8 +43,12 @@ public:
         m_cachedScript->removeClient(*this);
     }
 
-    unsigned hash() const override;
-    StringView source() const override;
+    // CachedResourceClient.
+    void ref() const final { JSC::SourceProvider::ref(); }
+    void deref() const final { JSC::SourceProvider::deref(); }
+
+    unsigned hash() const final;
+    StringView source() const final;
 
     JSC::CodeBlockHash codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind) override
     {

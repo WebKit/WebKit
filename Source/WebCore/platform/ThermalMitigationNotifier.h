@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -35,18 +36,10 @@ OBJC_CLASS WebThermalMitigationObserver;
 #endif
 
 namespace WebCore {
-class ThermalMitigationNotifier;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ThermalMitigationNotifier> : std::true_type { };
-}
-
-namespace WebCore {
-
-class ThermalMitigationNotifier : public CanMakeWeakPtr<ThermalMitigationNotifier> {
+class ThermalMitigationNotifier final : public CanMakeWeakPtr<ThermalMitigationNotifier>, public CanMakeCheckedPtr<ThermalMitigationNotifier> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ThermalMitigationNotifier, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThermalMitigationNotifier);
 public:
     using ThermalMitigationChangeCallback = Function<void(bool thermalMitigationEnabled)>;
     WEBCORE_EXPORT explicit ThermalMitigationNotifier(ThermalMitigationChangeCallback&&);

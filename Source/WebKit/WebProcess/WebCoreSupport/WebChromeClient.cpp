@@ -75,8 +75,8 @@
 #include "WebProcessProxyMessages.h"
 #include "WebSearchPopupMenu.h"
 #include "WebWorkerClient.h"
-#include <WebCore/AppHighlight.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AppHighlight.h>
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/ColorChooserClient.h>
@@ -101,6 +101,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
@@ -182,6 +183,10 @@
 
 #if ENABLE(DAMAGE_TRACKING)
 #include <WebCore/Damage.h>
+#endif
+
+#if ENABLE(VIDEO)
+#include <WebCore/HTMLMediaElement.h>
 #endif
 
 namespace WebKit {
@@ -387,8 +392,6 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
         openedMainFrameName,
-        { }, /* requesterOrigin */
-        { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
         std::nullopt, /* sourceBackForwardItemIdentifier */
         WebCore::LockHistory::No,
@@ -410,6 +413,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         originalRequest, /* originalRequest */
         originalRequest, /* request */
         originalRequest.url().isValid() ? String() : originalRequest.url().string(), /* invalidURLString */
+        navigationAction.requester(), /* requester */
     };
 
     auto sendResult = webProcess.protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page->identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
@@ -1659,6 +1663,16 @@ void WebChromeClient::spatialBackdropSourceChanged() const
 }
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void WebChromeClient::canEnterImmersiveElement(const Element& element, CompletionHandler<void(bool)>&& completion) const
+{
+    if (RefPtr page = m_page.get())
+        page->canEnterImmersiveElement(element, WTFMove(completion));
+    else
+        completion(false);
+}
+#endif
+
 #if ENABLE(APP_HIGHLIGHTS)
 WebCore::HighlightVisibility WebChromeClient::appHighlightsVisiblility() const
 {
@@ -1932,7 +1946,7 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
         page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerEnabled(enabled));
 }
 
-void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerState(name, state));
@@ -2383,15 +2397,22 @@ bool WebChromeClient::usePluginRendererScrollableArea(LocalFrame& frame) const
     return true;
 }
 
-void WebChromeClient::showCaptionDisplaySettings(CompletionHandler<void(bool)>&& callback)
+#if ENABLE(VIDEO)
+void WebChromeClient::showCaptionDisplaySettings(HTMLMediaElement& element, const ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
     RefPtr page = m_page.get();
     if (!page) {
-        callback(false);
+        completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
         return;
     }
 
-    page->sendWithAsyncReply(Messages::WebPageProxy::ShowCaptionDisplaySettings(), WTFMove(callback));
+    page->sendWithAsyncReply(Messages::WebPageProxy::ShowCaptionDisplaySettings(element.identifier(), options), [completionHandler = WTFMove(completionHandler)] (auto&& expected) mutable {
+        if (expected)
+            completionHandler({ });
+        else
+            completionHandler(expected.error().toException());
+    });
 }
+#endif
 
 } // namespace WebKit

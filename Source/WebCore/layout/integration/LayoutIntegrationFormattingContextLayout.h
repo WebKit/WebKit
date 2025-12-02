@@ -33,7 +33,7 @@ namespace WebCore {
 
 namespace Layout {
 
-class BlockLayoutState;
+class InlineLayoutState;
 class ElementBox;
 class LayoutState;
 }
@@ -55,7 +55,7 @@ enum class LogicalHeightType : uint8_t  {
 };
 LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox&, LogicalHeightType);
 
-void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLogicalTopLeft, Layout::BlockLayoutState& parentBlockLayoutState, Layout::LayoutState&);
+void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLogicalTopLeft, Layout::InlineLayoutState&, Layout::LayoutState&);
 
 }
 }

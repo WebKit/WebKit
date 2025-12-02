@@ -26,10 +26,12 @@
 #pragma once
 
 #include "ContextDestructionObserver.h"
+#include "ExceptionOr.h"
 #include "InternalReadableStream.h"
 #include "JSValueInWrappedObject.h"
 #include "ReadableByteStreamController.h"
 #include <JavaScriptCore/Strong.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -54,7 +56,7 @@ struct UnderlyingSource;
 
 using ReadableStreamReader = Variant<RefPtr<ReadableStreamDefaultReader>, RefPtr<ReadableStreamBYOBReader>>;
 
-class ReadableStream : public RefCountedAndCanMakeWeakPtr<ReadableStream>, public ContextDestructionObserver {
+class ReadableStream : public RefCounted<ReadableStream>, public ContextDestructionObserver {
 public:
     enum class ReaderMode { Byob };
     struct GetReaderOptions {
@@ -64,6 +66,9 @@ public:
         RefPtr<ReadableStream> readable;
         RefPtr<WritableStream> writable;
     };
+    struct IteratorOptions {
+        bool preventCancel { false };
+    };
 
     static ExceptionOr<Ref<ReadableStream>> create(JSDOMGlobalObject&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&);
     static ExceptionOr<Ref<ReadableStream>> create(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
@@ -71,6 +76,10 @@ public:
     static Ref<ReadableStream> create(Ref<InternalReadableStream>&&);
 
     virtual ~ReadableStream();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     Ref<DOMPromise> cancelForBindings(JSDOMGlobalObject&, JSC::JSValue);
     ExceptionOr<ReadableStreamReader> getReader(JSDOMGlobalObject&, const GetReaderOptions&);
@@ -119,10 +128,15 @@ public:
     bool isReachableFromOpaqueRoots() const { return m_isReachableFromOpaqueRootIfPulling && isPulling(); }
     void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
 
+    class DependencyToVisit : public AbstractRefCounted {
+    public:
+        virtual ~DependencyToVisit() = default;
+        virtual void visit(JSC::AbstractSlotVisitor&) = 0;
+    };
     enum class StartSynchronously : bool { No, Yes };
     enum class IsReachableFromOpaqueRootIfPulling : bool { No, Yes };
     struct ByteStreamOptions {
-        RefPtr<ReadableStream> relatedStreamForGC { };
+        RefPtr<DependencyToVisit> dependencyToVisit { };
         double highwaterMark { 0 };
         StartSynchronously startSynchronously { StartSynchronously::No };
         IsReachableFromOpaqueRootIfPulling isReachableFromOpaqueRootIfPulling { IsReachableFromOpaqueRootIfPulling::No };
@@ -137,10 +151,27 @@ public:
 
     JSDOMGlobalObject* globalObject();
 
+    class Iterator : public RefCounted<Iterator> {
+    public:
+        static Ref<Iterator> create(Ref<ReadableStreamDefaultReader>&&, bool preventCancel);
+        ~Iterator();
+
+        using Result = std::optional<JSC::JSValue>;
+        using Callback = CompletionHandler<void(ExceptionOr<Result>&&)>;
+        void next(Callback&&);
+
+    private:
+        Iterator(Ref<ReadableStreamDefaultReader>&&, bool preventCancel);
+
+        const Ref<ReadableStreamDefaultReader> m_reader;
+    };
+
+    ExceptionOr<Ref<Iterator>> createIterator(ScriptExecutionContext*, IteratorOptions&&);
+
 protected:
     static ExceptionOr<Ref<ReadableStream>> createFromJSValues(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
     static ExceptionOr<Ref<InternalReadableStream>> createInternalReadableStream(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
-    explicit ReadableStream(ScriptExecutionContext*, RefPtr<InternalReadableStream>&& = { }, RefPtr<ReadableStream>&& = { }, IsReachableFromOpaqueRootIfPulling = IsReachableFromOpaqueRootIfPulling::No);
+    explicit ReadableStream(ScriptExecutionContext*, RefPtr<InternalReadableStream>&& = { }, RefPtr<DependencyToVisit>&& = { }, IsReachableFromOpaqueRootIfPulling = IsReachableFromOpaqueRootIfPulling::No);
 
 private:
     ExceptionOr<void> setupReadableByteStreamControllerFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue, UnderlyingSource&&, double);
@@ -157,7 +188,7 @@ private:
     const std::unique_ptr<ReadableByteStreamController> m_controller;
     const RefPtr<InternalReadableStream> m_internalReadableStream;
 
-    const RefPtr<ReadableStream> m_relatedStreamForGC;
+    const RefPtr<DependencyToVisit> m_dependencyToVisit;
 };
 
 } // namespace WebCore

@@ -102,15 +102,14 @@ static void WebValidationBubbleViewController_viewSafeAreaInsetsDidChange(WebVal
 
 static WebValidationBubbleViewController *allocWebValidationBubbleViewControllerInstance()
 {
-    static Class theClass = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(PAL::getUIViewControllerClassSingleton(), "WebValidationBubbleViewController", 0);
+    static Class theClass = [] {
+        auto theClass = objc_allocateClassPair(PAL::getUIViewControllerClassSingleton(), "WebValidationBubbleViewController", 0);
         class_addMethod(theClass, @selector(viewDidLoad), (IMP)WebValidationBubbleViewController_viewDidLoad, "v@:");
         class_addMethod(theClass, @selector(viewWillLayoutSubviews), (IMP)WebValidationBubbleViewController_viewWillLayoutSubviews, "v@:");
         class_addMethod(theClass, @selector(viewSafeAreaInsetsDidChange), (IMP)WebValidationBubbleViewController_viewSafeAreaInsetsDidChange, "v@:");
         objc_registerClassPair(theClass);
-    });
+        return theClass;
+    }();
     return (WebValidationBubbleViewController *)[theClass alloc];
 }
 

@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS_FAMILY)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <SpringBoardServices/SBSStatusBarStyleOverridesAssertion.h>
@@ -73,3 +77,5 @@ typedef void (^SBSStatusBarStyleOverridesAssertionAcquisitionHandler)(BOOL acqui
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // PLATFORM(IOS_FAMILY)

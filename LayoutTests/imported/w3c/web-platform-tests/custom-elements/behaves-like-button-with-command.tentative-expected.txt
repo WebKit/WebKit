@@ -1,0 +1,12 @@
+
+PASS Custom element without type=button does not support commandfor attribute.
+FAIL Custom button with type=button and command='toggle-popover' toggles popover. assert_true: Custom button with type=button should open popover expected true got false
+FAIL Custom button with command='show-popover' only opens popover. assert_true: show-popover should open popover expected true got false
+FAIL Custom button with command='hide-popover' only closes popover. assert_false: hide-popover should close popover expected false got true
+PASS Disabled custom button does not support commandfor.
+FAIL Custom button with command='show-modal' opens dialog. assert_true: show-modal should open dialog expected true got false
+FAIL Custom button with command='close' closes dialog. assert_false: close command should close dialog expected false got true
+FAIL Custom button with command='request-close' closes open dialog and does nothing when dialog is already closed. assert_false: request-close command should close open dialog expected false got true
+FAIL Custom button with custom command fires command event. assert_true: Custom command should fire command event expected true got false
+PASS Custom button with invalid command does not fire command event.
+

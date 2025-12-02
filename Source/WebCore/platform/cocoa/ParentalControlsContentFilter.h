@@ -59,7 +59,7 @@ public:
 #endif
     
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
+    WEBCORE_EXPORT void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
 #endif
 
 private:
@@ -67,7 +67,7 @@ private:
     bool enabled() const;
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    ParentalControlsURLFilter& impl() const;
+    Ref<ParentalControlsURLFilter> protectedImpl() const;
     void updateFilterStateOnMain();
 #elif HAVE(WEBCONTENTANALYSIS_FRAMEWORK)
     void updateFilterState();

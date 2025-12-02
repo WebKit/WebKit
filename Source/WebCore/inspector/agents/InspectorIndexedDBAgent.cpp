@@ -569,6 +569,11 @@ static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(LocalFrame* frame, Do
         return false;
     }
 
+    if (!frame->settings().indexedDBAPIEnabled()) {
+        callback.sendFailure("IndexedDB is disabled"_s);
+        return false;
+    }
+
     auto idbFactory = IDBFactoryFromDocument(RefPtr { document.value() }.get());
     if (!idbFactory.has_value()) {
         callback.sendFailure(idbFactory.error());

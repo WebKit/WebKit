@@ -62,7 +62,7 @@ public:
         RefPtr<WebGL2RenderingContext>
     >;
 
-    static ExceptionOr<Ref<WebXRWebGLLayer>> create(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    static ExceptionOr<Ref<WebXRWebGLLayer>> create(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
     ~WebXRWebGLLayer();
 
     bool antialias() const;
@@ -89,7 +89,7 @@ public:
     PlatformXR::Device::Layer endFrame() final;
 
 private:
-    WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
+    WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
 
     bool isWebXRWebGLLayer() const final { return true; }
 
@@ -103,7 +103,7 @@ private:
 
     void addConsoleMessage(JSC::MessageLevel, String&&) const;
 
-    RefPtr<WebXRSession> m_session;
+    WeakPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
     struct ViewportData {

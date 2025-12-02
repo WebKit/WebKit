@@ -43,8 +43,9 @@ class WebXRLayer : public RefCounted<WebXRLayer>, public EventTarget, public Con
 public:
     virtual ~WebXRLayer();
 
-    using RefCounted<WebXRLayer>::ref;
-    using RefCounted<WebXRLayer>::deref;
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     virtual void startFrame(PlatformXR::FrameData&) = 0;
     virtual PlatformXR::Device::Layer endFrame() = 0;

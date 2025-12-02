@@ -36,7 +36,6 @@ messages -> SourceBufferPrivateRemoteMessageReceiver {
     SourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers) -> ()
     SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
     SourceBufferPrivateDidDropSample()
-    SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
     SourceBufferPrivateEvictionDataChanged(struct WebCore::SourceBufferEvictionData evictionData)
     SourceBufferPrivateDidAttach(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> (Expected<void, WebCore::PlatformMediaError> result)
 }

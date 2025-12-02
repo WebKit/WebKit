@@ -148,7 +148,7 @@ class HTTPConnectSetup(http.HTTPClient):
     """
 
     def __init__(self, host, port):
-        self.host = host
+        self.host = f'[{host}]' if ':' in host else host
         self.port = port
 
     def connectionMade(self):

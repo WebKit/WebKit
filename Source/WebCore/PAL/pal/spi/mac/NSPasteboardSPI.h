@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if USE(APPKIT)
+
 // FIXME: This should include AppKit/AppKitPrivate.h when using the internal SDK,
 // but that file won't compile as C++.
 
@@ -36,3 +40,5 @@ extern NSString *_NXSmartPaste;
 - (NSData *)_dataWithoutConversionForType:(NSString *)type securityScoped:(BOOL)securityScoped;
 - (BOOL)_setExpirationDate:(NSDate *)date;
 @end
+
+#endif // USE(APPKIT)

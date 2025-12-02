@@ -47,19 +47,16 @@ Modules/webaudio/AudioListener.cpp
 Modules/webaudio/AudioNode.cpp
 Modules/webaudio/AudioNodeInput.cpp
 Modules/webaudio/AudioNodeOutput.cpp
-Modules/webaudio/AudioNodeOutput.h
 Modules/webaudio/AudioParam.cpp
 Modules/webaudio/AudioScheduledSourceNode.cpp
 Modules/webaudio/AudioSummingJunction.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp
 Modules/webaudio/AudioWorkletMessagingProxy.cpp
 Modules/webaudio/AudioWorkletNode.cpp
-Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/BiquadFilterNode.cpp
 [ iOS ] Modules/webaudio/ChannelMergerNode.cpp
 Modules/webaudio/ConvolverNode.cpp
 Modules/webaudio/DefaultAudioDestinationNode.cpp
-Modules/webaudio/DelayNode.cpp
 Modules/webaudio/DynamicsCompressorNode.cpp
 Modules/webaudio/MediaElementAudioSourceNode.cpp
 Modules/webaudio/MediaStreamAudioDestinationNode.cpp
@@ -109,7 +106,6 @@ accessibility/AccessibilityTableHeaderContainer.cpp
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 [ iOS ] accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 animation/AnimationEffectTiming.cpp
-animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
@@ -308,7 +304,6 @@ dom/ContainerNodeAlgorithms.cpp
 dom/ContentVisibilityDocumentState.cpp
 dom/CurrentScriptIncrementer.h
 dom/CustomElementDefaultARIA.cpp
-dom/CustomElementReactionQueue.cpp
 dom/CustomElementRegistry.cpp
 dom/DOMImplementation.cpp
 dom/DataTransfer.cpp
@@ -325,7 +320,6 @@ dom/ExtensionStyleSheets.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/GCReachableRef.h
 dom/IdleCallbackController.cpp
-dom/IdleDeadline.cpp
 dom/ImageOverlay.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/KeyboardEvent.cpp
@@ -545,7 +539,6 @@ page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp
-page/FrameConsoleClient.cpp
 page/FrameDestructionObserver.cpp
 page/FrameSnapshotting.cpp
 page/ImageAnalysisQueue.cpp
@@ -990,10 +983,4 @@ workers/shared/SharedWorker.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/WorkletGlobalScope.cpp
 worklets/WorkletPendingTasks.cpp
-xml/XMLHttpRequest.cpp
-xml/XPathEvaluator.cpp
-xml/XPathFunctions.cpp
-xml/XSLImportRule.cpp
-xml/XSLStyleSheetLibxslt.cpp
-xml/XSLTProcessorLibxslt.cpp
 xml/parser/XMLDocumentParserLibxml2.cpp

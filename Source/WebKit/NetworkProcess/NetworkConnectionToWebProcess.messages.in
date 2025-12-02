@@ -144,8 +144,13 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
-    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(WebKit::WebTransportSessionIdentifier identifier, URL url, struct WebCore::WebTransportOptions options, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin clientOrigin) -> (bool success)
+    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(WebKit::WebTransportSessionIdentifier identifier, URL url, struct WebCore::WebTransportOptions options, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin clientOrigin) -> (struct std::optional<WebCore::WebTransportConnectionInfo> connectionInfo)
     [EnabledBy=WebTransportEnabled] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+
+#if USE(LIBRICE)
+    [EnabledBy=PeerConnectionEnabled] InitializeRiceBackend(WebKit::WebPageProxyIdentifier pageID) -> (std::optional<WebKit::RiceBackendIdentifier> identifier) Synchronous
+    [EnabledBy=PeerConnectionEnabled] DestroyRiceBackend(WebKit::RiceBackendIdentifier identifier)
+#endif
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 

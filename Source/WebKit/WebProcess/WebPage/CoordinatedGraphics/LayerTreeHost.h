@@ -99,7 +99,6 @@ public:
 
     void willRenderFrame();
     void didRenderFrame();
-    void didComposite(uint32_t);
 
 #if PLATFORM(GTK)
     void adjustTransientZoom(double, WebCore::FloatPoint);
@@ -127,7 +126,7 @@ private:
     void invalidateRenderingUpdateRunLoopObserver();
     void renderingUpdateRunLoopObserverFired();
     void updateRendering();
-    void commitSceneState();
+    void requestCompositionForRenderingUpdate();
 
     // CoordinatedPlatformLayer::Client
 #if USE(CAIRO)
@@ -141,9 +140,11 @@ private:
     void detachLayer(WebCore::CoordinatedPlatformLayer&) override;
     void notifyCompositionRequired() override;
     bool isCompositionRequiredOrOngoing() const override;
-    void requestComposition() override;
+    void requestComposition(WebCore::CompositionReason) override;
     RunLoop* compositingRunLoop() const override;
     int maxTextureSize() const override;
+    void willPaintTile() override;
+    void didPaintTile() override;
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -190,8 +191,6 @@ private:
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 #endif
-
-    uint32_t m_compositionRequestID { 0 };
 
 #if ENABLE(DAMAGE_TRACKING)
     Lock m_frameDamageHistoryForTestingLock;

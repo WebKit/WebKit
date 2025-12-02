@@ -624,7 +624,6 @@ static ISO8601::Duration adjustDateDurationRecord(JSGlobalObject* globalObject, 
     return result;
 }
 
-// TODO: Use PlainDateTime instead of a tuple, once that's added
 static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
 {
     return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, isoTime);
@@ -645,7 +644,7 @@ Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
 
 static Int128 getEpochNanosecondsFor(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime, TemporalDisambiguation disambiguation)
 {
-    // TODO time zones
+    // FIXME time zones
     (void) disambiguation;
     return getUTCEpochNanoseconds(isoDateTime);
 }
@@ -892,7 +891,7 @@ static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject* globalOb
 
 // RoundRelativeDuration ( duration, destEpochNs, isoDateTime, timeZone, calendar, largestUnit, increment, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundrelativeduration
-// TODO: calendar and time zone
+// FIXME: calendar and time zone
 void TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, TemporalUnit largestUnit, double increment, TemporalUnit smallestUnit, RoundingMode roundingMode)
 {
     VM& vm = globalObject->vm();

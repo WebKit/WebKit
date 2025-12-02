@@ -215,6 +215,8 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
     if (isNull())
         return nullptr;
 
+    // FIXME: The isNull() check should allow us to deref *treeID() and *objectID() safely
+    // in this function for a bit more performance.
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainThread()) {
         auto tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
@@ -548,7 +550,7 @@ String listMarkerTextOnSameLine(const AXTextMarker& marker)
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
-String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText) const
+String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, IncludeImageAltText includeImageAltText) const
 {
 #if !ENABLE(AX_THREAD_TEXT_APIS)
     UNUSED_PARAM(includeListMarkerText);
@@ -575,7 +577,12 @@ String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText) 
             return result.toString();
         }
 
-        auto emitNewlineOnExit = [&] (AXIsolatedObject& object) {
+        auto emitAuxiliaryText = [&] (AXIsolatedObject& object) {
+            if (includeImageAltText == IncludeImageAltText::Yes && object.isImage()) {
+                // This is an image, so add alt text (if it has any).
+                result.append(object.description());
+            }
+
             // FIXME: This function should not just be emitting newlines, but instead handling every character type in TextEmissionBehavior.
             auto behavior = object.textEmissionBehavior();
             if (behavior != TextEmissionBehavior::Newline && behavior != TextEmissionBehavior::DoubleNewline)
@@ -593,22 +600,27 @@ String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText) 
 
         // FIXME: If we've been given reversed markers, i.e. the end marker actually comes before the start marker,
         // we may want to detect this and try searching AXDirection::Previous?
-        RefPtr current = findObjectWithRuns(*start.isolatedObject(), AXDirection::Next, std::nullopt, emitNewlineOnExit);
+        RefPtr current = findObjectWithRuns(*start.isolatedObject(), AXDirection::Next, std::nullopt, emitAuxiliaryText);
         while (current && current->objectID() != end.objectID()) {
             result.append(current->textRuns()->toStringView());
-            current = findObjectWithRuns(*current, AXDirection::Next, std::nullopt, emitNewlineOnExit);
+            current = findObjectWithRuns(*current, AXDirection::Next, std::nullopt, emitAuxiliaryText);
         }
         result.append(end.runs()->substring(0, end.offset()));
         return result.toString();
     }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
-    return Accessibility::retrieveValueFromMainThread<String>([this] () -> String {
+    return Accessibility::retrieveValueFromMainThread<String>([this, includeImageAltText] () -> String {
+
         auto range = simpleRange();
         if (!range)
             return { };
 
-        TextIterator it = TextIterator(*range, { TextIteratorBehavior::IgnoresFullSizeKana });
+        OptionSet<TextIteratorBehavior> behaviors = { TextIteratorBehavior::IgnoresFullSizeKana };
+        if (includeImageAltText == IncludeImageAltText::Yes)
+            behaviors.add(TextIteratorBehavior::EmitsImageAltText);
+
+        TextIterator it = TextIterator(*range, behaviors);
         if (it.atEnd())
             return { };
 

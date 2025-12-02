@@ -36,7 +36,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 
-OBJC_CLASS WebUSDModelLoader;
+OBJC_CLASS DDBridgeModelLoader;
 
 namespace WebCore::DDModel {
 class DDMesh;
@@ -104,7 +104,7 @@ private:
     WeakPtr<ModelPlayerClient> m_client;
 
     WebCore::ModelPlayerIdentifier m_id;
-    RetainPtr<WebUSDModelLoader> m_modelLoader;
+    RetainPtr<DDBridgeModelLoader> m_modelLoader;
     Vector<MachSendRight> m_displayBuffers;
     RefPtr<WebCore::DDModel::DDMesh> m_currentModel;
     WeakRef<Page> m_page;

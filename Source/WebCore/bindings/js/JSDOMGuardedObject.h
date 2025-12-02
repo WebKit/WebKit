@@ -38,6 +38,10 @@ class WEBCORE_EXPORT DOMGuardedObject : public RefCounted<DOMGuardedObject>, pub
 public:
     ~DOMGuardedObject();
 
+    // ActiveDOMCallback.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     bool isSuspended() const { return !m_guarded || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
 
     template<typename Visitor> void visitAggregate(Visitor& visitor) { visitor.append(m_guarded); }

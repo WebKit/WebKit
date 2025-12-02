@@ -137,7 +137,7 @@ void AcceleratedBackingStore::didCreateSHMBuffer(uint64_t id, WebCore::Shareable
     auto data = bitmap->span();
     auto stride = bitmap->bytesPerRow();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data.data(), data.size(), [](gpointer userData) {
-        delete static_cast<WebCore::ShareableBitmap*>(userData);
+        adoptRef(static_cast<WebCore::ShareableBitmap*>(userData));
     }, bitmap.leakRef()));
 
     GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(wpe_view_get_display(m_wpeView.get()), size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get(), stride)));

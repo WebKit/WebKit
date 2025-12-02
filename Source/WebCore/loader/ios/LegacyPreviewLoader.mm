@@ -65,6 +65,24 @@ static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, c
     return emptyClient();
 }
 
+Ref<LegacyPreviewLoader> LegacyPreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
+{
+    return adoptRef(*new LegacyPreviewLoader(loader, response));
+}
+
+LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
+    : m_converter { PreviewConverter::create(response, *this) }
+    , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
+    , m_resourceLoader { loader }
+    , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
+{
+    ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
+    protectedConverter()->addClient(*this);
+    LOG(Network, "LegacyPreviewLoader created with preview file name \"%s\".", m_converter->previewFileName().utf8().data());
+}
+
+LegacyPreviewLoader::~LegacyPreviewLoader() = default;
+
 RefPtr<PreviewConverter> LegacyPreviewLoader::protectedConverter() const
 {
     return m_converter;
@@ -235,19 +253,6 @@ void LegacyPreviewLoader::provideMainResourceForPreviewConverter(PreviewConverte
 {
     ASSERT_UNUSED(converter, &converter == m_converter);
     completionHandler(m_originalData.copy());
-}
-
-LegacyPreviewLoader::~LegacyPreviewLoader() = default;
-
-LegacyPreviewLoader::LegacyPreviewLoader(ResourceLoader& loader, const ResourceResponse& response)
-    : m_converter { PreviewConverter::create(response, *this) }
-    , m_client { makeClient(loader, m_converter->previewFileName(), m_converter->previewUTI()) }
-    , m_resourceLoader { loader }
-    , m_shouldDecidePolicyBeforeLoading { loader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview() }
-{
-    ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
-    protectedConverter()->addClient(*this);
-    LOG(Network, "LegacyPreviewLoader created with preview file name \"%s\".", m_converter->previewFileName().utf8().data());
 }
 
 bool LegacyPreviewLoader::didReceiveResponse(const ResourceResponse&)

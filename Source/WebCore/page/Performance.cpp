@@ -73,15 +73,13 @@ static Seconds timePrecision { 1_ms };
 
 static bool isSignpostEnabled()
 {
-    static bool flag = false;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        const char* value = getenv("WebKitPerformanceSignpostEnabled");
-        if (value) {
+    static bool flag = [] {
+        if (const char* value = getenv("WebKitPerformanceSignpostEnabled")) {
             if (auto result = parseInteger<int>(StringView::fromLatin1(value)); result && result.value())
-                flag = true;
+                return true;
         }
-    });
+        return false;
+    }();
     return flag;
 }
 

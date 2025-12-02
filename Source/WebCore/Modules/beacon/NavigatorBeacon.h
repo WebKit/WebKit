@@ -50,7 +50,11 @@ public:
 
     size_t inflightBeaconsCount() const { return m_inflightBeacons.size(); }
 
-    WEBCORE_EXPORT static NavigatorBeacon* from(Navigator&);
+    WEBCORE_EXPORT static Ref<NavigatorBeacon> from(Navigator&);
+
+    // CachedResourceClient.
+    WEBCORE_EXPORT void ref() const final;
+    WEBCORE_EXPORT void deref() const final;
 
 private:
     ExceptionOr<bool> sendBeacon(Document&, const String& url, std::optional<FetchBody::Init>&&);

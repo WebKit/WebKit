@@ -50,10 +50,11 @@ inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Docume
 {
     ASSERT(hasTagName(SVGNames::feImageTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGFEImageElement::m_preserveAspectRatio>();
-    });
+    }
 }
 
 Ref<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document& document)

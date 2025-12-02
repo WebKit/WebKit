@@ -60,9 +60,9 @@ struct SelectionContext {
 
 }
 
-static RenderObject* rendererAfterOffset(const RenderObject& renderer, unsigned offset)
+static CheckedPtr<RenderObject> rendererAfterOffset(const RenderObject& renderer, unsigned offset)
 {
-    auto* child = renderer.childAt(offset);
+    CheckedPtr child = renderer.childAt(offset);
     return child ? child : renderer.nextInPreOrderAfterChildren();
 }
 
@@ -80,9 +80,9 @@ static bool isValidRendererForSelection(const RenderObject& renderer, const Rend
     return renderer.canBeSelectionLeaf() || &renderer == selection.start() || &renderer == selection.end();
 }
 
-static RenderBlock* containingBlockBelowView(const RenderObject& renderer)
+static CheckedPtr<RenderBlock> containingBlockBelowView(const RenderObject& renderer)
 {
-    auto* containingBlock = renderer.containingBlock();
+    CheckedPtr containingBlock = renderer.containingBlock();
     return is<RenderView>(containingBlock) ? nullptr : containingBlock;
 }
 
@@ -92,17 +92,17 @@ static SelectionContext collectSelectionData(const RenderRange& selection, bool 
     // Blocks contain selected objects and fill gaps between them, either on the left, right, or in between lines and blocks.
     // In order to get the repaint rect right, we have to examine left, middle, and right rects individually, since otherwise
     // the union of those rects might remain the same even when changes have occurred.
-    auto* start = selection.start();
-    RenderObject* stop = nullptr;
-    if (selection.end())
-        stop = rendererAfterOffset(*selection.end(), selection.endOffset());
-    RenderRangeIterator selectionIterator(start);
+    CheckedPtr start = selection.start();
+    CheckedPtr<RenderObject> stop;
+    if (CheckedPtr selectionEnd = selection.end())
+        stop = rendererAfterOffset(*selectionEnd, selection.endOffset());
+    RenderRangeIterator selectionIterator(start.get());
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, selection)) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             oldSelectionData.renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, true));
             if (repaintDifference) {
-                for (auto* block = containingBlockBelowView(*start); block; block = containingBlockBelowView(*block)) {
+                for (CheckedPtr block = containingBlockBelowView(*start); block; block = containingBlockBelowView(*block)) {
                     auto& blockInfo = oldSelectionData.blocks.add(*block, nullptr).iterator->value;
                     if (blockInfo)
                         break;
@@ -129,7 +129,7 @@ void RenderSelection::set(const RenderRange& selection, RepaintMode blockRepaint
     if ((selection.start() && !selection.end()) || (selection.end() && !selection.start()))
         return;
     // Just return if the selection hasn't changed.
-    auto isCaret = m_renderView.frame().selection().isCaret();
+    auto isCaret = m_renderView->frame().selection().isCaret();
     if (selection == m_renderRange && m_selectionWasCaret == isCaret)
         return;
 #if ENABLE(SERVICE_CONTROLS)
@@ -144,23 +144,23 @@ void RenderSelection::set(const RenderRange& selection, RepaintMode blockRepaint
 void RenderSelection::clear()
 {
     if (!m_selectionWasCaret)
-        m_renderView.layer()->repaintBlockSelectionGaps();
+        m_renderView->checkedLayer()->repaintBlockSelectionGaps();
     set({ }, RenderSelection::RepaintMode::NewMinusOld);
 }
 
 void RenderSelection::repaint() const
 {
     HashSet<CheckedPtr<RenderBlock>> processedBlocks;
-    RenderObject* end = nullptr;
-    if (m_renderRange.end())
-        end = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());
+    CheckedPtr<RenderObject> end;
+    if (CheckedPtr rangeEnd = m_renderRange.end())
+        end = rendererAfterOffset(*rangeEnd, m_renderRange.endOffset());
     RenderRangeIterator highlightIterator(m_renderRange.start());
-    for (auto* renderer = highlightIterator.current(); renderer && renderer != end; renderer = highlightIterator.next()) {
+    for (CheckedPtr renderer = highlightIterator.current(); renderer && renderer != end; renderer = highlightIterator.next()) {
         if (!isValidRendererForSelection(*renderer, m_renderRange))
             continue;
         RenderSelectionGeometry(*renderer, true).repaint();
         // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-        for (auto* block = containingBlockBelowView(*renderer); block; block = containingBlockBelowView(*block)) {
+        for (CheckedPtr block = containingBlockBelowView(*renderer); block; block = containingBlockBelowView(*block)) {
             if (!processedBlocks.add(block).isNewEntry)
                 break;
             RenderSelectionGeometry(*block, true).repaint();
@@ -171,21 +171,21 @@ void RenderSelection::repaint() const
 IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent) const
 {
     LOG_WITH_STREAM(Selection, stream << "SelectionData::collectBounds (clip to visible " << (clipToVisibleContent == ClipToVisibleContent::Yes ? "yes" : "no"));
-    
+
     SelectionContext::RendererMap renderers;
-    auto* start = m_renderRange.start();
-    RenderObject* stop = nullptr;
-    if (m_renderRange.end())
-        stop = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());
-    
-    RenderRangeIterator selectionIterator(start);
+    CheckedPtr start = m_renderRange.start();
+    CheckedPtr<RenderObject> stop;
+    if (CheckedPtr rangeEnd = m_renderRange.end())
+        stop = rendererAfterOffset(*rangeEnd, m_renderRange.endOffset());
+
+    RenderRangeIterator selectionIterator(start.get());
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, m_renderRange)) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
             LOG_WITH_STREAM(Selection, stream << " added start " << *start << " with rect " << renderers.get(*start)->rect());
-            
-            auto* block = start->containingBlock();
+
+            CheckedPtr block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
                 LOG_WITH_STREAM(Selection, stream << " added block " << *block);
                 auto& blockSelectionGeometry = renderers.add(*block, nullptr).iterator->value;
@@ -198,7 +198,7 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
         }
         start = selectionIterator.next();
     }
-    
+
     // Now create a single bounding box rect that encloses the whole selection.
     LayoutRect selectionRect;
     for (auto slectionEntry : renderers) {
@@ -207,8 +207,8 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
         LayoutRect currentRect = selectionGeometry->rect();
         if (currentRect.isEmpty())
             continue;
-        
-        if (auto* repaintContainer = selectionGeometry->repaintContainer()) {
+
+        if (CheckedPtr repaintContainer = selectionGeometry->repaintContainer()) {
             FloatRect localRect = currentRect;
             FloatQuad absQuad = repaintContainer->localToAbsoluteQuad(localRect);
             currentRect = absQuad.enclosingBoundingBox();
@@ -216,7 +216,7 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
         }
         selectionRect.unite(currentRect);
     }
-    
+
     LOG_WITH_STREAM(Selection, stream << " final rect " << selectionRect);
     return snappedIntRect(selectionRect);
 }
@@ -225,52 +225,54 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
 {
     auto oldSelectionData = collectSelectionData(m_renderRange, blockRepaintMode == RepaintMode::NewXOROld);
     // Remove current selection.
-    for (auto selectionEntry : oldSelectionData.renderers)
-        selectionEntry.key.setSelectionStateIfNeeded(RenderObject::HighlightState::None);
+    for (auto selectionEntry : oldSelectionData.renderers) {
+        CheckedRef renderer = selectionEntry.key;
+        renderer->setSelectionStateIfNeeded(RenderObject::HighlightState::None);
+    }
     m_renderRange = newSelection;
-    auto* selectionStart = m_renderRange.start();
+    CheckedPtr selectionStart = m_renderRange.start();
     // Update the selection status of all objects between selectionStart and selectionEnd
     if (selectionStart && selectionStart == m_renderRange.end())
         selectionStart->setSelectionStateIfNeeded(RenderObject::HighlightState::Both);
     else {
         if (selectionStart)
             selectionStart->setSelectionStateIfNeeded(RenderObject::HighlightState::Start);
-        if (auto* end = m_renderRange.end())
+        if (CheckedPtr end = m_renderRange.end())
             end->setSelectionStateIfNeeded(RenderObject::HighlightState::End);
     }
-    
-    RenderObject* selectionEnd = nullptr;
-    auto* selectionDataEnd = m_renderRange.end();
+
+    CheckedPtr<RenderObject> selectionEnd;
+    CheckedPtr selectionDataEnd = m_renderRange.end();
     if (selectionDataEnd)
         selectionEnd = rendererAfterOffset(*selectionDataEnd, m_renderRange.endOffset());
-    RenderRangeIterator selectionIterator(selectionStart);
-    for (auto* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
+    RenderRangeIterator selectionIterator(selectionStart.get());
+    for (CheckedPtr currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
         if (currentRenderer == selectionStart || currentRenderer == m_renderRange.end())
             continue;
         if (!currentRenderer->canBeSelectionLeaf() || currentRenderer->isSkippedContent())
             continue;
         currentRenderer->setSelectionStateIfNeeded(RenderObject::HighlightState::Inside);
     }
-    
+
     if (blockRepaintMode != RepaintMode::Nothing)
-        m_renderView.layer()->clearBlockSelectionGapsBounds();
-    
+        m_renderView->checkedLayer()->clearBlockSelectionGapsBounds();
+
     // Now that the selection state has been updated for the new objects, walk them again and
     // put them in the new objects list.
     SelectionContext::RendererMap newSelectedRenderers;
     SelectionContext::RenderBlockMap newSelectedBlocks;
-    selectionIterator = RenderRangeIterator(selectionStart);
-    for (auto* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
+    selectionIterator = RenderRangeIterator(selectionStart.get());
+    for (CheckedPtr currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
         if (isValidRendererForSelection(*currentRenderer, m_renderRange)) {
             auto selectionGeometry = makeUnique<RenderSelectionGeometry>(*currentRenderer, true);
 #if ENABLE(SERVICE_CONTROLS)
             for (auto& quad : selectionGeometry->collectedSelectionQuads())
-                m_selectionGeometryGatherer.addQuad(selectionGeometry->repaintContainer(), quad);
+                m_selectionGeometryGatherer.addQuad(selectionGeometry->checkedRepaintContainer().get(), quad);
             if (!currentRenderer->isRenderTextOrLineBreak())
                 m_selectionGeometryGatherer.setTextOnly(false);
 #endif
             newSelectedRenderers.set(*currentRenderer, WTFMove(selectionGeometry));
-            auto* containingBlock = currentRenderer->containingBlock();
+            CheckedPtr containingBlock = currentRenderer->containingBlock();
             while (containingBlock && !is<RenderView>(*containingBlock)) {
                 auto& blockSelectionGeometry = newSelectedBlocks.add(*containingBlock, nullptr).iterator->value;
                 if (blockSelectionGeometry)
@@ -278,49 +280,49 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
                 blockSelectionGeometry = makeUnique<RenderBlockSelectionGeometry>(*containingBlock);
                 containingBlock = containingBlock->containingBlock();
 #if ENABLE(SERVICE_CONTROLS)
-                m_selectionGeometryGatherer.addGapRects(blockSelectionGeometry->repaintContainer(), blockSelectionGeometry->rects());
+                m_selectionGeometryGatherer.addGapRects(blockSelectionGeometry->checkedRepaintContainer().get(), blockSelectionGeometry->rects());
 #endif
             }
         }
     }
-    
+
     if (blockRepaintMode == RepaintMode::Nothing)
         return;
-    
+
     // Have any of the old selected objects changed compared to the new selection?
     for (auto selectedRendererInfo : oldSelectionData.renderers) {
-        auto& renderer = selectedRendererInfo.key;
-        auto* newInfo = newSelectedRenderers.get(renderer);
+        CheckedRef renderer = selectedRendererInfo.key;
+        auto* newInfo = newSelectedRenderers.get(renderer.get());
         auto* oldInfo = selectedRendererInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
-            || (m_renderRange.start() == &renderer && oldSelectionData.startOffset != m_renderRange.startOffset())
-            || (m_renderRange.end() == &renderer && oldSelectionData.endOffset != m_renderRange.endOffset())) {
+            || (m_renderRange.start() == renderer.ptr() && oldSelectionData.startOffset != m_renderRange.startOffset())
+            || (m_renderRange.end() == renderer.ptr() && oldSelectionData.endOffset != m_renderRange.endOffset())) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
-                newSelectedRenderers.remove(renderer);
+                newSelectedRenderers.remove(renderer.get());
             }
         }
     }
-    
+
     // Any new objects that remain were not found in the old objects dict, and so they need to be updated.
     for (auto selectedRendererInfo : newSelectedRenderers)
         selectedRendererInfo.value->repaint();
-    
+
     // Have any of the old blocks changed?
     for (auto selectedBlockInfo : oldSelectionData.blocks) {
-        auto& block = selectedBlockInfo.key;
-        auto* newInfo = newSelectedBlocks.get(block);
+        CheckedRef block = selectedBlockInfo.key;
+        auto* newInfo = newSelectedBlocks.get(block.get());
         auto* oldInfo = selectedBlockInfo.value.get();
         if (!newInfo || oldInfo->rects() != newInfo->rects() || oldInfo->state() != newInfo->state()) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();
-                newSelectedBlocks.remove(block);
+                newSelectedBlocks.remove(block.get());
             }
         }
     }
-    
+
     // Any new blocks that remain were not found in the old blocks dict, and so they need to be updated.
     for (auto selectedBlockInfo : newSelectedBlocks)
         selectedBlockInfo.value->repaint();

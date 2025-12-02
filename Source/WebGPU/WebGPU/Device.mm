@@ -780,10 +780,8 @@ id<MTLRenderPipelineState> Device::indexedIndirectBufferClampPipeline(NSUInteger
     if (result)
         return result;
 
-    static id<MTLFunction> function = nil;
-    NSError *error = nil;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
+    static id<MTLFunction> function = [&] {
+        NSError *error = nil;
         MTLCompileOptions* options = [MTLCompileOptions new];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         options.fastMathEnabled = YES;
@@ -819,8 +817,8 @@ id<MTLRenderPipelineState> Device::indexedIndirectBufferClampPipeline(NSUInteger
         if (error)
             WTFLogAlways("%@", error);
 
-        function = [library newFunctionWithName:@"vsIndexedIndirect"];
-    });
+        return [library newFunctionWithName:@"vsIndexedIndirect"];
+    }();
 
     RELEASE_ASSERT(function);
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
@@ -830,6 +828,7 @@ id<MTLRenderPipelineState> Device::indexedIndirectBufferClampPipeline(NSUInteger
     mtlRenderPipelineDescriptor.fragmentFunction = nil;
     mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
 
+    NSError *error = nil;
     if (rasterSampleCount > 1)
         result = m_indexedIndirectBufferClampPSOMS = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
     else

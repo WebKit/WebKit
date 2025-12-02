@@ -1,0 +1,13 @@
+This tests that live region notifications for elements with different languages include the right language attributes.
+
+Announcement received, notification: AXAnnouncementRequested, attributed string: Manzana{
+    UIAccessibilitySpeechAttributeAnnouncementPriority = UIAccessibilityPriorityLow;
+    UIAccessibilitySpeechAttributeIsLiveRegion = 1;
+    UIAccessibilitySpeechAttributeLanguage = es;
+}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple: Manzana

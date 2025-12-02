@@ -204,7 +204,7 @@ protected:
     ResourceResponse m_response;
     ResourceLoadTiming m_loadTiming;
 #if USE(QUICK_LOOK)
-    std::unique_ptr<LegacyPreviewLoader> m_previewLoader;
+    const RefPtr<LegacyPreviewLoader> m_previewLoader;
 #endif
     bool m_canCrossOriginRequestsAskUserForCredentials { true };
 

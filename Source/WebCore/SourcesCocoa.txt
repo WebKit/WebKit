@@ -81,6 +81,7 @@ JSSpeechSynthesisErrorCode.cpp
 JSSpeechSynthesisErrorEvent.cpp
 JSSpeechSynthesisErrorEventInit.cpp
 JSSpeechSynthesisEventInit.cpp
+Modules/Model/Implementation/DDMeshImpl.mm
 Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm @nonARC
 Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.mm @nonARC
 Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.mm @nonARC
@@ -284,6 +285,7 @@ platform/audio/cocoa/SpatialAudioExperienceHelper.mm @nonARC
 platform/audio/cocoa/WebAudioBufferList.cpp
 platform/audio/ios/AudioOutputUnitAdaptorIOS.cpp @no-unify
 platform/audio/ios/AudioSessionIOS.mm @nonARC @no-unify
+platform/audio/ios/MediaDeviceRoute.mm @nonARC
 platform/audio/ios/MediaSessionHelperIOS.mm @nonARC @no-unify
 platform/audio/ios/MediaSessionManagerIOS.mm @nonARC @no-unify
 platform/audio/mac/AudioBusMac.mm @nonARC

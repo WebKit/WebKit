@@ -85,7 +85,11 @@ class WebDriverTestRunner(object):
 
         _log.info('Parsing expectations')
         self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
-        expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
+        if self._port.get_option('force'):
+            _log.info('Force mode enabled: Ignoring test expectations')
+            expectations_file = ''
+        else:
+            expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
         build_type = 'Debug' if self._port.get_option('debug') else 'Release'
         self._expectations = TestExpectations(self._port.name(), expectations_file, build_type)
         for test in self._expectations._expectations.keys():

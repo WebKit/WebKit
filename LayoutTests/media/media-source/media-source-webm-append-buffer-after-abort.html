@@ -43,7 +43,7 @@
             await Promise.all([
                 waitFor(video, 'loadeddata'),
                 waitFor(video, 'canplay'),
-                waitFor(sourceBuffer, 'update'),
+                waitFor(sourceBuffer, 'update', true),
             ]);
             testExpected('video.readyState', video.HAVE_FUTURE_DATA);
             testExpected('sourceBuffer.buffered.length', 1);

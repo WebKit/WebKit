@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "MessageReceiver.h"
+#include "ProvisionalFrameCreationParameters.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntSize.h>
@@ -39,6 +40,7 @@
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -199,7 +201,7 @@ public:
     bool isConnected() const;
     void didCreateSubframe(WebCore::FrameIdentifier, String&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
     ProcessID processID() const;
-    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, CompletionHandler<void(WebCore::PageIdentifier)>&&);
+    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(WebCore::PageIdentifier)>&&);
 
     void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
@@ -275,6 +277,8 @@ public:
 
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
+    ProvisionalFrameCreationParameters provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, CommitTiming);
+
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, IsMainFrame);
 
@@ -282,7 +286,7 @@ private:
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
-    WebFrameProxy* deepLastChild();
+    RefPtr<WebFrameProxy> deepLastChild();
     WebFrameProxy* firstChild() const;
     WebFrameProxy* lastChild() const;
     WebFrameProxy* nextSibling() const;
@@ -314,9 +318,19 @@ private:
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
-};
+} SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy);
 
 } // namespace WebKit
+
+inline void refWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
+}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebFrameProxy)
     static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Frame; }

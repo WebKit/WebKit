@@ -333,6 +333,7 @@ enum AV1ConfigurationRange {
 ] dictionary AcceleratedAnimation {
     DOMString property;
     double speed;
+    boolean isThreaded;
 };
 
 [
@@ -1025,6 +1026,7 @@ enum ContentsFormat {
 
     [Conditional=VIDEO] undefined showCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
     [Conditional=VIDEO] undefined hideCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement element);
+    [Conditional=VIDEO] undefined setMockCaptionDisplaySettingsClientCallback(MockCaptionDisplaySettingsClientCallback? callback);
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
@@ -1478,6 +1480,8 @@ enum ContentsFormat {
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
     [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
     [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
+
+    unsigned long fileConnectionHandleCount(FileSystemHandle handle);
 
     // Navigation API rate limiter testing
     undefined setNavigationRateLimiterParameters(DOMWindow window, unsigned long maxNavigations, double windowDurationSeconds);

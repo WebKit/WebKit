@@ -484,6 +484,21 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
     m_privateClickMeasurement->handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies(), appBundleID);
 }
 
+void NetworkSession::simulatePrivateClickMeasurementConversion(int priority, int triggerData, const URL& sourceURL, const URL& destinationURL)
+{
+    RegistrableDomain destinationSite { destinationURL };
+    if (!destinationSite.matches(URL { "https://pcmdestination.example"_s }))
+        return;
+
+    ResourceRequest request { URL { sourceURL }, destinationURL.strippedForUseAsReferrer().string };
+    request.setFirstPartyForCookies(destinationURL);
+
+    WebCore::PCM::AttributionTriggerData attributionTriggerData;
+    attributionTriggerData.data = triggerData;
+    attributionTriggerData.priority = priority;
+    handlePrivateClickMeasurementConversion(WTFMove(attributionTriggerData), sourceURL, request, { });
+}
+
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
 {
     m_privateClickMeasurement->toStringForTesting(WTFMove(completionHandler));

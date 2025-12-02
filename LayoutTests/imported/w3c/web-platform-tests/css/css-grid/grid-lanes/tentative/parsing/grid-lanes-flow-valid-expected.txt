@@ -1,0 +1,34 @@
+
+FAIL e.style['grid-lanes-flow'] = "column normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "column reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "column normal" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column normal" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column normal" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "column reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column reverse" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "row normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "row reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "row normal" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row normal" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row normal" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "row reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row reverse" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "column-reverse normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "column-reverse reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "column-reverse normal" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column-reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column-reverse normal" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column-reverse normal" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "column-reverse reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "column-reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column-reverse reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "column-reverse reverse" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "row-reverse normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "row-reverse reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['grid-lanes-flow'] = "row-reverse normal" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row-reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row-reverse normal" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "normal" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row-reverse normal" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['grid-lanes-flow'] = "row-reverse reverse" should set masonry-direction assert_equals: masonry-direction should be canonical expected (string) "row-reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row-reverse reverse" should set masonry-fill assert_equals: masonry-fill should be canonical expected (string) "reverse" but got (undefined) undefined
+FAIL e.style['grid-lanes-flow'] = "row-reverse reverse" should not set unrelated longhands assert_true: expected true got false
+

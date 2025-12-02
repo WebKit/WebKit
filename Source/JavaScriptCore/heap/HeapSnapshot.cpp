@@ -113,9 +113,7 @@ void HeapSnapshot::finalize()
         m_lastObjectIdentifier = m_nodes.last().identifier;
     }
 
-    std::sort(m_nodes.begin(), m_nodes.end(), [] (const HeapSnapshotNode& a, const HeapSnapshotNode& b) {
-        return a.cell < b.cell;
-    });
+    std::ranges::sort(m_nodes, { }, &HeapSnapshotNode::cell);
 
 #ifndef NDEBUG
     // Assert there are no duplicates or nullptr cells.

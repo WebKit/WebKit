@@ -18,12 +18,12 @@
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
+webkit.org/b/299561 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-chained-003.html [ Pass ]
+
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-intermediate-element-overflow-hidden-and-border-radius.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Pass ]
 
@@ -65,10 +65,8 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-014.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
-imported/w3c/web-platform-tests/svg/shapes/rect-04.svg [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-left-right-vlr-009.xht [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ Pass ]
@@ -113,9 +111,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ ImageOnlyFailure ]
-
-# WPE Pass but marked as fail in wk2
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-interface/destination.html
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
@@ -590,17 +585,12 @@ webkit.org/b/213231 fast/block/float/float-with-anonymous-previous-sibling.html 
 
 webkit.org/b/213717 fast/scrolling/overflow-scrollable-after-back.html [ Timeout ]
 
-webkit.org/b/216650 fast/events/mouse-cursor-multiframecur.html [ Failure ]
-webkit.org/b/216650 fast/events/mouse-cursor.html [ Failure ]
 webkit.org/b/216650 fast/events/mouse-cursor-hidden-when-out-of-bounds.html [ Failure ]
-webkit.org/b/216650 fast/events/mouse-focus-imagemap.html [ Failure ]
-webkit.org/b/216650 fast/events/mouse-moved-remove-frame-crash.html [ Timeout ]
 
 webkit.org/b/219465 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Failure Pass ]
 webkit.org/b/235277 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.rtl.text.worker.html [ Failure Pass ]
 
 # Flaky tests detected from 29Jan2023 to 23Feb2023
-webkit.org/b/252878 fast/events/mouse-events-on-textarea-resize.html [ Failure ]
 webkit.org/b/252878 fast/hidpi/filters-and-image-buffer-resolution.html [ Timeout Pass ]
 webkit.org/b/252878 fast/hidpi/filters-morphology.html [ Timeout Pass ]
 webkit.org/b/252878 fast/hidpi/hidpi-form-controls-drawing-size.html [ ImageOnlyFailure Pass ]
@@ -726,12 +716,7 @@ webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm 
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
 
-Bug(WPE) fast/css-grid-layout/flex-content-sized-columns-resize.html [ Timeout ]
-
 Bug(WPE) fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
-
-# clickCount related failures
-webkit.org/b/174674 fast/events/mouse-click-events.html [ Failure ]
 
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
@@ -820,7 +805,6 @@ Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document.html 
 Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html [ Pass ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 svg/text/kerning.svg [ Pass ]
@@ -963,7 +947,6 @@ fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
-webgl/2.0.y/conformance/extensions/ext-color-buffer-half-float.html [ Pass ]
 
 webkit.org/b/280603 webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float.html [ Failure Timeout Pass ]
 webkit.org/b/280603 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb8ui-rgb_integer-unsigned_byte.html [ Timeout Pass ]
@@ -1017,7 +1000,6 @@ fast/url/url-hostname-encoding.html [ Failure ]
 webgl/2.0.y/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
-imported/mozilla/svg/tspan-rotate-07.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
@@ -1071,8 +1053,6 @@ compositing/layer-creation/scroll-partial-update.html [ Failure ]
 compositing/overflow/content-gains-scrollbars.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layer-positions.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
-compositing/rtl/rtl-iframe-absolute.html [ Failure ]
-compositing/rtl/rtl-iframe-relative.html [ Failure ]
 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 compositing/tile-coverage-subpixel-empty-rect.html [ Failure ]
 compositing/tiling/tiled-layers-limit-contents-scale.html [ Failure ]
@@ -1177,7 +1157,6 @@ webkit.org/b/287572 fast/lists/list-marker-before-float-nested-rtl.html [ ImageO
 webkit.org/b/287572 fast/lists/list-marker-before-float-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/multicol/border-radius-overflow-columns.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/multicol/client-rects.html [ ImageOnlyFailure ]
-webkit.org/b/287572 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/mozilla/svg/markers-and-group-opacity-01.svg [ ImageOnlyFailure ]
@@ -1294,6 +1273,9 @@ webkit.org/b/287572 svg/compositing/svg-poster-circle.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/filters/filter-on-root-tile-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
 
+# Path with marker failures
+svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
+
 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
 
 webkit.org/b/292841 fullscreen/exit-full-screen-video-crash.html [ Timeout ]
@@ -1310,6 +1292,7 @@ imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynam
 
 imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/table-caption.html [ ImageOnlyFailure ]
 
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-spelling-error-1.html [ Skip ]
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-spelling-error-2.html [ Skip ]

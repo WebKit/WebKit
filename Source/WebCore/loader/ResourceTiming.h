@@ -48,6 +48,7 @@ public:
 
     const URL& url() const { return m_url; }
     const String& initiatorType() const { return m_initiatorType; }
+    String deliveryType() const { return m_networkLoadMetrics.fromPrefetch ? "navigational-prefetch"_s : emptyString(); }
     const ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
     const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }

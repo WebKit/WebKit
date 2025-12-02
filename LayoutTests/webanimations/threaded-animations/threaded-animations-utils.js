@@ -13,3 +13,14 @@ const animationAcceleration = async animation => {
     // but after the requestAnimationFrame callbacks have been serviced.
     await new Promise(setTimeout);
 };
+
+const legacyAnimationCommit = async () => {
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+};
+
+const threadedAnimationsCommit = async () => {
+    await new Promise(requestAnimationFrame);
+    await new Promise(setTimeout);
+};

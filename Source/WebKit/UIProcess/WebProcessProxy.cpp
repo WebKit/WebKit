@@ -32,6 +32,7 @@
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
 #include "DownloadProxyMap.h"
+#include "DrawingAreaProxy.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GoToBackForwardItemParameters.h"
 #include "JavaScriptEvaluationResult.h"
@@ -255,6 +256,11 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::mainPages() const
     return WTF::map(m_pageMap, [] (auto& keyValue) -> Ref<WebPageProxy> {
         return keyValue.value.get();
     });
+}
+
+unsigned WebProcessProxy::provisionalPageCount() const
+{
+    return m_provisionalPages.computeSize();
 }
 
 Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
@@ -1848,6 +1854,15 @@ void WebProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImmi
 {
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "sendPrepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent == IsSuspensionImminent::Yes);
     sendWithAsyncReply(Messages::WebProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes, MonotonicTime::now() + Seconds(remainingRunTime)), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+
+    for (Ref page : pages()) {
+        if (RefPtr drawingArea = page->drawingArea())
+            drawingArea->hideContentUntilPendingUpdate();
+    }
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (RefPtr drawingArea = provisionalPage->drawingArea())
+            drawingArea->hideContentUntilPendingUpdate();
+    }
 }
 
 void WebProcessProxy::sendProcessDidResume(ResumeReason)
@@ -2266,6 +2281,11 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_site = *site;
+}
+
+unsigned WebProcessProxy::suspendedPageCount() const
+{
+    return m_suspendedPages.computeSize();
 }
 
 void WebProcessProxy::addSuspendedPageProxy(SuspendedPageProxy& suspendedPage)

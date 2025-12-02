@@ -3,6 +3,8 @@ PASS Same-origin blob URL iframe should inherit service worker controller.
 PASS Same-origin blob URL iframe should intercept fetch().
 PASS Same-origin blob URL worker should inherit service worker controller.
 PASS Same-origin blob URL worker should intercept fetch().
+PASS Same-origin blob URL sharedworker should inherit service worker controller.
+PASS Same-origin blob URL sharedworker should intercept fetch().
 PASS Data URL iframe should not intercept fetch().
 PASS Data URL worker should not inherit service worker controller.
 PASS Data URL worker should not intercept fetch().

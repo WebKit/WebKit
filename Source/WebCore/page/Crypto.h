@@ -45,6 +45,10 @@ public:
     static Ref<Crypto> create(ScriptExecutionContext* context) { return adoptRef(*new Crypto(context)); }
     virtual ~Crypto();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
     String randomUUID() const;
 

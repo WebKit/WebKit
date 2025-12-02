@@ -128,6 +128,7 @@ private:
     JSObjectRef inputViewBounds() const override;
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
     JSRetainPtr<JSStringRef> uiViewTreeAsText() const override;
+    JSRetainPtr<JSStringRef> uiViewTreeAsTextForViewWithLayerID(unsigned long long) const override;
     void simulateRotation(DeviceOrientation*, JSValueRef) override;
     void simulateRotationLikeSafari(DeviceOrientation*, JSValueRef) override;
     bool isShowingPopover() const override;

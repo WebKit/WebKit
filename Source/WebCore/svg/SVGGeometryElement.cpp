@@ -42,10 +42,11 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SVGGeometryElement);
 SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& document, UniqueRef<SVGPropertyRegistry>&& propertyRegistry)
     : SVGGraphicsElement(tagName, document, WTFMove(propertyRegistry))
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::pathLengthAttr, &SVGGeometryElement::m_pathLength>();
-    });
+    }
 }
 
 float SVGGeometryElement::getTotalLength() const

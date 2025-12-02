@@ -32,4 +32,6 @@
 // Removes all items except the current one.
 - (void)_clear;
 
+- (NSString *)_loggingStringForTesting;
+
 @end

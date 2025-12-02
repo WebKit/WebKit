@@ -46,7 +46,7 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
 
-class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle>, public WebCore::ActiveDOMObject, public CanMakeWeakPtr<InjectedBundleNodeHandle> {
+class InjectedBundleNodeHandle : public API::ObjectImpl<API::Object::Type::BundleNodeHandle>, public WebCore::ActiveDOMObject {
 public:
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);

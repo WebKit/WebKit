@@ -396,11 +396,7 @@ private:
 MallocCallTracker& MallocCallTracker::singleton()
 {
     AvoidRecordingScope avoidRecording;
-    static LazyNeverDestroyed<MallocCallTracker> tracker;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        tracker.construct();
-    });
+    static NeverDestroyed<MallocCallTracker> tracker;
     return tracker;
 }
 

@@ -28,7 +28,9 @@
 #include <WebCore/EventLoop.h>
 #include <WebCore/GCReachableRef.h>
 #include <WebCore/Timer.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +44,9 @@ class Page;
 class SecurityOrigin;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
-class WindowEventLoop final : public EventLoop {
+class WindowEventLoop final : public EventLoop, public CanMakeCheckedPtr<WindowEventLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(WindowEventLoop);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WindowEventLoop);
 public:
     static Ref<WindowEventLoop> eventLoopForSecurityOrigin(const SecurityOrigin&);
 

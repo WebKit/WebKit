@@ -51,6 +51,10 @@ public:
 
     virtual ~CachedModuleScriptLoader();
 
+    // CachedResourceClient.
+    void ref() const final { ModuleScriptLoader::ref(); }
+    void deref() const final { ModuleScriptLoader::deref(); }
+
     bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>);
 
     CachedScript* cachedScript() { return m_cachedScript.get(); }

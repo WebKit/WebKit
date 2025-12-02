@@ -28,28 +28,22 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#import <Foundation/Foundation.h>
-#import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
 
-MediaPlaybackTargetContextCocoa::MediaPlaybackTargetContextCocoa(RetainPtr<AVOutputContext>&& outputContext)
-    : MediaPlaybackTargetContext(Type::AVOutputContext)
-    , m_outputContext(WTFMove(outputContext))
+MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(RetainPtr<AVOutputContext>&& outputContext)
+    : MediaPlaybackTarget { Type::AVOutputContext }
+    , m_outputContext { WTFMove(outputContext) }
 {
     ASSERT(m_outputContext);
 }
 
-MediaPlaybackTargetContextCocoa::~MediaPlaybackTargetContextCocoa() = default;
+MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa() = default;
 
-RetainPtr<AVOutputContext> MediaPlaybackTargetContextCocoa::outputContext() const
-{
-    return m_outputContext;
-}
-
-String MediaPlaybackTargetContextCocoa::deviceName() const
+String MediaPlaybackTargetCocoa::deviceName() const
 {
     if (![m_outputContext supportsMultipleOutputDevices])
         return [m_outputContext deviceName];
@@ -61,7 +55,7 @@ String MediaPlaybackTargetContextCocoa::deviceName() const
     return [outputDeviceNames componentsJoinedByString:@" + "];
 }
 
-bool MediaPlaybackTargetContextCocoa::hasActiveRoute() const
+bool MediaPlaybackTargetCocoa::hasActiveRoute() const
 {
     if ([m_outputContext supportsMultipleOutputDevices]) {
         for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
@@ -74,7 +68,8 @@ bool MediaPlaybackTargetContextCocoa::hasActiveRoute() const
     }
     return m_outputContext.get().deviceName;
 }
-bool MediaPlaybackTargetContextCocoa::supportsRemoteVideoPlayback() const
+
+bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
 {
     for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
         if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
@@ -84,22 +79,18 @@ bool MediaPlaybackTargetContextCocoa::supportsRemoteVideoPlayback() const
     return false;
 }
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(MediaPlaybackTargetContextCocoa&& context)
+Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create(RetainPtr<AVOutputContext>&& outputContext)
 {
-    return adoptRef(*new MediaPlaybackTargetCocoa(WTFMove(context)));
-}
-
-MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa&& context)
-    : m_context(context.outputContext())
-{
+    return adoptRef(*new MediaPlaybackTargetCocoa(WTFMove(outputContext)));
 }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 Ref<MediaPlaybackTargetCocoa> MediaPlaybackTargetCocoa::create()
 {
-    auto *routingContextUID = [[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID];
-    return adoptRef(*new MediaPlaybackTargetCocoa(MediaPlaybackTargetContextCocoa([PAL::getAVOutputContextClassSingleton() outputContextForID:routingContextUID])));
+    NSString *routingContextUID = [[PAL::getAVAudioSessionClassSingleton() sharedInstance] routingContextUID];
+    return create([PAL::getAVOutputContextClassSingleton() outputContextForID:routingContextUID]);
 }
+
 #endif
 
 } // namespace WebCore

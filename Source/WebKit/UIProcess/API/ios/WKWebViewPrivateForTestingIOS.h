@@ -52,6 +52,9 @@
 @property (nonatomic, readonly) UITapGestureRecognizer *_singleTapGestureRecognizer;
 @property (nonatomic, readonly, getter=_isKeyboardScrollingAnimationRunning) BOOL _keyboardScrollingAnimationRunning;
 
+- (NSString *)_uiViewTreeAsTextForViewWithLayerID:(unsigned long long)layerID;
+- (NSString *)_uiViewTreeAsTextForView:(UIView *)view;
+
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
 - (void)dismissFormAccessoryView;

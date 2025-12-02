@@ -255,12 +255,8 @@ static NSArray *playerKVOProperties();
 
 static dispatch_queue_t globalLoaderDelegateQueue()
 {
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
-    });
-    return globalQueue;
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL));
+    return globalQueue.get().get();
 }
 
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
@@ -3318,7 +3314,7 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 
 #if !PLATFORM(IOS_FAMILY)
     if (RefPtr playbackTarget = m_playbackTarget) {
-        if (playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation)
+        if (playbackTarget->type() == MediaPlaybackTarget::Type::AVOutputContext)
             wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
         else
             wirelessTarget = m_shouldPlayToPlaybackTarget && playbackTarget->hasActiveRoute();
@@ -3481,7 +3477,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
 
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
 
-    if (playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation) {
+    if (playbackTarget->type() == MediaPlaybackTarget::Type::AVOutputContext) {
         AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
 
         if (!m_avPlayer)
@@ -3496,7 +3492,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
         return;
     }
 
-    ASSERT(playbackTarget->targetType() == MediaPlaybackTarget::TargetType::Mock);
+    ASSERT(playbackTarget->type() == MediaPlaybackTarget::Type::Mock);
 
     if (RefPtr player = this->player()) {
         player->queueTaskOnEventLoop([weakThis = ThreadSafeWeakPtr { *this }] {
@@ -3949,11 +3945,7 @@ auto MediaPlayerPrivateAVFoundationObjC::asyncVideoPlaybackQualityMetrics() -> R
 {
     assertIsMainThread();
 
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<Ref<WorkQueue>> metricsWorkQueue;
-    std::call_once(onceKey, [] {
-        metricsWorkQueue.construct(WorkQueue::create("VideoPlaybackQualityMetrics"_s, WorkQueue::QOS::Background));
-    });
+    static NeverDestroyed<Ref<WorkQueue>> metricsWorkQueue = WorkQueue::create("VideoPlaybackQualityMetrics"_s, WorkQueue::QOS::Background);
 
     if (!m_videoLayer)
         return VideoPlaybackQualityMetricsPromise::createAndReject(PlatformMediaError::NotSupportedError);

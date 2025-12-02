@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutUnit.h"
+#include <WebCore/LayoutUnit.h>
 
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleZoomPrimitives.h>

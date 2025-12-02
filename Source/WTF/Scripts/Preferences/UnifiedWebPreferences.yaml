@@ -184,6 +184,20 @@ AccessHandleEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+AccessibilityTextStitchingEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Enable Accessibility Text Stitching"
+  humanReadableDescription: "Stitch adjacent text elements into one in the accessibility tree"
+  webcoreBinding: DeprecatedGlobalSettings
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AccessibilityThreadTextApisEnabled:
   type: bool
   status: embedder
@@ -1238,6 +1252,20 @@ CSSInputSecurityEnabled:
     WebCore:
       default: false
 
+CSSInternalAutoBaseParsingEnabled:
+  type: bool
+  status: internal
+  category: css
+  humanReadableName: "CSS -internal-auto-base() in author sheet"
+  humanReadableDescription: "Enable parsing -internal-auto-base() in author sheet"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSLineClampEnabled:
   type: bool
   status: preview
@@ -1549,20 +1577,6 @@ CSSTextTransformMathAutoEnabled:
     WebCore:
       default: false
 
-CSSTextUnderlinePositionLeftRightEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS text-underline-position: left right"
-  humanReadableDescription: "Enable the property text-underline-position left and right value support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSTextWrapPrettyEnabled:
    type: bool
    status: stable
@@ -1785,7 +1799,7 @@ CanvasUsesAcceleratedDrawing:
 
 CaptionDisplaySettingsEnabled:
   type: bool
-  status: unstable
+  status: internal
   category: media
   humanReadableName: "Caption Display Settings API"
   humanReadableDescription: "Enable Caption Display Settings API"
@@ -4223,6 +4237,19 @@ IsAccessibilityIsolatedTreeEnabled:
     WebCore:
       default: false
 
+IsAriaLiveRegionManagementEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "ARIA Live Regions in WebKit"
+  humanReadableDescription: "Turn on ARIA live-region management within WebKit"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsFirstPartyWebsiteDataRemovalDisabled:
   type: bool
@@ -5344,7 +5371,7 @@ MediaSourcePrefersDecompressionSession:
 
 MediaSourceUseRemoteAudioVideoRenderer:
   type: bool
-  status: unstable
+  status: testable
   category: media
   humanReadableName: "MSE player uses GPU renderer"
   humanReadableDescription: "MSE player uses GPU renderer"
@@ -5519,13 +5546,30 @@ ModelElementEnabled:
   condition: ENABLE(MODEL_ELEMENT)
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(VISION) && ENABLE(MODEL_ELEMENT)": true
+      "(PLATFORM(VISION) || ENABLE(GPU_PROCESS_MODEL)) && ENABLE(MODEL_ELEMENT)": true
       default: false
     WebKit:
-      "PLATFORM(VISION) && ENABLE(MODEL_ELEMENT)": true
+      "(PLATFORM(VISION) || ENABLE(GPU_PROCESS_MODEL)) && ENABLE(MODEL_ELEMENT)": true
       default: false
     WebCore:
-      "PLATFORM(VISION) && ENABLE(MODEL_ELEMENT)": true
+      "(PLATFORM(VISION) || ENABLE(GPU_PROCESS_MODEL)) && ENABLE(MODEL_ELEMENT)": true
+      default: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
+
+ModelElementImmersiveEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  condition: ENABLE(MODEL_ELEMENT_IMMERSIVE)
+  humanReadableName: "Immersive <model> API"
+  humanReadableDescription: "Enable <model> element immersive API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
@@ -6420,10 +6464,24 @@ ReadableByteStreamAPIEnabled:
 
 ReadableByteStreamFetchSourceEnabled:
   type: bool
-  status: unstable
+  status: preview
   category: dom
   humanReadableName: "ReadableByteStream for fetch API"
   humanReadableDescription: "Enable Readable Byte Streams for fetch API"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
+ReadableStreamIterableEnabled:
+  type: bool
+  status: preview
+  category: dom
+  humanReadableName: "ReadableStream async iterable"
+  humanReadableDescription: "Enable ReadableStream async iterable"
   defaultValue:
     WebCore:
       default: false
@@ -8854,34 +8912,6 @@ ViewGestureDebuggingEnabled:
     WebKit:
       default: false
 
-ViewTransitionClassesEnabled:
-  type: bool
-  category: animation
-  status: stable
-  humanReadableName: "View Transition Classes"
-  humanReadableDescription: "Support specifying classes for view transitions"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-ViewTransitionTypesEnabled:
-  type: bool
-  category: animation
-  status: stable
-  humanReadableName: "View Transition Types"
-  humanReadableDescription: "Support specifying types for view transitions"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ViewTransitionsEnabled:
   type: bool
   category: animation
@@ -9637,7 +9667,7 @@ WebRTCSocketsServiceClassEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: WebKit::defaultWebRTCSocketsServiceClassEnabled()
     WebCore:
       default: false
 

@@ -27,8 +27,8 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-#include "ProgressResolutionData.h"
-#include "TimelineIdentifier.h"
+#include <WebCore/ProgressResolutionData.h>
+#include <WebCore/TimelineIdentifier.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Variant.h>

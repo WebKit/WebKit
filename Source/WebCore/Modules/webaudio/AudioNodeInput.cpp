@@ -40,6 +40,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioNodeInput);
 
+Ref<AudioNodeInput> AudioNodeInput::create(AudioNode* node)
+{
+    return adoptRef(*new AudioNodeInput(node));
+}
+
 AudioNodeInput::AudioNodeInput(AudioNode* node)
     : AudioSummingJunction(node->context())
     , m_node(node, EnableWeakPtrThreadingAssertions::No) // WebAudio code uses locking when accessing the context.
@@ -110,7 +115,7 @@ void AudioNodeInput::disable(AudioNodeOutput* output)
     }
 
     // Propagate disabled state to outputs.
-    node()->disableOutputsIfNecessary();
+    checkedNode()->disableOutputsIfNecessary();
 }
 
 void AudioNodeInput::enable(AudioNodeOutput* output)
@@ -134,12 +139,12 @@ void AudioNodeInput::enable(AudioNodeOutput* output)
     m_disabledOutputs.remove(output);
 
     // Propagate enabled state to outputs.
-    node()->enableOutputsIfNecessary();
+    checkedNode()->enableOutputsIfNecessary();
 }
 
 void AudioNodeInput::didUpdate()
 {
-    node()->checkNumberOfChannelsForInput(this);
+    checkedNode()->checkNumberOfChannelsForInput(this);
 }
 
 void AudioNodeInput::updateInternalBus()
@@ -225,7 +230,7 @@ AudioBus& AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     // Handle single connection case.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
         // The output will optimize processing using inPlaceBus if it's able.
-        AudioNodeOutput* output = this->renderingOutput(0);
+        CheckedPtr output = this->renderingOutput(0);
         return output->pull(inPlaceBus, framesToProcess);
     }
 

@@ -11,7 +11,7 @@ PASS PerformanceResourceTiming interface: existence and properties of interface 
 PASS PerformanceResourceTiming interface: existence and properties of interface prototype object's "constructor" property
 PASS PerformanceResourceTiming interface: existence and properties of interface prototype object's @@unscopables property
 PASS PerformanceResourceTiming interface: attribute initiatorType
-FAIL PerformanceResourceTiming interface: attribute deliveryType assert_true: The prototype object must have a property "deliveryType" expected true got false
+PASS PerformanceResourceTiming interface: attribute deliveryType
 PASS PerformanceResourceTiming interface: attribute nextHopProtocol
 PASS PerformanceResourceTiming interface: attribute workerStart
 PASS PerformanceResourceTiming interface: attribute redirectStart
@@ -38,7 +38,7 @@ PASS PerformanceResourceTiming interface: operation toJSON()
 PASS PerformanceResourceTiming must be primary interface of resource
 PASS Stringification of resource
 PASS PerformanceResourceTiming interface: resource must inherit property "initiatorType" with the proper type
-FAIL PerformanceResourceTiming interface: resource must inherit property "deliveryType" with the proper type assert_inherits: property "deliveryType" not found in prototype chain
+PASS PerformanceResourceTiming interface: resource must inherit property "deliveryType" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "nextHopProtocol" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "workerStart" with the proper type
 PASS PerformanceResourceTiming interface: resource must inherit property "redirectStart" with the proper type

@@ -47,6 +47,7 @@ namespace WebCore {
 class AudioVideoRenderer;
 class LegacyCDMPrivateAVFObjC;
 class MediaSampleAVFObjC;
+class SharedBuffer;
 
 class CDMSessionAVContentKeySession final : public LegacyCDMSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CDMSessionAVContentKeySession> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);

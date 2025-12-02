@@ -37,6 +37,10 @@ class PositionErrorCallback : public RefCounted<PositionErrorCallback>, public A
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(GeolocationPositionError&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(GeolocationPositionError&) = 0;
 

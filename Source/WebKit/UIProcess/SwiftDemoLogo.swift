@@ -24,7 +24,7 @@
 #if ENABLE_SWIFT_DEMO_URI_SCHEME
 
 import Foundation
-internal import WebKit_Internal_Cxx
+internal import WebKit_Internal
 
 extension Data {
     var bytes: [UInt8] {

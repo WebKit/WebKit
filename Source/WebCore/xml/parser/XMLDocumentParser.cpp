@@ -98,8 +98,10 @@ void XMLDocumentParser::clearCurrentNodeStack()
     m_leafTextNode = nullptr;
 
     if (m_currentNodeStack.size()) { // Aborted parsing.
-        for (size_t i = m_currentNodeStack.size() - 1; i != 0; --i)
-            m_currentNodeStack[i]->deref();
+        for (size_t i = m_currentNodeStack.size() - 1; i != 0; --i) {
+            if (m_currentNodeStack[i])
+                m_currentNodeStack[i]->deref();
+        }
         if (m_currentNodeStack[0] && m_currentNodeStack[0] != document())
             m_currentNodeStack[0]->deref();
         m_currentNodeStack.clear();
@@ -148,7 +150,8 @@ void XMLDocumentParser::createLeafTextNode()
     ASSERT(m_bufferedText.size() == 0);
     ASSERT(!m_leafTextNode);
     m_leafTextNode = Text::create(m_currentNode->protectedDocument(), String { emptyString() });
-    CheckedPtr { m_currentNode }->parserAppendChild(*protectedLeafTextNode());
+    if (RefPtr currentNode = m_currentNode.get())
+        currentNode->parserAppendChild(*protectedLeafTextNode());
 }
 
 bool XMLDocumentParser::updateLeafTextNode()

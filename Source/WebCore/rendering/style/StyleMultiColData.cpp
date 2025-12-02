@@ -33,25 +33,25 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMultiColData);
 
 StyleMultiColData::StyleMultiColData()
-    : width(RenderStyle::initialColumnWidth())
-    , count(RenderStyle::initialColumnCount())
-    , fill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
+    : columnWidth(RenderStyle::initialColumnWidth())
+    , columnCount(RenderStyle::initialColumnCount())
+    , columnFill(static_cast<unsigned>(RenderStyle::initialColumnFill()))
     , columnSpan(static_cast<unsigned>(RenderStyle::initialColumnSpan()))
-    , axis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
-    , progression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
+    , columnAxis(static_cast<unsigned>(RenderStyle::initialColumnAxis()))
+    , columnProgression(static_cast<unsigned>(RenderStyle::initialColumnProgression()))
 {
 }
 
 inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     : RefCounted<StyleMultiColData>()
-    , width(other.width)
-    , count(other.count)
-    , rule(other.rule)
+    , columnWidth(other.columnWidth)
+    , columnCount(other.columnCount)
+    , columnRule(other.columnRule)
     , visitedLinkColumnRuleColor(other.visitedLinkColumnRuleColor)
-    , fill(other.fill)
+    , columnFill(other.columnFill)
     , columnSpan(other.columnSpan)
-    , axis(other.axis)
-    , progression(other.progression)
+    , columnAxis(other.columnAxis)
+    , columnProgression(other.columnProgression)
 {
 }
 
@@ -62,36 +62,36 @@ Ref<StyleMultiColData> StyleMultiColData::copy() const
 
 bool StyleMultiColData::operator==(const StyleMultiColData& other) const
 {
-    return width == other.width
-        && count == other.count
-        && rule == other.rule
+    return columnWidth == other.columnWidth
+        && columnCount == other.columnCount
+        && columnRule == other.columnRule
         && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
-        && fill == other.fill
+        && columnFill == other.columnFill
         && columnSpan == other.columnSpan
-        && axis == other.axis
-        && progression == other.progression;
+        && columnAxis == other.columnAxis
+        && columnProgression == other.columnProgression;
 }
 
 #if !LOG_DISABLED
 void StyleMultiColData::dumpDifferences(TextStream& ts, const StyleMultiColData& other) const
 {
-    LOG_IF_DIFFERENT(width);
-    LOG_IF_DIFFERENT(count);
-    LOG_IF_DIFFERENT(rule);
+    LOG_IF_DIFFERENT(columnWidth);
+    LOG_IF_DIFFERENT(columnCount);
+    LOG_IF_DIFFERENT(columnRule);
     LOG_IF_DIFFERENT(visitedLinkColumnRuleColor);
 
-    LOG_IF_DIFFERENT_WITH_CAST(ColumnFill, fill);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnFill, columnFill);
     LOG_IF_DIFFERENT_WITH_CAST(ColumnSpan, columnSpan);
-    LOG_IF_DIFFERENT_WITH_CAST(ColumnAxis, axis);
-    LOG_IF_DIFFERENT_WITH_CAST(ColumnProgression, progression);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnAxis, columnAxis);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnProgression, columnProgression);
 }
 #endif // !LOG_DISABLED
 
-Style::LineWidth StyleMultiColData::ruleWidth() const
+Style::LineWidth StyleMultiColData::columnRuleWidth() const
 {
-    if (rule.style() == BorderStyle::None || rule.style() == BorderStyle::Hidden)
+    if (columnRule.style() == BorderStyle::None || columnRule.style() == BorderStyle::Hidden)
         return Style::LineWidth { 0_css_px };
-    return rule.width();
+    return columnRule.width();
 }
 
 } // namespace WebCore

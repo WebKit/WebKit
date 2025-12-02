@@ -34,7 +34,7 @@ class CachedCSSStyleSheet;
 class StyleSheetContents;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleImport);
-class StyleRuleImport final : public StyleRuleBase {
+class StyleRuleImport final : public StyleRuleBase, public CanMakeWeakPtr<StyleRuleImport> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleImport, StyleRuleImport);
 public:
     struct SupportsCondition {
@@ -72,14 +72,21 @@ private:
     // to avoid adding a vptr to StyleRuleImport.
     class ImportedStyleSheetClient final : public CachedStyleSheetClient {
     public:
-        ImportedStyleSheetClient(StyleRuleImport* ownerRule) : m_ownerRule(ownerRule) { }
+        explicit ImportedStyleSheetClient(StyleRuleImport& ownerRule)
+            : m_ownerRule(ownerRule)
+        { }
         virtual ~ImportedStyleSheetClient() = default;
         void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet* sheet) final
         {
             m_ownerRule->setCSSStyleSheet(href, baseURL, charset, sheet);
         }
+
+        // CachedResourceClient.
+        void ref() const final { m_ownerRule->ref(); }
+        void deref() const final { m_ownerRule->deref(); }
+
     private:
-        StyleRuleImport* m_ownerRule;
+        WeakRef<StyleRuleImport> m_ownerRule;
     };
 
     void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet*);

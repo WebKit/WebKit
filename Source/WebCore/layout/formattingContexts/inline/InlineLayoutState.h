@@ -53,8 +53,11 @@ public:
     void setLegacyClampedLineIndex(size_t lineIndex) { m_legacyClampedLineIndex = lineIndex; }
     std::optional<size_t> legacyClampedLineIndex() const { return m_legacyClampedLineIndex; }
 
-    size_t lineCountForBlockDirectionClamp() const { return m_lineCountForBlockDirectionClamp; }
-    void setLineCountForBlockDirectionClamp(size_t lineCount) { m_lineCountForBlockDirectionClamp = lineCount; }
+    void setLineCount(size_t lineCount) { m_lineCount = lineCount; }
+    size_t lineCount() const { return m_lineCount; }
+
+    void setLineCountWithInlineContentIncludingNestedBlocks(size_t lineCount) { m_lineCountWithInlineContentIncludingNestedBlocks = lineCount; }
+    size_t lineCountWithInlineContentIncludingNestedBlocks() const { return m_lineCountWithInlineContentIncludingNestedBlocks; }
 
     void setHyphenationLimitLines(size_t hyphenateLimitLines) { m_hyphenateLimitLines = hyphenateLimitLines; }
     void incrementSuccessiveHyphenatedLineCount() { ++m_successiveHyphenatedLineCount; }
@@ -84,7 +87,8 @@ private:
     std::optional<size_t> m_legacyClampedLineIndex { };
     std::optional<size_t> m_hyphenateLimitLines { };
     size_t m_successiveHyphenatedLineCount { 0 };
-    size_t m_lineCountForBlockDirectionClamp { 0 };
+    size_t m_lineCount { 0 }; // Note that this does not include lines from nested blocks and it does not include lines with no content either.
+    size_t m_lineCountWithInlineContentIncludingNestedBlocks { 0 };
     // FIXME: This is required by the integaration codepath.
     HashMap<CheckedRef<const ElementBox>, LayoutUnit> m_nestedListMarkerOffsets;
     AvailableLineWidthOverride m_availableLineWidthOverride;

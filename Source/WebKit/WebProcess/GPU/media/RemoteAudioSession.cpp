@@ -42,12 +42,13 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSession);
 
-Ref<RemoteAudioSession> RemoteAudioSession::create()
+Ref<RemoteAudioSession> RemoteAudioSession::create(WebProcess& webProcess)
 {
-    return adoptRef(*new RemoteAudioSession);
+    return adoptRef(*new RemoteAudioSession(webProcess));
 }
 
-RemoteAudioSession::RemoteAudioSession()
+RemoteAudioSession::RemoteAudioSession(WebProcess& webProcess)
+    : m_webProcess(webProcess)
 {
     AudioSession::addInterruptionObserver(*this);
 }
@@ -188,6 +189,18 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     });
     if (isActiveChanged)
         activeStateChanged();
+
+    if (!mutedStateChanged && !bufferSizeChanged && !sampleRateChanged && !isActiveChanged && !routingContextUIDChanged)
+        return;
+
+    RefPtr protectedProcess = m_webProcess.get();
+    if (!protectedProcess)
+        return;
+
+    if (!protectedProcess->sharedPreferencesForWebProcessValue().remoteMediaSessionManagerEnabled)
+        return;
+
+    protectedProcess->remoteAudioSessionConfigurationChanged(*m_configuration);
 }
 
 void RemoteAudioSession::beginInterruptionRemote()

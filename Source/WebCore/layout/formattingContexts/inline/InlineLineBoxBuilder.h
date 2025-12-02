@@ -54,6 +54,7 @@ private:
     InlineLayoutUnit applyTextBoxTrimOnLineBoxIfNeeded(InlineLayoutUnit lineBoxLogicalHeight, LineBox&) const;
 
     void constructInlineLevelBoxes(LineBox&);
+    void constructBlockContent(LineBox&);
     void adjustIdeographicBaselineIfApplicable(LineBox&);
     void adjustOutsideListMarkersPosition(LineBox&);
     void expandAboveRootInlineBox(LineBox&, InlineLayoutUnit) const;

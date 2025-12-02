@@ -39,13 +39,12 @@ namespace WebCore {
 
 class FontCreationContext;
 
-class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
+class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient, public RefCounted<CachedFontLoadRequest> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedFontLoadRequest, Loader);
 public:
-    CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
-        : m_font(&font)
-        , m_context(context)
+    static Ref<CachedFontLoadRequest> create(CachedFont& font, ScriptExecutionContext& context)
     {
+        return adoptRef(*new CachedFontLoadRequest(font, context));
     }
 
     ~CachedFontLoadRequest()
@@ -54,10 +53,20 @@ public:
             protectedCachedFont()->removeClient(*this);
     }
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     CachedFont& cachedFont() const { return *m_font; }
     CachedResourceHandle<CachedFont> protectedCachedFont() const { return m_font; }
 
 private:
+    CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
+        : m_font(&font)
+        , m_context(context)
+    {
+    }
+
     const URL& url() const final { return m_font->url(); }
     bool isPending() const final { return m_font->status() == CachedResource::Status::Pending; }
     bool isLoading() const final { return m_font->isLoading(); }
@@ -82,9 +91,7 @@ private:
 
     void setClient(FontLoadRequestClient* client) final
     {
-        WeakPtr oldClient = m_fontLoadRequestClient;
-        m_fontLoadRequestClient = client;
-
+        WeakPtr oldClient = std::exchange(m_fontLoadRequestClient, client);
         if (!client && oldClient)
             protectedCachedFont()->removeClient(*this);
         else if (client && !oldClient)
@@ -100,8 +107,8 @@ private:
 
         m_fontLoadedProcessed = true;
         ASSERT_UNUSED(font, &font == m_font.get());
-        if (m_fontLoadRequestClient)
-            m_fontLoadRequestClient->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
+        if (CheckedPtr client = m_fontLoadRequestClient.get())
+            client->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
     }
 
     CachedResourceHandle<CachedFont> m_font;

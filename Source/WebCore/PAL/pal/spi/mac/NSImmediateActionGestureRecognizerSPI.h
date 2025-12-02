@@ -27,6 +27,10 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <wtf/Platform.h>
+
+#if USE(APPKIT)
+
 #import <AppKit/NSGestureRecognizer.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -67,3 +71,5 @@ DECLARE_SYSTEM_HEADER
 @end
 
 #endif
+
+#endif // USE(APPKIT)

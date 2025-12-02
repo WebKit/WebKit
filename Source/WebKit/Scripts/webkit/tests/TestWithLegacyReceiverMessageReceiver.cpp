@@ -139,6 +139,10 @@ void TestWithLegacyReceiver::didReceiveMessage(IPC::Connection& connection, IPC:
         IPC::handleMessage<Messages::TestWithLegacyReceiver::SetVideoLayerID>(connection, decoder, this, &TestWithLegacyReceiver::setVideoLayerID);
         return;
     }
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::OpaqueTypeSecurityAssertion::name()) {
+        IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::OpaqueTypeSecurityAssertion>(connection, decoder, this, &TestWithLegacyReceiver::opaqueTypeSecurityAssertion);
+        return;
+    }
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name()) {
         IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
@@ -291,6 +295,14 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SetVideoLayerID::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertion>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::OpaqueTypeSecurityAssertion::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertion>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::OpaqueTypeSecurityAssertion::ReplyArguments>(globalObject, decoder);
+}
 #if PLATFORM(MAC)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
@@ -328,6 +340,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginsReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginsReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::OpaqueTypeSecurityAssertionReply::Arguments>(globalObject, decoder);
 }
 #if PLATFORM(MAC)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEventReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)

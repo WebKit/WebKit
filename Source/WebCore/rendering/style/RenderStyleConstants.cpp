@@ -796,17 +796,6 @@ TextStream& operator<<(TextStream& ts, MarqueeDirection marqueeDirection)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, MaskMode maskMode)
-{
-    switch (maskMode) {
-    case MaskMode::Alpha: ts << "alpha"_s; break;
-    case MaskMode::Luminance: ts << "luminance"_s; break;
-    case MaskMode::MatchSource: ts << "match-source"_s; break;
-    }
-
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, NBSPMode mode)
 {
     switch (mode) {
@@ -994,19 +983,6 @@ TextStream& operator<<(TextStream& ts, ReflectionDirection direction)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, Resize resize)
-{
-    switch (resize) {
-    case Resize::None: ts << "none"_s; break;
-    case Resize::Both: ts << "both"_s; break;
-    case Resize::Horizontal: ts << "horizontal"_s; break;
-    case Resize::Vertical: ts << "vertical"_s; break;
-    case Resize::Block: ts << "block"_s; break;
-    case Resize::Inline: ts << "inline"_s; break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, RubyPosition position)
 {
     switch (position) {
@@ -1112,37 +1088,6 @@ TextStream& operator<<(TextStream& ts, TableLayoutType layoutType)
     case TableLayoutType::Auto: ts << "Auto"_s; break;
     case TableLayoutType::Fixed: ts << "Fixed"_s; break;
     }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, TextAlignMode alignMode)
-{
-    switch (alignMode) {
-    case TextAlignMode::Left: ts << "left"_s; break;
-    case TextAlignMode::Right: ts << "right"_s; break;
-    case TextAlignMode::Center: ts << "center"_s; break;
-    case TextAlignMode::Justify: ts << "justify"_s; break;
-    case TextAlignMode::WebKitLeft: ts << "webkit-left"_s; break;
-    case TextAlignMode::WebKitRight: ts << "webkit-right"_s; break;
-    case TextAlignMode::WebKitCenter: ts << "webkit-center"_s; break;
-    case TextAlignMode::Start: ts << "start"_s; break;
-    case TextAlignMode::End: ts << "end"_s; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, TextAlignLast textAlignLast)
-{
-    switch (textAlignLast) {
-    case TextAlignLast::Auto: ts << "auto"_s; break;
-    case TextAlignLast::Start: ts << "start"_s; break;
-    case TextAlignLast::End: ts << "end"_s; break;
-    case TextAlignLast::Left: ts << "left"_s; break;
-    case TextAlignLast::Right: ts << "right"_s; break;
-    case TextAlignLast::Center: ts << "center"_s; break;
-    case TextAlignLast::Justify: ts << "justify"_s; break;
-    }
-
     return ts;
 }
 

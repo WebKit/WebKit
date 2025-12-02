@@ -79,6 +79,8 @@ public:
     static Ref<IDBRequest> createObjectStoreGet(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     static Ref<IDBRequest> createIndexGet(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
+
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
     virtual ~IDBRequest();

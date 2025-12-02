@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
 
     .transformed {
       width: 200px;
@@ -36,6 +39,8 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     // Hide first separated layer, bring the second one into view.
     window.scrollTo(0, 2500);
     await UIHelper.ensureStablePresentationUpdate();
@@ -44,8 +49,8 @@ window.onload = async function () {
     document.querySelector("div.transformed:last-child").classList.add("separated");
     await UIHelper.ensureStablePresentationUpdate();
 
-    results.textContent = await UIHelper.getCALayerTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };

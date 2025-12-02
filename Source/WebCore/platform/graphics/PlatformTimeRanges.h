@@ -77,6 +77,7 @@ public:
     
     bool contain(const MediaTime&) const;
     bool containWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;
+    bool containWithEpsilon(const PlatformTimeRanges&, const MediaTime& epsilon) const;
 
     size_t find(const MediaTime&) const;
     size_t findWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;

@@ -197,6 +197,47 @@ private:
     Ref<WebCore::CryptoKeyHMAC> m_token;
 };
 
+// HmacSecretRequest prepares parameters for hmac-secret extension.
+// It performs key agreement and encrypts the provided salts.
+class HmacSecretRequest {
+    WTF_MAKE_NONCOPYABLE(HmacSecretRequest);
+public:
+    WEBCORE_EXPORT static std::optional<HmacSecretRequest> create(PINUVAuthProtocol, const Vector<uint8_t>& salt1, const std::optional<Vector<uint8_t>>& salt2, const WebCore::CryptoKeyEC& peerKey);
+    HmacSecretRequest(HmacSecretRequest&&) = default;
+    HmacSecretRequest& operator=(HmacSecretRequest&&) = default;
+
+    const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
+
+    const cbor::CBORValue::MapValue& coseKey() const { return m_coseKey; }
+
+    const Vector<uint8_t>& saltEnc() const { return m_saltEnc; }
+
+    const Vector<uint8_t>& saltAuth() const { return m_saltAuth; }
+
+    PINUVAuthProtocol protocol() const { return m_protocol; }
+
+private:
+    HmacSecretRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORValue::MapValue&& coseKey, Vector<uint8_t>&& saltEnc, Vector<uint8_t>&& saltAuth, PINUVAuthProtocol);
+
+    Ref<WebCore::CryptoKeyAES> m_sharedKey;
+    cbor::CBORValue::MapValue m_coseKey;
+    Vector<uint8_t> m_saltEnc;
+    Vector<uint8_t> m_saltAuth;
+    PINUVAuthProtocol m_protocol;
+};
+
+class HmacSecretResponse {
+public:
+    WEBCORE_EXPORT static std::optional<HmacSecretResponse> parse(PINUVAuthProtocol, const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& encryptedOutput);
+
+    WEBCORE_EXPORT const Vector<uint8_t>& output() const;
+
+private:
+    explicit HmacSecretResponse(Vector<uint8_t>&& decryptedOutput);
+
+    Vector<uint8_t> m_output;
+};
+
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const RetriesRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const TokenRequest&);

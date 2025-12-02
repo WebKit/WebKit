@@ -160,6 +160,7 @@ template: struct WebKit::RemoteAudioDestinationIdentifierType
 template: struct WebKit::RemoteAudioHardwareListenerIdentifierType
 template: struct WebKit::RemoteMediaResourceIdentifierType
 template: struct WebKit::RemoteRemoteCommandListenerIdentifierType
+template: struct WebKit::RiceBackendIdentifierType
 template: struct WebKit::SampleBufferDisplayLayerIdentifierType
 template: struct WebKit::ScriptMessageHandlerIdentifierType
 template: struct WebKit::TapIdentifierType

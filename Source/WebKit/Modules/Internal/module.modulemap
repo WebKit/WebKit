@@ -1,10 +1,13 @@
+// FIXME: this modulemap needs work as discussed in https://github.com/WebKit/WebKit/pull/54322
 module WebKit_Internal {
-    header "WebKitInternal.h"
-    export *
-    requires objc
-}
-
-module WebKit_Internal_Cxx {
-    header "WebKitInternalCxx.h"
-    export *
+    module WebKit_Internal_Objc {
+        header "WebKitInternal.h"
+        export *
+        requires objc
+    }
+    module WebKit_Internal_Cxx {
+        header "WebKitInternalCxx.h"
+        export *
+        requires cplusplus20
+    }
 }

@@ -182,88 +182,84 @@ header: <WebCore/DDMaterialDescriptor.h>
     String identifier;
 };
 
-header: <WebCore/DDMeshDescriptor.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDMeshDescriptor {
-    int32_t indexCapacity;
-    int32_t indexType;
-    int32_t vertexBufferCount;
-    int32_t vertexCapacity;
-    Vector<WebCore::DDModel::DDVertexAttributeFormat> vertexAttributes;
-    Vector<WebCore::DDModel::DDVertexLayout> vertexLayouts;
-    String identifier;
-};
-
 header: <WebCore/DDUpdateTextureDescriptor.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDUpdateTextureDescriptor {
     WebCore::DDModel::DDImageAsset imageAsset;
-};
-
-header: <WebCore/DDTextureDescriptor.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDTextureDescriptor {
-    WebCore::DDModel::DDImageAsset imageAsset;
+    String identifier;
+    String hashString;
 };
 
 header: <WebCore/DDUpdateMaterialDescriptor.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDUpdateMaterialDescriptor {
-    WebCore::DDModel::DDMaterialGraph materialGraph;
+    Vector<uint8_t> materialGraph;
+    String identifier;
 };
 
-header: <WebCore/DDReplaceVertices.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDReplaceVertices {
-    int32_t bufferIndex;
-    Vector<uint8_t> buffer;
+header: <WebCore/DDMeshDescriptor.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDMeshDescriptor {
+    long vertexBufferCount;
+    long vertexCapacity;
+    Vector<WebCore::DDModel::DDVertexAttributeFormat> vertexAttributes;
+    Vector<WebCore::DDModel::DDVertexLayout> vertexLayouts;
+    long indexCapacity;
+    long indexType;
 };
 
 header: <WebCore/DDUpdateMeshDescriptor.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDUpdateMeshDescriptor {
-    int32_t partCount;
-    Vector<KeyValuePair<int32_t, WebCore::DDModel::DDMeshPart>> parts;
-    Vector<KeyValuePair<int32_t, uint64_t>> renderFlags;
-    Vector<WebCore::DDModel::DDReplaceVertices> vertices;
-    Vector<uint8_t> indices;
-    WebCore::DDModel::DDFloat4x4 transform;
-    Vector<WebCore::DDModel::DDFloat4x4> instanceTransforms4x4;
-    Vector<String> materialIds;
     String identifier;
+    uint8_t updateType;
+    WebCore::DDModel::DDMeshDescriptor descriptor;
+    Vector<WebCore::DDModel::DDMeshPart> parts;
+    Vector<uint8_t> indexData;
+    Vector<Vector<uint8_t>> vertexData;
+    WebCore::DDModel::DDFloat4x4 transform;
+    Vector<WebCore::DDModel::DDFloat4x4> instanceTransforms;
+    Vector<String> materialPrims;
 };
 
 header: <WebCore/DDVertexAttributeFormat.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDVertexAttributeFormat {
-    int32_t semantic;
-    int32_t format;
-    int32_t layoutIndex;
-    int32_t offset;
+    long semantic;
+    unsigned long format;
+    long layoutIndex;
+    long offset;
 };
 
 header: <WebCore/DDVertexLayout.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDVertexLayout {
-    int32_t bufferIndex;
-    int32_t bufferOffset;
-    int32_t bufferStride;
+    long bufferIndex;
+    long bufferOffset;
+    long bufferStride;
 };
 
 header: <WebCore/DDMaterialDescriptor.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDMaterialDescriptor {
-    WebCore::DDModel::DDMaterialGraph materialGraph;
+    Vector<uint8_t> materialGraph;
+    String identifier;
 };
 
 header: <WebCore/DDImageAsset.h>
-[CustomHeader] enum class WebCore::DDModel::DDSemantic : uint8_t {
-    Color,
-    Vector,
-    Scalar,
-    Unknown
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDImageAssetSwizzle {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    uint8_t alpha;
 };
 
 header: <WebCore/DDImageAsset.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::DDModel::DDImageAsset {
     Vector<uint8_t> data;
-    uint32_t width;
-    uint32_t height;
-    uint32_t bytesPerPixel;
-    WebCore::DDModel::DDSemantic semantic;
-    String path;
-    String identifier;
+    long width;
+    long height;
+    long depth;
+    long bytesPerPixel;
+    uint64_t textureType;
+    uint64_t pixelFormat;
+    long mipmapLevelCount;
+    long arrayLength;
+    uint64_t textureUsage;
+    WebCore::DDModel::DDImageAssetSwizzle swizzle;
 };
 
 header: <WebCore/DDMeshPart.h>

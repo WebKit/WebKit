@@ -32,7 +32,7 @@
 ] interface WebKitNamespace {
     readonly attribute UserMessageHandlersNamespace messageHandlers;
     readonly attribute WebKitBufferNamespace buffers;
-    [EnabledForGlobalObject=allowsJSHandleCreation, CallWith=CurrentGlobalObject] WebKitJSHandle createJSHandle(object object);
+    [EnabledForGlobalObject=allowsJSHandleCreation] WebKitJSHandle createJSHandle(object object);
     [EnabledForWorld=allowNodeSerialization] WebKitSerializedNode serializeNode(Node node, optional WebKitSerializedNodeInit init);
 };
 

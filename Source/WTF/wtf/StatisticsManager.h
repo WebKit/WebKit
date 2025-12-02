@@ -27,21 +27,24 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
 class StatisticsManager {
+    WTF_MAKE_TZONE_ALLOCATED(StatisticsManager);
 public:
     WTF_EXPORT_PRIVATE static StatisticsManager& singleton();
+    ~StatisticsManager();
 
     WTF_EXPORT_PRIVATE void addDataPoint(ASCIILiteral id, double value);
     WTF_EXPORT_PRIVATE void dumpStatistics();
     WTF_EXPORT_PRIVATE void clear();
 
 private:
+    template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
     StatisticsManager() = default;
-    ~StatisticsManager() = default;
 
     mutable Lock m_lock;
     HashMap<ASCIILiteral, Vector<double>> m_data WTF_GUARDED_BY_LOCK(m_lock);

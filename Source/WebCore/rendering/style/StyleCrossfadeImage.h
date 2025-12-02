@@ -36,13 +36,16 @@ struct BlendingContext;
 
 class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StyleCrossfadeImage);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleCrossfadeImage);
 public:
     static Ref<StyleCrossfadeImage> create(RefPtr<StyleImage> from, RefPtr<StyleImage> to, double percentage, bool isPrefixed)
     {
         return adoptRef(*new StyleCrossfadeImage(WTFMove(from), WTFMove(to), percentage, isPrefixed));
     }
     virtual ~StyleCrossfadeImage();
+
+    // CachedResourceClient.
+    void ref() const final { StyleGeneratedImage::ref(); }
+    void deref() const final { StyleGeneratedImage::deref(); }
 
     RefPtr<StyleCrossfadeImage> blend(const StyleCrossfadeImage&, const BlendingContext&) const;
 

@@ -1,0 +1,7 @@
+
+PASS block-in-inline-hittest-float-002
+PASS with background
+PASS with padding
+PASS floats before block-in-inline
+PASS floats before block-in-inline with background
+

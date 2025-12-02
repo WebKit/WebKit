@@ -58,10 +58,11 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
 {
     ASSERT(hasTagName(SVGNames::aTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::targetAttr, &SVGAElement::m_target>();
-    });
+    }
 }
 
 SVGAElement::~SVGAElement() = default;

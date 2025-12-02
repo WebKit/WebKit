@@ -1717,10 +1717,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
 
     // The AvailableCollations abstract operation returns a List, ordered as if an Array of the same
     // values had been sorted using %Array.prototype.sort% using undefined as comparator
-    std::sort(elements.begin(), elements.end(),
-        [](const String& a, const String& b) {
-            return WTF::codePointCompare(a, b) < 0;
-        });
+    std::ranges::sort(elements, WTF::codePointCompareLessThan);
     auto end = std::unique(elements.begin(), elements.end());
     elements.shrink(elements.size() - (elements.end() - end));
 
@@ -1773,10 +1770,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
 
     // The AvailableCurrencies abstract operation returns a List, ordered as if an Array of the same
     // values had been sorted using %Array.prototype.sort% using undefined as comparator
-    std::sort(elements.begin(), elements.end(),
-        [](const String& a, const String& b) {
-            return WTF::codePointCompare(a, b) < 0;
-        });
+    std::ranges::sort(elements, WTF::codePointCompareLessThan);
     auto end = std::unique(elements.begin(), elements.end());
     elements.shrink(elements.size() - (elements.end() - end));
 
@@ -1823,10 +1817,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
 
     // The AvailableNumberingSystems abstract operation returns a List, ordered as if an Array of the same
     // values had been sorted using %Array.prototype.sort% using undefined as comprator
-    std::sort(elements.begin(), elements.end(),
-        [](const String& a, const String& b) {
-            return WTF::codePointCompare(a, b) < 0;
-        });
+    std::ranges::sort(elements, WTF::codePointCompareLessThan);
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
@@ -1881,10 +1872,7 @@ const Vector<String>& intlAvailableTimeZones()
 
         // The AvailableTimeZones abstract operation returns a List, ordered as if an Array of the same
         // values had been sorted using %Array.prototype.sort% using undefined as comparator
-        std::sort(temporary.begin(), temporary.end(),
-            [](const String& a, const String& b) {
-                return WTF::codePointCompare(a, b) < 0;
-            });
+        std::ranges::sort(temporary, WTF::codePointCompareLessThan);
         auto end = std::unique(temporary.begin(), temporary.end());
         availableTimeZones.construct();
 

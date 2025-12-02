@@ -839,7 +839,7 @@ ScrollableArea* LocalFrameView::scrollableAreaForScrollingNodeID(ScrollingNodeID
         return nullptr;
 
     if (auto area = m_scrollingNodeIDToPluginScrollableAreaMap.get(nodeID))
-        return area.get();
+        return area;
 
     return renderView->compositor().scrollableAreaForScrollingNodeID(nodeID);
 }
@@ -7014,7 +7014,7 @@ ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
     auto* document = m_frame->document();
     auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject && renderView())
-        return scrollingObject->style().scrollbarWidth().value;
+        return Style::toPlatform(scrollingObject->style().scrollbarWidth());
     return ScrollbarWidth::Auto;
 }
 

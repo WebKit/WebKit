@@ -31,21 +31,21 @@
 namespace WebCore {
 
 StyleMarqueeData::StyleMarqueeData()
-    : increment(RenderStyle::initialMarqueeIncrement())
-    , speed(RenderStyle::initialMarqueeSpeed())
-    , repetition(RenderStyle::initialMarqueeRepetition())
-    , behavior(static_cast<unsigned>(RenderStyle::initialMarqueeBehavior()))
-    , direction(static_cast<unsigned>(RenderStyle::initialMarqueeDirection()))
+    : marqueeIncrement(RenderStyle::initialMarqueeIncrement())
+    , marqueeSpeed(RenderStyle::initialMarqueeSpeed())
+    , marqueeRepetition(RenderStyle::initialMarqueeRepetition())
+    , marqueeBehavior(static_cast<unsigned>(RenderStyle::initialMarqueeBehavior()))
+    , marqueeDirection(static_cast<unsigned>(RenderStyle::initialMarqueeDirection()))
 {
 }
 
 inline StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
     : RefCounted<StyleMarqueeData>()
-    , increment(o.increment)
-    , speed(o.speed)
-    , repetition(o.repetition)
-    , behavior(o.behavior)
-    , direction(o.direction) 
+    , marqueeIncrement(o.marqueeIncrement)
+    , marqueeSpeed(o.marqueeSpeed)
+    , marqueeRepetition(o.marqueeRepetition)
+    , marqueeBehavior(o.marqueeBehavior)
+    , marqueeDirection(o.marqueeDirection)
 {
 }
 
@@ -61,21 +61,21 @@ Ref<StyleMarqueeData> StyleMarqueeData::copy() const
 
 bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
 {
-    return increment == o.increment
-        && speed == o.speed
-        && repetition == o.repetition
-        && behavior == o.behavior
-        && direction == o.direction;
+    return marqueeIncrement == o.marqueeIncrement
+        && marqueeSpeed == o.marqueeSpeed
+        && marqueeRepetition == o.marqueeRepetition
+        && marqueeBehavior == o.marqueeBehavior
+        && marqueeDirection == o.marqueeDirection;
 }
 
 #if !LOG_DISABLED
 void StyleMarqueeData::dumpDifferences(TextStream& ts, const StyleMarqueeData& other) const
 {
-    LOG_IF_DIFFERENT(increment);
-    LOG_IF_DIFFERENT(speed);
-    LOG_IF_DIFFERENT(repetition);
-    LOG_IF_DIFFERENT_WITH_CAST(MarqueeBehavior, behavior);
-    LOG_IF_DIFFERENT_WITH_CAST(MarqueeDirection, direction);
+    LOG_IF_DIFFERENT(marqueeIncrement);
+    LOG_IF_DIFFERENT(marqueeSpeed);
+    LOG_IF_DIFFERENT(marqueeRepetition);
+    LOG_IF_DIFFERENT_WITH_CAST(MarqueeBehavior, marqueeBehavior);
+    LOG_IF_DIFFERENT_WITH_CAST(MarqueeDirection, marqueeDirection);
 }
 #endif // !LOG_DISABLED
 

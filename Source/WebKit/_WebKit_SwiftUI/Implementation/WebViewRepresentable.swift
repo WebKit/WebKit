@@ -292,7 +292,10 @@ struct EquatableScrollBounceBehavior: Equatable {
     let behavior: ScrollBounceBehavior
 
     static func == (lhs: EquatableScrollBounceBehavior, rhs: EquatableScrollBounceBehavior) -> Bool {
-        unsafeBitCast(lhs.behavior, to: Int8.self) == unsafeBitCast(rhs.behavior, to: Int8.self)
+        // Safety: ScrollBounceBehavior is opaque, but stores data, so is guaranteed
+        // to be at least 1 byte long. We will compare just that first byte.
+        // This is a temporary workaround for rdar://145030632.
+        unsafe unsafeBitCast(lhs.behavior, to: Int8.self) == unsafeBitCast(rhs.behavior, to: Int8.self)
     }
 }
 

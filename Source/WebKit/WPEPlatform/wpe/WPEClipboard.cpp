@@ -193,10 +193,10 @@ gint64 wpe_clipboard_get_change_count(WPEClipboard* clipboard)
  * wpe_clipboard_get_formats:
  * @clipboard: a #WPEClipoard
  *
- * Get the formats that clipboard can provide
+ * Get the MIME type formats that clipboard can provide
  *
  * Returns: (array zero-terminated=1) (element-type utf8) (transfer none): A %NULL-terminated
- *    array of formats, or %NULL if clipboard is empty.
+ *    array of MIME type formats, or %NULL if clipboard is empty.
  */
 const char* const* wpe_clipboard_get_formats(WPEClipboard* clipboard)
 {
@@ -257,9 +257,9 @@ WPEClipboardContent* wpe_clipboard_get_content(WPEClipboard* clipboard)
 /**
  * wpe_clipboard_read_bytes:
  * @clipboard: a #WPEClipoard
- * @format: the format of the text to read
+ * @format: the MIME type format of the text to read
  *
- * Get the contents of @clipboard for the given @format as bytes.
+ * Get the contents of @clipboard for the given MIME type @format as bytes.
  *
  * Returns: (transfer full) (nullable): a new #GBytes, or %NULL
  */
@@ -295,10 +295,10 @@ GBytes* wpe_clipboard_read_bytes(WPEClipboard* clipboard, const char* format)
 /**
  * wpe_clipboard_read_text:
  * @clipboard: a #WPEClipoard
- * @format: the format of the text to read
+ * @format: the MIME type format of the text to read
  * @size: (out) (optional): location to return size of returned text.
  *
- * Get the contents of @clipboard for the given @format as text.
+ * Get the contents of @clipboard for the given MIME type @format as text.
  *
  * Returns: (transfer full) (nullable): a new allocated string.
  */
@@ -382,12 +382,27 @@ void wpe_clipboard_content_set_text(WPEClipboardContent* content, const char* te
 }
 
 /**
+ * wpe_clipboard_content_get_text:
+ * @content: a #WPEClipboardContent
+ *
+ * Get the text on @content.
+ *
+ * Returns: (transfer none) (nullable): the text on @content or %NULL
+ */
+const char* wpe_clipboard_content_get_text(WPEClipboardContent* content)
+{
+    g_return_val_if_fail(content, nullptr);
+
+    return content->text ? content->text->data() : nullptr;
+}
+
+/**
  * wpe_clipboard_content_set_bytes:
  * @content: a #WPEClipboardContent
- * @format: a format
+ * @format: a MIME type format
  * @bytes: a #GBytes with the data to set
  *
- * Set @bytes data on @content for @format.
+ * Set @bytes data on @content for MIME type @format.
  */
 void wpe_clipboard_content_set_bytes(WPEClipboardContent* content, const char* format, GBytes* bytes)
 {
@@ -400,12 +415,32 @@ void wpe_clipboard_content_set_bytes(WPEClipboardContent* content, const char* f
 }
 
 /**
+ * wpe_clipboard_content_get_bytes:
+ * @content: a #WPEClipboardContent
+ * @format: a MIME type format
+ *
+ * Get a #GBytes with data on @content for MIME type @format.
+ *
+ * Returns: (transfer none) (nullable): the bytes on @content for MIME type @format or %NULL
+ */
+GBytes* wpe_clipboard_content_get_bytes(WPEClipboardContent* content, const char* format)
+{
+    g_return_val_if_fail(content, nullptr);
+    g_return_val_if_fail(format && *format, nullptr);
+
+    if (!content->buffers)
+        return nullptr;
+
+    return content->buffers->get(g_intern_string(format));
+}
+
+/**
  * wpe_clipboard_content_serialize:
  * @content: a #WPEClipboardContent
- * @format: a format
+ * @format: a MIME type format
  * @stream: a #GOutputStream
  *
- * Serialize @content for @format in @stream.
+ * Serialize @content for MIME type @format in @stream.
  *
  * Returns: %TRUE if content was correctly serialized, or %FALSE otherwise
  */

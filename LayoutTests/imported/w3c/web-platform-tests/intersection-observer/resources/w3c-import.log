@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/cross-origin-child-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/cross-origin-subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/cross-origin-tall-subframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/iframe-no-root-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/intersection-observer-test-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/intersection-ratio-with-fractional-bounds-in-iframe-content.html
@@ -24,6 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/observer-in-iframe-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/same-origin-grand-child-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/scaled-target-subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/scroll-margin-propagation-iframe-1.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/scroll-margin-propagation-iframe-2.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/scroll-margin-propagation-iframe-3.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/timestamp-subframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/v2-midframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/resources/v2-subframe.html

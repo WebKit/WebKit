@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2424,7 +2424,7 @@ void SpeculativeJIT::compileContiguousPutByVal(Node* node)
     GPRReg storageReg = storage.gpr();
 
     ArrayMode arrayMode = node->arrayMode();
-    if (node->op() == PutByValAlias) {
+    if (node->op() == PutByValDirectResolved) {
         ASSERT(arrayMode.isInBounds());
 #if ASSERT_ENABLED
         Jump inBounds = branch32(Below, propertyReg, Address(storageReg, Butterfly::offsetOfPublicLength()));
@@ -2502,7 +2502,7 @@ void SpeculativeJIT::compileDoublePutByVal(Node* node)
     StorageOperand storage(this, m_graph.varArgChild(node, 3));
     GPRReg storageReg = storage.gpr();
 
-    if (node->op() == PutByValAlias) {
+    if (node->op() == PutByValDirectResolved) {
         ASSERT(arrayMode.isInBounds());
 #if ASSERT_ENABLED
         Jump inBounds = branch32(Below, propertyReg, Address(storageReg, Butterfly::offsetOfPublicLength()));
@@ -3288,8 +3288,13 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR, GPRReg scratch2GPR)
 {
     Edge& edge = m_graph.child(node, 0);
-    if (node->op() == PutByValAlias && m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(edge))) {
+    if (node->op() == PutByValDirectResolved && m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(edge))) {
         ASSERT(node->arrayMode().isInBounds());
+        // FIXME: This should work even when the TypedArray is resizable because either:
+        // 1) The TypedArray grows so the previous index is still valid.
+        // 2) The TypedArray shrinks thus is not a SharedArrayBuffer and local CSE wouldn't
+        //    have emitted an Aliased store because shrinking would `write(World)`.
+        // That said, we would need to clean up our clobberize/LocalCSE rules to remove these guards.
         ASSERT(!node->arrayMode().mayBeResizableOrGrowableSharedTypedArray());
 #if ASSERT_ENABLED
 #if USE(LARGE_TYPED_ARRAYS)
@@ -10852,7 +10857,7 @@ void SpeculativeJIT::compileCheckJSCast(Node* node)
         GPRReg specifiedGPR = specified.gpr();
 
         emitLoadStructure(vm(), baseGPR, otherGPR);
-        loadCompactPtr(Address(otherGPR, Structure::classInfoOffset()), otherGPR);
+        loadPtr(Address(otherGPR, Structure::classInfoOffset()), otherGPR);
         move(TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         Label loop = label();
@@ -11152,7 +11157,7 @@ void SpeculativeJIT::compileFunctionToString(Node* node)
     speculateFunction(node->child1(), function.gpr());
 
     emitLoadStructure(vm(), function.gpr(), result.gpr());
-    loadCompactPtr(Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
+    loadPtr(Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
     static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
     slowCases.append(branchPtr(Equal, result.gpr(), TrustedImmPtr(JSBoundFunction::info())));
 
@@ -15419,7 +15424,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     slowCases.append(branchTest32(Zero, structureGPR));
     emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
-    slowCases.append(branchCompactPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
+    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset())));
     loadLinkableConstant(LinkableConstant::globalObject(*this, node), scratch1GPR);
     slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::globalObjectOffset())));
 
@@ -15466,7 +15471,7 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     slowCases.append(branchTest32(Zero, structureGPR));
     emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     move(TrustedImmPtr(JSClass::info()), scratch1GPR);
-    slowCases.append(branchCompactPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset()), scratch2GPR));
+    slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::classInfoOffset())));
     loadLinkableConstant(LinkableConstant::globalObject(*this, node), scratch1GPR);
     slowCases.append(branchPtr(NotEqual, scratch1GPR, Address(structureGPR, Structure::globalObjectOffset())));
 

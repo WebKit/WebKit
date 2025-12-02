@@ -972,6 +972,20 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
 {
     WebCore::AuthenticationExtensionsClientInputs result;
     result.appid = extensions.appid;
+    if (extensions.credProps)
+        result.credProps = extensions.credProps;
+
+    if (extensions.prf || extensions.prfSalt1) {
+        WebCore::AuthenticationExtensionsClientInputs::PRFInputs prfInputs;
+        if (extensions.prfSalt1) {
+            WebCore::AuthenticationExtensionsClientInputs::PRFValues prfValues;
+            prfValues.first = WebCore::toBufferSource(extensions.prfSalt1);
+            if (extensions.prfSalt2)
+                prfValues.second = WebCore::toBufferSource(extensions.prfSalt2);
+            prfInputs.eval = WTFMove(prfValues);
+        }
+        result.prf = WTFMove(prfInputs);
+    }
 
     return result;
 }
@@ -1011,10 +1025,9 @@ static WebCore::MediationRequirement toWebCore(_WKWebAuthenticationMediationRequ
     if (options.authenticatorSelection)
         result.authenticatorSelection = authenticatorSelectionCriteria(retainPtr(options.authenticatorSelection).get());
     result.attestationString = WebCore::convertEnumerationToString(attestationConveyancePreference(options.attestation));
-    if (options.extensionsCBOR)
+    result.extensions = authenticationExtensionsClientInputs(retainPtr(options.extensions).get());
+    if (options.extensionsCBOR && options.extensionsCBOR.length > 0)
         result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(span(options.extensionsCBOR));
-    else
-        result.extensions = authenticationExtensionsClientInputs(retainPtr(options.extensions).get());
 #endif
 
     return result;
@@ -1106,10 +1119,9 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
         result.rpId = options.relyingPartyIdentifier;
     if (options.allowCredentials)
         result.allowCredentials = publicKeyCredentialDescriptors(retainPtr(options.allowCredentials).get());
-    if (options.extensionsCBOR)
+    result.extensions = authenticationExtensionsClientInputs(retainPtr(options.extensions).get());
+    if (options.extensionsCBOR && options.extensionsCBOR.length > 0)
         result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(span(options.extensionsCBOR));
-    else
-        result.extensions = authenticationExtensionsClientInputs(retainPtr(options.extensions).get());
     result.userVerificationString = WebCore::convertEnumerationToString(userVerification(options.userVerification));
     result.authenticatorAttachment = authenticatorAttachment(options.authenticatorAttachment);
 #endif

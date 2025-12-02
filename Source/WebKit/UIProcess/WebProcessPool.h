@@ -226,7 +226,7 @@ public:
 
     // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
     // null checks in WebPageProxy.
-    WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID).get(); }
+    WebProcessProxy* dummyProcessProxy(PAL::SessionID sessionID) const { return m_dummyProcessProxies.get(sessionID); }
 
     void forEachProcessForSession(PAL::SessionID, NOESCAPE const Function<void(WebProcessProxy&)>&);
     template<typename T> void sendToAllProcesses(const T& message);

@@ -308,7 +308,7 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
-class WPECairoBuildFactory(WPEBuildFactory):
+class WPECairoLibWebRTCBuildFactory(WPEBuildFactory):
     skipUpload = True
 
 

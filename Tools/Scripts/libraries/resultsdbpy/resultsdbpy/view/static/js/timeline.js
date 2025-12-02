@@ -408,17 +408,8 @@ class TimelineFromEndpoint {
         CommitBank.callbacks.push(this.commit_callback);
 
         this.reload();
+        this.showRegressionHighlight = true;
 
-        const defaultValue = false; 
-        const saved = localStorage.getItem('showRegressionHighlight');
-        this.showRegressionHighlight = saved == null ? defaultValue : JSON.parse(saved);
-
-        this.toggleShowRegressionHighlight = () => {
-            this.showRegressionHighlight = !this.showRegressionHighlight;
-            localStorage.setItem('showRegressionHighlight', JSON.stringify(this.showRegressionHighlight));
-
-            this.notifyRerender();
-        };
     }
     teardown() {
         CommitBank.callbacks = CommitBank.callbacks.filter((value, index, arr) => {
@@ -607,12 +598,13 @@ class TimelineFromEndpoint {
         const rateChange = pastSuccessRate - newSuccessRate;
         const description = `Success rate has dropped ${(rateChange * 100).toFixed(1)}% (from ${(pastSuccessRate * 100).toFixed(1)}% to ${(newSuccessRate * 100).toFixed(1)}%)`;
 
-        if (pastSuccessRate === 1.0 && newSuccessRate <= 0.2) {
+        if (pastSuccessRate === 1.0 && newSuccessRate <= 0.15) {
                 return {
                     uuid: currentResult.uuid,
                     rateChange,
                     patternDescription: description,
-                    affectedConfigs: [currentResult.configuration?.toKey() || 'unknown']
+                    affectedConfigs: [currentResult.configuration?.toKey() || 'unknown'],
+                    range: true
                 };
         }
 
@@ -806,7 +798,6 @@ class TimelineFromEndpoint {
         const idxByUuid = new Map(seriesResults.map((r, i) => [r.uuid, i]));
 
         return (data, context, x, y) => {
-            // toggle is off by default
             const range = this.regRange;
             if (!this.showRegressionHighlight || !range) {
                 return baseDotRenderer(data, context, x, y);
@@ -1308,7 +1299,6 @@ class TimelineFromEndpoint {
             }
 
             this.regRange = rng;
-            console.debug('regRange set to:', this.regRange);
 
             const targetResult = allConfigResults.find(r => r.uuid === regression.uuid);
             searchDot(targetResult);
@@ -1523,6 +1513,7 @@ class TimelineFromEndpoint {
                 },
                 onSelectionScroll: (dots, selectedDotRect) => {
                     this.selectedDotsButtonGroupRef.setState({top: selectedDotRect.bottom, left: selectedDotRect.right});
+                    this.notifyRerender();
                 },
             }, composer, ...children)}
         </div>`;

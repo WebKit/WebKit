@@ -39,4 +39,6 @@ std::pair<WebCore::VideoFrame::Rotation, bool> webkitGstBufferGetVideoRotation(G
 
 WebCore::VideoFrameContentHint webkitGstBufferGetContentHint(GstBuffer*);
 
+MediaTime webkitGstBufferGetProcessingTime(GstBuffer*, GstElement*);
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

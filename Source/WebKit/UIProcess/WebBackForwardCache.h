@@ -28,6 +28,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -52,7 +53,7 @@ public:
 
     void setCapacity(WebProcessPool&, unsigned);
     unsigned capacity() const { return m_capacity; }
-    unsigned size() const { return m_itemsWithCachedPage.computeSize(); }
+    unsigned size() const;
 
     void clear();
     void pruneToSize(unsigned);
@@ -77,6 +78,16 @@ private:
     WeakRef<WebProcessPool> m_processPool;
     unsigned m_capacity { 0 };
     WeakListHashSet<WebBackForwardListItem> m_itemsWithCachedPage;
-};
+} SWIFT_SHARED_REFERENCE(refWebBackForwardCache, derefWebBackForwardCache);
 
 } // namespace WebKit
+
+inline void refWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL obj)
+{
+    obj->deref();
+}

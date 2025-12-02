@@ -182,7 +182,7 @@ std::optional<MappedFileData> FileHandle::map(MappedFileMode mapMode, FileOpenMo
 #endif
     }
 
-    auto fileData = MallocSpan<uint8_t, Mmap>::mmap(nullptr, size, pageProtection, MAP_FILE | (mapMode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), platformHandle());
+    auto fileData = MmapSpan<uint8_t>::mmap(nullptr, size, pageProtection, MAP_FILE | (mapMode == MappedFileMode::Shared ? MAP_SHARED : MAP_PRIVATE), platformHandle());
     if (!fileData)
         return { };
 

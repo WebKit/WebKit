@@ -45,8 +45,6 @@
 #include <gtk/gtk.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-
 namespace WebKit {
 
 #if PLATFORM(GTK)
@@ -61,8 +59,8 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, GdkMonitor*
 
     // First find connectors matching the size.
     Vector<drmModeConnector*, 1> connectors;
-    for (int i = 0; i < resources->count_connectors; ++i) {
-        auto* connector = drmModeGetConnector(fd, resources->connectors[i]);
+    for (uint32_t connectorId : unsafeMakeSpan(resources->connectors, resources->count_connectors)) {
+        auto* connector = drmModeGetConnector(fd, connectorId);
         if (!connector)
             continue;
 
@@ -88,8 +86,9 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, GdkMonitor*
 
     // FIXME: if there are multiple connectors, check other properties.
     if (drmModeEncoder* encoder = drmModeGetEncoder(fd, connectors[0]->encoder_id)) {
-        for (int i = 0; i < resources->count_crtcs; ++i) {
-            if (resources->crtcs[i] == encoder->crtc_id) {
+        const auto crtcIds = unsafeMakeSpan(resources->crtcs, resources->count_crtcs);
+        for (unsigned i = 0; i < crtcIds.size(); ++i) {
+            if (crtcIds[i] == encoder->crtc_id) {
                 returnValue = { i, gdk_monitor_get_refresh_rate(monitor) };
                 break;
             }
@@ -113,8 +112,8 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 
     // Get the first active connector.
     drmModeConnector* connector = nullptr;
-    for (int i = 0; i < resources->count_connectors; ++i) {
-        connector = drmModeGetConnector(fd, resources->connectors[i]);
+    for (uint32_t connectorId : unsafeMakeSpan(resources->connectors, resources->count_connectors)) {
+        auto* connector = drmModeGetConnector(fd, connectorId);
         if (!connector)
             continue;
 
@@ -143,9 +142,10 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 
     std::optional<std::pair<uint32_t, uint32_t>> returnValue;
     if (drmModeEncoder* encoder = drmModeGetEncoder(fd, connector->encoder_id)) {
-        for (int i = 0; i < resources->count_crtcs; ++i) {
-            if (resources->crtcs[i] == encoder->crtc_id) {
-                if (drmModeCrtc* crtc = drmModeGetCrtc(fd, resources->crtcs[i])) {
+        const auto crtcIds = unsafeMakeSpan(resources->crtcs, resources->count_crtcs);
+        for (unsigned i = 0; i < crtcIds.size(); ++i) {
+            if (crtcIds[i] == encoder->crtc_id) {
+                if (drmModeCrtc* crtc = drmModeGetCrtc(fd, crtcIds[i])) {
                     returnValue = { i, modeRefreshRate(&crtc->mode) };
                     drmModeFreeCrtc(crtc);
                     break;
@@ -172,8 +172,8 @@ static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc(GdkMonitor* monitor)
 static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc()
 #endif
 {
-    drmDevicePtr devices[64];
-    const int devicesNum = drmGetDevices2(0, devices, std::size(devices));
+    std::array<drmDevicePtr, 64> devices;
+    const int devicesNum = drmGetDevices2(0, devices.data(), devices.size());
     if (devicesNum <= 0)
         return { };
     for (int i = 0; i < devicesNum; i++) {
@@ -189,11 +189,11 @@ static std::optional<DrmNodeWithCrtc> findDrmNodeWithCrtc()
         crtcInfo = findCrtc(fd.value());
 #endif
         if (crtcInfo) {
-            drmFreeDevices(devices, devicesNum);
+            drmFreeDevices(devices.data(), devicesNum);
             return DrmNodeWithCrtc { WTFMove(fd), *crtcInfo };
         }
     }
-    drmFreeDevices(devices, devicesNum);
+    drmFreeDevices(devices.data(), devicesNum);
     return { };
 }
 
@@ -271,7 +271,5 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBDRM)

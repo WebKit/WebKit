@@ -41,8 +41,9 @@ public:
     static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
     virtual ~WebXRInputSpace();
 
-    using RefCounted<WebXRInputSpace>::ref;
-    using RefCounted<WebXRInputSpace>::deref;
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     std::optional<bool> isPositionEmulated() const final { return m_pose.isPositionEmulated; }
     void setPose(const PlatformXR::FrameData::InputSourcePose& pose) { m_pose = pose; }

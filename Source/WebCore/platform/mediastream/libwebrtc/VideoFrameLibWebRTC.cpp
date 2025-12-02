@@ -28,9 +28,12 @@
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
 
-#include <pal/cf/CoreMediaSoftLink.h>
-#include "CoreVideoSoftLink.h"
 #include "LibWebRTCRefWrappers.h"
+#include "NativeImage.h"
+#include "PixelBufferConformerCV.h"
+
+#include "CoreVideoSoftLink.h"
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -76,10 +79,18 @@ VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirr
 
 CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
 {
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=302866 VideoFrameLibWebRTC should construct its CVPixelBuffer from the LibWebRTC buffer.
     Locker locker { m_pixelBufferLock };
     if (!m_pixelBuffer && m_conversionCallback)
         m_pixelBuffer = std::exchange(m_conversionCallback, { })(m_buffer.get());
     return m_pixelBuffer.get();
+}
+
+RefPtr<NativeImage> VideoFrameLibWebRTC::copyNativeImage() const
+{
+    // FIXME: It is not efficient to create a conformer everytime. We might want to make it more efficient, for instance by storing it in GraphicsContext.
+    auto conformer = makeUnique<PixelBufferConformerCV>(kCVPixelFormatType_32BGRA);
+    return NativeImage::create(conformer->createImageFromPixelBuffer(protectedPixelBuffer().get()));
 }
 
 Ref<VideoFrame> VideoFrameLibWebRTC::clone()

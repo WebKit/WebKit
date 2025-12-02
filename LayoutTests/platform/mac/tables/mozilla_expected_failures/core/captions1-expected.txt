@@ -57,26 +57,26 @@ layer at (0,0) size 785x1066
       RenderBlock (anonymous) at (0,288) size 769x18
         RenderText {#text} at (0,0) size 394x18
           text run at (0,0) width 394: "table 3 - caption gains content extending its max element size"
-      RenderTable {TABLE} at (5,316) size 151x111 [border: (10px solid #008000)]
-        RenderBlock {CAPTION} at (10,68) size 141x43 [border: (3px solid #800080)]
-          RenderText {#text} at (38,3) size 48x18
-            text run at (38,3) width 48: "caption"
-          RenderBlock {INPUT} at (87,7) size 13x12
+      RenderTable {TABLE} at (5,316) size 161x111 [border: (10px solid #008000)]
+        RenderBlock {CAPTION} at (10,68) size 151x43 [border: (3px solid #800080)]
+          RenderText {#text} at (43,3) size 48x18
+            text run at (43,3) width 48: "caption"
+          RenderBlock {INPUT} at (92,7) size 13x12
           RenderText {#text} at (3,22) size 145x18
             text run at (3,22) width 145: "very_large_very_large"
-        RenderTableSection {TBODY} at (10,10) size 131x46
-          RenderTableRow {TR} at (0,2) size 131x20
-            RenderTableCell {TD} at (2,2) size 63x20 [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {TBODY} at (10,10) size 141x46
+          RenderTableRow {TR} at (0,2) size 141x20
+            RenderTableCell {TD} at (2,2) size 68x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "Data"
-            RenderTableCell {TD} at (66,2) size 63x20 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (71,2) size 68x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "Data"
-          RenderTableRow {TR} at (0,24) size 131x20
-            RenderTableCell {TD} at (2,24) size 63x20 [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,24) size 141x20
+            RenderTableCell {TD} at (2,24) size 68x20 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "Data"
-            RenderTableCell {TD} at (66,24) size 63x20 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (71,24) size 68x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "Data"
       RenderBlock (anonymous) at (0,432) size 769x18

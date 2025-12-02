@@ -207,6 +207,12 @@ void WebChromeClient::relayAriaNotifyNotification(WebCore::AriaNotifyData&& noti
         page->relayAriaNotifyNotification(WTFMove(notificationData));
 }
 
+void WebChromeClient::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&& notificationData) const
+{
+    if (RefPtr page = m_page.get())
+        page->relayLiveRegionNotification(WTFMove(notificationData));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -56,6 +56,7 @@ private:
     IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
+    RefPtr<NativeImage> copyNativeImage() const final;
 
     Ref<VideoFrame> clone() final;
 

@@ -139,7 +139,7 @@ void BuilderState::adjustStyleForInterCharacterRuby()
     if (!m_style.isInterCharacterRubyPosition() || !element() || !element()->hasTagName(HTMLNames::rtTag))
         return;
 
-    m_style.setTextAlign(TextAlignMode::Center);
+    m_style.setTextAlign(TextAlign::Center);
     if (!m_style.writingMode().isVerticalTypographic())
         m_style.setWritingMode(StyleWritingMode::VerticalLr);
 }

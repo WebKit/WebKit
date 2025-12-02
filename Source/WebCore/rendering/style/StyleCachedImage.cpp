@@ -286,7 +286,7 @@ void StyleCachedImage::setContainerContextForRenderer(const RenderElement& rende
     m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
-    m_cachedImage->setContainerContextForClient(renderer, LayoutSize(containerSize), containerZoom, m_url.resolved);
+    m_cachedImage->setContainerContextForClient(renderer.cachedImageClient(), LayoutSize(containerSize), containerZoom, m_url.resolved);
 }
 
 void StyleCachedImage::addClient(RenderElement& renderer)
@@ -294,7 +294,7 @@ void StyleCachedImage::addClient(RenderElement& renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->addClient(renderer);
+    m_cachedImage->addClient(renderer.cachedImageClient());
 }
 
 void StyleCachedImage::removeClient(RenderElement& renderer)
@@ -302,7 +302,7 @@ void StyleCachedImage::removeClient(RenderElement& renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->removeClient(renderer);
+    m_cachedImage->removeClient(renderer.cachedImageClient());
 }
 
 bool StyleCachedImage::hasClient(RenderElement& renderer) const
@@ -310,7 +310,7 @@ bool StyleCachedImage::hasClient(RenderElement& renderer) const
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->hasClient(renderer);
+    return m_cachedImage->hasClient(renderer.cachedImageClient());
 }
 
 bool StyleCachedImage::hasImage() const

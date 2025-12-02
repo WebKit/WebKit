@@ -188,6 +188,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     StoreServiceWorkerRegistrations(PAL::SessionID sessionID) -> ()
 
     StorePrivateClickMeasurement(PAL::SessionID sessionID, WebCore::PrivateClickMeasurement privateClickMeasurement)
+    SimulatePrivateClickMeasurementConversion(PAL::SessionID sessionID, int priority, int triggerData, URL sourceURL, URL destinationURL)
     DumpPrivateClickMeasurement(PAL::SessionID sessionID) -> (String privateClickMeasurementState)
     ClearPrivateClickMeasurement(PAL::SessionID sessionID) -> ()
     SetPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> ()

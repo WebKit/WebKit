@@ -539,6 +539,97 @@ TEST(CtapPinTest, TestProtocol2HKDFKeyDerivation)
     EXPECT_FALSE(equalSpans(protocol1Key.span(), std::span { expectedAESKey }));
 }
 
+TEST(CtapPinTest, TestHmacSecretRequestCreate)
+{
+    // Generate an EC key pair as the peer key
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    // Create 32-byte salts
+    Vector<uint8_t> salt1(32, 0x00); // 32 bytes of zeros
+    Vector<uint8_t> salt2(32, 0xFF); // 32 bytes of 0xFF
+
+    // Test with 1 salt (Protocol 1)
+    auto request1 = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, salt1, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request1);
+    EXPECT_EQ(request1->saltEnc().size(), 32u);
+    EXPECT_EQ(request1->saltAuth().size(), 16u); // Protocol 1 uses 16 bytes
+    EXPECT_EQ(request1->protocol(), PINUVAuthProtocol::kPinProtocol1);
+
+    // Test with 2 salts (Protocol 1)
+    auto request2 = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, salt1, salt2, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request2);
+    EXPECT_EQ(request2->saltEnc().size(), 64u); // 32 + 32
+    EXPECT_EQ(request2->saltAuth().size(), 16u);
+
+    // Test with Protocol 2
+    auto request3 = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol2, salt1, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request3);
+    EXPECT_GT(request3->saltEnc().size(), 32u); // Protocol 2 adds IV
+    EXPECT_EQ(request3->saltAuth().size(), 32u); // Protocol 2 uses full 32 bytes
+    EXPECT_EQ(request3->protocol(), PINUVAuthProtocol::kPinProtocol2);
+}
+
+TEST(CtapPinTest, TestHmacSecretRequestInvalidSalts)
+{
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    // Invalid: salt1 too short
+    Vector<uint8_t> shortSalt(16, 0x00);
+    auto request = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, shortSalt, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    EXPECT_FALSE(request);
+
+    // Invalid: salt2 too short
+    Vector<uint8_t> validSalt(32, 0x00);
+    request = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, validSalt, shortSalt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    EXPECT_FALSE(request);
+}
+
+TEST(CtapPinTest, TestHmacSecretResponseRoundTrip)
+{
+    // Generate an EC key pair as the peer key
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    Vector<uint8_t> salt1(32, 0xAA);
+
+    // Create HmacSecretRequest which encrypts the salts
+    auto request = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, salt1, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request);
+
+    // Simulate authenticator response: re-encrypt the same data
+    // (In reality, authenticator would encrypt HMAC outputs, but for testing we just verify decrypt works)
+    auto encryptedOutput = request->saltEnc();
+
+    // Parse/decrypt the response
+    auto response = HmacSecretResponse::parse(PINUVAuthProtocol::kPinProtocol1, request->sharedKey(), encryptedOutput);
+    ASSERT_TRUE(response);
+
+    // Verify the decrypted output matches original salt
+    EXPECT_EQ(response->output().size(), 32u);
+    EXPECT_TRUE(equalSpans(response->output().span(), salt1.span()));
+}
+
+TEST(CtapPinTest, TestHmacSecretResponseInvalidSize)
+{
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    Vector<uint8_t> salt1(32, 0x00);
+    auto request = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, salt1, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request);
+
+    // Test with invalid encrypted output (wrong size)
+    Vector<uint8_t> invalidOutput(16, 0x00); // Too short, should be 32 or 64
+    auto response = HmacSecretResponse::parse(PINUVAuthProtocol::kPinProtocol1, request->sharedKey(), invalidOutput);
+    EXPECT_FALSE(response);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WEB_AUTHN)

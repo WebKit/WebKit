@@ -121,6 +121,8 @@ enum class MessageName : uint16_t {
     TestWithLegacyReceiver_LoadSomethingElse,
 #endif
     TestWithLegacyReceiver_LoadURL,
+    TestWithLegacyReceiver_OpaqueTypeSecurityAssertion,
+    TestWithLegacyReceiver_OpaqueTypeSecurityAssertionReply,
     TestWithLegacyReceiver_PreferencesDidChange,
     TestWithLegacyReceiver_RunJavaScriptAlert,
     TestWithLegacyReceiver_RunJavaScriptAlertReply,
@@ -197,6 +199,8 @@ enum class MessageName : uint16_t {
     TestWithoutAttributes_LoadSomethingElse,
 #endif
     TestWithoutAttributes_LoadURL,
+    TestWithoutAttributes_OpaqueTypeSecurityAssertion,
+    TestWithoutAttributes_OpaqueTypeSecurityAssertionReply,
     TestWithoutAttributes_PreferencesDidChange,
     TestWithoutAttributes_RunJavaScriptAlert,
     TestWithoutAttributes_RunJavaScriptAlertReply,

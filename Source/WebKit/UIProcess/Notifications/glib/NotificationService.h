@@ -47,7 +47,7 @@ class WebNotification;
 class NotificationService {
     WTF_MAKE_NONCOPYABLE(NotificationService);
     WTF_MAKE_TZONE_ALLOCATED(NotificationService);
-    friend LazyNeverDestroyed<NotificationService>;
+    friend NeverDestroyed<NotificationService>;
 public:
     static NotificationService& singleton();
 

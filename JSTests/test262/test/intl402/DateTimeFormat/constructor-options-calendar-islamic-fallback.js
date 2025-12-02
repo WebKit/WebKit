@@ -15,7 +15,7 @@ info: |
     b. Set _resolvedCalendar_ to CanonicalizeUValue(*"ca"*, _fallbackCalendar_).
     c. If the ECMAScript implementation has a mechanism for reporting diagnostic warning messages, a warning should be issued.
   10. Set _dateTimeFormat_.[[Calendar]] to _resolvedCalendar_.
-locale: [en, en-u-ca-islamic]
+locale: [en]
 features: [Intl.Era-monthcode]
 ---*/
 

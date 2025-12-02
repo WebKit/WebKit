@@ -9,4 +9,4 @@ TEST COMPLETE
 This is some
 highlighted
 text.
-This is some highlighted text.
+highlighted text.

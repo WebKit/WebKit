@@ -61,7 +61,7 @@ static bool isDoneWithFormSubmission;
 @implementation InputDelegateForFormSubmission {
 }
 
-- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject <NSSecureCoding> *)userObject submissionHandler:(void (^)(void))submissionHandler
+- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values frameInfo:(WKFrameInfo *)frameInfo sourceFrameInfo:(WKFrameInfo *)sourceFrameInfo userObject:(NSObject <NSSecureCoding> *)userObject requestURL:(NSURL *)requestURL method:(NSString *)method submissionHandler:(void (^)(void))submissionHandler
 {
     auto *dictionary = (NSDictionary *)userObject;
     EXPECT_WK_STREQ((NSString *)dictionary[@"foo"], @"bar");
@@ -1299,6 +1299,39 @@ TEST(WKUserContentController, DidAssociateFormControls)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLInputElement]");
 }
 
+TEST(WKUserContentController, DidAssociateFormControlsFromShadowTree)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+    NSString *pageWorldJS = @"window.addEventListener('webkitassociateformcontrols', () => alert('fail') )";
+    NSString *autofillWorldJS = @"window.addEventListener('webkitassociateformcontrols', (e) => { let composedTarget = e.composedPath()[0]; setTimeout(() => alert('pass ' + composedTarget), 50)})";
+    RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    RetainPtr autofillWorldScript = adoptNS([[WKUserScript alloc] initWithSource:autofillWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES inContentWorld:autofillWorld.get()]);
+    RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
+    [userContentController addUserScript:pageWorldScript.get()];
+    [userContentController addUserScript:autofillWorldScript.get()];
+
+    NSString *html = @""
+        "<div id='host'></div>"
+        "<script>"
+        "var shadow = host.attachShadow({mode: 'open'});"
+        "shadow.innerHTML = `<form id='loginForm'><input id='username' type='text'></form>`;"
+        ""
+        "function addPasswordFieldToForm() {"
+        "    var form = shadow.getElementById('loginForm');"
+        "    form.innerHTML += `<input id='password' type='password'>`;"
+        "}"
+        "</script>"
+        "<button onclick='addPasswordFieldToForm()'>Add Password Field</button>";
+    [webView synchronouslyLoadHTMLString:html];
+
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLFormElement]");
+    [webView evaluateJavaScript:@"addPasswordFieldToForm()" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLInputElement]");
+}
+
 TEST(WKUserContentController, ShadowRootAttachedEvent)
 {
     RetainPtr webView = adoptNS([TestWKWebView new]);
@@ -1415,6 +1448,64 @@ TEST(WKUserContentController, AllowElementUserInfo)
     [webView setUIDelegate:uiUelegate.get()];
 
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><input id='input' style='width: 200px; height: 20px'><div id='result'></div>"];
+    [webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener = false; input.addEventListener('webkitautofillrequest', () => didCallMainWorldEventListener = true);"];
+
+    [webView waitForNextPresentationUpdate];
+
+    auto inputLeft = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().left"].floatValue;
+    auto inputTop = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().top"].floatValue;
+    auto inputWidth = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().width"].floatValue;
+    auto inputHeight = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().height"].floatValue;
+
+    auto point = NSMakePoint(inputLeft + inputWidth - inputHeight / 2, 600 - (inputTop + inputHeight / 2));
+    [webView sendClickAtPoint:point];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::run(&didCallDidClickAutoFillButtonWithUserInfo);
+    EXPECT_TRUE(didCallDidClickAutoFillButtonWithUserInfo);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"result.textContent"], @"true");
+    EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener"] boolValue]);
+    [webView stringByEvaluatingJavaScript:@"input.dispatchEvent(new Event('webkitautofillrequest'))"];
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener"] boolValue]);
+}
+
+TEST(WKUserContentController, AllowElementUserInfoFromShadowTree)
+{
+    scriptMessagesVector.clear();
+    isDoneWithNavigation = false;
+    receivedScriptMessage = false;
+
+    RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
+    [contentWorldConfiguration setName:@"TestWorldAllowingAutofill"];
+    [contentWorldConfiguration setAllowElementUserInfo:YES];
+    [contentWorldConfiguration setAllowAutofill:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:contentWorldConfiguration.get()];
+    RetainPtr handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"var input = document.getElementById('host').shadowRoot.getElementById('input');"
+        "input.autofillButtonType = 'credentials';"
+        "input.addEventListener('webkitautofillrequest', () => { input.setUserInfo({'string': 'PASS', 'int': 123, 'double': 0.25, 'bool': true, 'null': null, 'array': [1, 'abc']});"
+        "result.textContent = 'true'; });"
+        injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" contentWorld:world.get()];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView addToTestWindow];
+    RetainPtr uiUelegate = adoptNS([[AutoFillDelegateForElementUserInfo alloc] init]);
+    [webView setUIDelegate:uiUelegate.get()];
+
+    NSString *html = @"<!DOCTYPE html>"
+        "<div id='host'></div>"
+        "<div id='result'></div>"
+        "<script>"
+        "var shadow = host.attachShadow({mode: 'open'});"
+        "shadow.innerHTML = `<input id='input' style='width: 200px; height: 20px'>`;"
+        "var input = shadow.getElementById('input');"
+        "</script>";
+    [webView synchronouslyLoadHTMLString:html];
     [webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener = false; input.addEventListener('webkitautofillrequest', () => didCallMainWorldEventListener = true);"];
 
     [webView waitForNextPresentationUpdate];
@@ -1649,4 +1740,85 @@ TEST(WKUserContentController, FormSubmissionWithUserInfo)
         "<input type='hidden' name='testname3' value='testvalue3'/>"
     "</form></body>" baseURL:nil];
     TestWebKitAPI::Util::run(&isDoneWithFormSubmission);
+}
+
+#if PLATFORM(MAC)
+
+TEST(WKUserContentController, AutoFillWorldTrustedEventHandler)
+{
+    RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
+    [contentWorldConfiguration setAllowAutofill:YES];
+
+    __block int autoFillWorldEventCount = 0;
+    __block int pageWorldEventCount = 0;
+    __block bool done = false;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:contentWorldConfiguration.get()];
+    RetainPtr autoFillHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [autoFillHandler addMessage:@"event" withHandler:^{
+        autoFillWorldEventCount++;
+    }];
+    [[configuration userContentController] addScriptMessageHandler:autoFillHandler.get() contentWorld:world.get() name:@"autofill"];
+
+    RetainPtr handler = adoptNS([[TestMessageHandler alloc] init]);
+    [handler addMessage:@"event" withHandler:^{
+        pageWorldEventCount++;
+        done = true;
+    }];
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"page"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadHTMLString:@"<input id='input' type='text'><script>input.focus()</script>"];
+
+    // webkitTrustedOnly should only have an effect in the autofill world.
+    [webView objectByEvaluatingJavaScript:@"window.addEventListener('keydown', (e) => { window.webkit.messageHandlers.autofill.postMessage('event'); }, { webkitTrustedOnly: true })" inFrame:nil inContentWorld:world.get()];
+    [webView objectByEvaluatingJavaScript:@"window.addEventListener('keydown', (e) => { window.webkit.messageHandlers.page.postMessage('event'); }, { webkitTrustedOnly: true });"];
+
+    [webView typeCharacter:'c'];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(autoFillWorldEventCount, 1);
+    EXPECT_EQ(pageWorldEventCount, 1);
+
+    [webView objectByEvaluatingJavaScript:@"input.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', code: 'keyA', keyCode: 65, which: 65, bubbles: true }))"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(autoFillWorldEventCount, 1);
+    EXPECT_EQ(pageWorldEventCount, 2);
+}
+
+#endif
+
+TEST(WKUserContentController, WebKitSubmitEvent)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+    NSString *pageWorldJS = @"window.addEventListener('webkitsubmit', () => alert('fail') )";
+    NSString *autofillWorldJS = @"window.addEventListener('webkitsubmit', (e) => { let composedTargetID = e.composedPath()[0].id; setTimeout(() => alert('pass ' + composedTargetID), 50)})";
+    RetainPtr pageWorldScript = adoptNS([[WKUserScript alloc] initWithSource:pageWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES]);
+    RetainPtr autofillWorldScript = adoptNS([[WKUserScript alloc] initWithSource:autofillWorldJS injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES inContentWorld:autofillWorld.get()]);
+    RetainPtr<WKUserContentController> userContentController = [webView configuration].userContentController;
+    [userContentController addUserScript:pageWorldScript.get()];
+    [userContentController addUserScript:autofillWorldScript.get()];
+
+    NSString *html = @""
+        "<form id='outerForm' action='javascript:void(0)'><button>Submit</button></form>"
+        "<div id='host'></div>"
+        "<script>"
+        "var shadow = host.attachShadow({mode: 'open'});"
+        "shadow.innerHTML = `<form id='innerForm' action='javascript:void(0)'><button>Submit</button></form>`;"
+        "</script>";
+    [webView synchronouslyLoadHTMLString:html];
+
+    [webView objectByEvaluatingJavaScript:@"outerForm.requestSubmit()"];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass outerForm");
+
+    [webView objectByEvaluatingJavaScript:@"shadow.getElementById('innerForm').requestSubmit()"];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass innerForm");
 }

@@ -170,7 +170,7 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex) {
         auto& line = displayContent.lines[lineIndex];
         auto& adjustment = adjustments[lineIndex];
-        line.moveInBlockDirection(adjustment.offset, isHorizontalWritingMode);
+        line.moveInBlockDirection(adjustment.offset);
         if (adjustment.isFirstAfterPageBreak)
             line.setIsFirstAfterPageBreak();
     }

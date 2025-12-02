@@ -11,5 +11,5 @@ PASS Negative
 PASS Percentage
 PASS Named space
 PASS Calc() expression
-FAIL Dynamic linethickness assert_approx_equals: attach expected 400 +/- 2 but got 100
+PASS Dynamic linethickness
 

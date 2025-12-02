@@ -31,20 +31,42 @@
 #include "stdlib.h"
 #if PAS_OS(DARWIN)
 #include <sys/sysctl.h>
+#include <mach/mach.h>
 #endif
 #if !PAS_OS(WINDOWS)
 #include "unistd.h"
+#include <pthread.h>
 #endif
 
+#include "pas_all_heaps.h"
 #include "pas_heap.h"
 #include "pas_mte.h"
+#include "pas_scavenger.h"
+#include "pas_segregated_heap.h"
+#include "pas_system_heap.h"
+#include "pas_utility_heap_config.h"
 #include "pas_utils.h"
 #include "pas_zero_memory.h"
 
+#if PAS_ENABLE_BMALLOC
+extern pas_heap bmalloc_common_primitive_heap;
+extern const pas_heap_config bmalloc_heap_config;
+extern pas_basic_heap_runtime_config bmalloc_flex_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_intrinsic_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_typed_runtime_config;
+extern pas_basic_heap_runtime_config bmalloc_primitive_runtime_config;
+#endif // PAS_ENABLE_BMALLOC
+#if PAS_ENABLE_JIT
+extern const pas_heap_config jit_heap_config;
+extern pas_basic_heap_runtime_config jit_heap_runtime_config;
+#endif // PAS_ENABLE_JIT
+#if PAS_ENABLE_ISO
+extern const pas_heap_config iso_heap_config;
+#endif // PAS_ENABLE_ISO
+extern const pas_heap_config pas_utility_heap_config;
+
 #if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #if PAS_ENABLE_MTE
-
-extern pas_heap bmalloc_common_primitive_heap;
 
 static int is_env_false(const char* var)
 {
@@ -182,6 +204,16 @@ static bool pas_mte_is_enabled(void)
     return (rc == sizeof(info) && (info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED) && !!*enabledByte);
 }
 
+static void pas_mte_get_config_bytes(uint8_t (*bytes_out)[6])
+{
+    (*bytes_out)[0] = PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG);
+    (*bytes_out)[1] = PAS_MTE_CONFIG_BYTE(PAS_MTE_MODE_BITS);
+    (*bytes_out)[2] = PAS_MTE_CONFIG_BYTE(PAS_MTE_TAGGING_RATE);
+    (*bytes_out)[3] = PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG);
+    (*bytes_out)[4] = PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG);
+    (*bytes_out)[5] = PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG);
+}
+
 #else // !PAS_ENABLE_MTE
 
 static PAS_UNUSED void pas_mte_do_initialization(void) { }
@@ -191,9 +223,100 @@ static PAS_UNUSED bool pas_mte_is_enabled(void)
     return false;
 }
 
+static PAS_UNUSED void pas_mte_get_config_bytes(uint8_t (*bytes_out)[6])
+{
+    for (int i = 0; i < 6; i++)
+        (*bytes_out)[i] = 0;
+}
+
 #endif // PAS_ENABLE_MTE
 
 #if PAS_OS(DARWIN)
+static size_t max_object_size_for_page_config_sans_heap(const pas_page_base_config* page_config)
+{
+    if (!page_config->is_enabled)
+        return 0;
+    return pas_round_down_to_power_of_2(
+        page_config->max_object_size,
+        pas_page_base_config_min_align(*page_config));
+}
+
+static void pas_report_config(void)
+{
+    const char* progname = getprogname();
+    const int pid = getpid();
+    const mach_port_t threadno = pthread_mach_thread_np(pthread_self());
+
+    uint8_t mte_conf[6];
+    pas_mte_get_config_bytes(&mte_conf);
+
+#define LOG_FMT_STR_FOR_HEAP_CONFIG(name) "\n\tHeap-Config " #name ":" \
+                                   "\n\t\tPage Configs (Enabled/MTE Taggable, Static Max Obj Size):" \
+                                   "\n\t\t\tSmall Segregated: %u/%u, %zuB"\
+                                   "\n\t\t\tMedium Segregated: %u/%u, %zuB"\
+                                   "\n\t\t\tSmall Bitfit: %u/%u, %zuB"\
+                                   "\n\t\t\tMedium Bitfit : %u/%u, %zuB"\
+                                   "\n\t\t\tMarge Bitfit : %u/%u, %zuB"
+#define LOG_FMT_VARS_FOR_HEAP_CONFIG(cfg) \
+    cfg.small_segregated_config.base.is_enabled, cfg.small_segregated_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.small_segregated_config.base), \
+    cfg.medium_segregated_config.base.is_enabled, cfg.medium_segregated_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.medium_segregated_config.base), \
+    cfg.small_bitfit_config.base.is_enabled, cfg.small_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.small_bitfit_config.base), \
+    cfg.medium_bitfit_config.base.is_enabled, cfg.medium_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.medium_bitfit_config.base), \
+    cfg.marge_bitfit_config.base.is_enabled, cfg.marge_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.marge_bitfit_config.base)
+#define LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(rcfg) \
+        rcfg.base.max_segregated_object_size, rcfg.base.max_bitfit_object_size, rcfg.base.directory_size_bound_for_baseline_allocators, rcfg.base.directory_size_bound_for_no_view_cache
+
+    fprintf(stderr,
+        "%s(%d,0x%x) malloc: libpas config:"
+        "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
+        "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
+        "\n\tMTE (Enabled/Mode-Bits/Tagging-Rate/Medium-Enabled/Lockdown/Hardened): (%u, %u, %u, %u, %u, %u)"
+#if PAS_ENABLE_BMALLOC
+        "\n\tUsing System Heap: %u"
+        LOG_FMT_STR_FOR_HEAP_CONFIG(bmalloc)
+        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
+        "\n\t\t\tFlex: %uB, %uB, %uB, %uB"
+        "\n\t\t\tIntrinsic: %uB, %uB, %uB, %uB"
+        "\n\t\t\tTyped: %uB, %uB, %uB, %uB"
+        "\n\t\t\tPrimitive: %uB, %uB, %uB, %uB"
+#endif
+#if PAS_ENABLE_JIT
+        LOG_FMT_STR_FOR_HEAP_CONFIG(jit)
+        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
+        "\n\t\t\tFlex: %uB, %uB, %uB, %uB"
+#endif
+#if PAS_ENABLE_ISO
+        LOG_FMT_STR_FOR_HEAP_CONFIG(iso)
+#endif
+        LOG_FMT_STR_FOR_HEAP_CONFIG(utility)
+        "\n",
+
+        /* Begin the fmt vars */
+        progname, pid, (int)threadno,
+        (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
+        pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
+        mte_conf[0], mte_conf[1], mte_conf[2], mte_conf[3], mte_conf[4], mte_conf[5],
+#if PAS_ENABLE_BMALLOC
+        pas_system_heap_is_enabled(pas_heap_config_kind_bmalloc),
+        LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
+        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_flex_runtime_config),
+        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),
+        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_typed_runtime_config),
+        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_primitive_runtime_config),
+#endif
+#if PAS_ENABLE_JIT
+        LOG_FMT_VARS_FOR_HEAP_CONFIG(jit_heap_config),
+        LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(jit_heap_runtime_config),
+#endif
+#if PAS_ENABLE_ISO
+        LOG_FMT_VARS_FOR_HEAP_CONFIG(iso_heap_config),
+#endif
+        LOG_FMT_VARS_FOR_HEAP_CONFIG(pas_utility_heap_config));
+}
+
+// rdar://164588924: We should refactor this to a more general mechanism
+// for handling 'libpas setup' tasks, e.g. LibpasMallocReportConfig,
+// probably in its own file with a hook back to this MTE setup work.
 static void pas_mte_do_and_check_initialization(void* context)
 {
     (void)context;
@@ -205,6 +328,13 @@ static void pas_mte_do_and_check_initialization(void* context)
             || !strcasecmp(crashIfMTENotEnabled, "1")) {
             PAS_ASSERT(pas_mte_is_enabled() && "MTE is not enabled, crashing");
         }
+    }
+    const char* logLibpasConfiguration = getenv("LibpasMallocReportConfig");
+    if (logLibpasConfiguration) {
+        if (!strcasecmp(logLibpasConfiguration, "true")
+            || !strcasecmp(logLibpasConfiguration, "yes")
+            || !strcasecmp(logLibpasConfiguration, "1"))
+            pas_report_config();
     }
 }
 

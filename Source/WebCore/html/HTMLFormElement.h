@@ -121,6 +121,7 @@ public:
     static HTMLFormElement* findClosestFormAncestor(const Element&);
     
     RefPtr<DOMFormData> constructEntryList(RefPtr<HTMLFormControlElement>&&, Ref<DOMFormData>&&, StringPairVector*);
+    const FormSubmission::Attributes& attributes() const { return m_attributes; }
     
 private:
     HTMLFormElement(const QualifiedName&, Document&);

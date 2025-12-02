@@ -83,6 +83,7 @@ public:
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, relevancy); }
 
     virtual Path computeClipPath(AffineTransform&) const;
+    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const;
 
 protected:
     RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
@@ -101,7 +102,6 @@ protected:
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
     void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive

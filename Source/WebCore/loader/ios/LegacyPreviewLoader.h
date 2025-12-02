@@ -39,11 +39,11 @@ class LegacyPreviewLoaderClient;
 class ResourceLoader;
 class ResourceResponse;
 
-class LegacyPreviewLoader final : private PreviewConverterClient, private PreviewConverterProvider {
+class LegacyPreviewLoader final : public RefCounted<LegacyPreviewLoader>, private PreviewConverterClient, private PreviewConverterProvider {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LegacyPreviewLoader, Loader);
     WTF_MAKE_NONCOPYABLE(LegacyPreviewLoader);
 public:
-    LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);
+    static Ref<LegacyPreviewLoader> create(ResourceLoader&, const ResourceResponse&);
     ~LegacyPreviewLoader();
 
     bool didReceiveResponse(const ResourceResponse&);
@@ -53,7 +53,13 @@ public:
 
     WEBCORE_EXPORT static void setClientForTesting(RefPtr<LegacyPreviewLoaderClient>&&);
 
+    // PreviewConverterClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    LegacyPreviewLoader(ResourceLoader&, const ResourceResponse&);
+
     // PreviewConverterClient
     void previewConverterDidStartUpdating(PreviewConverter&) final { };
     void previewConverterDidFinishUpdating(PreviewConverter&) final { };

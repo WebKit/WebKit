@@ -377,7 +377,7 @@ static bool parseAndVerifyDebugInfoImpl(JSC::VM* vm, const SourceModule& sourceM
         Vector<uint32_t> relative;
         for (uint32_t abs : absSet)
             relative.append(abs - sourceModule.bytecodeStart);
-        std::sort(relative.begin(), relative.end());
+        std::ranges::sort(relative);
         return relative;
     };
 

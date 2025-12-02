@@ -119,27 +119,32 @@ public:
 
     void characteristicsChanged() final
     {
-        if (!m_src)
+        auto src = m_src.get();
+        if (!src)
             return;
 
-        webkitMediaStreamSrcCharacteristicsChanged(WEBKIT_MEDIA_STREAM_SRC_CAST(m_src));
+        webkitMediaStreamSrcCharacteristicsChanged(WEBKIT_MEDIA_STREAM_SRC_CAST(src.get()));
     }
     void activeStatusChanged() final;
 
     void didAddTrack(MediaStreamTrackPrivate& track) final
     {
-        if (m_src)
-            webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(m_src), &track);
+        auto src = m_src.get();
+        if (!src)
+            return;
+
+        webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC_CAST(src.get()), &track);
     }
 
     void didRemoveTrack(MediaStreamTrackPrivate&) final;
 
 private:
     WebKitMediaStreamObserver(GstElement* src)
-        : m_src(src)
-    { }
+    {
+        m_src.reset(src);
+    }
 
-    GstElement* m_src;
+    GThreadSafeWeakPtr<GstElement> m_src;
 };
 
 static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc*);
@@ -823,7 +828,11 @@ bool InternalSource::receivedAudioSampleBeforeVideo()
 
 void WebKitMediaStreamObserver::activeStatusChanged()
 {
-    auto element = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
+    auto element = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
     auto isActive = element->priv->stream->active();
     GST_DEBUG_OBJECT(element, "MediaStream active status changed to %s", boolForPrinting(isActive));
     if (isActive)
@@ -859,10 +868,11 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(CleanupData);
 
 void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 {
-    if (!m_src)
+    auto src = m_src.get();
+    if (!src)
         return;
 
-    auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
+    auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
     auto priv = self->priv;
 
     GST_DEBUG_OBJECT(self, "Track with ID %s was removed", track.id().utf8().data());
@@ -889,7 +899,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
         // Make sure that the video.videoWidth is reset to 0.
         webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 
-        callOnMainThread([src = GRefPtr(m_src), source = WTFMove(source)] {
+        callOnMainThread([src = WTFMove(src), source = WTFMove(source)] {
             auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(src.get());
             webkitMediaStreamSrcCleanup(self, source);
         });
@@ -900,7 +910,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
     auto pad = adoptGRef(gst_element_get_static_pad(element, source->padName().ascii().data()));
 
     auto data = createCleanupData();
-    data->element.reset(m_src);
+    data->element.reset(src.get());
     data->source = WTFMove(source);
     gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto event = GST_PAD_PROBE_INFO_EVENT(info);
@@ -1042,12 +1052,6 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
     bool noPreroll = false;
 
     switch (transition) {
-    case GST_STATE_CHANGE_NULL_TO_READY: {
-        auto locker = GstObjectLocker(self);
-        for (auto& item : self->priv->sources.values())
-            item->startObserving();
-        break;
-    }
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
         noPreroll = true;
         break;
@@ -1066,12 +1070,6 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
     case GST_STATE_CHANGE_PAUSED_TO_READY: {
         auto locker = GstObjectLocker(self);
         gst_flow_combiner_reset(self->priv->flowCombiner.get());
-        break;
-    }
-    case GST_STATE_CHANGE_READY_TO_NULL: {
-        // Explicitely NOT stopping internal sources observation here because the state transition
-        // can be triggered from a non-main thread, specially when mediastreamsrc is used by
-        // GstTranscoder.
         break;
     }
     default:

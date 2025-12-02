@@ -37,8 +37,11 @@
 #include <WebCore/CDMKeySystemConfiguration.h>
 #include <WebCore/CDMRestrictions.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDM);
 
 using namespace WebCore;
 
@@ -92,7 +95,7 @@ bool RemoteCDM::supportsSessionTypeWithConfiguration(const CDMSessionType&, cons
     return false;
 }
 
-bool RemoteCDM::supportsInitData(const AtomString& type, const SharedBuffer& data) const
+bool RemoteCDM::supportsInitData(const String& type, const SharedBuffer& data) const
 {
     // This check will be done, later, inside RemoteCDMInstanceSessionProxy::requestLicense().
     return true;

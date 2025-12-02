@@ -26,6 +26,7 @@
 		256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.m */; };
 		2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC37342198B62D300EC33E9 /* SettingsController.m */; };
 		511AAEB72A8C1E77007ECBEE /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 511AAEB62A8C1E77007ECBEE /* UserNotifications.framework */; };
+		513EA7BF2ECFE34900828F2A /* HistoryButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 513EA7BE2ECFE34900828F2A /* HistoryButton.m */; };
 		51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 51E244F911EFCE07008228D1 /* MBToolbarItem.m */; };
 		5C9332AF24C1349C0036DECE /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9332AE24C1349C0036DECE /* SecurityInterface.framework */; };
 		72945D0229B7F204006ACF75 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72945D0129B7F204006ACF75 /* QuartzCore.framework */; };
@@ -65,6 +66,8 @@
 		2DC37342198B62D300EC33E9 /* SettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsController.m; path = mac/SettingsController.m; sourceTree = "<group>"; };
 		37BAF90620218053000EA879 /* MiniBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MiniBrowser.entitlements; sourceTree = "<group>"; };
 		511AAEB62A8C1E77007ECBEE /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		513EA7BD2ECFE34900828F2A /* HistoryButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HistoryButton.h; path = mac/HistoryButton.h; sourceTree = "<group>"; };
+		513EA7BE2ECFE34900828F2A /* HistoryButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HistoryButton.m; path = mac/HistoryButton.m; sourceTree = "<group>"; };
 		51E244F811EFCE07008228D1 /* MBToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBToolbarItem.h; sourceTree = "<group>"; };
 		51E244F911EFCE07008228D1 /* MBToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBToolbarItem.m; sourceTree = "<group>"; };
 		5C9332AE24C1349C0036DECE /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
@@ -107,6 +110,8 @@
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
 				7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */,
 				7CA379401AC381C10079DC37 /* ExtensionManagerWindowController.m */,
+				513EA7BD2ECFE34900828F2A /* HistoryButton.h */,
+				513EA7BE2ECFE34900828F2A /* HistoryButton.m */,
 				BC72B89A11E57E8A001EB4EA /* Info.plist */,
 				BC329486116A92E2008635D0 /* main.m */,
 				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
@@ -265,6 +270,7 @@
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
 				7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */,
+				513EA7BF2ECFE34900828F2A /* HistoryButton.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 				2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */,

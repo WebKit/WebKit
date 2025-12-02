@@ -418,7 +418,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
             if (!resultImage)
                 resultImage = imageValue.value().get();
             else
-                [resultImage->image() addRepresentations:imageValue.value()->image().get().representations];
+                [resultImage->image() addRepresentations:imageValue.value()->image().representations];
         } else if (reportError && !imageValue && imageValue.error())
             reportError(imageValue.error().releaseNonNull());
     }
@@ -428,7 +428,7 @@ RefPtr<WebCore::Icon> WebExtension::bestIcon(RefPtr<JSON::Object> icons, WebCore
     auto *images = mapObjects<NSDictionary>(scalePaths, ^id(NSNumber *scale, NSString *path) {
         auto imageValue = iconForPath(path, idealSize, scale.doubleValue);
         if (imageValue)
-            return imageValue.value()->image().get();
+            return imageValue.value()->image();
 
         if (reportError && !imageValue && imageValue.error())
             reportError(imageValue.error().releaseNonNull());
@@ -484,8 +484,8 @@ RefPtr<WebCore::Icon> WebExtension::bestIconVariant(RefPtr<JSON::Array> variants
     if (!lightIcon || !darkIcon)
         return lightIcon ?: darkIcon;
 
-    auto *lightImage = lightIcon->image().get();
-    auto *darkImage = darkIcon->image().get();
+    auto *lightImage = lightIcon->image();
+    auto *darkImage = darkIcon->image();
 #if USE(APPKIT)
     // The images need to be the same size to draw correctly in the block.
     auto imageSize = lightImage.size.width >= darkImage.size.width ? lightImage.size : darkImage.size;

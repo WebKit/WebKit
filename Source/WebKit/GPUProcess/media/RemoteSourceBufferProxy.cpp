@@ -150,12 +150,6 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
         connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
-{
-    if (RefPtr connection = m_connectionToWebProcess.get())
-        connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
-}
-
 void RemoteSourceBufferProxy::sourceBufferPrivateEvictionDataChanged(const WebCore::SourceBufferEvictionData& evictionData)
 {
     if (RefPtr connection = m_connectionToWebProcess.get())
@@ -415,6 +409,12 @@ std::optional<SharedPreferencesForWebProcess> RemoteSourceBufferProxy::sharedPre
         return connectionToWebProcess->sharedPreferencesForWebProcess();
 
     return std::nullopt;
+}
+
+void RemoteSourceBufferProxy::connectionToWebProcessClosed()
+{
+    ASSERT(isMainRunLoop());
+    disconnect();
 }
 
 #undef MESSAGE_CHECK

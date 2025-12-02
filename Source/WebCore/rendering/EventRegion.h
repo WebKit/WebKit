@@ -147,6 +147,7 @@ public:
 
 #if ENABLE(TOUCH_EVENT_REGIONS)
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegionsEventType, const IntPoint&) const;
+    const EventTrackingRegions& touchEventListenerRegion() const { return m_touchEventListenerRegion; }
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)

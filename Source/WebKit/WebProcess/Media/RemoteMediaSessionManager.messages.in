@@ -32,7 +32,11 @@ messages -> RemoteMediaSessionManager {
     void ClientMayResumePlayback(WebCore::MediaSessionIdentifier identifier, bool shouldResume)
     void ClientShouldSuspendPlayback(WebCore::MediaSessionIdentifier identifier)
     void ClientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier identifier, bool shouldPlay)
-    void ClientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier identifier, enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType command, struct WebCore::PlatformMediaSessionRemoteCommandArgument argument);
+
+#if USE(AUDIO_SESSION)
+    void SetAudioSessionCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
+    void SetAudioSessionPreferredBufferSize(uint64_t preferredBufferSize)
+#endif
 }
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

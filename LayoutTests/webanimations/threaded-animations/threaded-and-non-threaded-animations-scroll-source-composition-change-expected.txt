@@ -1,0 +1,3 @@
+
+PASS Scroll-driven animations can't be threaded if the scroll timeline source has 'overflow: hidden'.
+

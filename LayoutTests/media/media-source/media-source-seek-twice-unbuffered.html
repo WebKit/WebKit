@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-twice-unbuffered</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    window.addEventListener('load', event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = async () => {
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            run('sourceBuffer.timestampOffset = 5');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+            await waitFor(sourceBuffer, 'update');
+
+            run('video.currentTime = 5.5');
+            await waitFor(video, 'seeked');
+            run('sourceBuffer.remove(0, 5.6)');
+            run('video.currentTime = 0');
+            await Promise.all([ sleepFor(2), waitFor(sourceBuffer, 'update') ]);
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            run('video.currentTime = 5.5');
+            await waitFor(video, 'seeked');
+
+            endTest();
+        };
+        loader.onerror = () => {
+            failTest('Media data loading failed');
+        };
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

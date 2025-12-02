@@ -120,22 +120,6 @@ private:
     char32_t m_character;
 };
 
-template<> class StringTypeAdapter<const Latin1Character*> {
-public:
-    StringTypeAdapter(const Latin1Character* characters)
-        : m_characters { unsafeSpan(characters) }
-    {
-        RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
-    }
-
-    unsigned length() const { return m_characters.size(); }
-    bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination, m_characters); }
-
-private:
-    std::span<const Latin1Character> m_characters;
-};
-
 template<> class StringTypeAdapter<const char16_t*> {
 public:
     StringTypeAdapter(const char16_t* characters)

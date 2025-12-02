@@ -89,7 +89,7 @@ void ScrollingTreeCoordinated::applyLayerPositionsInternal()
 
     if (ScrollingThread::isCurrentThread()) {
         auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeCoordinated*>(rootScrollingNode)->rootContentsLayer();
-        rootContentsLayer->requestComposition();
+        rootContentsLayer->requestComposition(CompositionReason::AsyncScrolling);
     }
 }
 

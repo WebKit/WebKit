@@ -26,7 +26,12 @@
 #import "config.h"
 #import "_WKAuthenticationExtensionsClientOutputs.h"
 
-@implementation _WKAuthenticationExtensionsClientOutputs
+#import <wtf/RetainPtr.h>
+
+@implementation _WKAuthenticationExtensionsClientOutputs {
+    RetainPtr<NSData> _prfFirst;
+    RetainPtr<NSData> _prfSecond;
+}
 
 - (instancetype)initWithAppid:(BOOL)appid
 {
@@ -34,7 +39,30 @@
         return nil;
 
     _appid = appid;
+    _prfEnabled = NO;
     return self;
+}
+
+- (instancetype)initWithAppid:(BOOL)appid prfEnabled:(BOOL)prfEnabled prfFirst:(NSData *)prfFirst prfSecond:(NSData *)prfSecond
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _appid = appid;
+    _prfEnabled = prfEnabled;
+    _prfFirst = prfFirst;
+    _prfSecond = prfSecond;
+    return self;
+}
+
+- (NSData *)prfFirst
+{
+    return _prfFirst.get();
+}
+
+- (NSData *)prfSecond
+{
+    return _prfSecond.get();
 }
 
 @end

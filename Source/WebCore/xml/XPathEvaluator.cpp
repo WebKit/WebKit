@@ -54,7 +54,7 @@ ExceptionOr<Ref<XPathResult>> XPathEvaluator::evaluate(const String& expression,
     if (createResult.hasException())
         return createResult.releaseException();
 
-    return createResult.releaseReturnValue()->evaluate(contextNode, type, result);
+    return RefPtr { createResult.releaseReturnValue() }->evaluate(contextNode, type, result);
 }
 
 }

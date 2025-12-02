@@ -87,6 +87,8 @@ struct BorderImage {
     bool operator==(const BorderImage&) const = default;
 
 private:
+    friend class WebCore::RenderStyle;
+
     struct Data : RefCounted<Data> {
         static Ref<Data> create();
         static Ref<Data> create(BorderImageSource&&, BorderImageSlice&&, BorderImageWidth&&, BorderImageOutset&&, BorderImageRepeat&&);

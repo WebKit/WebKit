@@ -105,7 +105,7 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
         auto node = remainingNodes.takeLast();
         target->increaseNoiseInjectionMultiplier(node->noiseInjectionMultiplier());
         for (unsigned i = 0; i < node->numberOfOutputs(); ++i) {
-            auto* output = node->output(i);
+            CheckedPtr output = node->output(i);
             if (!output)
                 continue;
 

@@ -95,6 +95,10 @@
 #include <WebCore/ContentFilterUnblockHandler.h>
 #endif
 
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#include "WebParentalControlsURLFilter.h"
+#endif
+
 #define LOADER_RELEASE_LOG_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, WTF::getPtr(thisPtr), thisPtr->webPageProxyID().toUInt64(), thisPtr->pageID().toUInt64(), thisPtr->frameID().toUInt64(), thisPtr->coreIdentifier().toUInt64(), thisPtr->isMainResource(), static_cast<unsigned>(thisPtr->m_parameters.options.destination), thisPtr->isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG_DEBUG(fmt, ...) RELEASE_LOG_DEBUG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
@@ -284,12 +288,25 @@ void NetworkResourceLoader::startRequest(const ResourceRequest& newRequest)
 }
 
 #if ENABLE(CONTENT_FILTERING)
+static void setSharedParentalControlsURLFilterIfNecessary()
+{
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    ASSERT(isMainRunLoop());
+    static bool initialized = false;
+    if (!initialized) {
+        WebCore::ParentalControlsURLFilter::setGlobalFilter(WebParentalControlsURLFilter::create());
+        initialized = true;
+    }
+#endif
+}
+
 void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, CompletionHandler<void(ResourceRequest)>&& completionHandler)
 {
     if (!isMainResource()) {
         completionHandler(WTFMove(request));
         return;
     }
+    setSharedParentalControlsURLFilterIfNecessary();
     m_contentFilter = ContentFilter::create(*this);
     CheckedPtr contentFilter = m_contentFilter.get();
 #if HAVE(AUDIT_TOKEN)

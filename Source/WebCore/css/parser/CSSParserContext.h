@@ -64,7 +64,6 @@ struct CSSParserContext {
     bool cssAppearanceBaseEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };
     bool cssShapeFunctionEnabled : 1 { false };
-    bool cssTextUnderlinePositionLeftRightEnabled : 1 { false };
     bool cssTextDecorationLineErrorValues : 1 { false };
     bool cssBackgroundClipBorderAreaEnabled : 1 { false };
     bool cssWordBreakAutoPhraseEnabled : 1 { false };
@@ -78,7 +77,6 @@ struct CSSParserContext {
     bool colorLayersEnabled : 1 { false };
     bool contrastColorEnabled : 1 { false };
     bool targetTextPseudoElementEnabled : 1 { false };
-    bool viewTransitionTypesEnabled : 1 { false };
     bool cssProgressFunctionEnabled : 1 { false };
     bool cssRandomFunctionEnabled : 1 { false };
     bool cssTreeCountingFunctionsEnabled : 1 { false };
@@ -88,6 +86,7 @@ struct CSSParserContext {
     bool cssDynamicRangeLimitMixEnabled : 1 { false };
     bool cssConstrainedDynamicRangeLimitEnabled : 1 { false };
     bool cssTextTransformMathAutoEnabled : 1 { false };
+    bool cssInternalAutoBaseParsingEnabled : 1 { false };
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
 
     // Settings, those affecting properties.

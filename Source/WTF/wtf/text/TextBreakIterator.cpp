@@ -33,11 +33,7 @@ namespace WTF {
 
 TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 {
-    static LazyNeverDestroyed<TextBreakIteratorCache> cache;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        cache.construct();
-    });
+    static NeverDestroyed<TextBreakIteratorCache> cache;
     return cache.get();
 }
 

@@ -39,6 +39,10 @@ class XRSimulateUserActivationFunction : public RefCounted<XRSimulateUserActivat
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(void) = 0;
     virtual CallbackResult<void> invokeRethrowingException(void) = 0;
 

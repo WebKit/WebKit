@@ -175,7 +175,7 @@ public:
 
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
 
-    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
+    KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker.get(); }
 
     Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
@@ -231,7 +231,7 @@ private:
     Timer m_garbageCollectDocumentResourcesTimer;
 
     ResourceTimingInformation m_resourceTimingInfo;
-    KeepaliveRequestTracker m_keepaliveRequestTracker;
+    const Ref<KeepaliveRequestTracker> m_keepaliveRequestTracker;
 
     bool m_autoLoadImages { true };
     bool m_imagesEnabled { true };

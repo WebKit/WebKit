@@ -55,12 +55,11 @@ public:
     virtual void newStyleSheetsAvailable(TextTrackLoader&) = 0;
 };
 
-class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient, public CanMakeCheckedPtr<TextTrackLoader> {
+class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient, public RefCounted<TextTrackLoader> {
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextTrackLoader, Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackLoader);
 public:
-    TextTrackLoader(TextTrackLoaderClient&, Document&);
+    static Ref<TextTrackLoader> create(TextTrackLoaderClient&, Document&);
     virtual ~TextTrackLoader();
 
     bool load(const URL&, HTMLTrackElement&);
@@ -70,7 +69,13 @@ public:
     Vector<Ref<VTTRegion>> getNewRegions();
     Vector<String> getNewStyleSheets();
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 private:
+    TextTrackLoader(TextTrackLoaderClient&, Document&);
+
     // CachedResourceClient
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
     void deprecatedDidReceiveCachedResource(CachedResource&) final;
@@ -85,17 +90,14 @@ private:
     void cueLoadTimerFired();
     void corsPolicyPreventedLoad();
 
-    Ref<Document> protectedDocument() const;
     CachedResourceHandle<CachedTextTrack> protectedResource() const;
-
-    Ref<TextTrackLoaderClient> protectedClient() const { return m_client.get(); }
 
     enum State { Idle, Loading, Finished, Failed };
 
-    WeakRef<TextTrackLoaderClient> m_client;
+    WeakPtr<TextTrackLoaderClient> m_client;
     std::unique_ptr<WebVTTParser> m_cueParser;
     CachedResourceHandle<CachedTextTrack> m_resource;
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Timer m_cueLoadTimer;
     State m_state { Idle };
     unsigned m_parseOffset { 0 };

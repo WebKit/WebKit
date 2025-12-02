@@ -944,7 +944,7 @@ RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 {
     if (!isFirstLetter())
         return nullptr;
-    return firstLetterRemainingTextMap().get(*this).get();
+    return firstLetterRemainingTextMap().get(*this);
 }
 
 void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)

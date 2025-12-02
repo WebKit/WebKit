@@ -1,0 +1,18 @@
+This test ensures we handle text stitching appropriately for text within aria-owns.
+
+
+{StaticText AXLabel: Foo}
+
+{StaticText AXLabel: Baz}
+
+{StaticText AXLabel: Bar}
+
+Second traversal:
+
+{StaticText AXLabel: Foo Bar Baz}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar Baz
+

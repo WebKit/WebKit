@@ -22,15 +22,15 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-header: <WebCore/MediaPlaybackTargetContext.h>
-[CustomHeader] enum class WebCore::MediaPlaybackTargetContextMockState : uint8_t {
+header: <WebCore/MediaPlaybackTargetMock.h>
+[CustomHeader] enum class WebCore::MediaPlaybackTargetMockState : uint8_t {
     Unknown,
     OutputDeviceUnavailable,
     OutputDeviceAvailable,
 };
 
-header: <WebCore/MediaPlaybackTargetContext.h>
-[CustomHeader] enum class WebCore::MediaPlaybackTargetContextType : uint8_t {
+header: <WebCore/MediaPlaybackTarget.h>
+[CustomHeader] enum class WebCore::MediaPlaybackTargetType : uint8_t {
     AVOutputContext,
     Mock,
     Serialized
@@ -41,8 +41,8 @@ header: "MediaPlaybackTargetContextSerialized.h"
     String deviceName();
     bool hasActiveRoute();
     bool supportsRemoteVideoPlayback();
-    WebCore::MediaPlaybackTargetContextType targetType();
-    WebCore::MediaPlaybackTargetContextMockState mockState();
+    WebCore::MediaPlaybackTargetType targetType();
+    WebCore::MediaPlaybackTargetMockState mockState();
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     WebKit::CoreIPCAVOutputContext context();
 #else

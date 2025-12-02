@@ -224,7 +224,7 @@ bool NetworkRTCMonitor::sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;
 
-    return codePointCompare(StringView { a.description.span() }, StringView { b.description.span() }) < 0;
+    return codePointCompare(StringView { a.description }, StringView { b.description }) < 0;
 }
 
 NetworkRTCMonitor::NetworkRTCMonitor(NetworkRTCProvider& rtcProvider)

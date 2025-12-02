@@ -56,6 +56,10 @@ class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public Conte
 public:
     ~WebCodecsVideoFrame();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     using CanvasImageSource = Variant<RefPtr<HTMLImageElement>
         , RefPtr<SVGImageElement>
         , RefPtr<HTMLCanvasElement>

@@ -550,7 +550,6 @@ def sort_datas_for_sync_data_order(synched_datas):
 
 
 def main(argv):
-    print('Generating process sync data!')
     synched_datas = []
     headers = []
 

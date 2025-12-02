@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/RectEdges.h>
 #include <WebCore/StyleColor.h>
 
 namespace WebCore {
@@ -43,13 +44,10 @@ public:
     void dumpDifferences(TextStream&, const StyleVisitedLinkColorData&) const;
 #endif
 
-    Style::Color background;
-    Style::Color borderLeft;
-    Style::Color borderRight;
-    Style::Color borderTop;
-    Style::Color borderBottom;
-    Style::Color textDecoration;
-    Style::Color outline;
+    Style::Color visitedLinkBackgroundColor;
+    RectEdges<Style::Color> visitedLinkBorderColors;
+    Style::Color visitedLinkTextDecorationColor;
+    Style::Color visitedLinkOutlineColor;
 
 private:
     StyleVisitedLinkColorData();

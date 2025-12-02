@@ -43,6 +43,7 @@
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "CachedImage.h"
+#include "CaptionDisplaySettingsClient.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
@@ -228,7 +229,6 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
-#include "MediaPlaybackTarget.h"
 #endif
 
 #if PLATFORM(MAC)
@@ -256,6 +256,10 @@
 
 #if PLATFORM(VISION) && ENABLE(GAMEPAD)
 #include "GamepadManager.h"
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#include "DocumentImmersive.h"
 #endif
 
 namespace WebCore {
@@ -2274,6 +2278,12 @@ void Page::updateRendering()
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    runProcessingStep(RenderingUpdateStep::Immersive, [] (Document& document) {
+        document.protectedImmersive()->dispatchPendingEvents();
+    });
+#endif
+
     runProcessingStep(RenderingUpdateStep::VideoFrameCallbacks, [] (Document& document) {
         document.serviceRequestVideoFrameCallbacks();
     });
@@ -4130,7 +4140,7 @@ void Page::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     chrome().client().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
+void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetMockState state)
 {
     chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
 }
@@ -5066,6 +5076,9 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"_s; break;
     case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"_s; break;
     case RenderingUpdateStep::SnapshottedScrollOffsets: ts << "SnapshottedScrollOffsets"_s; break;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    case RenderingUpdateStep::Immersive: ts << "Immersive"_s; break;
+#endif
     }
     return ts;
 }
@@ -5073,8 +5086,13 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 ImageOverlayController& Page::imageOverlayController()
 {
     if (!m_imageOverlayController)
-        m_imageOverlayController = makeUnique<ImageOverlayController>(*this);
+        lazyInitialize(m_imageOverlayController, makeUniqueWithoutRefCountedCheck<ImageOverlayController>(*this));
     return *m_imageOverlayController;
+}
+
+Ref<ImageOverlayController> Page::protectedImageOverlayController()
+{
+    return imageOverlayController();
 }
 
 Page* Page::serviceWorkerPage(ScriptExecutionContextIdentifier serviceWorkerPageIdentifier)
@@ -6109,6 +6127,28 @@ void Page::didUpdateHardwareKeyboardAttachment(bool attached)
 
     m_hardwareKeyboardAttached = attached;
     flushHardwareKeyboardAttachmentObservers();
+}
+#endif
+
+#if ENABLE(VIDEO)
+void Page::setCaptionDisplaySettingsClientForTesting(Ref<CaptionDisplaySettingsClient>&& client)
+{
+    m_captionDisplaySettingsClientForTesting = WTFMove(client);
+}
+
+void Page::clearCaptionDisplaySettingsClientForTesting()
+{
+    m_captionDisplaySettingsClientForTesting = nullptr;
+}
+
+void Page::showCaptionDisplaySettings(HTMLMediaElement& element, const ResolvedCaptionDisplaySettingsOptions& options, CompletionHandler<void(ExceptionOr<void>)>&& callback)
+{
+    if (RefPtr client = m_captionDisplaySettingsClientForTesting) {
+        client->showCaptionDisplaySettings(element, options, WTFMove(callback));
+        return;
+    }
+
+    chrome().client().showCaptionDisplaySettings(element, options, WTFMove(callback));
 }
 #endif
 

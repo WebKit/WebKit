@@ -49,6 +49,7 @@
 #import <WebKit/_WKElementAction.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
+#import <WebKit/_WKImmersiveEnvironmentDelegate.h>
 #import <WebKit/_WKInputDelegate.h>
 #import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>

@@ -7,6 +7,7 @@ set(WTF_PUBLIC_HEADERS
     AbstractRefCounted.h
     AbstractRefCountedAndCanMakeWeakPtr.h
     AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h
+    AllocSpanMixin.h
     ASCIICType.h
     AccessibleAddress.h
     AggregateLogger.h
@@ -188,7 +189,7 @@ set(WTF_PUBLIC_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
-    Mmap.h
+    MmapSpan.h
     MonotonicTime.h
     NakedPtr.h
     NativePromise.h
@@ -260,6 +261,8 @@ set(WTF_PUBLIC_HEADERS
     RecursiveLockAdapter.h
     RedBlackTree.h
     Ref.h
+    RefCountable.h
+    RefCountDebugger.h
     RefCounted.h
     RefCountedAndCanMakeWeakPtr.h
     RefCountedFixedVector.h
@@ -584,7 +587,7 @@ set(WTF_SOURCES
     RAMSize.cpp
     RandomDevice.cpp
     ReadWriteLock.cpp
-    RefCounted.cpp
+    RefCountDebugger.cpp
     RefTrackerMixin.cpp
     RunLoop.cpp
     RuntimeApplicationChecks.cpp

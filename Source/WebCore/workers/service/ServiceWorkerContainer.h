@@ -62,9 +62,10 @@ public:
 
     ~ServiceWorkerContainer();
 
-    // ActiveDOMObject.
+    // ContextDestructionObserver.
     void ref() const final;
     void deref() const final;
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     ServiceWorker* controller() const;
 

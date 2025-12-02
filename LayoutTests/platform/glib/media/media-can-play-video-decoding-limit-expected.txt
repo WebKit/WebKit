@@ -1,0 +1,19 @@
+
+Test that limits enforced by the VIDEO_DECODING_LIMIT build flag are enforced.
+
+WebKit must be built with -DVIDEO_DECODING_LIMIT=7680x4320@60.
+
+Tools/Scripts/build-webkit should have set that limit automatically.
+
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=800; height=600; framerate=30') == 'probably') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=800; height=600; framerate=60') == 'probably') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7680; height=4320; framerate=30') == 'probably') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7680; height=4320; framerate=60') == 'probably') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7680; height=4320; framerate=61') == '') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=800; height=600; framerate=61') == '') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=800; height=4321; framerate=60') == '') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7681; height=600; framerate=60') == '') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7681; height=4321; framerate=60') == '') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=avc1; width=7681; height=4321; framerate=61') == '') OK
+END OF TEST
+

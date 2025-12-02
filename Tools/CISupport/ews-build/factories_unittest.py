@@ -555,7 +555,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'WPE-Cairo-Build-EWS': [
+        'WPE-Cairo-LibWebRTC-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',

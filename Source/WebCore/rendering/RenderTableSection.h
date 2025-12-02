@@ -195,7 +195,7 @@ private:
     void distributeExtraLogicalHeightToAutoRows(LayoutUnit& extraLogicalHeight, unsigned autoRowsCount);
     void distributeRemainingExtraLogicalHeight(LayoutUnit& extraLogicalHeight);
 
-    bool hasOverflowingCell() const { return m_overflowingCells.computeSize() || m_forceSlowPaintPathWithOverflowingCell; }
+    bool hasOverflowingCell() const;
     void computeOverflowFromCells(unsigned totalRows, unsigned nEffCols);
 
     CellSpan fullTableRowSpan() const;

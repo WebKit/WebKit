@@ -45,9 +45,6 @@ std::unique_ptr<CanvasFilterContextSwitcher> CanvasFilterContextSwitcher::create
         return nullptr;
 
     auto filterSwitcher = makeUnique<CanvasFilterContextSwitcher>(context);
-    if (!filterSwitcher)
-        return nullptr;
-
     auto targetSwitcher = CanvasLayerContextSwitcher::create(context, bounds, WTFMove(filter));
     if (!targetSwitcher)
         return nullptr;

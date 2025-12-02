@@ -73,14 +73,14 @@ ChannelMergerNode::ChannelMergerNode(BaseAudioContext& context, unsigned numberO
 
 void ChannelMergerNode::process(size_t framesToProcess)
 {
-    AudioNodeOutput* output = this->output(0);
+    CheckedPtr output = this->output(0);
     ASSERT(output);
     ASSERT_UNUSED(framesToProcess, framesToProcess == output->bus().length());
     ASSERT(numberOfInputs() == output->numberOfChannels());
     
     // Merge all the channels from all the inputs into one output.
     for (unsigned i = 0; i < numberOfInputs(); ++i) {
-        AudioNodeInput* input = this->input(i);
+        CheckedPtr input = this->input(i);
         ASSERT(input->numberOfChannels() == 1u);
         auto* outputChannel = output->bus().channel(i);
         if (input->isConnected()) {

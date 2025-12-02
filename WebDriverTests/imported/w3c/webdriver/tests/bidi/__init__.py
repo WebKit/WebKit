@@ -1,6 +1,52 @@
-from typing import Any, Callable, Dict, List, Mapping
+from typing import Any, Callable, Dict, List, Mapping, Literal
+
+from tests.support.sync import AsyncPoll
 from webdriver.bidi.modules.script import ContextTarget
 from webdriver.bidi.undefined import UNDEFINED
+
+
+def get_invalid_cases(
+        type_: Literal["boolean", "list", "string", "dict", "number"],
+        nullable: bool = False) -> List[Any]:
+    """
+    Returns invalid use cases for the specific type with the given restrictions.
+    >>> get_invalid_cases("boolean")
+    [42, None, [], 'foo', {}]
+    >>> get_invalid_cases("list")
+    [42, False, None, 'foo', {}]
+    >>> get_invalid_cases("string")
+    [42, False, None, [], {}]
+    >>> get_invalid_cases("dict")
+    [42, False, None, [], 'foo']
+    >>> get_invalid_cases("number")
+    [False, None, [], 'foo', {}]
+    >>> get_invalid_cases("boolean", nullable=True)
+    [42, [], 'foo', {}]
+    >>> get_invalid_cases("boolean", nullable=False)
+    [42, None, [], 'foo', {}]
+
+    >>> get_invalid_cases("invalid_type")
+    Traceback (most recent call last):
+      ...
+    ValueError: Unexpected type: invalid_type
+
+    """
+    cases = {
+        "boolean": False,
+        "list": [],
+        "string": 'foo',
+        "dict": {},
+        "number": 42,
+    }
+
+    if type_ not in cases:
+        raise ValueError(f"Unexpected type: {type_}")
+
+    result = list(filter(lambda i: i != cases[type_], cases.values()))
+    if not nullable:
+        result.append(None)
+
+    return sorted(result, key=lambda x: str(x))
 
 
 # Compares 2 objects recursively.
@@ -132,7 +178,7 @@ def assert_handle(obj: Mapping[str, Any], should_contain_handle: bool) -> None:
         assert "handle" not in obj, f"Result should not contain `handle`. Actual: {obj}"
 
 
-async def create_console_api_message(bidi_session, context: str, text: str):
+async def create_console_api_message(bidi_session, context: Any, text: str):
     await bidi_session.script.call_function(
         function_declaration="""(text) => console.log(text)""",
         arguments=[{"type": "string", "value": text}],
@@ -142,7 +188,7 @@ async def create_console_api_message(bidi_session, context: str, text: str):
     return text
 
 
-async def get_device_pixel_ratio(bidi_session, context: str) -> float:
+async def get_device_pixel_ratio(bidi_session, context: Any) -> float:
     result = await bidi_session.script.call_function(
         function_declaration="""() => {
         return window.devicePixelRatio;
@@ -167,7 +213,7 @@ async def get_element_dimensions(bidi_session, context, element):
     return remote_mapping_to_dict(result["value"])
 
 
-async def get_viewport_dimensions(bidi_session, context: str,
+async def get_viewport_dimensions(bidi_session, context: Any,
       with_scrollbar: bool = True, quirk_mode: bool = False):
     if with_scrollbar:
         expression = """
@@ -198,7 +244,7 @@ async def get_viewport_dimensions(bidi_session, context: str,
     return remote_mapping_to_dict(result["value"])
 
 
-async def get_document_dimensions(bidi_session, context: str):
+async def get_document_dimensions(bidi_session, context: Any):
     expression = """
         ({
           height: document.documentElement.scrollHeight,
@@ -231,3 +277,15 @@ def remote_mapping_to_dict(js_object) -> Dict:
             obj[key] = value["value"]
 
     return obj
+
+
+async def wait_for_bidi_events(bidi_session, events, count, timeout=2, equal_check=True):
+    def check_bidi_events(_, events, count):
+        assert len(
+            events) >= count, f"Did not receive at least {count} BiDi event(s)"
+
+    wait = AsyncPoll(bidi_session, timeout=timeout)
+    await wait.until(check_bidi_events, events, count)
+
+    if equal_check:
+        assert len(events) == count, f"Did not receive {count} BiDi event(s)"

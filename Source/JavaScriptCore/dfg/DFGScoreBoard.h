@@ -55,7 +55,7 @@ public:
     
     void sortFree()
     {
-        std::sort(m_free.begin(), m_free.end());
+        std::ranges::sort(m_free);
     }
     
     void assertClear()

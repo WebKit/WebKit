@@ -475,7 +475,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
             preferredAspectRatio = renderReplaced->preferredAspectRatio();
         }
         if (style().aspectRatio().isRatio() || (style().aspectRatio().isAutoAndRatio() && preferredAspectRatio.isEmpty()))
-            preferredAspectRatio = FloatSize::narrowPrecision(style().aspectRatioWidth().value, style().aspectRatioHeight().value);
+            preferredAspectRatio = FloatSize::narrowPrecision(style().aspectRatio().width().value, style().aspectRatio().height().value);
 
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
         intrinsicSize.scale(style().usedZoom());

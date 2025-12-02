@@ -48,8 +48,10 @@ public:
     static ExceptionOr<Ref<SharedWorker>> create(Document&, Variant<RefPtr<TrustedScriptURL>, String>&&, std::optional<Variant<String, WorkerOptions>>&&);
     ~SharedWorker();
 
+    // ContextDestructionObserver.
     void ref() const final { AbstractWorker::ref(); }
     void deref() const final { AbstractWorker::deref(); }
+    USING_CAN_MAKE_WEAKPTR(AbstractWorker);
 
     static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
     MessagePort& port() const { return m_port.get(); }

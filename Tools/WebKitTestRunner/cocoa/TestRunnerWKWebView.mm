@@ -39,6 +39,10 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#import <WebKit/_WKImmersiveEnvironmentDelegate.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -68,6 +72,9 @@ struct CustomMenuActionInfo {
 @interface TestRunnerWKWebView () <WKUIDelegatePrivate, _WKInputDelegate
 #if PLATFORM(IOS_FAMILY)
     , UIGestureRecognizerDelegate
+#endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    , _WKImmersiveEnvironmentDelegate
 #endif
 > {
     RetainPtr<NSNumber> _stableStateOverride;
@@ -132,6 +139,9 @@ IGNORE_WARNINGS_END
         self.focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
         self.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;
         self.traitOverrides.displayScale = 2.0f;
+#endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        self._immersiveEnvironmentDelegate = self;
 #endif
     }
     return self;
@@ -693,5 +703,16 @@ static bool isQuickboardViewController(UIViewController *viewController)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+
+#pragma mark - _WKImmersiveEnvironmentDelegate
+
+- (void)webView:(WKWebView *)webView canPresentImmersiveEnvironmentFromURL:(NSURL *)url completion:(void (^)(bool))completion
+{
+    completion(self.shouldAcceptImmersiveEnvironmentRequests);
+}
+
+#endif
 
 @end

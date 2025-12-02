@@ -48,8 +48,8 @@ AudioBasicInspectorNode::AudioBasicInspectorNode(BaseAudioContext& context, Node
 void AudioBasicInspectorNode::pullInputs(size_t framesToProcess)
 {
     // Render input stream - try to render directly into output bus for pass-through processing where process() doesn't need to do anything...
-    auto* output = this->output(0);
-    input(0)->pull(output ? &output->bus() : nullptr, framesToProcess);
+    CheckedPtr output = this->output(0);
+    checkedInput(0)->pull(output ? &output->bus() : nullptr, framesToProcess);
 }
 
 void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
@@ -60,7 +60,7 @@ void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* inpu
     if (input != this->input(0))
         return;
 
-    if (auto* output = this->output(0)) {
+    if (CheckedPtr output = this->output(0)) {
         unsigned numberOfChannels = input->numberOfChannels();
 
         if (numberOfChannels != output->numberOfChannels()) {
@@ -78,7 +78,7 @@ void AudioBasicInspectorNode::updatePullStatus()
 {
     ASSERT(context().isGraphOwner());
 
-    auto output = this->output(0);
+    CheckedPtr output = this->output(0);
     if (output && output->isConnected()) {
         // When an AudioBasicInspectorNode is connected to a downstream node, it will get pulled by the
         // downstream node, thus remove it from the context's automatic pull list.

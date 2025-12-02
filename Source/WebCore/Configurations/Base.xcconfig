@@ -68,7 +68,6 @@ GCC_NO_COMMON_BLOCKS = YES;
 GCC_OBJC_CALL_CXX_CDTORS = YES;
 GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 // FIXME: <http://webkit.org/b/109846> WebCore should build with -Wshorten-64-to-32
@@ -107,8 +106,6 @@ STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
-
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
 LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);

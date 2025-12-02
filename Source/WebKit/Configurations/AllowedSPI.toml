@@ -17,6 +17,12 @@ selectors = [
     { name = "_rasterizedImage", class = "UIImage" },
 ]
 
+[[not-web-essential]]
+request = "rdar://165225257"
+selectors = [
+    { name = "lookUpURL:isMainFrame:hasHighConfidenceOfSafety:cachedResult:completionHandler:", class = "SSBLookupContext" },
+]
+
 # Added in rdar://112101742.
 [[equivalent-api]]
 request = "rdar://157876115"
@@ -77,6 +83,9 @@ selectors = [
     { name = "_setServerTrust:", class = "?" },
 ]
 symbols = [
+    "nw_connection_abort_reads",
+    "nw_connection_abort_writes",
+    "nw_http_fields_access_value_by_name",
     "nw_parameters_create_webtransport_http",
     "nw_protocol_copy_webtransport_definition",
     "nw_webtransport_create_options",
@@ -86,10 +95,17 @@ symbols = [
     "nw_webtransport_metadata_get_session_error_message",
     "nw_webtransport_metadata_set_session_error_message",
     "nw_webtransport_metadata_get_session_closed",
+    "nw_webtransport_metadata_set_remote_drain_handler",
+    "nw_webtransport_metadata_set_remote_receive_error_handler",
+    "nw_webtransport_metadata_set_remote_send_error_handler",
+    "nw_webtransport_metadata_copy_connect_response",
+    "nw_webtransport_metadata_get_transport_mode",
     "nw_webtransport_options_add_connect_request_header",
     "nw_webtransport_options_set_allow_joining_before_ready",
     "nw_webtransport_options_set_is_datagram",
     "nw_webtransport_options_set_is_unidirectional",
+    "nw_webtransport_options_set_initial_max_streams_uni",
+    "nw_webtransport_options_set_initial_max_streams_bidi"
 ]
 requires = ["HAVE_WEB_TRANSPORT"]
 
@@ -230,3 +246,14 @@ selectors = [
     { name = "_verticalScrollIndicatorColor", class = "UIScrollView" },
 ]
 requires = ["HAVE_UIKIT_SCROLLBAR_COLOR_SPI"]
+
+[[temporary-usage]]
+request = "rdar://164431329"
+cleanup = "rdar://164667890"
+classes = [
+    "AVLegibleMediaOptionsMenuController",
+]
+selectors = [
+    { name = "buildMenuOfType:", class = "AVLegibleMediaOptionsMenuController" },
+]
+requires = ["HAVE_AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER"]

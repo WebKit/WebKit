@@ -119,6 +119,7 @@ coords
 crossorigin
 cue
 cuebackground
+customelementregistry
 data
 datetime
 declare
@@ -258,6 +259,8 @@ onfocusout
 onformdata
 onfullscreenchange
 onfullscreenerror
+onimmersivechange
+onimmersiveerror
 ongamepadconnected
 ongamepaddisconnected
 ongesturechange

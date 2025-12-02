@@ -122,8 +122,8 @@ TEST(StringBuilderTest, Append)
 
     {
         StringBuilder builder;
-        builder.append(unsafeSpanChar8("Water🍉Melon"));
-        EXPECT_EQ(builder.toString(), unsafeSpanChar8("Water🍉Melon"));
+        builder.append(u8"Water🍉Melon"_span);
+        EXPECT_EQ(builder.toString(), u8"Water🍉Melon"_span);
     }
 }
 

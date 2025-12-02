@@ -28,6 +28,7 @@ pre, #log {
   height: 100px;
 }
 #container {
+  margin: 20px;
   position: relative;
   padding: 8px;
   width: 0px;
@@ -77,7 +78,7 @@ promise_test(async function(t) {
   checkLastEntry(
     entries,
     0,
-    [8, 108, 0, 100, 8, 16, 0, 16, 0, 16, 0, 16, true],
+    [28, 128, 20, 120, 28, 36, 20, 36, 20, 36, 20, 36, true],
   );
   target.className = "animation";
   await forceReset();
@@ -85,7 +86,7 @@ promise_test(async function(t) {
   checkLastEntry(
     entries,
     1,
-    [8, 108, 0, 100, 0, 0, 0, 0, 0, 16, 0, 16, false],
+    [28, 128, 20, 120, 0, 0, 0, 0, 20, 36, 20, 36, false],
   );
   target.className = "";
   await forceReset();
@@ -93,7 +94,7 @@ promise_test(async function(t) {
   checkLastEntry(
     entries,
     2,
-    [8, 108, 0, 100, 8, 16, 0, 16, 0, 16, 0, 16, true],
+    [28, 128, 20, 120, 28, 36, 20, 36, 20, 36, 20, 36, true],
   );
 });
 </script>

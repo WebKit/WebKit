@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 //@ runDefault("--jitPolicyScale=0")
 const v39 = new WebAssembly.Instance(new WebAssembly.Module(new Uint8Array([
     0x00, 0x61, 0x73, 0x6D, 0x01, 0x00, 0x00, 0x00, 0x01, 0x23,

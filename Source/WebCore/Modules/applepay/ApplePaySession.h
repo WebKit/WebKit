@@ -62,11 +62,13 @@ template<typename> class ExceptionOr;
 class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ApplePaySession);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     static constexpr auto STATUS_SUCCESS = ApplePayPaymentAuthorizationResult::Success;
     static constexpr auto STATUS_FAILURE = ApplePayPaymentAuthorizationResult::Failure;

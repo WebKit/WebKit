@@ -65,7 +65,7 @@ void RemoteCDMInstanceSession::setLogIdentifier(uint64_t logIdentifier)
 }
 #endif
 
-void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
+void RemoteCDMInstanceSession::requestLicense(LicenseType type, KeyGroupingStrategy keyGroupingStrategy, const String& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     RefPtr factory = m_factory.get();
     if (!factory) {

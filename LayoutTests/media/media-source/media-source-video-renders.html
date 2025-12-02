@@ -29,7 +29,7 @@
                 once(video, 'seeked');
 
                 video.currentTime = 0;
-                once(video, 'seeked');
+                await once(video, 'seeked');
 
                 if (window.testRunner)
                     testRunner.notifyDone();

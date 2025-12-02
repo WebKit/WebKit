@@ -72,6 +72,12 @@ public:
             negativeMargin = { };
         }
 
+        void resetMarginValues()
+        {
+            positiveMargin = { };
+            negativeMargin = { };
+        }
+
         LayoutUnit margin() const { return positiveMargin - negativeMargin; }
 
         // FIXME: This tracks RenderBlockFlow's MarginInfo for now.

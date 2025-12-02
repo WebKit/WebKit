@@ -174,7 +174,7 @@ bool Box::establishesGridFormattingContext() const
 
 bool Box::establishesIndependentFormattingContext() const
 {
-    return isLayoutContainmentBox() || isAbsolutelyPositioned() || isFlexItem();
+    return isLayoutContainmentBox() || isAbsolutelyPositioned() || isFlexItem() || isGridItem();
 }
 
 bool Box::isRelativelyPositioned() const

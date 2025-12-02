@@ -2979,23 +2979,14 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
 static BOOL isBuiltInScrollViewPanGestureRecognizer(UIGestureRecognizer *recognizer)
 {
-    static Class scrollViewPanGestureClass;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        scrollViewPanGestureClass = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
-    });
+    static Class scrollViewPanGestureClass = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
     return [recognizer isKindOfClass:scrollViewPanGestureClass];
 }
 
 static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer)
 {
-    static Class scrollViewPinchGestureClass;
-    static Class scrollViewKnobLongPressGestureRecognizerClass;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        scrollViewPinchGestureClass = NSClassFromString(@"UIScrollViewPinchGestureRecognizer");
-        scrollViewKnobLongPressGestureRecognizerClass = NSClassFromString(@"UIScrollViewKnobLongPressGestureRecognizer");
-    });
+    static Class scrollViewPinchGestureClass = NSClassFromString(@"UIScrollViewPinchGestureRecognizer");
+    static Class scrollViewKnobLongPressGestureRecognizerClass = NSClassFromString(@"UIScrollViewKnobLongPressGestureRecognizer");
     return isBuiltInScrollViewPanGestureRecognizer(recognizer)
         || [recognizer isKindOfClass:scrollViewPinchGestureClass]
         || [recognizer isKindOfClass:scrollViewKnobLongPressGestureRecognizerClass];
@@ -6640,13 +6631,7 @@ static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedStrin
         });
     }];
 
-    std::ranges::sort(underlines, [](auto& a, auto& b) {
-        if (a.startOffset < b.startOffset)
-            return true;
-        if (a.startOffset > b.startOffset)
-            return false;
-        return a.endOffset < b.endOffset;
-    });
+    std::ranges::sort(underlines);
 
     Vector<WebCore::CompositionUnderline> mergedUnderlines;
     if (!underlines.isEmpty())
@@ -6679,13 +6664,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
     }];
 
-    std::ranges::sort(highlights, [](auto& a, auto& b) {
-        if (a.startOffset < b.startOffset)
-            return true;
-        if (a.startOffset > b.startOffset)
-            return false;
-        return a.endOffset < b.endOffset;
-    });
+    std::ranges::sort(highlights);
 
     Vector<WebCore::CompositionHighlight> mergedHighlights;
     mergedHighlights.reserveInitialCapacity(highlights.size());
@@ -12281,6 +12260,13 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 }
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
+#if ENABLE(VIDEO) && USE(UICONTEXTMENU)
+- (void)showCaptionDisplaySettingsMenu:(WebCore::HTMLMediaElementIdentifier)identifier withOptions:(const WebCore::ResolvedCaptionDisplaySettingsOptions&)options completionHandler:(CompletionHandler<void(Expected<void, WebCore::ExceptionData>)>&&)completionHandler
+{
+    [_actionSheetAssistant showCaptionDisplaySettingsMenu:identifier withOptions:options completionHandler:WTFMove(completionHandler)];
+}
+#endif
+
 #if HAVE(UI_POINTER_INTERACTION)
 
 - (void)setUpPointerInteraction
@@ -12994,7 +12980,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _pendingImageAnalysisRequestIdentifier = std::nullopt;
     _isProceedingWithTextSelectionInImage = NO;
     _elementPendingImageAnalysis = std::nullopt;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [std::exchange(_imageAnalyzer, nil) cancelAllRequests];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     [self uninstallImageAnalysisInteraction];
@@ -13006,7 +12994,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_cancelImageAnalysis
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_imageAnalyzer cancelAllRequests];
+ALLOW_DEPRECATED_DECLARATIONS_END
     RELEASE_LOG_IF(self.hasPendingImageAnalysisRequest, ImageAnalysis, "Image analysis request %" PRIu64 " cancelled.", _pendingImageAnalysisRequestIdentifier->toUInt64());
     _pendingImageAnalysisRequestIdentifier = std::nullopt;
     _isProceedingWithTextSelectionInImage = NO;
@@ -13093,7 +13083,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     auto requestIdentifier = WebKit::ImageAnalysisRequestIdentifier::generate();
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_imageAnalyzer cancelAllRequests];
+ALLOW_DEPRECATED_DECLARATIONS_END
     _pendingImageAnalysisRequestIdentifier = requestIdentifier;
     _isProceedingWithTextSelectionInImage = NO;
     _elementPendingImageAnalysis = std::nullopt;

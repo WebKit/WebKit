@@ -51,10 +51,14 @@ public:
         Box<NetworkLoadMetrics> metrics;
     };
     static Ref<DocumentPrefetcher> create(FrameLoader& frameLoader) { return adoptRef(*new DocumentPrefetcher(frameLoader)); }
-    explicit DocumentPrefetcher(FrameLoader&);
     ~DocumentPrefetcher();
 
+    // CachedResourceClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void prefetch(const URL&, const Vector<String>& tags, std::optional<ReferrerPolicy>, bool lowPriority = false);
+    bool wasPrefetched(const URL&) const;
     Box<NetworkLoadMetrics> takePrefetchedNetworkLoadMetrics(const URL&);
 
     // CachedRawResourceClient
@@ -64,6 +68,8 @@ public:
 
 
 private:
+    explicit DocumentPrefetcher(FrameLoader&);
+
     WeakRef<FrameLoader> m_frameLoader;
     HashMap<URL, PrefetchedResourceData> m_prefetchedData;
 };

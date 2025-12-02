@@ -121,7 +121,7 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         Locker contextLocker { context().graphLock() };
 
         // Do any necesssary re-configuration to the output's number of channels.
-        output(0)->setNumberOfChannels(numberOfChannels);
+        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
     }
 }
 
@@ -132,7 +132,7 @@ void MediaStreamAudioSourceNode::provideInput(AudioBus& bus, size_t framesToProc
 
 void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
 {
-    Ref outputBus = output(0)->bus();
+    Ref outputBus = checkedOutput(0)->bus();
 
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of

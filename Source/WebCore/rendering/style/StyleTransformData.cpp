@@ -34,7 +34,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 StyleTransformData::StyleTransformData()
     : transform(RenderStyle::initialTransform())
     , origin(RenderStyle::initialTransformOrigin())
-    , transformBox(RenderStyle::initialTransformBox())
+    , transformBox(static_cast<unsigned>(RenderStyle::initialTransformBox()))
 {
 }
 
@@ -63,7 +63,7 @@ void StyleTransformData::dumpDifferences(TextStream& ts, const StyleTransformDat
 {
     LOG_IF_DIFFERENT(transform);
     LOG_IF_DIFFERENT(origin);
-    LOG_IF_DIFFERENT(transformBox);
+    LOG_IF_DIFFERENT_WITH_CAST(TransformBox, transformBox);
 }
 #endif // !LOG_DISABLED
 

@@ -2,6 +2,9 @@
 <html>
 <style>
     body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
 
     .transformed {
       background: purple;
@@ -32,13 +35,15 @@ window.onload = async function () {
     if (!window.internals)
         return;
 
+    const testEl = document.getElementById('test');
+
     const video = document.querySelector("video");
     if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA)
         await new Promise(r => video.addEventListener("canplay", r));
 
     await UIHelper.ensureStablePresentationUpdate();
-    results.textContent = await UIHelper.getCALayerTree();
-    document.getElementById('test').remove();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
 
     testRunner.notifyDone();
 };

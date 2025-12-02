@@ -95,6 +95,7 @@ class GLibPort(Port):
 
         # Copy all GStreamer related env vars
         self._copy_values_from_environ_with_prefix(environment, 'GST_')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DISABLE_WEBRTC_NETWORK_SANDBOX')
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
         # Disable hardware-accelerated device providers, encoders and decoders. Depending on the underlying platform

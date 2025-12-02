@@ -59,7 +59,6 @@ platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediastream/AudioMediaStreamTrackRenderer.h
 platform/mock/ScrollbarsControllerMock.h
 platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h
-rendering/TextBoxPainter.h
 rendering/style/StyleGeneratedImage.cpp
 rendering/updating/RenderTreeUpdater.h
 style/ClassChangeInvalidation.cpp

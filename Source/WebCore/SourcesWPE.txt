@@ -39,7 +39,7 @@ accessibility/atspi/AccessibilityObjectValueAtspi.cpp
 accessibility/atspi/AccessibilityRootAtspi.cpp
 accessibility/atspi/AXObjectCacheAtspi.cpp
 
-dom/wpe/PointerEventWPE.cpp
+dom/glib/PointerEventGLib.cpp
 
 editing/atspi/FrameSelectionAtspi.cpp
 

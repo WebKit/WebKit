@@ -37,6 +37,7 @@ class AudioContext;
     
 class ChannelMergerNode final : public AudioNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ChannelMergerNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ChannelMergerNode);
 public:
     static ExceptionOr<Ref<ChannelMergerNode>> create(BaseAudioContext&, const ChannelMergerOptions& = { });
     

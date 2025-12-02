@@ -55,6 +55,10 @@ public:
 
     ~ServiceWorkerClient();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     const URL& url() const;
     FrameType frameType() const;
     Type type() const;

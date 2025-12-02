@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2112,29 +2112,6 @@ public:
     {
         ptrdiff_t initialOffset = -sizeof(IndexingHeader) - outOfLineCapacity * sizeof(EncodedJSValue);
         emitFillStorageWithJSEmpty(butterflyGPR, initialOffset, outOfLineCapacity, scratchGPR);
-    }
-
-    void loadCompactPtr(Address address, GPRReg dest)
-    {
-#if HAVE(36BIT_ADDRESS)
-        load32(address, dest);
-        lshift64(TrustedImm32(4), dest);
-#else
-        loadPtr(address, dest);
-#endif
-    }
-
-    Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
-    {
-#if HAVE(36BIT_ADDRESS)
-        ASSERT(left != scratch);
-        load32(right, scratch);
-        lshift64(TrustedImm32(4), scratch);
-        return branchPtr(cond, left, Address(scratch));
-#else
-        UNUSED_PARAM(scratch);
-        return branchPtr(cond, left, right);
-#endif
     }
 
 #if USE(JSVALUE64)

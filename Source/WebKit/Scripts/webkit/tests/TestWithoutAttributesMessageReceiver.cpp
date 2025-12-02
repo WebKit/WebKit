@@ -139,6 +139,10 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
         IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(connection, decoder, this, &TestWithoutAttributes::setVideoLayerID);
         return;
     }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::OpaqueTypeSecurityAssertion::name()) {
+        IPC::handleMessageAsync<Messages::TestWithoutAttributes::OpaqueTypeSecurityAssertion>(connection, decoder, this, &TestWithoutAttributes::opaqueTypeSecurityAssertion);
+        return;
+    }
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name()) {
         IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
@@ -291,6 +295,14 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SetVideoLayerID::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_OpaqueTypeSecurityAssertion>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::OpaqueTypeSecurityAssertion::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_OpaqueTypeSecurityAssertion>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::OpaqueTypeSecurityAssertion::ReplyArguments>(globalObject, decoder);
+}
 #if PLATFORM(MAC)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidCreateWebProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
@@ -328,6 +340,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPluginsReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPluginsReply::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_OpaqueTypeSecurityAssertionReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::OpaqueTypeSecurityAssertionReply::Arguments>(globalObject, decoder);
 }
 #if PLATFORM(MAC)
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_InterpretKeyEventReply>(JSC::JSGlobalObject* globalObject, Decoder& decoder)

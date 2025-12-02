@@ -214,6 +214,16 @@ void WebRemoteFrameClient::setPrinting(bool printing, FloatSize pageSize, FloatS
     WebFrameLoaderClient::setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize);
 }
 
+void WebRemoteFrameClient::broadcastAllFrameTreeSyncDataToOtherProcesses(FrameTreeSyncData& data)
+{
+    WebFrameLoaderClient::broadcastAllFrameTreeSyncDataToOtherProcesses(data);
+}
+
+void WebRemoteFrameClient::broadcastFrameTreeSyncDataToOtherProcesses(const FrameTreeSyncSerializationData& data)
+{
+    WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(data);
+}
+
 void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     RefPtr coreFrame = m_frame->coreRemoteFrame();

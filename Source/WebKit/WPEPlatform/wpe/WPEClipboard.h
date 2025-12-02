@@ -77,9 +77,12 @@ WPE_API WPEClipboardContent *wpe_clipboard_content_ref        (WPEClipboardConte
 WPE_API void                 wpe_clipboard_content_unref      (WPEClipboardContent *content);
 WPE_API void                 wpe_clipboard_content_set_text   (WPEClipboardContent *content,
                                                                const char          *text);
+WPE_API const char          *wpe_clipboard_content_get_text   (WPEClipboardContent *content);
 WPE_API void                 wpe_clipboard_content_set_bytes  (WPEClipboardContent *content,
                                                                const char          *format,
                                                                GBytes              *bytes);
+WPE_API GBytes              *wpe_clipboard_content_get_bytes  (WPEClipboardContent *content,
+                                                               const char          *format);
 WPE_API gboolean             wpe_clipboard_content_serialize  (WPEClipboardContent *content,
                                                                const char          *format,
                                                                GOutputStream       *stream);

@@ -829,6 +829,86 @@
                 "color-property": true,
                 "parser-grammar": "<color>"
             }
+        },
+        "test-render-style-storage-one-level-reference": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "parser-grammar": "<number>",
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::Number<>"
+            }
+        },
+        "test-render-style-storage-one-level-value": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "parser-grammar": "<number>",
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "value",
+                "render-style-type": "Style::Number<>"
+            }
+        },
+        "test-render-style-storage-one-level-enum": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo | bar",
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "enum",
+                "render-style-type": "Style::TestEnumeration"
+            }
+        },
+        "test-render-style-storage-one-level-raw": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo || bar",
+                "render-style-storage-path": ["level1"],
+                "render-style-storage-kind": "raw",
+                "render-style-type": "Style::TestRaw"
+            }
+        },
+        "test-render-style-storage-two-level-reference": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "parser-grammar": "<number>",
+                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-kind": "reference",
+                "render-style-type": "Style::Number<>"
+            }
+        },
+        "test-render-style-storage-two-level-value": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "codegen-properties": {
+                "parser-grammar": "<number>",
+                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-kind": "value",
+                "render-style-type": "Style::Number<>"
+            }
+        },
+        "test-render-style-storage-two-level-enum": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo | bar",
+                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-kind": "enum",
+                "render-style-type": "Style::TestEnumeration"
+            }
+        },
+        "test-render-style-storage-two-level-raw": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo || bar",
+                "render-style-storage-path": ["level1", "level2"],
+                "render-style-storage-kind": "raw",
+                "render-style-type": "Style::TestRaw"
+            }
         }
     },
     "descriptors": {

@@ -39,31 +39,19 @@ namespace UIProcess {
 
 String wtfLogLevelString()
 {
-    static NeverDestroyed<RetainPtr<NSString>> logString;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        logString.get() = [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
-    });
+    static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
     return logString.get().get();
 }
 
 String webCoreLogLevelString()
 {
-    static NeverDestroyed<RetainPtr<NSString>> logString;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        logString.get() = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
-    });
+    static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
     return logString.get().get();
 }
 
 String webKitLogLevelString()
 {
-    static NeverDestroyed<RetainPtr<NSString>> logString;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        logString.get() = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
-    });
+    static NeverDestroyed<RetainPtr<NSString>> logString = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
     return logString.get().get();
 }
 

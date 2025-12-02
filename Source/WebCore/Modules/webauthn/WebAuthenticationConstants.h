@@ -117,6 +117,7 @@ enum class Scope {
 constexpr uint8_t userPresenceFlag = 0b00000001;
 constexpr uint8_t userVerifiedFlag = 0b00000100;
 constexpr uint8_t attestedCredentialDataIncludedFlag = 0b01000000;
+constexpr uint8_t extensionDataIncludedFlag = 0b10000000;
 // https://github.com/w3c/webauthn/pull/1695
 constexpr uint8_t backupEligibilityFlag = 0b00001000;
 constexpr uint8_t backupStateFlag = 0b00010000;

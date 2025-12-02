@@ -117,12 +117,12 @@ webrtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC:
             return nullptr;
 
         GstMappedFrame frame(sample, GST_MAP_READ);
-        return webrtc::I420Buffer::Copy(frame.width(), frame.height(), frame.componentData(0), frame.componentStride(0),
-            frame.componentData(1), frame.componentStride(1), frame.componentData(2), frame.componentStride(2));
+        return webrtc::I420Buffer::Copy(frame.width(), frame.height(), frame.componentData(0).data(), frame.componentStride(0),
+            frame.componentData(1).data(), frame.componentStride(1), frame.componentData(2).data(), frame.componentStride(2));
     }
 
-    return webrtc::I420Buffer::Copy(inFrame.width(), inFrame.height(), inFrame.componentData(0), inFrame.componentStride(0),
-        inFrame.componentData(1), inFrame.componentStride(1), inFrame.componentData(2), inFrame.componentStride(2));
+    return webrtc::I420Buffer::Copy(inFrame.width(), inFrame.height(), inFrame.componentData(0).data(), inFrame.componentStride(0),
+        inFrame.componentData(1).data(), inFrame.componentStride(1), inFrame.componentData(2).data(), inFrame.componentStride(2));
 }
 
 }

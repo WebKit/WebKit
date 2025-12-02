@@ -173,6 +173,21 @@
     padding: 0;
 }
 
+.heap-snapshot-instance-popover-content td.dominator > .glyph {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -3.5px;
+}
+
+.heap-snapshot-instance-popover-content td.dominated::before {
+    display: block;
+    width: 7.5px;
+    height: 14px;
+    content: "";
+    border-right: 1px dashed grey;
+}
+
 .heap-snapshot-instance-popover-content td.edge-name {
     text-align: right;
     max-width: 110px;
@@ -245,5 +260,9 @@
 
     .heap-snapshot .icon.symbol {
         content: url(../Images/TypeIcons.svg#TypeSymbol-dark);
+    }
+
+    .heap-snapshot-instance-popover-content td.dominator > .glyph {
+        filter: var(--filter-invert);
     }
 }

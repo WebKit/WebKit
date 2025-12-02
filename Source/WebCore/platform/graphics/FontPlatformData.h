@@ -80,6 +80,7 @@ interface IDWriteFontFace;
 
 namespace WebCore {
 
+class Font;
 class FontDescription;
 struct FontCustomPlatformData;
 struct FontSizeAdjust;
@@ -226,20 +227,45 @@ struct FontPlatformSerializedAttributes {
 #endif
 };
 
-struct FontPlatformSerializedCreationData {
-    Vector<uint8_t> fontFaceData;
-    std::optional<FontPlatformSerializedAttributes> attributes;
-    String itemInCollection;
-};
-
 struct FontPlatformSerializedData {
     CTFontDescriptorOptions options { 0 }; // <rdar://121670125>
     RetainPtr<CFStringRef> referenceURL;
     RetainPtr<CFStringRef> postScriptName;
     std::optional<FontPlatformSerializedAttributes> attributes;
 };
+
+struct FontMetadata {
+    double pointSize = { 0.0 };
+    WebCore::FontOrientation orientation = FontOrientation::Horizontal;
+    WebCore::FontWidthVariant widthVariant = FontWidthVariant::RegularWidth;
+    WebCore::TextRenderingMode textRenderingMode = TextRenderingMode::AutoTextRendering;
+    bool syntheticBold = false;
+    bool syntheticOblique = false;
+};
+
+struct InstalledFont {
+    struct PostScriptFont {
+        String postScriptName;
+        CTFontDescriptorOptions fontDescriptorOptions;
+        std::optional<FontPlatformSerializedAttributes> fontSerializedAttributes;
+        RetainPtr<CTFontRef> toCTFont(double pointSize) const;
+    };
+
+    Variant<PostScriptFont> font;
+    FontMetadata metadata;
+    WEBCORE_EXPORT RetainPtr<CTFontRef> toCTFont() const;
+    Ref<Font> toFont() const;
+};
+
+struct CustomFontCreationData {
+    FontMetadata metadata;
+    Vector<uint8_t> fontFaceData;
+    std::optional<FontPlatformSerializedAttributes> attributes;
+    String itemInCollection;
+};
+
 #elif USE(SKIA)
-struct FontPlatformSerializedCreationData {
+struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
     String itemInCollection;
 };
@@ -248,7 +274,7 @@ struct FontPlatformSerializedData {
     sk_sp<SkData> typefaceData;
 };
 #elif USE(CAIRO)
-struct FontPlatformSerializedCreationData {
+struct CustomFontCreationData {
     Vector<uint8_t> fontFaceData;
     String itemInCollection;
 };
@@ -327,7 +353,7 @@ public:
     HFONT hfont() const { return m_hfont ? m_hfont->get() : 0; }
 #endif
 
-    using IPCData = Variant<FontPlatformSerializedData, FontPlatformSerializedCreationData>;
+    using IPCData = Variant<FontPlatformSerializedData, CustomFontCreationData>;
 #if USE(CORE_TEXT)
     WEBCORE_EXPORT FontPlatformData(float size, FontOrientation&&, FontWidthVariant&&, TextRenderingMode&&, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&&, RefPtr<FontCustomPlatformData>&&);
 #elif USE(SKIA)

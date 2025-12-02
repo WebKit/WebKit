@@ -38,6 +38,7 @@ class AudioContext;
 
 class GainNode final : public AudioNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GainNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GainNode);
 public:
     static ExceptionOr<Ref<GainNode>> create(BaseAudioContext& context, const GainOptions& = { });
 

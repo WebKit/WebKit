@@ -35,6 +35,10 @@ class ReducerCallback : public RefCounted<ReducerCallback>, public ActiveDOMCall
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<JSC::JSValue> invoke(JSC::JSValue, JSC::JSValue, uint64_t) = 0;
     virtual CallbackResult<JSC::JSValue> invokeRethrowingException(JSC::JSValue, JSC::JSValue, uint64_t) = 0;
 

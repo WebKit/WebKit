@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            async function start() {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                const tests = [
+                    "800x600@30=true",
+                    "800x600@60=true",
+                    "7680x4320@30=true",
+                    "7680x4320@60=true",
+                    "7680x4320@61=false",
+                    "800x600@61=false",
+                    "800x4321@60=false",
+                    "7681x600@60=false",
+                    "7681x4321@60=false",
+                    "7681x4321@61=false"
+                ];
+
+                for (t of tests) {
+                    var [width, height, framerate, expectation] = t.split(/[x@=]/);
+                    expectation = (expectation == "true") ? "probably" : "";
+
+                    testExpected("video.canPlayType('video/mp4; codecs=avc1; width=" + width
+                        + "; height=" + height + "; framerate=" + framerate + "')",
+                        expectation);
+                }
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test that limits enforced by the VIDEO_DECODING_LIMIT build flag are enforced.</p>
+        <p>WebKit must be built with -DVIDEO_DECODING_LIMIT=7680x4320@60.</p>
+        <p><code>Tools/Scripts/build-webkit</code> should have set that limit automatically.</p>
+    </body>
+</html>

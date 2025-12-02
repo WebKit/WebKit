@@ -46,12 +46,12 @@ struct StyleMarqueeData : RefCounted<StyleMarqueeData> {
     void dumpDifferences(TextStream&, const StyleMarqueeData&) const;
 #endif
 
-    Style::WebkitMarqueeIncrement increment;
-    Style::WebkitMarqueeSpeed speed;
-    Style::WebkitMarqueeRepetition repetition;
+    Style::WebkitMarqueeIncrement marqueeIncrement;
+    Style::WebkitMarqueeSpeed marqueeSpeed;
+    Style::WebkitMarqueeRepetition marqueeRepetition;
 
-    PREFERRED_TYPE(MarqueeBehavior) unsigned behavior : 2;
-    PREFERRED_TYPE(MarqueeDirection) unsigned direction : 3;
+    PREFERRED_TYPE(MarqueeBehavior) unsigned marqueeBehavior : 2;
+    PREFERRED_TYPE(MarqueeDirection) unsigned marqueeDirection : 3;
 
 private:
     StyleMarqueeData();

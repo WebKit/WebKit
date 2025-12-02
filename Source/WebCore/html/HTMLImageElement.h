@@ -69,6 +69,7 @@ public:
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
     void deref() const final { HTMLElement::deref(); }
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     void formOwnerRemovedFromTree(const Node& formRoot);
 

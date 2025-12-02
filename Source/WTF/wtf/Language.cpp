@@ -63,11 +63,7 @@ static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOC
 using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
 static ObserverMap& observerMap()
 {
-    static LazyNeverDestroyed<ObserverMap> map;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        map.construct();
-    });
+    static NeverDestroyed<ObserverMap> map;
     return map.get();
 }
 

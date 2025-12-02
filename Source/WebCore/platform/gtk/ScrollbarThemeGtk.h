@@ -45,7 +45,7 @@ private:
 
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
-    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
+    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
     int minimumThumbLength(Scrollbar&) override;
 
     void themeChanged() override;

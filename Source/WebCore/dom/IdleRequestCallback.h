@@ -37,6 +37,10 @@ class IdleRequestCallback : public RefCounted<IdleRequestCallback>, public Activ
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(IdleDeadline&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(IdleDeadline&) = 0;
 

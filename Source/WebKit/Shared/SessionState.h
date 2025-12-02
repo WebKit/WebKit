@@ -36,6 +36,7 @@
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -142,7 +143,7 @@ private:
     );
 
     Vector<AtomString> m_documentState;
-};
+} SWIFT_SHARED_REFERENCE(refFrameState, derefFrameState);
 
 struct BackForwardListState {
     Vector<Ref<FrameState>> items;
@@ -161,3 +162,13 @@ struct SessionState {
 };
 
 } // namespace WebKit
+
+inline void refFrameState(WebKit::FrameState* obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefFrameState(WebKit::FrameState* obj)
+{
+    WTF::deref(obj);
+}

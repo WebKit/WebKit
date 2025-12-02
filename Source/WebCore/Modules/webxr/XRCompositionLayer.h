@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class XRLayerBacking;
+
 class XRCompositionLayer : public WebXRLayer {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(XRCompositionLayer);
 public:
@@ -58,9 +60,12 @@ public:
 
     bool needsRedraw() const { return true; }
 
+    XRLayerBacking& backing();
+
     void destroy() { }
 protected:
-    explicit XRCompositionLayer(ScriptExecutionContext*);
+    explicit XRCompositionLayer(ScriptExecutionContext*, Ref<XRLayerBacking>&&);
+    const Ref<XRLayerBacking> m_backing;
 
 private:
     bool isXRCompositionLayer() const final { return true; }

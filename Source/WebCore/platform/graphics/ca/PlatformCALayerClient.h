@@ -30,7 +30,7 @@
 #include <wtf/MonotonicTime.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-#include  "DynamicContentScalingDisplayList.h"
+#include <WebCore/DynamicContentScalingDisplayList.h>
 #endif
 
 namespace WebCore {

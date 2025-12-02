@@ -222,7 +222,7 @@ SourceBufferParserAVFObjC::SourceBufferParserAVFObjC(const MediaSourceConfigurat
 
 #if USE(MEDIAPARSERD)
     if ([m_parser.get() respondsToSelector:@selector(setPreferSandboxedParsing:)])
-        [m_parser.get() setPreferSandboxedParsing:YES];
+        [m_parser.get() setPreferSandboxedParsing:!m_configuration.demuxInProcess];
 #endif
 }
 
@@ -374,6 +374,13 @@ void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(N
         protectedThis->m_didProvideContentKeyRequestIdentifierForTrackIDCallback(WTFMove(initData), trackID);
     });
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& SourceBufferParserAVFObjC::logChannel() const
+{
+    return LogMedia;
+}
+#endif // !RELEASE_LOG_DISABLED
 
 }
 

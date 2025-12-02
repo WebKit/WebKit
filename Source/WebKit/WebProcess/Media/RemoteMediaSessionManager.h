@@ -34,18 +34,28 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/PlatformMediaSessionManager.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakListHashSet.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/MediaSessionManagerIOS.h>
+#define REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS MediaSessionManageriOS
+#elif PLATFORM(COCOA)
+#include <WebCore/MediaSessionManagerCocoa.h>
+#define REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS MediaSessionManagerCocoa
+#else
+#include <WebCore/PlatformMediaSessionManager.h>
+#define REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS PlatformMediaSessionManager
+#endif
 
 namespace WebKit {
 
 class WebPage;
 
 class RemoteMediaSessionManager
-    : public WebCore::PlatformMediaSessionManager
+    : public WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS
     , public IPC::MessageReceiver
     , public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManager);
@@ -60,15 +70,21 @@ public:
 protected:
     RemoteMediaSessionManager(WebPage& topPage, WebPage& localPage);
 
+    // Messages
     void addSession(WebCore::PlatformMediaSessionInterface&) final;
     void removeSession(WebCore::PlatformMediaSessionInterface&) final;
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
-
     void clientShouldResumeAutoplaying(WebCore::MediaSessionIdentifier);
     void clientMayResumePlayback(WebCore::MediaSessionIdentifier, bool);
     void clientShouldSuspendPlayback(WebCore::MediaSessionIdentifier);
     void clientSetShouldPlayToPlaybackTarget(WebCore::MediaSessionIdentifier, bool);
     void clientDidReceiveRemoteControlCommand(WebCore::MediaSessionIdentifier, WebCore::PlatformMediaSessionRemoteControlCommandType, WebCore::PlatformMediaSessionRemoteCommandArgument);
+
+#if USE(AUDIO_SESSION)
+    void setAudioSessionCategory(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
+    void setAudioSessionPreferredBufferSize(uint64_t);
+    void tryToSetAudioSessionActive(bool);
+#endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -86,12 +102,27 @@ private:
     void updateSessionState() final;
     RefPtr<WebCore::PlatformMediaSessionInterface> sessionWithIdentifier(WebCore::MediaSessionIdentifier);
 
+#if PLATFORM(COCOA)
+    // AudioHardwareListenerClient
+    void audioHardwareDidBecomeActive() final;
+    void audioHardwareDidBecomeInactive() final;
+    void audioOutputDeviceChanged() final;
+#endif
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const final;
+#endif
+
     WeakPtr<WebPage> m_topPage;
     WeakPtr<WebPage> m_localPage;
     WebCore::PageIdentifier m_topPageID;
     WebCore::PageIdentifier m_localPageID;
     HashMap<WebCore::MediaSessionIdentifier, UniqueRef<RemoteMediaSessionState>> m_cachedSessionState;
 };
+
+#if !RELEASE_LOG_DISABLED
+inline ASCIILiteral RemoteMediaSessionManager::logClassName() const { return "RemoteMediaSessionManager"_s; }
+#endif
 
 } // namespace WebKit
 

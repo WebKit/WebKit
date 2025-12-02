@@ -47,6 +47,7 @@ public:
     static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
 
     const String& initiatorType() const { return m_resourceTiming.initiatorType(); }
+    String deliveryType() const { return m_resourceTiming.deliveryType(); }
     const String& nextHopProtocol() const;
 
     double workerStart() const;
@@ -66,6 +67,7 @@ public:
     uint64_t decodedBodySize() const;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
+    ResourceTiming& resourceTiming() { return m_resourceTiming; }
 
     Type performanceEntryType() const override { return Type::Resource; }
     ASCIILiteral entryType() const override { return "resource"_s; }

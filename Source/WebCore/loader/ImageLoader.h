@@ -49,12 +49,12 @@ enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullI
 
 class ImageLoader : public CachedImageClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageLoader, Loader);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ImageLoader);
 public:
     virtual ~ImageLoader();
 
-    void ref() const;
-    void deref() const;
+    // CachedResourceClient.
+    void ref() const final;
+    void deref() const final;
 
     // This function should be called when the element is attached to a document; starts
     // loading if a load hasn't already been started.

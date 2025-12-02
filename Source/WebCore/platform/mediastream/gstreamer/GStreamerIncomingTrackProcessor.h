@@ -70,11 +70,15 @@ private:
     std::pair<String, String> m_sdpMsIdAndTrackId;
 
     bool m_isDecoding { false };
-    FloatSize m_videoSize;
+    IntSize m_videoSize;
+    double m_frameRate;
     uint64_t m_decodedVideoFrames { 0 };
     GRefPtr<GstElement> m_sink;
     GUniquePtr<GstStructure> m_stats;
     bool m_isReady { false };
+
+    // https://www.w3.org/TR/webrtc-stats/#dom-rtcinboundrtpstreamstats-totaldecodetime
+    MediaTime m_totalVideoDecodeTime { MediaTime::zeroTime() };
 };
 
 } // namespace WebCore

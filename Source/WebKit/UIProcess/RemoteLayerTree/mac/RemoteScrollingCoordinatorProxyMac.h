@@ -33,9 +33,7 @@
 
 namespace WebKit {
 
-#if ENABLE(SCROLLING_THREAD)
 class RemoteLayerTreeEventDispatcher;
-#endif
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyMac);
@@ -85,9 +83,7 @@ private:
     void didCommitLayerAndScrollingTrees() override;
 #endif
 
-#if ENABLE(SCROLLING_THREAD)
     const Ref<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
-#endif
 };
 
 } // namespace WebKit

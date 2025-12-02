@@ -14,6 +14,7 @@
 		07789181273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0778917F273B14FF00E408D1 /* ScreenCaptureKitSoftLink.mm */; };
 		077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */; };
 		079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */; };
+		07C9C8DC2EDAAABD007B579A /* CryptoDigestHashFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C9C8DB2EDAAABD007B579A /* CryptoDigestHashFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
@@ -88,7 +89,6 @@
 		93B38EC025821CD800198E63 /* SpeechSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B38EBF25821CD700198E63 /* SpeechSoftLink.mm */; };
 		94A41E732BB1E10D00DA715C /* UnsafeOverlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A41E702BB1E10D00DA715C /* UnsafeOverlays.swift */; };
 		94C759082B990D69000CC511 /* PALSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 94C759072B990D62000CC511 /* PALSwift.h */; };
-		94E867A32BD191FC000EF470 /* PALSwiftUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 94E8679F2BD18EBC000EF470 /* PALSwiftUtils.h */; };
 		94F4AA022B730D2C006DFFDE /* CryptoKitShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */; };
 		A1038D332AB12BF100F57BA4 /* WebAVContentKeyGrouping.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D322AB12BF100F57BA4 /* WebAVContentKeyGrouping.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1038D4F2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A1038D4D2AB21FBB00F57BA4 /* WebAVContentKeyReportGroupExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -467,6 +467,7 @@
 		077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSoftLink.h; sourceTree = "<group>"; };
 		079D1D9526950DD700883577 /* SystemStatusSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemStatusSoftLink.h; sourceTree = "<group>"; };
 		079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemStatusSoftLink.mm; sourceTree = "<group>"; };
+		07C9C8DB2EDAAABD007B579A /* CryptoDigestHashFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoDigestHashFunction.h; sourceTree = "<group>"; };
 		0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTimeAVFoundation.cpp; sourceTree = "<group>"; };
 		0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTimeAVFoundation.h; sourceTree = "<group>"; };
 		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
@@ -678,7 +679,6 @@
 		94A41E702BB1E10D00DA715C /* UnsafeOverlays.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnsafeOverlays.swift; path = pal/PALSwift/UnsafeOverlays.swift; sourceTree = SOURCE_ROOT; };
 		94C759022B990D31000CC511 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		94C759072B990D62000CC511 /* PALSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PALSwift.h; sourceTree = "<group>"; };
-		94E8679F2BD18EBC000EF470 /* PALSwiftUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PALSwiftUtils.h; sourceTree = "<group>"; };
 		94F4AA012B730D2C006DFFDE /* CryptoKitShim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CryptoKitShim.swift; path = pal/PALSwift/CryptoKitShim.swift; sourceTree = SOURCE_ROOT; };
 		A10265881F56747A00B4C844 /* HIToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIToolboxSPI.h; sourceTree = "<group>"; };
 		A102658D1F567E9D00B4C844 /* HIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSPI.h; sourceTree = "<group>"; };
@@ -1067,7 +1067,6 @@
 				1C4876D71F8D7F4E00CCEEBD /* Logging.h */,
 				94C759022B990D31000CC511 /* module.modulemap */,
 				94C759072B990D62000CC511 /* PALSwift.h */,
-				94E8679F2BD18EBC000EF470 /* PALSwiftUtils.h */,
 				FE62AC3C2CFE2E0300740A18 /* PALTZoneImpls.cpp */,
 				A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */,
 				A3C66CDB1F462D6A009E6EE9 /* SessionID.h */,
@@ -1082,6 +1081,7 @@
 			children = (
 				1C09D0541E31C45200725F18 /* commoncrypto */,
 				1C09D0521E31C44100725F18 /* CryptoDigest.h */,
+				07C9C8DB2EDAAABD007B579A /* CryptoDigestHashFunction.h */,
 			);
 			path = crypto;
 			sourceTree = "<group>";
@@ -1446,6 +1446,7 @@
 				DD20DE1C27BC90D80093D175 /* CoreUISPI.h in Headers */,
 				DD20DDD127BC90D70093D175 /* CoreVideoSPI.h in Headers */,
 				DD20DD2727BC90D60093D175 /* CryptoDigest.h in Headers */,
+				07C9C8DC2EDAAABD007B579A /* CryptoDigestHashFunction.h in Headers */,
 				DD20DD1D27BC90D60093D175 /* CryptoKitPrivateSoftLink.h in Headers */,
 				DD20DDE327BC90D70093D175 /* CryptoKitPrivateSPI.h in Headers */,
 				DD20DD1E27BC90D60093D175 /* DataDetectorsCoreSoftLink.h in Headers */,
@@ -1547,7 +1548,6 @@
 				DD20DD1327BC90D60093D175 /* OutputContext.h in Headers */,
 				DD20DD1427BC90D60093D175 /* OutputDevice.h in Headers */,
 				94C759082B990D69000CC511 /* PALSwift.h in Headers */,
-				94E867A32BD191FC000EF470 /* PALSwiftUtils.h in Headers */,
 				DD20DE0227BC90D80093D175 /* PassKitInstallmentsSPI.h in Headers */,
 				DD20DD2227BC90D60093D175 /* PassKitSoftLink.h in Headers */,
 				DD20DE0327BC90D80093D175 /* PassKitSPI.h in Headers */,

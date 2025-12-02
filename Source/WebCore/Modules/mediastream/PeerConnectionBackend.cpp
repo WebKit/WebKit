@@ -110,22 +110,26 @@ std::optional<RTCRtpCapabilities> PeerConnectionBackend::senderCapabilities(Scri
 #if PLATFORM(WPE) || PLATFORM(GTK)
 class JSONFileHandler {
 public:
-    JSONFileHandler(const String& path)
-        : m_logFile(FilePrintStream::open(path.utf8().data(), "w"))
+    JSONFileHandler(String&& path)
+        : m_path(WTFMove(path))
     {
-        // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
-        setvbuf(m_logFile->file(), nullptr, _IONBF, 0);
+        Locker lock(m_clientsLock);
+        open(true);
     }
 
     void log(String&& event)
     {
-        m_logFile->println(WTFMove(event));
+        Locker lock(m_clientsLock);
+        if (m_logFile)
+            m_logFile->println(WTFMove(event));
     }
 
     void addClient(uint64_t identifier)
     {
         Locker lock(m_clientsLock);
         m_clients.append(identifier);
+        if (!m_logFile)
+            open(false);
     }
 
     void removeClient(uint64_t identifier)
@@ -140,8 +144,20 @@ public:
     }
 
 private:
-    std::unique_ptr<FilePrintStream> m_logFile;
+    void open(bool overwrite)
+    {
+        ASSERT(!m_logFile);
+        ASSERT(m_clientsLock.isHeld());
+
+        m_logFile = FilePrintStream::open(m_path.utf8().data(), overwrite ? "w" : "a");
+
+        // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
+        setvbuf(m_logFile->file(), nullptr, _IONBF, 0);
+    }
+
+    String m_path;
     Lock m_clientsLock;
+    std::unique_ptr<FilePrintStream> m_logFile WTF_GUARDED_BY_LOCK(m_clientsLock);
     Vector<uint64_t> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
 };
 
@@ -149,7 +165,7 @@ JSONFileHandler& jsonFileHandler()
 {
     auto path = String::fromUTF8(getenv("WEBKIT_WEBRTC_JSON_EVENTS_FILE"));
     ASSERT(!path.isEmpty());
-    static NeverDestroyed<JSONFileHandler> sharedInstance(path);
+    static NeverDestroyed<JSONFileHandler> sharedInstance(WTFMove(path));
     return sharedInstance;
 }
 #endif

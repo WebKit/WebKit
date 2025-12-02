@@ -191,6 +191,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-contents-whitespace-inside-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-letter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/display-first-line-002-ref.html
@@ -222,6 +223,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/empty-text-baseline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/empty-text-baseline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/order-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-display/order-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-display/select-4-option-optgroup-display-none.html

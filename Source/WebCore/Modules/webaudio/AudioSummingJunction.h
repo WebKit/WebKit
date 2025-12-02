@@ -25,7 +25,9 @@
 #pragma once
 
 #include "AudioBus.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +39,9 @@ class WeakPtrImplWithEventTargetData;
 
 // An AudioSummingJunction represents a point where zero, one, or more AudioNodeOutputs connect.
 
-class AudioSummingJunction {
+class AudioSummingJunction : public CanMakeThreadSafeCheckedPtr<AudioSummingJunction> {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSummingJunction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioSummingJunction);
 public:
     explicit AudioSummingJunction(BaseAudioContext&);
     virtual ~AudioSummingJunction();

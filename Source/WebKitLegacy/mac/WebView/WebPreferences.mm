@@ -52,6 +52,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
 #import <wtf/MainThread.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -200,13 +201,13 @@ struct WebPreferencesPrivate
 public:
     WebPreferencesPrivate()
 #if PLATFORM(IOS_FAMILY)
-        : readWriteQueue { adoptNS(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
+        : readWriteQueue { adoptOSObject(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
 #endif
     {
     }
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<dispatch_queue_t> readWriteQueue;
+    OSObjectPtr<dispatch_queue_t> readWriteQueue;
 #endif
     RetainPtr<NSMutableDictionary> values;
     RetainPtr<NSString> identifier;

@@ -230,9 +230,10 @@ void ThreadedCompositor::updateSceneState()
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
 
-    m_sceneState->rootLayer().flushCompositingState(*m_textureMapper);
+    auto reasons = OptionSet<CompositionReason>::all();
+    m_sceneState->rootLayer().flushCompositingState(reasons, *m_textureMapper);
     for (auto& layer : m_sceneState->committedLayers())
-        layer->flushCompositingState(*m_textureMapper);
+        layer->flushCompositingState(reasons, *m_textureMapper);
 }
 
 void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size)

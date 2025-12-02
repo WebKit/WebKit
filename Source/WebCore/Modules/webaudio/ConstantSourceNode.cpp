@@ -64,7 +64,8 @@ ConstantSourceNode::~ConstantSourceNode()
 
 void ConstantSourceNode::process(size_t framesToProcess)
 {
-    auto& outputBus = output(0)->bus();
+    CheckedPtr firstOutput = output(0);
+    auto& outputBus = firstOutput->bus();
     
     if (!isInitialized() || !outputBus.numberOfChannels()) {
         outputBus.zero();

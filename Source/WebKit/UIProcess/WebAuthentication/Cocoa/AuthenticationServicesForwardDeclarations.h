@@ -394,6 +394,14 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPlatformPublicKeyCredentialRegistratio
 @property (nonatomic, nullable, readonly) ASAuthorizationPublicKeyCredentialPRFAssertionOutput *prf;
 @end
 
+@interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest ()
+@property (nonatomic, nullable) ASAuthorizationPublicKeyCredentialPRFAssertionInput *prf;
+@end
+
+@interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertion ()
+@property (nonatomic, nullable, readonly) ASAuthorizationPublicKeyCredentialPRFAssertionOutput *prf;
+@end
+
 @interface ASAuthorizationPublicKeyCredentialPRFRegistrationInput : NSObject
 + (instancetype)checkForSupport;
 - (instancetype)initWithInputValues:(nullable ASAuthorizationPublicKeyCredentialPRFAssertionInputValues *)inputValues;
@@ -405,6 +413,10 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPlatformPublicKeyCredentialRegistratio
 @property (nonatomic, nullable) ASAuthorizationPublicKeyCredentialPRFRegistrationInput *prf;
 @end
 
+@interface ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest ()
+@property (nonatomic, nullable) ASAuthorizationPublicKeyCredentialPRFRegistrationInput *prf;
+@end
+
 @interface ASAuthorizationPublicKeyCredentialPRFRegistrationOutput : NSObject
 @property (nonatomic, readonly) BOOL isSupported;
 @property (nonatomic, nullable, readonly) NSData *first;
@@ -412,6 +424,10 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPlatformPublicKeyCredentialRegistratio
 @end
 
 @interface ASAuthorizationPlatformPublicKeyCredentialRegistration ()
+@property (nonatomic, nullable, readonly) ASAuthorizationPublicKeyCredentialPRFRegistrationOutput *prf;
+@end
+
+@interface ASAuthorizationSecurityKeyPublicKeyCredentialRegistration ()
 @property (nonatomic, nullable, readonly) ASAuthorizationPublicKeyCredentialPRFRegistrationOutput *prf;
 @end
 #endif

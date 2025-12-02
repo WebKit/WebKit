@@ -67,9 +67,6 @@ public:
     void markEndOfStream(EndOfStreamStatus) override;
     void unmarkEndOfStream() override;
 
-    MediaPlayer::ReadyState mediaPlayerReadyState() const override;
-    void setMediaPlayerReadyState(MediaPlayer::ReadyState) override;
-
     void notifyActiveSourceBuffersChanged() final;
 
     void startPlaybackIfHasAllTracks();

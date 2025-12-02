@@ -30,10 +30,6 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
 class StyleAppleColorFilterData : public RefCounted<StyleAppleColorFilterData> {

@@ -116,7 +116,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
         enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
     }
-    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, contentOverflowRect };
+    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.bottom()) }, contentOverflowRect };
 }
 
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& lineLayoutResult, const LineBox& lineBox, bool lineIsFullyTruncatedInBlockDirection) const
@@ -151,6 +151,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
         , isLeftToRightDirection
         , rootInlineBox.layoutBox().writingMode().isHorizontal()
         , lineIsFullyTruncatedInBlockDirection
+        , lineLayoutResult.hasBlockContent()
     };
 }
 
@@ -498,6 +499,37 @@ void InlineDisplayLineBuilder::applyEllipsisIfNeeded(LineEndingTruncationPolicy 
 
     if (auto ellipsisRect = trailingEllipsisVisualRectAfterTruncation(truncationPolicy, ellipsisText, displayLine, displayBoxes))
         displayLine.setEllipsis({ truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInInlineDirection ? InlineDisplay::Line::Ellipsis::Type::Inline : InlineDisplay::Line::Ellipsis::Type::Block, *ellipsisRect, ellipsisText });
+}
+
+std::optional<size_t> InlineDisplayLineBuilder::trailingLineWithBlockLevelBox(const InlineDisplay::Boxes& displayBoxes)
+{
+    for (auto& displayBox : displayBoxes | std::views::reverse) {
+        if (displayBox.isRootInlineBox() || displayBox.isInlineBox()) {
+            // Skip "empty" trailing lines constructed for </span> (e.g. <span><block></block></span> initiates 3 lines where the first and last lines are empty and they only contain the inline box start/end)
+            continue;
+        }
+        if (displayBox.isBlockLevelBox())
+            return displayBox.lineIndex();
+        return { };
+    }
+    return { };
+}
+
+void InlineDisplayLineBuilder::adjustLineBlockAfterSideWithCollapsedMargin(const BlockLayoutState::MarginState& marginState, size_t lineIndexWithBlockLevelBox, InlineDisplay::Lines& displayLines)
+{
+    if (lineIndexWithBlockLevelBox >= displayLines.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!marginState.margin())
+        return;
+
+    auto& lastLineWithBlockContent = displayLines[lineIndexWithBlockLevelBox];
+    ASSERT(lastLineWithBlockContent.hasInflowContent());
+    lastLineWithBlockContent.shrinkInBlockDirection(marginState.margin());
+    for (auto lineIndex = lineIndexWithBlockLevelBox + 1; lineIndex < displayLines.size(); ++lineIndex)
+        displayLines[lineIndex].moveInBlockDirection(-marginState.margin());
 }
 
 }

@@ -29,7 +29,10 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteAudioSessionConfiguration.h"
 #include "WebProcessProxy.h"
+#include <WebCore/AudioHardwareListener.h>
+#include <WebCore/AudioSession.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -52,12 +55,16 @@ class PlatformMediaSessionInterface;
 
 namespace WebKit {
 
+class RemoteMediaSessionManagerAudioHardwareListener;
 class RemoteMediaSessionProxy;
 class WebProcessProxy;
 struct RemoteMediaSessionState;
 
 class RemoteMediaSessionManagerProxy
     : public WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS
+#if USE(AUDIO_SESSION)
+    , public WebCore::AudioSession
+#endif
     , public IPC::MessageReceiver
     , public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerProxy);
@@ -68,20 +75,58 @@ public:
 
     virtual ~RemoteMediaSessionManagerProxy();
 
+#if USE(AUDIO_SESSION)
+    void ref() const final { AudioSession::ref(); }
+    void deref() const final { AudioSession::deref(); }
+#else
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+#endif
 
     const Ref<WebProcessProxy> process() const { return m_process; }
 
 private:
     RemoteMediaSessionManagerProxy(WebCore::PageIdentifier, WebProcessProxy&);
 
+    // Messages
     void addMediaSession(RemoteMediaSessionState&&);
     void removeMediaSession(RemoteMediaSessionState&&);
     void setCurrentMediaSession(RemoteMediaSessionState&&);
     void updateMediaSessionState();
 
+#if PLATFORM(COCOA)
+    void remoteAudioHardwareDidBecomeActive();
+    void remoteAudioHardwareDidBecomeInactive();
+    void remoteAudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum);
+#endif
+
+#if USE(AUDIO_SESSION)
+    void remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&&);
+
+    // AudioSession
+    void setCategory(CategoryType, Mode, WebCore::RouteSharingPolicy) final;
+    CategoryType category() const final { return m_category; }
+    Mode mode() const final { return m_mode; }
+
+    WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_routeSharingPolicy; }
+    String routingContextUID() const final { return m_audioConfiguration.routingContextUID; }
+
+    float sampleRate() const final { return m_audioConfiguration.sampleRate; }
+    size_t bufferSize() const final { return m_audioConfiguration.bufferSize; }
+    size_t numberOfOutputChannels() const final { return m_audioConfiguration.numberOfOutputChannels; }
+    size_t maximumNumberOfOutputChannels() const final { return m_audioConfiguration.maximumNumberOfOutputChannels; }
+    size_t outputLatency() const final { return m_audioConfiguration.outputLatency; }
+
+    bool tryToSetActiveInternal(bool) final;
+
+    size_t preferredBufferSize() const final { return m_audioConfiguration.preferredBufferSize; }
+    void setPreferredBufferSize(size_t) final;
+
+    CategoryType categoryOverride() const final  { return m_audioConfiguration.categoryOverride; }
+#endif
+
     RefPtr<WebCore::PlatformMediaSessionInterface> findSession(RemoteMediaSessionState&);
+    Ref<RemoteMediaSessionManagerAudioHardwareListener> ensureAudioHardwareListenerProxy(WebCore::AudioHardwareListener::Client&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -92,13 +137,30 @@ private:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
-    ASCIILiteral logClassName() const final { return "RemoteMediaSessionManagerProxy"_s; }
+    ASCIILiteral logClassName() const final;
 #endif
 
     const Ref<WebProcessProxy> m_process;
     WebCore::PageIdentifier m_topPageID;
     HashMap<WebCore::MediaSessionIdentifier, Ref<RemoteMediaSessionProxy>> m_sessionProxies;
+
+#if PLATFORM(COCOA)
+    RefPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;
+#endif
+
+#if USE(AUDIO_SESSION)
+    CategoryType m_category { CategoryType::None };
+    Mode m_mode { Mode::Default };
+    WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
+    mutable RemoteAudioSessionConfiguration m_audioConfiguration;
+#endif
+
+    bool m_isInterruptedForTesting { false };
 };
+
+#if !RELEASE_LOG_DISABLED
+inline ASCIILiteral RemoteMediaSessionManagerProxy::logClassName() const { return "RemoteMediaSessionManagerProxy"_s; }
+#endif
 
 } // namespace WebKit
 

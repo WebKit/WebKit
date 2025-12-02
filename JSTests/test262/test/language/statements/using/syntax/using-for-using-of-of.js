@@ -18,5 +18,5 @@ for (using of of [0, 1, 2]) {
   result.push(using);
 }
 
-asserts.sameValue(result.length, 1);
-asserts.sameValue(result[0], 7);
+assert.sameValue(result.length, 1);
+assert.sameValue(result[0], 7);

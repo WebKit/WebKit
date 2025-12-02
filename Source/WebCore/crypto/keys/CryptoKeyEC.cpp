@@ -29,10 +29,11 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
-#if HAVE(SWIFT_CPP_INTEROP)
+#include <wtf/text/Base64.h>
+
+#if OS(DARWIN) && !PLATFORM(GTK)
 #include <pal/PALSwift.h>
 #endif
-#include <wtf/text/Base64.h>
 
 namespace WebCore {
 

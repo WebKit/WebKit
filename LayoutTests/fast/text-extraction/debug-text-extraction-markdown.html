@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes.</p>
+<a href="https://www.apple.com">T[e]st link</a>
+<div>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them. Because they change things.</div>
+<img src="file:///fake/image.png" alt="Purposefully broken image"></img>
+<p>This is a list:</p>
+<ul>
+    <li>foo</li>
+    <li>bar</li>
+    <li>baz</li>
+</ul>
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({ outputFormat: "markdown" });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

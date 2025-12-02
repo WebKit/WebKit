@@ -382,7 +382,7 @@ void TZoneHeapManager::dumpRegisteredTypes()
         if (!m_typeSizes.size())
             return;
 
-        std::sort(m_typeSizes.begin(), m_typeSizes.end());
+        std::ranges::sort(m_typeSizes);
         auto typeSizesEnd = m_typeSizes.end();
 
         Vector<unsigned> bucketCountHistogram;

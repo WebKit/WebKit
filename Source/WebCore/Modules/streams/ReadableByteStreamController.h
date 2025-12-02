@@ -92,6 +92,7 @@ public:
     void error(JSDOMGlobalObject&, JSC::JSValue);
     void close(JSDOMGlobalObject&);
     void closeAndRespondToPendingPullIntos(JSDOMGlobalObject&);
+    size_t pullFromBytes(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t offset);
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBufferView&);
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBuffer&);
 

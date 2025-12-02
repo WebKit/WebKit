@@ -57,6 +57,10 @@ public:
     static Ref<WebCodecsAudioData> create(ScriptExecutionContext&, Ref<PlatformRawAudioData>&&);
     static Ref<WebCodecsAudioData> create(ScriptExecutionContext& context, WebCodecsAudioInternalData&& data) { return adoptRef(*new WebCodecsAudioData(context, WTFMove(data))); }
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     std::optional<AudioSampleFormat> format() const;
     float sampleRate() const;
     size_t numberOfFrames() const;

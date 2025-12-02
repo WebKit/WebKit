@@ -38,6 +38,7 @@ class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStreamAudioDestinationNode);
 public:
     static ExceptionOr<Ref<MediaStreamAudioDestinationNode>> create(BaseAudioContext&, const AudioNodeOptions& = { });
 

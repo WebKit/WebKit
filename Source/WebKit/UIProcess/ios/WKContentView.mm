@@ -38,6 +38,7 @@
 #import "PageClientImplIOS.h"
 #import "PickerDismissalReason.h"
 #import "PrintInfo.h"
+#import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "SmartMagnificationController.h"
 #import "UIKitSPI.h"
@@ -999,20 +1000,20 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #endif // USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
-- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData
+- (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction mainFrameData:(const std::optional<WebKit::MainFrameData>&)mainFrameData pageData:(const WebKit::PageData&)pageData transactionID:(const WebKit::TransactionID&)transactionID
 {
-    BOOL transactionMayChangeBounds = layerTreeTransaction.isMainFrameProcessTransaction();
+    BOOL transactionMayChangeBounds = mainFrameData.has_value();
     CGSize contentsSize = layerTreeTransaction.contentsSize();
     CGPoint scrollOrigin = -layerTreeTransaction.scrollOrigin();
     CGRect contentBounds = { scrollOrigin, contentsSize };
 
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView _didCommitLayerTree:] transactionID " <<  layerTreeTransaction.transactionID() << " contentBounds " << WebCore::FloatRect(contentBounds));
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView _didCommitLayerTree:] transactionID " << transactionID << " contentBounds " << WebCore::FloatRect(contentBounds));
 
     BOOL boundsChanged = transactionMayChangeBounds && !CGRectEqualToRect([self bounds], contentBounds);
     if (boundsChanged)
         [self setBounds:contentBounds];
 
-    [_webView _didCommitLayerTree:layerTreeTransaction mainFrameData:mainFrameData];
+    [_webView _didCommitLayerTree:layerTreeTransaction mainFrameData:mainFrameData pageData:pageData transactionID:transactionID];
 
     if (_interactionViewsContainerView) {
         WebCore::FloatPoint scaledOrigin = layerTreeTransaction.scrollOrigin();

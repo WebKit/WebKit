@@ -479,8 +479,9 @@ CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const
     return nullptr;
 }
 
-ScrollTimeline::Data ViewTimeline::computeTimelineData() const
+ScrollTimeline::Data ViewTimeline::computeTimelineData(UseCachedCurrentTime) const
 {
+    // FIXME: account for UseCachedCurrentTime parameter.
     if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.scrollContainerSize)
         return { };
 

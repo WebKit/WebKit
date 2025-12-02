@@ -1,4 +1,0 @@
-
-Harness Error (FAIL), message = TypeError: TestingUtils.testGridTemplateColumns is not a function. (In 'TestingUtils.testGridTemplateColumns("masonry", trackList, expected, testset)', 'TestingUtils.testGridTemplateColumns' is undefined)
-
-

@@ -133,6 +133,11 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
     return logicalRect;
 }
 
+InlineRect LineBox::logicalContentBoxForInlineBox(const Box& layoutBox) const
+{
+    return logicalRectForInlineLevelBox(layoutBox);
+}
+
 } // namespace Layout
 } // namespace WebCore
 

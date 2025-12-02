@@ -176,6 +176,9 @@ public:
 #if ENABLE(MODEL_CONTEXT) && !ENABLE(GPU_PROCESS_MODEL)
     WEBCORE_EXPORT void setContentsToModelContext(Ref<ModelContext>, ContentsLayerPurpose) override;
 #endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    WEBCORE_EXPORT void removeModelContents() override;
+#endif
     WEBCORE_EXPORT void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT PlatformLayerIdentifier setContentsToAsyncDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>, ContentsLayerPurpose);
@@ -226,7 +229,7 @@ public:
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const override;
 
-    WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
+    WEBCORE_EXPORT Vector<GraphicsLayer::AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const final;
 
     constexpr static CompositingCoordinatesOrientation defaultContentsOrientation = CompositingCoordinatesOrientation::TopDown;
 

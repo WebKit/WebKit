@@ -31,17 +31,11 @@ namespace WTF {
 class ActivityObserver : public ThreadSafeRefCounted<ActivityObserver> {
     WTF_MAKE_TZONE_ALLOCATED(ActivityObserver);
 public:
-    enum class NotifyResult {
-        Continue,
-        Stop,
-        Destroyed
-    };
+    using Callback = Function<void()>;
 
-    using Callback = Function<NotifyResult()>;
-
-    static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+    static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
     {
-        return adoptRef(*new ActivityObserver(WTFMove(runLoop), order, activities, WTFMove(callback)));
+        return adoptRef(*new ActivityObserver(WTFMove(runLoop), isRepeating, order, activities, WTFMove(callback)));
     }
 
     ~ActivityObserver()
@@ -73,19 +67,24 @@ public:
     uint8_t order() const { return m_order; }
     OptionSet<RunLoop::Activity> activities() const { return m_activities; }
 
-    NotifyResult notify() const
+    void notify()
     {
         {
             Locker lock { m_callbackLock };
             if (!m_callback)
-                return NotifyResult::Destroyed;
+                return;
         }
-        return m_callback();
+
+        m_callback();
+
+        if (!m_isRepeating)
+            stop();
     }
 
 private:
-    ActivityObserver(Ref<RunLoop>&& runLoop, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+    ActivityObserver(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
         : m_runLoop(WTFMove(runLoop))
+        , m_isRepeating(isRepeating)
         , m_order(order)
         , m_activities(activities)
         , m_callback(WTFMove(callback))
@@ -95,6 +94,7 @@ private:
 
 private:
     ThreadSafeWeakPtr<RunLoop> m_runLoop;
+    bool m_isRepeating { false };
     uint8_t m_order { 0 };
     OptionSet<RunLoop::Activity> m_activities;
     mutable Lock m_callbackLock;

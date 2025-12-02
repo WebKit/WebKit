@@ -74,7 +74,6 @@ enum class SDKAlignedBehavior {
     ModernCompabilityModeByDefault,
     MutationEventsDisabledByDefault,
     NavigationActionSourceFrameNonNull,
-    AllowBackgroundAudioPlayback,
     NoClientCertificateLookup,
     NoExpandoIndexedPropertiesOnWindow,
     NoPokerBrosBuiltInTagQuirk,
@@ -207,8 +206,6 @@ WTF_EXPORT_PRIVATE bool isMobileStore();
 WTF_EXPORT_PRIVATE bool isUNIQLOApp();
 WTF_EXPORT_PRIVATE bool isDOFUSTouch();
 WTF_EXPORT_PRIVATE bool isMyRideK12();
-WTF_EXPORT_PRIVATE bool isFirefox();
-WTF_EXPORT_PRIVATE bool isFirefoxFocus();
 
 } // IOSApplication
 

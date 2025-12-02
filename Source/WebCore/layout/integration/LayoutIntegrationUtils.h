@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <WebCore/BlockLayoutState.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutUnit.h>
+#include <WebCore/RenderBlockFlow.h>
 
 #include <optional>
 #include <wtf/CheckedRef.h>
@@ -35,7 +37,7 @@ namespace WebCore {
 namespace Layout {
 
 class ElementBox;
-class BlockLayoutState;
+class InlineLayoutState;
 class LayoutState;
 
 class IntegrationUtils {
@@ -46,7 +48,13 @@ public:
     LayoutUnit maxContentWidth(const ElementBox&) const;
     LayoutUnit minContentWidth(const ElementBox&) const;
     LayoutUnit minContentHeight(const ElementBox&) const;
-    void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLogicalTopLeft, const BlockLayoutState& parentBlockLayoutState) const;
+    LayoutUnit preferredMinWidth(const ElementBox&) const;
+    LayoutUnit preferredMaxWidth(const ElementBox&) const;
+    void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLogicalTopLeft, const InlineLayoutState&) const;
+
+    static BlockLayoutState::MarginState toMarginState(const RenderBlockFlow::MarginInfo&);
+    static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);
+    static std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
 
 private:
     const CheckedRef<const LayoutState> m_globalLayoutState;

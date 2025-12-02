@@ -333,7 +333,6 @@ fast/forms/file/file-input-empty-validation.html [ Failure ]
 editing/mac/input/insert-dictated-text.html
 editing/mac/input/crash-for-empty-text-alternative.html
 editing/mac/input/edit-dictated-text-with-alternative.html
-editing/mac/attributed-string/
 
 # This test times out on Mac WK2 every time.
 webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]
@@ -799,8 +798,6 @@ webkit.org/b/161653 [ Debug ] storage/indexeddb/key-generator.html [ Pass Timeou
 
 webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]
 
-webkit.org/b/187935 [ Release ] imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html  [ Pass Failure ]
-
 webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 
 webkit.org/b/168065 inspector/unit-tests/heap-snapshot.html [ Pass Failure Timeout ]
@@ -1075,8 +1072,6 @@ webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash Failure ]
 
 webkit.org/b/230485 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Failure ]
-
-webkit.org/b/214683 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 
 webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 
@@ -2052,8 +2047,6 @@ webkit.org/b/289200 imported/w3c/web-platform-tests/fullscreen/rendering/backdro
 
 webkit.org/b/289211 [ Sequoia Release x86_64 ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Failure ]
 
-webkit.org/b/289254 [ Debug ] imported/w3c/web-platform-tests/mediacapture-streams/historical.https.html [ Pass Crash ]
-
 # webkit.org/b/289272 [ macOS wk2 arm64 ] 2x imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=on&method=* are flaky failures.
 [ arm64 ] imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=on&method=forwarddelete [ Pass Failure ]
 [ arm64 ] imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html?designMode=on&method=backspace [ Pass Failure ]
@@ -2406,8 +2399,6 @@ fast/events/popup-blocking-timers1.html [ Timeout ]
 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
 
-webkit.org/b/302165 [ Debug ] media/track/webvtt-parser-does-not-leak.html [ Pass Failure Timeout ]
-
 webkit.org/b/302169 [ Debug ] css3/filters/backdrop/effect-hw.html [ ImageOnlyFailure ]
 
 webkit.org/b/302172 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
@@ -2417,3 +2408,11 @@ webkit.org/b/302174 [ Tahoe Debug arm64 ] platform/mac/media/encrypted-media/fps
 # webkit.org/b/302674 fast/webgpu/nocrash/fuzz-279542.html appears to cause other tests to timeout
 [ Tahoe Debug arm64 ] fast/webgpu/nocrash/ [ Skip ]
 [ Tahoe Debug arm64 ] fast/selectors/is-backtracking.html [ Skip ]
+
+webkit.org/b/302935 [ Sonoma ] media/media-source/media-source-allowed-codecs.html [ Failure ]
+
+# webkit.org/b/303325 REGRESSION(303533@main): Caused webrtc/vp9-profile2.html to time out
+webrtc/vp9-profile2.html [ Pass Timeout ]
+fast/mediastream/captureStream/canvas3d.html [ Pass Crash ]
+
+webkit.org/b/302725 [ Sequoia Sonoma ] fast/css/accent-color/datalist.html [ Pass ]

@@ -36,6 +36,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <pal/spi/cocoa/NSFileManagerSPI.h>
 #import <wtf/Deque.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/NotificationCenterCF.h>
@@ -108,7 +109,7 @@ struct PermissionRequest {
 
 @implementation WKWebGeolocationPolicyDecider {
 @private
-    RetainPtr<dispatch_queue_t> _diskDispatchQueue;
+    OSObjectPtr<dispatch_queue_t> _diskDispatchQueue;
     RetainPtr<NSMutableDictionary> _sites;
     Deque<std::unique_ptr<PermissionRequest>> _challenges;
     std::unique_ptr<PermissionRequest> _activeChallenge;
@@ -128,7 +129,7 @@ struct PermissionRequest {
     if (!self)
         return nil;
 
-    _diskDispatchQueue = adoptNS(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
+    _diskDispatchQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKWebGeolocationPolicyDecider", DISPATCH_QUEUE_SERIAL));
 
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), self, clearGeolocationCache, CLAppResetChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
 

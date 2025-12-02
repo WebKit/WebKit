@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 function shouldBe(actual, expected) {
     if (!Object.is(actual, expected)) {
         throw new Error(`expected: ${expected}, actual: ${actual}`);

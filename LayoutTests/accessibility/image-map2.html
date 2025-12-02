@@ -1,31 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<map id="apple" name="imagemap1">
+    <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" alt="Link1" />
+    <area shape="rect" coords="12,74,134,88" href="http://www.apple.com" alt="Link2" />
+</map>
+
+<img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
+
 <script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
+var output = "This test ensures proper AX tree output for image map links with alt tags.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += webArea.attributesOfChildren();
+    debugEscaped(output);
+}
 </script>
-<body id="body">
-    
-    <div id="result"></div>
-    
-    <!-- Test image map -->
-    <map id="apple" name="imagemap1">
-      <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" alt="Link1" />
-      <area shape="rect" coords="12,74,134,88" href="http://www.apple.com" alt="Link2" />
-    </map>
-
-    <img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
-
-     
-    <script>
-        if (window.accessibilityController) {
-            var result = document.getElementById("result");
-
-            var body = document.getElementById("body");
-            body.focus();
-            result.innerText += "Image map - test 2 - 2 Links (alt tags)\n";
-            result.innerText += "----------------------\n";
-            result.innerText += accessibilityController.focusedElement.attributesOfChildren() + "\n\n"; 
-        }
-    </script>
 </body>
 </html>
+

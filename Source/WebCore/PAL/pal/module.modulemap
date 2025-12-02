@@ -1,4 +1,11 @@
 module PALSwift {
     header "PALSwift.h"
+
+    // FIXME: This is incorrect, but the rest of the module is also incorrect for the time being, so alas.
+    explicit module CryptoDigestHashFunction {
+        header "crypto/CryptoDigestHashFunction.h"
+        export *
+    }
+
     export *
 }

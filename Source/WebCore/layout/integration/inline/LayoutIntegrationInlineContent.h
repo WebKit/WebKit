@@ -88,8 +88,11 @@ public:
     const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const;
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
 
+    // Returns a block level box if the line is for block-in-inline.
+    const InlineDisplay::Box* blockLevelBoxForLine(const InlineDisplay::Line&) const;
+    bool isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
+
     template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
-    template<typename Function> void traverseDescendantBlockLevelBoxes(const Layout::Box&, Function&&);
 
     const RenderBlockFlow& formattingContextRoot() const;
 
@@ -137,21 +140,6 @@ template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const
 {
     for (auto index : nonRootInlineBoxIndexesForLayoutBox(layoutBox))
         function(displayContent().boxes[index]);
-}
-
-template<typename Function> void InlineContent::traverseDescendantBlockLevelBoxes(const Layout::Box& ancestor, Function&& function)
-{
-    if (!m_hasBlockLevelBoxes)
-        return;
-
-    for (auto& box : m_displayContent.boxes) {
-        if (!box.isBlockLevelBox())
-            continue;
-        CheckedRef layoutBox = box.layoutBox();
-        if (!layoutBox->isDescendantOfWithinFormattingContext(ancestor))
-            continue;
-        function(box);
-    }
 }
 
 }

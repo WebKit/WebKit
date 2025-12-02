@@ -214,11 +214,11 @@
   <!-- libvpx needed for libwebrtc -->
   <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
     <pkg-config>vpx.pc</pkg-config>
-    <branch repo="github-tarball"
-            version="1.11.0"
-            module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
-            checkoutdir="libvpx-${version}"
-            hash="sha256:965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"/>
+    <branch module="webmproject/libvpx"
+            repo="github.com"
+            tag="v1.15.2"
+            version="1.15.2"
+            checkoutdir="libvpx-${version}" />
   </autotools>
 
   <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled -Dgtk_doc=false -Dtests=false">

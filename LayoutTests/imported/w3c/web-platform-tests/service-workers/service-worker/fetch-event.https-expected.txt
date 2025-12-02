@@ -21,16 +21,11 @@ PASS Service Worker responds to fetch event with the correct integrity_metadata
 PASS FetchEvent#body is a string
 FAIL FetchEvent#body is a ReadableStream promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
 PASS FetchEvent#body is a string and is passed to network fallback
-FAIL FetchEvent#body is a ReadableStream and is passed to network fallback promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
 FAIL FetchEvent#body is a none Uint8Array ReadableStream and is passed to a service worker promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
 PASS FetchEvent#body is a string, used and passed to network fallback
-FAIL FetchEvent#body is a ReadableStream, used and passed to network fallback promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
 PASS FetchEvent#body is a string, cloned and passed to network fallback
-PASS FetchEvent#body is a ReadableStream, cloned and passed to network fallback
 PASS FetchEvent#body is a blob
 PASS FetchEvent#body is a blob and is passed to network fallback
 PASS Service Worker responds to fetch event with the correct keepalive value

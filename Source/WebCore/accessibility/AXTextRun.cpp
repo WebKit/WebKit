@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AXTextRuns);
+
 String AXTextRuns::debugDescription() const
 {
     StringBuilder builder;

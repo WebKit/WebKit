@@ -54,7 +54,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 struct PositionOptions;
 
-class Geolocation final : public RefCountedAndCanMakeWeakPtr<Geolocation>, public ScriptWrappable, public ActiveDOMObject {
+class Geolocation final : public RefCounted<Geolocation>, public ScriptWrappable, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Geolocation, WEBCORE_EXPORT);
     friend class GeoNotifier;
 public:

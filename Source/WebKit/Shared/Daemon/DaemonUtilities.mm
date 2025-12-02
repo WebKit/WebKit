@@ -91,7 +91,7 @@ XPCObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&& encoder)
 {
     __block auto blockEncoder = WTFMove(encoder);
     auto buffer = blockEncoder->span();
-    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
+    auto dispatchData = adoptOSObject(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));

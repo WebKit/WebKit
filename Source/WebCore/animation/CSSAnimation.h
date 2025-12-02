@@ -38,6 +38,7 @@ class RenderStyle;
 
 class CSSAnimation final : public StyleOriginatedAnimation {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSAnimation);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSAnimation);
 public:
     static Ref<CSSAnimation> create(const Styleable&, Style::Animation&&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;

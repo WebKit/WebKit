@@ -1452,6 +1452,18 @@ void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, 
 }
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+void GraphicsLayerCA::removeModelContents()
+{
+    if (!m_contentsLayer)
+        return;
+
+    m_contentsLayer = nullptr;
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
+}
+#endif
+
 void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
 {
 #if HAVE(AVKIT)
@@ -5281,37 +5293,31 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
     return layer->backingStoreBytesPerPixel() * size().width() * layer->contentsScale() * size().height() * layer->contentsScale();
 }
 
-Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesting(const Settings& settings) const
+Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCA::acceleratedAnimationsForTesting() const
 {
-    Vector<std::pair<String, double>> animations;
+    Vector<GraphicsLayer::AcceleratedAnimationForTesting> animations;
 
 #if ENABLE(THREADED_ANIMATIONS)
     auto addAcceleratedEffect = [&](const AcceleratedEffect& effect) {
         for (auto property : effect.animatedProperties())
-            animations.append({ acceleratedEffectPropertyIDAsString(property), effect.playbackRate() });
+            animations.append({ acceleratedEffectPropertyIDAsString(property), effect.playbackRate(), true });
     };
 
-    if (settings.threadedScrollDrivenAnimationsEnabled() || settings.threadedTimeBasedAnimationsEnabled()) {
-        if (RefPtr effectsStack = acceleratedEffectStack()) {
-            for (auto& effect : effectsStack->primaryLayerEffects())
-                addAcceleratedEffect(effect.get());
-            for (auto& effect : effectsStack->backdropLayerEffects())
-                addAcceleratedEffect(effect.get());
-        }
-
-        return animations;
+    if (RefPtr effectsStack = acceleratedEffectStack()) {
+        for (auto& effect : effectsStack->primaryLayerEffects())
+            addAcceleratedEffect(effect.get());
+        for (auto& effect : effectsStack->backdropLayerEffects())
+            addAcceleratedEffect(effect.get());
     }
-#else
-    UNUSED_PARAM(settings);
 #endif
 
     for (auto& animation : m_animations) {
         if (animation.m_pendingRemoval)
             continue;
         if (auto caAnimation = protectedAnimatedLayer(animation.m_property)->animationForKey(animation.animationIdentifier()))
-            animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed() });
+            animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed(), false });
         else
-            animations.append({ animatedPropertyIDAsString(animation.m_property), (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::PlayPending) ? 1 : 0 });
+            animations.append({ animatedPropertyIDAsString(animation.m_property), (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::PlayPending) ? 1.0 : 0.0, false });
     }
 
     return animations;

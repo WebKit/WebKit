@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #include "AudioVideoRenderer.h"
+#include "MediaSourceConfiguration.h"
 #include "ProcessIdentity.h"
 #include "SourceBufferParser.h"
 #include "SourceBufferPrivate.h"
@@ -80,7 +81,7 @@ class SourceBufferPrivateAVFObjC final
     : public SourceBufferPrivate
 {
 public:
-    static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC&, Ref<SourceBufferParser>&&, Ref<AudioVideoRenderer>&&);
+    static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC&, const MediaSourceConfiguration&, Ref<SourceBufferParser>&&, Ref<AudioVideoRenderer>&&);
     virtual ~SourceBufferPrivateAVFObjC();
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
@@ -91,20 +92,16 @@ public:
 
     bool hasSelectedVideo() const;
 
-    void trackDidChangeSelected(VideoTrackPrivate&, bool selected);
-    void trackDidChangeEnabled(AudioTrackPrivate&, bool enabled);
+    void videoTrackDidChangeSelected(TrackID, bool selected);
+    void audioTrackDidChangeEnabled(TrackID, bool enabled);
 
     FloatSize naturalSize();
     void flushAndReenqueueVideo();
 
-    const std::optional<TrackID>& protectedTrackID() const { return m_protectedTrackID; }
     bool needsVideoLayer() const;
 
 #if (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool waitingForKey() const final { return m_waitingForKey; }
-#endif
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<SharedBuffer> initData() const { return m_initData; }
 #endif
 
     // Used by CDMSessionAVContentKeySession
@@ -130,7 +127,7 @@ public:
     void setAudioVideoRenderer(AudioVideoRenderer&);
 
 private:
-    explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, Ref<SourceBufferParser>&&, Ref<AudioVideoRenderer>&&);
+    SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC&, const MediaSourceConfiguration&, Ref<SourceBufferParser>&&, Ref<AudioVideoRenderer>&&);
 
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, TrackID, const String& mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
@@ -148,18 +145,17 @@ private:
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&) override;
     bool canSwitchToType(const ContentType&) final;
 
+    void configureParser(SourceBufferParser&);
     bool precheckInitializationSegment(const InitializationSegment&) final;
     void processInitializationSegment(std::optional<InitializationSegment>&&) final;
     void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, TrackID) final;
     void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&) final;
 
-    Ref<AudioVideoRenderer> protectedRenderer() const { return m_renderer; }
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, TrackID);
     void attachContentKeyToSampleIfNeeded(const MediaSampleAVFObjC&);
     void didBecomeReadyForMoreSamples(TrackID);
     void appendCompleted(bool);
     void destroyRendererTracks();
-    void clearTracks();
 
     bool isEnabledVideoTrackID(TrackID) const;
     bool isTextTrack(TrackID) const;
@@ -179,31 +175,32 @@ private:
 
     void maybeUpdateNeedsVideoLayer();
 
-    StdUnorderedMap<TrackID, RefPtr<VideoTrackPrivate>> m_videoTracks;
-    StdUnorderedMap<TrackID, RefPtr<AudioTrackPrivate>> m_audioTracks;
-    StdUnorderedMap<TrackID, RefPtr<InbandTextTrackPrivate>> m_textTracks;
-    StdUnorderedMap<TrackID, TrackIdentifier> m_trackIdentifiers;
+    RefPtr<AudioVideoRenderer> protectedRenderer() const;
+    void ensureWeakOnDispatcher(Function<void(SourceBufferPrivateAVFObjC&)>&&);
+    void callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&&);
+
+    StdUnorderedMap<TrackID, RefPtr<VideoTrackPrivate>> m_videoTracks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    StdUnorderedMap<TrackID, RefPtr<AudioTrackPrivate>> m_audioTracks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    StdUnorderedMap<TrackID, RefPtr<InbandTextTrackPrivate>> m_textTracks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    StdUnorderedMap<TrackID, TrackIdentifier> m_trackIdentifiers WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
 
     // Detachable MediaSource state records.
     void detach() final;
-    StdUnorderedMap<TrackID, bool> m_trackSelectedValues;
-    bool m_isDetached { false };
+    StdUnorderedMap<TrackID, bool> m_trackSelectedValues WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    bool m_isDetached WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };
 
-    const Ref<SourceBufferParser> m_parser;
-    Vector<Function<void()>> m_pendingTrackChangeTasks;
+    Ref<SourceBufferParser> m_parser WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    Vector<Function<void()>> m_pendingTrackChangeTasks WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     const Ref<WTF::WorkQueue> m_appendQueue;
+    const MediaSourceConfiguration m_configuration;
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<SharedBuffer> m_initData;
-#endif
-
-    std::optional<FloatSize> m_cachedSize;
-    FloatSize m_currentSize;
-    bool m_waitingForKey { true };
-    std::optional<TrackID> m_enabledVideoTrackID;
-    std::optional<TrackID> m_protectedTrackID;
-    Ref<AudioVideoRenderer> m_renderer;
-    bool m_isSelectedForVideo { false };
+    std::optional<FloatSize> m_cachedSize WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    FloatSize m_currentSize WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    std::atomic<bool> m_waitingForKey { true };
+    std::optional<TrackID> m_enabledVideoTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    std::optional<TrackID> m_protectedTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
+    RefPtr<AudioVideoRenderer> m_renderer WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()); // Never null except when detached.
+    bool m_isSelectedForVideo  WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };
     std::atomic<bool> m_needsVideoLayer { false };
 
 #if !RELEASE_LOG_DISABLED

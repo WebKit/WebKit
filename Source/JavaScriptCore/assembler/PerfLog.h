@@ -32,6 +32,7 @@
 
 #include "LinkBuffer.h"
 #include <stdio.h>
+#include <wtf/FileHandle.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>
@@ -50,13 +51,13 @@ private:
     PerfLog();
     static PerfLog& singleton();
 
-    void write(const AbstractLocker&, const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
+    void write(const AbstractLocker&, std::span<const uint8_t>) WTF_REQUIRES_LOCK(m_lock);
+    void write(const AbstractLocker& locker, std::span<const char> span) WTF_REQUIRES_LOCK(m_lock) { write(locker, unsafeMakeSpan(std::bit_cast<const uint8_t*>(span.data()), span.size_bytes())); }
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
-    FILE* m_file { nullptr };
+    WTF::FileSystemImpl::FileHandle m_file { };
     void* m_marker { nullptr };
     uint64_t m_codeIndex { 0 };
-    int m_fd { -1 };
     Lock m_lock;
 };
 

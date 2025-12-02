@@ -516,7 +516,7 @@ void RemoteGraphicsContextProxy::fillEllipse(const FloatRect& rect)
 }
 
 #if ENABLE(VIDEO)
-void RemoteGraphicsContextProxy::drawVideoFrame(VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
+void RemoteGraphicsContextProxy::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
     appendStateChangeItemIfNecessary();
 #if PLATFORM(COCOA)

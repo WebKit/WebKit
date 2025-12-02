@@ -37,3 +37,35 @@ let x = a + b + c;
 ";
 <p>Test</p>
 </script>
+
+<script>
+`A
+B
+C`;
+let a = 1,
+    b = 2,
+    c = 3;
+test`A
+${a}
+B
+${b}
+C
+${c}`;
+a = 1,
+b = 2,
+c = 3;
+`ABC`;
+a = 1,
+b = 2,
+c = 3;
+/*
+* Multi-line comment
+*/
+a = 1,
+b = 2,
+c = 3;
+// Inline comment
+a = 1,
+b = 2,
+c = 3;
+</script>

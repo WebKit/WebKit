@@ -46,6 +46,8 @@ public:
     void scheduleDisplayRefreshCallbacksForAnimation();
     void pauseDisplayRefreshCallbacksForAnimation();
 
+    UIView *viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier) const;
+
 private:
     RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
 

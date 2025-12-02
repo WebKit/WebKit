@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+function runTest() {
+  embed.click();
+}
+function eventhandler() {
+  embed.align = "justify";
+  embed.offsetLeft;
+  testRunner.notifyDone();
+}
+</script>
+<body onload=runTest()>
+  <form onsubmit="eventhandler()">
+    <button>
+      <embed id="embed" src="data:text/html,foo"></embed>
+    </button>
+  </form>
+  Test passes if no crash.
+</body>

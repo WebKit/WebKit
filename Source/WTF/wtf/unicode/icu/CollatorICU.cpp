@@ -90,11 +90,7 @@ static inline const char* resolveDefaultLocale(const char* locale)
         return locale;
     // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
     // So, instead of passing null to ICU, we pass the name of the user's selected locale.
-    static LazyNeverDestroyed<CString> defaultLocale;
-    static std::once_flag initializeDefaultLocaleOnce;
-    std::call_once(initializeDefaultLocaleOnce, []{
-        defaultLocale.construct(copyDefaultLocale());
-    });
+    static NeverDestroyed<CString> defaultLocale = copyDefaultLocale();
     return defaultLocale.get().data();
 }
 

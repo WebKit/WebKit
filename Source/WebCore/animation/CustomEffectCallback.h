@@ -36,6 +36,10 @@ class CustomEffectCallback : public RefCounted<CustomEffectCallback>, public Act
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(double progress) = 0;
     virtual CallbackResult<void> invokeRethrowingException(double progress) = 0;
 

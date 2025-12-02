@@ -16,11 +16,9 @@ Modules/webaudio/AudioBufferSourceNode.cpp
 Modules/webaudio/AudioDestinationNode.cpp
 Modules/webaudio/AudioNode.cpp
 Modules/webaudio/AudioNodeInput.cpp
-Modules/webaudio/AudioNodeOutput.cpp
 Modules/webaudio/AudioParam.cpp
 Modules/webaudio/AudioWorkletGlobalScope.cpp
 Modules/webaudio/AudioWorkletNode.cpp
-Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/ChannelSplitterNode.cpp
 Modules/webaudio/ConstantSourceNode.cpp
 Modules/webaudio/ConvolverNode.cpp
@@ -167,6 +165,7 @@ dom/Position.cpp
 dom/QualifiedNameCache.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
+dom/ScriptExecutionContext.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
@@ -260,7 +259,6 @@ page/DebugPageOverlays.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/FocusController.cpp
-page/FrameConsoleClient.cpp
 page/FrameSnapshotting.cpp
 page/FrameView.cpp
 page/ImageAnalysisQueue.cpp
@@ -395,7 +393,6 @@ rendering/RenderTextControlSingleLine.cpp
 rendering/RenderTheme.cpp
 rendering/RenderTreeAsText.cpp
 rendering/RenderWidget.cpp
-rendering/TextBoxPainter.cpp
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/mathml/MathMLStyle.cpp
 rendering/style/RenderStyle.cpp

@@ -31,8 +31,11 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include <algorithm>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSummingJunction);
 
 AudioSummingJunction::AudioSummingJunction(BaseAudioContext& context)
     : m_context(context, EnableWeakPtrThreadingAssertions::No) // WebAudio code uses locking when accessing the context.
@@ -112,7 +115,7 @@ void AudioSummingJunction::updateRenderingState()
 unsigned AudioSummingJunction::maximumNumberOfChannels() const
 {
     unsigned maxChannels = 0;
-    for (auto* output : m_outputs) {
+    for (CheckedPtr output : m_outputs) {
         // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
         // because the calling of AudioNodeOutput::bus() is not safe here.
         maxChannels = std::max(maxChannels, output->numberOfChannels());

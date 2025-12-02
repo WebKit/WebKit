@@ -222,7 +222,7 @@ void CachedFont::checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnothe
         return;
 
     CachedResourceClientWalker<CachedFontClient> walker(*this);
-    while (CachedFontClient* client = walker.next())
+    while (RefPtr client = walker.next())
         client->fontLoaded(*this);
 }
 

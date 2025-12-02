@@ -1,0 +1,8 @@
+
+RUN(video.showCaptionDisplaySettings({anchorNode: target}))
+EXPECTED (options.anchorBounds.x == '10') OK
+EXPECTED (options.anchorBounds.y == '20') OK
+EXPECTED (options.anchorBounds.width == '30') OK
+EXPECTED (options.anchorBounds.height == '40') OK
+END OF TEST
+

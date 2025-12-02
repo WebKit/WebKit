@@ -400,12 +400,8 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
 
 static ThreadGroup& activeThreads()
 {
-    static LazyNeverDestroyed<RefPtr<ThreadGroup>> activeThreads;
-    static std::once_flag initializeKey;
-    std::call_once(initializeKey, [&] {
-        activeThreads.construct(ThreadGroup::create());
-    });
-    return (*activeThreads.get());
+    static NeverDestroyed<Ref<ThreadGroup>> activeThreads = ThreadGroup::create();
+    return activeThreads.get();
 }
 
 void registerThreadForMachExceptionHandling(Thread& thread)

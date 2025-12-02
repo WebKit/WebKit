@@ -93,6 +93,7 @@ WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=*.internal] = -DSDKDB_HAS_148943382;
 WK_OTHER_AUDIT_SPI_FLAGS_148943382[sdk=iphoneos18*] = ;
 
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+GCC_THREADSAFE_STATICS = YES;
 
 WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wpointer-to-int-cast -Wreorder-init-list -Wundef -Wunused-but-set-variable -Wvla;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS) $(WK_SANITIZER_WARNING_CFLAGS);
@@ -113,6 +114,7 @@ WK_SWIFT_MEMORY_SAFETY_FLAGS_ = -strict-memory-safety -enable-experimental-featu
 // rdar://164903024: Work around strict safety bug by only promoting warnings
 // to errors in certain SDK versions. Merge this -Werror argument into the
 // above build setting once fixed.
+// Keep it turned off on VisionOS until rdar://164555610 and rdar://164559261 are fixed.
 WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.0*] = -Werror StrictMemorySafety $(inherited);
 WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.1*] = -Werror StrictMemorySafety $(inherited);
 WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=macosx26.2*] = -Werror StrictMemorySafety $(inherited);
@@ -121,3 +123,5 @@ WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=iphone*26.1*] = -Werror StrictMemorySafety $(i
 WK_SWIFT_MEMORY_SAFETY_FLAGS_[sdk=iphone*26.2*] = -Werror StrictMemorySafety $(inherited);
 
 OTHER_SWIFT_FLAGS = $(inherited) $(WK_SWIFT_MEMORY_SAFETY_FLAGS);
+
+OTHER_LIBTOOLFLAGS = -no_warning_for_no_symbols;

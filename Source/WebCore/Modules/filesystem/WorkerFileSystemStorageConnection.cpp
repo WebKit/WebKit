@@ -321,7 +321,7 @@ void WorkerFileSystemStorageConnection::unregisterSyncAccessHandle(FileSystemSyn
 
 void WorkerFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier)
 {
-    if (auto handle = m_syncAccessHandles.get(identifier))
+    if (RefPtr handle = m_syncAccessHandles.get(identifier))
         handle->invalidate();
 }
 

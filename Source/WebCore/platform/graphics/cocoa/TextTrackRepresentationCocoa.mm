@@ -43,7 +43,7 @@
 
 
 @interface WebCoreTextTrackRepresentationCocoaHelper : NSObject <CALayerDelegate> {
-    WebCore::TextTrackRepresentationCocoa* _parent;
+    CheckedPtr<WebCore::TextTrackRepresentationCocoa> _parent;
 }
 - (id)initWithParent:(WebCore::TextTrackRepresentationCocoa*)parent;
 @property (assign) WebCore::TextTrackRepresentationCocoa* parent;
@@ -79,7 +79,7 @@
 
 - (WebCore::TextTrackRepresentationCocoa*)parent
 {
-    return _parent;
+    return _parent.get();
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -93,7 +93,7 @@
     });
 #else
     if (_parent && [keyPath isEqual:@"bounds"] && object == _parent->platformLayer())
-        _parent->boundsChanged();
+        CheckedPtr { _parent }->boundsChanged();
 #endif
 }
 
@@ -170,8 +170,8 @@ IntRect TextTrackRepresentationCocoa::bounds() const
 void TextTrackRepresentationCocoa::boundsChanged()
 {
     callOnMainThread([weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->client().textTrackRepresentationBoundsChanged(weakThis->bounds());
+        if (CheckedPtr checkedThis = weakThis.get())
+            checkedThis->client().textTrackRepresentationBoundsChanged(checkedThis->bounds());
     });
 }
 

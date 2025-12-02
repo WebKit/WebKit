@@ -190,12 +190,12 @@ bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
         return true; 
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
-    if (!strokeData->paint.hasSameType(other.strokeData->paint)
-        || strokeData->paint.urlDisregardingType() != other.strokeData->paint.urlDisregardingType()
-        || strokeData->dashArray != other.strokeData->dashArray
-        || strokeData->dashOffset != other.strokeData->dashOffset
-        || !strokeData->visitedLinkPaint.hasSameType(other.strokeData->visitedLinkPaint)
-        || strokeData->visitedLinkPaint.urlDisregardingType() != other.strokeData->visitedLinkPaint.urlDisregardingType())
+    if (!strokeData->stroke.hasSameType(other.strokeData->stroke)
+        || strokeData->stroke.urlDisregardingType() != other.strokeData->stroke.urlDisregardingType()
+        || strokeData->strokeDashArray != other.strokeData->strokeDashArray
+        || strokeData->strokeDashOffset != other.strokeData->strokeDashOffset
+        || !strokeData->visitedLinkStroke.hasSameType(other.strokeData->visitedLinkStroke)
+        || strokeData->visitedLinkStroke.urlDisregardingType() != other.strokeData->visitedLinkStroke.urlDisregardingType())
         return true;
 
     // vector-effect changes require a re-layout.
@@ -209,16 +209,16 @@ bool SVGRenderStyle::changeRequiresRepaint(const SVGRenderStyle& other, bool cur
 {
     if (this == &other) {
         ASSERT(currentColorDiffers);
-        return containsCurrentColor(strokeData->paint)
-            || containsCurrentColor(strokeData->visitedLinkPaint)
+        return containsCurrentColor(strokeData->stroke)
+            || containsCurrentColor(strokeData->visitedLinkStroke)
             || containsCurrentColor(miscData->floodColor)
             || containsCurrentColor(miscData->lightingColor)
-            || containsCurrentColor(fillData->paint); // FIXME: Should this be checking fillData->visitedLinkPaint.color as well?
+            || containsCurrentColor(fillData->fill); // FIXME: Should this be checking fillData->visitedLinkFill as well?
     }
 
-    if (strokeData->opacity != other.strokeData->opacity
-        || colorChangeRequiresRepaint(strokeData->paint.colorDisregardingType(), other.strokeData->paint.colorDisregardingType(), currentColorDiffers)
-        || colorChangeRequiresRepaint(strokeData->visitedLinkPaint.colorDisregardingType(), other.strokeData->visitedLinkPaint.colorDisregardingType(), currentColorDiffers))
+    if (strokeData->strokeOpacity != other.strokeData->strokeOpacity
+        || colorChangeRequiresRepaint(strokeData->stroke.colorDisregardingType(), other.strokeData->stroke.colorDisregardingType(), currentColorDiffers)
+        || colorChangeRequiresRepaint(strokeData->visitedLinkStroke.colorDisregardingType(), other.strokeData->visitedLinkStroke.colorDisregardingType(), currentColorDiffers))
         return true;
 
     // Painting related properties only need repaints. 
@@ -228,10 +228,10 @@ bool SVGRenderStyle::changeRequiresRepaint(const SVGRenderStyle& other, bool cur
         return true;
 
     // If fill data changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (!fillData->paint.hasSameType(other.fillData->paint)
-        || colorChangeRequiresRepaint(fillData->paint.colorDisregardingType(), other.fillData->paint.colorDisregardingType(), currentColorDiffers)
-        || fillData->paint.urlDisregardingType() != other.fillData->paint.urlDisregardingType()
-        || fillData->opacity != other.fillData->opacity)
+    if (!fillData->fill.hasSameType(other.fillData->fill)
+        || colorChangeRequiresRepaint(fillData->fill.colorDisregardingType(), other.fillData->fill.colorDisregardingType(), currentColorDiffers)
+        || fillData->fill.urlDisregardingType() != other.fillData->fill.urlDisregardingType()
+        || fillData->fillOpacity != other.fillData->fillOpacity)
         return true;
 
     // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientStop.
@@ -260,27 +260,27 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
     // FIXME: Consider auto-generating this function from CSSProperties.json.
 
     auto conservativelyCollectChangedAnimatablePropertiesViaFillData = [&](auto& first, auto& second) {
-        if (first.opacity != second.opacity)
+        if (first.fillOpacity != second.fillOpacity)
             changingProperties.m_properties.set(CSSPropertyFillOpacity);
-        if (first.paint != second.paint || first.visitedLinkPaint != second.visitedLinkPaint)
+        if (first.fill != second.fill || first.visitedLinkFill != second.visitedLinkFill)
             changingProperties.m_properties.set(CSSPropertyFill);
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaStrokeData = [&](auto& first, auto& second) {
-        if (first.opacity != second.opacity)
+        if (first.strokeOpacity != second.strokeOpacity)
             changingProperties.m_properties.set(CSSPropertyStrokeOpacity);
-        if (first.dashOffset != second.dashOffset)
+        if (first.strokeDashOffset != second.strokeDashOffset)
             changingProperties.m_properties.set(CSSPropertyStrokeDashoffset);
-        if (first.dashArray != second.dashArray)
+        if (first.strokeDashArray != second.strokeDashArray)
             changingProperties.m_properties.set(CSSPropertyStrokeDasharray);
-        if (first.paint != second.paint || first.visitedLinkPaint != second.visitedLinkPaint)
+        if (first.stroke != second.stroke || first.visitedLinkStroke != second.visitedLinkStroke)
             changingProperties.m_properties.set(CSSPropertyStroke);
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaStopData = [&](auto& first, auto& second) {
-        if (first.opacity != second.opacity)
+        if (first.stopOpacity != second.stopOpacity)
             changingProperties.m_properties.set(CSSPropertyStopOpacity);
-        if (first.color != second.color)
+        if (first.stopColor != second.stopColor)
             changingProperties.m_properties.set(CSSPropertyStopColor);
     };
 

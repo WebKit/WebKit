@@ -1434,6 +1434,8 @@ editing/style/preserve-selection-direction.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.detachedcanvas.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/html/canvas/historical.any.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/historical.any.worker.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/semantics/rellist-feature-detection.html [ Skip ] # Failure
 

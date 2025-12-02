@@ -27,17 +27,11 @@
 #pragma once
 
 #include <WebCore/FontTaggedSettings.h>
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
-
-namespace WebCore {
-class FontLoadRequestClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::FontLoadRequestClient> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -47,13 +41,15 @@ class FontDescription;
 class FontLoadRequest;
 struct FontSelectionSpecifiedCapabilities;
 
-class FontLoadRequestClient : public CanMakeWeakPtr<FontLoadRequestClient> {
+class FontLoadRequestClient : public CanMakeWeakPtr<FontLoadRequestClient>, public CanMakeCheckedPtr<FontLoadRequestClient> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FontLoadRequestClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FontLoadRequestClient);
 public:
     virtual ~FontLoadRequestClient() = default;
     virtual void fontLoaded(FontLoadRequest&) { }
 };
 
-class FontLoadRequest {
+class FontLoadRequest : public AbstractRefCounted {
 public:
     virtual ~FontLoadRequest() = default;
 

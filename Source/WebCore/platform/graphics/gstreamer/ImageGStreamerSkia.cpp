@@ -151,7 +151,8 @@ ImageGStreamer::ImageGStreamer(GRefPtr<GstSample>&& sample)
     // Copy the buffer data. Keeping the whole mapped GstVideoFrame alive would increase memory
     // pressure and the file descriptor(s) associated with the buffer pool open. We only need the
     // data here.
-    SkPixmap pixmap(imageInfo, videoFrame.planeData(0), videoFrame.planeStride(0));
+    auto planeData = videoFrame.planeData(0);
+    SkPixmap pixmap(imageInfo, planeData.data(), videoFrame.planeStride(0));
     m_image = SkImages::RasterFromPixmapCopy(pixmap);
 
     if (auto* cropMeta = gst_buffer_get_video_crop_meta(buffer))

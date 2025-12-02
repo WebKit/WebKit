@@ -36,6 +36,8 @@ DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 
+// FIXME: (rdar://165540771) This file is invalid in a module because MediaPlayer has incorrect extern_c attributes in its dependencies.
+
 #import <MediaPlayer/MPAVRoutingController.h>
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

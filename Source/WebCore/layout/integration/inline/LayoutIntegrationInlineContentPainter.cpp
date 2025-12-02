@@ -29,6 +29,7 @@
 #include "EllipsisBoxPainter.h"
 #include "InlineBoxPainter.h"
 #include "InlineDisplayBoxInlines.h"
+#include "OutlinePainter.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
@@ -86,6 +87,9 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
 
     if (box.isInlineBox()) {
         if (!box.isVisible() || !hasDamage(box))
+            return;
+        // Don't paint inline boxes wrapping block-in-inline.
+        if (m_inlineContent.isInlineBoxWrapperForBlockLevelBox(box))
             return;
 
         auto canSkipInlineBoxPainting = [&]() {
@@ -188,8 +192,9 @@ void InlineContentPainter::paint()
     }
     paintLineEndingEllipsisIfApplicable({ });
 
+    OutlinePainter outlinePainter { m_paintInfo };
     for (auto& renderInline : m_outlineObjects)
-        renderInline.paintOutline(m_paintInfo, m_paintOffset);
+        outlinePainter.paintOutline(renderInline, m_paintOffset);
 }
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const

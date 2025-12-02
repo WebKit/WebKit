@@ -101,11 +101,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)expire
 {
-    if (!_dataSource)
+    RefPtr dataSource = _dataSource.get();
+    if (!dataSource)
         return;
 
 #if HAVE(AVCONTENTKEY_REVOKE)
-    Vector keys = _dataSource->contentKeyGroupDataSourceKeys();
+    Vector keys = dataSource->contentKeyGroupDataSourceKeys();
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys=", keys.size());
 
     // FIXME (117803793): Remove staging code once -[AVContentKey revoke] is available in SDKs used by WebKit builders
@@ -131,17 +132,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (uint64_t)logIdentifier
 {
-    return _dataSource ? _dataSource->contentKeyGroupDataSourceLogIdentifier() : 0;
+    RefPtr dataSource = _dataSource.get();
+    return dataSource ? dataSource->contentKeyGroupDataSourceLogIdentifier() : 0;
 }
 
 - (const Logger*)loggerPtr
 {
-    return _dataSource ? &_dataSource->contentKeyGroupDataSourceLogger() : nullptr;
+    RefPtr dataSource = _dataSource.get();
+    return dataSource ? &dataSource->contentKeyGroupDataSourceLogger() : nullptr;
 }
 
 - (WTFLogChannel*)logChannel
 {
-    return _dataSource ? &_dataSource->contentKeyGroupDataSourceLogChannel() : nullptr;
+    RefPtr dataSource = _dataSource.get();
+    return dataSource ? &dataSource->contentKeyGroupDataSourceLogChannel() : nullptr;
 }
 
 @end

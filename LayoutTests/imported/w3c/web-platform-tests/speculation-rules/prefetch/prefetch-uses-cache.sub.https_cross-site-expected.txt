@@ -1,3 +1,3 @@
 
-FAIL Test that prefetches use/store responses to/from the HTTP cache. assert_equals: expected (string) "" but got (undefined) undefined
+FAIL Test that prefetches use/store responses to/from the HTTP cache. assert_equals: Navigation should have used the prefetch expected "navigational-prefetch" but got ""
 

@@ -509,10 +509,10 @@ ScrollbarButtonPressAction ScrollbarThemeGtk::handleMousePressEvent(Scrollbar&, 
     return ScrollbarButtonPressAction::None;
 }
 
-int ScrollbarThemeGtk::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState expansionState, OverlayScrollbarSizeRelevancy overlayRelevancy)
+int ScrollbarThemeGtk::scrollbarThickness(ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
     if (!m_useSystemAppearance)
-        return ScrollbarThemeAdwaita::scrollbarThickness(scrollbarWidth, expansionState, overlayRelevancy);
+        return ScrollbarThemeAdwaita::scrollbarThickness(scrollbarWidth, overlayRelevancy);
 
     if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
         return 0;

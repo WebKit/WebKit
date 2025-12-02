@@ -39,11 +39,7 @@ NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const c
 {
     NSBundle *bundle;
     if (stringsBundle == NULL) {
-        static LazyNeverDestroyed<RetainPtr<NSBundle>> mainBundle;
-        static std::once_flag flag;
-        std::call_once(flag, [] () {
-            mainBundle.construct([NSBundle mainBundle]);
-        });
+        static NeverDestroyed<RetainPtr<NSBundle>> mainBundle = [NSBundle mainBundle];
         ASSERT(mainBundle.get());
         bundle = mainBundle.get().get();
     } else {

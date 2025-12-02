@@ -39,6 +39,7 @@ struct GridItemRect;
 struct TrackSizingFunctions;
 struct UnsizedTrack;
 
+using BorderBoxPositions = Vector<LayoutUnit>;
 using GridAreas = HashMap<UnplacedGridItem, GridAreaLines>;
 using GridCell = Vector<UnplacedGridItem, 1>;
 using GridItemRects = Vector<GridItemRect>;
@@ -47,5 +48,7 @@ using PlacedGridItems = Vector<PlacedGridItem>;
 using TrackSizes = Vector<LayoutUnit>;
 using TrackSizingFunctionsList = Vector<TrackSizingFunctions>;
 using UnsizedTracks = Vector<UnsizedTrack>;
+using UsedBlockSizes = Vector<LayoutUnit>;
+using UsedInlineSizes = Vector<LayoutUnit>;
 } // namespace Layout
 } // namespace WebCore

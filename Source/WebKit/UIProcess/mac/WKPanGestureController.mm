@@ -31,6 +31,7 @@
 #import "AppKitSPI.h"
 #import "NativeWebWheelEvent.h"
 #import "ScrollingAccelerationCurve.h"
+#import "ViewGestureController.h"
 #import "WKWebView.h"
 #import "WebEventModifier.h"
 #import "WebEventType.h"
@@ -42,6 +43,7 @@
 #import <WebCore/IntPoint.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/Scrollbar.h>
+#import <source_location>
 #import <wtf/CheckedPtr.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RefPtr.h>
@@ -120,11 +122,22 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
     _panGestureRecognizer = adoptNS([[NSPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)]);
     [self configureForScrolling:_panGestureRecognizer.get()];
     [_panGestureRecognizer setDelegate:self];
+    [self enablePanGestureIfNeeded];
 
     CheckedPtr checkedViewImpl = _viewImpl.get();
     [checkedViewImpl->protectedView() addGestureRecognizer:_panGestureRecognizer.get()];
 
     return self;
+}
+
+- (void)enablePanGestureIfNeeded
+{
+    RefPtr page = _page.get();
+    if (!page)
+        return;
+    bool panGestureEnabled = page->protectedPreferences()->useAppKitGestures();
+    WK_PAN_GESTURE_CONTROLLER_RELEASE_LOG(page->identifier().toUInt64(), "%@ setEnabled:%d", _panGestureRecognizer.get(), static_cast<int>(panGestureEnabled));
+    [_panGestureRecognizer setEnabled:panGestureEnabled];
 }
 
 #pragma mark - Gesture Recognition

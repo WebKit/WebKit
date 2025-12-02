@@ -1,4 +1,3 @@
-Modules/Model/Implementation/DDMeshImpl.cpp
 Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
 Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
 Modules/WebGPU/Implementation/WebGPUBufferImpl.cpp
@@ -31,8 +30,6 @@ bindings/js/GarbageCollectionController.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp
 bridge/objc/objc_runtime.h
-crypto/cocoa/CryptoAlgorithmEd25519Cocoa.cpp
-crypto/cocoa/CryptoKeyOKPCocoa.cpp
 css/CSSStyleProperties.h
 css/CSSToLengthConversionData.h
 css/MediaList.h
@@ -83,16 +80,13 @@ platform/graphics/ca/TileController.cpp
 [ iOS ] platform/ios/LegacyTileCache.h
 platform/mediastream/libwebrtc/LibWebRTCDav1dDecoder.cpp
 [ iOS ] platform/text/TextBoundaries.cpp
+rendering/MarkedText.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
-rendering/RenderTableCellInlines.h
 rendering/RenderTextLineBoxes.h
-rendering/TableLayout.h
 rendering/style/StyleCachedImage.cpp
 rendering/svg/SVGRenderingContext.h
 style/StyleExtractorState.h
 style/StyleScope.h
-style/values/will-change/StyleWillChange.cpp
 testing/Internals.cpp
-xml/XSLStyleSheetLibxslt.cpp
 xml/parser/XMLDocumentParserLibxml2.cpp

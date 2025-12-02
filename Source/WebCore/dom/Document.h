@@ -289,6 +289,10 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+class DocumentImmersive;
+#endif
+
 struct ApplicationManifest;
 struct AriaNotifyOptions;
 struct BoundaryPoint;
@@ -382,6 +386,7 @@ class Update;
 enum class PageshowEventPersistence : bool { NotPersisted, Persisted };
 
 enum class EventHandlerRemoval : bool { One, All };
+enum class EventHandlerRemovalReason : bool { RendererDetached, Other };
 using EventTargetSet = WeakHashCountedSet<Node, WeakPtrImplWithEventTargetData>;
 
 struct CachedSetInnerHTML {
@@ -464,6 +469,10 @@ public:
     static Ref<Document> createCloned(ClonedDocumentType, const Settings&, const URL&, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode, Document& contextDocument, SecurityOriginPolicy*, const String& contentType, TextResourceDecoder*);
 
     virtual ~Document();
+
+    // FrameDestructionObserver.
+    void ref() const final { ContainerNode::ref(); }
+    void deref() const final { ContainerNode::deref(); }
 
     // Nodes belonging to this document increase referencingNodeCount -
     // these are enough to keep the document from being destroyed, but
@@ -1472,6 +1481,15 @@ public:
     WEBCORE_EXPORT Ref<const DocumentFullscreen> protectedFullscreen() const;
 #endif
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    DocumentImmersive* immersiveIfExists() { return m_immersive.get(); }
+    const DocumentImmersive* immersiveIfExists() const { return m_immersive.get(); }
+    WEBCORE_EXPORT DocumentImmersive& immersive();
+    WEBCORE_EXPORT const DocumentImmersive& immersive() const;
+    WEBCORE_EXPORT Ref<DocumentImmersive> protectedImmersive();
+    WEBCORE_EXPORT Ref<const DocumentImmersive> protectedImmersive() const;
+#endif
+
 #if ENABLE(POINTER_LOCK)
     WEBCORE_EXPORT void exitPointerLock();
 #endif
@@ -2104,6 +2122,9 @@ private:
     ScriptRunner& ensureScriptRunner();
     ScriptModuleLoader& ensureModuleLoader();
     WEBCORE_EXPORT DocumentFullscreen& ensureFullscreen();
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    WEBCORE_EXPORT DocumentImmersive& ensureImmersive();
+#endif
     inline DocumentFontLoader& fontLoader();
     Ref<DocumentFontLoader> protectedFontLoader();
     DocumentFontLoader& ensureFontLoader();
@@ -2122,7 +2143,7 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final;
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
+    RefPtr<FontLoadRequest> fontLoadRequest(const String&, bool, bool, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient
@@ -2426,6 +2447,10 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     const std::unique_ptr<DocumentFullscreen> m_fullscreen;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    const std::unique_ptr<DocumentImmersive> m_immersive;
 #endif
 
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;

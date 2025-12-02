@@ -378,6 +378,17 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
         findListeners(eventNames().gestureendEvent, EventListenerRegionType::GestureEnd, EventListenerRegionType::NonPassiveGestureEnd);
         findListeners(eventNames().gesturestartEvent, EventListenerRegionType::GestureStart, EventListenerRegionType::NonPassiveGestureStart);
     }
+
+    if (eventTarget.hasInternalTouchEventHandling()) {
+        types.add(EventListenerRegionType::TouchCancel);
+        types.add(EventListenerRegionType::TouchEnd);
+        types.add(EventListenerRegionType::TouchMove);
+        types.add(EventListenerRegionType::TouchStart);
+        types.add(EventListenerRegionType::NonPassiveTouchCancel);
+        types.add(EventListenerRegionType::NonPassiveTouchEnd);
+        types.add(EventListenerRegionType::NonPassiveTouchMove);
+        types.add(EventListenerRegionType::NonPassiveTouchStart);
+    }
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -516,8 +527,8 @@ void Adjuster::adjust(RenderStyle& style) const
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
         if (RefPtr element = m_element) {
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
-            if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
-                style.setTextAlign(TextAlignMode::Start);
+            if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlign::WebKitLeft || style.textAlign() == TextAlign::WebKitCenter || style.textAlign() == TextAlign::WebKitRight))
+                style.setTextAlign(TextAlign::Start);
 
             // Ruby text does not support float or position. This might change with evolution of the specification.
             if (element->hasTagName(rtTag)) {
@@ -560,6 +571,21 @@ void Adjuster::adjust(RenderStyle& style) const
         if (style.display() == DisplayType::TableColumn || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableFooterGroup
             || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup)
             style.setWritingMode(m_parentStyle.writingMode().computedWritingMode());
+
+
+        // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute on other display types.
+        // For now, this gives mostly backwards-compatible behavior.
+        if (style.display() == DisplayType::Grid || style.display() == DisplayType::InlineGrid) {
+            if (style.gridAutoFlow().direction() == GridAutoFlow::Direction::Normal)
+                style.setGridAutoFlowDirection(Style::GridAutoFlow::Direction::Row);
+        } else if (style.display() == DisplayType::GridLanes || style.display() == DisplayType::InlineGridLanes) {
+            if (style.gridAutoFlow().direction() == GridAutoFlow::Direction::Normal) {
+                if (!style.gridTemplateRows().isNone() && style.gridTemplateColumns().isNone())
+                    style.setGridAutoFlowDirection(Style::GridAutoFlow::Direction::Column);
+                else
+                    style.setGridAutoFlowDirection(Style::GridAutoFlow::Direction::Row);
+            }
+        }
 
         if (style.isDisplayDeprecatedFlexibleBox()) {
             // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
@@ -661,7 +687,7 @@ void Adjuster::adjust(RenderStyle& style) const
             if (!isVertical) {
                 style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
                 style.setTextWrapMode(TextWrapMode::NoWrap);
-                style.setTextAlign(TextAlignMode::Start);
+                style.setTextAlign(TextAlign::Start);
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
@@ -1010,8 +1036,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         return;
 
     if (documentQuirks.needsBodyScrollbarWidthNoneDisabledQuirk() && is<HTMLBodyElement>(*m_element)) {
-        if (style.scrollbarWidth().isNone())
-            style.setScrollbarWidth(CSS::Keyword::Auto { });
+        if (style.scrollbarWidth() == ScrollbarWidth::None)
+            style.setScrollbarWidth(ScrollbarWidth::Auto);
     }
 
     if (documentQuirks.needsYouTubeOverflowScrollQuirk()) {

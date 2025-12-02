@@ -36,9 +36,12 @@
 #include "NotImplemented.h"
 #include "ParsedContentType.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMPrivate);
 
 CDMPrivate::CDMPrivate() = default;
 CDMPrivate::~CDMPrivate() = default;
@@ -86,7 +89,7 @@ void CDMPrivate::doSupportedConfigurationStep(CDMKeySystemConfiguration&& candid
         case ConsentStatus::ConsentDenied:
             // ↳ ConsentDenied:
             //    Return ConsentDenied and updated restrictions.
-            weakThis->doSupportedConfigurationStep(WTFMove(configuration), WTFMove(restrictions), access, WTFMove(callback));
+            CheckedRef { *weakThis }->doSupportedConfigurationStep(WTFMove(configuration), WTFMove(restrictions), access, WTFMove(callback));
             return;
 
         case ConsentStatus::InformUser:

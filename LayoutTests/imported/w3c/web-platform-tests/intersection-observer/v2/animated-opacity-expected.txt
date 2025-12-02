@@ -1,0 +1,10 @@
+Hello, world!
+
+Harness Error (FAIL), message = Unhandled rejection: assert_true: expected true got undefined
+
+TIMEOUT IntersectionObserver generates notifications when an opacity animation changes occlusion state. Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_true: expected true got undefined
+
+TIMEOUT IntersectionObserver generates notifications when an opacity animation changes occlusion state. Test timed out
+

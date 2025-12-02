@@ -617,7 +617,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Top]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Top, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_leftEdgeEffect
@@ -631,7 +631,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Left]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Left, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_rightEdgeEffect
@@ -645,7 +645,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Right]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Right, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (WKUIScrollEdgeEffect *)_wk_bottomEdgeEffect
@@ -659,7 +659,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         wrapper = adoptNS([[WKUIScrollEdgeEffect alloc] initWithScrollView:self scrollEdgeEffect:originalEffect.get() boxSide:WebCore::BoxSide::Bottom]);
         _edgeEffectWrappers.setAt(WebCore::BoxSide::Bottom, wrapper);
     }
-    return wrapper.unsafeGet();
+    return wrapper.autorelease();
 }
 
 - (void)_setInternalTopPocketColor:(UIColor *)color

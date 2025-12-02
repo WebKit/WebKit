@@ -812,11 +812,6 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArgument
             totalLength += (sourceLen - lastIndex);
     }
 
-    if (totalLength > StringImpl::MaxLength) [[unlikely]] {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-
     StringView sourceView { source };
     if (sourceView.is8Bit() && replacementsAre8Bit) {
         std::span<Latin1Character> buffer;
@@ -955,11 +950,6 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearch(VM& vm, JSGl
             }
             if (static_cast<unsigned>(lastIndex) < sourceLen)
                 totalLength += (sourceLen - lastIndex);
-        }
-
-        if (totalLength > StringImpl::MaxLength) [[unlikely]] {
-            throwOutOfMemoryError(globalObject, scope);
-            return nullptr;
         }
 
         StringView sourceView { source };

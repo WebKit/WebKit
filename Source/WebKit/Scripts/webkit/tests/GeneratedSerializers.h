@@ -99,6 +99,7 @@ class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
 class AppKitControlSystemImage;
 #endif
 template<typename> class RectEdges;
+class OpaqueTypeObject;
 struct Amazing;
 }
 
@@ -426,6 +427,11 @@ template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::OpaqueTypeObject> {
+    static void encode(Encoder&, const WebCore::OpaqueTypeObject&);
+    static std::optional<WebCore::OpaqueTypeObject> decode(Decoder&);
 };
 
 } // namespace IPC

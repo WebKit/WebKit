@@ -445,7 +445,7 @@ XPCObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryF
 
     __block auto blockBytes = encoder.takeBytes();
     auto buffer = blockBytes.span();
-    auto dispatchData = adoptNS(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
+    auto dispatchData = adoptOSObject(dispatch_data_create(buffer.data(), buffer.size(), mainDispatchQueueSingleton(), ^{
         blockBytes.clear();
     }));
     // FIXME: This is a false positive. <rdar://164843889>

@@ -899,7 +899,7 @@ private:
         case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic: {
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
@@ -1577,7 +1577,7 @@ private:
 
         case NewArrayWithButterfly:
         case NewButterflyWithSize:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case DoubleAsInt32:
         case CheckTypeInfoFlags:
         case Arrayify:

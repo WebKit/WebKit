@@ -3869,9 +3869,7 @@ public:
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
     {
-        std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), [](auto& a, auto& b) {
-            return a.from() < b.from();
-        });
+        std::ranges::sort(m_jumpsToLink, { }, &LinkRecord::from);
         return m_jumpsToLink;
     }
 

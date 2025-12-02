@@ -29,6 +29,10 @@
 #include "RemoteSharedResourceCacheProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(VIDEO)
+#include "RemoteVideoFrameObjectHeapProxy.h"
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCacheProxy);
@@ -41,6 +45,32 @@ Ref<RemoteSharedResourceCacheProxy> RemoteSharedResourceCacheProxy::create()
 RemoteSharedResourceCacheProxy::RemoteSharedResourceCacheProxy() = default;
 
 RemoteSharedResourceCacheProxy::~RemoteSharedResourceCacheProxy() = default;
+
+void RemoteSharedResourceCacheProxy::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
+{
+    UNUSED_PARAM(gpuProcessConnection);
+#if ENABLE(VIDEO)
+    if (RefPtr proxy = m_videoFrameObjectHeapProxy)
+        proxy->gpuProcessConnectionDidBecomeAvailable(gpuProcessConnection);
+#endif
+}
+
+#if ENABLE(VIDEO)
+RemoteVideoFrameObjectHeapProxy& RemoteSharedResourceCacheProxy::videoFrameObjectHeapProxy()
+{
+    if (!m_videoFrameObjectHeapProxy) {
+        lazyInitialize(m_videoFrameObjectHeapProxy, RemoteVideoFrameObjectHeapProxy::create());
+        if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+            m_videoFrameObjectHeapProxy->gpuProcessConnectionDidBecomeAvailable(*gpuProcessConnection);
+    }
+    return *m_videoFrameObjectHeapProxy;
+}
+
+Ref<RemoteVideoFrameObjectHeapProxy> RemoteSharedResourceCacheProxy::protectedVideoFrameObjectHeapProxy()
+{
+    return videoFrameObjectHeapProxy();
+}
+#endif
 
 }
 

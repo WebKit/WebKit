@@ -1,7 +1,0 @@
-XXX XX
-XX
-XX
-
-Harness Error (FAIL), message = Unhandled rejection: TestingUtils.testGridTemplateColumns is not a function. (In 'TestingUtils.testGridTemplateColumns("masonry", trackList, expectedCols)', 'TestingUtils.testGridTemplateColumns' is undefined)
-
-

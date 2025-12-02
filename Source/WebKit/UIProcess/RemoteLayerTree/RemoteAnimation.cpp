@@ -72,6 +72,8 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
         return convertedKeyframes;
     };
 
+    auto resolvedTiming = m_effect->resolvedTimingForTesting(m_timeline->currentTime(), m_timeline->duration());
+
     Ref object = JSON::Object::create();
     object->setValue("composite"_s, WebKit::toJSONForTesting(m_effect->compositeOperation()));
     object->setBoolean("paused"_s, m_effect->paused());
@@ -82,6 +84,8 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
     object->setArray("keyframes"_s, convertKeyframes(keyframes()));
     object->setObject("timing"_s, WebKit::toJSONForTesting(m_effect->timing()));
     object->setObject("timeline"_s, m_timeline->toJSONForTesting());
+    if (auto progress = resolvedTiming.transformedProgress)
+        object->setDouble("progress"_s, *progress);
     return object;
 }
 

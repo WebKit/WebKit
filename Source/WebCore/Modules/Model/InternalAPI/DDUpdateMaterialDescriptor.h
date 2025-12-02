@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include <WebCore/DDMaterialDescriptor.h>
-
 namespace WebCore::DDModel {
 
 struct DDUpdateMaterialDescriptor {
-    DDMaterialGraph materialGraph;
+    Vector<uint8_t> materialGraph;
+    String identifier;
 };
 
 }

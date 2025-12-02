@@ -29,7 +29,7 @@
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface MockCDMFactory {
     attribute sequence<DOMString> supportedDataTypes;
-    attribute sequence<[AtomString] DOMString> supportedRobustness;
+    attribute sequence<DOMString> supportedRobustness;
     attribute sequence<MediaKeySessionType> supportedSessionTypes;
     attribute MediaKeysRequirement distinctiveIdentifiersRequirement;
     attribute MediaKeysRequirement persistentStateRequirement;

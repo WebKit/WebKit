@@ -1,0 +1,9 @@
+
+PASS e.style['grid-lanes-flow'] = "nowrap row nowrap" should not set the property value
+PASS e.style['grid-lanes-flow'] = "column wrap column" should not set the property value
+PASS e.style['grid-lanes-flow'] = "reverse-column column" should not set the property value
+PASS e.style['grid-lanes-flow'] = "reverse-row, row" should not set the property value
+PASS e.style['grid-lanes-flow'] = "normal row-reverse" should not set the property value
+PASS e.style['grid-lanes-flow'] = "reverse column" should not set the property value
+PASS e.style['grid-lanes-flow'] = "auto, auto" should not set the property value
+

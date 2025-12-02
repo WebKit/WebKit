@@ -53,17 +53,17 @@ public:
     void dumpDifferences(TextStream&, const StyleMultiColData&) const;
 #endif
 
-    Style::LineWidth ruleWidth() const;
+    Style::LineWidth columnRuleWidth() const;
 
-    Style::ColumnWidth width { CSS::Keyword::Auto { } };
-    Style::ColumnCount count { CSS::Keyword::Auto { } };
-    BorderValue rule;
+    Style::ColumnWidth columnWidth { CSS::Keyword::Auto { } };
+    Style::ColumnCount columnCount { CSS::Keyword::Auto { } };
+    BorderValue columnRule;
     Style::Color visitedLinkColumnRuleColor;
 
-    PREFERRED_TYPE(ColumnFill) unsigned fill : 1;
+    PREFERRED_TYPE(ColumnFill) unsigned columnFill : 1;
     PREFERRED_TYPE(ColumnSpan) unsigned columnSpan : 1;
-    PREFERRED_TYPE(ColumnAxis) unsigned axis : 2;
-    PREFERRED_TYPE(ColumnProgression) unsigned progression : 2;
+    PREFERRED_TYPE(ColumnAxis) unsigned columnAxis : 2;
+    PREFERRED_TYPE(ColumnProgression) unsigned columnProgression : 2;
 
 private:
     StyleMultiColData();

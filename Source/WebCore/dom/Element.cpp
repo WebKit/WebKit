@@ -1610,8 +1610,11 @@ int Element::clientWidth()
         // Currently, WebKit doesn't have table wrapper box, and we are supposed to
         // retrieve clientWidth/Height from table wrapper box, not table grid box. So
         // when we retrieve clientWidth/Height, it includes table's border size.
-        if (renderer->isRenderTable())
+        if (renderer->isRenderTable()) {
+            if (renderer->style().boxSizing() == BoxSizing::ContentBox)
+                clientWidth += renderer->paddingLeft() + renderer->paddingRight();
             clientWidth += renderer->borderLeft() + renderer->borderRight();
+        }
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble());
     }
     return 0;
@@ -1644,8 +1647,11 @@ int Element::clientHeight()
         // Currently, WebKit doesn't have table wrapper box, and we are supposed to
         // retrieve clientWidth/Height from table wrapper box, not table grid box. So
         // when we retrieve clientWidth/Height, it includes table's border size.
-        if (renderer->isRenderTable())
+        if (renderer->isRenderTable()) {
+            if (renderer->style().boxSizing() == BoxSizing::ContentBox)
+                clientHeight += renderer->paddingTop() + renderer->paddingBottom();
             clientHeight += renderer->borderTop() + renderer->borderBottom();
+        }
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble());
     }
     return 0;
@@ -2360,6 +2366,10 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             updateEffectiveLangStateAndPropagateToDescendants();
         break;
     }
+    case AttributeNames::customelementregistryAttr:
+        if (reason == AttributeModificationReason::Parser && !isDefinedCustomElement())
+            setUsesNullCustomElementRegistry();
+        break;
     default: {
         Ref document = this->document();
         if (isElementReflectionAttribute(document->settings(), name) || isElementsArrayReflectionAttribute(name)) {
@@ -3046,23 +3056,23 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
                 updateNameForDocument(*newHTMLDocument, nullAtom(), nameValue);
         }
 
-        if (parentOfInsertedTree.isInTreeScope() && usesScopedCustomElementRegistryMap()) {
-            if (CustomElementRegistry::registryForElement(*this) == treeScope().customElementRegistry())
-                CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
-        }
-    }
-
-    if (usesNullCustomElementRegistry() && !parentOfInsertedTree.usesNullCustomElementRegistry()) {
-        clearUsesNullCustomElementRegistry();
-        if (parentOfInsertedTree.usesScopedCustomElementRegistryMap()) [[unlikely]] {
-            RefPtr registry = CustomElementRegistry::registryForElement(downcast<Element>(parentOfInsertedTree));
-            ASSERT(registry);
-            CustomElementRegistry::addToScopedCustomElementRegistryMap(*this, *registry);
+        if (parentOfInsertedTree.isInTreeScope()) {
+            if (usesScopedCustomElementRegistryMap()) {
+                if (CustomElementRegistry::registryForElement(*this) == treeScope().customElementRegistry())
+                    CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
+            } else if (!usesNullCustomElementRegistry()) {
+                if (treeScope().customElementRegistry() != document().customElementRegistry()) [[unlikely]] {
+                    // This element was moved into a shadow tree with a scoped custom elemnt registry.
+                    // Keep using the document's non-scoped custom element registry.
+                    if (RefPtr window = document().window())
+                        CustomElementRegistry::addToScopedCustomElementRegistryMap(*this, window->ensureCustomElementRegistry());
+                }
+            }
         }
     }
 
     if (insertionType.connectedToDocument) {
-        if (isCustomElementUpgradeCandidate()) [[unlikely]] {
+        if (isCustomElementUpgradeCandidate() && !usesNullCustomElementRegistry()) [[unlikely]] {
             ASSERT(isConnected());
             CustomElementReactionQueue::tryToUpgradeElement(*this);
         }
@@ -3377,9 +3387,14 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init, std::
         }
         return Exception { ExceptionCode::NotSupportedError };
     }
-    RefPtr registry = init.customElementRegistry;
-    if (registry && !registry->isScoped() && registry != document().customElementRegistry())
-        return Exception { ExceptionCode::NotSupportedError };
+    RefPtr<CustomElementRegistry> registry;
+    if (init.customElementRegistry) {
+        registry = *init.customElementRegistry;
+        if (registry && !registry->isScoped() && registry != document().customElementRegistry())
+            return Exception { ExceptionCode::NotSupportedError };
+        if (!registry)
+            registryKind = CustomElementRegistryKind::Null;
+    }
     auto scopedRegistry = ShadowRootScopedCustomElementRegistry::No;
     if (!registryKind)
         registryKind = !registry && usesNullCustomElementRegistry() ? CustomElementRegistryKind::Null : CustomElementRegistryKind::Window;
@@ -3414,7 +3429,7 @@ ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, S
         clonable == ShadowRootClonable::Yes,
         serializable == ShadowRootSerializable::Yes,
         SlotAssignmentMode::Named,
-        nullptr,
+        std::nullopt,
         referenceTarget,
     }, registryKind);
     if (exceptionOrShadowRoot.hasException())

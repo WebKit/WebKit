@@ -35,6 +35,9 @@ namespace JSC {
     macro(month, Month) \
     macro(day, Day)
 
+#define JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month)
 
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
@@ -62,6 +65,7 @@ enum class TemporalUnit : uint8_t {
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainYearMonthUnits = 0 JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainMonthDayUnits = 0 JSC_TEMPORAL_PLAIN_MONTH_DAY_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
@@ -142,6 +146,11 @@ enum class AddOrSubtract : bool {
     Subtract
 };
 
+struct ParsedMonthCode {
+    uint8_t monthNumber;
+    bool isLeapMonth;
+};
+
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
@@ -163,7 +172,6 @@ Int128 roundNumberToIncrementInt128(Int128, Int128, RoundingMode);
 Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
 double applyUnsignedRoundingMode(double, double, double, UnsignedRoundingMode);
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
-
 
 constexpr Int128 lengthInNanoseconds(TemporalUnit unit)
 {
@@ -227,6 +235,17 @@ enum class TemporalDisambiguation : uint8_t {
     Earlier,
     Later,
     Reject,
+};
+
+enum class TemporalDateFormat : uint8_t {
+    Date,
+    YearMonth,
+    MonthDay
+};
+
+enum class TemporalAnyProperties : bool {
+    None,
+    Some,
 };
 
 } // namespace JSC

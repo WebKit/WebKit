@@ -62,15 +62,16 @@ bool defaultMediaSourceEnabled()
 
 static bool isAsyncTextInputFeatureFlagEnabled()
 {
-    static bool enabled = false;
 #if USE(BROWSERENGINEKIT)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
+    static bool enabled = [] {
         if (PAL::deviceClassIsSmallScreen())
-            enabled = os_feature_enabled(UIKit, async_text_input_iphone) || os_feature_enabled(UIKit, async_text_input);
-        else if (PAL::deviceHasIPadCapability())
-            enabled = os_feature_enabled(UIKit, async_text_input_ipad);
-    });
+            return os_feature_enabled(UIKit, async_text_input_iphone) || os_feature_enabled(UIKit, async_text_input);
+        if (PAL::deviceHasIPadCapability())
+            return os_feature_enabled(UIKit, async_text_input_ipad);
+        return false;
+    }();
+#else
+    static bool enabled = false;
 #endif
     return enabled;
 }

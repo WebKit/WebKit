@@ -85,6 +85,7 @@ public:
     static Ref<CSSValue> extractTranslate(ExtractorState&);
     static Ref<CSSValue> extractScale(ExtractorState&);
     static Ref<CSSValue> extractRotate(ExtractorState&);
+    static Ref<CSSValue> extractGridAutoFlow(ExtractorState&);
     static Ref<CSSValue> extractGridTemplateColumns(ExtractorState&);
     static Ref<CSSValue> extractGridTemplateRows(ExtractorState&);
     static Ref<CSSValue> extractAnimationDuration(ExtractorState&);
@@ -92,6 +93,8 @@ public:
     static Ref<CSSValue> extractOrphans(ExtractorState&);
     static Ref<CSSValue> extractWebkitTextCombine(ExtractorState&);
     static Ref<CSSValue> extractWebkitRubyPosition(ExtractorState&);
+    static Ref<CSSValue> extractWebkitMaskComposite(ExtractorState&);
+    static Ref<CSSValue> extractWebkitMaskSourceType(ExtractorState&);
 
     // MARK: Shorthands
 
@@ -177,6 +180,7 @@ public:
     static void extractTranslateSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractScaleSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractRotateSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractGridAutoFlowSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractGridTemplateColumnsSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractGridTemplateRowsSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractAnimationDurationSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -184,6 +188,8 @@ public:
     static void extractOrphansSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitTextCombineSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWebkitRubyPositionSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractWebkitMaskCompositeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractWebkitMaskSourceTypeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
 
     static void extractAnimationShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractAnimationRangeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -826,6 +832,43 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyMinWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         return MinimumSizeSharedAdaptor<CSSPropertyMinWidth> { }.computedValue(state, state.style.minWidth(), std::forward<F>(functor));
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyGridAutoFlow> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute.
+        // For now, this gives the most backwards-compatible behavior.
+        auto gridFlow = state.style.gridAutoFlow();
+        switch (gridFlow.direction()) {
+        case GridAutoFlow::Direction::Column:
+            switch (gridFlow.packing()) {
+            case GridAutoFlow::Packing::Dense:
+                return functor(SpaceSeparatedTuple { CSS::Keyword::Column { }, CSS::Keyword::Dense { } });
+            case GridAutoFlow::Packing::Sparse:
+                return functor(CSS::Keyword::Column { });
+            }
+        case GridAutoFlow::Direction::Row:
+            switch (gridFlow.packing()) {
+            case GridAutoFlow::Packing::Dense:
+                if (!state.style.gridTemplateRows().isNone() && state.style.gridTemplateColumns().isNone()
+                    && (state.style.display() == DisplayType::GridLanes || state.style.display() == DisplayType::InlineGridLanes))
+                    return functor(SpaceSeparatedTuple { CSS::Keyword::Row { }, CSS::Keyword::Dense { } });
+                return functor(CSS::Keyword::Dense { });
+            case GridAutoFlow::Packing::Sparse:
+                return functor(CSS::Keyword::Row { });
+            }
+        default:
+            ASSERT(state.style.display() != DisplayType::GridLanes && state.style.display() != DisplayType::InlineGridLanes
+                && state.style.display() != DisplayType::Grid && state.style.display() != DisplayType::InlineGrid);
+            switch (gridFlow.packing()) {
+            case GridAutoFlow::Packing::Dense:
+                return functor(CSS::Keyword::Dense { });
+            case GridAutoFlow::Packing::Sparse:
+                return functor(CSS::Keyword::Normal { });
+            }
+        }
     }
 };
 
@@ -2025,6 +2068,16 @@ inline void ExtractorCustom::extractMinWidthSerialization(ExtractorState& state,
     extractSerialization<CSSPropertyMinWidth>(state, builder, context);
 }
 
+inline Ref<CSSValue> ExtractorCustom::extractGridAutoFlow(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyGridAutoFlow>(state);
+}
+
+inline void ExtractorCustom::extractGridAutoFlowSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyGridAutoFlow>(state, builder, context);
+}
+
 inline Ref<CSSValue> ExtractorCustom::extractCounterIncrement(ExtractorState& state)
 {
     return extractCounterValue<CSSPropertyCounterIncrement>(state);
@@ -2251,6 +2304,38 @@ inline Ref<CSSValue> ExtractorCustom::extractWebkitRubyPosition(ExtractorState& 
 inline void ExtractorCustom::extractWebkitRubyPositionSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyWebkitRubyPosition>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractWebkitMaskComposite(ExtractorState& extractorState)
+{
+    auto mapper = [](auto&, const auto& value, const std::optional<MaskLayers::value_type>&, const auto&) -> Ref<CSSValue> {
+        return CSSPrimitiveValue::create(toCSSValueIDForWebkitMaskComposite(value));
+    };
+    return extractCoordinatedValueListValue<CSSPropertyID::CSSPropertyMaskComposite>(extractorState, extractorState.style.maskLayers(), mapper);
+}
+
+inline void ExtractorCustom::extractWebkitMaskCompositeSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    auto mapper = [](auto&, auto& builder, const auto&, const auto& value, const std::optional<MaskLayers::value_type>&, const auto&) {
+        builder.append(nameLiteralForSerialization(toCSSValueIDForWebkitMaskComposite(value)));
+    };
+    extractCoordinatedValueListSerialization<CSSPropertyID::CSSPropertyMaskComposite>(extractorState, builder, context, extractorState.style.maskLayers(), mapper);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractWebkitMaskSourceType(ExtractorState& extractorState)
+{
+    auto mapper = [](auto&, const auto& value, const std::optional<MaskLayers::value_type>&, const auto&) -> Ref<CSSValue> {
+        return CSSPrimitiveValue::create(toCSSValueIDForWebkitMaskSourceType(value));
+    };
+    return extractCoordinatedValueListValue<CSSPropertyID::CSSPropertyMaskMode>(extractorState, extractorState.style.maskLayers(), mapper);
+}
+
+inline void ExtractorCustom::extractWebkitMaskSourceTypeSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    auto mapper = [](auto&, auto& builder, const auto&, const auto& value, const std::optional<MaskLayers::value_type>&, const auto&) {
+        builder.append(nameLiteralForSerialization(toCSSValueIDForWebkitMaskSourceType(value)));
+    };
+    extractCoordinatedValueListSerialization<CSSPropertyID::CSSPropertyMaskMode>(extractorState, builder, context, extractorState.style.maskLayers(), mapper);
 }
 
 // MARK: - Shorthands

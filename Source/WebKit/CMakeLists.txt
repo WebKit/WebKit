@@ -279,6 +279,8 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/NetworkRTCProvider
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
+    NetworkProcess/webrtc/rice/RiceBackend
+
     NetworkProcess/webtransport/NetworkTransportSession
 
     Shared/AuxiliaryProcess
@@ -384,6 +386,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager
     WebProcess/Network/webrtc/WebRTCMonitor
     WebProcess/Network/webrtc/WebRTCResolver
+
+    WebProcess/Network/webrtc/rice/RiceBackendProxy
 
     WebProcess/Network/NetworkProcessConnection
     WebProcess/Network/WebResourceLoader
@@ -780,6 +784,11 @@ if (USE_LIBWEBRTC)
         "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
         "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
     list(APPEND WebKit_LIBRARIES webrtc)
+endif ()
+
+if (USE_GSTREAMER_WEBRTC AND USE_LIBRICE)
+    list(APPEND WebKit_LIBRARIES Rice::Io)
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES "${WEBKIT_DIR}/NetworkProcess/webrtc/rice")
 endif ()
 
 if (ATOMICS_REQUIRE_LIBATOMIC)

@@ -39,8 +39,10 @@ class EventTargetConcrete final : public RefCounted<EventTargetConcrete>, public
 public:
     static Ref<EventTargetConcrete> create(ScriptExecutionContext&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
 private:
     explicit EventTargetConcrete(ScriptExecutionContext&);

@@ -145,6 +145,11 @@ static bool shouldUseBackForwardCache(const std::string& pathOrURL)
     return pathContains(pathOrURL, "navigation-api/");
 }
 
+static bool shouldEnableBlocksInInline(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "web-platform.test:8800/");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -174,6 +179,10 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolTestRunnerFeatures.insert({ "enhancedSecurityEnabled", true });
     if (shouldUseBackForwardCache(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "UsesBackForwardCache", true });
+    // FIXME: Temporary. Enable WPT tests first as they don't use render tree dumps and so don't need rebaselining.
+    // https://bugs.webkit.org/show_bug.cgi?id=303236
+    if (shouldEnableBlocksInInline(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "BlocksInInlineLayoutEnabled", true });
 
     return features;
 }

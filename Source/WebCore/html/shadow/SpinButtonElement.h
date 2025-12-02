@@ -76,6 +76,10 @@ public:
     bool willRespondToMouseMoveEvents() const override;
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
 
+    // PopupOpeningObserver.
+    void ref() const final { HTMLDivElement::ref(); }
+    void deref() const final { HTMLDivElement::deref(); }
+
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);
 

@@ -194,7 +194,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
             usedHorizontalMargin = { horizontalSpaceForMargin / 2, horizontalSpaceForMargin / 2 };
         }
 
-        auto shouldApplyCenterAlignForBlockContent = containingBlockStyle.textAlign() == TextAlignMode::WebKitCenter && (computedHorizontalMargin.start || computedHorizontalMargin.end);
+        auto shouldApplyCenterAlignForBlockContent = containingBlockStyle.textAlign() == Style::TextAlign::WebKitCenter && (computedHorizontalMargin.start || computedHorizontalMargin.end);
         if (shouldApplyCenterAlignForBlockContent) {
             auto borderBoxWidth = (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
             auto marginStart = computedHorizontalMargin.start.value_or(0);

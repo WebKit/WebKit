@@ -49,6 +49,7 @@ enum WKDebugOverlayRegionFlags {
     kWKWheelEventHandlerRegion = 1 << 1,
     kWKTouchActionRegion = 1 << 2,
     kWKEditableElementRegion = 1 << 3,
+    kWKTouchEventRegion = 1 << 7,
 };
 typedef unsigned WKDebugOverlayRegions;
 

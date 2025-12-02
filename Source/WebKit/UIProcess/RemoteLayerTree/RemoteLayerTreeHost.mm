@@ -170,7 +170,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
     if (!rootNode)
         REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID() ? transaction.rootLayerID()->object().toUInt64() : 0);
 
-    if (m_rootNode.get() != rootNode.get() && transaction.isMainFrameProcessTransaction()) {
+    if (m_rootNode.get() != rootNode.get() && mainFrameData) {
         m_rootNode = rootNode;
         rootLayerChanged = true;
     }

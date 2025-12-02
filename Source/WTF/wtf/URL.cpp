@@ -979,22 +979,14 @@ bool protocolIsInHTTPFamily(StringView url)
 static StaticStringImpl aboutBlankString { "about:blank" };
 const URL& aboutBlankURL()
 {
-    static LazyNeverDestroyed<URL> staticBlankURL;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        staticBlankURL.construct(&aboutBlankString);
-    });
+    static NeverDestroyed<URL> staticBlankURL { &aboutBlankString };
     return staticBlankURL;
 }
 
 static StaticStringImpl aboutSrcDocString { "about:srcdoc" };
 const URL& aboutSrcDocURL()
 {
-    static LazyNeverDestroyed<URL> staticSrcDocURL;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        staticSrcDocURL.construct(&aboutSrcDocString);
-    });
+    static NeverDestroyed<URL> staticSrcDocURL { &aboutSrcDocString };
     return staticSrcDocURL;
 }
 

@@ -39,11 +39,7 @@ namespace WebKit {
 
 LaunchLogHook& LaunchLogHook::singleton()
 {
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<LaunchLogHook> logHook;
-    std::call_once(onceKey, [] {
-        logHook.construct();
-    });
+    static NeverDestroyed<LaunchLogHook> logHook;
     return logHook.get();
 }
 

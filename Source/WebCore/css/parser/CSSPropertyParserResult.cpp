@@ -34,6 +34,11 @@
 namespace WebCore {
 namespace CSS {
 
+void PropertyParserResult::addProperty(CSSProperty&& property)
+{
+    parsedProperties.append(WTFMove(property));
+}
+
 void PropertyParserResult::addProperty([[maybe_unused]] CSS::PropertyParserState& state, CSSPropertyID property, CSSPropertyID currentShorthand, RefPtr<CSSValue>&& value, IsImportant important, IsImplicit implicit)
 {
     int shorthandIndex = 0;
@@ -53,10 +58,10 @@ void PropertyParserResult::addProperty([[maybe_unused]] CSS::PropertyParserState
     ASSERT(isExposed(property, &state.context.propertySettings) || setFromShorthand || isInternal(property));
 
     if (value && !value->isImplicitInitialValue())
-        parsedProperties.append(CSSProperty(property, value.releaseNonNull(), important, setFromShorthand, shorthandIndex, implicit));
+        addProperty(CSSProperty(property, value.releaseNonNull(), important, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
-        parsedProperties.append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, IsImplicit::Yes));
+        addProperty(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, IsImplicit::Yes));
     }
 }
 

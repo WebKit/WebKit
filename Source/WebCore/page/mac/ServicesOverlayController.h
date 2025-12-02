@@ -52,8 +52,9 @@ public:
     explicit ServicesOverlayController(Page&);
     ~ServicesOverlayController();
 
-    void ref() const;
-    void deref() const;
+    // DataDetectorHighlightClient.
+    void ref() const final;
+    void deref() const final;
 
     void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);

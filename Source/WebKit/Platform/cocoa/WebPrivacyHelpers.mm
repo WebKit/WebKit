@@ -742,7 +742,7 @@ bool isKnownTrackerAddressOrDomain(StringView host)
     TrackerAddressLookupInfo::populateIfNeeded();
     TrackerDomainLookupInfo::populateIfNeeded();
 
-    if (auto address = URL::hostIsIPAddress(host) ? IPAddress::fromString(host.toStringWithoutCopying()) : std::nullopt) {
+    if (auto address = URL::hostIsIPAddress(host) ? WebCore::IPAddress::fromString(host.toStringWithoutCopying()) : std::nullopt) {
         if (TrackerAddressLookupInfo::find(*address))
             return true;
     }
@@ -751,7 +751,7 @@ bool isKnownTrackerAddressOrDomain(StringView host)
     return TrackerDomainLookupInfo::find(domain.string()).owner().length();
 }
 
-IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const ResourceRequest& request)
+WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest& request)
 {
     return request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()) ? WebCore::IsKnownCrossSiteTracker::Yes : WebCore::IsKnownCrossSiteTracker::No;
 }

@@ -374,11 +374,11 @@ static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTr
     return static_cast<LibWebRTCRtpTransceiverBackend&>(*transceiver.backend());
 }
 
-RTCRtpTransceiver* LibWebRTCPeerConnectionBackend::existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
+RefPtr<RTCRtpTransceiver> LibWebRTCPeerConnectionBackend::existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
 {
     for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
         if (matchingFunction(backendFromRTPTransceiver(*transceiver)))
-            return transceiver.get();
+            return transceiver;
     }
     return nullptr;
 }

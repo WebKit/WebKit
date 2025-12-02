@@ -57,8 +57,9 @@ class RemoteVideoFrameProxy;
 
 class RemoteVideoFrameObjectHeapProxyProcessor : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>, public GPUProcessConnection::Client {
 public:
-    static Ref<RemoteVideoFrameObjectHeapProxyProcessor> create(GPUProcessConnection&);
+    static Ref<RemoteVideoFrameObjectHeapProxyProcessor> create();
     ~RemoteVideoFrameObjectHeapProxyProcessor();
+    void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
@@ -71,8 +72,8 @@ public:
     void deref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::deref(); }
 
 private:
-    explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);
-    void initialize();
+    explicit RemoteVideoFrameObjectHeapProxyProcessor();
+    RefPtr<IPC::Connection> connection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

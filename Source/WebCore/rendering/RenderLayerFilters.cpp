@@ -49,8 +49,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerFilters);
 
+Ref<RenderLayerFilters> RenderLayerFilters::create(RenderLayer& layer)
+{
+    return adoptRef(*new RenderLayerFilters(layer));
+}
+
 RenderLayerFilters::RenderLayerFilters(RenderLayer& layer)
-    : m_layer(layer)
+    : m_layer(&layer)
 {
 }
 
@@ -76,11 +81,15 @@ bool RenderLayerFilters::hasSourceImage() const
 
 void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
+    CheckedPtr layer = m_layer;
+    if (!layer)
+        return;
+
     // FIXME: This really shouldn't have to invalidate layer composition,
     // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.
-    if (auto* enclosingElement = m_layer->enclosingElement())
+    if (auto* enclosingElement = layer->enclosingElement())
         enclosingElement->invalidateStyleAndLayerComposition();
-    m_layer->renderer().repaint();
+    layer->renderer().repaint();
 }
 
 void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filter)
@@ -100,13 +109,16 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
             m_externalSVGReferences.append(cachedSVGDocument);
         } else {
             // Reference is internal; add layer as a client so we can trigger filter repaint on SVG attribute change.
-            RefPtr filterElement = m_layer->renderer().document().getElementById(referenceOperation->fragment());
+            CheckedPtr layer = m_layer;
+            if (!layer)
+                continue;
+            RefPtr filterElement = layer->renderer().document().getElementById(referenceOperation->fragment());
             if (!filterElement)
                 continue;
             CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());
             if (!renderer)
                 continue;
-            renderer->addClientRenderLayer(m_layer);
+            renderer->addClientRenderLayer(*layer);
             m_internalSVGReferences.append(WTFMove(filterElement));
         }
     }
@@ -119,9 +131,11 @@ void RenderLayerFilters::removeReferenceFilterClients()
 
     m_externalSVGReferences.clear();
 
-    for (auto& filterElement : m_internalSVGReferences) {
-        if (CheckedPtr renderer = filterElement->renderer())
-            downcast<LegacyRenderSVGResourceContainer>(*renderer).removeClientRenderLayer(m_layer);
+    if (CheckedPtr layer = m_layer) {
+        for (auto& filterElement : m_internalSVGReferences) {
+            if (CheckedPtr renderer = filterElement->renderer())
+                downcast<LegacyRenderSVGResourceContainer>(*renderer).removeClientRenderLayer(*layer);
+        }
     }
     m_internalSVGReferences.clear();
 }

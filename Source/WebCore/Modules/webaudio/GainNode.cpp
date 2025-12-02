@@ -69,12 +69,14 @@ void GainNode::process(size_t framesToProcess)
     // happen in the summing junction input of the AudioNode we're connected to.
     // Then we can avoid all of the following:
 
-    AudioBus& outputBus = output(0)->bus();
+    CheckedPtr firstOutput = output(0);
+    AudioBus& outputBus = firstOutput->bus();
 
-    if (!isInitialized() || !input(0)->isConnected())
+    CheckedPtr firstInput = input(0);
+    if (!isInitialized() || !firstInput->isConnected())
         outputBus.zero();
     else {
-        AudioBus& inputBus = input(0)->bus();
+        AudioBus& inputBus = firstInput->bus();
 
         if (gain().hasSampleAccurateValues() && gain().automationRate() == AutomationRate::ARate) {
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
@@ -126,7 +128,7 @@ void GainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 
     if (!isInitialized()) {
         // This will propagate the channel count to any nodes connected further downstream in the graph.
-        output(0)->setNumberOfChannels(numberOfChannels);
+        checkedOutput(0)->setNumberOfChannels(numberOfChannels);
         initialize();
     }
 

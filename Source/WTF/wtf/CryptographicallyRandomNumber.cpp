@@ -149,14 +149,7 @@ void ARC4RandomNumberGenerator::randomValues(std::span<uint8_t> buffer)
 
 ARC4RandomNumberGenerator& sharedRandomNumberGenerator()
 {
-    static LazyNeverDestroyed<ARC4RandomNumberGenerator> randomNumberGenerator;
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
-            randomNumberGenerator.construct();
-        });
-
+    static NeverDestroyed<ARC4RandomNumberGenerator> randomNumberGenerator;
     return randomNumberGenerator;
 }
 

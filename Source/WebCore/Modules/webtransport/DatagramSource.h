@@ -26,26 +26,47 @@
 #pragma once
 
 #include "ReadableStreamSource.h"
+#include <wtf/AbstractRefCounted.h>
+
+namespace JSC {
+class JSGlobalObject;
+class JSValue;
+}
 
 namespace WebCore {
 
 class WebTransport;
 class Exception;
 
-class DatagramSource : public RefCountedReadableStreamSource {
+class DatagramSource : public AbstractRefCounted {
 public:
-    static Ref<DatagramSource> create() { return adoptRef(*new DatagramSource()); }
-    ~DatagramSource();
-    void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&);
+    DatagramSource() = default;
+    virtual ~DatagramSource() = default;
+    virtual void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) = 0;
+    virtual void error(JSC::JSGlobalObject&, JSC::JSValue) = 0;
+};
+
+class DatagramDefaultSource final : public DatagramSource, public RefCountedReadableStreamSource {
+public:
+    static Ref<DatagramDefaultSource> create() { return adoptRef(*new DatagramDefaultSource()); }
+    ~DatagramDefaultSource();
+
+    void ref() const final { return RefCountedReadableStreamSource::ref(); }
+    void deref() const final { return RefCountedReadableStreamSource::deref(); }
 
 private:
-    DatagramSource();
+    DatagramDefaultSource();
+
+    void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
+    void error(JSC::JSGlobalObject&, JSC::JSValue) final;
 
     void setActive() final { }
     void setInactive() final { }
     void doStart() final { }
     void doPull() final { }
-    void doCancel() final;
+    void doCancel(JSC::JSValue) final { doCancel(); }
+
+    void doCancel();
 
     bool m_isCancelled { false };
     bool m_isClosed { false };

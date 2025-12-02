@@ -57,7 +57,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
         }
 
         auto lineRect = lineInput.initialLogicalRect;
-        auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), { }, lineRect.width(), { }, inlineBoxRuns, true);
+        auto contentLeft = InlineFormattingUtils::horizontalAlignmentOffset(rootStyle(), { }, lineRect.width(), { }, true);
         return LineLayoutResult { lineInput.needsLayoutRange
             , WTFMove(inlineBoxRuns)
             , { }

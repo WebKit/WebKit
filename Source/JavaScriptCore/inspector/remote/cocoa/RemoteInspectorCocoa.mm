@@ -344,7 +344,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
         return;
     }
 
-    Ref relayConnection = adoptRef(*new RemoteInspectorXPCConnection(connection.get(), m_xpcQueue.get(), this));
+    Ref relayConnection = RemoteInspectorXPCConnection::create(connection.get(), m_xpcQueue.get(), this);
     m_relayConnection = relayConnection.copyRef();
     relayConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
 

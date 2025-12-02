@@ -120,7 +120,7 @@ template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struc
 template<typename T> struct CSSValueConversion<SpaceSeparatedEnumSet<T>> {
     SpaceSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
             return SpaceSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<T>(state, element);
             });
@@ -133,8 +133,34 @@ template<typename T> struct CSSValueConversion<SpaceSeparatedEnumSet<T>> {
 template<typename T> struct CSSValueConversion<CommaSeparatedEnumSet<T>> {
     CommaSeparatedEnumSet<T> operator()(BuilderState& state, const CSSValue& value)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
             return CommaSeparatedEnumSet<T>::map(*list, [&](const CSSValue& element) {
+                return toStyleFromCSSValue<T>(state, element);
+            });
+        }
+        return { toStyleFromCSSValue<T>(state, value) };
+    }
+};
+
+// Specialization for `SpaceSeparatedListHashSet`.
+template<typename T> struct CSSValueConversion<SpaceSeparatedListHashSet<T>> {
+    SpaceSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value)
+    {
+        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+            return SpaceSeparatedListHashSet<T>::map(*list, [&](const CSSValue& element) {
+                return toStyleFromCSSValue<T>(state, element);
+            });
+        }
+        return { toStyleFromCSSValue<T>(state, value) };
+    }
+};
+
+// Specialization for `CommaSeparatedListHashSet`.
+template<typename T> struct CSSValueConversion<CommaSeparatedListHashSet<T>> {
+    CommaSeparatedListHashSet<T> operator()(BuilderState& state, const CSSValue& value)
+    {
+        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+            return CommaSeparatedListHashSet<T>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<T>(state, element);
             });
         }
@@ -146,7 +172,7 @@ template<typename T> struct CSSValueConversion<CommaSeparatedEnumSet<T>> {
 template<typename StyleType> struct CSSValueConversion<SpaceSeparatedFixedVector<StyleType>> {
     SpaceSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::SpaceSeparator) {
             return SpaceSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<StyleType>(state, element);
             });
@@ -159,7 +185,7 @@ template<typename StyleType> struct CSSValueConversion<SpaceSeparatedFixedVector
 template<typename StyleType> struct CSSValueConversion<CommaSeparatedFixedVector<StyleType>> {
     CommaSeparatedFixedVector<StyleType> operator()(BuilderState& state, const CSSValue& value)
     {
-        if (auto list = dynamicDowncast<CSSValueList>(value)) {
+        if (auto list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
             return CommaSeparatedFixedVector<StyleType>::map(*list, [&](const CSSValue& element) {
                 return toStyleFromCSSValue<StyleType>(state, element);
             });

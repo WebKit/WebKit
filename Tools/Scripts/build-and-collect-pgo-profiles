@@ -75,7 +75,7 @@ else
     echo "Using .app: $APP"
 fi
 
-benchmarks=(jetstream2 speedometer3 motionmark)
+benchmarks=(jetstream3 speedometer3 motionmark)
 
 if [[ -n $APP ]] ; then
    run_benchmark_args=(--browser-path "$APP")

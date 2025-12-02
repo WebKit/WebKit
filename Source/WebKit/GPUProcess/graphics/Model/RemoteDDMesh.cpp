@@ -36,7 +36,6 @@
 #include <WebCore/DDMaterialDescriptor.h>
 #include <WebCore/DDMesh.h>
 #include <WebCore/DDMeshDescriptor.h>
-#include <WebCore/DDTextureDescriptor.h>
 #include <WebCore/DDUpdateMaterialDescriptor.h>
 #include <WebCore/DDUpdateMeshDescriptor.h>
 #include <WebCore/DDUpdateTextureDescriptor.h>
@@ -84,11 +83,6 @@ void RemoteDDMesh::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void RemoteDDMesh::addMesh(const WebCore::DDModel::DDMeshDescriptor& descriptor)
-{
-    m_backing->addMesh(descriptor);
-}
-
 void RemoteDDMesh::update(const WebCore::DDModel::DDUpdateMeshDescriptor& descriptor)
 {
     m_backing->update(descriptor);
@@ -99,19 +93,9 @@ void RemoteDDMesh::render()
     m_backing->render();
 }
 
-void RemoteDDMesh::addTexture(const WebCore::DDModel::DDTextureDescriptor& descriptor)
-{
-    m_backing->addTexture(descriptor);
-}
-
 void RemoteDDMesh::updateTexture(const WebCore::DDModel::DDUpdateTextureDescriptor& descriptor)
 {
     m_backing->updateTexture(descriptor);
-}
-
-void RemoteDDMesh::addMaterial(const WebCore::DDModel::DDMaterialDescriptor& descriptor)
-{
-    m_backing->addMaterial(descriptor);
 }
 
 void RemoteDDMesh::updateMaterial(const WebCore::DDModel::DDUpdateMaterialDescriptor& descriptor)

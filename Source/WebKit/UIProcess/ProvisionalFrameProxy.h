@@ -37,11 +37,12 @@ class FrameProcess;
 class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
+enum class CommitTiming : bool;
 
 class ProvisionalFrameProxy : public RefCountedAndCanMakeWeakPtr<ProvisionalFrameProxy> {
     WTF_MAKE_TZONE_ALLOCATED(ProvisionalFrameProxy);
 public:
-    explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&);
+    explicit ProvisionalFrameProxy(WebFrameProxy&, Ref<FrameProcess>&&, CommitTiming);
 
     ~ProvisionalFrameProxy();
 

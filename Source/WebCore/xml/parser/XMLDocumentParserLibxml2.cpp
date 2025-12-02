@@ -751,7 +751,7 @@ struct _xmlSAX2Namespace {
 };
 typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 
-static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlNamespaces, int numNamespaces)
+static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlNamespaces, int numNamespaces, bool& shouldUseNullCustomElementRegistry)
 {
     auto namespaces = unsafeMakeSpan(reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces), numNamespaces);
     for (auto& xmlNamespace : namespaces) {
@@ -764,7 +764,11 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         if (result.hasException())
             return false;
 
-        prefixedAttributes.append(Attribute(result.releaseReturnValue(), namespaceURI));
+        QualifiedName attributeName = result.releaseReturnValue();
+        if (attributeName == HTMLNames::customelementregistryAttr)
+            shouldUseNullCustomElementRegistry = true;
+
+        prefixedAttributes.append(Attribute(attributeName, namespaceURI));
     }
     return true;
 }
@@ -778,7 +782,7 @@ struct _xmlSAX2Attributes {
 };
 typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 
-static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlAttributes, int numAttributes)
+static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlAttributes, int numAttributes, bool& shouldUseNullCustomElementRegistry)
 {
     auto attributes = unsafeMakeSpan(reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes), numAttributes);
     for (auto& attribute : attributes) {
@@ -792,7 +796,11 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
         if (result.hasException())
             return false;
 
-        prefixedAttributes.append(Attribute(result.releaseReturnValue(), attrValue));
+        QualifiedName attributeName = result.releaseReturnValue();
+        if (attributeName == HTMLNames::customelementregistryAttr)
+            shouldUseNullCustomElementRegistry = true;
+
+        prefixedAttributes.append(Attribute(attributeName, attrValue));
     }
     return true;
 }
@@ -844,17 +852,20 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         customElementReactionStack.emplace(m_currentNode->document().globalObject());
     }
 
-    auto newElement = m_currentNode->document().createElement(qName, true,
-        CustomElementRegistry::registryForNodeOrTreeScope(*m_currentNode, m_currentNode->treeScope()));
-
     Vector<Attribute> prefixedAttributes;
-    if (!handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, numNamespaces)) {
+    bool shouldUseNullCustomElementRegistry = false;
+    bool handledAttributes = handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, numNamespaces, shouldUseNullCustomElementRegistry);
+    bool success = handledAttributes ? handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes, shouldUseNullCustomElementRegistry) : false;
+
+    RefPtr registry = shouldUseNullCustomElementRegistry ? nullptr : CustomElementRegistry::registryForNodeOrTreeScope(*m_currentNode, m_currentNode->treeScope());
+    auto newElement = m_currentNode->document().createElement(qName, true, registry.get());
+
+    if (!handledAttributes) {
         setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
         stopParsing();
         return;
     }
 
-    bool success = handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes);
     setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
     if (!success) {
         stopParsing();

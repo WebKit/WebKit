@@ -577,13 +577,13 @@ private:
 
         void sort()
         {
-            std::sort(regConst.begin(), regConst.end(), [] (const RegConst& a, const RegConst& b) {
+            std::ranges::sort(regConst, [](const auto& a, const auto& b) {
                 return a < b;
             });
-            std::sort(slotConst.begin(), slotConst.end(), [] (const SlotConst& a, const SlotConst& b) {
+            std::ranges::sort(slotConst, [](const auto& a, const auto& b) {
                 return a < b;
             });
-            std::sort(regSlot.begin(), regSlot.end(), [] (const RegSlot& a, const RegSlot& b) {
+            std::ranges::sort(regSlot, [](const auto& a, const auto& b) {
                 return a < b;
             });
 #if ASSERT_ENABLED

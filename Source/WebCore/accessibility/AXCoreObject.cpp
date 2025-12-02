@@ -360,9 +360,64 @@ AXCoreObject* AXCoreObject::firstUnignoredChild()
 
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
+static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(AXCoreObject::AccessibilityChildrenVector&& children)
+{
+    children.removeAllMatching([] (const auto& child) {
+        if (!child->hasStitchableRole())
+            return false;
+
+        std::optional stitchedIntoID = child->stitchedIntoID();
+        return stitchedIntoID && *stitchedIntoID != child->objectID();
+    });
+
+    return children;
+}
+
+
+#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+static AXCoreObject::AccessibilityChildrenVector childrenAfterStitching(const AXCoreObject::AccessibilityChildrenVector& children)
+{
+    auto childrenCopy = children;
+    return childrenAfterStitching(WTFMove(childrenCopy));
+}
+#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::stitchedUnignoredChildren()
+{
+    return childrenAfterStitching(unignoredChildren());
+}
+
+AXCoreObject* AXCoreObject::blockFlowAncestor() const
+{
+    return Accessibility::findAncestor(*this, /* includeSelf */ false, [] (const auto& ancestor) {
+        return ancestor.isBlockFlow();
+    });
+}
+
+AXCoreObject::StitchState AXCoreObject::stitchStateFromGroups(const Vector<Vector<AXID>>* groups, IncludeStitchGroup includeStitchGroup) const
+{
+    if (!groups)
+        return { };
+
+    AXID thisAXID = objectID();
+    for (const auto& group : *groups) {
+        if (group.contains(thisAXID)) {
+            if (includeStitchGroup == IncludeStitchGroup::No) {
+                // If the caller doesn't need the group we belong to, don't bother doing the copy.
+                return { group[0], { } };
+            }
+
+            // Stitching zero or one elements doesn't make sense, so ensure our group is two or larger.
+            ASSERT(group.size() >= 2);
+            return { group[0], group };
+        }
+    }
+    return { };
+}
+
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameUnignoredChildren()
 {
-    AXCoreObject::AccessibilityChildrenVector result = unignoredChildren(/* updateChildrenIfNeeded */ true);
+    AXCoreObject::AccessibilityChildrenVector result = stitchedUnignoredChildren();
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     if (result.isEmpty()) {
@@ -608,7 +663,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
     if (isScrollView()) {
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;
-        for (const auto& child : unignoredChildren()) {
+        for (const auto& child : stitchedUnignoredChildren()) {
             if (!child->isScrollbar())
                 nonScrollbarChildren.append(child);
         }

@@ -70,12 +70,12 @@ WTF::String FrameInfo::title() const
 
 const WebKit::WebPageProxy* FrameInfo::page() const
 {
-    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).unsafeGet();
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID);
 }
 
 WebKit::WebPageProxy* FrameInfo::page()
 {
-    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).unsafeGet();
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID);
 }
 
 } // namespace API

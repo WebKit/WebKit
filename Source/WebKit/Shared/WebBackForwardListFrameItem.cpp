@@ -119,20 +119,20 @@ void WebBackForwardListFrameItem::setChild(Ref<FrameState>&& frameState)
     m_children.append(WTFMove(childItem));
 }
 
-WebBackForwardListFrameItem& WebBackForwardListFrameItem::rootFrame()
+Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::rootFrame()
 {
     Ref rootFrame = *this;
     while (rootFrame->m_parent && rootFrame->m_parent->identifier().processIdentifier() == identifier().processIdentifier())
         rootFrame = *rootFrame->m_parent;
-    return rootFrame.unsafeGet();
+    return rootFrame;
 }
 
-WebBackForwardListFrameItem& WebBackForwardListFrameItem::mainFrame()
+Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::mainFrame()
 {
     Ref mainFrame = *this;
     while (mainFrame->m_parent)
         mainFrame = *mainFrame->m_parent;
-    return mainFrame.unsafeGet();
+    return mainFrame;
 }
 
 Ref<WebBackForwardListFrameItem> WebBackForwardListFrameItem::protectedMainFrame()
@@ -175,7 +175,6 @@ bool WebBackForwardListFrameItem::sharesAncestor(WebBackForwardListFrameItem& fr
     return false;
 }
 
-#if !LOG_DISABLED
 String WebBackForwardListFrameItem::loggingString()
 {
     return loggingStringAtIndent(1);
@@ -197,11 +196,13 @@ String WebBackForwardListFrameItem::loggingStringAtIndent(size_t indent)
         builder.append('\n');
     }
 
-    for (size_t i = 0; i < m_children.size(); ++i)
-        builder.append(makeString(indentString, String::number(i), " - "_s, m_children[i]->loggingStringAtIndent(indent + 1)));
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        Ref child = m_children[i];
+        auto childString = child->loggingStringAtIndent(indent + 1);
+        builder.append(makeString(indentString, String::number(i), " - "_s, childString));
+    }
 
     return builder.toString();
 }
-#endif // !LOG_DISABLED
 
 } // namespace WebKit

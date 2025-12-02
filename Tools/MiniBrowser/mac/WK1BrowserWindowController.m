@@ -148,6 +148,10 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SEL action = [menuItem action];
 
+    if (action == @selector(cloneSiteIsolatedWindow:))
+        return NO;
+    if (action == @selector(cloneNonIsolatedWindow:))
+        return NO;
     if (action == @selector(saveAsPDF:))
         return NO;
     if (action == @selector(saveAsImage:))

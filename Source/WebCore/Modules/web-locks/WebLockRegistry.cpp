@@ -99,7 +99,7 @@ LocalWebLockRegistry::~LocalWebLockRegistry() = default;
 
 auto LocalWebLockRegistry::ensureRegistryForOrigin(PAL::SessionID sessionID, const ClientOrigin& clientOrigin) -> Ref<PerOriginRegistry>
 {
-    if (auto existingRegistry = m_perOriginRegistries.get({ sessionID, clientOrigin }))
+    if (RefPtr existingRegistry = m_perOriginRegistries.get({ sessionID, clientOrigin }))
         return *existingRegistry;
 
     return PerOriginRegistry::create(*this, sessionID, clientOrigin);
@@ -107,7 +107,7 @@ auto LocalWebLockRegistry::ensureRegistryForOrigin(PAL::SessionID sessionID, con
 
 auto LocalWebLockRegistry::existingRegistryForOrigin(PAL::SessionID sessionID, const ClientOrigin& clientOrigin) const -> RefPtr<PerOriginRegistry>
 {
-    return m_perOriginRegistries.get({ sessionID, clientOrigin }).get();
+    return m_perOriginRegistries.get({ sessionID, clientOrigin });
 }
 
 Ref<LocalWebLockRegistry::PerOriginRegistry> LocalWebLockRegistry::PerOriginRegistry::create(LocalWebLockRegistry& globalRegistry, PAL::SessionID sessionID, const ClientOrigin& clientOrigin)

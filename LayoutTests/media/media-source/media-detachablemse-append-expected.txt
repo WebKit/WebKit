@@ -30,7 +30,7 @@ EXPECTED (video.duration > 0 == 'true') OK
 EVENT(loadedmetadata)
 EVENT(loadeddata)
 EXPECTED (video.buffered.length == '1') OK
-EXPECTED (video.readyState == '4') OK
+EXPECTED (video.readyState >= readyState == 'true') OK
 EXPECTED (video.videoTracks.length >= 1 == 'true') OK
 EXPECTED (video.audioTracks.length >= 1 == 'true') OK
 RUN(video.play())

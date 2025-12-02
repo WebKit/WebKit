@@ -32,7 +32,7 @@
 ]
 messages -> RemoteCDMInstanceSessionProxy {
     SetLogIdentifier(uint64_t logIdentifier)
-    RequestLicense(enum:uint8_t WebCore::CDMSessionType type, enum:bool WebCore::CDMKeyGroupingStrategy keyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded)
+    RequestLicense(enum:uint8_t WebCore::CDMSessionType type, enum:bool WebCore::CDMKeyGroupingStrategy keyGroupingStrategy, String initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded)
     UpdateLicense(String sessionId, enum:uint8_t WebCore::CDMSessionType type, RefPtr<WebCore::SharedBuffer> response) -> (bool sessionWasClosed, std::optional<Vector<std::pair<Ref<WebCore::SharedBuffer>, WebCore::CDMKeyStatus>>> changedKeys, std::optional<double> changedExpiration, std::optional<std::pair<WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>>> message, bool succeeded)
     LoadSession(enum:uint8_t WebCore::CDMSessionType type, String sessionId, String origin) -> (std::optional<Vector<std::pair<Ref<WebCore::SharedBuffer>, WebCore::CDMKeyStatus>>> changedKeys, std::optional<double> changedExpiration, std::optional<std::pair<WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>>> message, bool succeeded, enum:uint8_t WebCore::CDMInstanceSessionLoadFailure loadFailure)
     CloseSession(String sessionId) -> ()

@@ -53,47 +53,31 @@ public:
     void dumpDifferences(TextStream&, const StyleBoxData&) const;
 #endif
 
-    const Style::PreferredSize& width() const { return m_width; }
-    const Style::PreferredSize& height() const { return m_height; }
+    Style::PreferredSize width;
+    Style::PreferredSize height;
 
-    const Style::MinimumSize& minWidth() const { return m_minWidth; }
-    const Style::MinimumSize& minHeight() const { return m_minHeight; }
+    Style::MinimumSize minWidth;
+    Style::MaximumSize maxWidth;
 
-    const Style::MaximumSize& maxWidth() const { return m_maxWidth; }
-    const Style::MaximumSize& maxHeight() const { return m_maxHeight; }
-    
-    const Style::VerticalAlign& verticalAlign() const { return m_verticalAlign; }
+    Style::MinimumSize minHeight;
+    Style::MaximumSize maxHeight;
 
-    Style::ZIndex specifiedZIndex() const { return { static_cast<bool>(m_hasAutoSpecifiedZIndex), m_specifiedZIndexValue }; }
-    Style::ZIndex usedZIndex() const { return { static_cast<bool>(m_hasAutoUsedZIndex), m_usedZIndexValue }; }
+    Style::VerticalAlign verticalAlign;
 
-    BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
-    BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
+    PREFERRED_TYPE(bool) uint8_t hasAutoSpecifiedZIndex : 1;
+    PREFERRED_TYPE(bool) uint8_t hasAutoUsedZIndex : 1;
+    PREFERRED_TYPE(BoxSizing) uint8_t boxSizing : 1;
+    PREFERRED_TYPE(BoxDecorationBreak) uint8_t boxDecorationBreak : 1;
+
+    Style::ZIndex::Value specifiedZIndexValue;
+    Style::ZIndex::Value usedZIndexValue;
+
+    Style::ZIndex specifiedZIndex() const { return { static_cast<bool>(hasAutoSpecifiedZIndex), specifiedZIndexValue }; }
+    Style::ZIndex usedZIndex() const { return { static_cast<bool>(hasAutoUsedZIndex), usedZIndexValue }; }
 
 private:
-    friend class RenderStyle;
-
     StyleBoxData();
     StyleBoxData(const StyleBoxData&);
-
-    Style::PreferredSize m_width;
-    Style::PreferredSize m_height;
-
-    Style::MinimumSize m_minWidth;
-    Style::MaximumSize m_maxWidth;
-
-    Style::MinimumSize m_minHeight;
-    Style::MaximumSize m_maxHeight;
-
-    Style::VerticalAlign m_verticalAlign;
-
-    PREFERRED_TYPE(bool) uint8_t m_hasAutoSpecifiedZIndex : 1;
-    PREFERRED_TYPE(bool) uint8_t m_hasAutoUsedZIndex : 1;
-    PREFERRED_TYPE(BoxSizing) uint8_t m_boxSizing : 1;
-    PREFERRED_TYPE(BoxDecorationBreak) uint8_t m_boxDecorationBreak : 1;
-
-    Style::ZIndex::Value m_specifiedZIndexValue;
-    Style::ZIndex::Value m_usedZIndexValue;
 };
 
 } // namespace WebCore

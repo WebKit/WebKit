@@ -1659,7 +1659,7 @@ public:
 
     JSType queriedType()
     {
-        static_assert(std::is_same<uint8_t, std::underlying_type<JSType>::type>::value, "Ensure that uint8_t is the underlying type for JSType.");
+        static_assert(std::same_as<uint8_t, std::underlying_type_t<JSType>>);
         return static_cast<JSType>(m_opInfo.as<uint32_t>());
     }
 
@@ -2257,7 +2257,7 @@ public:
         case GetByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -2295,7 +2295,7 @@ public:
         case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
             return 3;
         case AtomicsAdd:
@@ -2651,7 +2651,7 @@ public:
         case InByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
         case EnumeratorPutByVal:
         case GetByVal:
@@ -2753,7 +2753,7 @@ public:
         case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
         case PutByValDirect:
         case PutByValWithThis:
@@ -2782,7 +2782,7 @@ public:
         case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
-        case PutByValAlias:
+        case PutByValDirectResolved:
         case PutByValMegamorphic:
         case PutByValDirect:
         case EnumeratorPutByVal:
@@ -2995,7 +2995,7 @@ public:
     
     bool isBinaryUseKind(UseKind left, UseKind right)
     {
-        return child1().useKind() == left && child2().useKind() == right;
+        return !hasVarArgs() && child1() && child1().useKind() == left && child2() && child2().useKind() == right;
     }
     
     bool isBinaryUseKind(UseKind useKind)
@@ -3922,23 +3922,27 @@ private:
             u.int64 = std::bit_cast<uint64_t>(newArrayBufferData);
             return *this;
         }
-        template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_pointer<T>::value && !std::is_const<typename std::remove_pointer<T>::type>::value, T>::type
+        template<typename T>
+            requires (std::is_pointer_v<T> && !std::is_const_v<std::remove_pointer_t<T>>)
+        ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.pointer);
         }
-        template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<std::is_pointer<T>::value && std::is_const<typename std::remove_pointer<T>::type>::value, T>::type
+        template<typename T>
+            requires (std::is_pointer_v<T> && std::is_const_v<std::remove_pointer_t<T>>)
+        ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.constPointer);
         }
-        template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) <= 4, T>::type
+        template<typename T>
+            requires ((std::integral<T> || std::is_enum_v<T>) && sizeof(T) <= 4)
+        ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.int32);
         }
-        template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) == 8, T>::type
+        template<typename T>
+            requires ((std::integral<T> || std::is_enum_v<T>) && sizeof(T) == 8)
+        ALWAYS_INLINE T as() const
         {
             return static_cast<T>(u.int64);
         }
@@ -4011,7 +4015,7 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = nullptr)
         typename T::const_iterator iter = nodeMap.begin();
         iter != nodeMap.end(); ++iter)
         keys.append(iter->key);
-    std::sort(keys.begin(), keys.end(), NodeComparator());
+    std::ranges::sort(keys, NodeComparator());
     StringPrintStream out;
     CommaPrinter comma;
     for(unsigned i = 0; i < keys.size(); ++i)
@@ -4022,9 +4026,8 @@ CString nodeMapDump(const T& nodeMap, DumpContext* context = nullptr)
 template<typename T>
 CString nodeValuePairListDump(const T& nodeValuePairList, DumpContext* context = nullptr)
 {
-    using V = typename T::ValueType;
     T sortedList = nodeValuePairList;
-    std::sort(sortedList.begin(), sortedList.end(), [](const V& a, const V& b) {
+    std::ranges::sort(sortedList, [](const auto& a, const auto& b) {
         return NodeComparator()(a.node, b.node);
     });
 

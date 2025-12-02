@@ -831,13 +831,13 @@ class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
         super().__init__(*args, timeout=2 * 60 * 60, **kwargs)
 
     def run(self):
+        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
         filter_command = ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs test262'
         self.command = self.shell_command(filter_command)
 
         self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
         self.addLogObserver('stdio', self.log_observer)
         self.failedTestCount = 0
-        self.appendCustomBuildFlags(self.getProperty('platform'), self.getProperty('fullPlatform'))
 
         steps_to_add = [
             GenerateS3URL(

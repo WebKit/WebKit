@@ -4320,6 +4320,513 @@ void testSub32ArgImm()
     }
 }
 
+template<typename SrcT, typename DstT, typename Scenario, typename CompileFunctor>
+void testLoadExtend_Address_RegisterID(const Scenario* scenarios, size_t numberOfScenarios, CompileFunctor compileFunctor)
+{
+    const int32_t offsets[] = {
+        std::numeric_limits<int>::max(),
+        0x10000000,
+        0x1000000,
+        0x100000,
+        0x10000,
+        0x1000,
+        0x100,
+        0x10,
+        0x8,
+        0,
+        -0x8,
+        -0x10,
+        -0x100,
+        -0x1000,
+        -0x10000,
+        -0x100000,
+        -0x1000000,
+        -0x10000000,
+        std::numeric_limits<int>::min()
+    };
+
+    for (size_t j = 0; j < ARRAY_SIZE(offsets); ++j) {
+        auto offset = offsets[j];
+        offset = (offset / sizeof(SrcT)) * sizeof(SrcT); // Make sure the offset is aligned.
+
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            compileFunctor(jit, offset);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        for (size_t i = 0; i < numberOfScenarios; ++i) {
+            DstT result;
+            SrcT* baseAddress = std::bit_cast<SrcT*>(std::bit_cast<const uint8_t*>(&scenarios[i].src) - offset);
+            invoke<void>(test, &result, baseAddress);
+            CHECK_EQ(result, scenarios[i].expected);
+        }
+    }
+}
+
+template<typename SrcT, typename DstT, typename Scenario, typename CompileFunctor>
+void testLoadExtend_BaseIndex_RegisterID(const Scenario* scenarios, size_t numberOfScenarios, CompileFunctor compileFunctor)
+{
+    const int32_t offsets[] = {
+        std::numeric_limits<int>::max(),
+        0x10000000,
+        0x1000000,
+        0x100000,
+        0x10000,
+        0x1000,
+        0x100,
+        0x10,
+        0x8,
+        0,
+        -0x8,
+        -0x10,
+        -0x100,
+        -0x1000,
+        -0x10000,
+        -0x100000,
+        -0x1000000,
+        -0x10000000,
+        std::numeric_limits<int>::min()
+    };
+
+    const int32_t indexes[] = {
+        std::numeric_limits<int>::max(),
+        0x100,
+        0x8,
+        0x2,
+        0,
+        -0x2,
+        -0x8,
+        -0x100,
+        std::numeric_limits<int>::min()
+    };
+
+    for (size_t k = 0; k < ARRAY_SIZE(offsets); ++k) {
+        int32_t offset = offsets[k];
+        offset = (offset / sizeof(SrcT)) * sizeof(SrcT); // Make sure the offset is aligned.
+
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            compileFunctor(jit, offset);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        for (size_t j = 0; j < ARRAY_SIZE(indexes); ++j) {
+            auto index = indexes[j];
+
+            for (size_t i = 0; i < numberOfScenarios; ++i) {
+                DstT result;
+                SrcT* baseAddress = std::bit_cast<SrcT*>(std::bit_cast<const uint8_t*>(&scenarios[i].src) - (index * sizeof(SrcT)) - offset);
+                invoke<void>(test, &result, baseAddress, static_cast<intptr_t>(index));
+                CHECK_EQ(result, scenarios[i].expected);
+            }
+        }
+    }
+}
+
+template<typename T, typename Scenario, typename CompileFunctor>
+void testLoadExtend_voidp_RegisterID(const Scenario* scenarios, size_t numberOfScenarios, CompileFunctor compileFunctor)
+{
+    for (size_t i = 0; i < numberOfScenarios; ++i) {
+        auto test = compile([&] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+            compileFunctor(jit, &scenarios[i].src);
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        T result;
+        invoke<void>(test, &result);
+        CHECK_EQ(result, scenarios[i].expected);
+    }
+}
+
+struct SignedLoad8to32Scenario {
+    int8_t src;
+    int32_t expected;
+};
+
+const SignedLoad8to32Scenario signedLoad8to32Scenarios[] = {
+    { 0x7f, 0x7fll },
+    { 42, 42 },
+    { 1, 1 },
+    { 0, 0 },
+    { -1, -1 },
+    { -42, -42 },
+    { static_cast<int8_t>(0x81), static_cast<int32_t>(0xffffff81ll) },
+    { static_cast<int8_t>(0x80), static_cast<int32_t>(0xffffff80ll) },
+};
+
+struct SignedLoad16to32Scenario {
+    int16_t src;
+    int32_t expected;
+};
+
+const SignedLoad16to32Scenario signedLoad16to32Scenarios[] = {
+    { 0x7fff, 0x7fffll },
+    { 42, 42 },
+    { 1, 1 },
+    { 0, 0 },
+    { -1, -1 },
+    { -42, -42 },
+    { static_cast<int16_t>(0x8001), static_cast<int32_t>(0xffff8001ll) },
+    { static_cast<int16_t>(0x8000), static_cast<int32_t>(0xffff8000ll) },
+};
+
+// void loadAcq8SignedExtendTo32(Address address, RegisterID dest)
+void testLoadAcq8SignedExtendTo32_Address_RegisterID()
+{
+#if CPU(ARM64) || CPU(ARM)
+    testLoadExtend_Address_RegisterID<int8_t, int32_t>(signedLoad8to32Scenarios, ARRAY_SIZE(signedLoad8to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.loadAcq8SignedExtendTo32(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+#endif
+}
+
+// void load8SignedExtendTo32(Address address, RegisterID dest)
+void testLoad8SignedExtendTo32_Address_RegisterID()
+{
+    testLoadExtend_Address_RegisterID<int8_t, int32_t>(signedLoad8to32Scenarios, ARRAY_SIZE(signedLoad8to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.load8SignedExtendTo32(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
+void testLoad8SignedExtendTo32_BaseIndex_RegisterID()
+{
+    testLoadExtend_BaseIndex_RegisterID<int8_t, int32_t>(signedLoad8to32Scenarios, ARRAY_SIZE(signedLoad8to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg baseAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg indexGPR = GPRInfo::argumentGPR2;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR3;
+
+            jit.load8SignedExtendTo32(CCallHelpers::BaseIndex(baseAddressGPR, indexGPR, CCallHelpers::Scale::TimesOne, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load8SignedExtendTo32(const void* address, RegisterID dest)
+void testLoad8SignedExtendTo32_voidp_RegisterID()
+{
+#if CPU(ARM64) || CPU(RISCV64)
+    testLoadExtend_voidp_RegisterID<int32_t>(signedLoad8to32Scenarios, ARRAY_SIZE(signedLoad8to32Scenarios),
+        [] (CCallHelpers& jit, const void* src) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR1;
+
+            jit.load8SignedExtendTo32(src, resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR, 0));
+        });
+#endif
+}
+
+// void loadAcq16SignedExtendTo32(Address address, RegisterID dest)
+void testLoadAcq16SignedExtendTo32_Address_RegisterID()
+{
+#if CPU(ARM64) || CPU(ARM)
+    testLoadExtend_Address_RegisterID<int16_t, int32_t>(signedLoad16to32Scenarios, ARRAY_SIZE(signedLoad16to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.loadAcq16SignedExtendTo32(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+#endif
+}
+
+// void load16SignedExtendTo32(Address address, RegisterID dest)
+void testLoad16SignedExtendTo32_Address_RegisterID()
+{
+    testLoadExtend_Address_RegisterID<int16_t, int32_t>(signedLoad16to32Scenarios, ARRAY_SIZE(signedLoad16to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.load16SignedExtendTo32(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
+void testLoad16SignedExtendTo32_BaseIndex_RegisterID()
+{
+    testLoadExtend_BaseIndex_RegisterID<int16_t, int32_t>(signedLoad16to32Scenarios, ARRAY_SIZE(signedLoad16to32Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg baseAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg indexGPR = GPRInfo::argumentGPR2;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR3;
+
+            jit.load16SignedExtendTo32(CCallHelpers::BaseIndex(baseAddressGPR, indexGPR, CCallHelpers::Scale::TimesTwo, offset), resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load16SignedExtendTo32(const void* address, RegisterID dest)
+void testLoad16SignedExtendTo32_voidp_RegisterID()
+{
+#if CPU(ARM64) || CPU(RISCV64)
+    testLoadExtend_voidp_RegisterID<int32_t>(signedLoad16to32Scenarios, ARRAY_SIZE(signedLoad16to32Scenarios),
+        [] (CCallHelpers& jit, const void* src) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR1;
+
+            jit.load16SignedExtendTo32(src, resultGPR);
+            jit.store32(resultGPR, CCallHelpers::Address(resultAddressGPR, 0));
+        });
+#endif
+}
+
+#if CPU(ADDRESS64)
+
+struct SignedLoad8to64Scenario {
+    int8_t src;
+    int64_t expected;
+};
+
+const SignedLoad8to64Scenario signedLoad8to64Scenarios[] = {
+    { 0x7f, 0x7fll },
+    { 42, 42 },
+    { 1, 1 },
+    { 0, 0 },
+    { -1, -1 },
+    { -42, -42 },
+    { static_cast<int8_t>(0x81), static_cast<int64_t>(0xffffffffffffff81ll) },
+    { static_cast<int8_t>(0x80), static_cast<int64_t>(0xffffffffffffff80ll) },
+};
+
+struct SignedLoad16to64Scenario {
+    int16_t src;
+    int64_t expected;
+};
+
+const SignedLoad16to64Scenario signedLoad16to64Scenarios[] = {
+    { 0x7fff, 0x7fffll },
+    { 42, 42 },
+    { 1, 1 },
+    { 0, 0 },
+    { -1, -1 },
+    { -42, -42 },
+    { static_cast<int16_t>(0x8001), static_cast<int64_t>(0xffffffffffff8001ll) },
+    { static_cast<int16_t>(0x8000), static_cast<int64_t>(0xffffffffffff8000ll) },
+};
+
+struct SignedLoad32to64Scenario {
+    int32_t src;
+    int64_t expected;
+};
+
+const SignedLoad32to64Scenario signedLoad32to64Scenarios[] = {
+    { 0x7fffffff, 0x7fffffffll },
+    { 42, 42 },
+    { 1, 1 },
+    { 0, 0 },
+    { -1, -1 },
+    { -42, -42 },
+    { static_cast<int32_t>(0x80000001), static_cast<int64_t>(0xffffffff80000001ll) },
+    { static_cast<int32_t>(0x80000000), static_cast<int64_t>(0xffffffff80000000ll) },
+};
+
+// void loadAcq8SignedExtendTo64(Address address, RegisterID dest)
+void testLoadAcq8SignedExtendTo64_Address_RegisterID()
+{
+#if CPU(ARM64)
+    testLoadExtend_Address_RegisterID<int8_t, int64_t>(signedLoad8to64Scenarios, ARRAY_SIZE(signedLoad8to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.loadAcq8SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+#endif
+}
+
+// void load8SignedExtendTo64(Address address, RegisterID dest)
+void testLoad8SignedExtendTo64_Address_RegisterID()
+{
+    testLoadExtend_Address_RegisterID<int8_t, int64_t>(signedLoad8to64Scenarios, ARRAY_SIZE(signedLoad8to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.load8SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load8SignedExtendTo64(BaseIndex address, RegisterID dest)
+void testLoad8SignedExtendTo64_BaseIndex_RegisterID()
+{
+    testLoadExtend_BaseIndex_RegisterID<int8_t, int64_t>(signedLoad8to64Scenarios, ARRAY_SIZE(signedLoad8to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg baseAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg indexGPR = GPRInfo::argumentGPR2;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR3;
+
+            jit.load8SignedExtendTo64(CCallHelpers::BaseIndex(baseAddressGPR, indexGPR, CCallHelpers::Scale::TimesOne, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load8SignedExtendTo64(const void* address, RegisterID dest)
+void testLoad8SignedExtendTo64_voidp_RegisterID()
+{
+#if !CPU(X86_64)
+    testLoadExtend_voidp_RegisterID<int64_t>(signedLoad8to64Scenarios, ARRAY_SIZE(signedLoad8to64Scenarios),
+        [] (CCallHelpers& jit, const void* src) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR1;
+
+            jit.load8SignedExtendTo64(src, resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR, 0));
+        });
+#endif
+}
+
+// void loadAcq16SignedExtendTo64(Address address, RegisterID dest)
+void testLoadAcq16SignedExtendTo64_Address_RegisterID()
+{
+#if CPU(ARM64)
+    testLoadExtend_Address_RegisterID<int16_t, int64_t>(signedLoad16to64Scenarios, ARRAY_SIZE(signedLoad16to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.loadAcq16SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+#endif
+}
+
+// void load16SignedExtendTo64(Address address, RegisterID dest)
+void testLoad16SignedExtendTo64_Address_RegisterID()
+{
+    testLoadExtend_Address_RegisterID<int16_t, int64_t>(signedLoad16to64Scenarios, ARRAY_SIZE(signedLoad16to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.load16SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load16SignedExtendTo64(BaseIndex address, RegisterID dest)
+void testLoad16SignedExtendTo64_BaseIndex_RegisterID()
+{
+    testLoadExtend_BaseIndex_RegisterID<int16_t, int64_t>(signedLoad16to64Scenarios, ARRAY_SIZE(signedLoad16to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg baseAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg indexGPR = GPRInfo::argumentGPR2;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR3;
+
+            jit.load16SignedExtendTo64(CCallHelpers::BaseIndex(baseAddressGPR, indexGPR, CCallHelpers::Scale::TimesTwo, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load16SignedExtendTo64(const void* address, RegisterID dest)
+void testLoad16SignedExtendTo64_voidp_RegisterID()
+{
+#if !CPU(X86_64)
+    testLoadExtend_voidp_RegisterID<int64_t>(signedLoad16to64Scenarios, ARRAY_SIZE(signedLoad16to64Scenarios),
+        [] (CCallHelpers& jit, const void* src) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR1;
+
+            jit.load16SignedExtendTo64(src, resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR, 0));
+        });
+#endif
+}
+
+// void loadAcq32SignedExtendTo64(Address address, RegisterID dest)
+void testLoadAcq32SignedExtendTo64_Address_RegisterID()
+{
+#if CPU(ARM64)
+    testLoadExtend_Address_RegisterID<int32_t, int64_t>(signedLoad32to64Scenarios, ARRAY_SIZE(signedLoad32to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.loadAcq32SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+#endif
+}
+
+// void load32SignedExtendTo64(Address address, RegisterID dest)
+void testLoad32SignedExtendTo64_Address_RegisterID()
+{
+    testLoadExtend_Address_RegisterID<int32_t, int64_t>(signedLoad32to64Scenarios, ARRAY_SIZE(signedLoad32to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg srcAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR2;
+
+            jit.load32SignedExtendTo64(CCallHelpers::Address(srcAddressGPR, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load32SignedExtendTo64(BaseIndex address, RegisterID dest)
+void testLoad32SignedExtendTo64_BaseIndex_RegisterID()
+{
+    testLoadExtend_BaseIndex_RegisterID<int32_t, int64_t>(signedLoad32to64Scenarios, ARRAY_SIZE(signedLoad32to64Scenarios),
+        [] (CCallHelpers& jit, int offset) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg baseAddressGPR = GPRInfo::argumentGPR1;
+            constexpr GPRReg indexGPR = GPRInfo::argumentGPR2;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR3;
+
+            jit.load32SignedExtendTo64(CCallHelpers::BaseIndex(baseAddressGPR, indexGPR, CCallHelpers::Scale::TimesFour, offset), resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR));
+        });
+}
+
+// void load32SignedExtendTo64(const void* address, RegisterID dest)
+void testLoad32SignedExtendTo64_voidp_RegisterID()
+{
+#if !CPU(X86_64)
+    testLoadExtend_voidp_RegisterID<int64_t>(signedLoad32to64Scenarios, ARRAY_SIZE(signedLoad32to64Scenarios),
+        [] (CCallHelpers& jit, const void* src) {
+            constexpr GPRReg resultAddressGPR = GPRInfo::argumentGPR0;
+            constexpr GPRReg resultGPR = GPRInfo::argumentGPR1;
+
+            jit.load32SignedExtendTo64(src, resultGPR);
+            jit.store64(resultGPR, CCallHelpers::Address(resultAddressGPR, 0));
+        });
+#endif
+}
+
+#endif // CPU(ADDRESS64)
+
 #if CPU(ARM64)
 void testLoadStorePair64Int64()
 {
@@ -6315,6 +6822,35 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testCountTrailingZeros64WithoutNullCheck());
     RUN(testShiftAndAdd());
     RUN(testStore64Imm64AddressPointer());
+#endif
+
+    RUN(testLoadAcq8SignedExtendTo32_Address_RegisterID());
+    RUN(testLoad8SignedExtendTo32_Address_RegisterID());
+    RUN(testLoad8SignedExtendTo32_BaseIndex_RegisterID());
+    RUN(testLoad8SignedExtendTo32_voidp_RegisterID());
+
+    RUN(testLoadAcq16SignedExtendTo32_Address_RegisterID());
+    RUN(testLoad16SignedExtendTo32_Address_RegisterID());
+    RUN(testLoad16SignedExtendTo32_BaseIndex_RegisterID());
+    RUN(testLoad16SignedExtendTo32_voidp_RegisterID());
+
+    RUN(testLoadStorePair32());
+
+#if CPU(ADDRESS64)
+    RUN(testLoadAcq8SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad8SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad8SignedExtendTo64_BaseIndex_RegisterID());
+    RUN(testLoad8SignedExtendTo64_voidp_RegisterID());
+
+    RUN(testLoadAcq16SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad16SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad16SignedExtendTo64_BaseIndex_RegisterID());
+    RUN(testLoad16SignedExtendTo64_voidp_RegisterID());
+
+    RUN(testLoadAcq32SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad32SignedExtendTo64_Address_RegisterID());
+    RUN(testLoad32SignedExtendTo64_BaseIndex_RegisterID());
+    RUN(testLoad32SignedExtendTo64_voidp_RegisterID());
 #endif
 
 #if CPU(ARM64)

@@ -74,11 +74,11 @@ bool WebNotificationClient::show(ScriptExecutionContext&, NotificationData&& not
 
 void WebNotificationClient::cancel(NotificationData&& notification)
 {
-    WebNotification *webNotification = m_notificationMap.get(notification.notificationID).unsafeGet();
+    RetainPtr webNotification = m_notificationMap.get(notification.notificationID);
     if (!webNotification)
         return;
 
-    [[m_webView _notificationProvider] cancelNotification:webNotification];
+    [[m_webView _notificationProvider] cancelNotification:webNotification.get()];
 }
 
 void WebNotificationClient::notificationObjectDestroyed(NotificationData&& notification)

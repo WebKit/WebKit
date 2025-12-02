@@ -456,6 +456,9 @@ void WebEditorClient::textDidChangeInTextField(Element& element)
 
     if (RefPtr page = m_page.get())
         page->injectedBundleFormClient().textDidChangeInTextField(page.get(), *inputElement, webFrame.get(), initiatedByUserTyping);
+
+    if (initiatedByUserTyping)
+        inputElement->dispatchUserTextInputEvent();
 }
 
 void WebEditorClient::textDidChangeInTextArea(Element& element)
@@ -469,6 +472,9 @@ void WebEditorClient::textDidChangeInTextArea(Element& element)
 
     if (RefPtr page = m_page.get())
         page->injectedBundleFormClient().textDidChangeInTextArea(page.get(), *textAreaElement, webFrame.get());
+
+    if (UserTypingGestureIndicator::processingUserTypingGesture())
+        textAreaElement->dispatchUserTextInputEvent();
 }
 
 #if !PLATFORM(IOS_FAMILY)

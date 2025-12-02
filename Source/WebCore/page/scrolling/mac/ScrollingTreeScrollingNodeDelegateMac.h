@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <WebCore/ScrollerPairMac.h>
 #include <WebCore/ScrollingEffectsController.h>
@@ -92,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#endif // PLATFORM(MAC)

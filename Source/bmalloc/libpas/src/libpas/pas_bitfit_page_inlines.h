@@ -248,7 +248,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     pas_bitfit_page_testing_verify(page);
 
     PAS_PROFILE(BITFIT_ALLOCATION, &page_config, begin, size, allocation_mode);
-    PAS_MTE_HANDLE(BITFIT_ALLOCATION, &page_config, begin, size, allocation_mode);
+    PAS_MTE_HANDLE(BITFIT_ALLOCATION, page_config, begin, size, allocation_mode);
 
     return pas_bitfit_allocation_result_create_success(begin);
 }
@@ -551,7 +551,6 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     uintptr_t word_index;
     uintptr_t bit_index_in_word;
     uintptr_t other_word_index;
-    uintptr_t original_object_size;
     uint64_t* free_words;
     uint64_t* object_end_words;
     uint64_t object_end_word;
@@ -645,7 +644,6 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
 
     object_end_word = object_end_words[word_index];
     shifted_object_end_word = object_end_word >> bit_index_in_word;
-    original_object_size = 1 << ((uint64_t)(__builtin_ctzll(shifted_object_end_word)) + 1);
 
     if (shifted_object_end_word) {
         uint64_t object_end_bit_index;
@@ -901,8 +899,15 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
         break;
     } }
 
-    PAS_PROFILE(BITFIT_PAGE_DEALLOCATION, page_config, begin, original_object_size);
-    PAS_MTE_HANDLE(BITFIT_PAGE_DEALLOCATION, page_config, begin, original_object_size);
+    switch (mode) {
+    case pas_bitfit_page_deallocate_with_page_impl_deallocate_mode: {
+        PAS_PROFILE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
+        PAS_MTE_HANDLE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
+        break;
+    case pas_bitfit_page_deallocate_with_page_impl_get_allocation_size_mode:
+    case pas_bitfit_page_deallocate_with_page_impl_shrink_mode:
+        break;
+    } }
 
     return num_bits;
 }

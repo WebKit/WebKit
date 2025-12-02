@@ -39,8 +39,8 @@
 namespace WTF {
 
 template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
-template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
-template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
+template<typename, typename = DefaultWeakPtrImpl> class WeakHashSet;
+template<typename, typename = DefaultWeakPtrImpl> class WeakListHashSet;
 
 template<typename T, typename WeakPtrImpl, typename PtrTraits> class WeakPtr {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakPtr);
@@ -85,6 +85,21 @@ public:
     explicit WeakPtr(RefPtr<WeakPtrImpl, OtherPtrTraits> impl)
         : m_impl(WTFMove(impl))
     {
+    }
+
+    WeakPtr(HashTableDeletedValueType) : m_impl(HashTableDeletedValue) { }
+    WeakPtr(HashTableEmptyValueType) : m_impl(HashTableEmptyValue) { }
+
+    bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
+    bool isHashTableEmptyValue() const { return !m_impl; }
+
+    T* ptrAllowingHashTableEmptyValue() const
+    {
+        static_assert(
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
+
+        return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
 
     RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTFMove(m_impl); }
@@ -159,8 +174,6 @@ public:
 
 private:
     template<typename, typename, typename> friend class WeakHashMap;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
     template<typename, typename> friend class WeakPtrFactoryWithBitField;
@@ -284,6 +297,42 @@ struct IsSmartPtr<WeakPtr<T, WeakPtrImpl, PtrTraits>> {
     static constexpr bool isNullable = true;
 };
 
+template<typename P, typename WeakPtrImpl> struct WeakPtrHashTraits : SimpleClassHashTraits<WeakPtr<P, WeakPtrImpl>> {
+    static constexpr bool emptyValueIsZero = true;
+    static P* emptyValue() { return nullptr; }
+
+    template <typename>
+    static void constructEmptyValue(WeakPtr<P, WeakPtrImpl>& slot)
+    {
+        new (NotNull, std::addressof(slot)) WeakPtr<P, WeakPtrImpl>();
+    }
+
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const WeakPtr<P, WeakPtrImpl>& value) { return value.isHashTableEmptyValue(); }
+
+    // FIXME: HashTable::checkHashTableKey() defeats the "lookup using P* without converting to smart pointer" optimization.
+    // These helper functions preserve the optimization at the expense of some encapsulation. We should either change how
+    // checkHashTableKey() works, or change all smart pointer HashTraits to add this workaround.
+    static bool isEmptyValue(const P* value) { return !value; }
+    static bool isDeletedValue(const P* value) { return value == reinterpret_cast<const P*>(-1); }
+    using SimpleClassHashTraits<WeakPtr<P, WeakPtrImpl>>::isDeletedValue;
+
+    using PeekType = P*;
+    static PeekType peek(const WeakPtr<P, WeakPtrImpl>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
+    static PeekType peek(P* value) { return value; }
+
+    using TakeType = WeakPtr<P, WeakPtrImpl>;
+    static TakeType take(WeakPtr<P, WeakPtrImpl>&& value) { return isEmptyValue(value) ? nullptr : WeakPtr<P, WeakPtrImpl>(WTFMove(value)); }
+};
+
+template<typename P, typename WeakPtrImpl> struct HashTraits<WeakPtr<P, WeakPtrImpl>> : WeakPtrHashTraits<P, WeakPtrImpl> { };
+
+template<typename P, typename WeakPtrImpl> struct PtrHash<WeakPtr<P, WeakPtrImpl>> : PtrHashBase<WeakPtr<P, WeakPtrImpl>, IsSmartPtr<WeakPtr<P, WeakPtrImpl>>::value> {
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<typename P, typename WeakPtrImpl> struct DefaultHash<WeakPtr<P, WeakPtrImpl>> : PtrHash<WeakPtr<P, WeakPtrImpl>> { };
+
 template<typename ExpectedType, typename ArgType, typename WeakPtrImpl, typename PtrTraits>
 inline bool is(WeakPtr<ArgType, WeakPtrImpl, PtrTraits>& source)
 {
@@ -340,13 +389,13 @@ WeakPtr(const RefPtr<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtr
 template<typename T, typename PtrTraits = RawPtrTraits<SingleThreadWeakPtrImpl>> using SingleThreadWeakPtr = WeakPtr<T, SingleThreadWeakPtrImpl, PtrTraits>;
 template<typename T> using SingleThreadPackedWeakPtr = WeakPtr<T, SingleThreadWeakPtrImpl, PackedPtrTraits<SingleThreadWeakPtrImpl>>;
 
-template<typename T, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes>
-using SingleThreadWeakHashSet = WeakHashSet<T, SingleThreadWeakPtrImpl, enableWeakPtrThreadingAssertions>;
+template<typename T>
+using SingleThreadWeakHashSet = WeakHashSet<T, SingleThreadWeakPtrImpl>;
 
 template<typename KeyType, typename ValueType> using SingleThreadWeakHashMap = WeakHashMap<KeyType, ValueType, SingleThreadWeakPtrImpl>;
 
-template<typename T, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes>
-using SingleThreadWeakListHashSet = WeakListHashSet<T, SingleThreadWeakPtrImpl, enableWeakPtrThreadingAssertions>;
+template<typename T>
+using SingleThreadWeakListHashSet = WeakListHashSet<T, SingleThreadWeakPtrImpl>;
 
 } // namespace WTF
 

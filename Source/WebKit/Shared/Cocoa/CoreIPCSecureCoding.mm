@@ -43,23 +43,22 @@ namespace SecureCoding {
 
 static std::unique_ptr<HashSet<String>>& internalClassNamesExemptFromSecureCodingCrash()
 {
-    static dispatch_once_t onceToken;
-    static NeverDestroyed<std::unique_ptr<HashSet<String>>> exemptClassNames;
-    dispatch_once(&onceToken, ^{
+    static NeverDestroyed<std::unique_ptr<HashSet<String>>> exemptClassNames = []() -> std::unique_ptr<HashSet<String>> {
         if (isInAuxiliaryProcess())
-            return;
+            return nullptr;
 
         RetainPtr<NSArray> array = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitCrashOnSecureCodingWithExemptClassesKey"];
         if (!array)
-            return;
+            return nullptr;
 
-        exemptClassNames.get() = WTF::makeUnique<HashSet<String>>();
+        auto exemptClassNames = WTF::makeUnique<HashSet<String>>();
 
         for (id value in array.get()) {
             if (RetainPtr string = dynamic_objc_cast<NSString>(value))
-                exemptClassNames.get()->add(string.get());
+                exemptClassNames->add(string.get());
         }
-    });
+        return exemptClassNames;
+    }();
 
     return exemptClassNames.get();
 }

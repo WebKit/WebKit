@@ -97,12 +97,12 @@
 
 - (void)webView:(WebView *)webView didShowNotification:(NSString *)notificationID
 {
-    [_notifications.get(String(notificationID)).get() dispatchShowEvent];
+    [_notifications.get(String(notificationID))dispatchShowEvent];
 }
 
 - (void)webView:(WebView *)webView didClickNotification:(NSString *)notificationID
 {
-    [_notifications.get(String(notificationID)).get() dispatchClickEvent];
+    [_notifications.get(String(notificationID)) dispatchClickEvent];
 }
 
 - (void)webView:(WebView *)webView didCloseNotifications:(NSArray *)notificationIDs

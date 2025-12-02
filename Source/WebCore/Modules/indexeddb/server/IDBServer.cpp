@@ -195,7 +195,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr transaction = m_transactions.get(transactionIdentifier).get();
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to abort.
         // We also have no access to a connection over which to message failure-to-abort.
@@ -207,7 +207,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
 
 RefPtr<UniqueIDBDatabaseTransaction> IDBServer::idbTransaction(const IDBRequestData& requestData) const
 {
-    return m_transactions.get(requestData.transactionIdentifier()).get();
+    return m_transactions.get(requestData.transactionIdentifier());
 }
 
 void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
@@ -404,7 +404,7 @@ void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseCon
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -425,7 +425,7 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr transaction = m_transactions.get(transactionIdentifier).get();
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to commit.
         // We also have no access to a connection over which to message failure-to-commit.
@@ -441,7 +441,7 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionI
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    if (RefPtr connection = m_databaseConnections.get(databaseConnectionIdentifier).get())
+    if (RefPtr connection = m_databaseConnections.get(databaseConnectionIdentifier))
         connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
@@ -451,7 +451,7 @@ void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier d
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -464,7 +464,7 @@ void IDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databas
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -486,11 +486,11 @@ void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databa
     ASSERT(m_lock.isHeld());
 
     if (transactionIdentifier) {
-        if (RefPtr transaction = m_transactions.get(*transactionIdentifier).get())
+        if (RefPtr transaction = m_transactions.get(*transactionIdentifier))
             transaction->abortWithoutCallback();
     }
 
-    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get();
+    RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
     if (!databaseConnection)
         return;
 
@@ -503,13 +503,13 @@ void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databa
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    if (RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier).get())
+    if (RefPtr databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier))
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
 void IDBServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey, std::optional<int64_t> recordID)
 {
-    if (RefPtr transaction = m_transactions.get(transactionIdentifier).get())
+    if (RefPtr transaction = m_transactions.get(transactionIdentifier))
         transaction->didGenerateIndexKeyForRecord(requestIdentifier, indexInfo, key, indexKey, recordID);
 }
 

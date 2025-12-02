@@ -69,8 +69,9 @@ class CachedRawResource;
         friend class InspectorInstrumentation;
         friend class InspectorNetworkAgent;
 
-        using RefCounted<DocumentThreadableLoader>::ref;
-        using RefCounted<DocumentThreadableLoader>::deref;
+        // CachedResourceClient.
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
     protected:
         void refThreadableLoader() override { ref(); }
@@ -148,7 +149,7 @@ class CachedRawResource;
         bool m_delayCallbacksForIntegrityCheck;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
         std::optional<CrossOriginEmbedderPolicy> m_crossOriginEmbedderPolicy;
-        std::optional<CrossOriginPreflightChecker> m_preflightChecker;
+        RefPtr<CrossOriginPreflightChecker> m_preflightChecker;
         std::optional<HTTPHeaderMap> m_originalHeaders;
         URL m_responseURL;
 

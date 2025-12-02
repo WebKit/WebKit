@@ -141,7 +141,7 @@ class TextBreakIteratorCache {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIteratorCache);
 // Use CachedTextBreakIterator instead of dealing with the cache directly.
 private:
-    friend class LazyNeverDestroyed<TextBreakIteratorCache>;
+    friend class NeverDestroyed<TextBreakIteratorCache>;
     friend class CachedTextBreakIterator;
 
     WTF_EXPORT_PRIVATE static TextBreakIteratorCache& singleton();

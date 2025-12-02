@@ -45,7 +45,9 @@ typedef struct _GstWebRTCRTPSender GstWebRTCRTPSender;
 typedef struct _GstWebRTCRTPTransceiver GstWebRTCRTPTransceiver;
 typedef struct _GstRTPHeaderExtension GstRTPHeaderExtension;
 typedef struct _GstWebRTCICE GstWebRTCICE;
-#endif
+typedef struct _GstWebRTCICEStream GstWebRTCICEStream;
+
+#endif // USE(GSTREAMER_WEBRTC)
 
 namespace WTF {
 
@@ -99,11 +101,13 @@ WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPSender, gst_object_ref, gst_object_unr
 WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPTransceiver, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCDTLSTransport, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICETransport, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICEStream, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstRTPHeaderExtension, gst_object_ref, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICE, gst_object_ref, gst_object_unref, g_object_is_floating)
 
 WTF_DEFINE_GREF_TRAITS_INLINE(GstPromise, gst_promise_ref, gst_promise_unref)
-#endif
+
+#endif // USE(GSTREAMER_WEBRTC)
 
 // GstToc needs to be defined manually because gst_toc_ref() causes a warning if return value is not used.
 template<> struct GRefPtrDefaultRefDerefTraits<GstToc> {

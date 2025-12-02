@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #include <WebCore/ScrollbarThemeMac.h>
 #include <WebCore/ScrollingStateFrameScrollingNode.h>
@@ -94,4 +94,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollingTreeFrameScrollingNodeMac) \
     static bool isType(const WebCore::ScrollingTreeFrameScrollingNode& node) { return node.isScrollingTreeFrameScrollingNodeMac(); } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

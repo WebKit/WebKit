@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(ASYNC_SCROLLING)
-
 #include <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -52,5 +50,3 @@ protected:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeOverflowScrollProxyNodeCocoa, isOverflowScrollProxyNodeCocoa())
-
-#endif // ENABLE(ASYNC_SCROLLING)

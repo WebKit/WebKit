@@ -64,6 +64,10 @@ public:
     static Ref<CustomElementRegistry> create(ScriptExecutionContext&);
     ~CustomElementRegistry();
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     bool isScoped() const { return !m_window; }
     Document* document() const;
 

@@ -88,7 +88,7 @@ public:
     const AtomString& target() const { return m_target; }
     const String& contentType() const { return m_contentType; }
     FormState& state() const { return *m_formState; }
-    Ref<FormState> takeState() { return m_formState.releaseNonNull(); }
+    RefPtr<FormState> protectedState() const { return m_formState; }
     FormData& data() const { return *m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }

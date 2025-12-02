@@ -28,10 +28,10 @@
 namespace WebCore::DDModel {
 
 struct DDVertexAttributeFormat {
-    int32_t semantic;
-    int32_t format;
-    int32_t layoutIndex;
-    int32_t offset;
+    long semantic;
+    unsigned long format;
+    long layoutIndex;
+    long offset;
 };
 
 }

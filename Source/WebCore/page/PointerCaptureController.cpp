@@ -210,7 +210,7 @@ bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(Poi
     return capturingData && capturingData->preventsCompatibilityMouseEvents;
 }
 
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
+#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
 static bool hierarchyHasCapturingEventListeners(Element* target, const AtomString& eventName)
 {
     for (RefPtr<ContainerNode> currentNode = target; currentNode; currentNode = currentNode->parentInComposedTree()) {
@@ -380,7 +380,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     capturingData->state = CapturingData::State::Finished;
     capturingData->previousTarget = nullptr;
 }
-#endif // ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
+#endif // ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
 
 void PointerCaptureController::clearUnmatchedMouseDown(PointerID pointerID)
 {
@@ -566,7 +566,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     capturingData->pendingTargetOverride = nullptr;
     capturingData->state = CapturingData::State::Cancelled;
 
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
+#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE) || PLATFORM(GTK))
     capturingData->previousTarget = nullptr;
 #endif
 

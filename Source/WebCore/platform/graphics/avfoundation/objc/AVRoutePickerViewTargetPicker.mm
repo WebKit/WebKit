@@ -193,8 +193,8 @@ void AVRoutePickerViewTargetPicker::availableDevicesDidChange()
         return;
     }
 
-    if (client())
-        client()->availableDevicesChanged();
+    if (CheckedPtr client = this->client())
+        client->availableDevicesChanged();
 }
 
 bool AVRoutePickerViewTargetPicker::hasActiveRoute() const
@@ -220,19 +220,23 @@ bool AVRoutePickerViewTargetPicker::hasActiveRoute() const
 void AVRoutePickerViewTargetPicker::currentDeviceDidChange()
 {
     auto haveActiveRoute = hasActiveRoute();
-    if (!client() || m_hadActiveRoute == haveActiveRoute)
+    CheckedPtr client = this->client();
+    if (!client || m_hadActiveRoute == haveActiveRoute)
         return;
 
     m_hadActiveRoute = haveActiveRoute;
-    client()->currentDeviceChanged();
+    client->currentDeviceChanged();
 }
 
 void AVRoutePickerViewTargetPicker::devicePickerWasDismissed()
 {
-    if (!client())
-        return;
-    
-    client()->pickerWasDismissed();
+    {
+        CheckedPtr client = this->client();
+        if (!client)
+            return;
+
+        client->pickerWasDismissed();
+    }
     currentDeviceDidChange();
 }
 
@@ -262,10 +266,8 @@ void AVRoutePickerViewTargetPicker::devicePickerWasDismissed()
         return;
 
     callOnMainThread([self, protectedSelf = retainPtr(self)] {
-        if (!m_callback)
-            return;
-
-        m_callback->devicePickerWasDismissed();
+        if (CheckedPtr callback = m_callback.get())
+            callback->devicePickerWasDismissed();
     });
 }
 
@@ -277,13 +279,14 @@ void AVRoutePickerViewTargetPicker::devicePickerWasDismissed()
         return;
 
     callOnMainThread([self, protectedSelf = retainPtr(self), notification = retainPtr(notification)] {
-        if (!m_callback)
+        CheckedPtr callback = m_callback.get();
+        if (!callback)
             return;
 
         if ([[notification name] isEqualToString:PAL::AVOutputContextOutputDevicesDidChangeNotification])
-            m_callback->currentDeviceDidChange();
+            callback->currentDeviceDidChange();
         else if ([[notification name] isEqualToString:PAL::AVRouteDetectorMultipleRoutesDetectedDidChangeNotification])
-            m_callback->availableDevicesDidChange();
+            callback->availableDevicesDidChange();
     });
 }
 

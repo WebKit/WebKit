@@ -1,7 +1,7 @@
 
 PASS Property grid-auto-columns has initial value auto
 PASS Property grid-auto-columns does not inherit
-PASS Property grid-auto-flow has initial value row
+FAIL Property grid-auto-flow has initial value row assert_equals: expected "row" but got "normal"
 PASS Property grid-auto-flow does not inherit
 PASS Property grid-auto-rows has initial value auto
 PASS Property grid-auto-rows does not inherit

@@ -65,7 +65,7 @@ public:
 private:
     WebSocketChannel(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&);
 
-    static WebCore::NetworkSendQueue createMessageQueue(WebCore::Document&, WebSocketChannel&);
+    static Ref<WebCore::NetworkSendQueue> createMessageQueue(WebCore::Document&, WebSocketChannel&);
 
     // ThreadableWebSocketChannel
     ConnectStatus connect(const URL&, const String& protocol) final;
@@ -116,7 +116,7 @@ private:
     String m_extensions;
     size_t m_bufferedAmount { 0 };
     bool m_isClosing { false };
-    WebCore::NetworkSendQueue m_messageQueue;
+    const Ref<WebCore::NetworkSendQueue> m_messageQueue;
     WebCore::WebSocketChannelInspector m_inspector;
     WebCore::ResourceRequest m_handshakeRequest;
     WebCore::ResourceResponse m_handshakeResponse;

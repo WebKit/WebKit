@@ -28,62 +28,45 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaPlaybackTargetContextMock final : public MediaPlaybackTargetContext {
-public:
-    using State = MediaPlaybackTargetContextMockState;
-
-    MediaPlaybackTargetContextMock(const String& mockDeviceName, State mockState)
-        : MediaPlaybackTargetContext(Type::Mock)
-        , m_mockDeviceName(mockDeviceName)
-        , m_mockState(mockState)
-    {
-    }
-
-    State state() const
-    {
-        return m_mockState;
-    }
-
-    String deviceName() const final { return m_mockDeviceName; }
-    bool hasActiveRoute() const final { return !m_mockDeviceName.isEmpty(); }
-    bool supportsRemoteVideoPlayback() const final { return !m_mockDeviceName.isEmpty(); }
-
-private:
-    String m_mockDeviceName;
-    State m_mockState { State::Unknown };
+enum class MediaPlaybackTargetMockState : uint8_t {
+    Unknown = 0,
+    OutputDeviceUnavailable = 1,
+    OutputDeviceAvailable = 2,
 };
 
 class MediaPlaybackTargetMock final : public MediaPlaybackTarget {
 public:
-    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(MediaPlaybackTargetContextMock&&);
+    using State = MediaPlaybackTargetMockState;
 
-    MediaPlaybackTargetContextMock::State state() const { return m_context.state(); }
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetMock> create(const String& mockDeviceName, State);
+
+    ~MediaPlaybackTargetMock();
+
+    State state() const { return m_mockState; }
 
 private:
-    explicit MediaPlaybackTargetMock(MediaPlaybackTargetContextMock&&);
-    TargetType targetType() const final { return MediaPlaybackTarget::TargetType::Mock; }
-    const MediaPlaybackTargetContext& targetContext() const final { return m_context; }
+    MediaPlaybackTargetMock(const String& mockDeviceName, State);
 
-    MediaPlaybackTargetContextMock m_context;
+    // MediaPlaybackTarget
+    String deviceName() const final { return m_mockDeviceName; }
+    bool hasActiveRoute() const final { return !m_mockDeviceName.isEmpty(); }
+    bool supportsRemoteVideoPlayback() const final { return !m_mockDeviceName.isEmpty(); }
+
+    String m_mockDeviceName;
+    State m_mockState;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlaybackTargetContextMock)
-static bool isType(const WebCore::MediaPlaybackTargetContext& context)
-{
-    return context.type() ==  WebCore::MediaPlaybackTargetContextType::Mock;
-}
-SPECIALIZE_TYPE_TRAITS_END()
-
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlaybackTargetMock)
 static bool isType(const WebCore::MediaPlaybackTarget& target)
 {
-    return target.targetType() ==  WebCore::MediaPlaybackTarget::TargetType::Mock;
+    return target.type() ==  WebCore::MediaPlaybackTargetType::Mock;
 }
 SPECIALIZE_TYPE_TRAITS_END()
 

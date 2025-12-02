@@ -52,14 +52,15 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
 {
     ASSERT(hasTagName(SVGNames::imageTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGImageElement::m_x>();
         PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGImageElement::m_y>();
         PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGImageElement::m_width>();
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGImageElement::m_height>();
         PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGImageElement::m_preserveAspectRatio>();
-    });
+    }
 }
 
 Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document& document)

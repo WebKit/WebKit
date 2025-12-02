@@ -1032,7 +1032,7 @@ void JSObject::forEachOwnIndexedProperty(JSGlobalObject* globalObject, const Fun
                     }
                 }
 
-                std::sort(propertyAndValueIndexTuples.begin(), propertyAndValueIndexTuples.end(), [](auto a, auto b) {
+                std::ranges::sort(propertyAndValueIndexTuples, [](auto a, auto b) {
                     return std::get<0>(a) < std::get<0>(b);
                 });
                 for (size_t i = 0; i < propertyAndValueIndexTuples.size(); ++i) {

@@ -16,7 +16,7 @@ PASS length.valueAsString = null threw exception SyntaxError: The string did not
 PASS length.valueAsString is "0"
 PASS length.valueAsString = '10' did not throw exception.
 PASS length.valueAsString is "10"
-FAIL length.valueAsString = '' should throw an exception. Was .
+PASS length.valueAsString = '' threw exception SyntaxError: The string did not match the expected pattern..
 PASS length.valueAsString is "10"
 PASS successfullyParsed is true
 

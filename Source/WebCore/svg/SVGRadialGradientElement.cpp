@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,15 +51,16 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
     // Spec: If the cx/cy/r/fr attribute is not specified, the effect is as if a value of "50%" were specified.
     ASSERT(hasTagName(SVGNames::radialGradientTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGRadialGradientElement::m_cx>();
         PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGRadialGradientElement::m_cy>();
         PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGRadialGradientElement::m_r>();
         PropertyRegistry::registerProperty<SVGNames::fxAttr, &SVGRadialGradientElement::m_fx>();
         PropertyRegistry::registerProperty<SVGNames::fyAttr, &SVGRadialGradientElement::m_fy>();
         PropertyRegistry::registerProperty<SVGNames::frAttr, &SVGRadialGradientElement::m_fr>();
-    });
+    }
 }
 
 Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document& document)
@@ -73,22 +74,22 @@ void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, const
 
     switch (name.nodeName()) {
     case AttributeNames::cxAttr:
-        Ref { m_cx }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_cx }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "50%"_s));
         break;
     case AttributeNames::cyAttr:
-        Ref { m_cy }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_cy }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "50%"_s));
         break;
     case AttributeNames::rAttr:
-        Ref { m_r }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
+        Ref { m_r }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "50%"_s));
         break;
     case AttributeNames::fxAttr:
-        Ref { m_fx }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_fx }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "50%"_s));
         break;
     case AttributeNames::fyAttr:
-        Ref { m_fy }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_fy }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Allow, "50%"_s));
         break;
     case AttributeNames::frAttr:
-        Ref { m_fr }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
+        Ref { m_fr }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid, "0%"_s));
         break;
     default:
         break;

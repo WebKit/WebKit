@@ -45,7 +45,7 @@ private:
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
     void close() final { m_isClosed = true; }
-    void error(String&&) final { }
+    void abort(JSC::JSValue) final { }
 
     ThreadSafeWeakPtr<WebTransportSession> m_session;
     WeakPtr<WebTransportDatagramsWritable> m_datagrams;

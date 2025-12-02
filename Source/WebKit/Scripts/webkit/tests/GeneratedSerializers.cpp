@@ -64,6 +64,7 @@
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#include <WebCore/OpaqueTypeObject.h>
 #if USE(APPKIT)
 #include <WebCore/ScrollbarTrackCornerSystemImageMac.h>
 #endif
@@ -234,6 +235,7 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
 
     encoder << instance.a;
     encoder << instance.b;
+    ASSERT(!isInWebProcess());
     encoder << instance.dataDetectorResults;
 }
 
@@ -1533,6 +1535,33 @@ std::optional<WebCore::RectEdges<bool>> ArgumentCoder<WebCore::RectEdges<bool>>:
             WTFMove(*right),
             WTFMove(*bottom),
             WTFMove(*left)
+        }
+    };
+}
+
+void ArgumentCoder<WebCore::OpaqueTypeObject>::encode(Encoder& encoder, const WebCore::OpaqueTypeObject& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.member)>, NotDispatchableFromWebContent>);
+    struct ShouldBeSameSizeAsOpaqueTypeObject : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebCore::OpaqueTypeObject>, false> {
+        NotDispatchableFromWebContent member;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsOpaqueTypeObject) == sizeof(WebCore::OpaqueTypeObject));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebCore::OpaqueTypeObject, member)
+    >::value);
+
+    ASSERT(!isInWebProcess());
+    encoder << instance.member;
+}
+
+std::optional<WebCore::OpaqueTypeObject> ArgumentCoder<WebCore::OpaqueTypeObject>::decode(Decoder& decoder)
+{
+    auto member = decoder.decode<NotDispatchableFromWebContent>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebCore::OpaqueTypeObject {
+            WTFMove(*member)
         }
     };
 }

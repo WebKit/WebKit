@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/animating.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/bounding-box.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/callback-cross-realm-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/client-rect.html
@@ -24,6 +25,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/containing-block.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-document-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-tall-iframe-rendering-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-tall-iframe-rendering.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-tall-iframe-rendering.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/cross-origin-tall-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/document-scrolling-element-root.html
@@ -56,6 +61,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-without-js-reference.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/padding-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/reinsert-element.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/remove-element.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/root-margin-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/root-margin-rounding.html
@@ -80,6 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-non-scrolling-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-not-contained.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-with-border-outline.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin-zero.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/scroll-margin.html

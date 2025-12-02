@@ -1131,15 +1131,15 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static TestInterfaceIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
+    static TestInterfaceIterator* create(JSC::VM& vm, JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind, InternalIterator&& iterator)
     {
-        auto* instance = new (NotNull, JSC::allocateCell<TestInterfaceIterator>(vm)) TestInterfaceIterator(structure, iteratedObject, kind);
+        auto* instance = new (NotNull, JSC::allocateCell<TestInterfaceIterator>(vm)) TestInterfaceIterator(structure, iteratedObject, kind, WTFMove(iterator));
         instance->finishCreation(vm);
         return instance;
     }
 private:
-    TestInterfaceIterator(JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind)
-        : Base(structure, iteratedObject, kind)
+    TestInterfaceIterator(JSC::Structure* structure, JSTestInterface& iteratedObject, IterationKind kind, InternalIterator&& iterator)
+        : Base(structure, iteratedObject, kind, WTFMove(iterator))
     {
     }
 };
@@ -1154,9 +1154,12 @@ const JSC::ClassInfo TestInterfaceIterator::s_info = { "TestInterface Iterator"_
 template<>
 const JSC::ClassInfo TestInterfaceIteratorPrototype::s_info = { "TestInterface Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TestInterfaceIteratorPrototype) };
 
-static inline EncodedJSValue jsTestInterfacePrototypeFunction_entriesCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject)
+static inline EncodedJSValue jsTestInterfacePrototypeFunction_entriesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Entries));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Entries)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_entries, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -1164,9 +1167,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_entries, (JSC::JSGloba
     return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_entriesCaller>(*lexicalGlobalObject, *callFrame, "entries");
 }
 
-static inline EncodedJSValue jsTestInterfacePrototypeFunction_keysCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject)
+static inline EncodedJSValue jsTestInterfacePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Keys));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Keys)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_keys, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))
@@ -1174,9 +1180,12 @@ JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_keys, (JSC::JSGlobalOb
     return IDLOperation<JSTestInterface>::call<jsTestInterfacePrototypeFunction_keysCaller>(*lexicalGlobalObject, *callFrame, "keys");
 }
 
-static inline EncodedJSValue jsTestInterfacePrototypeFunction_valuesCaller(JSGlobalObject*, CallFrame*, JSTestInterface* thisObject)
+static inline EncodedJSValue jsTestInterfacePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestInterface* thisObject)
 {
-    return JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, IterationKind::Values));
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestInterfaceIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestInterfacePrototypeFunction_values, (JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame))

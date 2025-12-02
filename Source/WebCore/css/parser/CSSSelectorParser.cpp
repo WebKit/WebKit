@@ -974,7 +974,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             Vector<AtomString> nameAndClasses;
 
             // Check for implicit universal selector.
-            if (m_context.viewTransitionClassesEnabled && block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
+            if (block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
                 nameAndClasses.append(starAtom());
 
             // Parse name or explicit universal selector.
@@ -989,15 +989,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             }
 
             // Parse classes.
-            if (m_context.viewTransitionClassesEnabled) {
-                while (!block.atEnd() && !CSSTokenizer::isWhitespace(block.peek().type())) {
-                    if (block.peek().type() != DelimiterToken || block.consume().delimiter() != '.')
-                        return nullptr;
+            while (!block.atEnd() && !CSSTokenizer::isWhitespace(block.peek().type())) {
+                if (block.peek().type() != DelimiterToken || block.consume().delimiter() != '.')
+                    return nullptr;
 
-                    if (block.peek().type() != IdentToken)
-                        return nullptr;
-                    nameAndClasses.append({ block.consume().value().toAtomString() });
-                }
+                if (block.peek().type() != IdentToken)
+                    return nullptr;
+                nameAndClasses.append({ block.consume().value().toAtomString() });
             }
 
             block.consumeWhitespace();

@@ -39,6 +39,10 @@ class MediaSessionActionHandler : public RefCounted<MediaSessionActionHandler>, 
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     virtual CallbackResult<void> invoke(const MediaSessionActionDetails&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(const MediaSessionActionDetails&) = 0;
 

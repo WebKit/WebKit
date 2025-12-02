@@ -598,7 +598,7 @@ bool doesGC(Graph& graph, Node* node)
 
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias:
+    case PutByValDirectResolved:
     case PutByValMegamorphic:
         if (!graph.m_plan.isFTL()) {
             switch (node->arrayMode().modeForPut().type()) {

@@ -32,6 +32,7 @@
 #include "DeviceMotionData.h"
 #include "DeviceOrientationUpdateProvider.h"
 #include "MotionManagerClient.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -39,7 +40,7 @@ OBJC_CLASS WebCoreMotionManager;
 
 namespace WebCore {
 
-class DeviceMotionClientIOS : public DeviceMotionClient, public MotionManagerClient {
+class DeviceMotionClientIOS : public DeviceMotionClient, public MotionManagerClient, public CanMakeCheckedPtr<DeviceMotionClientIOS> {
     WTF_MAKE_TZONE_ALLOCATED(DeviceMotionClientIOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DeviceMotionClientIOS);
 public:
@@ -52,6 +53,13 @@ public:
     void deviceMotionControllerDestroyed() override;
 
     void motionChanged(double, double, double, double, double, double, std::optional<double>, std::optional<double>, std::optional<double>) override;
+
+    // DeviceMotionClient, MotionManagerClient.
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
 private:
     WebCoreMotionManager* m_motionManager { nullptr };

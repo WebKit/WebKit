@@ -57,6 +57,7 @@ def main(argv):
                 receiver = webkit.parser.parse(source_file)
 
         receiver.enforce_attribute_constraints()
+        receiver.enforce_opaque_ipc_types_usage()
 
         receivers.append(receiver)
         if receiver_name != receiver.name:

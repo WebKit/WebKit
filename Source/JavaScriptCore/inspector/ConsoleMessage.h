@@ -80,7 +80,7 @@ public:
 
     void incrementCount() { ++m_repeatCount; }
 
-    const RefPtr<ScriptArguments>& arguments() const { return m_arguments; }
+    ScriptArguments* arguments() const { return m_arguments.get(); }
     unsigned argumentCount() const;
 
     bool isEqual(ConsoleMessage* msg) const;

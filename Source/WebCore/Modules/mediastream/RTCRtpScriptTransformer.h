@@ -53,8 +53,7 @@ template<typename> class ExceptionOr;
 
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
-    , public ActiveDOMObject
-    , public CanMakeWeakPtr<RTCRtpScriptTransformer> {
+    , public ActiveDOMObject {
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }

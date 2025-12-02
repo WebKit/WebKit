@@ -5466,8 +5466,10 @@ Expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEvent(co
             // No hittest is performed on move or stationary, since the target is not allowed to change anyway.
             touchTarget = m_originatingTouchPointTargets.get(touchPointTargetKey);
 
+#if PLATFORM(WPE)
             HitTestResult result = hitTestResultAtPoint(pagePoint, hitType | HitTestRequest::Type::AllowChildFrameContent);
             pointerTarget = result.targetElement();
+#endif
         }
 
         RefPtr touchTargetNode = dynamicDowncast<Node>(touchTarget);
@@ -5492,11 +5494,13 @@ Expected<bool, RemoteFrameGeometryTransformer> EventHandler::handleTouchEvent(co
             document->protectedPage()->pointerCaptureController().dispatchEventForTouchAtIndex(
                 *touchTarget, cancelEvent, index, !index, *document->windowProxy(), { 0, 0 });
         }
+#endif
 
+#if PLATFORM(WPE) || PLATFORM(GTK)
         // FIXME: Pass the touch delta for pointermove events by remembering the position per pointerID similar to
         // Apple's m_touchLastGlobalPositionAndDeltaMap
         document->protectedPage()->pointerCaptureController().dispatchEventForTouchAtIndex(
-            *pointerTarget, event, index, !index, *document->windowProxy(), { 0, 0 });
+            pointerTarget ? *pointerTarget : *touchTarget, event, index, !index, *document->windowProxy(), { 0, 0 });
 #endif
 
         // pagePoint should always be relative to the target elements containing frame.

@@ -34,7 +34,6 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/NativePromise.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -77,8 +76,7 @@ public:
 
     void enqueueSample(TrackIdentifier, Ref<MediaSample>&&, std::optional<MediaTime>) final;
     bool isReadyForMoreSamples(TrackIdentifier) final;
-    void requestMediaDataWhenReady(TrackIdentifier, Function<void(TrackIdentifier)>&&) final;
-    void stopRequestingMediaData(TrackIdentifier) final;
+    Ref<RequestPromise> requestMediaDataWhenReady(TrackIdentifier) final;
     void notifyTrackNeedsReenqueuing(TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>&&) final;
 
     bool timeIsProgressing() const final;
@@ -254,6 +252,12 @@ private:
         WaitingForAvailableFame,
         SeekCompleted,
     };
+    struct AudioTrackProperties {
+        bool hasAudibleSample { false };
+        std::unique_ptr<RequestPromise::AutoRejectProducer> requestPromise;
+        Function<void(TrackIdentifier, const MediaTime&)> callbackForReenqueuing;
+    };
+    AudioTrackProperties& audioTrackPropertiesFor(TrackIdentifier);
 
     String toString(TrackIdentifier) const;
     String toString(SeekState) const;
@@ -298,11 +302,8 @@ private:
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
 
-    struct AudioTrackProperties {
-        bool hasAudibleSample { false };
-        Function<void(TrackIdentifier, const MediaTime&)> callbackForReenqueuing;
-    };
     HashMap<TrackIdentifier, AudioTrackProperties> m_audioTracksMap;
+    std::optional<RequestPromise::AutoRejectProducer> m_requestVideoPromise;
     bool m_readyToRequestVideoData { true };
     bool m_readyToRequestAudioData { true };
 

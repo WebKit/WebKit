@@ -1,9 +1,4 @@
-# - Try to find Enchant
-# Once done, this will define
-#
-#  ENCHANT_INCLUDE_DIRS - the Enchant include drectories
-#  ENCHANT_LIBRARIES - link these to use Enchant
-#
+# Copyright (C) 2025 Igalia S.L.
 # Copyright (C) 2012 Samsung Electronics
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,35 +22,73 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#[=======================================================================[.rst:
+FindEnchant
+-----------
+
+Find the enchant-2 headers and libraries.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``Enchant::Enchant``
+  The enchant-2 library, if found.
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables in your project:
+
+``Enchant_FOUND``
+  true if enchant-2 is available.
+``Enchant_VERSION``
+  Version of enchant-2.
+
+#]=======================================================================]
+
+
 find_package(PkgConfig QUIET)
+pkg_check_modules(PC_Enchant QUIET IMPORTED_TARGET enchant-2)
 
-# TODO Remove the check for Enchant 1.x once all major LTS GNU/Linux
-#      distributions ship the 2.x series (probably around mid-2020).
+set(Enchant_COMPILE_OPTIONS ${PC_Enchant_CFLAGS_OTHER})
+set(Enchant_VERSION ${PC_Enchant_VERSION})
 
-foreach (ENCHANT_NAME enchant-2 enchant)
-    pkg_check_modules(PC_ENCHANT ${ENCHANT_NAME})
+if (PC_Enchant_FOUND AND TARGET PkgConfig::PC_Enchant AND NOT TARGET Enchant::Enchant)
+    get_target_property(Enchant_LIBRARY PkgConfig::PC_Enchant INTERFACE_LINK_LIBRARIES)
+    list(GET Enchant_LIBRARY 0 Enchant_LIBRARY)
+    add_library(Enchant::Enchant INTERFACE IMPORTED GLOBAL)
+    set_property(TARGET Enchant::Enchant PROPERTY INTERFACE_LINK_LIBRARIES PkgConfig::PC_Enchant)
+endif ()
 
-    find_path(ENCHANT_INCLUDE_DIRS
+# Search the library by hand, as a fallback.
+if (NOT TARGET Enchant::Enchant)
+    find_path(Enchant_INCLUDE_DIR
         NAMES enchant.h
-        HINTS ${PC_ENCHANT_INCLUDEDIR}
-              ${PC_ENCHANT_INCLUDE_DIRS}
+        HINTS ${PC_Enchant_INCLUDEDIR}
+              ${PC_Enchant_INCLUDE_DIRS}
     )
-
-    find_library(ENCHANT_LIBRARIES
-        NAMES ${ENCHANT_NAME}
-        HINTS ${PC_ENCHANT_LIBDIR}
-              ${PC_ENCHANT_LIBRARY_DIRS}
+    find_library(Enchant_LIBRARY
+        NAMES enchant-2
+        HINTS ${PC_Enchant_LIBDIR}
+              ${PC_Enchant_LIBRARY_DIRS}
     )
-
-    # Only stop searching if the three have been found. This covers for corner
-    # cases in which e.g. both versions of the library are installed, but the
-    # headers are usable/present for one of them.
-    if (PC_ENCHANT_FOUND AND ENCHANT_INCLUDE_DIRS AND ENCHANT_LIBRARIES)
-        break ()
+    if (Enchant_LIBRARY)
+        add_library(Enchant::Enchant UNKNOWN IMPORTED GLOBAL)
+        set_target_properties(Enchant::Enchant PROPERTIES
+            IMPORTED_LOCATION "${Enchant_LIBRARY}"
+            INTERFACE_COMPILE_OPTIONS "${Enchant_COMPILE_OPTIONS}"
+            INTERFACE_INCLUDE_DIRECTORIES "${Enchant_INCLUDE_DIR}"
+        )
     endif ()
-endforeach (ENCHANT_NAME)
+endif ()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Enchant
+    REQUIRED_VARS Enchant_LIBRARY
+    VERSION_VAR Enchant_VERSION
+)
 
 mark_as_advanced(
-    ENCHANT_INCLUDE_DIRS
-    ENCHANT_LIBRARIES
+    Enchant_INCLUDE_DIR
+    Enchant_LIBRARY
 )

@@ -68,11 +68,7 @@ using namespace WebCore;
 
 WorkQueue& AudioVideoRendererRemote::queueSingleton()
 {
-    static std::once_flag onceKey;
-    static LazyNeverDestroyed<Ref<WorkQueue>> workQueue;
-    std::call_once(onceKey, [] {
-        workQueue.construct(WorkQueue::create("AudioVideoRendererRemote"_s));
-    });
+    static NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("AudioVideoRendererRemote"_s);
     return workQueue.get();
 }
 
@@ -299,18 +295,8 @@ void AudioVideoRendererRemote::paintCurrentVideoFrameInContext(GraphicsContext& 
 
 RefPtr<NativeImage> AudioVideoRendererRemote::currentNativeImage() const
 {
-#if PLATFORM(COCOA)
-    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     RefPtr videoFrame = currentVideoFrame();
-    if (!videoFrame)
-        return nullptr;
-    ASSERT(gpuProcessConnection);
-
-    return gpuProcessConnection->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
-#else
-    ASSERT_NOT_REACHED();
-    return nullptr;
-#endif
+    return videoFrame ? videoFrame->copyNativeImage() : nullptr;
 }
 
 std::optional<VideoPlaybackQualityMetrics> AudioVideoRendererRemote::videoPlaybackQualityMetrics()
@@ -486,36 +472,49 @@ void AudioVideoRendererRemote::enqueueSample(TrackIdentifier trackIdentifier, Re
 {
     {
         Locker locker { m_lock };
-        readyForMoreData(trackIdentifier).sampleEnqueued();
+        readyForMoreDataState(trackIdentifier).sampleEnqueued();
     }
     ensureOnDispatcherWithConnection([trackIdentifier, sample = WTFMove(sample), expectedMinimum](auto& renderer, auto& connection) {
-        connection.send(Messages::RemoteAudioVideoRendererProxyManager::EnqueueSample(renderer.m_identifier, trackIdentifier, MediaSamplesBlock::fromMediaSample(sample), expectedMinimum), 0);
+        connection.sendWithAsyncReplyOnDispatcher(Messages::RemoteAudioVideoRendererProxyManager::EnqueueSample(renderer.m_identifier, trackIdentifier, MediaSamplesBlock::fromMediaSample(sample), expectedMinimum), queueSingleton(), [weakThis = ThreadSafeWeakPtr { renderer }, trackIdentifier](bool readyForMoreData) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            auto pendingSamples = [&] {
+                Locker locker { protectedThis->m_lock };
+                auto& state = protectedThis->readyForMoreDataState(trackIdentifier);
+                state.sampleReceived();
+                state.setRemoteReadyForMoreData(readyForMoreData);
+                return state.pendingSamples();
+            }();
+            if (!pendingSamples && !readyForMoreData) {
+                RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
+                if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+                    return;
+                gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::RequestMediaDataWhenReady(protectedThis->m_identifier, trackIdentifier), 0);
+                return;
+            }
+            protectedThis->resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
+        }, 0);
     });
 }
 
 bool AudioVideoRendererRemote::isReadyForMoreSamples(TrackIdentifier trackIdentifier)
 {
     Locker locker { m_lock };
-    return readyForMoreData(trackIdentifier).isReadyForMoreData();
+    return readyForMoreDataState(trackIdentifier).isReadyForMoreData();
 }
 
-void AudioVideoRendererRemote::requestMediaDataWhenReady(TrackIdentifier trackIdentifier, Function<void(TrackIdentifier)>&& callback)
+Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererRemote::requestMediaDataWhenReady(TrackIdentifier trackIdentifier)
 {
-    ensureOnDispatcherWithConnection([trackIdentifier, callback = WTFMove(callback)](auto& renderer, auto& connection) mutable {
+    return invokeAsync(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, trackIdentifier] {
         assertIsCurrent(queueSingleton());
-        auto addResult = renderer.m_requestMediaDataWhenReadyDataCallbacks.add(trackIdentifier, nullptr);
-        addResult.iterator->value = WTFMove(callback);
-        connection.send(Messages::RemoteAudioVideoRendererProxyManager::RequestMediaDataWhenReady(renderer.m_identifier, trackIdentifier), 0);
-    });
-}
-
-void AudioVideoRendererRemote::stopRequestingMediaData(TrackIdentifier trackIdentifier)
-{
-    ensureOnDispatcherWithConnection([trackIdentifier](auto& renderer, auto& connection) {
-        assertIsCurrent(queueSingleton());
-        if (auto it = renderer.m_requestMediaDataWhenReadyDataCallbacks.find(trackIdentifier); it != renderer.m_requestMediaDataWhenReadyDataCallbacks.end())
-            it->value = nullptr;
-        connection.send(Messages::RemoteAudioVideoRendererProxyManager::StopRequestingMediaData(renderer.m_identifier, trackIdentifier), 0);
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return RequestPromise::createAndReject(PlatformMediaError::Cancelled);
+        if (protectedThis->isReadyForMoreSamples(trackIdentifier))
+            return RequestPromise::createAndResolve(trackIdentifier);
+        auto addResult = protectedThis->m_requestMediaDataWhenReadyDataPromises.set(trackIdentifier, makeUnique<RequestPromise::AutoRejectProducer>(PlatformMediaError::Cancelled));
+        return addResult.iterator->value->promise();
     });
 }
 
@@ -658,11 +657,23 @@ void AudioVideoRendererRemote::updateCacheState(const RemoteAudioVideoRendererSt
     m_state = state;
 }
 
-AudioVideoRendererRemote::ReadyForMoreData& AudioVideoRendererRemote::readyForMoreData(TrackIdentifier trackIdentifier)
+AudioVideoRendererRemote::ReadyForMoreDataState& AudioVideoRendererRemote::readyForMoreDataState(TrackIdentifier trackIdentifier)
 {
     assertIsHeld(m_lock);
-    auto addResult = m_readyForMoreData.add(trackIdentifier,  ReadyForMoreData { });
+    auto addResult = m_readyForMoreDataStates.add(trackIdentifier, ReadyForMoreDataState { });
     return addResult.iterator->value;
+}
+
+void AudioVideoRendererRemote::resolveRequestMediaDataWhenReadyIfNeeded(TrackIdentifier trackIdentifier)
+{
+    assertIsCurrent(queueSingleton());
+
+    if (!isReadyForMoreSamples(trackIdentifier))
+        return;
+    auto iterator = m_requestMediaDataWhenReadyDataPromises.find(trackIdentifier);
+    if (iterator == m_requestMediaDataWhenReadyDataPromises.end())
+        return;
+    m_requestMediaDataWhenReadyDataPromises.take(iterator)->resolve(trackIdentifier);
 }
 
 void AudioVideoRendererRemote::requestHostingContext(LayerHostingContextCallback&& completionHandler)
@@ -943,18 +954,14 @@ void AudioVideoRendererRemote::MessageReceiver::errorOccurred(WebCore::PlatformM
     }
 }
 
-void AudioVideoRendererRemote::MessageReceiver::requestMediaDataWhenReady(TrackIdentifier trackIdentifier)
+void AudioVideoRendererRemote::MessageReceiver::readyForMoreMediaData(TrackIdentifier trackIdentifier)
 {
     if (RefPtr parent = m_parent.get()) {
-        assertIsCurrent(queueSingleton());
         {
             Locker locker { parent->m_lock };
-            parent->readyForMoreData(trackIdentifier).reset();
+            parent->readyForMoreDataState(trackIdentifier).setRemoteReadyForMoreData(true);
         }
-        auto iterator = parent->m_requestMediaDataWhenReadyDataCallbacks.find(trackIdentifier);
-        if (iterator == parent->m_requestMediaDataWhenReadyDataCallbacks.end() || !iterator->value)
-            return;
-        iterator->value(trackIdentifier);
+        parent->resolveRequestMediaDataWhenReadyIfNeeded(trackIdentifier);
     }
 }
 

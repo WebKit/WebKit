@@ -111,7 +111,7 @@ public:
     static Ref<CSSFontFaceSrcResourceValue> create(CSS::URL, String format, Vector<FontTechnology>&&);
 
     bool isEmpty() const { return m_location.specified.isEmpty(); }
-    std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
+    RefPtr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;

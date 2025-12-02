@@ -60,7 +60,7 @@ HTMLIFrameElement& RenderIFrame::iframeElement() const
 
 bool RenderIFrame::requiresLayer() const
 {
-    return RenderFrameBase::requiresLayer() || style().resize() != Resize::None;
+    return RenderFrameBase::requiresLayer() || style().resize() != Style::Resize::None;
 }
 
 bool RenderIFrame::isFullScreenIFrame() const

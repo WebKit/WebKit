@@ -37,12 +37,12 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<Subscriber> {
+class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public RefCounted<Subscriber> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
-    void ref() const final { RefCountedAndCanMakeWeakPtr::ref(); }
-    void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void next(JSC::JSValue);
     void complete();

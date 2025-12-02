@@ -73,11 +73,11 @@ static const WeakStyleable originatingElementExcludingTimelineScope(const Ref<Sc
     return timeline->timelineScopeDeclaredElement() ? WeakStyleable() : originatingElement(timeline);
 }
 
-Vector<WeakStyleable> StyleOriginatedTimelinesController::relatedTimelineScopeElements(const AtomString& name)
+Vector<WeakStyleable> StyleOriginatedTimelinesController::relatedTimelineScopeElements(const CustomIdentifier& name)
 {
     Vector<WeakStyleable> timelineScopeElements;
     for (auto& scope : m_timelineScopeEntries) {
-        if (scope.second && (scope.first.type == NameScope::Type::All || (scope.first.type == NameScope::Type::Ident && scope.first.names.contains(name))))
+        if (scope.second && (scope.first.type == Style::NameScope::Type::All || (scope.first.type == Style::NameScope::Type::Ident && scope.first.names.contains(name))))
             timelineScopeElements.append(scope.second);
     }
     return timelineScopeElements;
@@ -174,7 +174,7 @@ void StyleOriginatedTimelinesController::updateTimelineForTimelineScope(const Re
     for (auto& entry : m_timelineScopeEntries) {
         if (auto entryElement = entry.second.styleable()) {
             Ref protectedEntryElement { entryElement->element };
-            if (Ref { timelineElement->element }->isComposedTreeDescendantOf(protectedEntryElement.get()) && (entry.first.type == NameScope::Type::All ||  entry.first.names.contains(name)))
+            if (Ref { timelineElement->element }->isComposedTreeDescendantOf(protectedEntryElement.get()) && (entry.first.type == Style::NameScope::Type::All || entry.first.names.contains(CustomIdentifier { name })))
                 matchedTimelineScopeElements.appendIfNotContains(*entryElement);
         }
     }
@@ -362,7 +362,7 @@ void StyleOriginatedTimelinesController::attachAnimation(CSSAnimation& animation
         return;
     }
 
-    auto timelineScopeElements = relatedTimelineScopeElements(timelineName->value);
+    auto timelineScopeElements = relatedTimelineScopeElements(*timelineName);
 
     if (!hasNamedTimeline) {
         // First, determine whether the name is within scope, ie. whether a parent element
@@ -418,7 +418,7 @@ static void updateTimelinesForTimelineScope(Vector<Ref<ScrollTimeline>> entries,
     }
 }
 
-void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(const NameScope& scope, const Styleable& styleable)
+void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(const Style::NameScope& scope, const Styleable& styleable)
 {
     LOG_WITH_STREAM(Animations, stream << "StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope: " << scope << " styleable: " << styleable);
 
@@ -427,7 +427,7 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
     // (such as a named scroll progress timeline or named view progress timeline) to be referenced by elements outside the timeline-defining element’s
     // subtree—​for example, by siblings, cousins, or ancestors.
     switch (scope.type) {
-    case NameScope::Type::None: {
+    case Style::NameScope::Type::None: {
         HashSet<Ref<ScrollTimeline>> namedTimelinesToUnregister;
         for (auto& entry : m_nameToTimelineMap) {
             for (auto& timeline : entry.value) {
@@ -439,7 +439,7 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
                 }
             }
         }
-        m_timelineScopeEntries.removeAllMatching([&] (const std::pair<NameScope, WeakStyleable> entry) {
+        m_timelineScopeEntries.removeAllMatching([&](const std::pair<Style::NameScope, WeakStyleable> entry) {
             return entry.second == styleable;
         });
         // We need to unregister all timelines that are no longer within this scope.
@@ -449,14 +449,14 @@ void StyleOriginatedTimelinesController::updateNamedTimelineMapForTimelineScope(
         }
         break;
     }
-    case NameScope::Type::All:
+    case Style::NameScope::Type::All:
         for (auto& entry : m_nameToTimelineMap)
             updateTimelinesForTimelineScope(entry.value, styleable);
         m_timelineScopeEntries.append(std::make_pair(scope, styleable));
         break;
-    case NameScope::Type::Ident:
+    case Style::NameScope::Type::Ident:
         for (auto& name : scope.names) {
-            auto it = m_nameToTimelineMap.find(name);
+            auto it = m_nameToTimelineMap.find(name.value);
             if (it != m_nameToTimelineMap.end())
                 updateTimelinesForTimelineScope(it->value, styleable);
         }

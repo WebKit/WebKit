@@ -19,17 +19,17 @@ layer at (0,0) size 800x476
           layer at (0,0) size 102x26
             RenderView at (0,0) size 102x26
           layer at (0,0) size 102x26
-            RenderSVGRoot {svg} at (0,0) size 60x16
-              RenderSVGRect {rect} at (0,0) size 60x16 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
-              RenderSVGPath {path} at (8,2) size 43x11 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
+            RenderSVGRoot {svg} at (0,0) size 102x26
+              RenderSVGRect {rect} at (0,0) size 102x26 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
+              RenderSVGPath {path} at (15,5) size 72x16 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
       RenderBlock {P} at (1,194) size 139x10
         RenderEmbeddedObject {OBJECT} at (9,0) size 121x44 [bgcolor=#FF0000] [border: (9px solid #0000FF)]
           layer at (0,0) size 102x26
             RenderView at (0,0) size 102x26
           layer at (0,0) size 102x26
-            RenderSVGRoot {svg} at (0,0) size 60x16
-              RenderSVGRect {rect} at (0,0) size 60x16 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
-              RenderSVGPath {path} at (8,2) size 43x11 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
+            RenderSVGRoot {svg} at (0,0) size 102x26
+              RenderSVGRect {rect} at (0,0) size 102x26 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
+              RenderSVGPath {path} at (15,5) size 72x16 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
       RenderTable at (1,258) size 139x47
         RenderTableSection (anonymous) at (0,0) size 139x46
           RenderTableRow (anonymous) at (0,0) size 139x46
@@ -38,9 +38,9 @@ layer at (0,0) size 800x476
                 layer at (0,0) size 102x26
                   RenderView at (0,0) size 102x26
                 layer at (0,0) size 102x26
-                  RenderSVGRoot {svg} at (0,0) size 60x16
-                    RenderSVGRect {rect} at (0,0) size 60x16 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
-                    RenderSVGPath {path} at (8,2) size 43x11 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
+                  RenderSVGRoot {svg} at (0,0) size 102x26
+                    RenderSVGRect {rect} at (0,0) size 102x26 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
+                    RenderSVGPath {path} at (15,5) size 72x16 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
       RenderTable {TABLE} at (1,360) size 139x47
         RenderTableSection {TBODY} at (0,0) size 139x46
           RenderTableRow {TR} at (0,0) size 139x46
@@ -49,14 +49,14 @@ layer at (0,0) size 800x476
                 layer at (0,0) size 102x26
                   RenderView at (0,0) size 102x26
                 layer at (0,0) size 102x26
-                  RenderSVGRoot {svg} at (0,0) size 60x16
-                    RenderSVGRect {rect} at (0,0) size 60x16 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
-                    RenderSVGPath {path} at (8,2) size 43x11 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
+                  RenderSVGRoot {svg} at (0,0) size 102x26
+                    RenderSVGRect {rect} at (0,0) size 102x26 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
+                    RenderSVGPath {path} at (15,5) size 72x16 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
       RenderBlock (floating) {P} at (1,461) size 139x11
         RenderEmbeddedObject {OBJECT} at (9,0) size 121x44 [bgcolor=#FF0000] [border: (9px solid #0000FF)]
           layer at (0,0) size 102x26
             RenderView at (0,0) size 102x26
           layer at (0,0) size 102x26
-            RenderSVGRoot {svg} at (0,0) size 60x16
-              RenderSVGRect {rect} at (0,0) size 60x16 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
-              RenderSVGPath {path} at (8,2) size 43x11 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
+            RenderSVGRoot {svg} at (0,0) size 102x26
+              RenderSVGRect {rect} at (0,0) size 102x26 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
+              RenderSVGPath {path} at (15,5) size 72x16 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]

@@ -51,10 +51,12 @@ inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Docu
 {
     ASSERT(hasTagName(SVGNames::clipPathTag));
 
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static bool didRegistration = false;
+    if (!didRegistration) [[unlikely]] {
+        didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::clipPathUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGClipPathElement::m_clipPathUnits>();
-    });}
+    }
+}
 
 Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName, Document& document)
 {

@@ -258,6 +258,7 @@ private:
     void didInvalidateDataDetectorHighlightOverlayRects();
 
     PDFDataDetectorOverlayController& dataDetectorOverlayController() { return *m_dataDetectorOverlayController; }
+    Ref<PDFDataDetectorOverlayController> protectedDataDetectorOverlayController();
 #endif
 
     const PDFDocumentLayout& documentLayout() const { return m_documentLayout; }
@@ -714,7 +715,7 @@ private:
     PDFPageCoverage m_findMatchRects;
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    std::unique_ptr<PDFDataDetectorOverlayController> m_dataDetectorOverlayController;
+    RefPtr<PDFDataDetectorOverlayController> m_dataDetectorOverlayController;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

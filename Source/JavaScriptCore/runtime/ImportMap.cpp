@@ -65,10 +65,9 @@ ImportMap::ImportMap(SpecifierMap&& imports, ScopesMap&& scopesMap, IntegrityMap
     // is code unit less than a’s key.</spec>
     ASSERT(m_scopesVector.isEmpty());
     m_scopesVector = copyToVector(m_scopesMap.keys());
-    std::sort(m_scopesVector.begin(), m_scopesVector.end(),
-        [](const URL& a, const URL& b) {
-            return codePointCompareLessThan(b.string(), a.string());
-        });
+    std::ranges::sort(m_scopesVector, [](const auto& a, const auto& b) {
+        return codePointCompareLessThan(b.string(), a.string());
+    });
 }
 
 Expected<URL, String> ImportMap::resolveImportMatch(const AtomString& normalizedSpecifier, const URL& asURL, const SpecifierMap& specifierMap)

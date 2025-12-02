@@ -503,13 +503,16 @@ static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButt
 {
     CheckedRef style = renderer.style();
 
-    String locale = style->computedLocale();
-    if (locale.isEmpty())
-        locale = defaultLanguage(ShouldMinimizeLanguages::No);
+    auto platformLocale = [&] -> String {
+        auto locale = style->computedLocale();
+        if (locale.isAuto())
+            return defaultLanguage(ShouldMinimizeLanguages::No);
+        return Style::toPlatform(locale);
+    }();
 
     applePayButtonPart.setButtonType(style->applePayButtonType());
     applePayButtonPart.setButtonStyle(style->applePayButtonStyle());
-    applePayButtonPart.setLocale(locale);
+    applePayButtonPart.setLocale(WTFMove(platformLocale));
 }
 #endif
 

@@ -1,0 +1,121 @@
+
+PASS idl_test setup
+PASS idl_test validation
+FAIL WebTransportDatagramsWritable interface: existence and properties of interface object assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface object length assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface object name assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface: attribute sendGroup assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+FAIL WebTransportDatagramsWritable interface: attribute sendOrder assert_own_property: self does not have own property "WebTransportDatagramsWritable" expected property "WebTransportDatagramsWritable" missing
+PASS WebTransportDatagramDuplexStream interface: existence and properties of interface object
+PASS WebTransportDatagramDuplexStream interface object length
+PASS WebTransportDatagramDuplexStream interface object name
+PASS WebTransportDatagramDuplexStream interface: existence and properties of interface prototype object
+PASS WebTransportDatagramDuplexStream interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportDatagramDuplexStream interface: existence and properties of interface prototype object's @@unscopables property
+FAIL WebTransportDatagramDuplexStream interface: operation createWritable(optional WebTransportSendOptions) assert_own_property: interface prototype object missing non-static operation expected property "createWritable" missing
+PASS WebTransportDatagramDuplexStream interface: attribute readable
+PASS WebTransportDatagramDuplexStream interface: attribute maxDatagramSize
+PASS WebTransportDatagramDuplexStream interface: attribute incomingMaxAge
+PASS WebTransportDatagramDuplexStream interface: attribute outgoingMaxAge
+PASS WebTransportDatagramDuplexStream interface: attribute incomingHighWaterMark
+PASS WebTransportDatagramDuplexStream interface: attribute outgoingHighWaterMark
+PASS WebTransport interface: existence and properties of interface object
+PASS WebTransport interface object length
+PASS WebTransport interface object name
+PASS WebTransport interface: existence and properties of interface prototype object
+PASS WebTransport interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransport interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransport interface: operation getStats()
+FAIL WebTransport interface: operation exportKeyingMaterial(BufferSource, optional BufferSource) assert_own_property: interface prototype object missing non-static operation expected property "exportKeyingMaterial" missing
+PASS WebTransport interface: attribute ready
+PASS WebTransport interface: attribute reliability
+PASS WebTransport interface: attribute congestionControl
+FAIL WebTransport interface: attribute anticipatedConcurrentIncomingUnidirectionalStreams assert_true: The prototype object must have a property "anticipatedConcurrentIncomingUnidirectionalStreams" expected true got false
+FAIL WebTransport interface: attribute anticipatedConcurrentIncomingBidirectionalStreams assert_true: The prototype object must have a property "anticipatedConcurrentIncomingBidirectionalStreams" expected true got false
+FAIL WebTransport interface: attribute protocol assert_true: The prototype object must have a property "protocol" expected true got false
+PASS WebTransport interface: attribute closed
+PASS WebTransport interface: attribute draining
+PASS WebTransport interface: operation close(optional WebTransportCloseInfo)
+PASS WebTransport interface: attribute datagrams
+PASS WebTransport interface: operation createBidirectionalStream(optional WebTransportSendStreamOptions)
+PASS WebTransport interface: attribute incomingBidirectionalStreams
+PASS WebTransport interface: operation createUnidirectionalStream(optional WebTransportSendStreamOptions)
+PASS WebTransport interface: attribute incomingUnidirectionalStreams
+FAIL WebTransport interface: operation createSendGroup() assert_own_property: interface prototype object missing non-static operation expected property "createSendGroup" missing
+FAIL WebTransport interface: attribute supportsReliableOnly assert_own_property: The interface object must have a property "supportsReliableOnly" expected property "supportsReliableOnly" missing
+PASS WebTransport must be primary interface of webTransport
+PASS Stringification of webTransport
+PASS WebTransport interface: webTransport must inherit property "getStats()" with the proper type
+FAIL WebTransport interface: webTransport must inherit property "exportKeyingMaterial(BufferSource, optional BufferSource)" with the proper type assert_inherits: property "exportKeyingMaterial" not found in prototype chain
+FAIL WebTransport interface: calling exportKeyingMaterial(BufferSource, optional BufferSource) on webTransport with too few arguments must throw TypeError assert_inherits: property "exportKeyingMaterial" not found in prototype chain
+PASS WebTransport interface: webTransport must inherit property "ready" with the proper type
+PASS WebTransport interface: webTransport must inherit property "reliability" with the proper type
+PASS WebTransport interface: webTransport must inherit property "congestionControl" with the proper type
+FAIL WebTransport interface: webTransport must inherit property "anticipatedConcurrentIncomingUnidirectionalStreams" with the proper type assert_inherits: property "anticipatedConcurrentIncomingUnidirectionalStreams" not found in prototype chain
+FAIL WebTransport interface: webTransport must inherit property "anticipatedConcurrentIncomingBidirectionalStreams" with the proper type assert_inherits: property "anticipatedConcurrentIncomingBidirectionalStreams" not found in prototype chain
+FAIL WebTransport interface: webTransport must inherit property "protocol" with the proper type assert_inherits: property "protocol" not found in prototype chain
+PASS WebTransport interface: webTransport must inherit property "closed" with the proper type
+PASS WebTransport interface: webTransport must inherit property "draining" with the proper type
+PASS WebTransport interface: webTransport must inherit property "close(optional WebTransportCloseInfo)" with the proper type
+PASS WebTransport interface: calling close(optional WebTransportCloseInfo) on webTransport with too few arguments must throw TypeError
+PASS WebTransport interface: webTransport must inherit property "datagrams" with the proper type
+PASS WebTransport interface: webTransport must inherit property "createBidirectionalStream(optional WebTransportSendStreamOptions)" with the proper type
+PASS WebTransport interface: calling createBidirectionalStream(optional WebTransportSendStreamOptions) on webTransport with too few arguments must throw TypeError
+PASS WebTransport interface: webTransport must inherit property "incomingBidirectionalStreams" with the proper type
+PASS WebTransport interface: webTransport must inherit property "createUnidirectionalStream(optional WebTransportSendStreamOptions)" with the proper type
+PASS WebTransport interface: calling createUnidirectionalStream(optional WebTransportSendStreamOptions) on webTransport with too few arguments must throw TypeError
+PASS WebTransport interface: webTransport must inherit property "incomingUnidirectionalStreams" with the proper type
+FAIL WebTransport interface: webTransport must inherit property "createSendGroup()" with the proper type assert_inherits: property "createSendGroup" not found in prototype chain
+PASS WebTransport interface: webTransport must inherit property "supportsReliableOnly" with the proper type
+PASS WebTransportSendStream interface: existence and properties of interface object
+PASS WebTransportSendStream interface object length
+PASS WebTransportSendStream interface object name
+PASS WebTransportSendStream interface: existence and properties of interface prototype object
+PASS WebTransportSendStream interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportSendStream interface: existence and properties of interface prototype object's @@unscopables property
+FAIL WebTransportSendStream interface: attribute sendGroup assert_true: The prototype object must have a property "sendGroup" expected true got false
+PASS WebTransportSendStream interface: attribute sendOrder
+PASS WebTransportSendStream interface: operation getStats()
+FAIL WebTransportSendStream interface: operation getWriter() assert_own_property: interface prototype object missing non-static operation expected property "getWriter" missing
+FAIL WebTransportSendGroup interface: existence and properties of interface object assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface object length assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface object name assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+FAIL WebTransportSendGroup interface: operation getStats() assert_own_property: self does not have own property "WebTransportSendGroup" expected property "WebTransportSendGroup" missing
+PASS WebTransportReceiveStream interface: existence and properties of interface object
+PASS WebTransportReceiveStream interface object length
+PASS WebTransportReceiveStream interface object name
+PASS WebTransportReceiveStream interface: existence and properties of interface prototype object
+PASS WebTransportReceiveStream interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportReceiveStream interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransportReceiveStream interface: operation getStats()
+PASS WebTransportBidirectionalStream interface: existence and properties of interface object
+PASS WebTransportBidirectionalStream interface object length
+PASS WebTransportBidirectionalStream interface object name
+PASS WebTransportBidirectionalStream interface: existence and properties of interface prototype object
+PASS WebTransportBidirectionalStream interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportBidirectionalStream interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransportBidirectionalStream interface: attribute readable
+PASS WebTransportBidirectionalStream interface: attribute writable
+FAIL WebTransportWriter interface: existence and properties of interface object assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface object length assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface object name assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface: operation atomicWrite(optional any) assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+FAIL WebTransportWriter interface: operation commit() assert_own_property: self does not have own property "WebTransportWriter" expected property "WebTransportWriter" missing
+PASS WebTransportError interface: existence and properties of interface object
+PASS WebTransportError interface object length
+PASS WebTransportError interface object name
+PASS WebTransportError interface: existence and properties of interface prototype object
+PASS WebTransportError interface: existence and properties of interface prototype object's "constructor" property
+PASS WebTransportError interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebTransportError interface: attribute source
+PASS WebTransportError interface: attribute streamErrorCode
+

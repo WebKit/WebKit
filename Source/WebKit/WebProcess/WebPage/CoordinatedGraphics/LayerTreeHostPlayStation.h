@@ -150,9 +150,11 @@ private:
     void detachLayer(WebCore::CoordinatedPlatformLayer&) override;
     void notifyCompositionRequired() override;
     bool isCompositionRequiredOrOngoing() const override;
-    void requestComposition() override;
+    void requestComposition(WebCore::CompositionReason) override;
     RunLoop* compositingRunLoop() const override;
     int maxTextureSize() const override;
+    void willPaintTile() override { };
+    void didPaintTile() override { };
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;

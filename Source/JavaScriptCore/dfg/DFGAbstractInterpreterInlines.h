@@ -3081,7 +3081,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias:
+    case PutByValDirectResolved:
     case PutByValMegamorphic: {
         switch (node->arrayMode().modeForPut().type()) {
         case Array::ForceExit:

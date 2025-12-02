@@ -127,6 +127,7 @@ public:
 
     WebCore::MediaPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
+    void connectionToWebProcessClosed();
 
     // Ensure that all previously queued messages to the content process have completed.
     Ref<WebCore::MediaPromise> commitAllTransactions();

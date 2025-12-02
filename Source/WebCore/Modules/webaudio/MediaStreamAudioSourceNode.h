@@ -41,6 +41,7 @@ class WebAudioSourceProvider;
 
 class MediaStreamAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamAudioSourceNode);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaStreamAudioSourceNode);
 public:
     static ExceptionOr<Ref<MediaStreamAudioSourceNode>> create(BaseAudioContext&, MediaStreamAudioSourceOptions&&);
 

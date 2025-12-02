@@ -928,6 +928,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
 
+    Modules/webtransport/DatagramsReadableMode.idl
     Modules/webtransport/WebTransport.idl
     Modules/webtransport/WebTransportBidirectionalStream.idl
     Modules/webtransport/WebTransportCloseInfo.idl
@@ -1183,6 +1184,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Document+CSSOMView.idl
     dom/Document+CaretPositionFromPoint.idl
     dom/Document+Fullscreen.idl
+    dom/Document+Immersive.idl
     dom/Document+HTML.idl
     dom/Document+HTMLObsolete.idl
     dom/Document+PageVisibility.idl
@@ -1326,6 +1328,7 @@ set(WebCore_NON_SVG_IDL_FILES
     fileapi/FileReader.idl
     fileapi/FileReaderSync.idl
 
+    html/CaptionDisplaySettingsOptions.idl
     html/DOMFormData.idl
     html/DOMTokenList.idl
     html/DOMURL.idl
@@ -1412,6 +1415,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLTrackElement.idl
     html/HTMLUListElement.idl
     html/HTMLUnknownElement.idl
+    html/HTMLVideoElement+CaptionDisplaySettings.idl
     html/HTMLVideoElement+RequestVideoFrameCallback.idl
     html/HTMLVideoElement.idl
     html/ImageBitmap.idl
@@ -1425,6 +1429,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/OffscreenCanvas.idl
     html/PopoverInvokerElement.idl
     html/RadioNodeList.idl
+    html/ResolvedCaptionDisplaySettingsOptions.idl
     html/SubmitEvent.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
@@ -2483,6 +2488,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MallocStatistics.idl
     testing/MemoryInfo.idl
     testing/MockCDMFactory.idl
+    testing/MockCaptionDisplaySettingsClientCallback.idl
     testing/MockContentFilterSettings.idl
     testing/MockPageOverlay.idl
     testing/MockWebAuthenticationConfiguration.idl
@@ -2498,6 +2504,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/InternalsMapLike.cpp
     testing/InternalsSetLike.cpp
     testing/MockCDMFactory.cpp
+    testing/MockCaptionDisplaySettingsClientCallback.cpp
     testing/MockGamepad.cpp
     testing/MockGamepadProvider.cpp
     testing/MockLibWebRTCPeerConnection.cpp
@@ -2792,7 +2799,7 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions
 
 # Generate CSS property names
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.gperf ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleInlinesGenerated.h ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleSettersGenerated.h ${WebCore_DERIVED_SOURCES_DIR}/StyleBuilderGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleExtractorGenerated.cpp ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.h ${WebCore_DERIVED_SOURCES_DIR}/StyleInterpolationWrapperMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.h ${WebCore_DERIVED_SOURCES_DIR}/StylePropertyShorthandFunctions.cpp ${WebCore_DERIVED_SOURCES_DIR}/CSSStyleProperties+PropertyNames.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/scripts/process-css-properties.py
     DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}

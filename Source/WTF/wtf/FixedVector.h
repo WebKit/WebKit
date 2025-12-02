@@ -72,6 +72,9 @@ public:
 
     FixedVector& operator=(const FixedVector& other)
     {
+        if (&other == this)
+            return *this;
+
         FixedVector tmp(other);
         swap(tmp);
         return *this;

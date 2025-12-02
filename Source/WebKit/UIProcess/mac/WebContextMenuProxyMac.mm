@@ -1090,7 +1090,7 @@ RetainPtr<NSArray> WebContextMenuProxyMac::platformData() const
 WKCaptionStyleMenuController *WebContextMenuProxyMac::captionStyleMenuController()
 {
     if (!m_captionStyleMenuController) {
-        m_captionStyleMenuController = adoptNS([[WKCaptionStyleMenuController alloc] init]);
+        m_captionStyleMenuController = [WKCaptionStyleMenuController menuController];
         [m_captionStyleMenuController setDelegate:RetainPtr { menuDelegate() }.get()];
     }
     return m_captionStyleMenuController.get();

@@ -61,6 +61,10 @@ public:
 
     void finishSession(std::optional<bool>&&);
 
+    // ContextDestructionObserver.
+    void ref() const final { PaymentHandler::ref(); }
+    void deref() const final { PaymentHandler::deref(); }
+
 private:
     friend class PaymentHandler;
     explicit ApplePayAMSUIPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);

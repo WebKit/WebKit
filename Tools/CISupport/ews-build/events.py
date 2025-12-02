@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ class Events(service.BuildbotService):
         'bindings-tests', 'check-webkit-style',
         'webkitperl-tests', 're-run-webkitperl-tests', 'webkitpy-tests'
     ]
+    QUEUES_TO_SKIP_REPORTING = ['__Janitor', 'Safe-Merge-Queue']
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
@@ -115,7 +116,7 @@ class Events(service.BuildbotService):
         if not (build and 'properties' in build):
             return ''
 
-        return build.get('properties').get('buildername')[0]
+        return build.get('properties').get('buildername', [''])[0]
 
     def extractProperty(self, build, property_name):
         if not (build and 'properties' in build and property_name in build['properties']):
@@ -127,6 +128,9 @@ class Events(service.BuildbotService):
     def buildStarted(self, key, build):
         if not build.get('properties'):
             build['properties'] = yield self.master.db.builds.getBuildProperties(build.get('buildid'))
+
+        if self.getBuilderName(build) in self.QUEUES_TO_SKIP_REPORTING:
+            return
 
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
         # Handle both buildbot 2.x (dict) and 4.x (model object)
@@ -186,8 +190,9 @@ class Events(service.BuildbotService):
     def buildFinished(self, key, build):
         if not build.get('properties'):
             build['properties'] = yield self.master.db.builds.getBuildProperties(build.get('buildid'))
-        if not build.get('steps'):
-            build['steps'] = yield self.master.db.steps.getSteps(build.get('buildid'))
+
+        if self.getBuilderName(build) in self.QUEUES_TO_SKIP_REPORTING:
+            return
 
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
         # Handle both buildbot 2.x (dict) and 4.x (model object)

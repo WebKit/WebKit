@@ -844,6 +844,9 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy, typename Malloc>
 auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, SizePolicy, Malloc>::operator=(const RobinHoodHashTable& other) -> RobinHoodHashTable&
 {
+    if (&other == this)
+        return *this;
+
     RobinHoodHashTable tmp(other);
     swap(tmp);
     return *this;

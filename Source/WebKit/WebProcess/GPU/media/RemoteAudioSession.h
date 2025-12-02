@@ -49,13 +49,13 @@ class RemoteAudioSession final
     , IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
-    static Ref<RemoteAudioSession> create();
+    static Ref<RemoteAudioSession> create(WebProcess&);
     ~RemoteAudioSession();
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
 private:
-    RemoteAudioSession();
+    RemoteAudioSession(WebProcess&);
     IPC::Connection& ensureConnection();
     Ref<IPC::Connection> ensureProtectedConnection();
 
@@ -117,6 +117,7 @@ private:
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(MayResume) final;
 
+    WeakRef<WebProcess> m_webProcess;
     WeakHashSet<WebCore::AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };
     Mode m_mode { Mode::Default };

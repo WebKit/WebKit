@@ -40,6 +40,10 @@ public:
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();
 
+    // CachedResourceClient.
+    void ref() const final { CharacterData::ref(); }
+    void deref() const final { CharacterData::deref(); }
+
     const String& target() const { return m_target; }
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }

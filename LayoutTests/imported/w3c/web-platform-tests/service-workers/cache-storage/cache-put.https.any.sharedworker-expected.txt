@@ -10,7 +10,7 @@ PASS Cache.put with HTTP 206 response
 PASS Cache.put with opaque-filtered HTTP 206 response
 PASS Cache.put with HTTP 500 response
 PASS Cache.put called twice with matching Requests and different Responses
-PASS Cache.put called twice with request URLs that differ only by a fragment
+FAIL Cache.put called multiple times with request URLs that differ only by a fragment assert_equals: expected "https://example.com/foo#fragment" but got "https://example.com/foo"
 PASS Cache.put with a string request
 PASS Cache.put with an invalid response
 PASS Cache.put with a non-HTTP/HTTPS request

@@ -27,8 +27,10 @@ promise_test(async () => {
 
     const initialAnimations = internals.acceleratedAnimationsForElement(target);
     assert_equals(initialAnimations.length, 1, "There should be a single accelerated animation before suspension.");
-    assert_object_equals(initialAnimations[0], { property: "transform", speed: 1 },
-                         'The single accelerated animation before suspension should be running and targeting the "transform" property.');
+    assert_equals(initialAnimations[0].property, "transform",
+                         'The single accelerated animation before suspension should be targeting the "transform" property.');
+    assert_equals(initialAnimations[0].speed, 1,
+                         'The single accelerated animation before suspension should be running.');
 
     internals.suspendAnimations();
 
@@ -36,8 +38,10 @@ promise_test(async () => {
 
     const suspendedAnimations = internals.acceleratedAnimationsForElement(target);
     assert_equals(suspendedAnimations.length, 1, "There should be a single accelerated animation after suspension.");
-    assert_object_equals(suspendedAnimations[0], { property: "transform", speed: 0 },
-                         'The single accelerated animation after suspension should be paused and targeting the "transform" property.');
+    assert_equals(suspendedAnimations[0].property, "transform",
+                         'The single accelerated animation after suspension should be targeting the "transform" property.');
+    assert_equals(suspendedAnimations[0].speed, 0,
+                         'The single accelerated animation after suspension should be paused.');
     internals.resumeAnimations();
 
     await new Promise(setTimeout);

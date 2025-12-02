@@ -60,7 +60,7 @@ function load_css_image_set(url, type) {
   }
 }
 
-function load_script_with_integrity(url, { integrity, type } = { }) {
+function load_script_with_integrity(url, integrity, type) {
   const script = document.createElement('script');
   if (type) {
     script.type = type;

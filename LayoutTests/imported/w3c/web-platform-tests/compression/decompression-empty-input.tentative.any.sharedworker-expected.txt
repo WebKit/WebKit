@@ -1,5 +1,0 @@
-
-PASS decompressing gzip empty input should work
-PASS decompressing deflate empty input should work
-PASS decompressing deflate-raw empty input should work
-

@@ -30,38 +30,32 @@
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
 #include "CryptoUtilitiesCocoa.h"
+
 #if HAVE(SWIFT_CPP_INTEROP)
-#include <pal/PALSwiftUtils.h>
+#include <pal/PALSwift.h>
 #endif
 
 namespace WebCore {
-#if !HAVE(SWIFT_CPP_INTEROP)
-static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCC(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
-{
-    CCDigestAlgorithm digestAlgorithm;
-    getCommonCryptoDigestAlgorithm(parameters.hashIdentifier, digestAlgorithm);
 
-    return deriveHDKFBits(digestAlgorithm, key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length);
-}
-
-#else
 static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
+#if !defined(CLANG_WEBKIT_BRANCH)
     if (!isValidHashParameter(parameters.hashIdentifier))
         return Exception { ExceptionCode::OperationError };
-    auto rv = PAL::HKDF::deriveBits(key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length, toCKHashFunction(parameters.hashIdentifier));
+    auto rv = PAL::HKDF::deriveBits(key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length, std::to_underlying(toCKHashFunction(parameters.hashIdentifier)));
     if (rv.errorCode != Cpp::ErrorCodes::Success)
         return Exception { ExceptionCode::OperationError };
     return WTFMove(rv.result);
-}
+#else
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(length);
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("CLANG_WEBKIT_BRANCH");
 #endif
+}
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
-#if HAVE(SWIFT_CPP_INTEROP)
     return platformDeriveBitsCryptoKit(parameters, key, length);
-#else
-    return platformDeriveBitsCC(parameters, key, length);
-#endif
 }
 } // namespace WebCore

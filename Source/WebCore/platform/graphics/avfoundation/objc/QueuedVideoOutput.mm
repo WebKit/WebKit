@@ -31,11 +31,12 @@
 #include <AVFoundation/AVPlayerItemOutput.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cocoa/AVFoundationSPI.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/OSObjectPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/cocoa/AVFoundationSoftLink.h>
-
-#include <wtf/TZoneMallocInlines.h>
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(AVPlayerItemVideoOutput)
 static bool isType(const AVPlayerItemOutput& output) { return [&output isKindOfClass:PAL::getAVPlayerItemVideoOutputClassSingleton()]; }
@@ -119,12 +120,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(QueuedVideoOutput);
 
 static dispatch_queue_t globalOutputDelegateQueue()
 {
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("WebQueuedVideoOutputDelegate queue", DISPATCH_QUEUE_SERIAL);
-    });
-    return globalQueue;
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> globalQueue = adoptOSObject(dispatch_queue_create("WebQueuedVideoOutputDelegate queue", DISPATCH_QUEUE_SERIAL));
+    return globalQueue.get().get();
 }
 
 RefPtr<QueuedVideoOutput> QueuedVideoOutput::create(AVPlayerItem* item, AVPlayer* player)

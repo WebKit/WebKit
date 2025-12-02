@@ -278,7 +278,7 @@ private:
                 case MultiGetByVal:
                 case PutByValDirect:
                 case PutByVal:
-                case PutByValAlias:
+                case PutByValDirectResolved:
                 case PutByValMegamorphic:
                 case MultiPutByVal:
                 case EnumeratorPutByVal:
@@ -366,7 +366,7 @@ private:
                 case MultiGetByVal:
                 case PutByValDirect:
                 case PutByVal:
-                case PutByValAlias:
+                case PutByValDirectResolved:
                 case PutByValMegamorphic:
                 case EnumeratorPutByVal:
                 case GetArrayLength:

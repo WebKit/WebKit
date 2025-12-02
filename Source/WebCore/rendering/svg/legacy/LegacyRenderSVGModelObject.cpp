@@ -228,6 +228,10 @@ bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const F
     return rect.contains(ctm.mapRect(svgElement->checkedRenderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
+void LegacyRenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*) const
+{
+}
+
 Ref<SVGElement> LegacyRenderSVGModelObject::protectedElement() const
 {
     return element();

@@ -47,7 +47,7 @@ class CompletionHandlerCallingScope;
 namespace WebCore {
 
 class DocumentLoader;
-class FormState;
+class FormSubmission;
 class HitTestResult;
 class LocalFrame;
 class NavigationAction;
@@ -72,12 +72,12 @@ class PolicyChecker final : public CanMakeWeakPtr<PolicyChecker>, public CanMake
 public:
     explicit PolicyChecker(LocalFrame&);
 
-    using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, NavigationPolicyDecision)>;
-    using NewWindowPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, const AtomString& frameName, const NavigationAction&, ShouldContinuePolicyCheck)>;
+    using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<const FormSubmission>&&, NavigationPolicyDecision)>;
+    using NewWindowPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<const FormSubmission>&&, const AtomString& frameName, const NavigationAction&, ShouldContinuePolicyCheck)>;
 
-    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<FormState>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous, std::optional<NavigationNavigationType> = std::nullopt);
+    void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, DocumentLoader*, RefPtr<const FormSubmission>&&, NavigationPolicyDecisionFunction&&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous, std::optional<NavigationNavigationType> = std::nullopt);
     void checkNavigationPolicy(ResourceRequest&&, const ResourceResponse& redirectResponse, NavigationPolicyDecisionFunction&&);
-    void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, RefPtr<FormState>&&, const AtomString& frameName, NewWindowPolicyDecisionFunction&&);
+    void checkNewWindowPolicy(NavigationAction&&, ResourceRequest&&, RefPtr<const FormSubmission>&&, const AtomString& frameName, NewWindowPolicyDecisionFunction&&);
 
     void stopCheck();
 

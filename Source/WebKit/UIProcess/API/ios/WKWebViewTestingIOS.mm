@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "SystemPreviewController.h"
@@ -237,7 +238,7 @@ static bool shouldDumpSeparatedDetails(UIView *view)
 }
 #endif
 
-static void dumpUIView(TextStream& ts, UIView *view)
+static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 {
     auto rectToString = [] (auto rect) {
         return makeString("[x: "_s, rect.origin.x, " y: "_s, rect.origin.y, " width: "_s, rect.size.width, " height: "_s, rect.size.height, ']');
@@ -293,27 +294,45 @@ static void dumpUIView(TextStream& ts, UIView *view)
         ts << "separated"_s;
         if (shouldDumpSeparatedDetails(view))
             dumpSeparatedLayerProperties(ts, view.layer);
+        else
+            traverse = false;
     }
 #endif
 
-    if (view.subviews.count > 0) {
+    if (traverse && view.subviews.count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "subviews"_s;
         for (UIView *subview in view.subviews) {
             TextStream::GroupScope scope(ts);
-            dumpUIView(ts, subview);
+            dumpUIView(ts, subview, traverse);
         }
     }
 }
 
 - (NSString *)_uiViewTreeAsText
 {
+    return [self _uiViewTreeAsTextForView:self];
+}
+
+- (NSString *)_uiViewTreeAsTextForViewWithLayerID:(unsigned long long)layerID
+{
+    if (!layerID)
+        return nil;
+    RetainPtr view = downcast<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(_page->protectedDrawingArea())->viewWithLayerIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    if (!view)
+        return nil;
+
+    return [self _uiViewTreeAsTextForView:view.get()];
+}
+
+- (NSString *)_uiViewTreeAsTextForView:(UIView *)view
+{
     TextStream ts(TextStream::LineMode::MultipleLine);
 
     {
         TextStream::GroupScope scope(ts);
         ts << "UIView tree root "_s;
-        dumpUIView(ts, self);
+        dumpUIView(ts, view, true);
     }
 
     return ts.release().createNSString().autorelease();

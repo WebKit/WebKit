@@ -52,7 +52,7 @@
 
 - (UIScrollView *)lastTouchedScrollView
 {
-    return _lastTouchedScrollView.get().unsafeGet();
+    return _lastTouchedScrollView.getAutoreleased();
 }
 
 @end

@@ -719,7 +719,7 @@ bool XMLHttpRequest::internalAbort()
     // This would create internalAbort reentrant call.
     // m_loadingActivity is set to std::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
     auto loadingActivity = std::exchange(m_loadingActivity, std::nullopt);
-    loadingActivity->loader->cancel();
+    loadingActivity->protectedLoader()->cancel();
 
     // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value.
     // The function calling internalAbort() should abort to let the open() and send() calls continue properly.
@@ -1103,7 +1103,7 @@ void XMLHttpRequest::dispatchEvent(Event& event)
 {
     RELEASE_ASSERT(!scriptExecutionContext()->activeDOMObjectsAreSuspended());
 
-    if (m_userGestureToken && m_userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()))
+    if (m_userGestureToken && RefPtr { m_userGestureToken }->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()))
         m_userGestureToken = nullptr;
 
     if (readyState() != DONE || !m_userGestureToken || !m_userGestureToken->processingUserGesture()) {
@@ -1132,7 +1132,7 @@ void XMLHttpRequest::timeoutTimerFired()
 {
     if (!m_loadingActivity)
         return;
-    m_loadingActivity->loader->computeIsDone();
+    m_loadingActivity->protectedLoader()->computeIsDone();
 }
 
 void XMLHttpRequest::notifyIsDone(bool isDone)
@@ -1227,6 +1227,11 @@ bool XMLHttpRequest::virtualHasPendingActivity() const
 void XMLHttpRequest::dispatchThrottledProgressEventIfNeeded()
 {
     m_progressEventThrottle->dispatchThrottledProgressEventIfNeeded();
+}
+
+Ref<ThreadableLoader> XMLHttpRequest::LoadingActivity::protectedLoader() const
+{
+    return loader;
 }
 
 } // namespace WebCore

@@ -48,6 +48,10 @@ public:
     }
     virtual ~UserMessageHandler();
 
+    // FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
     JSC::JSValue postLegacySynchronousMessage(JSC::JSGlobalObject&, JSC::JSValue);
 
