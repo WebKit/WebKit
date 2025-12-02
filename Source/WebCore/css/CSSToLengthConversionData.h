@@ -111,6 +111,12 @@ public:
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
     CheckedPtr<Style::BuilderState> protectedStyleBuilderState() const;
 
+    void setRangeZoomAndOption(float zoom, CSS::RangeZoomOptions zoomOption)
+    {
+        m_zoom = zoom;
+        m_rangeZoomOption = zoomOption;
+    }
+
 private:
     const RenderStyle* m_style { nullptr };
     const RenderStyle* m_rootStyle { nullptr };

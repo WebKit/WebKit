@@ -1192,20 +1192,18 @@ static NSControlSize controlSizeForFont(const RenderStyle& style)
 
 static IntSize sizeForFont(const RenderStyle& style, std::span<const IntSize, 4> sizes)
 {
-    if (style.usedZoom() != 1.0f && !style.evaluationTimeZoomEnabled()) {
-        IntSize result = sizes[controlSizeForFont(style)];
-        return IntSize(result.width() * style.usedZoom(), result.height() * style.usedZoom());
-    }
-    return sizes[controlSizeForFont(style)];
+    const IntSize& result = sizes[controlSizeForFont(style)];
+    if (style.usedZoom() != 1.0f && !style.evaluationTimeZoomEnabled())
+        return result.scaled(style.usedZoom());
+    return result;
 }
 
 static IntSize sizeForSystemFont(const RenderStyle& style, std::span<const IntSize, 4> sizes)
 {
-    if (style.usedZoom() != 1.0f) {
-        IntSize result = sizes[controlSizeForSystemFont(style)];
-        return IntSize(result.width() * style.usedZoom(), result.height() * style.usedZoom());
-    }
-    return sizes[controlSizeForSystemFont(style)];
+    const IntSize& result = sizes[controlSizeForSystemFont(style)];
+    if (style.usedZoom() != 1.0f)
+        return result.scaled(style.usedZoom());
+    return result;
 }
 
 static void setSizeFromFont(RenderStyle& style, std::span<const IntSize, 4> sizes)
