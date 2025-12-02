@@ -48,6 +48,7 @@ PerformanceEventTiming::PerformanceEventTiming(const PerformanceEventTimingCandi
     , m_processingEnd(candidate.processingEnd)
     , m_interactionID(candidate.interactionID)
     , m_target(candidate.target)
+    , m_targetSelector(candidate.targetSelector)
 { }
 
 PerformanceEventTiming::~PerformanceEventTiming() = default;
