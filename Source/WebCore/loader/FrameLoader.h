@@ -395,7 +395,7 @@ private:
     ResourceRequestCachePolicy defaultRequestCachingPolicy(const ResourceRequest&, FrameLoadType, bool isMainResource);
 
     void clearProvisionalLoad();
-    void transitionToCommitted(CachedPage*);
+    void transitionToCommitted(DocumentLoader*, CachedPage*);
     void frameLoadCompleted();
 
     SubstituteData defaultSubstituteDataForURL(const URL&);
