@@ -23,6 +23,7 @@ grid {
   border: solid;
   border-width: 3px 5px 1px 1px;
   background: lightgrey content-box;
+  item-tolerance: 0px;
 }
 .rows {
   grid-template-columns: 50px 80px 40px;
@@ -44,6 +45,7 @@ subgrid {
   grid-row: 2 / span 2;
   grid-gap: 8px 20px;
   background: yellow;
+  item-tolerance: 0px;
 }
 .rows > subgrid {
   grid-row: initial;

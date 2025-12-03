@@ -23,6 +23,7 @@ grid {
   border: solid;
   border-width: 3px 5px 1px 1px;
   background: lightgrey content-box;
+  item-tolerance: 0px;
 }
 .rows {
   grid-lanes-direction: column;
@@ -46,6 +47,7 @@ subgrid {
   grid: subgrid / subgrid;
   grid-gap: 6px 8px;
   background: yellow;
+  item-tolerance: 0px;
 }
 subgrid.definite {
   grid-row-start:2;
@@ -67,15 +69,15 @@ subgrid.extent {
 <!-- auto-placed subgrid inhibits subgridding when parent is doing grid-lanes layout ... -->
 
 <grid class="rows">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <subgrid>
+  <item style="height: 24px;">1</item>
+  <item style="height: 40px;">2</item>
+  <item style="height: 40px;">3</item>
+  <subgrid style="height: 54px;">
     <item>4a</item>
-    <item>4b</item>
+    <item style="grid-column: span 2;">4b</item>
     <item>4c</item>
   </subgrid>
-  <item>5</item>
+  <item style="height: 30px;">5</item>
 </grid>
 
 </body></html>
