@@ -159,6 +159,8 @@ String canonicalizeUnicodeLocaleID(const CString& languageTag);
 
 bool isWellFormedCurrencyCode(StringView);
 
+bool isFallbackIslamic(StringView);
+
 std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {

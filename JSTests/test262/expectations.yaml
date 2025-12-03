@@ -475,9 +475,6 @@ test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
   strict mode: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
-test/intl402/DateTimeFormat/constructor-options-calendar-islamic-fallback.js:
-  default: "Test262Error: no valid fallback for 'islamic' calendar option Expected SameValue(«false», «true») to be true"
-  strict mode: "Test262Error: no valid fallback for 'islamic' calendar option Expected SameValue(«false», «true») to be true"
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-format-with-era.js:
   default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
   strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
