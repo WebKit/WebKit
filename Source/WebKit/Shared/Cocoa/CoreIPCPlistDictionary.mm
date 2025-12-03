@@ -35,6 +35,7 @@
 #import "CoreIPCPlistObject.h"
 #import "CoreIPCString.h"
 #import <wtf/Assertions.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -43,6 +44,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCPlistDictionary);
 
 CoreIPCPlistDictionary::CoreIPCPlistDictionary(NSDictionary *dictionary)
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+
     m_keyValuePairs.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {

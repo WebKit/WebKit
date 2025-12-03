@@ -34,6 +34,7 @@
 #import "CoreIPCCFType.h"
 #import "CoreIPCCFURL.h"
 #import "CoreIPCTypes.h"
+#import <wtf/RuntimeApplicationChecks.h>
 #include <optional>
 
 namespace WebKit {
@@ -106,6 +107,8 @@ CoreIPCCFDictionary::~CoreIPCCFDictionary() = default;
 
 CoreIPCCFDictionary::CoreIPCCFDictionary(CFDictionaryRef dictionary)
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isInWebProcess());
+
     if (!dictionary)
         return;
     m_vector = makeUnique<KeyValueVector>();
