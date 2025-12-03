@@ -437,10 +437,13 @@ GENERATE_SINGLE_SWIFT_INTEROP_FILE_YES = GENERATE_SINGLE_SWIFT_INTEROP_FILE;
 // FIXME: (rdar://149474443) Swift/Cxx interop does not respect CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
 // FIXME: (rdar://103177280) "-no-verify-emitted-module-interface;" is needed to workaround a SwiftVerifyEmittedModuleInterface bug
 OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) $(OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_$(WK_GENERATE_SINGLE_SWIFT_INTEROP_FILE);
-OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -no-verify-emitted-module-interface;
+OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -no-verify-emitted-module-interface $(OTHER_SWIFT_FLAGS_MINACCESS_INTERNAL);
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
 OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_YES = -enable-experimental-feature RequiresObjC=Foundation;
 OTHER_SWIFT_FLAGS_MARK_FOUNDATION_AS_OBJC_NO = ;
+OTHER_SWIFT_FLAGS_MINACCESS_INTERNAL = ;
+OTHER_SWIFT_FLAGS_MINACCESS_INTERNAL[sdk=macosx26.4*] = -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
+OTHER_SWIFT_FLAGS_MINACCESS_INTERNAL[sdk=iphone26.4*] = -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
 
 // WebKit's clang module does not build in public SDK builds of these
 // platforms, preventing any Swift compilation. (https://bugs.webkit.org/show_bug.cgi?id=280912)
