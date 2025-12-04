@@ -218,9 +218,11 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
         return false;
     }
 
-    auto& rootBox = formattingContext().root();
-    if (rootBox.isAnonymous() || rootBox.isListItem())
-        return false;
+    if (!formattingContext().layoutState().inStandardsMode()) {
+        auto& rootBox = formattingContext().root();
+        if (rootBox.isAnonymous() || rootBox.isListItem())
+            return false;
+    }
 
     for (auto& run : lineContent) {
         if (run.isListMarkerOutside())
