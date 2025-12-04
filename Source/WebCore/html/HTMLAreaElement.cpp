@@ -104,7 +104,6 @@ bool HTMLAreaElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size
     return true;
 }
 
-// FIXME: We should use RenderElement* instead of RenderObject* once we upstream iOS's DOMUIKitExtensions.{h, mm}.
 Path HTMLAreaElement::computePath(const RenderElement& renderer) const
 {
     // FIXME: This doesn't work correctly with transforms.
