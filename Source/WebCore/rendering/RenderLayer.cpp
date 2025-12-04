@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
@@ -2970,8 +2970,9 @@ LayoutSize RenderLayer::minimumSizeForResizing(float zoomFactor) const
 {
     // Use the resizer size as the strict minimum size
     auto resizerRect = overflowControlsRects().resizer;
-    auto minWidth = Style::evaluateMinimum<LayoutUnit>(renderer().style().minWidth(), renderer().containingBlock()->width(), renderer().style().usedZoomForLength());
-    auto minHeight = Style::evaluateMinimum<LayoutUnit>(renderer().style().minHeight(), renderer().containingBlock()->height(), renderer().style().usedZoomForLength());
+    const auto& styleZoomFactor = renderer().style().usedZoomForLength();
+    auto minWidth = Style::evaluateMinimum<LayoutUnit>(renderer().style().minWidth(), renderer().containingBlock()->width(), styleZoomFactor);
+    auto minHeight = Style::evaluateMinimum<LayoutUnit>(renderer().style().minHeight(), renderer().containingBlock()->height(), styleZoomFactor);
     minWidth = std::max(LayoutUnit(minWidth / zoomFactor), LayoutUnit(resizerRect.width()));
     minHeight = std::max(LayoutUnit(minHeight / zoomFactor), LayoutUnit(resizerRect.height()));
     return LayoutSize(minWidth, minHeight);

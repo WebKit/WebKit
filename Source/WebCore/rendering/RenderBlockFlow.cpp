@@ -4658,10 +4658,11 @@ static inline std::optional<LayoutUnit> textIndentForBlockContainer(const Render
     auto indentValue = LayoutUnit { };
     if (auto* containingBlock = renderer.containingBlock()) {
         if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
-            auto containingBlockFixedLogicalWidthValue = Style::evaluate<LayoutUnit>(*containingBlockFixedLogicalWidth, containingBlock->style().usedZoomForLength());
+            const auto& zoomFactor = containingBlock->style().usedZoomForLength();
+            auto containingBlockFixedLogicalWidthValue = Style::evaluate<LayoutUnit>(*containingBlockFixedLogicalWidth, zoomFactor);
             // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
             // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-            indentValue = Style::evaluate<LayoutUnit>(style.textIndent().length, containingBlockFixedLogicalWidthValue, containingBlock->style().usedZoomForLength());
+            indentValue = Style::evaluate<LayoutUnit>(style.textIndent().length, containingBlockFixedLogicalWidthValue, zoomFactor);
         }
     }
     return indentValue ? std::make_optional(indentValue) : std::nullopt;

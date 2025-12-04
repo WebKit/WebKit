@@ -556,8 +556,9 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
 
         auto fixedWidth = thumbStyle.width().tryFixed();
         auto fixedHeight = thumbStyle.height().tryFixed();
-        auto thumbWidth = fixedWidth ? static_cast<int>(fixedWidth->resolveZoom(thumbStyle.usedZoomForLength())) : 0;
-        auto thumbHeight = fixedHeight ? static_cast<int>(fixedHeight->resolveZoom(thumbStyle.usedZoomForLength())) : 0;
+        const auto& zoomFactor = thumbStyle.usedZoomForLength();
+        auto thumbWidth = fixedWidth ? static_cast<int>(fixedWidth->resolveZoom(zoomFactor)) : 0;
+        auto thumbHeight = fixedHeight ? static_cast<int>(fixedHeight->resolveZoom(zoomFactor)) : 0;
 
         thumbSize = { thumbWidth, thumbHeight };
     }

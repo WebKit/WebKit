@@ -376,12 +376,13 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     auto& right = style.right();
     auto& top = style.top();
     auto& bottom = style.bottom();
+    const auto& zoomFactor = style.usedZoomForLength();
 
     auto offset = accumulateInFlowPositionOffsets(*this);
     auto topFixed = top.tryFixed();
     auto leftFixed = left.tryFixed();
     if (topFixed && leftFixed && bottom.isAuto() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
-        offset.expand(leftFixed->resolveZoom(style.usedZoomForLength()), topFixed->resolveZoom(style.usedZoomForLength()));
+        offset.expand(leftFixed->resolveZoom(zoomFactor), topFixed->resolveZoom(zoomFactor));
         return offset;
     }
 
@@ -404,11 +405,11 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         };
         if (!left.isAuto()) {
             if (!right.isAuto() && !containingBlock->writingMode().isAnyLeftToRight())
-                offset.setWidth(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, style.usedZoomForLength()));
+                offset.setWidth(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, zoomFactor));
             else
-                offset.expand(Style::evaluate<LayoutUnit>(left, !left.isFixed() ? availableWidth() : 0_lu, style.usedZoomForLength()), 0_lu);
+                offset.expand(Style::evaluate<LayoutUnit>(left, !left.isFixed() ? availableWidth() : 0_lu, zoomFactor), 0_lu);
         } else if (!right.isAuto())
-            offset.expand(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, style.usedZoomForLength()), 0_lu);
+            offset.expand(-Style::evaluate<LayoutUnit>(right, !right.isFixed() ? availableWidth() : 0_lu, zoomFactor), 0_lu);
     }
 
     // If the containing block of a relatively positioned element does not
@@ -439,10 +440,10 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         // FIXME: The computation of the available height is repeated later for "bottom".
         // We could refactor this and move it to some common code for both ifs, however moving it outside of the ifs
         // is not possible as it'd cause performance regressions.
-        offset.expand(0_lu, Style::evaluate<LayoutUnit>(top, !top.isFixed() ? availableHeight() : 0_lu, style.usedZoomForLength()));
+        offset.expand(0_lu, Style::evaluate<LayoutUnit>(top, !top.isFixed() ? availableHeight() : 0_lu, zoomFactor));
     } else if (!bottom.isAuto() && (!bottom.isPercentOrCalculated() || containingBlockHasDefiniteHeight)) {
         // FIXME: Check comment above for "top", it applies here too.
-        offset.expand(0_lu, -Style::evaluate<LayoutUnit>(bottom, !bottom.isFixed() ? availableHeight() : 0_lu, style.usedZoomForLength()));
+        offset.expand(0_lu, -Style::evaluate<LayoutUnit>(bottom, !bottom.isFixed() ? availableHeight() : 0_lu, zoomFactor));
     }
     return offset;
 }
@@ -606,22 +607,22 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     constraints.setStickyBoxRect(stickyBoxRelativeToScrollingAncestor);
 
     if (!style().left().isAuto()) {
-        constraints.setLeftOffset(Style::evaluate<float>(style().left(), constrainingRect.width(), style().usedZoomForLength()));
+        constraints.setLeftOffset(Style::evaluate<float>(style().left(), constrainingRect.width(), zoomFactor));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
     }
 
     if (!style().right().isAuto()) {
-        constraints.setRightOffset(Style::evaluate<float>(style().right(), constrainingRect.width(), style().usedZoomForLength()));
+        constraints.setRightOffset(Style::evaluate<float>(style().right(), constrainingRect.width(), zoomFactor));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
     }
 
     if (!style().top().isAuto()) {
-        constraints.setTopOffset(Style::evaluate<float>(style().top(), constrainingRect.height(), style().usedZoomForLength()));
+        constraints.setTopOffset(Style::evaluate<float>(style().top(), constrainingRect.height(), zoomFactor));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
     }
 
     if (!style().bottom().isAuto()) {
-        constraints.setBottomOffset(Style::evaluate<float>(style().bottom(), constrainingRect.height(), style().usedZoomForLength()));
+        constraints.setBottomOffset(Style::evaluate<float>(style().bottom(), constrainingRect.height(), zoomFactor));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
     }
 }

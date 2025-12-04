@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2016-2017 Google Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
@@ -181,13 +181,13 @@ Style::PreferredSize RenderTableCell::logicalWidthFromColumns(RenderTableCol* fi
     ASSERT(firstColForThisCell && firstColForThisCell == table()->colElement(col()));
     RenderTableCol* tableCol = firstColForThisCell;
 
+    auto& colWidth = tableCol->style().logicalWidth();
+    const auto& tableColZoomFactor = tableCol->style().usedZoomForLength();
+    auto fixedColWidth = colWidth.tryFixed();
+
     unsigned colSpanCount = colSpan();
     LayoutUnit colWidthSum;
     for (unsigned i = 1; i <= colSpanCount; i++) {
-        auto& colWidth = tableCol->style().logicalWidth();
-
-        auto fixedColWidth = colWidth.tryFixed();
-
         // Percentage value should be returned only for colSpan == 1.
         // Otherwise we return original width for the cell.
         if (!fixedColWidth) {
@@ -196,7 +196,7 @@ Style::PreferredSize RenderTableCell::logicalWidthFromColumns(RenderTableCol* fi
             return colWidth;
         }
 
-        colWidthSum += fixedColWidth->resolveZoom(tableCol->style().usedZoomForLength());
+        colWidthSum += fixedColWidth->resolveZoom(tableColZoomFactor);
         tableCol = tableCol->nextColumn();
         // If no next <col> tag found for the span we just return what we have for now.
         if (!tableCol)

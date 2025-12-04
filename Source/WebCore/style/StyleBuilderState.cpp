@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -257,8 +257,9 @@ void BuilderState::updateFontForSizeChange()
     auto& fontCascade = m_style.mutableFontCascadeWithoutUpdate();
     auto fontSize = fontCascade.size();
 
-    auto newWordSpacing = evaluate<float>(m_style.computedWordSpacing(), fontSize, m_style.usedZoomForLength());
-    auto newLetterSpacing = evaluate<float>(m_style.computedLetterSpacing(), fontSize, m_style.usedZoomForLength());
+    const auto& zoomFactor = m_style.usedZoomForLength();
+    auto newWordSpacing = evaluate<float>(m_style.computedWordSpacing(), fontSize, zoomFactor);
+    auto newLetterSpacing = evaluate<float>(m_style.computedLetterSpacing(), fontSize, zoomFactor);
 
     if (newWordSpacing != fontCascade.wordSpacing())
         fontCascade.setWordSpacing(newWordSpacing);

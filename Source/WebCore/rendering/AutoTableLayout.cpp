@@ -174,8 +174,9 @@ void AutoTableLayout::fullRecalc()
             if (!colLogicalWidth.isAuto() && span == 1 && effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
                 m_layoutStruct[effCol].usedZoom = column->style().usedZoom();
                 m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
-                if (auto fixedColLogicalWidth = colLogicalWidth.tryFixed(); fixedColLogicalWidth && m_layoutStruct[effCol].maxLogicalWidth < fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength()))
-                    m_layoutStruct[effCol].maxLogicalWidth = fixedColLogicalWidth->resolveZoom(column->style().usedZoomForLength());
+                const auto& zoomFactor = column->style().usedZoomForLength();
+                if (auto fixedColLogicalWidth = colLogicalWidth.tryFixed(); fixedColLogicalWidth && m_layoutStruct[effCol].maxLogicalWidth < fixedColLogicalWidth->resolveZoom(zoomFactor))
+                    m_layoutStruct[effCol].maxLogicalWidth = fixedColLogicalWidth->resolveZoom(zoomFactor);
             }
             currentColumn += span;
         }
@@ -269,13 +270,14 @@ void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, Lay
 {
     if (auto fixedTableLogicalWidth = m_table->style().logicalWidth().tryFixed(); fixedTableLogicalWidth && fixedTableLogicalWidth->isPositive()) {
         LayoutUnit minContentWidth = minWidth;
-        LayoutUnit tableFixedWidth = m_table->overridingBorderBoxLogicalWidth().value_or(LayoutUnit { fixedTableLogicalWidth->resolveZoom(m_table->style().usedZoomForLength()) });
+        const auto& zoomFactor = m_table->style().usedZoomForLength();
+        LayoutUnit tableFixedWidth = m_table->overridingBorderBoxLogicalWidth().value_or(LayoutUnit { fixedTableLogicalWidth->resolveZoom(zoomFactor) });
         LayoutUnit clampedWidth = std::max(minContentWidth, std::max(minWidth, tableFixedWidth));
         minWidth = clampedWidth;
         maxWidth = clampedWidth;
 
         if (auto fixedMaxWidth = m_table->style().logicalMaxWidth().tryFixed()) {
-            LayoutUnit maxAllowedWidth { fixedMaxWidth->resolveZoom(m_table->style().usedZoomForLength()) };
+            LayoutUnit maxAllowedWidth { fixedMaxWidth->resolveZoom(zoomFactor) };
             minWidth = std::min(minWidth, maxAllowedWidth);
             minWidth = std::max(minWidth, minContentWidth);
             maxWidth = minWidth;

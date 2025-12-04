@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1109,7 +1109,8 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
             auto fixedHeight = style.height().tryFixed();
             if (!fixedWidth || !fixedHeight)
                 return { };
-            return std::make_optional(IntSize { static_cast<int>(fixedWidth->resolveZoom(style.usedZoomForLength())), static_cast<int>(fixedHeight->resolveZoom(style.usedZoomForLength())) });
+            const auto& zoomFactor = style.usedZoomForLength();
+            return std::make_optional(IntSize { static_cast<int>(fixedWidth->resolveZoom(zoomFactor)), static_cast<int>(fixedHeight->resolveZoom(zoomFactor)) });
         };
         // SVG content tends to have a fixed size construct. However this is known to be inaccurate in certain cases (box-sizing: border-box) or especially when the parent box is oversized.
         auto candidateSize = IntSize { };

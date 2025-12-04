@@ -82,7 +82,8 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
             if (auto percentageRowLogicalHeight = row.logicalHeight.tryPercentage(); !percentageRowLogicalHeight || percentageRowLogicalHeight->value < percentageLogicalHeight->value)
                 row.logicalHeight = logicalHeight;
         } else if (auto fixedLogicalHeight = logicalHeight.tryFixed()) {
-            if (auto fixedRowLogicalHeight = row.logicalHeight.tryFixed(); row.logicalHeight.isAuto() || (fixedRowLogicalHeight && fixedRowLogicalHeight->resolveZoom(cell->style().usedZoomForLength()) < fixedLogicalHeight->resolveZoom(cell->style().usedZoomForLength())))
+            const auto& zoomFactor = cell->style().usedZoomForLength();
+            if (auto fixedRowLogicalHeight = row.logicalHeight.tryFixed(); row.logicalHeight.isAuto() || (fixedRowLogicalHeight && fixedRowLogicalHeight->resolveZoom(zoomFactor) < fixedLogicalHeight->resolveZoom(zoomFactor)))
                 row.logicalHeight = logicalHeight;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 {
     auto& flexContainerRenderer = downcast<RenderFlexibleBox>(*flexContainer.rendererForIntegration());
     auto& flexBoxStyle = flexContainer.style();
+    const auto& flexBoxZoomFactor = flexBoxStyle.usedZoomForLength();
     auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
     auto availableLogicalWidth = flexContainerRenderer.contentBoxRect().width();
     // FIXME: Use root's BoxGeometry which first needs to stop flipping for the formatting context.
@@ -73,7 +74,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 
     auto widthValue = [&]<typename SizeType> (const SizeType& computedValue) -> std::optional<LayoutUnit> {
         if (auto fixedWidth = computedValue.tryFixed()) {
-            auto value = Style::evaluate<LayoutUnit>(*fixedWidth, flexBoxStyle.usedZoomForLength());
+            auto value = Style::evaluate<LayoutUnit>(*fixedWidth, flexBoxZoomFactor);
             return boxSizingIsContentBox ? value : value - horizontalMarginBorderAndPadding;
         }
         if (auto percentageWidth = computedValue.tryPercentage()) {
@@ -85,7 +86,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 
     auto heightValue = [&]<typename SizeType> (const SizeType& computedValue, bool callRendererForPercentValue = false) -> std::optional<LayoutUnit> {
         if (auto fixedHeight = computedValue.tryFixed()) {
-            auto value = Style::evaluate<LayoutUnit>(*fixedHeight, flexBoxStyle.usedZoomForLength());
+            auto value = Style::evaluate<LayoutUnit>(*fixedHeight, flexBoxZoomFactor);
             return boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding;
         }
 

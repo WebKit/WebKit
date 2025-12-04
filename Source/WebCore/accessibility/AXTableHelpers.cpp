@@ -199,9 +199,9 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
     unsigned tableVerticalBorderSpacing = 0;
     if (CheckedPtr<const RenderStyle> tableStyle = safeStyleFrom(tableElement)) {
         tableBackgroundColor = tableStyle->visitedDependentColor(CSSPropertyBackgroundColor);
-        tableHorizontalBorderSpacing = tableStyle->borderHorizontalSpacing().resolveZoom(tableStyle->usedZoomForLength());
-        tableVerticalBorderSpacing = tableStyle->borderVerticalSpacing().resolveZoom(tableStyle->usedZoomForLength());
-
+        const auto& zoomFactor = tableStyle->usedZoomForLength();
+        tableHorizontalBorderSpacing = tableStyle->borderHorizontalSpacing().resolveZoom(zoomFactor);
+        tableVerticalBorderSpacing = tableStyle->borderVerticalSpacing().resolveZoom(zoomFactor);
     }
 
     unsigned cellCount = 0;

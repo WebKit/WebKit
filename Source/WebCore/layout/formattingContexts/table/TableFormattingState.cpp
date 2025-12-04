@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,9 @@ static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
     auto tableGrid = makeUniqueRef<TableGrid>();
     auto& tableStyle = tableBox.style();
     auto shouldApplyBorderSpacing = tableStyle.borderCollapse() == BorderCollapse::Separate;
-    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderHorizontalSpacing().resolveZoom(tableStyle.usedZoomForLength()) : 0 });
-    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderVerticalSpacing().resolveZoom(tableStyle.usedZoomForLength()) : 0 });
+    const auto& zoomFactor = tableStyle.usedZoomForLength();
+    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderHorizontalSpacing().resolveZoom(zoomFactor) : 0 });
+    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.borderVerticalSpacing().resolveZoom(zoomFactor) : 0 });
 
     auto* firstChild = tableBox.firstChild();
     if (!firstChild) {

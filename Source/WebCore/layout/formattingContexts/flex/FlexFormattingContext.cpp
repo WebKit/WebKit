@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,15 +86,16 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         for (CheckedPtr flexItem = checkedRoot()->firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
             auto& flexItemGeometry = m_globalLayoutState->geometryForBox(*flexItem);
             CheckedRef style = flexItem->style();
+            const auto& flexItemZoomFactor = style->usedZoomForLength();
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
             auto crossAxis = LogicalFlexItem::CrossAxisGeometry { };
 
             auto propertyValueForLength = [&](const auto& propertyValue, auto availableSize) -> std::optional<LayoutUnit> {
                 if (auto fixedPropertyValue = propertyValue.tryFixed())
-                    return Style::evaluate<LayoutUnit>(*fixedPropertyValue, style->usedZoomForLength());
+                    return Style::evaluate<LayoutUnit>(*fixedPropertyValue, flexItemZoomFactor);
 
                 if (propertyValue.isSpecified() && availableSize)
-                    return Style::evaluate<LayoutUnit>(propertyValue, *availableSize, style->usedZoomForLength());
+                    return Style::evaluate<LayoutUnit>(propertyValue, *availableSize, flexItemZoomFactor);
                 return { };
             };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -352,7 +352,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             }
             auto cellPosition = cell->position();
             auto& cellStyle = cellBox.style();
-            auto usedZoom = cellStyle.usedZoomForLength();
+            const auto& usedZoom = cellStyle.usedZoomForLength();
             // Expand it with border and padding.
             auto horizontalBorderAndPaddingWidth = formattingGeometry.computedCellBorder(*cell).width()
                 + formattingGeometry.fixedValue(cellStyle.paddingLeft(), usedZoom).value_or(0)
@@ -364,7 +364,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             auto columnIndex = cellPosition.column;
             WTF::switchOn(cellStyle.logicalWidth(),
                 [&](const Style::PreferredSize::Fixed& fixed) {
-                    auto fixedWidth = LayoutUnit { fixed.resolveZoom(cellStyle.usedZoomForLength()) } + horizontalBorderAndPaddingWidth;
+                    auto fixedWidth = LayoutUnit { fixed.resolveZoom(usedZoom) } + horizontalBorderAndPaddingWidth;
                     maximumFixedColumnWidths[columnIndex] = std::max(maximumFixedColumnWidths[columnIndex].value_or(0_lu), fixedWidth);
                     hasColumnWithFixedWidth = true;
                 },

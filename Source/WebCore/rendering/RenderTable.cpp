@@ -158,8 +158,9 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     bool oldFixedTableLayout = oldStyle ? oldStyle->isFixedTableLayout() : false;
 
     // In the collapsed border model, there is no cell spacing.
-    m_hSpacing = collapseBorders() ? 0 : style().borderHorizontalSpacing().resolveZoom(style().usedZoomForLength());
-    m_vSpacing = collapseBorders() ? 0 : style().borderVerticalSpacing().resolveZoom(style().usedZoomForLength());
+    const auto& zoomFactor = style().usedZoomForLength();
+    m_hSpacing = collapseBorders() ? 0 : style().borderHorizontalSpacing().resolveZoom(zoomFactor);
+    m_vSpacing = collapseBorders() ? 0 : style().borderVerticalSpacing().resolveZoom(zoomFactor);
     ASSERT(m_hSpacing >= 0);
     ASSERT(m_vSpacing >= 0);
 
@@ -308,8 +309,9 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, style().usedZoomForLength());
-        auto marginEnd = Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth,  style().usedZoomForLength());
+        const auto& zoomFactor = style().usedZoomForLength();
+        auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, zoomFactor);
+        auto marginEnd = Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, zoomFactor);
         auto marginTotal = marginStart + marginEnd;
 
         // Subtract out our margins to get the available content width.
@@ -361,8 +363,9 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(marginValues.m_start);
         setMarginEnd(marginValues.m_end);
     } else {
-        setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth,  style().usedZoomForLength()));
-        setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth,  style().usedZoomForLength()));
+        const auto& zoomFactor = style().usedZoomForLength();
+        setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, zoomFactor));
+        setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, zoomFactor));
     }
 }
 

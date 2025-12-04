@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -221,12 +221,13 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     // applied to the right, so this is not an issue with left overflow.
     rightGlyphOverflow -= std::min(0, (int)lineStyle.fontCascade().letterSpacing());
 
-    auto [textShadowLogicalTop, textShadowLogicalBottom] = Style::shadowBlockDirectionExtent(lineStyle.textShadow(), writingMode, lineStyle.usedZoomForLength());
+    const auto& zoomFactor = lineStyle.usedZoomForLength();
+    auto [textShadowLogicalTop, textShadowLogicalBottom] = Style::shadowBlockDirectionExtent(lineStyle.textShadow(), writingMode, zoomFactor);
 
     auto childOverflowLogicalTop = std::min<LayoutUnit>(textShadowLogicalTop + topGlyphOverflow, topGlyphOverflow);
     auto childOverflowLogicalBottom = std::max<LayoutUnit>(textShadowLogicalBottom + bottomGlyphOverflow, bottomGlyphOverflow);
 
-    auto [textShadowLogicalLeft, textShadowLogicalRight] = Style::shadowInlineDirectionExtent(lineStyle.textShadow(), writingMode, lineStyle.usedZoomForLength());
+    auto [textShadowLogicalLeft, textShadowLogicalRight] = Style::shadowInlineDirectionExtent(lineStyle.textShadow(), writingMode, zoomFactor);
 
     auto childOverflowLogicalLeft = std::min<LayoutUnit>(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     auto childOverflowLogicalRight = std::max<LayoutUnit>(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);

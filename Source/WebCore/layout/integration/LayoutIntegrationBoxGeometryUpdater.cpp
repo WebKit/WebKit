@@ -230,11 +230,12 @@ Layout::BoxGeometry::HorizontalEdges BoxGeometryUpdater::horizontalLogicalMargin
 Layout::BoxGeometry::VerticalEdges BoxGeometryUpdater::verticalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, WritingMode writingMode)
 {
     auto& style = renderer.style();
+    const auto& zoomFactor = style.usedZoomForLength();
     if (writingMode.isHorizontal())
-        return { usedValueOrZero(style.marginTop(), availableWidth, style.usedZoomForLength()), usedValueOrZero(style.marginBottom(), availableWidth, style.usedZoomForLength()) };
+        return { usedValueOrZero(style.marginTop(), availableWidth, zoomFactor), usedValueOrZero(style.marginBottom(), availableWidth, zoomFactor) };
     if (writingMode.isLineOverLeft())
-        return { usedValueOrZero(style.marginLeft(), availableWidth, style.usedZoomForLength()), usedValueOrZero(style.marginRight(), availableWidth, style.usedZoomForLength()) };
-    return { usedValueOrZero(style.marginRight(), availableWidth, style.usedZoomForLength()), usedValueOrZero(style.marginLeft(), availableWidth, style.usedZoomForLength()) };
+        return { usedValueOrZero(style.marginLeft(), availableWidth, zoomFactor), usedValueOrZero(style.marginRight(), availableWidth, zoomFactor) };
+    return { usedValueOrZero(style.marginRight(), availableWidth, zoomFactor), usedValueOrZero(style.marginLeft(), availableWidth, zoomFactor) };
 }
 
 Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxModelObject& renderer, WritingMode writingMode, bool isIntrinsicWidthMode, bool retainBorderStart, bool retainBorderEnd)

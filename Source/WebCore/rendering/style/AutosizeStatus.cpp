@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,12 +41,14 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle&
     if (!lineHeightAsFixed && !lineHeightAsPercentage)
         return false;
 
+    const auto& zoomFactor = style.usedZoomForLength();
+
     auto& maxHeight = style.maxHeight();
     std::optional<float> heightOrMaxHeightAsLength;
     if (auto fixedMaxHeight = maxHeight.tryFixed())
-        heightOrMaxHeightAsLength = fixedMaxHeight->resolveZoom(style.usedZoomForLength());
+        heightOrMaxHeightAsLength = fixedMaxHeight->resolveZoom(zoomFactor);
     else if (auto fixedHeight = style.height().tryFixed(); fixedHeight && (!maxHeight.isSpecified() || maxHeight.isNone()))
-        heightOrMaxHeightAsLength = fixedHeight->resolveZoom(style.usedZoomForLength());
+        heightOrMaxHeightAsLength = fixedHeight->resolveZoom(zoomFactor);
 
     if (!heightOrMaxHeightAsLength)
         return false;
@@ -55,7 +57,7 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle&
     if (heightOrMaxHeight <= 0)
         return false;
 
-    float approximateLineHeight = lineHeightAsPercentage ? lineHeightAsPercentage->value * style.specifiedFontSize() / 100 : lineHeightAsFixed->resolveZoom(style.usedZoomForLength());
+    float approximateLineHeight = lineHeightAsPercentage ? lineHeightAsPercentage->value * style.specifiedFontSize() / 100 : lineHeightAsFixed->resolveZoom(zoomFactor);
     if (approximateLineHeight <= 0)
         return false;
 
