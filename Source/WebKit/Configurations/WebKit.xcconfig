@@ -384,6 +384,9 @@ WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR_cocoatouch = $(PRIVATE_HEADERS_FOLDER_PATH
 
 EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.webpushd.mac.sb com.apple.WebProcess.sb;
 
+SWIFT_VERSION = 6.0;
+SWIFT_VERSION[sdk=macosx14*] = 5.0;
+
 // FIXME: (rdar://149216417) Enable this on all platforms when possible.
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP = $(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_PLATFORM_NAME));
 WK_SUPPORTS_SWIFT_OBJCXX_INTEROP_iphoneos = NO;
