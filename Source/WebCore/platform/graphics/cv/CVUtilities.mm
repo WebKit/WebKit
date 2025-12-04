@@ -46,11 +46,11 @@ static Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createBufferPool(unsi
             (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey : @(minimumBufferCount)
         };
     }
-    CVPixelBufferPoolRef pool = nullptr;
-    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)poolOptions, (__bridge CFDictionaryRef)pixelAttributes, &pool);
+    RetainPtr<CVPixelBufferPoolRef> pool;
+    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)poolOptions, (__bridge CFDictionaryRef)pixelAttributes, pool.adoptOut());
     if (status != kCVReturnSuccess || !pool)
         return makeUnexpected(status);
-    return adoptCF(pool);
+    return pool;
 }
 
 Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createIOSurfaceCVPixelBufferPool(size_t width, size_t height, OSType format, unsigned minimumBufferCount, bool isCGImageCompatible)
@@ -87,17 +87,17 @@ Expected<RetainPtr<CVPixelBufferPoolRef>, CVReturn> createCVPixelBufferPool(size
 
 Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBufferFromPool(CVPixelBufferPoolRef pixelBufferPool, unsigned maxBufferSize)
 {
-    CVPixelBufferRef pixelBuffer = nullptr;
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
     CVReturn status;
     if (!maxBufferSize)
-        status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferPool, &pixelBuffer);
+        status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferPool, pixelBuffer.adoptOut());
     else {
         auto *auxiliaryAttributes = @{ (__bridge NSString *)kCVPixelBufferPoolAllocationThresholdKey : @(maxBufferSize) };
-        status = CVPixelBufferPoolCreatePixelBufferWithAuxAttributes(kCFAllocatorDefault, pixelBufferPool, (__bridge CFDictionaryRef)auxiliaryAttributes, &pixelBuffer);
+        status = CVPixelBufferPoolCreatePixelBufferWithAuxAttributes(kCFAllocatorDefault, pixelBufferPool, (__bridge CFDictionaryRef)auxiliaryAttributes, pixelBuffer.adoptOut());
     }
     if (status != kCVReturnSuccess || !pixelBuffer)
         return makeUnexpected(status);
-    return adoptCF(pixelBuffer);
+    return pixelBuffer;
 }
 
 static CFDictionaryRef pixelBufferCreationOptions(IOSurfaceRef surface)
@@ -135,13 +135,13 @@ static CFDictionaryRef pixelBufferCreationOptions(IOSurfaceRef surface)
 
 Expected<RetainPtr<CVPixelBufferRef>, CVReturn> createCVPixelBuffer(IOSurfaceRef surface)
 {
-    CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, RetainPtr { pixelBufferCreationOptions(surface) }.get(), &pixelBuffer);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto status = CVPixelBufferCreateWithIOSurface(kCFAllocatorDefault, surface, RetainPtr { pixelBufferCreationOptions(surface) }.get(), pixelBuffer.adoptOut());
     if (status != kCVReturnSuccess || !pixelBuffer) {
-        RELEASE_LOG_ERROR(WebRTC, "createCVPixelBuffer failed with IOSurface status=%d, pixelBuffer=%p", (int)status, pixelBuffer);
+        RELEASE_LOG_ERROR(WebRTC, "createCVPixelBuffer failed with IOSurface status=%d, pixelBuffer=%p", (int)status, pixelBuffer.get());
         return makeUnexpected(status);
     }
-    return adoptCF(pixelBuffer);
+    return pixelBuffer;
 }
 
 RetainPtr<CGColorSpaceRef> createCGColorSpaceForCVPixelBuffer(CVPixelBufferRef buffer)
@@ -187,27 +187,29 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
     if (!WTF::safeMultiply(width, height, widthTimesHeight) || widthTimesHeight > maxIOSurfaceWidth * maxIOSurfaceWidth)
         return nullptr;
 
-    CVPixelBufferRef pixelBuffer = nullptr;
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, shouldUseIOSurface ? (__bridge CFDictionaryRef)pixelAttributes : nullptr, &pixelBuffer);
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, shouldUseIOSurface ? (__bridge CFDictionaryRef)pixelAttributes : nullptr, pixelBuffer.adoptOut());
     if (status != noErr || !pixelBuffer)
         return nullptr;
 
-    status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
-    ASSERT(status == noErr);
+    if (CVPixelBufferLockBaseAddress(pixelBuffer.get(), 0)) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
-    auto yPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 0);
-    size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    auto yPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer.get(), 0);
+    size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer.get(), 0);
     for (unsigned i = 0; i < height; ++i)
         zeroSpan(yPlane.subspan(i * yStride, width));
 
-    auto uvPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 1);
-    size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    auto uvPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer.get(), 1);
+    size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer.get(), 1);
     for (unsigned i = 0; i < height / 2; ++i)
         memsetSpan(uvPlane.subspan(i * uvStride, width), 128);
 
-    status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    status = CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), 0);
     ASSERT(!status);
-    return adoptCF(pixelBuffer);
+    return pixelBuffer;
 }
 
 }

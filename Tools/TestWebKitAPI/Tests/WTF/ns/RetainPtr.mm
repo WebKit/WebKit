@@ -407,7 +407,7 @@ TEST(RETAIN_PTR_TEST_NAME, HashMapCFTypeDeletedValue)
     EXPECT_EQ(1, CFGetRetainCount(key.get()));
 }
 
-TEST(RETAIN_PTR_TEST_NAME, RetainPtrType)
+TEST(RETAIN_PTR_TEST_NAME, RetainPtrTypeNS)
 {
     // CF Types.
     static_assert(std::is_same_v<RetainPtr<CFTypeRef>, RetainPtr<WTF::RetainPtrType<CFTypeRef>>>);
