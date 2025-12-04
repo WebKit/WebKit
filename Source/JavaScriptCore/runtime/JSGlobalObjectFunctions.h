@@ -67,6 +67,7 @@ JSC_DECLARE_HOST_FUNCTION(globalFuncIsNaN);
 JSC_DECLARE_HOST_FUNCTION(globalFuncToIntegerOrInfinity);
 JSC_DECLARE_HOST_FUNCTION(globalFuncToLength);
 JSC_DECLARE_HOST_FUNCTION(globalFuncSpeciesGetter);
+JSC_DECLARE_HOST_FUNCTION(globalFuncReflectOwnKeys);
 
 JS_EXPORT_PRIVATE double jsToNumber(StringView);
 

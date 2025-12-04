@@ -148,6 +148,7 @@ namespace JSC {
     macro(instanceOf) \
     macro(isArraySlow) \
     macro(sameValue) \
+    macro(reflectOwnKeys) \
     macro(regExpCreate) \
     macro(isRegExp) \
     macro(isFinite) \

@@ -117,3 +117,344 @@ function concat(/* ...items */)
 
     return @iteratorHelperCreate(generator, null);
 }
+
+// https://tc39.es/proposal-joint-iteration/#sec-getoptionsobject
+@linkTimeConstant
+function getOptionsObject(options)
+{
+    if (options === @undefined)
+        return @Object.@create(null);
+    if (@isObject(options))
+        return options;
+    @throwTypeError("options should be undefined or object");
+}
+
+// https://tc39.es/proposal-joint-iteration/#sec-closeall
+@linkTimeConstant
+function iteratorCloseAll(openIters, completion)
+{
+    "use strict";
+
+    for (var i = openIters.length - 1; i >= 0; i--) {
+        var iter = openIters[i];
+        if (iter === null)
+            continue;
+        openIters[i] = null;
+
+        var returnMethod;
+        try {
+            returnMethod = iter.return;
+        } catch (e) {
+            if (completion === @undefined)
+                completion = e;
+            continue;
+        }
+
+        if (returnMethod !== @undefined && returnMethod !== null) {
+            try {
+                returnMethod.@call(iter);
+            } catch (e) {
+                if (completion === @undefined)
+                    completion = e;
+            }
+        }
+    }
+
+    if (completion !== @undefined)
+        throw completion;
+
+    return completion;
+}
+
+// https://tc39.es/proposal-joint-iteration/#sec-IteratorZip
+@linkTimeConstant
+function iteratorZip(iters, iterNextMethods, mode, padding, finishResults)
+{
+    "use strict";
+
+    var iterCount = iters.length;
+    var openIters = [];
+    for (var i = 0; i < iterCount; i++)
+        @arrayPush(openIters, iters[i]);
+    var generator = (function*() {
+        if (iterCount === 0)
+            return;
+        for (;;) {
+            var results = [];
+            for (var i = 0; i < iterCount; i++) {
+                var iter = iters[i];
+                if (iter === null) {
+                    @arrayPush(results, padding[i]);
+                } else {
+                    var result;
+                    var resultValue;
+                    var isDone = false;
+                    try {
+                        result = iterNextMethods[i].@call(iter);
+                        if (!@isObject(result))
+                            @throwTypeError("Iterator result interface is not an object");
+                        isDone = result.done;
+                        if (!isDone)
+                            resultValue = result.value;
+                    } catch (e) {
+                        openIters[i] = null;
+                        throw @iteratorCloseAll(openIters, e);
+                    }
+                    if (isDone) {
+                        openIters[i] = null;
+                        if (mode === "shortest") {
+                            @iteratorCloseAll(openIters, @undefined);
+                            return;
+                        } else if (mode === "strict") {
+                            if (i !== 0)
+                                throw @iteratorCloseAll(openIters, @makeTypeError("Iterators in strict mode have different lengths"));
+
+                            for (var k = 1; k < iterCount; k++) {
+                                var openDone = false;
+                                try {
+                                    var openResult = iterNextMethods[k].@call(iters[k]);
+                                    if (!@isObject(openResult))
+                                        @throwTypeError("Iterator result interface is not an object");
+                                    openDone = openResult.done;
+                                } catch (e) {
+                                    openIters[k] = null;
+                                    throw @iteratorCloseAll(openIters, e);
+                                }
+                                if (openDone)
+                                    openIters[k] = null;
+                                else
+                                    throw @iteratorCloseAll(openIters, @makeTypeError("Iterators in strict mode have different lengths"));
+                            }
+                            return;
+                        } else {
+                            var allClosed = true;
+                            for (var j = 0; j < iterCount; j++) {
+                                if (openIters[j] !== null) {
+                                    allClosed = false;
+                                    break;
+                                }
+                            }
+                            if (allClosed)
+                                return;
+                            iters[i] = null;
+                            resultValue = padding[i];
+                        }
+                    }
+                    @arrayPush(results, resultValue);
+                }
+            }
+            results = finishResults(results);
+            var yieldAbrupt = true;
+            try {
+                yield results;
+                yieldAbrupt = false;
+            } finally {
+                if (yieldAbrupt)
+                    @iteratorCloseAll(openIters, @undefined);
+            }
+        }
+    })();
+    return @iteratorHelperCreate(generator, openIters);
+}
+
+// https://tc39.es/proposal-joint-iteration/#sec-iterator.zip
+function zip(iterables)
+{
+    "use strict";
+
+    if (!@isObject(iterables))
+        @throwTypeError("Iterator.zip requires iterables to be an object");
+
+    var options = @getOptionsObject(@argument(1));
+    var mode = options.mode;
+    if (mode === @undefined)
+        mode = "shortest";
+    if (mode !== "shortest" && mode !== "longest" && mode !== "strict")
+        @throwTypeError("mode should be 'shortest' or 'longest' or 'strict'");
+
+    var paddingOption;
+    if (mode === "longest") {
+        paddingOption = options.padding;
+        if (paddingOption !== @undefined && !@isObject(paddingOption))
+            @throwTypeError("padding option should be an object");
+    }
+
+    var iters = [];
+    var iterNextMethods = [];
+    var padding = [];
+
+    var iteratorMethod = iterables.@@iterator;
+    if (!@isCallable(iteratorMethod))
+        @throwTypeError("Iterator.zip requires that iterables[Symbol.iterator] be a function");
+    var inputIter = iteratorMethod.@call(iterables);
+    if (!@isObject(inputIter))
+        @throwTypeError("Iterator.zip requires that iterables[Symbol.iterator]() returns an object");
+    var inputIterNextMethod = inputIter.next;
+
+    for (;;) {
+        var result;
+        var done;
+        var value;
+        try {
+            result = inputIterNextMethod.@call(inputIter);
+            if (!@isObject(result))
+                @throwTypeError("Iterator result interface is not an object");
+            done = result.done;
+            if (!done)
+                value = result.value;
+        } catch (e) {
+            throw @iteratorCloseAll(iters, e);
+        }
+        if (done)
+            break;
+        var iter;
+        var iterNextMethod;
+        try {
+            iter = @getIteratorFlattenable(value, true);
+            iterNextMethod = iter.next;
+        } catch (e) {
+            var allIters = [inputIter];
+            for (var j = 0; j < iters.length; j++)
+                @arrayPush(allIters, iters[j]);
+            throw @iteratorCloseAll(allIters, e);
+        }
+        @arrayPush(iters, iter);
+        @arrayPush(iterNextMethods, iterNextMethod);
+    }
+
+    var iterCount = iters.length;
+    if (mode === "longest") {
+        if (paddingOption === @undefined) {
+            for (var i = 0; i < iterCount; i++)
+                @arrayPush(padding, @undefined);
+        } else {
+            var paddingIterMethod = paddingOption.@@iterator;
+            if (!@isCallable(paddingIterMethod))
+                throw @iteratorCloseAll(iters, @makeTypeError("padding[Symbol.iterator] is not a function"));
+
+            var paddingIter;
+            var paddingIterNextMethod;
+            try {
+                paddingIter = paddingIterMethod.@call(paddingOption);
+                if (!@isObject(paddingIter))
+                    @throwTypeError("padding[Symbol.iterator]() did not return an object");
+                paddingIterNextMethod = paddingIter.next;
+            } catch (e) {
+                throw @iteratorCloseAll(iters, e);
+            }
+            var usingIterator = true;
+            try {
+                for (var i = 0; i < iterCount; i++) {
+                    if (usingIterator) {
+                        var paddingResult = paddingIterNextMethod.@call(paddingIter);
+                        if (!@isObject(paddingResult))
+                            @throwTypeError("Iterator result interface is not an object");
+
+                        if (paddingResult.done)
+                            usingIterator = false;
+                        else
+                            @arrayPush(padding, paddingResult.value);
+                    }
+                    if (!usingIterator)
+                        @arrayPush(padding, @undefined);
+                }
+            } catch (e) {
+                throw @iteratorCloseAll(iters, e);
+            }
+            if (usingIterator) {
+                try {
+                    @iteratorGenericClose(paddingIter);
+                } catch (e) {
+                    throw @iteratorCloseAll(iters, e);
+                }
+            }
+        }
+    }
+    return @iteratorZip(iters, iterNextMethods, mode, padding, function (results) { return results });
+}
+
+// https://tc39.es/proposal-joint-iteration/#sec-iterator.zipkeyed
+function zipKeyed(iterables)
+{
+    "use strict";
+
+    if (!@isObject(iterables))
+        @throwTypeError("Iterator.zipKeyed requires iterables to be an object");
+
+    var options = @getOptionsObject(@argument(1));
+    var mode = options.mode;
+    if (mode === @undefined)
+        mode = "shortest";
+    if (mode !== "shortest" && mode !== "longest" && mode !== "strict")
+        @throwTypeError("mode should be 'shortest' or 'longest' or 'strict'");
+
+    var paddingOption;
+    if (mode === "longest") {
+        paddingOption = options.padding;
+        if (paddingOption !== @undefined && !@isObject(paddingOption))
+            @throwTypeError("padding option should be an object");
+    }
+
+    var iters = [];
+    var iterNextMethods = [];
+    var padding = [];
+    var keys = [];
+    var allKeys = @reflectOwnKeys(iterables);
+
+    for (var i = 0; i < allKeys.length; i++) {
+        var key = allKeys[i];
+        var desc;
+        try {
+            desc = @Object.@getOwnPropertyDescriptor(iterables, key);
+        } catch (e) {
+            throw @iteratorCloseAll(iters, e);
+        }
+        if (desc !== @undefined && desc.enumerable === true) {
+            var value;
+            try {
+                value = iterables[key];
+            } catch (e) {
+                throw @iteratorCloseAll(iters, e);
+            }
+            if (value !== @undefined) {
+                @arrayPush(keys, key);
+                var iter;
+                var iterNextMethod;
+                try {
+                    iter = @getIteratorFlattenable(value, true);
+                    iterNextMethod = iter.next;
+                } catch (e) {
+                    throw @iteratorCloseAll(iters, e);
+                }
+                @arrayPush(iters, iter);
+                @arrayPush(iterNextMethods, iterNextMethod);
+            }
+        }
+    }
+
+    var iterCount = iters.length;
+    if (mode === "longest") {
+        if (paddingOption === @undefined) {
+            for (var i = 0; i < iterCount; i++)
+                @arrayPush(padding, @undefined);
+        } else {
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var value;
+                try {
+                    value = paddingOption[key];
+                } catch (e) {
+                    throw @iteratorCloseAll(iters, e);
+                }
+                @arrayPush(padding, value);
+            }
+        }
+    }
+    var finishResults = function(results) {
+        var obj = @Object.@create(null);
+        for (var i = 0; i < iterCount; i++)
+            obj[keys[i]] = results[i];
+        return obj;
+    };
+    return @iteratorZip(iters, iterNextMethods, mode, padding, finishResults);
+}

@@ -53,8 +53,13 @@ function return()
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateCompleted);
 
         var underlyingIterator = @getIteratorHelperInternalField(this, @iteratorHelperFieldUnderlyingIterator);
-        if (underlyingIterator !== null)
-            @iteratorGenericClose(underlyingIterator);
+        if (underlyingIterator !== null) {
+            // For Iterator.zip, underlyingIterator is an array of iterators (openIters)
+            if (@isArray(underlyingIterator))
+                @iteratorCloseAll(underlyingIterator, @undefined);
+            else
+                @iteratorGenericClose(underlyingIterator);
+        }
 
         return { value: @undefined, done: true };
     }
