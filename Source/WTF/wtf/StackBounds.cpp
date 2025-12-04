@@ -81,6 +81,18 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return newThreadStackBounds(pthread_self());
 }
 
+#elif OS(QNX)
+
+StackBounds StackBounds::currentThreadStackBoundsInternal()
+{
+    struct _thread_local_storage* tls = __tls();
+    void* bound = tls->__stackaddr;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    void* origin = static_cast<char*>(bound) + tls->__stacksize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    return StackBounds { origin, bound };
+}
+
 #elif OS(UNIX) || OS(HAIKU)
 
 #if OS(OPENBSD)
@@ -92,18 +104,6 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
     void* origin = stack.ss_sp;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void* bound = static_cast<char*>(origin) - stack.ss_size;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return StackBounds { origin, bound };
-}
-
-#elif OS(QNX)
-
-StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
-{
-    struct _thread_local_storage* tls = __tls();
-    void* bound = tls->__stackaddr;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    void* origin = static_cast<char*>(bound) + tls->__stacksize;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return StackBounds { origin, bound };
 }

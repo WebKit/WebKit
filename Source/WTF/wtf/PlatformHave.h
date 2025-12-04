@@ -211,7 +211,7 @@
 #define HAVE_MADV_FREE_REUSE 1
 #endif
 
-#if OS(DARWIN) || OS(HAIKU)
+#if OS(DARWIN) || OS(HAIKU) || OS(QNX)
 #define HAVE_MADV_DONTNEED 1
 #endif
 
@@ -411,7 +411,7 @@
 #define HAVE_URL_FORMATTING 1
 #endif
 
-#if !OS(WINDOWS)
+#if !OS(WINDOWS) && !OS(QNX)
 #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
 #endif
 

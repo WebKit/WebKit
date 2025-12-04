@@ -165,6 +165,16 @@ static inline void*& stackPointerImpl(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
+#elif OS(QNX)
+
+#if CPU(X86_64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.rsp);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.gpr[AARCH64_REG_SP]);
+#else
+#error Unknown Architecture
+#endif
+
 #elif OS(NETBSD)
 
 #if CPU(X86_64)

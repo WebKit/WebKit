@@ -76,6 +76,21 @@ CString currentExecutablePath()
 {
     return { };
 }
+#elif OS(QNX)
+#include <fcntl.h>
+
+CString currentExecutablePath()
+{
+    static char readBuffer[PATH_MAX];
+    int selfFd = open("/proc/self/exefile", O_RDONLY);
+    ssize_t result = read(selfFd, readBuffer, sizeof(readBuffer));
+    close(selfFd);
+    if (result == -1)
+        return { };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // QNX port
+    return CString( std::span{ readBuffer, static_cast<size_t>(result) } );
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
 #elif OS(UNIX)
 CString currentExecutablePath()
 {

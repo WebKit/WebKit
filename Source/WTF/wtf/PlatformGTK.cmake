@@ -70,6 +70,12 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 
         unix/MemoryPressureHandlerUnix.cpp
     )
+elseif (CMAKE_SYSTEM_NAME MATCHES "QNX")
+    list(APPEND WTF_SOURCES
+        generic/MemoryFootprintGeneric.cpp
+
+        unix/MemoryPressureHandlerUnix.cpp
+    )
 else ()
     list(APPEND WTF_SOURCES
         generic/MemoryFootprintGeneric.cpp
