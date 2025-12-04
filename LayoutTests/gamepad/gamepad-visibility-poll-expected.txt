@@ -1,0 +1,14 @@
+empty getGamepads()
+after button interaction
+gamepadsSeen[0]: index: 0, connected: true
+gamepadsSeen[1]: index: 1, connected: true
+after disconnecting 0
+gamepadsSeen[0]: index: 0, connected: false
+gamepadsSeen[1]: index: 1, connected: true
+getGamepads()[0]: null
+getGamepads()[1]: index: 1, connected: true
+after disconnecting 1
+gamepadsSeen[0]: index: 0, connected: false
+gamepadsSeen[1]: index: 1, connected: false
+empty getGamepads()
+

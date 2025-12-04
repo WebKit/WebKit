@@ -2441,8 +2441,6 @@ webkit.org/b/298042 http/tests/security/clipboard/copy-paste-html-cross-origin-i
 
 webkit.org/b/298402 inspector/worker/dom-debugger-event-after-terminate-crash.html [ Pass Crash ]
 
-webkit.org/b/298476 gamepad/gamepad-visibility-1.html [ Crash ]
-
 webkit.org/b/280234 imported/w3c/web-platform-tests/html/dom/idlharness.https.html? [ Skip ]
 
 webkit.org/b/299131 [ Release ] inspector/unit-tests/target-manager.html [ Pass Crash ]

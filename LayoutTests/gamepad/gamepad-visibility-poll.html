@@ -1,0 +1,89 @@
+<body>
+<div id="logger"></div>
+<script>
+function log(msg) {
+    logger.innerHTML += msg + "<br>";
+}
+function timeout(ms) {
+    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+}
+function logGamepads(name, gamepads) {
+    function logGamepad(gamepad) {
+        if (gamepad)
+            return `index: ${gamepad.index}, connected: ${gamepad.connected}`;
+        return gamepad === null ? "null" : typeof gamepad;
+    }
+    if (!gamepads.length)
+        log(`empty ${name}`);
+    else
+        gamepads.forEach((gamepad, i) => log(`${name}[${i}]: ${logGamepad(gamepad)}`));
+}
+// Tests gamepad visibility when the page doesn't register any event listeners, just 
+// uses Navigator.getGamepads().
+async function runTest() {
+    // Race condition in UIGamepadProvider: if it misses the mock gamepad connections
+    // because the page is not yet monitoring, it fails to monitor the gamepad altogether.
+    navigator.getGamepads();
+    await timeout(200);
+
+    testRunner.setMockGamepadDetails(0, "Test0", "", 2, 2, false, /*was connected*/ true);
+    testRunner.setMockGamepadDetails(1, "Test1", "", 2, 2, false, /*was connected*/ true);
+    testRunner.connectMockGamepad(0);
+    testRunner.connectMockGamepad(1);
+    // Poll gamepads, they should not be visible.
+    for (let i = 0; i < 20; ++i) {
+        if (navigator.getGamepads().filter(x => x).length)
+            break;
+        await timeout(100);
+    }
+    logGamepads("getGamepads()", navigator.getGamepads());
+
+    // After button interaction, both should appear.
+    log('after button interaction'); 
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    for (let i = 0; i < 200; ++i) {
+        if (navigator.getGamepads().filter(x => x).length)
+            break;
+        await timeout(100);
+    }
+    let gamepadsSeen = navigator.getGamepads();
+    logGamepads("gamepadsSeen", gamepadsSeen)
+
+    // After disconnecting 0, 0 should disappear and seenGamepads[0].connected == false.
+    testRunner.disconnectMockGamepad(0);
+    log('after disconnecting 0');
+    for (let i = 0; i < 200; ++i) {
+        if (!navigator.getGamepads()[0])
+            break;
+        await timeout(100);
+    }
+    logGamepads("gamepadsSeen", gamepadsSeen)
+    logGamepads("getGamepads()", navigator.getGamepads());
+
+    // After disconnecting 1, 1 should disappear and seenGamepads[1].connected == false.
+    // and getGamepads() should not return null entries.
+    testRunner.disconnectMockGamepad(1);
+    log('after disconnecting 1');
+    for (let i = 0; i < 200; ++i) {
+        if (!navigator.getGamepads().length)
+            break;
+        await timeout(100);
+    }
+    logGamepads("gamepadsSeen", gamepadsSeen)
+    logGamepads("getGamepads()", navigator.getGamepads());
+}
+
+async function test() {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    try {
+        await runTest();
+    } catch (e) {
+        log(`exception: ${e}`);
+    } finally {
+        testRunner.notifyDone();
+    }
+}
+test();
+</script>
+</body>
