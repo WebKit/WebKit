@@ -3847,14 +3847,11 @@ IncrementalPDFLoadingEnabled:
   condition: HAVE(INCREMENTAL_PDF_APIS)
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(MAC)": true
-      default: false
+      default: true
     WebKit:
-      "PLATFORM(MAC)": true
-      default: false
+      default: true
     WebCore:
-      "PLATFORM(MAC)": true
-      default: false
+      default: true
 
 IncrementalRenderingSuppressionTimeout:
   type: double
