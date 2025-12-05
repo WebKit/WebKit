@@ -564,8 +564,6 @@ enum ContentsFormat {
     readonly attribute double animationsInterval;
 
     // Web Animations testing.
-    unsigned long long identifierForTimeline(AnimationTimeline timeline);
-    sequence<unsigned long long> scrollingNodeIDForTimeline(AnimationTimeline timeline);
     sequence<AcceleratedAnimation> acceleratedAnimationsForElement(Element element);
     unsigned long numberOfAnimationTimelineInvalidations();
     double timeToNextAnimationTick(WebAnimation animation);

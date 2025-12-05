@@ -430,15 +430,6 @@ Ref<AcceleratedTimeline> ScrollTimeline::createAcceleratedRepresentation() const
         data.rangeEnd
     });
 }
-
-std::optional<ScrollingNodeID> ScrollTimeline::scrollingNodeIDForTesting() const
-{
-    if (RefPtr source = this->source()) {
-        if (CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document()))
-            return sourceScrollableArea->scrollingNodeID();
-    }
-    return std::nullopt;
-}
 #endif
 
 TextStream& operator<<(TextStream& ts, const ScrollTimeline& timeline)

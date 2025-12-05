@@ -96,7 +96,6 @@ public:
     void updateTimelineRegistration(WebCore::ProcessIdentifier, const HashSet<Ref<WebCore::AcceleratedTimeline>>&);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
     bool hasTimelineForNode(const WebCore::ScrollingTreeScrollingNode&) const;
-    HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const;
 #endif
 
 protected:

@@ -465,6 +465,5 @@ interface UIScriptController {
 
 #if defined(ENABLE_THREADED_ANIMATIONS) && ENABLE_THREADED_ANIMATIONS
     DOMString animationStackForLayerWithID(unsigned long long layerID);
-    DOMString progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID);
 #endif
 };

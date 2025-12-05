@@ -150,18 +150,6 @@ void RemoteProgressBasedTimelineRegistry::updateTimelinesForNode(const WebCore::
     }
 }
 
-HashSet<Ref<RemoteProgressBasedTimeline>> RemoteProgressBasedTimelineRegistry::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID) const
-{
-    auto processIterator = m_timelines.find(scrollingNodeID.processIdentifier());
-    if (processIterator == m_timelines.end())
-        return { };
-    auto& processTimelines = processIterator->value;
-    auto sourceIterator = processTimelines.find(scrollingNodeID);
-    if (sourceIterator == processTimelines.end())
-        return { };
-    return sourceIterator->value;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(THREADED_ANIMATIONS)

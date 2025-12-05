@@ -83,7 +83,6 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 #import "RemoteAnimationStack.h"
-#import "RemoteProgressBasedTimeline.h"
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -1207,32 +1206,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (animationStack)
         return animationStack->toJSONForTesting()->toJSONString().createNSString().autorelease();
     return @"";
-}
-
-- (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID
-{
-    auto timelines = [&] -> HashSet<Ref<WebKit::RemoteProgressBasedTimeline>> {
-        if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID)
-            || !ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(scrollingNodeID))
-            return { };
-
-        CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
-        if (!scrollingCoordinator)
-            return { };
-
-        return scrollingCoordinator->timelinesForScrollingNodeIDForTesting({
-            ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID),
-            ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)
-        });
-    }();
-
-    Ref convertedTimelines = JSON::Array::create();
-    for (auto& timeline : timelines)
-        convertedTimelines->pushObject(timeline->toJSONForTesting());
-
-    Ref object = JSON::Object::create();
-    object->setArray("timelines"_s, WTFMove(convertedTimelines));
-    return object->toJSONString().createNSString().autorelease();
 }
 #endif
 

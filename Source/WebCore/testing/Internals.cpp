@@ -220,7 +220,6 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptedAnimationController.h"
-#include "ScrollTimeline.h"
 #include "ScrollToOptions.h"
 #include "ScrollbarsControllerMock.h"
 #include "ScrollingCoordinator.h"
@@ -1437,29 +1436,6 @@ ExceptionOr<void> Internals::resumeAnimations() const
     }
 
     return { };
-}
-
-uint64_t Internals::identifierForTimeline(AnimationTimeline& timeline) const
-{
-#if ENABLE(THREADED_ANIMATIONS)
-    return timeline.acceleratedTimelineIdentifierForTesting().toRawValue();
-#else
-    UNUSED_PARAM(timeline);
-    return 0;
-#endif
-}
-
-Vector<uint64_t> Internals::scrollingNodeIDForTimeline(AnimationTimeline& timeline) const
-{
-#if ENABLE(THREADED_ANIMATIONS)
-    if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(timeline)) {
-        if (auto scrollingNodeID = scrollTimeline->scrollingNodeIDForTesting())
-            return Vector({ scrollingNodeID->object().toUInt64(), scrollingNodeID->processIdentifier().toUInt64() });
-    }
-#else
-    UNUSED_PARAM(timeline);
-#endif
-    return { 0, 0 };
 }
 
 Vector<Internals::AcceleratedAnimation> Internals::acceleratedAnimationsForElement(Element& element)

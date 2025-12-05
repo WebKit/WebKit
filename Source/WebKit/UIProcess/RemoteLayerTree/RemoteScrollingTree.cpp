@@ -326,13 +326,6 @@ void RemoteScrollingTree::updateProgressBasedTimelinesForNode(const WebCore::Scr
     if (m_progressBasedTimelineRegistry)
         m_progressBasedTimelineRegistry->updateTimelinesForNode(node);
 }
-
-HashSet<Ref<RemoteProgressBasedTimeline>> RemoteScrollingTree::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID) const
-{
-    if (m_progressBasedTimelineRegistry)
-        return m_progressBasedTimelineRegistry->timelinesForScrollingNodeIDForTesting(scrollingNodeID);
-    return { };
-}
 #endif
 
 } // namespace WebKit

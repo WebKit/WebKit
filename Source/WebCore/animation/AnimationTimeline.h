@@ -84,7 +84,6 @@ public:
     virtual bool computeCanBeAccelerated() const { return false; }
     AcceleratedTimeline& acceleratedRepresentation();
     void runPostRenderingUpdateTasks();
-    const TimelineIdentifier& acceleratedTimelineIdentifierForTesting() const { return m_acceleratedTimelineIdentifier; }
 #endif
 
 protected:

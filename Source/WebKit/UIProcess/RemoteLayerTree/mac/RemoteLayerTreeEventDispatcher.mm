@@ -717,13 +717,6 @@ RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStac
         return it->value.ptr();
     return nullptr;
 }
-
-HashSet<Ref<RemoteProgressBasedTimeline>> RemoteLayerTreeEventDispatcher::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID)
-{
-    if (auto scrollingTree = this->scrollingTree())
-        return scrollingTree->timelinesForScrollingNodeIDForTesting(scrollingNodeID);
-    return { };
-}
 #endif
 
 void RemoteLayerTreeEventDispatcher::windowScreenWillChange()

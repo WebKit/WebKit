@@ -598,11 +598,6 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::animationStackForLayerWithID(u
 {
     return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _animationStackForLayerWithID:layerID]));
 }
-
-JSRetainPtr<JSStringRef> UIScriptControllerCocoa::progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID) const
-{
-    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _progressBasedTimelinesForScrollingNodeID:scrollingNodeID processID:processID]));
-}
 #endif
 
 } // namespace WTR

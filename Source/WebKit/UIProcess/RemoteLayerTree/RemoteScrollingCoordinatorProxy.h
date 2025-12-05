@@ -155,7 +155,6 @@ public:
     virtual RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const { return nullptr; }
     virtual void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) { }
     virtual RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const { return nullptr; }
-    virtual HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const { return { }; }
 #endif
 
     String scrollingTreeAsText() const;

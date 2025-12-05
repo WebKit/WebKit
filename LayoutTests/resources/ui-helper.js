@@ -2051,28 +2051,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static async remoteTimeline(timeline)
-    {
-        if (!this.isWebKit2() || !(timeline instanceof ScrollTimeline))
-            return;
-
-        const scrollingNodeID = window.internals?.scrollingNodeIDForTimeline(timeline);
-        if (!scrollingNodeID[0] || !scrollingNodeID[1])
-            return;
-
-        const identifier = window.internals?.identifierForTimeline(timeline);
-
-        const script = `uiController.uiScriptComplete(uiController.progressBasedTimelinesForScrollingNodeID(${scrollingNodeID[0]}, ${scrollingNodeID[1]}))`;
-        const result = await new Promise(resolve => {
-            testRunner.runUIScript(script, result => resolve(JSON.parse(result)));
-        });
-        const timelines = result.timelines;
-        for (const timeline of timelines) {
-            if (timeline.identifier == identifier)
-                return timeline;
-        }
-    }
-
     static dragFromPointToPoint(fromX, fromY, toX, toY, duration)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {

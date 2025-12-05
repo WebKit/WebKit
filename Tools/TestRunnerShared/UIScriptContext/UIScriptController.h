@@ -475,7 +475,6 @@ public:
 #if ENABLE(THREADED_ANIMATIONS)
     // Animations
     virtual JSRetainPtr<JSStringRef> animationStackForLayerWithID(uint64_t) const { notImplemented(); return nullptr; }
-    virtual JSRetainPtr<JSStringRef> progressBasedTimelinesForScrollingNodeID(unsigned long long, unsigned long long) const { notImplemented(); return nullptr; }
 #endif
 
 protected:

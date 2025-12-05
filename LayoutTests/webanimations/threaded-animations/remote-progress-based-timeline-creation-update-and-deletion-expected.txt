@@ -1,3 +1,0 @@
-
-PASS A remote timeline gets created, updated and removed during the lifecycle of its associated animation.
-
