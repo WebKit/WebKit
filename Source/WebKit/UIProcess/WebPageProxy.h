@@ -642,6 +642,9 @@ enum class SOAuthorizationLoadPolicy : bool;
 enum class SameDocumentNavigationType : uint8_t;
 enum class SelectionFlags : uint8_t;
 enum class SelectionTouch : uint8_t;
+#if PLATFORM(IOS_FAMILY)
+enum class SheetAction : uint8_t;
+#endif
 enum class ShouldDelayClosingUntilFirstLayerFlush : bool;
 enum class ShouldExpectAppBoundDomainResult : bool;
 enum class ShouldExpectSafeBrowsingResult : bool;
@@ -1206,9 +1209,8 @@ public:
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithPositionInformation(const InteractionInformationAtPosition&);
     void stopInteraction();
-    void performActionOnElement(uint32_t action);
-    void performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&&);
-    void saveImageToLibrary(IPC::Connection&, WebCore::SharedMemoryHandle&& imageHandle, const String& authorizationToken);
+    void performActionOnElement(SheetAction);
+    void performActionOnElements(SheetAction, Vector<WebCore::ElementContext>&&);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
     void setFocusedElementValue(const WebCore::ElementContext&, const String&);
     void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);

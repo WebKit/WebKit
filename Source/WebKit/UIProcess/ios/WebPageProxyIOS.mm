@@ -588,40 +588,45 @@ bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(const String&
     return !authorizationToken.isNull() && m_performActionOnElementAuthTokens.contains(authorizationToken);
 }
 
-void WebPageProxy::performActionOnElement(uint32_t action)
+void WebPageProxy::performActionOnElement(SheetAction action)
 {
-    auto authorizationToken = createVersion4UUIDString();
+    if (action == SheetAction::SaveImage) {
+        legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::PeformSaveImageActionOnElement(), [weakThis = WeakPtr { *this }] (std::optional<SharedMemory::Handle>&& imageHandle) mutable {
+            if (!weakThis)
+                return;
 
-    m_performActionOnElementAuthTokens.add(authorizationToken);
-    
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::PerformActionOnElement(action, authorizationToken), [weakThis = WeakPtr { *this }, authorizationToken] () mutable {
-        if (!weakThis)
-            return;
+            if (!imageHandle)
+                return;
 
-        ASSERT(weakThis->isValidPerformActionOnElementAuthorizationToken(authorizationToken));
-        weakThis->m_performActionOnElementAuthTokens.remove(authorizationToken);
-    }, webPageIDInMainFrameProcess());
+            auto sharedMemoryBuffer = SharedMemory::map(WTFMove(*imageHandle), SharedMemory::Protection::ReadOnly);
+            if (!sharedMemoryBuffer)
+                return;
+
+            RefPtr pageClient = weakThis->pageClient();
+            if (!pageClient)
+                return;
+
+            auto buffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
+            pageClient->saveImageToLibrary(WTFMove(buffer));
+        }, webPageIDInMainFrameProcess());
+    } else {
+        auto authorizationToken = createVersion4UUIDString();
+
+        m_performActionOnElementAuthTokens.add(authorizationToken);
+
+        legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::PerformActionOnElement(action, authorizationToken), [weakThis = WeakPtr { *this }, authorizationToken] () mutable {
+            if (!weakThis)
+                return;
+
+            ASSERT(weakThis->isValidPerformActionOnElementAuthorizationToken(authorizationToken));
+            weakThis->m_performActionOnElementAuthTokens.remove(authorizationToken);
+        }, webPageIDInMainFrameProcess());
+    }
 }
 
-void WebPageProxy::performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&& elements)
+void WebPageProxy::performActionOnElements(SheetAction action, Vector<WebCore::ElementContext>&& elements)
 {
     m_legacyMainFrameProcess->send(Messages::WebPage::PerformActionOnElements(action, elements), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::saveImageToLibrary(IPC::Connection& connection, SharedMemory::Handle&& imageHandle, const String& authorizationToken)
-{
-    MESSAGE_CHECK_BASE(isValidPerformActionOnElementAuthorizationToken(authorizationToken), connection);
-
-    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return;
-
-    RefPtr pageClient = this->pageClient();
-    if (!pageClient)
-        return;
-
-    auto buffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
-    pageClient->saveImageToLibrary(WTFMove(buffer));
 }
 
 void WebPageProxy::applicationDidEnterBackground()

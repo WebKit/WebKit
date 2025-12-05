@@ -189,7 +189,6 @@ messages -> WebPageProxy {
 #if PLATFORM(IOS_FAMILY)
     InterpretKeyEvent(struct WebKit::EditorState state, struct WebKit::KeyEventInterpretationContext context) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
-    SaveImageToLibrary(WebCore::SharedMemory::Handle handle, String authorizationToken)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)

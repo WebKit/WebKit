@@ -434,6 +434,7 @@
     [Legacy] StructureParam IPC::SharedBufferReference::SerializableBuffer.handle
     [Legacy] StructureParam WebKit::FullScreenMediaDetails.imageHandle
 
+    [NotSentFromWebContent] MessageParamReply WebPage.PeformSaveImageActionOnElement handle
     [DebugOnly] MessageParamReply IPCStreamTester.SyncMessageReturningSharedMemory1 handle
 }
 
@@ -445,7 +446,6 @@
 }
 
 [UnsafeWrapper] WebCore::SharedMemory::Handle {
-    [Legacy] MessageParam WebPageProxy.SaveImageToLibrary handle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage imageHandle
     [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage archiveHandle
     [Legacy] MessageParam LibWebRTCCodecsProxy.SetSharedVideoFrameMemory storageHandle

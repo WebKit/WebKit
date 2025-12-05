@@ -9986,12 +9986,12 @@ static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCor
     if (action == WebKit::SheetAction::Copy && [self _tryToCopyLinkURLFromPlugin])
         return;
 
-    _page->performActionOnElement((uint32_t)action);
+    _page->performActionOnElement(action);
 }
 
 - (void)_actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action onElements:(Vector<WebCore::ElementContext>&&)elements
 {
-    _page->performActionOnElements((uint32_t)action, WTFMove(elements));
+    _page->performActionOnElements(action, WTFMove(elements));
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
