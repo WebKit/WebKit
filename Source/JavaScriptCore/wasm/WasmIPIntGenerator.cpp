@@ -202,6 +202,7 @@ class IPIntGenerator {
 public:
     IPIntGenerator(ModuleInformation&, FunctionCodeIndex, const TypeDefinition&, std::span<const uint8_t>, FunctionDebugInfo* = nullptr);
 
+    static constexpr BytecodeValidationMode bytecodeValidationMode = BytecodeValidationMode::Validate;
     static constexpr bool shouldFuseBranchCompare = false;
 
     using ControlType = IPIntControlType;

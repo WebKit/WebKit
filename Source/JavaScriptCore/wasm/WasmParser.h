@@ -57,6 +57,8 @@ template<typename T>
 inline String makeString(const T& failure) { return WTF::toString(failure); }
 }
 
+enum class BytecodeValidationMode : bool { Skip, Validate };
+
 class ParserBase {
 public:
     typedef String ErrorType;
@@ -109,9 +111,12 @@ protected:
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, m_offset, ": "_s, makeString(args)...));
     }
 #define WASM_PARSER_FAIL_IF(condition, ...) do { \
-    if (condition) [[unlikely]]                     \
-        return fail(__VA_ARGS__);                \
-    } while (0)
+    if (condition) [[unlikely]] { \
+        if constexpr (bytecodeValidationMode == BytecodeValidationMode::Validate) \
+            return fail(__VA_ARGS__); \
+        ASSERT_NOT_REACHED(); \
+    } \
+} while (0)
 
 #define WASM_ALLOCATOR_FAIL_IF(condition, ...) do { \
     if (condition) [[unlikely]]                     \
@@ -134,9 +139,12 @@ protected:
     RecursionGroupInformation m_recursionGroupInformation;
 };
 
-template<typename SuccessType> class Parser : public ParserBase {
+template<typename SuccessType, BytecodeValidationMode validationMode = BytecodeValidationMode::Validate>
+class Parser : public ParserBase {
 public:
     using Result = Expected<SuccessType, ErrorType>;
+
+    static constexpr BytecodeValidationMode bytecodeValidationMode = validationMode;
 
     explicit Parser(std::span<const uint8_t> span)
         : ParserBase { span }

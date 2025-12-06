@@ -164,6 +164,8 @@ public:
         BlockSignature m_signature;
     };
 
+    static constexpr BytecodeValidationMode bytecodeValidationMode = BytecodeValidationMode::Validate;
+
     using ControlType = ControlData;
     using ControlEntry = FunctionParser<ConstExprGenerator>::ControlEntry;
     using ControlStack = FunctionParser<ConstExprGenerator>::ControlStack;

@@ -1,7 +1,7 @@
 //@ requireOptions("--useBBQJIT=1")
 //@ skip
 // Failure:
-// Exception: CompileError: WebAssembly.Module doesn't parse at byte 94: byte alignment 1 does not match against atomic op's natural alignment 8, in function at index 0 (evaluating 'new WebAssembly.Module(builder.toBuffer())')
+// Exception: CompileError: WebAssembly.Module doesn't validate: byte alignment 1 does not match against atomic op's natural alignment 8, in function at index 0 (evaluating 'new WebAssembly.Module(builder.toBuffer())')
 //  Module@[native code]
 //  testOpcode@compare-exchange64-stress.js:209:40
 //  global code@compare-exchange64-stress.js:218:11

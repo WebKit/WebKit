@@ -21,7 +21,7 @@ async function testLoad()
       (func (export "i32.atomic.load") (param $addr i32) (result i32) (i32.atomic.load align=8 (local.get $addr)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 6: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 async function testStore()
@@ -32,7 +32,7 @@ async function testStore()
       (func (export "i32.atomic.store") (param $addr i32) (param $value i32) (i32.atomic.store align=8 (local.get $addr) (local.get $value)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 async function testRMW()
@@ -43,7 +43,7 @@ async function testRMW()
       (func (export "i32.atomic.rmw.add") (param $addr i32) (param $value i32) (result i32) (i32.atomic.rmw.add align=8 (local.get $addr) (local.get $value)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 async function testCmpXchg()
@@ -54,7 +54,7 @@ async function testCmpXchg()
       (func (export "i32.atomic.rmw.cmpxchg") (param $addr i32) (param $expected i32) (param $value i32) (result i32) (i32.atomic.rmw.cmpxchg align=8 (local.get $addr) (local.get $expected) (local.get $value)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 async function testAtomicNotify()
@@ -67,7 +67,7 @@ async function testAtomicNotify()
           (memory.atomic.notify align=8 (local.get 0) (local.get 1)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 8: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 1 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 1 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 async function testAtomicWait()
@@ -79,7 +79,7 @@ async function testAtomicWait()
           (memory.atomic.wait32 align=8 (local.get 0) (local.get 1) (local.get 2)))
     )`;
     let error = await buildAndThrow(text);
-    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't parse at byte 10: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
+    assert.eq(String(error), `CompileError: WebAssembly.Module doesn't validate: byte alignment 8 does not match against atomic op's natural alignment 4, in function at index 0 (evaluating 'new WebAssembly.Module(binaryResult.buffer)')`);
 }
 
 await testLoad();
