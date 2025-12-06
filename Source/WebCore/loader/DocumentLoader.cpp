@@ -2248,6 +2248,8 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching);
 
+    mainResourceLoadOptions.shouldEnableContentExtensionsCheck = isContinuingLoadAfterProvisionalLoadStarted() ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
+
     auto isSandboxingAllowingServiceWorkerFetchHandling = [](SandboxFlags flags) {
         return !(flags.contains(SandboxFlag::Origin)) && !(flags.contains(SandboxFlag::Scripts));
     };
