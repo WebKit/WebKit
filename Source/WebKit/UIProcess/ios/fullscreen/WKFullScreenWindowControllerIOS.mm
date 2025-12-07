@@ -70,6 +70,10 @@
 #import "MRUIKitSPI.h"
 #endif
 
+#if ENABLE(SCENE_GEOMETRY_UPDATE)
+#import "UIWindowScene+Extras.h"
+#endif
+
 #import "WebKitSwiftSoftLink.h"
 
 #if !HAVE(URL_FORMATTING)
@@ -117,7 +121,7 @@ static bool useSpatialFullScreenTransition()
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomVision;
 }
 
-static void resizeScene(UIWindowScene *scene, CGSize size, CompletionHandler<void()>&& completionHandler)
+static void resizeScene(UIWindowScene *scene, CGSize size, BOOL useDefaultSceneGeometry, BOOL updateSceneGeometryEnabled, CompletionHandler<void()>&& completionHandler)
 {
     if (size.width) {
         CGSize minimumSize = scene.sizeRestrictions.minimumSize;
@@ -131,6 +135,10 @@ static void resizeScene(UIWindowScene *scene, CGSize size, CompletionHandler<voi
         scene.sizeRestrictions.minimumSize = size;
 
     [UIView animateWithDuration:0 animations:^{
+#if ENABLE(SCENE_GEOMETRY_UPDATE)
+        if (updateSceneGeometryEnabled)
+            [scene setUsesDefaultGeometry:useDefaultSceneGeometry];
+#endif
         [scene mrui_requestResizeToSize:size options:nil completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](CGSize sizeReceived, NSError *error) mutable {
             completionHandler();
         }).get()];
@@ -2027,7 +2035,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     scene.mrui_placement.preferredChromeOptions = RSSSceneChromeOptionsNone;
 
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
-    WebKit::resizeScene(scene, sceneSize, [strongSelf = retainPtr(self), self, adjustedOriginalWindowFrame, adjustedFullscreenWindowFrame, logIdentifier = OBJC_LOGIDENTIFIER]() {
+    WebKit::resizeScene(scene, sceneSize, NO, NO, [strongSelf = retainPtr(self), self, adjustedOriginalWindowFrame, adjustedFullscreenWindowFrame, logIdentifier = OBJC_LOGIDENTIFIER]() {
         OBJC_ALWAYS_LOG(logIdentifier, "resize completed");
         [_lastKnownParentWindow setFrame:adjustedOriginalWindowFrame];
         [_window setFrame:adjustedFullscreenWindowFrame];
@@ -2152,8 +2160,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         } completion:nil];
     }
 
-    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
-        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, [controller, inWindow, originalState, enter, completionHandler = WTFMove(completionHandler)]() mutable {
+    BOOL allowSceneGeometryUpdates = NO;
+#if ENABLE(SCENE_GEOMETRY_UPDATE)
+    // TODO: https://bugs.webkit.org/show_bug.cgi?id=303664
+    if (auto page = [self._webView _page])
+        allowSceneGeometryUpdates = page->preferences().updateSceneGeometryEnabled();
+#endif
+
+    auto completion = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, allowSceneGeometryUpdates, completionHandler = WTFMove(completionHandler)] (BOOL finished) mutable {
+        WebKit::resizeScene([inWindow windowScene], [inWindow bounds].size, !enter, allowSceneGeometryUpdates, [controller, inWindow, originalState, enter, completionHandler = WTFMove(completionHandler)] mutable {
             Class inWindowClass = enter ? [UIWindow class] : [originalState windowClass];
             object_setClass(inWindow.get(), inWindowClass);
 

@@ -1740,6 +1740,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return protectedPreferences(self)->modelNoPortalAttributeEnabled();
 }
 
+- (void)_setUpdateSceneGeometryEnabled:(BOOL)enabled
+{
+    protectedPreferences(self)->setUpdateSceneGeometryEnabled(enabled);
+}
+
+- (BOOL)_updateSceneGeometryEnabled
+{
+    return protectedPreferences(self)->updateSceneGeometryEnabled();
+}
+
 - (void)_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:(BOOL)enabled
 {
 #if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
