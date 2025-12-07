@@ -34,8 +34,11 @@ function match(regexp)
 
     if (@isObject(regexp)) {
         var matcher = regexp.@@match;
-        if (!@isUndefinedOrNull(matcher))
+        if (!@isUndefinedOrNull(matcher)) {
+            if (!@isCallable(matcher))
+                @throwTypeError("Symbol.match property should be callable");
             return matcher.@call(regexp, this);
+        }
     }
 
     var thisString = @toString(this);
@@ -55,8 +58,11 @@ function matchAll(arg)
             @throwTypeError("String.prototype.matchAll argument must not be a non-global regular expression");
 
         var matcher = arg.@@matchAll;
-        if (!@isUndefinedOrNull(matcher))
+        if (!@isUndefinedOrNull(matcher)) {
+            if (!@isCallable(matcher))
+                @throwTypeError("Symbol.matchAll property should be callable");
             return matcher.@call(arg, this);
+        }
     }
 
     var string = @toString(this);
@@ -270,6 +276,8 @@ function replace(search, replace)
     if (@isObject(search)) {
         var replacer = search.@@replace;
         if (!@isUndefinedOrNull(replacer)) {
+            if (!@isCallable(replacer))
+                @throwTypeError("Symbol.replace property should be callable");
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
             return replacer.@call(search, this, replace);
@@ -295,6 +303,8 @@ function replaceAll(search, replace)
 
         var replacer = search.@@replace;
         if (!@isUndefinedOrNull(replacer)) {
+            if (!@isCallable(replacer))
+                @throwTypeError("Symbol.replace property should be callable");
             if (!@hasObservableSideEffectsForStringReplace(search, replacer))
                 return @toString(this).@replaceUsingRegExp(search, replace);
             return replacer.@call(search, this, replace);
@@ -315,8 +325,11 @@ function search(regexp)
 
     if (@isObject(regexp)) {
         var searcher = regexp.@@search;
-        if (!@isUndefinedOrNull(searcher))
+        if (!@isUndefinedOrNull(searcher)) {
+            if (!@isCallable(searcher))
+                @throwTypeError("Symbol.search property should be callable");
             return searcher.@call(regexp, this);
+        }
     }
 
     var thisString = @toString(this);
@@ -327,16 +340,19 @@ function search(regexp)
 function split(separator, limit)
 {
     "use strict";
-    
+
     if (@isUndefinedOrNull(this))
         @throwTypeError("String.prototype.split requires that |this| not be null or undefined");
-    
+
     if (@isObject(separator)) {
         var splitter = separator.@@split;
-        if (!@isUndefinedOrNull(splitter))
+        if (!@isUndefinedOrNull(splitter)) {
+            if (!@isCallable(splitter))
+                @throwTypeError("Symbol.split property should be callable");
             return splitter.@call(separator, this, limit);
+        }
     }
-    
+
     return @stringSplitFast.@call(this, separator, limit);
 }
 
