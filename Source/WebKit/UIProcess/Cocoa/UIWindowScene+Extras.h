@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Add project-level Objective-C header files here to be able to access them from within Swift sources.
+#if ENABLE(SCENE_GEOMETRY_UPDATE)
 
-#import <wtf/Platform.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-#import "UIWindowScene+Extras.h"
-#import "WKMaterialHostingSupport.h"
-#import "WKMouseDeviceObserver.h"
-#import "WKPreferencesInternal.h"
-#import "WKScrollGeometry.h"
-#import "WKSeparatedImageView.h"
-#import "WKUIDelegateInternal.h"
-#import "WKWebViewConfigurationInternal.h"
-#import "WKWebViewInternal.h"
-#import "_WKTextExtractionInternal.h"
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@interface UIWindowScene (SceneGeometry)
+@property (nonatomic) BOOL usesDefaultGeometry;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
+
+#endif
