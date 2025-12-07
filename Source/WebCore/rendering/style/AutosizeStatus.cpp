@@ -55,7 +55,10 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle&
     if (heightOrMaxHeight <= 0)
         return false;
 
-    float approximateLineHeight = lineHeightAsPercentage ? lineHeightAsPercentage->value * style.specifiedFontSize() / 100 : lineHeightAsFixed->resolveZoom(style.usedZoomForLength());
+    auto specifiedFontSize = Style::evaluate<float>(style.specifiedFontSize(), Style::ZoomNeeded { });
+    float approximateLineHeight = lineHeightAsPercentage
+        ? lineHeightAsPercentage->value * specifiedFontSize / 100
+        : lineHeightAsFixed->resolveZoom(style.usedZoomForLength());
     if (approximateLineHeight <= 0)
         return false;
 
@@ -79,7 +82,8 @@ auto AutosizeStatus::computeStatus(const RenderStyle& style) -> AutosizeStatus
 
         const float maximumDifferenceBetweenFixedLineHeightAndFontSize = 5;
         auto& lineHeight = style.specifiedLineHeight();
-        if (auto fixedLineHeight = lineHeight.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(style.usedZoomForLength()) - style.specifiedFontSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
+        auto specifiedFontSize = Style::evaluate<float>(style.specifiedFontSize(), Style::ZoomNeeded { });
+        if (auto fixedLineHeight = lineHeight.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(style.usedZoomForLength()) - specifiedFontSize > maximumDifferenceBetweenFixedLineHeightAndFontSize)
             return false;
 
         if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::Collapse && style.textWrapMode() == TextWrapMode::NoWrap)

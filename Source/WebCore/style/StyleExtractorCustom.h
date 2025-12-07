@@ -736,13 +736,6 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyFontFamily> {
     }
 };
 
-template<> struct PropertyExtractorAdaptor<CSSPropertyFontSize> {
-    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
-    {
-        return functor(Length<CSS::Nonnegative> { state.style.fontDescription().computedSize() });
-    }
-};
-
 template<> struct PropertyExtractorAdaptor<CSSPropertyTop> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
@@ -1917,16 +1910,6 @@ inline Ref<CSSValue> ExtractorCustom::extractFontFamily(ExtractorState& state)
 inline void ExtractorCustom::extractFontFamilySerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyFontFamily>(state, builder, context);
-}
-
-inline Ref<CSSValue> ExtractorCustom::extractFontSize(ExtractorState& state)
-{
-    return extractCSSValue<CSSPropertyFontSize>(state);
-}
-
-inline void ExtractorCustom::extractFontSizeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
-{
-    extractSerialization<CSSPropertyFontSize>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractTop(ExtractorState& state)

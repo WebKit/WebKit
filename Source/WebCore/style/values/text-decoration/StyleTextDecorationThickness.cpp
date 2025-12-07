@@ -34,6 +34,7 @@
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+Blending.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
@@ -44,13 +45,15 @@ float TextDecorationThickness::resolve(const RenderStyle& style) const
 {
     return WTF::switchOn(m_value,
         [&](const CSS::Keyword::Auto&) {
-            return style.computedFontSize() / textDecorationBaseFontSize;
+            auto fontSize = evaluate<float>(style.computedFontSize(), ZoomNeeded { });
+            return fontSize / textDecorationBaseFontSize;
         },
         [&](const CSS::Keyword::FromFont&) {
             return style.metricsOfPrimaryFont().underlineThickness().value_or(0);
         },
         [&](const TextDecorationThicknessLength& length) {
-            return Style::evaluate<float>(length, style.computedFontSize(), style.usedZoomForLength());
+            auto fontSize = evaluate<float>(style.computedFontSize(), ZoomNeeded { });
+            return evaluate<float>(length, fontSize, style.usedZoomForLength());
         }
     );
 }

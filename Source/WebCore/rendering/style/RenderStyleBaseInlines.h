@@ -38,6 +38,7 @@
 #include <WebCore/StyleFontFamily.h>
 #include <WebCore/StyleFontFeatureSettings.h>
 #include <WebCore/StyleFontPalette.h>
+#include <WebCore/StyleFontSize.h>
 #include <WebCore/StyleFontSizeAdjust.h>
 #include <WebCore/StyleFontStyle.h>
 #include <WebCore/StyleFontVariantAlternates.h>

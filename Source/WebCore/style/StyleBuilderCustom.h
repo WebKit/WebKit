@@ -48,6 +48,7 @@
 #include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include "StyleBuilderStateInlines.h"
+#include "StyleFontSize.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
@@ -569,8 +570,8 @@ inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
 
 static inline float computeBaseSpecifiedFontSize(const Document& document, const RenderStyle& style, bool percentageAutosizingEnabled)
 {
-    float result = style.specifiedFontSize();
-    auto* frame = document.frame();
+    auto result = evaluate<float>(style.specifiedFontSize(), ZoomNeeded { });
+    RefPtr frame = document.frame();
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.usedZoom();

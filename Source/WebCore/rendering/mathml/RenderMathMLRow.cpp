@@ -36,6 +36,7 @@
 #include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -91,7 +92,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
     if (stretchAscent + stretchDescent <= 0) {
         // We ensure a minimal stretch size.
-        stretchAscent = style().computedFontSize();
+        stretchAscent = Style::evaluate<float>(style().computedFontSize(), Style::ZoomNeeded { });
         stretchDescent = 0;
     }
 

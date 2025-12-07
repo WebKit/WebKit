@@ -257,6 +257,7 @@ struct FontFamilies;
 struct FontFamiliesView;
 struct FontFeatureSettings;
 struct FontPalette;
+struct FontSize;
 struct FontSizeAdjust;
 struct FontStyle;
 struct FontVariantAlternates;
@@ -582,7 +583,7 @@ public:
 
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const;
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
-    float computedFontSize() const;
+    Style::FontSize specifiedFontSize() const;
     inline Style::WebkitLocale computedLocale() const;
     const Style::LineHeight& specifiedLineHeight() const;
 #if ENABLE(TEXT_AUTOSIZING)

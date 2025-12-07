@@ -62,14 +62,16 @@ inline void BuilderState::setFontDescriptionIsAbsoluteSize(bool isAbsoluteSize)
     m_style.mutableFontDescriptionWithoutUpdate().setIsAbsoluteSize(isAbsoluteSize);
 }
 
-inline void BuilderState::setFontDescriptionFontSize(float fontSize)
+inline void BuilderState::setFontDescriptionFontSize(FontSize fontSize)
 {
-    if (m_style.fontDescription().specifiedSize() != fontSize) {
+    auto platformFontSize = fontSize.platform();
+
+    if (m_style.fontDescription().specifiedSize() != platformFontSize) {
         m_fontDirty = true;
-        m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedSize(fontSize);
+        m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedSize(platformFontSize);
     }
 
-    SUPPRESS_UNCOUNTED_ARG auto computedSize = Style::computedFontSizeFromSpecifiedSize(fontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), &style(), document());
+    SUPPRESS_UNCOUNTED_ARG auto computedSize = Style::computedFontSizeFromSpecifiedSize(platformFontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), &style(), document());
     if (m_style.fontDescription().computedSize() != computedSize.size || m_style.fontDescription().usedZoomFactor() != computedSize.usedZoomFactor) {
         m_fontDirty = true;
         m_style.mutableFontDescriptionWithoutUpdate().setComputedSize(computedSize.size, computedSize.usedZoomFactor);

@@ -5291,6 +5291,7 @@
 		BC913AAB2EDE1833009E3349 /* RenderStyleBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = BC913A8D2EDBB938009E3349 /* RenderStyleBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC913AE32EE1FF04009E3349 /* StyleZoom.h in Headers */ = {isa = PBXBuildFile; fileRef = BC913AE02EE1FA36009E3349 /* StyleZoom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC913AE42EE1FF17009E3349 /* StyleZoomPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = BC913AE12EE1FA36009E3349 /* StyleZoomPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC913B1B2EE49BFD009E3349 /* StyleFontSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC913B0F2EE3CC5C009E3349 /* StyleFontSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */; };
 		BC929E902DAEC25B00311094 /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7C5E562BE2A8FB00AE645C /* CSSParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9439C3116CF4940048C750 /* JSNodeCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9439C2116CF4940048C750 /* JSNodeCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19266,6 +19267,8 @@
 		BC913ABD2EDF542D009E3349 /* RenderLayerModelObjectInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderLayerModelObjectInlines.h; sourceTree = "<group>"; };
 		BC913AE02EE1FA36009E3349 /* StyleZoom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleZoom.h; sourceTree = "<group>"; };
 		BC913AE12EE1FA36009E3349 /* StyleZoomPrimitives.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleZoomPrimitives.h; sourceTree = "<group>"; };
+		BC913B0F2EE3CC5C009E3349 /* StyleFontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFontSize.h; sourceTree = "<group>"; };
+		BC913B102EE3CC5C009E3349 /* StyleFontSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFontSize.cpp; sourceTree = "<group>"; };
 		BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElement.cpp; sourceTree = "<group>"; };
 		BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameSetElement.h; sourceTree = "<group>"; };
 		BC9439C2116CF4940048C750 /* JSNodeCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeCustom.h; sourceTree = "<group>"; };
@@ -36666,6 +36669,8 @@
 				BCB02AC82E9035BA008A0B68 /* StyleFontOpentypeTag.h */,
 				BC7826742E845D5400FB0C7E /* StyleFontPalette.cpp */,
 				BC7826732E845D5400FB0C7E /* StyleFontPalette.h */,
+				BC913B102EE3CC5C009E3349 /* StyleFontSize.cpp */,
+				BC913B0F2EE3CC5C009E3349 /* StyleFontSize.h */,
 				BC0A309D2E876826007B809D /* StyleFontSizeAdjust.cpp */,
 				BC0A309C2E876826007B809D /* StyleFontSizeAdjust.h */,
 				BC0A30982E875609007B809D /* StyleFontStyle.cpp */,
@@ -46935,6 +46940,7 @@
 				BC6F79AC2EC25C110049BA02 /* StyleFontFamilyName.h in Headers */,
 				BCB02ACA2E903C46008A0B68 /* StyleFontFeatureSettings.h in Headers */,
 				BC7826762E845D6000FB0C7E /* StyleFontPalette.h in Headers */,
+				BC913B1B2EE49BFD009E3349 /* StyleFontSize.h in Headers */,
 				BC0A309E2E8771BD007B809D /* StyleFontSizeAdjust.h in Headers */,
 				E4D58EB917B4ED8900CBDCA8 /* StyleFontSizeFunctions.h in Headers */,
 				BC0A30992E875D14007B809D /* StyleFontStyle.h in Headers */,

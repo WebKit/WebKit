@@ -37,7 +37,7 @@ namespace Layout {
 
 static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
 {
-    return annotationBox.style().computedFontSize() / 2.f;
+    return Style::evaluate<float>(annotationBox.style().computedFontSize(), Style::ZoomNeeded { }) / 2.0f;
 }
 
 static inline size_t baseContentIndex(size_t rubyBaseStart, const InlineDisplay::Boxes& boxes)

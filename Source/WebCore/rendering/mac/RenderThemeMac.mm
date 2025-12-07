@@ -1168,7 +1168,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderElement& renderer) const
 
 static NSControlSize controlSizeForSystemFont(const RenderStyle& style)
 {
-    auto fontSize = style.computedFontSize();
+    auto fontSize = Style::evaluate<float>(style.computedFontSize(), Style::ZoomNeeded { });
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
@@ -1180,7 +1180,7 @@ static NSControlSize controlSizeForSystemFont(const RenderStyle& style)
 
 static NSControlSize controlSizeForFont(const RenderStyle& style)
 {
-    auto fontSize = style.computedFontSize();
+    auto fontSize = Style::evaluate<float>(style.computedFontSize(), Style::ZoomNeeded { });
     if (fontSize >= 21 && supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 16)
@@ -1371,7 +1371,8 @@ Style::PaddingBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& sty
     }
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
-        float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
+        auto fontSize = Style::evaluate<float>(style.computedFontSize(), Style::ZoomNeeded { });
+        float arrowWidth = baseArrowWidth * (fontSize / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.usedZoom());
         float leftPadding = styledPopupPaddingLeft;
         if (style.writingMode().isBidiRTL())
@@ -1413,7 +1414,8 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
 #else
     UNUSED_PARAM(element);
 #endif
-    float fontScale = style.computedFontSize() / baseFontSize;
+    auto fontSize = Style::evaluate<float>(style.computedFontSize(), Style::ZoomNeeded { });
+    auto fontScale = fontSize / baseFontSize;
 
     style.resetPadding();
 

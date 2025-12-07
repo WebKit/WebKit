@@ -779,11 +779,13 @@ void Adjuster::adjust(RenderStyle& style) const
     if (shouldAddIntrinsicMarginToFormControls) {
         // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
         // alter fonts and heights/widths.
-        if (is<HTMLFormControlElement>(m_element) && style.computedFontSize() >= 11) {
-            // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
-            // so we have to treat all image buttons as though they were explicitly sized.
-            if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
-                addIntrinsicMargins(style);
+        if (is<HTMLFormControlElement>(m_element)) {
+            if (auto fontSize = evaluate<float>(style.computedFontSize(), ZoomNeeded { }); fontSize >= 11) {
+                // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
+                // so we have to treat all image buttons as though they were explicitly sized.
+                if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
+                    addIntrinsicMargins(style);
+            }
         }
     }
 #endif

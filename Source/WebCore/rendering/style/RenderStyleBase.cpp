@@ -196,9 +196,9 @@ std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyleBase::fontAndGlyph
     }
 }
 
-float RenderStyleBase::computedFontSize() const
+Style::FontSize RenderStyleBase::specifiedFontSize() const
 {
-    return fontDescription().computedSize();
+    return fontDescription().specifiedSize();
 }
 
 const Style::LineHeight& RenderStyleBase::specifiedLineHeight() const

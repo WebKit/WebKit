@@ -884,7 +884,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style.get(), textDecorationThickness, autoTextDecorationThickness),
                 decoratingBox.style->metricsOfPrimaryFont().intAscent() + 2.f,
-                wavyStrokeParameters(decoratingBox.style->computedFontSize())
+                wavyStrokeParameters(Style::evaluate<float>(decoratingBox.style->computedFontSize(), Style::ZoomNeeded { }))
             };
         };
 
@@ -922,11 +922,17 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
     auto deviceScaleFactor = m_document->deviceScaleFactor();
     auto textDecorationThickness = computedTextDecorationThickness(styleForDecoration, deviceScaleFactor);
     auto linethroughCenter = computedLinethroughCenter(styleForDecoration, textDecorationThickness, computedAutoTextDecorationThickness(styleForDecoration, deviceScaleFactor));
-    decorationPainter.paintForegroundDecorations({ textBoxPaintRect.location()
-        , textBoxPaintRect.width()
-        , textDecorationThickness
-        , linethroughCenter
-        , wavyStrokeParameters(styleForDecoration.computedFontSize()) }, markedText.style.textDecorationStyles);
+
+    decorationPainter.paintForegroundDecorations(
+        TextDecorationPainter::ForegroundDecorationGeometry {
+              textBoxPaintRect.location(),
+              textBoxPaintRect.width(),
+              textDecorationThickness,
+              linethroughCenter,
+              wavyStrokeParameters(Style::evaluate<float>(styleForDecoration.computedFontSize(), Style::ZoomNeeded { }))
+        },
+        markedText.style.textDecorationStyles
+    );
 
     if (m_isCombinedText)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Counterclockwise));

@@ -147,9 +147,9 @@ inline Style::LineWidth RenderStyleProperties::columnRuleWidth() const
 
 // FIXME: Support font properties.
 
-float RenderStyleProperties::specifiedFontSize() const
+Style::FontSize RenderStyleProperties::computedFontSize() const
 {
-    return fontDescription().specifiedSize();
+    return fontDescription().computedSize();
 }
 
 inline Style::FontFamilies RenderStyleProperties::fontFamily() const

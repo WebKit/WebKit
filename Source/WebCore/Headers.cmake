@@ -3360,6 +3360,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/fonts/StyleFontFamilyName.h
     style/values/fonts/StyleFontFeatureSettings.h
     style/values/fonts/StyleFontPalette.h
+    style/values/fonts/StyleFontSize.h
     style/values/fonts/StyleFontSizeAdjust.h
     style/values/fonts/StyleFontStyle.h
     style/values/fonts/StyleFontVariantAlternates.h

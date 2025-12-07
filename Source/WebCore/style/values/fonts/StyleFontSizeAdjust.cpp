@@ -28,7 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveKeyword+CSSValueConversion.h"
 #include "StylePrimitiveKeyword+CSSValueCreation.h"
@@ -36,6 +36,7 @@
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
@@ -45,8 +46,10 @@ static constexpr auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
 
 std::optional<float> FontSizeAdjust::resolvedMetricValue(const RenderStyle& style) const
 {
-    if (m_platform.shouldResolveFromFont())
-        return m_platform.resolve(style.computedFontSize(), style.metricsOfPrimaryFont());
+    if (m_platform.shouldResolveFromFont()) {
+        auto fontSize = evaluate<float>(style.computedFontSize(), ZoomNeeded { });
+        return m_platform.resolve(fontSize, style.metricsOfPrimaryFont());
+    }
     return m_platform.value;
 }
 

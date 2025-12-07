@@ -35,6 +35,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 
@@ -136,8 +137,10 @@ static float textRunOffsetFromBottomMost(const InlineIterator::LineBoxIterator& 
 static inline float defaultGap(const RenderStyle& style)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
-    const float textDecorationBaseFontSize = 16.f;
-    return std::max(1.f, ceilf(style.computedFontSize() / textDecorationBaseFontSize / 2.f));
+    constexpr auto textDecorationBaseFontSize = 16.0f;
+
+    auto fontSize = Style::evaluate<float>(style.computedFontSize(), Style::ZoomNeeded { });
+    return std::max(1.0f, ceilf(fontSize / textDecorationBaseFontSize / 2.0f));
 }
 
 static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
@@ -202,7 +205,8 @@ static GlyphOverflow computedInkOverflowForDecorations(const RenderStyle& lineSt
     GlyphOverflow overflowResult;
 
     if (decorationStyle == TextDecorationStyle::Wavy) {
-        wavyStrokeParameters = WebCore::wavyStrokeParameters(lineStyle.computedFontSize());
+        auto fontSize = Style::evaluate<float>(lineStyle.computedFontSize(), Style::ZoomNeeded { });
+        wavyStrokeParameters = WebCore::wavyStrokeParameters(fontSize);
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;
