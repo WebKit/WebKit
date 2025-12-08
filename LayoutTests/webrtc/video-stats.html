@@ -204,18 +204,28 @@ promise_test(async (test) => {
 
     const expectedTypes = ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "remote-outbound-rtp", "transport"];
     let types;
+    let getStatsCallCount = 0;
     do {
         types = await getStatsType(firstConnection);
-        if (types.length != expectedTypes.length)
-            types = undefined;
+        getStatsCallCount++;
+        if (types.length != expectedTypes.length) {
+             if (getStatsCallCount > 300)
+                 break;
+             types = undefined;
+        }
     } while(!types);
 
     assert_array_equals(types, expectedTypes, "first connection");
 
+    getStatsCallCount = 0;
     do {
         types = await getStatsType(secondConnection);
-        if (types.length != expectedTypes.length)
+        getStatsCallCount++;
+        if (types.length != expectedTypes.length) {
+            if (getStatsCallCount > 150)
+                break;
             types = undefined;
+        }
     } while(!types);
 
     assert_array_equals(types, expectedTypes, "second connection");
