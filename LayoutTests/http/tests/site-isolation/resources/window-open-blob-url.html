@@ -1,0 +1,14 @@
+<script>
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <h1>Blob URL Loaded</h1>
+        </html>
+        `;
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    const blobPopUp = window.open(blobUrl);
+
+    window.parent.postMessage("finish test", "*");
+</script>
