@@ -58,7 +58,7 @@ static StringView extractCharset(StringView value)
         while (pos < length && value[pos] <= ' ')
             ++pos;
 
-        if (value[pos] != '=')
+        if (pos < length && value[pos] != '=')
             continue;
 
         ++pos;
