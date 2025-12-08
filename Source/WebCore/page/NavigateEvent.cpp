@@ -128,13 +128,27 @@ void NavigateEvent::processScrollBehavior(Document& document)
 
     if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload) {
         if (m_navigationType == NavigationNavigationType::Reload && document.url().hasFragmentIdentifier()) {
+            if (!document.haveStylesheetsLoaded()) {
+                document.setGotoAnchorNeededAfterStylesheetsLoad(true);
+                return;
+            }
             if (document.frame()->view()->scrollToFragment(document.url()))
                 return;
         }
         document.frame()->loader().history().restoreScrollPositionAndViewState();
-    } else if (!document.frame()->view()->scrollToFragment(document.url())) {
-        if (!document.url().hasFragmentIdentifier())
-            document.frame()->view()->scrollTo({ 0, 0 });
+    } else {
+        if (!document.haveStylesheetsLoaded()) {
+            if (document.url().hasFragmentIdentifier())
+                document.setGotoAnchorNeededAfterStylesheetsLoad(true);
+            else
+                document.frame()->view()->scrollTo({ 0, 0 });
+            return;
+        }
+
+        if (!document.frame()->view()->scrollToFragment(document.url())) {
+            if (!document.url().hasFragmentIdentifier())
+                document.frame()->view()->scrollTo({ 0, 0 });
+        }
     }
 }
 

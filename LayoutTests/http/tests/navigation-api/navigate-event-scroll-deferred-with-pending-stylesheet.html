@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NavigateEvent scroll behavior with pending stylesheets should not crash</title>
+</head>
+<body>
+<div style="height: 3000px;"></div>
+<div id="target">Target Element</div>
+<div style="height: 3000px;"></div>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+navigation.addEventListener('navigate', e => {
+  e.intercept({
+    handler: () => Promise.resolve()
+  });
+});
+
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = '../incremental/resources/delayed-css.py?delay=2000';
+document.head.appendChild(link);
+
+navigation.navigate("#target");
+
+setTimeout(function() {
+    link.remove();
+    document.body.innerHTML = "PASS, if no crash";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 50);
+</script>
+</body>
+</html>
