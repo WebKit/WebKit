@@ -63,8 +63,8 @@ fields.forEach((field, i) => {
 shouldBe(pdt.calendar instanceof Temporal.Calendar, true);
 shouldBe(pdt.calendar.toString(), 'iso8601');
 {
-    const dateGetters = ['monthCode', 'dayOfWeek', 'dayOfYear', 'weekOfYear', 'daysInWeek', 'daysInMonth', 'daysInYear', 'monthsInYear', 'inLeapYear'];
-    const results = ['M02', 6, 34, 5, 7, 28, 365, 12, false];
+    const dateGetters = ['monthCode', 'dayOfWeek', 'dayOfYear', 'weekOfYear', 'yearOfWeek', 'daysInWeek', 'daysInMonth', 'daysInYear', 'monthsInYear', 'inLeapYear'];
+    const results = ['M02', 6, 34, 5, 1, 7, 28, 365, 12, false];
     dateGetters.forEach((property, i) => {
         shouldThrow(() => Temporal.PlainDateTime.prototype[property], TypeError);
         shouldBe(pdt[property], results[i]);
@@ -108,6 +108,20 @@ shouldThrow(() => { Temporal.PlainDateTime.from({ year: 2007, monthCode: 'M00', 
 shouldThrow(() => { Temporal.PlainDateTime.from({ year: 2007, month: 1, day: 0 }); }, RangeError);
 shouldThrow(() => { Temporal.PlainDateTime.from({ year: 2007, month: 1, monthCode: 'M02', day: 9 }); }, RangeError);
 shouldThrow(() => { Temporal.PlainDateTime.from({ year: 2007, month: 20, day: 40, hour: 30, minute: 80, second: 80, millisecond: 2000, microsecond: 2000, nanosecond: 2000 }, { overflow: 'reject' }); }, RangeError);
+
+{
+    shouldBe(Temporal.PlainDateTime.from('2024-12-28').yearOfWeek, 2024);
+    shouldBe(Temporal.PlainDateTime.from('2024-12-29').yearOfWeek, 2024);
+    shouldBe(Temporal.PlainDateTime.from('2024-12-30').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2024-12-31').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2025-01-01').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2025-01-02').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2025-01-05').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2025-12-28').yearOfWeek, 2025);
+    shouldBe(Temporal.PlainDateTime.from('2025-12-29').yearOfWeek, 2026);
+    shouldBe(Temporal.PlainDateTime.from('2025-12-31').yearOfWeek, 2026);
+    shouldBe(Temporal.PlainDateTime.from('2026-01-01').yearOfWeek, 2026);
+}
 
 const goodStrings = [
     '2007-01-09',

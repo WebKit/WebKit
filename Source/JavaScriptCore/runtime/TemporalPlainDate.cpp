@@ -474,7 +474,7 @@ uint16_t TemporalPlainDate::dayOfYear() const
 
 uint8_t TemporalPlainDate::weekOfYear() const
 {
-    return ISO8601::weekOfYear(m_plainDate);
+    return ISO8601::weekOfYear(m_plainDate).second;
 }
 
 } // namespace JSC

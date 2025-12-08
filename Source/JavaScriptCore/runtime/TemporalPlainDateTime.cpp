@@ -262,7 +262,12 @@ uint16_t TemporalPlainDateTime::dayOfYear() const
 
 uint8_t TemporalPlainDateTime::weekOfYear() const
 {
-    return ISO8601::weekOfYear(m_plainDate);
+    return ISO8601::weekOfYear(m_plainDate).second;
+}
+
+int32_t TemporalPlainDateTime::yearOfWeek() const
+{
+    return ISO8601::weekOfYear(m_plainDate).first;
 }
 
 TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject, JSObject* temporalDateTimeLike, JSValue optionsValue)

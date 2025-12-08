@@ -404,7 +404,7 @@ std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<Time
 uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
-uint8_t weekOfYear(PlainDate);
+std::pair<int32_t, uint8_t> weekOfYear(PlainDate);
 uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);

@@ -72,6 +72,7 @@ public:
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
     uint8_t weekOfYear() const;
+    int32_t yearOfWeek() const;
 
     String toString(JSGlobalObject*, JSValue options) const;
     String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const

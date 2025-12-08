@@ -1390,15 +1390,24 @@ uint16_t dayOfYear(PlainDate plainDate)
     return dayInYear(plainDate.year(), plainDate.month() - 1, plainDate.day()) + 1; // Always start with 1 (1/1 is 1).
 }
 
-uint8_t weekOfYear(PlainDate plainDate)
+// return pair<year, week>
+// https://tc39.es/proposal-temporal/#sec-temporal-isoweekofyear
+std::pair<int32_t, uint8_t> weekOfYear(PlainDate plainDate)
 {
+    constexpr int32_t wednesday = 3;
+    constexpr int32_t thursday = 4;
+    constexpr int32_t friday = 5;
+    constexpr int32_t saturday = 6;
+    constexpr int32_t daysInWeek = 7;
+    constexpr int32_t maxWeekNumber = 53;
+    int32_t year = plainDate.year();
     int32_t dayOfYear = ISO8601::dayOfYear(plainDate);
     int32_t dayOfWeek = ISO8601::dayOfWeek(plainDate);
 
     // ISO week 1 is the week containing the first Thursday (4) of the year.
     // https://en.wikipedia.org/wiki/ISO_week_date#Algorithms
-    int32_t week = (dayOfYear - dayOfWeek + 10) / 7;
-    if (week <= 0) {
+    int32_t week = static_cast<int32_t>(std::floor((dayOfYear + daysInWeek - dayOfWeek + wednesday) / daysInWeek));
+    if (week < 1) {
         // Previous year's last week. Thus, 52 or 53 weeks. Getting weeks in the previous year.
         //
         // https://en.wikipedia.org/wiki/ISO_week_date#Weeks_per_year
@@ -1408,23 +1417,23 @@ uint8_t weekOfYear(PlainDate plainDate)
         int32_t dayOfWeekForJanuaryFirst = ISO8601::dayOfWeek(PlainDate { plainDate.year(), 1, 1 });
 
         // Any year ending on Thursday (D, ED) -> this year's 1/1 is Friday.
-        if (dayOfWeekForJanuaryFirst == 5)
-            return 53;
+        if (dayOfWeekForJanuaryFirst == friday)
+            return { year - 1, maxWeekNumber };
 
         // Any leap year ending on Friday (DC) -> this year's 1/1 is Saturday and previous year is a leap year.
-        if (dayOfWeekForJanuaryFirst == 6 && isLeapYear(plainDate.year() - 1))
-            return 53;
+        if (dayOfWeekForJanuaryFirst == saturday && isLeapYear(plainDate.year() - 1))
+            return { year - 1, maxWeekNumber };
 
-        return 52;
+        return { year - 1, maxWeekNumber - 1 };
     }
 
-    if (week == 53) {
+    if (week == maxWeekNumber) {
         // Check whether this is in next year's week 1.
-        if ((daysInYear(plainDate.year()) - dayOfYear) < (4 - dayOfWeek))
-            return 1;
+        if ((daysInYear(plainDate.year()) - dayOfYear) < (thursday - dayOfWeek))
+            return { year + 1, 1 };
     }
 
-    return week;
+    return { year, week };
 }
 
 static constexpr uint8_t daysInMonths[2][12] = {
