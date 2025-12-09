@@ -154,6 +154,7 @@ private:
     void willReplaceMultipartContent() final { }
     void didReplaceMultipartContent() final;
 
+    void updateFrameTreeForCommit() final { }
     void committedLoad(WebCore::DocumentLoader*, const WebCore::SharedBuffer&) final;
     void finishedLoading(WebCore::DocumentLoader*) final;
     void updateGlobalHistory() final;

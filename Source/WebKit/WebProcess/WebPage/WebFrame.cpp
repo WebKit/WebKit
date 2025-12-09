@@ -485,6 +485,11 @@ void WebFrame::destroyProvisionalFrame()
     }
 }
 
+void WebFrame::updateFrameTreeForCommit()
+{
+    commitProvisionalFrame();
+}
+
 void WebFrame::commitProvisionalFrame()
 {
     RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
