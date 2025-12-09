@@ -3250,8 +3250,14 @@ bool LocalFrameView::scrollToAnchorFragment(StringView fragmentIdentifier)
 
     if (anchorElement) {
         // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
-        if (anchorElement->isFocusable())
-            document->setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, { }, { }, FocusVisibility::Visible });
+        if (anchorElement->isFocusable()) {
+            FocusVisibility focusVisibility;
+            if (document->wasLastFocusByClick())
+                focusVisibility = FocusVisibility::Invisible;
+            else
+                focusVisibility = FocusVisibility::Visible;
+            document->setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, { }, { }, focusVisibility });
+        }
         else {
             document->setFocusedElement(nullptr);
             document->setFocusNavigationStartingNode(anchorElement.get());
