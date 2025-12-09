@@ -84,6 +84,6 @@ private:
     }
 
     T m_value;
-} SWIFT_SHARED_REFERENCE(.ref, .deref);
+} SWIFT_SHARED_REFERENCE(.ref, .deref) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WTF
