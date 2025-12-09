@@ -665,15 +665,12 @@
             ],
             "codegen-properties": {
                 "accepts-quirky-length": true,
-                "animation-wrapper": "FontSizeWrapper",
-                "animation-wrapper-requires-override-parameters": [],
                 "style-builder-custom": "All",
-                "style-extractor-custom": true,
                 "high-priority": true,
-                "render-style-getter": "specifiedFontSize",
+                "render-style-getter": "computedFontSize",
                 "render-style-getter-custom": true,
                 "render-style-setter-custom": true,
-                "render-style-type": "float",
+                "render-style-type": "Style::FontSize",
                 "parser-grammar": "<absolute-size> | <relative-size> | <length-percentage [0,inf]> | <-webkit-absolute-size> | <-webkit-relative-size>",
                 "parser-exported": true
             },

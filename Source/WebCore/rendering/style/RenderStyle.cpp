@@ -540,7 +540,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
                     return false;
                 if (auto fixedHeight = height().tryFixed(); fixedHeight && specifiedLineHeight().isFixed()) {
                     if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
-                        float specifiedSize = specifiedFontSize();
+                        auto specifiedSize = Style::evaluate<float>(specifiedFontSize(), Style::ZoomNeeded { });
                         if (fixedHeight->resolveZoom(usedZoomForLength()) == specifiedSize && fixedSpecifiedLineHeight->resolveZoom(usedZoomForLength()) == specifiedSize)
                             return false;
                     }
@@ -550,7 +550,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
             if (fields.contains(AutosizeStatus::Fields::Floating)) {
                 if (auto fixedHeight = height().tryFixed(); specifiedLineHeight().isFixed() && fixedHeight) {
                     if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
-                        float specifiedSize = specifiedFontSize();
+                        auto specifiedSize = Style::evaluate<float>(specifiedFontSize(), Style::ZoomNeeded { });
                         if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f, deviceScaleFactor() }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
                             && fixedHeight->resolveZoom(usedZoomForLength()) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
                             return true;
@@ -581,8 +581,10 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
             return true;
         if (fields.contains(AutosizeStatus::Fields::FixedWidth))
             return true;
-        if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed(); fixedSpecifiedLineHeight && fixedSpecifiedLineHeight->resolveZoom(usedZoomForLength()) - specifiedFontSize() > largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
-            return true;
+        if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
+            if (auto specifiedSize = Style::evaluate<float>(specifiedFontSize(), Style::ZoomNeeded { }); fixedSpecifiedLineHeight->resolveZoom(usedZoomForLength()) - specifiedSize > largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
+                return true;
+        }
         return false;
     }
 
@@ -2340,10 +2342,12 @@ float RenderStyle::computeLineHeight(const Style::LineHeight& lineHeight) const
             return Style::evaluate<LayoutUnit>(fixed, usedZoomForLength()).toFloat();
         },
         [&](const Style::LineHeight::Percentage& percentage) -> float {
-            return Style::evaluate<LayoutUnit>(percentage, LayoutUnit { computedFontSize() }).toFloat();
+            auto fontSize = Style::evaluate<LayoutUnit>(computedFontSize(), Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(percentage, fontSize).toFloat();
         },
         [&](const Style::LineHeight::Calc& calc) -> float {
-            return Style::evaluate<LayoutUnit>(calc, LayoutUnit { computedFontSize() }, usedZoomForLength()).toFloat();
+            auto fontSize = Style::evaluate<LayoutUnit>(computedFontSize(), Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(calc, fontSize, usedZoomForLength()).toFloat();
         }
     );
 }

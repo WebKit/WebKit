@@ -3254,6 +3254,7 @@ style/values/fonts/StyleFontFamily.cpp
 style/values/fonts/StyleFontFamilyName.cpp
 style/values/fonts/StyleFontFeatureSettings.cpp
 style/values/fonts/StyleFontPalette.cpp
+style/values/fonts/StyleFontSize.cpp
 style/values/fonts/StyleFontSizeAdjust.cpp
 style/values/fonts/StyleFontStyle.cpp
 style/values/fonts/StyleFontVariantAlternates.cpp

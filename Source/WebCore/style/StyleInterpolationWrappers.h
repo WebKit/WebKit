@@ -261,22 +261,6 @@ public:
     }
 };
 
-// MARK: - Font Property Wrappers
-
-class FontSizeWrapper final : public Wrapper<float> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontSizeWrapper, Animation);
-public:
-    FontSizeWrapper()
-        : Wrapper<float>(CSSPropertyID::CSSPropertyFontSize, &RenderStyleProperties::computedFontSize, &RenderStyleProperties::setFontSize)
-    {
-    }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const final
-    {
-        return a.specifiedFontSize() == b.specifiedFontSize();
-    }
-};
-
 // MARK: - Color Property Wrappers
 
 class ColorWrapper final : public WrapperWithGetter<const WebCore::Color&> {

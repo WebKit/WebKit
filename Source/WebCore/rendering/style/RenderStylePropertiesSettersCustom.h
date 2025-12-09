@@ -128,20 +128,22 @@ inline void RenderStyleProperties::setTextAutospace(Style::TextAutospace value)
     setFontDescription(WTFMove(description));
 }
 
-inline void RenderStyleProperties::setFontSize(float size)
+inline void RenderStyleProperties::setFontSize(Style::FontSize size)
 {
     // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
     // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
 
-    ASSERT(std::isfinite(size));
-    if (!std::isfinite(size) || size < 0)
-        size = 0;
+    auto platformSize = size.value.unresolvedValue();
+
+    ASSERT(std::isfinite(platformSize));
+    if (!std::isfinite(platformSize) || platformSize < 0)
+        platformSize = 0;
     else
-        size = std::min(maximumAllowedFontSize, size);
+        platformSize = std::min(maximumAllowedFontSize, platformSize);
 
     auto description = fontDescription();
-    description.setSpecifiedSize(size);
-    description.setComputedSize(size);
+    description.setSpecifiedSize(platformSize);
+    description.setComputedSize(platformSize);
     setFontDescription(WTFMove(description));
 }
 

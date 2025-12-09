@@ -57,6 +57,7 @@ struct Color;
 struct FontFamilies;
 struct FontFeatureSettings;
 struct FontPalette;
+struct FontSize;
 struct FontSizeAdjust;
 struct FontStyle;
 struct FontVariantAlternates;
@@ -178,7 +179,7 @@ public:
 
     void setFontDescriptionKeywordSizeFromIdentifier(CSSValueID);
     void setFontDescriptionIsAbsoluteSize(bool);
-    void setFontDescriptionFontSize(float);
+    void setFontDescriptionFontSize(FontSize);
     void setFontDescriptionFamilies(FontFamilies&&);
     void setFontDescriptionFeatureSettings(FontFeatureSettings&&);
     void setFontDescriptionFontPalette(FontPalette&&);

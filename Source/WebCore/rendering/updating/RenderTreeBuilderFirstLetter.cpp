@@ -70,7 +70,8 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
         // Set the font to be one line too big and then ratchet back to get to a precise fit. We can't just set the desired font size based off font height metrics
         // because many fonts bake ascent into the font metrics. Therefore we have to look at actual measured cap height values in order to know when we have a good fit.
         auto newFontDescription = firstLetterStyle.fontDescription();
-        float capRatio = firstLetterStyle.metricsOfPrimaryFont().capHeight().value() / firstLetterStyle.computedFontSize();
+        auto firstLetterFontSize = Style::evaluate<float>(firstLetterStyle.computedFontSize(), Style::ZoomNeeded { });
+        float capRatio = firstLetterStyle.metricsOfPrimaryFont().capHeight().value() / firstLetterFontSize;
         float startingFontSize = ((firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
         newFontDescription.setComputedSize(startingFontSize);
