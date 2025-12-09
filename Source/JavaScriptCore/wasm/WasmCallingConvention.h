@@ -176,8 +176,16 @@ private:
             return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset, valueSize);
         case TypeKind::F32:
         case TypeKind::F64:
-        case TypeKind::V128:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, valueSize);
+        case TypeKind::V128: {
+            auto result = marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset, valueSize);
+#if USE(JSVALUE32_64)
+            // FIXME: V128 uses 2 consecutive FPR registers on 32-bit
+            if (fpArgumentCount <= fprArgs.size())
+                fpArgumentCount++;
+#endif
+            return result;
+        }
         default:
             break;
         }
@@ -207,10 +215,20 @@ private:
                 break;
             case TypeKind::F32:
             case TypeKind::F64:
-            case TypeKind::V128:
                 if (fprIndex < fprCount)
                     ++fprIndex;
                 else
+                    ++stackCount;
+                break;
+            case TypeKind::V128:
+                if (fprIndex < fprCount) {
+#if USE(JSVALUE32_64)
+                    // FIXME: V128 uses 2 consecutive FPR registers on 32-bit
+                    fprIndex += 2;
+#else
+                    ++fprIndex;
+#endif
+                } else
                     ++stackCount;
                 break;
             case TypeKind::Void:

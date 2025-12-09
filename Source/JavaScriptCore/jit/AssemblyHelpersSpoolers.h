@@ -210,13 +210,7 @@ private:
 
     ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.loadVector(Address(m_baseGPR, offset), reg);
-#else
-        UNUSED_PARAM(offset);
-        UNUSED_PARAM(reg);
-        UNREACHABLE_FOR_PLATFORM();
-#endif
     }
 
     friend class AssemblyHelpers::Spooler<LoadRegSpooler>;
@@ -271,13 +265,7 @@ private:
 
     ALWAYS_INLINE void executeVector(ptrdiff_t offset, FPRReg reg)
     {
-#if USE(JSVALUE64)
         m_jit.storeVector(reg, Address(m_baseGPR, offset));
-#else
-        UNUSED_PARAM(offset);
-        UNUSED_PARAM(reg);
-        UNREACHABLE_FOR_PLATFORM();
-#endif
     }
 
     friend class AssemblyHelpers::Spooler<StoreRegSpooler>;

@@ -1168,9 +1168,28 @@ public:
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+#if USE(JSVALUE32_64)
+            // FIXME: why this wasn't a problem before?
+            // On 32-bit platforms, we need to check for unsigned overflow when adding boundary to pointer.
+            // If pointer + boundary overflows, the access is definitely out of bounds.
+            if (boundary > std::numeric_limits<uint32_t>::max()) {
+                // boundary doesn't fit in 32 bits - any access would overflow, always trap
+                emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+            } else if (boundary) {
+                uint32_t boundary32 = static_cast<uint32_t>(boundary);
+                uint32_t maxPointer = std::numeric_limits<uint32_t>::max() - boundary32;
+                // If pointer > maxPointer, then pointer + boundary would overflow 32 bits
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::Above, wasmScratchGPR, TrustedImm32(maxPointer)));
+                m_jit.add32(TrustedImm32(boundary32), wasmScratchGPR);
+            }
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
+#else
+            // On 64-bit platforms, zeroExtend32ToWord ensures the pointer fits in 64-bit,
+            // so adding a 32-bit boundary won't overflow.
             if (boundary)
                 m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
             recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, wasmBoundsCheckingSizeRegister));
+#endif
             break;
         }
 
@@ -1188,9 +1207,23 @@ public:
             if (uoffset >= Memory::fastMappedRedzoneBytes()) {
                 uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
                 m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+#if USE(JSVALUE32_64)
+                // FIXME: why this wasn't a problem before?
+                // On 32-bit platforms, check for unsigned overflow when adding boundary.
+                if (boundary > std::numeric_limits<uint32_t>::max()) {
+                    emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+                } else if (boundary) {
+                    uint32_t boundary32 = static_cast<uint32_t>(boundary);
+                    uint32_t maxPointer = std::numeric_limits<uint32_t>::max() - boundary32;
+                    recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::Above, wasmScratchGPR, TrustedImm32(maxPointer)));
+                    m_jit.add32(TrustedImm32(boundary32), wasmScratchGPR);
+                }
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(static_cast<uint32_t>(maximum))));
+#else
                 if (boundary)
                     m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
                 recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
+#endif
             }
             break;
         }

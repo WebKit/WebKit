@@ -33,6 +33,7 @@
 
 #include <JavaScriptCore/ARMv7Assembler.h>
 #include <JavaScriptCore/AbstractMacroAssembler.h>
+#include <JavaScriptCore/SIMDInfo.h>
 #include <initializer_list>
 #include <optional>
 
@@ -358,7 +359,10 @@ public:
         m_assembler.str(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
 
         m_assembler.ldr(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
-        m_assembler.adc(scratch, scratch, ARMThumbImmediate::makeEncodedImm(imm.m_value >> 31));
+        if (imm.m_value >= 0)
+            m_assembler.adc(scratch, scratch, ARMThumbImmediate::makeEncodedImm(0));
+        else
+            m_assembler.sbc(scratch, scratch, ARMThumbImmediate::makeEncodedImm(0));
         m_assembler.str(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
     }
 
@@ -1722,11 +1726,16 @@ public:
         storeDouble(fpTempRegister, dest);
     }
 
-    void transferVector(Address src, Address dest)
+    template<typename SrcType, typename DestType>
+    void transferVector(SrcType src, DestType dest)
     {
-        if (src == dest)
-            return;
-        UNREACHABLE_FOR_PLATFORM();
+        if constexpr (std::equality_comparable_with<SrcType, DestType>) {
+            if (src == dest)
+                return;
+        }
+
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
     }
 
     void transferFloat(BaseIndex src, BaseIndex dest)
@@ -1740,13 +1749,6 @@ public:
             return;
         loadDouble(src, fpTempRegister);
         storeDouble(fpTempRegister, dest);
-    }
-
-    void transferVector(BaseIndex src, BaseIndex dest)
-    {
-        if (src == dest)
-            return;
-        UNREACHABLE_FOR_PLATFORM();
     }
 
     void storeCond8(RegisterID src, Address addr, RegisterID result)
@@ -1778,7 +1780,7 @@ public:
     {
         m_assembler.vmov(dest1, dest2, src);
     }
-    
+
     void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest)
     {
         m_assembler.vmov(dest, src1, src2);
@@ -1787,6 +1789,17 @@ public:
     void move32ToFloat(RegisterID src, FPRegisterID dest)
     {
         m_assembler.vmov(asSingle(dest), src);
+    }
+
+    void move32ToFloat(RegisterID src, ARMRegisters::FPSingleRegisterID dest)
+    {
+        m_assembler.vmov(dest, src);
+    }
+
+    void moveFloat(ARMRegisters::FPSingleRegisterID src, ARMRegisters::FPSingleRegisterID dest)
+    {
+        if (src != dest)
+            m_assembler.vmov(dest, src);
     }
 
     void moveFloatTo32(FPRegisterID src, RegisterID dest)
@@ -1866,39 +1879,28 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
-    static bool supportsFloatingPointRounding() { return false; }
+    static bool supportsFloatingPointRounding() { return true; }
     static bool supportsFloat16() { return false; }
 
     void loadDouble(Address address, FPRegisterID dest)
     {
-        RegisterID base = address.base;
-        int32_t offset = address.offset;
-
-        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
-        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
-            add32(TrustedImm32(offset), base, scratch);
-            base = scratch;
-            offset = 0;
-        }
-        
-        m_assembler.vldr(dest, base, offset);
+        // Use two GPR loads for unaligned access
+        // We only have dataTempRegister safe to use since load32 may use addressTempRegister
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        auto sd0 = ARMRegisters::asSingle(dest);
+        auto sd1 = ARMRegisters::asSingleUpper(dest);
+        load32(address, scratch);
+        m_assembler.vmov(sd0, scratch);
+        load32(Address(address.base, address.offset + 4), scratch);
+        m_assembler.vmov(sd1, scratch);
     }
 
     void loadFloat(Address address, FPRegisterID dest)
     {
-        RegisterID base = address.base;
-        int32_t offset = address.offset;
-
-        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
-        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
-            add32(TrustedImm32(offset), base, scratch);
-            base = scratch;
-            offset = 0;
-        }
-        
-        m_assembler.flds(ARMRegisters::asSingle(dest), base, offset);
+        // Use GPR load for unaligned access (flds requires 4-byte alignment)
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load32(address, scratch);
+        move32ToFloat(scratch, dest);
     }
 
     void loadDouble(BaseIndex address, FPRegisterID dest)
@@ -1909,7 +1911,7 @@ public:
         cachedAddressTempRegister().invalidate();
         loadDouble(Address(addressTempRegister, address.offset), dest);
     }
-    
+
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
         move(address.index, addressTempRegister);
@@ -1926,6 +1928,17 @@ public:
     }
 
     void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
+    {
+        if (!imm.m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(imm, scratch);
+        move32ToFloat(scratch, dest);
+    }
+
+    void move32ToFloat(TrustedImm32 imm, ARMRegisters::FPSingleRegisterID dest)
     {
         if (!imm.m_value) {
             moveZeroToFloat(dest);
@@ -1955,6 +1968,13 @@ public:
         loadFloat(TrustedImmPtr(&zeroConstant), reg);
     }
 
+    void moveZeroToFloat(ARMRegisters::FPSingleRegisterID reg)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(TrustedImm32(0), scratch);
+        m_assembler.vmov(reg, scratch);
+    }
+
     void loadFloat(TrustedImmPtr address, FPRegisterID dest)
     {
         move(address, addressTempRegister);
@@ -1975,34 +1995,23 @@ public:
 
     void storeDouble(FPRegisterID src, Address address)
     {
-        RegisterID base = address.base;
-        int32_t offset = address.offset;
-
-        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
-        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
-            add32(TrustedImm32(offset), base, scratch);
-            base = scratch;
-            offset = 0;
-        }
-        
-        m_assembler.vstr(src, base, offset);
+        // Use two GPR stores for unaligned access (vstr requires 4-byte alignment)
+        // We only have dataTempRegister safe to use since store32 may use addressTempRegister
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        auto sd0 = ARMRegisters::asSingle(src);
+        auto sd1 = ARMRegisters::asSingleUpper(src);
+        m_assembler.vmov(scratch, sd0);
+        store32(scratch, address);
+        m_assembler.vmov(scratch, sd1);
+        store32(scratch, Address(address.base, address.offset + 4));
     }
 
     void storeFloat(FPRegisterID src, Address address)
     {
-        RegisterID base = address.base;
-        int32_t offset = address.offset;
-
-        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
-        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
-            add32(TrustedImm32(offset), base, scratch);
-            base = scratch;
-            offset = 0;
-        }
-        
-        m_assembler.fsts(ARMRegisters::asSingle(src), base, offset);
+        // Use GPR store for unaligned access (fsts requires 4-byte alignment)
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        moveFloatTo32(src, scratch);
+        store32(scratch, address);
     }
 
     void storeDouble(FPRegisterID src, TrustedImmPtr address)
@@ -2118,6 +2127,16 @@ public:
         m_assembler.vand(dest, op1, op2);
     }
 
+    void andFloat(ARMRegisters::FPSingleRegisterID op1, ARMRegisters::FPSingleRegisterID op2, ARMRegisters::FPSingleRegisterID dest)
+    {
+        RegisterID temp1 = getCachedDataTempRegisterIDAndInvalidate();
+        RegisterID temp2 = getCachedAddressTempRegisterIDAndInvalidate();
+        m_assembler.vmov(temp1, op1);
+        m_assembler.vmov(temp2, op2);
+        m_assembler.ARM_and(temp1, temp1, temp2);
+        m_assembler.vmov(dest, temp1);
+    }
+
     void andDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         m_assembler.vand(dest, op1, op2);
@@ -2126,6 +2145,16 @@ public:
     void orFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
     {
         m_assembler.vorr(dest, op1, op2);
+    }
+
+    void orFloat(ARMRegisters::FPSingleRegisterID op1, ARMRegisters::FPSingleRegisterID op2, ARMRegisters::FPSingleRegisterID dest)
+    {
+        RegisterID temp1 = getCachedDataTempRegisterIDAndInvalidate();
+        RegisterID temp2 = getCachedAddressTempRegisterIDAndInvalidate();
+        m_assembler.vmov(temp1, op1);
+        m_assembler.vmov(temp2, op2);
+        m_assembler.orr(temp1, temp1, temp2);
+        m_assembler.vmov(dest, temp1);
     }
 
     void orDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
@@ -2163,68 +2192,458 @@ public:
         m_assembler.vneg(dest, src);
     }
 
-    NO_RETURN_DUE_TO_CRASH void ceilFloat(FPRegisterID, FPRegisterID)
+    void ceilFloat(ARMRegisters::FPSingleRegisterID src, ARMRegisters::FPSingleRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        // ARMv7 doesn't have vrintp, use trunc then add 1 if x > trunc(x)
+        auto scratchS0 = fpTempRegisterAsSingle();
+        auto scratchS1 = static_cast<ARMRegisters::FPSingleRegisterID>(fpTempRegisterAsSingle() + 1);
+
+        // Check NaN: x != x
+        Jump isNaN = branchFloat(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move32ToFloat(TrustedImm32(0x4F000000), scratchS0);
+        Jump isLargePos = branchFloat(DoubleGreaterThanOrEqualOrUnordered, src, scratchS0);
+
+        // Check for large negative: src <= -2^31
+        move32ToFloat(TrustedImm32(0xCF000000), scratchS0);
+        Jump isLargeNeg = branchFloat(DoubleLessThanOrEqualOrUnordered, src, scratchS0);
+
+        // Save original for later comparison
+        moveFloat(src, scratchS1);
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(scratchS0, src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, scratchS0);
+
+        // If x > trunc(x), add 1.0
+        Jump notGreater = branchFloat(DoubleLessThanOrEqualOrUnordered, scratchS1, dest);
+        move32ToFloat(TrustedImm32(0x3F800000), scratchS0); // 1.0f
+        m_assembler.vadd(dest, dest, scratchS0);
+        notGreater.link(this);
+
+        // Preserve sign from input (handle -0.0 case)
+        {
+            RegisterID gprScratch1 = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID gprScratch2 = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(gprScratch1, dest);
+            m_assembler.vmov(gprScratch2, scratchS1);
+            and32(TrustedImm32(0x80000000), gprScratch2);
+            and32(TrustedImm32(0x7FFFFFFF), gprScratch1);
+            or32(gprScratch2, gprScratch1);
+            m_assembler.vmov(dest, gprScratch1);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveFloat(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
     }
 
-    NO_RETURN_DUE_TO_CRASH void floorFloat(FPRegisterID, FPRegisterID)
+    void ceilFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        ceilFloat(asSingle(src), asSingle(dest));
     }
 
-    NO_RETURN_DUE_TO_CRASH void truncFloat(FPRegisterID, FPRegisterID)
+    void floorFloat(ARMRegisters::FPSingleRegisterID src, ARMRegisters::FPSingleRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        // ARMv7 doesn't have vrintm, use trunc then subtract 1 if x < trunc(x)
+        auto scratchS0 = fpTempRegisterAsSingle();
+        auto scratchS1 = static_cast<ARMRegisters::FPSingleRegisterID>(fpTempRegisterAsSingle() + 1);
+
+        // Check NaN: x != x
+        Jump isNaN = branchFloat(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move32ToFloat(TrustedImm32(0x4F000000), scratchS0);
+        Jump isLargePos = branchFloat(DoubleGreaterThanOrEqualOrUnordered, src, scratchS0);
+
+        // Check for large negative: src <= -2^31
+        move32ToFloat(TrustedImm32(0xCF000000), scratchS0);
+        Jump isLargeNeg = branchFloat(DoubleLessThanOrEqualOrUnordered, src, scratchS0);
+
+        // Save original to scratchS1 for later comparison and sign preservation
+        moveFloat(src, scratchS1);
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(scratchS0, src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, scratchS0);
+
+        // If x < trunc(x), subtract 1.0
+        Jump notLess = branchFloat(DoubleGreaterThanOrEqualOrUnordered, scratchS1, dest);
+        move32ToFloat(TrustedImm32(0x3F800000), scratchS0); // 1.0f
+        m_assembler.vsub(dest, dest, scratchS0);
+        notLess.link(this);
+
+        // Preserve sign from input
+        {
+            RegisterID gprScratch1 = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID gprScratch2 = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(gprScratch1, dest);
+            m_assembler.vmov(gprScratch2, scratchS1);
+            and32(TrustedImm32(0x80000000), gprScratch2);
+            and32(TrustedImm32(0x7FFFFFFF), gprScratch1);
+            or32(gprScratch2, gprScratch1);
+            m_assembler.vmov(dest, gprScratch1);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveFloat(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
     }
 
-    NO_RETURN_DUE_TO_CRASH void roundTowardNearestIntFloat(FPRegisterID, FPRegisterID)
+    void floorFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        floorFloat(asSingle(src), asSingle(dest));
     }
 
-    NO_RETURN_DUE_TO_CRASH void roundTowardZeroFloat(FPRegisterID, FPRegisterID)
+    void truncFloat(ARMRegisters::FPSingleRegisterID src, ARMRegisters::FPSingleRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        // ARMv7 doesn't have vrintz, use vcvt to int (truncates) and back
+        auto scratchS0 = fpTempRegisterAsSingle();
+        auto scratchS1 = static_cast<ARMRegisters::FPSingleRegisterID>(fpTempRegisterAsSingle() + 1);
+
+        // Check NaN: x != x
+        Jump isNaN = branchFloat(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move32ToFloat(TrustedImm32(0x4F000000), scratchS0);
+        Jump isLargePos = branchFloat(DoubleGreaterThanOrEqualOrUnordered, src, scratchS0);
+
+        // Check for large negative: src <= -2^31
+        move32ToFloat(TrustedImm32(0xCF000000), scratchS0);
+        Jump isLargeNeg = branchFloat(DoubleLessThanOrEqualOrUnordered, src, scratchS0);
+
+        // Save original sign
+        moveFloat(src, scratchS1);
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(scratchS0, src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, scratchS0);
+
+        // Preserve sign from input (fixes trunc(-0) = -0)
+        {
+            RegisterID gprScratch1 = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID gprScratch2 = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(gprScratch1, dest);
+            m_assembler.vmov(gprScratch2, scratchS1);
+            and32(TrustedImm32(0x80000000), gprScratch2);
+            and32(TrustedImm32(0x7FFFFFFF), gprScratch1);
+            or32(gprScratch2, gprScratch1);
+            m_assembler.vmov(dest, gprScratch1);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveFloat(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
     }
 
-    NO_RETURN_DUE_TO_CRASH void ceilDouble(FPRegisterID, FPRegisterID)
+    void truncFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        truncFloat(asSingle(src), asSingle(dest));
     }
 
-    NO_RETURN_DUE_TO_CRASH void floorDouble(FPRegisterID, FPRegisterID)
+    void roundTowardNearestIntFloat(ARMRegisters::FPSingleRegisterID src, ARMRegisters::FPSingleRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        auto scratchS0 = fpTempRegisterAsSingle();
+        auto scratchS1 = static_cast<ARMRegisters::FPSingleRegisterID>(fpTempRegisterAsSingle() + 1);
+
+        // Check NaN: x != x
+        Jump isNaN = branchFloat(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move32ToFloat(TrustedImm32(0x4F000000), scratchS0);
+        Jump isLargePos = branchFloat(DoubleGreaterThanOrEqualOrUnordered, src, scratchS0);
+
+        // Check for large negative: src <= -2^31
+        move32ToFloat(TrustedImm32(0xCF000000), scratchS0);
+        Jump isLargeNeg = branchFloat(DoubleLessThanOrEqualOrUnordered, src, scratchS0);
+
+        // Save original sign for later
+        moveFloat(src, scratchS1);
+
+        // Use vcvt with round-to-nearest
+        m_assembler.vcvt_floatingPointToSignedNearest(scratchS0, src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, scratchS0);
+
+        // Preserve sign from input (fixes nearest(-0.4) = -0 case)
+        {
+            RegisterID gprScratch1 = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID gprScratch2 = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(gprScratch1, dest);
+            m_assembler.vmov(gprScratch2, scratchS1);
+            and32(TrustedImm32(0x80000000), gprScratch2);
+            and32(TrustedImm32(0x7FFFFFFF), gprScratch1);
+            or32(gprScratch2, gprScratch1);
+            m_assembler.vmov(dest, gprScratch1);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveFloat(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
     }
 
-    NO_RETURN_DUE_TO_CRASH void truncDouble(FPRegisterID, FPRegisterID)
+    void roundTowardNearestIntFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        roundTowardNearestIntFloat(asSingle(src), asSingle(dest));
     }
 
-    NO_RETURN_DUE_TO_CRASH void roundTowardZeroDouble(FPRegisterID, FPRegisterID)
+    void roundTowardZeroFloat(FPRegisterID src, FPRegisterID dest)
     {
-        ASSERT(!supportsFloatingPointRounding());
-        CRASH();
+        truncFloat(src, dest);
     }
 
-    // this is provided (unlike the other rounding instructions) since it is
-    // used in a more limited fashion (for Uint8ClampedArray)--its range is
-    // limited to doubles that round to a 32-bit signed int--otherwise, it will
-    // saturate (and signal an FP exception [which is non-trapping])
+    void ceilDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        // ARMv7 doesn't have vrintp, use trunc then add 1 if x > trunc(x)
+        // Use fpScratchRegister (d14) to save original, fpTempRegister (d15) for constants
+        auto fpScratchRegister = static_cast<FPRegisterID>(fpTempRegister - 1);
+        auto fpScratchRegisterHi = static_cast<ARMRegisters::FPSingleRegisterID>(fpScratchRegister * 2 + 1);
+
+        // Check for NaN
+        Jump isNaN = branchDouble(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move64ToDouble(TrustedImm64(0x41E0000000000000), fpTempRegister);
+        Jump isLargePos = branchDouble(DoubleGreaterThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Check for large negative: src <= -2^31
+        move64ToDouble(TrustedImm64(0xC1E0000000000000), fpTempRegister);
+        Jump isLargeNeg = branchDouble(DoubleLessThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Save original to fpScratchRegister for later comparison and sign preservation
+        moveDouble(src, fpScratchRegister);
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
+
+        // If x > trunc(x), add 1.0
+        Jump notGreater = branchDouble(DoubleLessThanOrEqualOrUnordered, fpScratchRegister, dest);
+        move64ToDouble(TrustedImm64(0x3FF0000000000000), fpTempRegister);
+        m_assembler.vadd(dest, dest, fpTempRegister);
+        notGreater.link(this);
+
+        // Preserve sign from input (read from fpScratchRegister which holds original value)
+        {
+            RegisterID signBit = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID resultHi = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(resultHi, static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1));
+            m_assembler.vmov(signBit, fpScratchRegisterHi);
+            and32(TrustedImm32(0x80000000), signBit);
+            and32(TrustedImm32(0x7FFFFFFF), resultHi);
+            or32(signBit, resultHi);
+            m_assembler.vmov(static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1), resultHi);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveDouble(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
+    }
+
+    void floorDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        // ARMv7 doesn't have vrintm, use trunc then subtract 1 if x < trunc(x)
+        // Use fpScratchRegister (d14) to save original, fpTempRegister (d15) for constants
+        auto fpScratchRegister = static_cast<FPRegisterID>(fpTempRegister - 1);
+        auto fpScratchRegisterHi = static_cast<ARMRegisters::FPSingleRegisterID>(fpScratchRegister * 2 + 1);
+
+        // Check for NaN
+        Jump isNaN = branchDouble(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move64ToDouble(TrustedImm64(0x41E0000000000000), fpTempRegister);
+        Jump isLargePos = branchDouble(DoubleGreaterThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Check for large negative: src <= -2^31
+        move64ToDouble(TrustedImm64(0xC1E0000000000000), fpTempRegister);
+        Jump isLargeNeg = branchDouble(DoubleLessThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Save original to fpScratchRegister for later comparison and sign preservation
+        moveDouble(src, fpScratchRegister);
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
+
+        // If x < trunc(x), subtract 1.0
+        Jump notLess = branchDouble(DoubleGreaterThanOrEqualOrUnordered, fpScratchRegister, dest);
+        move64ToDouble(TrustedImm64(0x3FF0000000000000), fpTempRegister);
+        m_assembler.vsub(dest, dest, fpTempRegister);
+        notLess.link(this);
+
+        // Preserve sign from input (read from fpScratchRegister which holds original value)
+        {
+            RegisterID signBit = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID resultHi = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(resultHi, static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1));
+            m_assembler.vmov(signBit, fpScratchRegisterHi);
+            and32(TrustedImm32(0x80000000), signBit);
+            and32(TrustedImm32(0x7FFFFFFF), resultHi);
+            or32(signBit, resultHi);
+            m_assembler.vmov(static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1), resultHi);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveDouble(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
+    }
+
+    void truncDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        // ARMv7 doesn't have vrintz, use vcvt to int (truncates) and back
+        // Check for NaN
+        Jump isNaN = branchDouble(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move64ToDouble(TrustedImm64(0x41E0000000000000), fpTempRegister);
+        Jump isLargePos = branchDouble(DoubleGreaterThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Check for large negative: src <= -2^31
+        move64ToDouble(TrustedImm64(0xC1E0000000000000), fpTempRegister);
+        Jump isLargeNeg = branchDouble(DoubleLessThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Save original sign
+        RegisterID gprScratchHi = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.vmov(gprScratchHi, static_cast<ARMRegisters::FPSingleRegisterID>(src * 2 + 1));
+
+        // Compute trunc(x)
+        m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
+
+        // Preserve sign from input
+        {
+            RegisterID resultHi = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(resultHi, static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1));
+            and32(TrustedImm32(0x80000000), gprScratchHi);
+            and32(TrustedImm32(0x7FFFFFFF), resultHi);
+            or32(gprScratchHi, resultHi);
+            m_assembler.vmov(static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1), resultHi);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveDouble(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
+    }
+
+    void roundTowardZeroDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        truncDouble(src, dest);
+    }
+
     void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.vcvt_floatingPointToSignedNearest(asSingle(dest), src);
-        m_assembler.vcvt_signedToFloatingPoint(dest, asSingle(dest));
+        // Check for NaN
+        Jump isNaN = branchDouble(DoubleNotEqualOrUnordered, src, src);
+
+        // Check for large positive: src >= 2^31
+        move64ToDouble(TrustedImm64(0x41E0000000000000), fpTempRegister);
+        Jump isLargePos = branchDouble(DoubleGreaterThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Check for large negative: src <= -2^31
+        move64ToDouble(TrustedImm64(0xC1E0000000000000), fpTempRegister);
+        Jump isLargeNeg = branchDouble(DoubleLessThanOrEqualOrUnordered, src, fpTempRegister);
+
+        // Save original sign
+        RegisterID gprScratchHi = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.vmov(gprScratchHi, static_cast<ARMRegisters::FPSingleRegisterID>(src * 2 + 1));
+
+        // Use vcvt with round-to-nearest
+        m_assembler.vcvt_floatingPointToSignedNearest(fpTempRegisterAsSingle(), src);
+        m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
+
+        // Preserve sign from input (fixes nearest(-0.4) = -0 case)
+        {
+            RegisterID resultHi = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.vmov(resultHi, static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1));
+            and32(TrustedImm32(0x80000000), gprScratchHi);
+            and32(TrustedImm32(0x7FFFFFFF), resultHi);
+            or32(gprScratchHi, resultHi);
+            m_assembler.vmov(static_cast<ARMRegisters::FPSingleRegisterID>(dest * 2 + 1), resultHi);
+        }
+        Jump done = jump();
+
+        // NaN: quieten signaling NaNs
+        isNaN.link(this);
+        m_assembler.vadd(dest, src, src);
+        Jump doneFromNaN = jump();
+
+        // Large values: preserve original
+        isLargePos.link(this);
+        isLargeNeg.link(this);
+        moveDouble(src, dest);
+
+        doneFromNaN.link(this);
+        done.link(this);
     }
 
     void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
@@ -2289,40 +2708,1845 @@ public:
      * unimplemented. These stubs are provided instead (since they are
      * referenced directly by the JIT; these are not available via Air)
      */
-    void storeVector(FPRegisterID, Address)
+
+private:
+    template<typename Operation>
+    void forEachDRegister(FPRegisterID reg, Operation op)
     {
-        UNREACHABLE_FOR_PLATFORM();
+        op(reg);
+        op(static_cast<FPRegisterID>(reg + 1));
     }
 
-    void storeVector(FPRegisterID, TrustedImmPtr)
+    template<typename Operation>
+    void forEachDRegister(FPRegisterID dest, FPRegisterID src, Operation op)
     {
-        UNREACHABLE_FOR_PLATFORM();
+        op(dest, src);
+        op(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(src + 1));
     }
 
-    void storeVector(FPRegisterID, BaseIndex)
+    template<typename Operation>
+    void forEachDRegister(FPRegisterID dest, FPRegisterID left, FPRegisterID right, Operation op)
     {
-        UNREACHABLE_FOR_PLATFORM();
+        op(dest, left, right);
+        op(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(left + 1), static_cast<FPRegisterID>(right + 1));
     }
 
-    void loadVector(Address, FPRegisterID)
+public:
+    void storeVector(FPRegisterID src, Address address)
     {
-        UNREACHABLE_FOR_PLATFORM();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        add32(TrustedImm32(address.offset), address.base, scratch);
+        m_assembler.vst1_128(src, scratch);
     }
 
-    void loadVector(BaseIndex, FPRegisterID)
+    void storeVector(FPRegisterID src, TrustedImmPtr address)
     {
-        UNREACHABLE_FOR_PLATFORM();
-    }
-    
-    void loadVector(TrustedImmPtr, FPRegisterID)
-    {
-        UNREACHABLE_FOR_PLATFORM();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(TrustedImmPtr(address), scratch);
+        m_assembler.vst1_128(src, scratch);
     }
 
-    void moveVector(FPRegisterID, FPRegisterID)
+    void storeVector(FPRegisterID src, BaseIndex address)
     {
-        UNREACHABLE_FOR_PLATFORM();
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.add(scratch, address.base, address.index, ShiftTypeAndAmount(SRType_LSL, address.scale));
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scratch);
+        m_assembler.vst1_128(src, scratch);
     }
+
+    void loadVector(Address address, FPRegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        add32(TrustedImm32(address.offset), address.base, scratch);
+        m_assembler.vld1_128(dest, scratch);
+    }
+
+    void loadVector(BaseIndex address, FPRegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.add(scratch, address.base, address.index, ShiftTypeAndAmount(SRType_LSL, address.scale));
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scratch);
+        m_assembler.vld1_128(dest, scratch);
+    }
+
+    void loadVector(TrustedImmPtr address, FPRegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(TrustedImmPtr(address), scratch);
+        m_assembler.vld1_128(dest, scratch);
+    }
+
+    void moveVector(FPRegisterID src, FPRegisterID dest)
+    {
+        if (src != dest)
+            m_assembler.vmovVector(dest, src);
+    }
+
+    void moveZeroToVector(FPRegisterID dest)
+    {
+        forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.veor(d, d, d); });
+    }
+
+    void vectorBitwiseSelect(FPRegisterID left, FPRegisterID right, FPRegisterID inputBitsAndDest)
+    {
+        forEachDRegister(inputBitsAndDest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) {
+            m_assembler.vbsl(d, l, r);
+        });
+    }
+
+    void vectorUshl(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_u8(d, i, s); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_u16(d, i, s); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_u32(d, i, s); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_u64(d, i, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSshl(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID shift, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_s8(d, i, s); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_s16(d, i, s); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_s32(d, i, s); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, input, shift, [&](FPRegisterID d, FPRegisterID i, FPRegisterID s) { m_assembler.vshl_s64(d, i, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorMulLow(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(!scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+
+        SIMDLane inputLane = narrowedLane(simdInfo.lane);
+        switch (inputLane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s8(dest, left, right);
+            else
+                m_assembler.vmull_u8(dest, left, right);
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s16(dest, left, right);
+            else
+                m_assembler.vmull_u16(dest, left, right);
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s32(dest, left, right);
+            else
+                m_assembler.vmull_u32(dest, left, right);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorMulHigh(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(!scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+
+        SIMDLane inputLane = narrowedLane(simdInfo.lane);
+        FPRegisterID leftHigh = static_cast<FPRegisterID>(left + 1);
+        FPRegisterID rightHigh = static_cast<FPRegisterID>(right + 1);
+
+        switch (inputLane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s8(dest, leftHigh, rightHigh);
+            else
+                m_assembler.vmull_u8(dest, leftHigh, rightHigh);
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s16(dest, leftHigh, rightHigh);
+            else
+                m_assembler.vmull_u16(dest, leftHigh, rightHigh);
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmull_s32(dest, leftHigh, rightHigh);
+            else
+                m_assembler.vmull_u32(dest, leftHigh, rightHigh);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorLoad8Splat(Address address, FPRegisterID dest, FPRegisterID)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load8(address, scratch);
+        vectorSplatInt8(scratch, dest);
+    }
+
+    void vectorLoad16Splat(Address address, FPRegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load16(address, scratch);
+        vectorSplatInt16(scratch, dest);
+    }
+
+    void vectorLoad32Splat(Address address, FPRegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load32(address, scratch);
+        vectorSplatInt32(scratch, dest);
+    }
+
+    void vectorLoad64Splat(Address address, FPRegisterID dest)
+    {
+        loadDouble(address, dest);
+        // Copy dest to dest+1 to splat the 64-bit value across the full V128
+        m_assembler.vorr(static_cast<FPRegisterID>(dest + 1), dest, dest);
+    }
+
+    void vectorLoad8Lane(Address address, TrustedImm32 laneIndex, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load8(address, scratch);
+        FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 3));
+        m_assembler.vmovToVectorElement8(dReg, scratch, index & 0x7);
+    }
+
+    void vectorLoad16Lane(Address address, TrustedImm32 laneIndex, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load16(address, scratch);
+        FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 2));
+        m_assembler.vmovToVectorElement16(dReg, scratch, index & 0x3);
+    }
+
+    void vectorLoad32Lane(Address address, TrustedImm32 laneIndex, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        load32(address, scratch);
+        FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 1));
+        m_assembler.vmovToVectorElement32(dReg, scratch, index & 0x1);
+    }
+
+    void vectorLoad64Lane(Address address, TrustedImm32 laneIndex, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        FPRegisterID dReg = static_cast<FPRegisterID>(dest + index);
+        loadDouble(address, dReg);
+    }
+
+    void vectorStore8Lane(FPRegisterID src, Address address, TrustedImm32 laneIndex)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 3));
+        m_assembler.vmovFromVectorElement8(scratch, dReg, index & 0x7);
+        store8(scratch, address);
+    }
+
+    void vectorStore16Lane(FPRegisterID src, Address address, TrustedImm32 laneIndex)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 2));
+        m_assembler.vmovFromVectorElement16(scratch, dReg, index & 0x3);
+        store16(scratch, address);
+    }
+
+    void vectorStore32Lane(FPRegisterID src, Address address, TrustedImm32 laneIndex)
+    {
+        uint8_t index = laneIndex.m_value;
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 1));
+        m_assembler.vmovFromVectorElement32(scratch, dReg, index & 0x1);
+        store32(scratch, address);
+    }
+
+    void vectorStore64Lane(FPRegisterID src, Address address, TrustedImm32 laneIndex)
+    {
+        uint8_t index = laneIndex.m_value;
+        FPRegisterID dReg = static_cast<FPRegisterID>(src + index);
+        storeDouble(dReg, address);
+    }
+
+    void vectorExtendLow(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        ASSERT(elementByteSize(simdInfo.lane) <= 8 && elementByteSize(simdInfo.lane) >= 2);
+
+        SIMDLane narrowLane = narrowedLane(simdInfo.lane);
+
+        switch (narrowLane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s8(dest, input);
+            else
+                m_assembler.vmovl_u8(dest, input);
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s16(dest, input);
+            else
+                m_assembler.vmovl_u16(dest, input);
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s32(dest, input);
+            else
+                m_assembler.vmovl_u32(dest, input);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorExtendHigh(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        ASSERT(elementByteSize(simdInfo.lane) <= 8 && elementByteSize(simdInfo.lane) >= 2);
+
+        FPRegisterID inputHigh = static_cast<FPRegisterID>(input + 1);
+        SIMDLane narrowLane = narrowedLane(simdInfo.lane);
+
+        switch (narrowLane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s8(dest, inputHigh);
+            else
+                m_assembler.vmovl_u8(dest, inputHigh);
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s16(dest, inputHigh);
+            else
+                m_assembler.vmovl_u16(dest, inputHigh);
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                m_assembler.vmovl_s32(dest, inputHigh);
+            else
+                m_assembler.vmovl_u32(dest, inputHigh);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorUnsignedMax(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            // Reduce 16 lanes (in 2 D regs) to 1 using vpmax
+            m_assembler.vpmax_u8(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 16 -> 8 lanes in dest
+            m_assembler.vpmax_u8(dest, dest, dest); // 8 -> 4 lanes
+            m_assembler.vpmax_u8(dest, dest, dest); // 4 -> 2 lanes
+            m_assembler.vpmax_u8(dest, dest, dest); // 2 -> 1 lane (result in first byte)
+            break;
+        case SIMDLane::i16x8:
+            // Reduce 8 lanes (in 2 D regs) to 1
+            m_assembler.vpmax_u16(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 8 -> 4 lanes
+            m_assembler.vpmax_u16(dest, dest, dest); // 4 -> 2 lanes
+            m_assembler.vpmax_u16(dest, dest, dest); // 2 -> 1 lane (result in first 16 bits)
+            break;
+        case SIMDLane::i32x4:
+            // Reduce 4 lanes (in 2 D regs) to 1
+            m_assembler.vpmax_u32(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 4 -> 2 lanes
+            m_assembler.vpmax_u32(dest, dest, dest); // 2 -> 1 lane (result in first 32 bits)
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorUnsignedMin(SIMDInfo simdInfo, FPRegisterID vec, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            // Reduce 16 lanes (in 2 D regs) to 1 using vpmin
+            m_assembler.vpmin_u8(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 16 -> 8 lanes in dest
+            m_assembler.vpmin_u8(dest, dest, dest); // 8 -> 4 lanes
+            m_assembler.vpmin_u8(dest, dest, dest); // 4 -> 2 lanes
+            m_assembler.vpmin_u8(dest, dest, dest); // 2 -> 1 lane (result in first byte)
+            break;
+        case SIMDLane::i16x8:
+            // Reduce 8 lanes (in 2 D regs) to 1
+            m_assembler.vpmin_u16(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 8 -> 4 lanes
+            m_assembler.vpmin_u16(dest, dest, dest); // 4 -> 2 lanes
+            m_assembler.vpmin_u16(dest, dest, dest); // 2 -> 1 lane (result in first 16 bits)
+            break;
+        case SIMDLane::i32x4:
+            // Reduce 4 lanes (in 2 D regs) to 1
+            m_assembler.vpmin_u32(dest, vec, static_cast<FPRegisterID>(vec + 1)); // 4 -> 2 lanes
+            m_assembler.vpmin_u32(dest, dest, dest); // 2 -> 1 lane (result in first 32 bits)
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void compareIntegerVectorWithZero(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID vector, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        FPRegisterID zeroVec = ARMRegisters::d12;
+        moveZeroToVector(zeroVec);
+        compareIntegerVector(cond, simdInfo, vector, zeroVec, dest, zeroVec);
+    }
+
+    void vectorBitmask(SIMDInfo simdInfo, FPRegisterID vec, RegisterID dest, FPRegisterID)
+    {
+        // FIXME: We should do something like:
+        // https://developer.arm.com/community/arm-community-blogs/b/servers-and-cloud-computing-blog/posts/porting-x86-vector-bitmask-optimizations-to-arm-neon
+
+        move(TrustedImm32(0), dest);
+        uint32_t numLanes = elementCount(simdInfo.lane);
+        uint32_t elementSize = elementByteSize(simdInfo.lane);
+        uint32_t signBitPosition = elementSize * 8 - 1;
+        uint32_t signBitMask = 1u << signBitPosition;
+
+        RegisterID temp1 = getCachedDataTempRegisterIDAndInvalidate();
+        RegisterID temp2 = getCachedAddressTempRegisterIDAndInvalidate();
+
+        for (uint32_t i = 0; i < numLanes; i++) {
+            FPRegisterID dReg;
+            uint8_t laneInDReg;
+
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                dReg = static_cast<FPRegisterID>(vec + (i >> 3));
+                laneInDReg = i & 0x7;
+                m_assembler.vmovFromVectorElementS8(temp1, dReg, laneInDReg);
+                break;
+            case SIMDLane::i16x8:
+                dReg = static_cast<FPRegisterID>(vec + (i >> 2));
+                laneInDReg = i & 0x3;
+                m_assembler.vmovFromVectorElementS16(temp1, dReg, laneInDReg);
+                break;
+            case SIMDLane::i32x4:
+                dReg = static_cast<FPRegisterID>(vec + (i >> 1));
+                laneInDReg = i & 0x1;
+                m_assembler.vmovFromVectorElement32(temp1, dReg, laneInDReg);
+                break;
+            case SIMDLane::i64x2:
+                dReg = static_cast<FPRegisterID>(vec + i);
+                m_assembler.vmovFromVectorElement32(temp1, dReg, 1);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+
+            // vmovFromVectorElementS8/S16 sign-extends, so mask to get just the sign bit
+            // For i8x16 and i16x8, we need to mask before shifting
+            // For i32x4 and i64x2 (which extract the high 32 bits), we can shift directly
+            if (elementSize < 4) {
+                and32(TrustedImm32(signBitMask), temp1, temp2);
+                urshift32(temp2, TrustedImm32(signBitPosition), temp2);
+            } else {
+                // For i32x4 and i64x2, just shift right to get bit 31 at position 0
+                urshift32(temp1, TrustedImm32(31), temp2);
+            }
+
+            lshift32(TrustedImm32(i), temp2);
+            or32(temp2, dest);
+        }
+    }
+
+    void vectorPromote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f32x4);
+        auto inputS0 = ARMRegisters::asSingle(input);
+        auto inputS1 = ARMRegisters::asSingleUpper(input);
+        auto destD0 = dest;
+        auto destD1 = static_cast<FPRegisterID>(dest + 1);
+        m_assembler.vcvt_f64_f32(destD1, inputS1);
+        m_assembler.vcvt_f64_f32(destD0, inputS0);
+    }
+
+    void vectorDemote(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::f64x2);
+        auto destS0 = ARMRegisters::asSingle(dest);
+        auto destS1 = ARMRegisters::asSingleUpper(dest);
+        auto destD1 = static_cast<FPRegisterID>(dest + 1);
+        m_assembler.vcvt_f32_f64(destS0, input);
+        m_assembler.vcvt_f32_f64(destS1, static_cast<FPRegisterID>(input + 1));
+        // Zero the upper 64 bits
+        m_assembler.veor(destD1, destD1, destD1);
+    }
+
+    void vectorAbs(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        auto emitI64Abs = [&](FPRegisterID d, FPRegisterID src) {
+            RegisterID scratchLow = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID scratchHigh = getCachedAddressTempRegisterIDAndInvalidate();
+
+            moveDoubleToInts(src, scratchLow, scratchHigh);
+            auto positive = branch32(GreaterThanOrEqual, scratchHigh, TrustedImm32(0));
+            m_assembler.sub_S(scratchLow, ARMThumbImmediate::makeUInt12(0), scratchLow);
+            m_assembler.mvn(scratchHigh, scratchHigh);
+            m_assembler.adc(scratchHigh, scratchHigh, ARMThumbImmediate::makeEncodedImm(0));
+            positive.link(this);
+            moveIntsToDouble(scratchLow, scratchHigh, d);
+        };
+
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vabs_i8(d, s); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vabs_i16(d, s); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vabs_i32(d, s); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, input, emitI64Abs);
+            break;
+        case SIMDLane::f32x4:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vabs_f32(d, s); });
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vabs(d, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorNeg(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        auto emitI64Neg = [&](FPRegisterID d, FPRegisterID src) {
+            RegisterID scratchLow = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID scratchHigh = getCachedAddressTempRegisterIDAndInvalidate();
+
+            moveDoubleToInts(src, scratchLow, scratchHigh);
+            m_assembler.sub_S(scratchLow, ARMThumbImmediate::makeUInt12(0), scratchLow);
+            m_assembler.mvn(scratchHigh, scratchHigh);
+            m_assembler.adc(scratchHigh, scratchHigh, ARMThumbImmediate::makeEncodedImm(0));
+            moveIntsToDouble(scratchLow, scratchHigh, d);
+        };
+
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vneg_i8(d, s); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vneg_i16(d, s); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vneg_i32(d, s); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, input, emitI64Neg);
+            break;
+        case SIMDLane::f32x4:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vneg_f32(d, s); });
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vneg(d, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorPopcnt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT_UNUSED(simdInfo, simdInfo.lane == SIMDLane::i8x16);
+        forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vcnt(d, s); });
+    }
+
+    void vectorCeil(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4: {
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto ss = static_cast<ARMRegisters::FPSingleRegisterID>((input * 2) + i);
+                ceilFloat(ss, sd);
+            }
+            break;
+        }
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { ceilDouble(s, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorFloor(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4: {
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto ss = static_cast<ARMRegisters::FPSingleRegisterID>((input * 2) + i);
+                floorFloat(ss, sd);
+            }
+            break;
+        }
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { floorDouble(s, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorTrunc(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4: {
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto ss = static_cast<ARMRegisters::FPSingleRegisterID>((input * 2) + i);
+                truncFloat(ss, sd);
+            }
+            break;
+        }
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { truncDouble(s, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorNearest(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4: {
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto ss = static_cast<ARMRegisters::FPSingleRegisterID>((input * 2) + i);
+                roundTowardNearestIntFloat(ss, sd);
+            }
+            break;
+        }
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { roundTowardNearestIntDouble(s, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSqrt(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sm = static_cast<ARMRegisters::FPSingleRegisterID>((input * 2) + i);
+                m_assembler.vsqrt(sd, sm);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vsqrt(d, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorExtaddPairwise(SIMDInfo simdInfo, FPRegisterID a, FPRegisterID dst)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dst, a, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vpaddl_s8(d, s); });
+            else
+                forEachDRegister(dst, a, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vpaddl_u8(d, s); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dst, a, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vpaddl_s16(d, s); });
+            else
+                forEachDRegister(dst, a, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vpaddl_u16(d, s); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorConvert(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(elementByteSize(simdInfo.lane) == 4);
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        if (simdInfo.signMode == SIMDSignMode::Signed)
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vcvt_f32_s32(d, s); });
+        else
+            forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vcvt_f32_u32(d, s); });
+    }
+
+    void vectorConvertLow(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(elementByteSize(simdInfo.lane) == 4);
+        auto inputS0 = ARMRegisters::asSingle(input);
+        auto inputS1 = ARMRegisters::asSingleUpper(input);
+        auto destD0 = dest;
+        auto destD1 = static_cast<FPRegisterID>(dest + 1);
+
+        if (simdInfo.signMode == SIMDSignMode::Signed) {
+            m_assembler.vcvt_f64_s32(destD1, inputS1);
+            m_assembler.vcvt_f64_s32(destD0, inputS0);
+        } else {
+            m_assembler.vcvt_f64_u32(destD1, inputS1);
+            m_assembler.vcvt_f64_u32(destD0, inputS0);
+        }
+    }
+
+    void vectorTruncSat(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        if (simdInfo.lane == SIMDLane::f32x4) {
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vcvt_s32_f32(d, s); });
+            else
+                forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vcvt_u32_f32(d, s); });
+        } else {
+            auto destS0 = ARMRegisters::asSingle(dest);
+            auto destS1 = ARMRegisters::asSingleUpper(dest);
+            auto destD1 = static_cast<FPRegisterID>(dest + 1);
+
+            if (simdInfo.signMode == SIMDSignMode::Signed) {
+                m_assembler.vcvt_s32_f64(destS0, input);
+                m_assembler.vcvt_s32_f64(destS1, static_cast<FPRegisterID>(input + 1));
+            } else {
+                m_assembler.vcvt_u32_f64(destS0, input);
+                m_assembler.vcvt_u32_f64(destS1, static_cast<FPRegisterID>(input + 1));
+            }
+            // Zero the upper 64 bits
+            m_assembler.veor(destD1, destD1, destD1);
+        }
+    }
+
+    void vectorNot(SIMDInfo, FPRegisterID input, FPRegisterID dest)
+    {
+        forEachDRegister(dest, input, [&](FPRegisterID d, FPRegisterID s) { m_assembler.vmvn(d, s); });
+    }
+
+    void vectorAnd(SIMDInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vand(d, l, r); });
+    }
+
+    void vectorAndnot(SIMDInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vbic(d, l, r); });
+    }
+
+    void vectorOr(SIMDInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vorr(d, l, r); });
+    }
+
+    void vectorXor(SIMDInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.veor(d, l, r); });
+    }
+
+    void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vadd_i8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vadd_i16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vadd_i32(d, l, r); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vadd_i64(d, l, r); });
+            break;
+        case SIMDLane::f32x4:
+            // NEON vadd.f32 flushes denormals, use VFP scalar vadd for IEEE compliance
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                m_assembler.vadd(sd, sl, sr);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vadd(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSub(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vsub_i8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vsub_i16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vsub_i32(d, l, r); });
+            break;
+        case SIMDLane::i64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vsub_i64(d, l, r); });
+            break;
+        case SIMDLane::f32x4:
+            // NEON vsub.f32 flushes denormals, use VFP scalar vsub for IEEE compliance
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                m_assembler.vsub(sd, sl, sr);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vsub(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorMul(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmul_i8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmul_i16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmul_i32(d, l, r); });
+            break;
+        case SIMDLane::f32x4:
+            // NEON vmul.f32 flushes denormals to zero, use VFP scalar vmul for IEEE compliance
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                m_assembler.vmul(sd, sl, sr);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmul(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::f32x4:
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                m_assembler.vdiv(sd, sl, sr);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vdiv(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    // IEEE 754-2019 compliant float min: propagates NaN, -0.0 < +0.0
+    void floatMin(ARMRegisters::FPSingleRegisterID left, ARMRegisters::FPSingleRegisterID right, ARMRegisters::FPSingleRegisterID dest)
+    {
+        Jump isEqual = branchFloat(DoubleEqualAndOrdered, left, right);
+        Jump isLessThan = branchFloat(DoubleLessThanAndOrdered, left, right);
+        Jump isGreaterThan = branchFloat(DoubleGreaterThanAndOrdered, left, right);
+
+        // NaN case: propagate via addition
+        m_assembler.vadd(dest, left, right);
+        Jump afterNaN = jump();
+
+        // Left > right: min is right
+        isGreaterThan.link(this);
+        moveFloat(right, dest);
+        Jump afterGreaterThan = jump();
+
+        // Left < right: min is left
+        isLessThan.link(this);
+        moveFloat(left, dest);
+        Jump afterLessThan = jump();
+
+        // Equal case: OR to handle -0.0 vs +0.0
+        isEqual.link(this);
+        orFloat(left, right, dest);
+
+        afterNaN.link(this);
+        afterGreaterThan.link(this);
+        afterLessThan.link(this);
+    }
+
+    // IEEE 754-2019 compliant float max: propagates NaN, +0.0 > -0.0
+    void floatMax(ARMRegisters::FPSingleRegisterID left, ARMRegisters::FPSingleRegisterID right, ARMRegisters::FPSingleRegisterID dest)
+    {
+        Jump isEqual = branchFloat(DoubleEqualAndOrdered, left, right);
+        Jump isLessThan = branchFloat(DoubleLessThanAndOrdered, left, right);
+        Jump isGreaterThan = branchFloat(DoubleGreaterThanAndOrdered, left, right);
+
+        // NaN case: propagate via addition
+        m_assembler.vadd(dest, left, right);
+        Jump afterNaN = jump();
+
+        // Left > right: max is left
+        isGreaterThan.link(this);
+        moveFloat(left, dest);
+        Jump afterGreaterThan = jump();
+
+        // Left < right: max is right
+        isLessThan.link(this);
+        moveFloat(right, dest);
+        Jump afterLessThan = jump();
+
+        // Equal case: AND to handle -0.0 vs +0.0
+        isEqual.link(this);
+        andFloat(left, right, dest);
+
+        afterNaN.link(this);
+        afterGreaterThan.link(this);
+        afterLessThan.link(this);
+    }
+
+    void doubleMin(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        Jump isEqual = branchDouble(DoubleEqualAndOrdered, left, right);
+        Jump isLessThan = branchDouble(DoubleLessThanAndOrdered, left, right);
+        Jump isGreaterThan = branchDouble(DoubleGreaterThanAndOrdered, left, right);
+
+        addDouble(left, right, dest);
+        Jump afterNaN = jump();
+
+        isGreaterThan.link(this);
+        moveDouble(right, dest);
+        Jump afterGreaterThan = jump();
+
+        isLessThan.link(this);
+        moveDouble(left, dest);
+        Jump afterLessThan = jump();
+
+        isEqual.link(this);
+        orDouble(left, right, dest);
+
+        afterNaN.link(this);
+        afterGreaterThan.link(this);
+        afterLessThan.link(this);
+    }
+
+    void doubleMax(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        Jump isEqual = branchDouble(DoubleEqualAndOrdered, left, right);
+        Jump isLessThan = branchDouble(DoubleLessThanAndOrdered, left, right);
+        Jump isGreaterThan = branchDouble(DoubleGreaterThanAndOrdered, left, right);
+
+        addDouble(left, right, dest);
+        Jump afterNaN = jump();
+
+        isGreaterThan.link(this);
+        moveDouble(left, dest);
+        Jump afterGreaterThan = jump();
+
+        isLessThan.link(this);
+        moveDouble(right, dest);
+        Jump afterLessThan = jump();
+
+        isEqual.link(this);
+        andDouble(left, right, dest);
+
+        afterNaN.link(this);
+        afterGreaterThan.link(this);
+        afterLessThan.link(this);
+    }
+
+    void vectorMin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_s8(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_u8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_s16(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_u16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_s32(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmin_u32(d, l, r); });
+            break;
+        case SIMDLane::f32x4:
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                floatMin(sl, sr, sd);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { doubleMin(l, r, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorMax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_s8(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_u8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_s16(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_u16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_s32(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vmax_u32(d, l, r); });
+            break;
+        case SIMDLane::f32x4:
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                floatMax(sl, sr, sd);
+            }
+            break;
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { doubleMax(l, r, d); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorAddSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_s8(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_u8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_s16(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_u16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_s32(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqadd_u32(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSubSat(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_s8(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_u8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_s16(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_u16(d, l, r); });
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_s32(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqsub_u32(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorAvgRound(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        switch (simdInfo.lane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vrhadd_s8(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vrhadd_u8(d, l, r); });
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed)
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vrhadd_s16(d, l, r); });
+            else
+                forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vrhadd_u16(d, l, r); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorMulSat(FPRegisterID left, FPRegisterID right, FPRegisterID dest, RegisterID, FPRegisterID)
+    {
+        forEachDRegister(dest, left, right, [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) { m_assembler.vqrdmulh_i16(d, l, r); });
+    }
+
+    void vectorPmin(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+
+        // Use scalar VFP comparisons which handle denormals correctly.
+        if (simdInfo.lane == SIMDLane::f32x4) {
+            auto emitF32Pmin = [&](ARMRegisters::FPSingleRegisterID d, ARMRegisters::FPSingleRegisterID l, ARMRegisters::FPSingleRegisterID r) {
+                m_assembler.vcmp(l, r);
+                m_assembler.vmrs();
+                if (d == l) {
+                    m_assembler.it(ARMv7Assembler::ConditionGT);
+                    moveFloat(r, d);
+                } else if (d == r) {
+                    m_assembler.it(ARMv7Assembler::ConditionLE);
+                    moveFloat(l, d);
+                } else {
+                    moveFloat(l, d);
+                    m_assembler.it(ARMv7Assembler::ConditionGT);
+                    moveFloat(r, d);
+                }
+            };
+
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                emitF32Pmin(sd, sl, sr);
+            }
+        } else {
+            ASSERT(simdInfo.lane == SIMDLane::f64x2);
+            auto emitF64Pmin = [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) {
+                m_assembler.vcmp(l, r);
+                m_assembler.vmrs();
+                if (d == l) {
+                    m_assembler.it(ARMv7Assembler::ConditionGT);
+                    moveDouble(r, d);
+                } else if (d == r) {
+                    m_assembler.it(ARMv7Assembler::ConditionLE);
+                    moveDouble(l, d);
+                } else {
+                    moveDouble(l, d);
+                    m_assembler.it(ARMv7Assembler::ConditionGT);
+                    moveDouble(r, d);
+                }
+            };
+
+            emitF64Pmin(dest, left, right);
+            emitF64Pmin(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(left + 1), static_cast<FPRegisterID>(right + 1));
+        }
+    }
+
+    void vectorPmax(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+
+        // Use scalar VFP comparisons which handle denormals correctly.
+        if (simdInfo.lane == SIMDLane::f32x4) {
+            auto emitF32Pmax = [&](ARMRegisters::FPSingleRegisterID d, ARMRegisters::FPSingleRegisterID l, ARMRegisters::FPSingleRegisterID r) {
+                m_assembler.vcmp(l, r);
+                m_assembler.vmrs();
+                if (d == l) {
+                    m_assembler.it(ARMv7Assembler::ConditionMI);
+                    moveFloat(r, d);
+                } else if (d == r) {
+                    m_assembler.it(ARMv7Assembler::ConditionPL);
+                    moveFloat(l, d);
+                } else {
+                    moveFloat(l, d);
+                    m_assembler.it(ARMv7Assembler::ConditionMI);
+                    moveFloat(r, d);
+                }
+            };
+
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                emitF32Pmax(sd, sl, sr);
+            }
+        } else {
+            ASSERT(simdInfo.lane == SIMDLane::f64x2);
+            auto emitF64Pmax = [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) {
+                m_assembler.vcmp(l, r);
+                m_assembler.vmrs();
+                if (d == l) {
+                    m_assembler.it(ARMv7Assembler::ConditionMI);
+                    moveDouble(r, d);
+                } else if (d == r) {
+                    m_assembler.it(ARMv7Assembler::ConditionPL);
+                    moveDouble(l, d);
+                } else {
+                    moveDouble(l, d);
+                    m_assembler.it(ARMv7Assembler::ConditionMI);
+                    moveDouble(r, d);
+                }
+            };
+
+            emitF64Pmax(dest, left, right);
+            emitF64Pmax(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(left + 1), static_cast<FPRegisterID>(right + 1));
+        }
+    }
+
+    void vectorSwizzle(FPRegisterID table, FPRegisterID indices, FPRegisterID dest)
+    {
+        if (dest == table || dest == static_cast<FPRegisterID>(table + 1)) {
+            FPRegisterID scratch = fpTempRegister;
+            moveDouble(table, scratch);
+            moveDouble(static_cast<FPRegisterID>(table + 1), static_cast<FPRegisterID>(scratch + 1));
+            m_assembler.vtbl2(dest, scratch, indices);
+            m_assembler.vtbl2(static_cast<FPRegisterID>(dest + 1), scratch, static_cast<FPRegisterID>(indices + 1));
+        } else {
+            m_assembler.vtbl2(dest, table, indices);
+            m_assembler.vtbl2(static_cast<FPRegisterID>(dest + 1), table, static_cast<FPRegisterID>(indices + 1));
+        }
+    }
+
+    void vectorNarrow(SIMDInfo simdInfo, FPRegisterID lower, FPRegisterID upper, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(simdInfo.signMode != SIMDSignMode::None);
+        ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+        ASSERT(scratch != upper);
+
+        FPRegisterID scratchHi = static_cast<FPRegisterID>(scratch + 1);
+
+        SIMDLane narrowLane = narrowedLane(simdInfo.lane);
+        switch (narrowLane) {
+        case SIMDLane::i8x16:
+            if (simdInfo.signMode == SIMDSignMode::Signed) {
+                m_assembler.vqmovn_s16(scratch, lower);
+                m_assembler.vqmovn_s16(scratchHi, upper);
+            } else {
+                m_assembler.vqmovun_s16(scratch, lower);
+                m_assembler.vqmovun_s16(scratchHi, upper);
+            }
+            break;
+        case SIMDLane::i16x8:
+            if (simdInfo.signMode == SIMDSignMode::Signed) {
+                m_assembler.vqmovn_s32(scratch, lower);
+                m_assembler.vqmovn_s32(scratchHi, upper);
+            } else {
+                m_assembler.vqmovun_s32(scratch, lower);
+                m_assembler.vqmovun_s32(scratchHi, upper);
+            }
+            break;
+        case SIMDLane::i32x4:
+            if (simdInfo.signMode == SIMDSignMode::Signed) {
+                m_assembler.vqmovn_s64(scratch, lower);
+                m_assembler.vqmovn_s64(scratchHi, upper);
+            } else {
+                m_assembler.vqmovun_s64(scratch, lower);
+                m_assembler.vqmovun_s64(scratchHi, upper);
+            }
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        moveVector(scratch, dest);
+    }
+
+    void vectorDotProduct(FPRegisterID a, FPRegisterID b, FPRegisterID dest, FPRegisterID scratch)
+    {
+        FPRegisterID aHigh = static_cast<FPRegisterID>(a + 1);
+        FPRegisterID bHigh = static_cast<FPRegisterID>(b + 1);
+        FPRegisterID scratchHigh = static_cast<FPRegisterID>(scratch + 1);
+        FPRegisterID destHigh = static_cast<FPRegisterID>(dest + 1);
+
+        m_assembler.vmull_s16(scratch, aHigh, bHigh);
+        m_assembler.vpadd_i32(destHigh, scratch, scratchHigh);
+
+        m_assembler.vmull_s16(scratch, a, b);
+        m_assembler.vpadd_i32(dest, scratch, scratchHigh);
+    }
+
+    void vectorExtractLane(SIMDLane lane, SIMDSignMode signMode, TrustedImm32 laneIndex, FPRegisterID src, RegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+
+        switch (lane) {
+        case SIMDLane::i8x16: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 3));
+            if (signMode == SIMDSignMode::Signed)
+                m_assembler.vmovFromVectorElementS8(dest, dReg, index & 0x7);
+            else
+                m_assembler.vmovFromVectorElement8(dest, dReg, index & 0x7);
+            break;
+        }
+        case SIMDLane::i16x8: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 2));
+            if (signMode == SIMDSignMode::Signed)
+                m_assembler.vmovFromVectorElementS16(dest, dReg, index & 0x3);
+            else
+                m_assembler.vmovFromVectorElement16(dest, dReg, index & 0x3);
+            break;
+        }
+        case SIMDLane::i32x4: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 1));
+            m_assembler.vmovFromVectorElement32(dest, dReg, index & 0x1);
+            break;
+        }
+        default:
+            // i64x2 extraction on 32-bit needs the two-register overload
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorExtractLaneInt64(TrustedImm32 laneIndex, FPRegisterID src, RegisterID destLo, RegisterID destHi)
+    {
+        uint8_t index = laneIndex.m_value;
+        FPRegisterID dReg = static_cast<FPRegisterID>(src + index);
+        m_assembler.vmovFromVectorElement32(destLo, dReg, 0);
+        m_assembler.vmovFromVectorElement32(destHi, dReg, 1);
+    }
+
+    void vectorExtractLane(SIMDLane lane, TrustedImm32 laneIndex, FPRegisterID src, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        if (!index) {
+            moveDouble(src, dest);
+            return;
+        }
+
+        switch (lane) {
+        case SIMDLane::f32x4: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(src + (index >> 1));
+            auto srcSingle = static_cast<ARMRegisters::FPSingleRegisterID>((dReg << 1) + (index & 1));
+            auto destSingle = static_cast<ARMRegisters::FPSingleRegisterID>(dest << 1);
+            moveFloat(srcSingle, destSingle);
+            break;
+        }
+        case SIMDLane::f64x2:
+            ASSERT(index == 1);
+            moveDouble(static_cast<FPRegisterID>(src + 1), dest);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
+
+    void vectorReplaceLane(SIMDLane lane, TrustedImm32 laneIndex, RegisterID src, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        switch (lane) {
+        case SIMDLane::i8x16: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 3));
+            m_assembler.vmovToVectorElement8(dReg, src, index & 0x7);
+            break;
+        }
+        case SIMDLane::i16x8: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 2));
+            m_assembler.vmovToVectorElement16(dReg, src, index & 0x3);
+            break;
+        }
+        case SIMDLane::i32x4: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 1));
+            m_assembler.vmovToVectorElement32(dReg, src, index & 0x1);
+            break;
+        }
+        default:
+            // i64x2 replacement on 32-bit needs the two-register overload
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorReplaceLaneInt64(TrustedImm32 laneIndex, RegisterID srcLo, RegisterID srcHi, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        FPRegisterID dReg = static_cast<FPRegisterID>(dest + index);
+        m_assembler.vmovToVectorElement32(dReg, srcLo, 0);
+        m_assembler.vmovToVectorElement32(dReg, srcHi, 1);
+    }
+
+    void vectorReplaceLane(SIMDLane lane, TrustedImm32 laneIndex, FPRegisterID src, FPRegisterID dest)
+    {
+        uint8_t index = laneIndex.m_value;
+        switch (lane) {
+        case SIMDLane::f32x4: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(dest + (index >> 1));
+            m_assembler.vmovToVectorElementFloat32(dReg, asSingle(src), index & 0x1);
+            break;
+        }
+        case SIMDLane::f64x2: {
+            FPRegisterID dReg = static_cast<FPRegisterID>(dest + index);
+            m_assembler.vmovToVectorElementFloat64(dReg, src);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    DEFINE_SIMD_FUNCS(vectorReplaceLane);
+
+    void vectorSplat(SIMDLane lane, RegisterID src, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsIntegral(lane));
+        switch (lane) {
+        case SIMDLane::i8x16:
+            forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.vdup8(d, src); });
+            break;
+        case SIMDLane::i16x8:
+            forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.vdup16(d, src); });
+            break;
+        case SIMDLane::i32x4:
+            forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.vdup32(d, src); });
+            break;
+        default:
+            // i64x2 splat on 32-bit needs the two-register overload
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSplat(SIMDLane lane, FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(lane));
+        switch (lane) {
+        case SIMDLane::f32x4: {
+            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+            m_assembler.vmovFromVectorElement32(scratch, src, 0);
+            forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.vdup32(d, scratch); });
+            break;
+        }
+        case SIMDLane::f64x2:
+            forEachDRegister(dest, [&](FPRegisterID d) { m_assembler.vorr(d, src, src); });
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void vectorSplatInt8(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i8x16, src, dest); }
+    void vectorSplatInt16(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i16x8, src, dest); }
+    void vectorSplatInt32(RegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::i32x4, src, dest); }
+    void vectorSplatInt64(RegisterID lo, RegisterID hi, FPRegisterID dest)
+    {
+        m_assembler.vmov(dest, lo, hi);
+        moveDouble(dest, static_cast<FPRegisterID>(dest + 1));
+    }
+    void vectorSplatFloat32(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f32x4, src, dest); }
+    void vectorSplatFloat64(FPRegisterID src, FPRegisterID dest) { vectorSplat(SIMDLane::f64x2, src, dest); }
+
+    void compareIntegerVector(RelationalCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest, FPRegisterID scratch)
+    {
+        RELEASE_ASSERT(scalarTypeIsIntegral(simdInfo.lane));
+
+        auto emitI64ScalarComparison = [&](RelationalCondition condition) {
+            auto compareOneLane = [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) {
+                RegisterID temp1 = getCachedDataTempRegisterIDAndInvalidate();
+                RegisterID temp2 = getCachedAddressTempRegisterIDAndInvalidate();
+
+                ARMRegisters::FPSingleRegisterID s_left_low = ARMRegisters::asSingle(l);
+                ARMRegisters::FPSingleRegisterID s_left_high = ARMRegisters::asSingleUpper(l);
+                ARMRegisters::FPSingleRegisterID s_right_low = ARMRegisters::asSingle(r);
+                ARMRegisters::FPSingleRegisterID s_right_high = ARMRegisters::asSingleUpper(r);
+
+                m_assembler.vmov(temp1, s_left_high);
+                m_assembler.vmov(temp2, s_right_high);
+                ARMv7Assembler::Condition hiCondition = armV7ConditionForHigh32(condition);
+                compare32(hiCondition, temp1, temp2, temp1);
+                Jump done = makeBranch(ARMv7Assembler::ConditionNE);
+
+                m_assembler.vmov(temp1, s_left_low);
+                m_assembler.vmov(temp2, s_right_low);
+                ARMv7Assembler::Condition loCondition = armV7ConditionForLow32(condition);
+                compare32(loCondition, temp1, temp2, temp1);
+
+                done.link(this);
+                m_assembler.neg(temp1, temp1);
+                m_assembler.vmov(d, temp1, temp1);
+            };
+
+            compareOneLane(dest, left, right);
+            compareOneLane(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(left + 1), static_cast<FPRegisterID>(right + 1));
+        };
+
+        auto emitComparison = [&](auto compareFn) {
+            FPRegisterID leftHi = static_cast<FPRegisterID>(left + 1);
+            FPRegisterID rightHi = static_cast<FPRegisterID>(right + 1);
+
+            if (dest == leftHi || dest == rightHi) {
+                compareFn(m_assembler, scratch, left, right);
+                compareFn(m_assembler, static_cast<FPRegisterID>(dest + 1), leftHi, rightHi);
+                moveDouble(scratch, dest);
+            } else {
+                compareFn(m_assembler, dest, left, right);
+                compareFn(m_assembler, static_cast<FPRegisterID>(dest + 1), leftHi, rightHi);
+            }
+        };
+
+        switch (cond) {
+        case Equal:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(Equal);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case NotEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vceq_i32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(Equal);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            vectorNot(simdInfo, dest, dest);
+            break;
+        case GreaterThan:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(GreaterThan);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case GreaterThanOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(GreaterThanOrEqual);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case LessThan:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s8(d, r, l); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s16(d, r, l); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_s32(d, r, l); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(LessThan);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case LessThanOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s8(d, r, l); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s16(d, r, l); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_s32(d, r, l); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(LessThanOrEqual);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case Above:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(Above);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case AboveOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u8(d, l, r); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u16(d, l, r); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u32(d, l, r); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(AboveOrEqual);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case Below:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u8(d, r, l); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u16(d, r, l); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcgt_u32(d, r, l); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(Below);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case BelowOrEqual:
+            switch (simdInfo.lane) {
+            case SIMDLane::i8x16:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u8(d, r, l); });
+                break;
+            case SIMDLane::i16x8:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u16(d, r, l); });
+                break;
+            case SIMDLane::i32x4:
+                emitComparison([](auto& assembler, auto d, auto l, auto r) { assembler.vcge_u32(d, r, l); });
+                break;
+            case SIMDLane::i64x2:
+                emitI64ScalarComparison(BelowOrEqual);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+
+        // No scratch needed: each lane reads its inputs before writing output,
+        // so aliasing between dest and left/right is safe.
+
+        auto emitF32ScalarComparison = [&](ARMv7Assembler::Condition condition) {
+            RegisterID allOnes = getCachedDataTempRegisterIDAndInvalidate();
+            RegisterID zero = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.mvn(allOnes, ARMThumbImmediate::makeEncodedImm(0));
+            m_assembler.mov(zero, ARMThumbImmediate::makeEncodedImm(0));
+
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto sl = static_cast<ARMRegisters::FPSingleRegisterID>((left * 2) + i);
+                auto sr = static_cast<ARMRegisters::FPSingleRegisterID>((right * 2) + i);
+                m_assembler.vcmp(sl, sr);
+                m_assembler.vmrs();
+                m_assembler.it(condition, false);
+                m_assembler.vmov(sd, allOnes);
+                m_assembler.vmov(sd, zero);
+            }
+        };
+
+        auto emitF64ScalarComparison = [&](ARMv7Assembler::Condition condition) {
+            RegisterID allOnes = getCachedDataTempRegisterIDAndInvalidate();
+            m_assembler.mvn(allOnes, ARMThumbImmediate::makeEncodedImm(0));
+
+            auto compareOneLane = [&](FPRegisterID d, FPRegisterID l, FPRegisterID r) {
+                m_assembler.vcmp(l, r);
+                m_assembler.vmrs();
+                m_assembler.it(condition, false);
+                m_assembler.vmov(d, allOnes, allOnes);
+                m_assembler.veor(d, d, d);
+            };
+
+            compareOneLane(dest, left, right);
+            compareOneLane(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(left + 1), static_cast<FPRegisterID>(right + 1));
+        };
+
+        ARMv7Assembler::Condition condition = static_cast<ARMv7Assembler::Condition>(cond);
+        if (simdInfo.lane == SIMDLane::f32x4)
+            emitF32ScalarComparison(condition);
+        else
+            emitF64ScalarComparison(condition);
+    }
+
+    void vectorFusedMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        if (mul1 == dest) {
+            moveVector(mul1, scratch);
+            mul1 = scratch;
+        }
+        moveVector(addend, dest);
+        if (simdInfo.lane == SIMDLane::f32x4) {
+            // NEON vfma.f32 flushes denormals, use VFP scalar vfma
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto s1 = static_cast<ARMRegisters::FPSingleRegisterID>((mul1 * 2) + i);
+                auto s2 = static_cast<ARMRegisters::FPSingleRegisterID>((mul2 * 2) + i);
+                m_assembler.vfma(sd, s1, s2);
+            }
+        } else if (simdInfo.lane == SIMDLane::f64x2) {
+            m_assembler.vfma(dest, mul1, mul2);
+            m_assembler.vfma(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(mul1 + 1), static_cast<FPRegisterID>(mul2 + 1));
+        } else
+            UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void vectorFusedNegMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        if (mul1 == dest) {
+            moveVector(mul1, scratch);
+            mul1 = scratch;
+        }
+        moveVector(addend, dest);
+        if (simdInfo.lane == SIMDLane::f32x4) {
+            // NEON vfms.f32 flushes denormals, use VFP scalar vfms
+            for (int i = 0; i < 4; i++) {
+                auto sd = static_cast<ARMRegisters::FPSingleRegisterID>((dest * 2) + i);
+                auto s1 = static_cast<ARMRegisters::FPSingleRegisterID>((mul1 * 2) + i);
+                auto s2 = static_cast<ARMRegisters::FPSingleRegisterID>((mul2 * 2) + i);
+                m_assembler.vfms(sd, s1, s2);
+            }
+        } else if (simdInfo.lane == SIMDLane::f64x2) {
+            m_assembler.vfms(dest, mul1, mul2);
+            m_assembler.vfms(static_cast<FPRegisterID>(dest + 1), static_cast<FPRegisterID>(mul1 + 1), static_cast<FPRegisterID>(mul2 + 1));
+        } else
+            UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void materializeVector(v128_t value, FPRegisterID dest)
+    {
+        FPRegisterID loDReg = dest;
+        FPRegisterID hiDReg = static_cast<FPRegisterID>(dest + 1);
+
+        RegisterID scratch1 = getCachedDataTempRegisterIDAndInvalidate();
+        RegisterID scratch2 = getCachedAddressTempRegisterIDAndInvalidate();
+
+        move(TrustedImm32(value.u32x4[0]), scratch1);
+        move(TrustedImm32(value.u32x4[1]), scratch2);
+        move64ToDouble(scratch2, scratch1, loDReg);
+
+        move(TrustedImm32(value.u32x4[2]), scratch1);
+        move(TrustedImm32(value.u32x4[3]), scratch2);
+        move64ToDouble(scratch2, scratch1, hiDReg);
+    }
+
 private:
     Jump makeFPBranch(DoubleCondition cond)
     {
@@ -2351,6 +4575,12 @@ public:
     Jump branchFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
         m_assembler.vcmp(asSingle(left), asSingle(right));
+        return makeFPBranch(cond);
+    }
+
+    Jump branchFloat(DoubleCondition cond, ARMRegisters::FPSingleRegisterID left, ARMRegisters::FPSingleRegisterID right)
+    {
+        m_assembler.vcmp(left, right);
         return makeFPBranch(cond);
     }
 
@@ -3523,12 +5753,17 @@ public:
         m_assembler.bx(linkRegister);
     }
 
-    void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
+    void compare32(ARMv7Assembler::Condition cond, RegisterID left, RegisterID right, RegisterID dest)
     {
         m_assembler.cmp(left, right);
-        m_assembler.it(armV7Condition(cond), false);
+        m_assembler.it(cond, false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
+    }
+
+    void compare32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
+    {
+        compare32(armV7Condition(cond), left, right, dest);
     }
 
     void compare32(RelationalCondition cond, Address left, RegisterID right, RegisterID dest)
