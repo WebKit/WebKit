@@ -745,9 +745,9 @@
 		A16E590E2E7B713C0093E45F /* remove-fullscreen-element-from-dom.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A16E590D2E7B71310093E45F /* remove-fullscreen-element-from-dom.html */; };
 		A170E3AA2ABA7857009EA799 /* VectorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A170E3A22ABA7857009EA799 /* VectorCocoa.mm */; };
 		A17191AD2CD2DB090088944E /* WKWebViewLogging.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17191AC2CD2DB090088944E /* WKWebViewLogging.mm */; };
-		A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2472D6D295400C63915 /* GPUExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2482D6D295400C63915 /* NetworkingExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2492D6D295400C63915 /* WebContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2472D6D295400C63915 /* GPUExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2482D6D295400C63915 /* NetworkingExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2492D6D295400C63915 /* WebContentExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */; };
 		A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		A17991881E1C994E00A505ED /* SharedBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17991861E1C994E00A505ED /* SharedBuffer.mm */; };
@@ -1369,7 +1369,7 @@
 		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
 		DF6580942722168900B3F1C1 /* ASN1Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6580922722168900B3F1C1 /* ASN1Utilities.cpp */; };
 		DFB80E38261512C1002D4771 /* TestAwakener.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFB80E362615124E002D4771 /* TestAwakener.mm */; };
-		E1DCD2A72ECEB57200035D13 /* blob-popup-file-mainframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */; };
+		E1DCD2A72ECEB57200035D13 /* blob-popup-mainframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1DCD2A62ECEB57200035D13 /* blob-popup-mainframe.html */; };
 		E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */; };
 		E30F393428F4973800113EE7 /* SyscallUnixSandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */; };
 		E316D42027647A0200287B16 /* RefCountedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */; };
@@ -1888,7 +1888,7 @@
 				A17C46A02C98E54B0023F3C7 /* beforeunload-slow.html in Copy Resources */,
 				A17C46A12C98E54B0023F3C7 /* beforeunload.html in Copy Resources */,
 				A17C47212C98E5C20023F3C7 /* blinking-div.html in Copy Resources */,
-				E1DCD2A72ECEB57200035D13 /* blob-popup-file-mainframe.html in Copy Resources */,
+				E1DCD2A72ECEB57200035D13 /* blob-popup-mainframe.html in Copy Resources */,
 				A17C46A22C98E54B0023F3C7 /* bundle-file.html in Copy Resources */,
 				A17C47222C98E5C20023F3C7 /* camera-to-canvas.html in Copy Resources */,
 				A17C466C2C98E4D20023F3C7 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
@@ -4102,7 +4102,7 @@
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
 		E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StopLoadingFromDidReceiveResponse.html; sourceTree = "<group>"; };
-		E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "blob-popup-file-mainframe.html"; sourceTree = "<group>"; };
+		E1DCD2A62ECEB57200035D13 /* blob-popup-mainframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "blob-popup-mainframe.html"; sourceTree = "<group>"; };
 		E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtrTuple.cpp; sourceTree = "<group>"; };
 		E30F392C28F4973800113EE7 /* SyscallUnixSandboxCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SyscallUnixSandboxCheck.mm; sourceTree = "<group>"; };
 		E316D41F27647A0200287B16 /* RefCountedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedFixedVector.cpp; sourceTree = "<group>"; };
@@ -5767,7 +5767,7 @@
 				F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */,
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
-				E1DCD2A62ECEB57200035D13 /* blob-popup-file-mainframe.html */,
+				E1DCD2A62ECEB57200035D13 /* blob-popup-mainframe.html */,
 				0794742C25CB33B000C597EE /* camera-to-canvas.html */,
 				F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */,
 				F43B320D2C9C801100838ABA /* canvas-fingerprinting.js */,
