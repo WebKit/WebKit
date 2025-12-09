@@ -4871,7 +4871,7 @@ ALWAYS_INLINE void BBQJIT::willParseOpcode()
 
 #if ASSERT_ENABLED
     if (shouldFuseBranchCompare && isCompareOpType(m_prevOpcode)
-        && (m_parser->currentOpcode() == OpType::BrIf || m_parser->currentOpcode() == OpType::If)) {
+        && (m_parser->currentOpcode() == OpType::BrIf || m_parser->currentOpcode() == OpType::If || m_parser->currentOpcode() == OpType::Select)) {
         m_prevOpcode = m_parser->currentOpcode();
         return;
     }
@@ -5122,74 +5122,80 @@ static MacroAssembler::Jump emitBranchF64(CCallHelpers& jit, MacroAssembler::Dou
     return jit.branchDouble(condition, leftLocation.asFPR(), rightLocation.asFPR());
 }
 
-BBQJIT::Jump BBQJIT::emitFusedBranchCompareBranch(OpType opType, ExpressionType left, Location leftLocation, ExpressionType right, Location rightLocation)
+BBQJIT::Jump BBQJIT::emitFusedBranchCompareBranch(OpType opType, ExpressionType left, Location leftLocation, ExpressionType right, Location rightLocation, bool branchIfTrue)
 {
-    // Emit a branch with the inverse of the comparison. We're generating the "branch-if-false" case.
+    // When branchIfTrue=false (default), emit branch-if-false (inverse of comparison).
+    // When branchIfTrue=true, emit branch-if-true (comparison as-is).
+
+    auto conditionForBranch = [&](auto cond) ALWAYS_INLINE_LAMBDA {
+        return branchIfTrue ? cond : MacroAssembler::invert(cond);
+    };
+
     switch (opType) {
     case OpType::I32LtS:
-        return emitBranchI32(m_jit, RelationalCondition::GreaterThanOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::LessThan), left, leftLocation, right, rightLocation);
     case OpType::I32LtU:
-        return emitBranchI32(m_jit, RelationalCondition::AboveOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::Below), left, leftLocation, right, rightLocation);
     case OpType::I32GtS:
-        return emitBranchI32(m_jit, RelationalCondition::LessThanOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::GreaterThan), left, leftLocation, right, rightLocation);
     case OpType::I32GtU:
-        return emitBranchI32(m_jit, RelationalCondition::BelowOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::Above), left, leftLocation, right, rightLocation);
     case OpType::I32LeS:
-        return emitBranchI32(m_jit, RelationalCondition::GreaterThan, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::LessThanOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I32LeU:
-        return emitBranchI32(m_jit, RelationalCondition::Above, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::BelowOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I32GeS:
-        return emitBranchI32(m_jit, RelationalCondition::LessThan, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::GreaterThanOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I32GeU:
-        return emitBranchI32(m_jit, RelationalCondition::Below, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::AboveOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I32Eq:
-        return emitBranchI32(m_jit, RelationalCondition::NotEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::Equal), left, leftLocation, right, rightLocation);
     case OpType::I32Ne:
-        return emitBranchI32(m_jit, RelationalCondition::Equal, left, leftLocation, right, rightLocation);
+        return emitBranchI32(m_jit, conditionForBranch(RelationalCondition::NotEqual), left, leftLocation, right, rightLocation);
     case OpType::I64LtS:
-        return emitBranchI64(m_jit, RelationalCondition::GreaterThanOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::LessThan), left, leftLocation, right, rightLocation);
     case OpType::I64LtU:
-        return emitBranchI64(m_jit, RelationalCondition::AboveOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::Below), left, leftLocation, right, rightLocation);
     case OpType::I64GtS:
-        return emitBranchI64(m_jit, RelationalCondition::LessThanOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::GreaterThan), left, leftLocation, right, rightLocation);
     case OpType::I64GtU:
-        return emitBranchI64(m_jit, RelationalCondition::BelowOrEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::Above), left, leftLocation, right, rightLocation);
     case OpType::I64LeS:
-        return emitBranchI64(m_jit, RelationalCondition::GreaterThan, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::LessThanOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I64LeU:
-        return emitBranchI64(m_jit, RelationalCondition::Above, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::BelowOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I64GeS:
-        return emitBranchI64(m_jit, RelationalCondition::LessThan, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::GreaterThanOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I64GeU:
-        return emitBranchI64(m_jit, RelationalCondition::Below, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::AboveOrEqual), left, leftLocation, right, rightLocation);
     case OpType::I64Eq:
-        return emitBranchI64(m_jit, RelationalCondition::NotEqual, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::Equal), left, leftLocation, right, rightLocation);
     case OpType::I64Ne:
-        return emitBranchI64(m_jit, RelationalCondition::Equal, left, leftLocation, right, rightLocation);
+        return emitBranchI64(m_jit, conditionForBranch(RelationalCondition::NotEqual), left, leftLocation, right, rightLocation);
     case OpType::F32Lt:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F32Gt:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F32Le:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F32Ge:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F32Eq:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F32Ne:
-        return emitBranchF32(m_jit, MacroAssembler::invert(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
+        return emitBranchF32(m_jit, conditionForBranch(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
     case OpType::F64Lt:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleLessThanAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F64Gt:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleGreaterThanAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F64Le:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleLessThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F64Ge:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleGreaterThanOrEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F64Eq:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleEqualAndOrdered), left, leftLocation, right, rightLocation);
     case OpType::F64Ne:
-        return emitBranchF64(m_jit, MacroAssembler::invert(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
+        return emitBranchF64(m_jit, conditionForBranch(DoubleCondition::DoubleNotEqualOrUnordered), left, leftLocation, right, rightLocation);
     default:
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a binary comparison and should not have been fused.\n", makeString(opType).characters());
     }
@@ -5287,6 +5293,182 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, Expression
         result.setIfBranch(m_jit.jump()); // Emit direct branch if we know the condition is false.
     else if (foldResult == BranchNotFolded) // Otherwise, we only emit a branch at all if we don't know the condition statically.
         result.setIfBranch(emitFusedBranchCompareBranch(op, left, leftLocation, right, rightLocation));
+    return { };
+}
+
+PartialResult BBQJIT::addFusedSelectCompare(OpType opType, ExpressionType condition, ExpressionType val1, ExpressionType val2, ExpressionType& result)
+{
+    Location conditionLocation = loadIfNecessary(condition);
+    Location val1Location = Location::none(), val2Location = Location::none();
+
+    if (!val1.isConst())
+        val1Location = loadIfNecessary(val1);
+    if (!val2.isConst())
+        val2Location = loadIfNecessary(val2);
+
+    ASSERT(val1.isConst() || val1Location.isRegister());
+    ASSERT(val2.isConst() || val2Location.isRegister());
+
+    consume(condition);
+    consume(val1);
+    consume(val2);
+
+    result = topValue(val1.type());
+    Location resultLocation = allocate(result);
+
+    LOG_INSTRUCTION("SelectCompare", makeString(opType).characters(), condition, conditionLocation, val1, val1Location, val2, val2Location, RESULT(result));
+    LOG_INDENT();
+
+    if (val2.isConst())
+        emitMoveConst(val2, resultLocation);
+    else
+        emitMove(val2.type(), val2Location, resultLocation);
+
+    Jump skipVal1;
+    switch (opType) {
+    case OpType::I32Eqz:
+        skipVal1 = m_jit.branchTest32(ResultCondition::NonZero, conditionLocation.asGPR());
+        break;
+    case OpType::I64Eqz:
+#if USE(JSVALUE64)
+        skipVal1 = m_jit.branchTest64(ResultCondition::NonZero, conditionLocation.asGPR());
+#else
+        skipVal1 = m_jit.branchTest64(ResultCondition::NonZero, conditionLocation.asGPRhi(), conditionLocation.asGPRlo());
+#endif
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Op type '%s' is not a unary comparison.\n", makeString(opType).characters());
+    }
+
+    if (val1.isConst())
+        emitMoveConst(val1, resultLocation);
+    else
+        emitMove(val1.type(), val1Location, resultLocation);
+
+    skipVal1.link(&m_jit);
+
+    LOG_DEDENT();
+    return { };
+}
+
+PartialResult BBQJIT::addFusedSelectCompare(OpType opType, ExpressionType left, ExpressionType right, ExpressionType val1, ExpressionType val2, ExpressionType& result)
+{
+    if (left.isConst() && right.isConst()) {
+        BranchFoldResult foldResult = tryFoldFusedBranchCompare(opType, left, right);
+        Value src = (foldResult == BranchAlwaysTaken) ? val1 : val2;
+        Location srcLocation;
+        if (src.isConst())
+            result = src;
+        else {
+            result = topValue(val1.type());
+            srcLocation = loadIfNecessary(src);
+        }
+
+        LOG_INSTRUCTION("SelectCompare", makeString(opType).characters(), left, right, val1, val2, RESULT(result));
+        consume(left);
+        consume(right);
+        consume(val1);
+        consume(val2);
+        if (!result.isConst()) {
+            Location resultLocation = allocate(result);
+            emitMove(val1.type(), srcLocation, resultLocation);
+        }
+        return { };
+    }
+
+    Location leftLocation, rightLocation;
+    Location val1Location = Location::none(), val2Location = Location::none();
+
+    if (!left.isConst())
+        leftLocation = loadIfNecessary(left);
+    else if (left.isFloat()) {
+        leftLocation = Location::fromFPR(wasmScratchFPR);
+        emitMove(left, leftLocation);
+    }
+
+    if (!right.isConst())
+        rightLocation = loadIfNecessary(right);
+    else if (right.isFloat()) {
+        if (!leftLocation.isFPR() || leftLocation.asFPR() != wasmScratchFPR) {
+            rightLocation = Location::fromFPR(wasmScratchFPR);
+            emitMove(right, rightLocation);
+        }
+    }
+
+    if (!val1.isConst())
+        val1Location = loadIfNecessary(val1);
+    if (!val2.isConst())
+        val2Location = loadIfNecessary(val2);
+
+    ASSERT(val1.isConst() || val1Location.isRegister());
+    ASSERT(val2.isConst() || val2Location.isRegister());
+
+    consume(val1);
+    consume(val2);
+
+    result = topValue(val1.type());
+    Location resultLocation = allocate(result);
+
+    LOG_INSTRUCTION("SelectCompare", makeString(opType).characters(), left, leftLocation, right, rightLocation, val1, val1Location, val2, val2Location, RESULT(result));
+    LOG_INDENT();
+
+    bool inverted = false;
+    if (val2Location == resultLocation) {
+        std::swap(val1, val2);
+        std::swap(val1Location, val2Location);
+        inverted = true;
+    }
+
+    // If the comparison operands alias with the result, we need to preserve them
+    // since we'll overwrite the result with val1 before doing the comparison
+    if (leftLocation == resultLocation && !left.isConst()) {
+        if (left.isFloat()) {
+            m_jit.moveDouble(leftLocation.asFPR(), wasmScratchFPR);
+            leftLocation = Location::fromFPR(wasmScratchFPR);
+#if USE(JSVALUE32_64)
+        } else if (leftLocation.isGPR2()) {
+            m_jit.move(leftLocation.asGPRlo(), wasmScratchGPR);
+            m_jit.move(leftLocation.asGPRhi(), wasmScratchGPR2);
+            leftLocation = Location::fromGPR2(wasmScratchGPR, wasmScratchGPR2);
+#endif
+        } else {
+            m_jit.move(leftLocation.asGPR(), wasmScratchGPR);
+            leftLocation = Location::fromGPR(wasmScratchGPR);
+        }
+    } else if (rightLocation == resultLocation && !right.isConst()) {
+        if (right.isFloat()) {
+            m_jit.moveDouble(rightLocation.asFPR(), wasmScratchFPR);
+            rightLocation = Location::fromFPR(wasmScratchFPR);
+#if USE(JSVALUE32_64)
+        } else if (rightLocation.isGPR2()) {
+            m_jit.move(rightLocation.asGPRlo(), wasmScratchGPR);
+            m_jit.move(rightLocation.asGPRhi(), wasmScratchGPR2);
+            rightLocation = Location::fromGPR2(wasmScratchGPR, wasmScratchGPR2);
+#endif
+        } else {
+            m_jit.move(rightLocation.asGPR(), wasmScratchGPR);
+            rightLocation = Location::fromGPR(wasmScratchGPR);
+        }
+    }
+
+    if (val1.isConst())
+        emitMoveConst(val1, resultLocation);
+    else
+        emitMove(val1.type(), val1Location, resultLocation);
+
+    Jump skipVal2 = emitFusedBranchCompareBranch(opType, left, leftLocation, right, rightLocation, /* branchIfTrue = */ !inverted);
+
+    consume(left);
+    consume(right);
+
+    if (val2.isConst())
+        emitMoveConst(val2, resultLocation);
+    else
+        emitMove(val2.type(), val2Location, resultLocation);
+
+    skipVal2.link(&m_jit);
+
+    LOG_DEDENT();
     return { };
 }
 

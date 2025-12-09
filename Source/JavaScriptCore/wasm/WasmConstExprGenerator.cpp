@@ -659,6 +659,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedSelectCompare(OpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedSelectCompare(OpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry& entry, Stack& expressionStack)
     {

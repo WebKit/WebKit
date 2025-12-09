@@ -631,6 +631,26 @@ auto FunctionParser<Context>::binaryCompareCase(OpType op, BinaryOperationHandle
             m_context.didParseOpcode();
             return { };
         }
+        if (nextOpcode == OpType::Select) {
+            m_currentOpcodeStartingOffset = m_offset;
+            m_currentOpcode = static_cast<OpType>(nextOpcode);
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the select, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+            m_context.willParseOpcode();
+
+            TypedExpression val2;
+            TypedExpression val1;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(val2, "select val2"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(val1, "select val1"_s);
+
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(val2.type(), val1.type()) && !isSubtype(val1.type(), val2.type()), "select val1 and val2 must have compatible types"_s);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedSelectCompare(op, left, right, val1, val2, result));
+            m_expressionStack.constructAndAppend(val1.type(), result);
+            m_context.didParseOpcode();
+            return { };
+        }
     }
 
     ExpressionType result;
@@ -696,6 +716,22 @@ auto FunctionParser<Context>::unaryCompareCase(OpType op, UnaryOperationHandler 
 
             m_controlStack.append({ WTFMove(m_expressionStack), newStack, getLocalInitStackHeight(), WTFMove(control) });
             m_expressionStack = WTFMove(newStack);
+            return { };
+        }
+        if (nextOpcode == OpType::Select) {
+            bool didParseNextOpcode = parseUInt8(nextOpcode); // We're going to fuse this compare to the select, so we consume the opcode.
+            ASSERT_UNUSED(didParseNextOpcode, didParseNextOpcode);
+
+            TypedExpression val2;
+            TypedExpression val1;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(val2, "select val2"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(val1, "select val1"_s);
+
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(val2.type(), val1.type()) && !isSubtype(val1.type(), val2.type()), "select val1 and val2 must have compatible types"_s);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addFusedSelectCompare(op, value, val1, val2, result));
+            m_expressionStack.constructAndAppend(val1.type(), result);
             return { };
         }
     }
