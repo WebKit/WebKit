@@ -190,6 +190,8 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
 void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation)
 {
     auto lastNavigationAction = navigation.lastNavigationAction();
+    if (lastNavigationAction->hasOpener)
+        return;
 
     bool isBackForward = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::BackForward;
     bool isReload = lastNavigationAction && lastNavigationAction->navigationType == NavigationType::Reload;
