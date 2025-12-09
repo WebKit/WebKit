@@ -251,9 +251,16 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
 
 CanvasDirection CanvasRenderingContext2D::direction() const
 {
-    if (state().direction == Direction::Inherit)
-        canvas().protectedDocument()->updateStyleIfNeeded();
-    return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
+    switch (state().direction) {
+    case Direction::Inherit:
+        return CanvasDirection::Inherit;
+    case Direction::Rtl:
+        return CanvasDirection::Rtl;
+    case Direction::Ltr:
+        return CanvasDirection::Ltr;
+    }
+    ASSERT_NOT_REACHED();
+    return CanvasDirection::Inherit;
 }
 
 void CanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
