@@ -992,7 +992,7 @@ private:
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     bool m_didReceiveLogsDuringLaunchForTesting { false };
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-} SWIFT_SHARED_REFERENCE(refWebProcessProxy, derefWebProcessProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
 
@@ -1005,16 +1005,6 @@ inline RefPtr<WebProcessProxy> downcastToWebProcessProxy(AuxiliaryProcessProxy* 
 }
 
 } // namespace WebKit
-
-inline void refWebProcessProxy(WebKit::WebProcessProxy* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefWebProcessProxy(WebKit::WebProcessProxy* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebProcessProxy)
 static bool isType(const WebKit::AuxiliaryProcessProxy& process) { return process.type() == WebKit::AuxiliaryProcessProxy::Type::WebContent; }

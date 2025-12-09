@@ -54,7 +54,7 @@ private:
     TestWithSwiftMessageForwarder(WebKit::TestWithSwiftWeakRef* _Nonnull);
     std::unique_ptr<WebKit::TestWithSwift> getMessageTarget();
     std::unique_ptr<WebKit::TestWithSwiftWeakRef> m_handler;
-} SWIFT_SHARED_REFERENCE(.ref, .deref);
+};
 
 }
 

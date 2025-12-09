@@ -33,7 +33,6 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -129,7 +128,7 @@ private:
     RefPtr<ViewSnapshot> m_snapshot;
 #endif
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
-} SWIFT_SHARED_REFERENCE(refBackForwardListItem, derefBackForwardListItem) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;
 
@@ -142,16 +141,6 @@ inline API::Object* WTF_NONNULL toAPIObject(WebBackForwardListItem* WTF_NONNULL 
 }
 
 } // namespace WebKit
-
-inline void refBackForwardListItem(WebKit::WebBackForwardListItem* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefBackForwardListItem(WebKit::WebBackForwardListItem* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebBackForwardListItem)
 static bool isType(const API::Object& object) { return object.type() == API::Object::Type::BackForwardListItem; }

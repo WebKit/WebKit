@@ -30,7 +30,6 @@
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
 #include <wtf/RefPtr.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -153,19 +152,9 @@ private:
     bool m_needUpdateAfterBatch { false };
 
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_STORE)
-} SWIFT_SHARED_REFERENCE(refPrefs, derefPrefs) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
 } // namespace WebKit
-
-inline void refPrefs(WebKit::WebPreferences* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefPrefs(WebKit::WebPreferences* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPreferences)
 static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Preferences; }

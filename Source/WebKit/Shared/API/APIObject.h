@@ -287,8 +287,10 @@ private:
     void* operator new(size_t) = delete;
 
     CFTypeRef m_wrapper;
+} SWIFT_SHARED_REFERENCE(.ref, .deref) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+#else // DELEGATE_REF_COUNTING_TO_COCOA
+};
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
-} SWIFT_SHARED_REFERENCE(refObject, derefObject) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 template <Object::Type ArgumentType>
 class ObjectImpl : public Object {
@@ -324,16 +326,6 @@ using VectorRefPtrAPIObject = Vector<RefPtr<Object>>;
 using RefPtrAPIObject = RefPtr<Object>;
 
 } // namespace API
-
-inline void refObject(API::Object* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefObject(API::Object* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 #undef DELEGATE_REF_COUNTING_TO_COCOA
 
