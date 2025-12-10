@@ -95,8 +95,19 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
         this._inputElement.select();
 
-        if (performSearch)
-            this.performSearch(this._inputElement.value, {omitFocus: true});
+        if (performSearch) {
+            const minimumQueryLength = 3;
+            if (this._inputElement.value.length >= minimumQueryLength)
+                this.performSearch(this._inputElement.value, {omitFocus: true});
+            else {
+                // Allow the user to intentionally proceed with a potentially very slow query by pressing the Enter key.
+                // This is needed because the "change" event won't trigger on Enter if the value is already set programmatically; there is no change.
+                this._inputElement.addEventListener("keydown", (event) => {
+                    if (event.keyCode === WI.KeyboardShortcut.Key.Enter.keyCode)
+                        this.performSearch(this._inputElement.value);
+                }, {once: true});
+            }
+        }
     }
 
     performSearch(searchQuery, {omitFocus} = {})
