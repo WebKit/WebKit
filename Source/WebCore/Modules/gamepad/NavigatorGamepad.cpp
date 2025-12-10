@@ -70,13 +70,33 @@ NavigatorGamepad& NavigatorGamepad::from(Navigator& navigator)
     return *supplement;
 }
 
-Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platformGamepad)
+Ref<Gamepad> NavigatorGamepad::ensureGamepad(const PlatformGamepad& platformGamepad)
 {
     unsigned index = platformGamepad.index();
-    if (index >= m_gamepads.size() || !m_gamepads[index])
-        return Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
-
+    if (index >= m_gamepads.size())
+        m_gamepads.resize(index + 1);
+    if (!m_gamepads[index])
+        m_gamepads[index] = Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
     return *m_gamepads[index];
+}
+
+RefPtr<Gamepad> NavigatorGamepad::gamepadIfExists(const PlatformGamepad& platformGamepad) const
+{
+    unsigned index = platformGamepad.index();
+    if (index >= m_gamepads.size())
+        return nullptr;
+    return m_gamepads[index];
+}
+
+void NavigatorGamepad::removeGamepadIfExists(const PlatformGamepad& platformGamepad)
+{
+    auto index = platformGamepad.index();
+    if (index >= m_gamepads.size())
+        return;
+    m_gamepads[index] = nullptr;
+    // The spec says no null entries at the end of the getGamepads() list.
+    while (!m_gamepads.isEmpty() && !m_gamepads.last())
+        m_gamepads.removeLast();
 }
 
 ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Navigator& navigator)
@@ -127,72 +147,18 @@ const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()
         if (RefPtr page = frame->page())
             page->gamepadsRecentlyAccessed();
     }
-
-    if (m_gamepads.isEmpty())
-        return m_gamepads;
-
     auto& platformGamepads = GamepadProvider::singleton().platformGamepads();
-
-    for (unsigned i = 0; i < platformGamepads.size(); ++i) {
-        if (!platformGamepads[i]) {
-            ASSERT(!m_gamepads[i]);
+    for (unsigned i = 0; i < m_gamepads.size(); ++i) {
+        if (!m_gamepads[i])
+            continue;
+        if (i >= platformGamepads.size() || !platformGamepads[i]) {
+            // Disconnected gamepads are specified to exist in getGamepads() during gamepaddisconnected event.
             continue;
         }
         Ref { *m_gamepads[i] }->updateFromPlatformGamepad(*platformGamepads[i]);
     }
 
     return m_gamepads;
-}
-
-void NavigatorGamepad::gamepadsBecameVisible()
-{
-    auto& platformGamepads = GamepadProvider::singleton().platformGamepads();
-    m_gamepads.resize(platformGamepads.size());
-
-    for (unsigned i = 0; i < platformGamepads.size(); ++i) {
-        if (!platformGamepads[i])
-            continue;
-
-        m_gamepads[i] = Gamepad::create(m_navigator->protectedDocument().get(), *platformGamepads[i]);
-    }
-}
-
-void NavigatorGamepad::gamepadConnected(PlatformGamepad& platformGamepad)
-{
-    // If this is the first gamepad this Navigator object has seen, then all gamepads just became visible.
-    if (m_gamepads.isEmpty()) {
-        gamepadsBecameVisible();
-        return;
-    }
-
-    unsigned index = platformGamepad.index();
-    ASSERT(GamepadProvider::singleton().platformGamepads()[index] == &platformGamepad);
-
-    // The new index should already fit in the existing array, or should be exactly one past-the-end of the existing array.
-    ASSERT(index <= m_gamepads.size());
-
-    if (index < m_gamepads.size())
-        m_gamepads[index] = Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
-    else if (index == m_gamepads.size())
-        m_gamepads.append(Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad));
-}
-
-void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
-{
-    // If this Navigator hasn't seen any gamepads yet its Vector will still be empty.
-    if (!m_gamepads.size())
-        return;
-
-    ASSERT(platformGamepad.index() < m_gamepads.size());
-    ASSERT(m_gamepads[platformGamepad.index()]);
-
-    m_gamepads[platformGamepad.index()] = nullptr;
-}
-
-RefPtr<Page> NavigatorGamepad::protectedPage() const
-{
-    RefPtr frame = m_navigator->frame();
-    return frame ? frame->protectedPage() : nullptr;
 }
 
 } // namespace WebCore

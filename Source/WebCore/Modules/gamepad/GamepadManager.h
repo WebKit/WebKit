@@ -60,33 +60,22 @@ public:
     void unregisterDOMWindow(LocalDOMWindow&);
 
 #if PLATFORM(VISION)
-    void updateQuarantineStatus();
+    void didUpdateGamepadAccess();
 #endif
 
 private:
     GamepadManager();
 
-    void makeGamepadVisible(PlatformGamepad&, WeakHashSet<Navigator>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
+    void makeGamepadsVisible();
     void dispatchGamepadEvent(const AtomString& eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
     void maybeStopMonitoringGamepads();
 
-#if PLATFORM(VISION)
-    void findUnquarantinedNavigatorsAndWindows(WeakHashSet<Navigator>&, WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData>&);
-#endif
-
-    bool m_isMonitoringGamepads;
-
     WeakHashSet<Navigator> m_navigators;
-    WeakHashSet<Navigator> m_gamepadBlindNavigators;
     WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_domWindows;
-    WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_gamepadBlindDOMWindows;
-
-#if PLATFORM(VISION)
-    WeakHashSet<Navigator> m_gamepadQuarantinedNavigators;
-    WeakHashSet<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_gamepadQuarantinedDOMWindows;
-#endif
+    bool m_isMonitoringGamepads { false };
+    bool m_hasPendingConnections { false };
 };
 
 } // namespace WebCore

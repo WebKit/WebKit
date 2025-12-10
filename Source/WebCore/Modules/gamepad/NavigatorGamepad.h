@@ -59,15 +59,12 @@ public:
     // Null checking each entry is necessary.
     static ExceptionOr<const Vector<RefPtr<Gamepad>>&> getGamepads(Navigator&);
 
-    void gamepadConnected(PlatformGamepad&);
-    void gamepadDisconnected(PlatformGamepad&);
-
-    Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
+    Ref<Gamepad> ensureGamepad(const PlatformGamepad&);
+    RefPtr<Gamepad> gamepadIfExists(const PlatformGamepad&) const;
+    void removeGamepadIfExists(const PlatformGamepad&);
 
     WEBCORE_EXPORT static void setGamepadsRecentlyAccessedThreshold(Seconds);
     static Seconds gamepadsRecentlyAccessedThreshold();
-
-    RefPtr<Page> protectedPage() const;
 
 private:
     static ASCIILiteral supplementName() { return "NavigatorGamepad"_s; }

@@ -5629,7 +5629,7 @@ void Page::allowGamepadAccess()
         return;
 
     m_gamepadAccessGranted = true;
-    GamepadManager::singleton().updateQuarantineStatus();
+    GamepadManager::singleton().didUpdateGamepadAccess();
 }
 
 void Page::initializeGamepadAccessForPageLoad()
