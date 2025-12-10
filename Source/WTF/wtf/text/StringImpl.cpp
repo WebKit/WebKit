@@ -300,6 +300,12 @@ RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
     return create(result.buffer);
 }
 
+Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const char> characters)
+{
+    ASSERT(charactersAreAllASCII(byteCast<Latin1Character>(characters)));
+    return createStaticStringImpl(byteCast<Latin1Character>(characters));
+}
+
 Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const Latin1Character> characters)
 {
     if (characters.empty())

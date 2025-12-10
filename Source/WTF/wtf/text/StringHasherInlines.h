@@ -39,16 +39,15 @@ unsigned StringHasher::computeHashAndMaskTop8Bits(std::span<const T> data)
 #endif
 }
 
-template<typename T, unsigned characterCount>
-constexpr unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount])
+template<typename T>
+inline consteval unsigned StringHasher::computeLiteralHashAndMaskTop8Bits(std::span<T> data)
 {
-    constexpr unsigned characterCountWithoutNull = characterCount - 1;
 #if ENABLE(WYHASH_STRING_HASHER)
-    if constexpr (characterCountWithoutNull <= smallStringThreshold)
-        return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
-    return WYHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
+    if (data.size() <= smallStringThreshold)
+        return SuperFastHash::computeHashAndMaskTop8Bits<T>(data);
+    return WYHash::computeHashAndMaskTop8Bits<T>(data);
 #else
-    return SuperFastHash::computeHashAndMaskTop8Bits<T>(unsafeMakeSpan(characters, characterCountWithoutNull));
+    return SuperFastHash::computeHashAndMaskTop8Bits<T>(data);
 #endif
 }
 
