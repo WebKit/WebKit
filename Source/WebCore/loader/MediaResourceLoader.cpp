@@ -93,6 +93,17 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
     m_document->protectedFrame()->loader().client().sendH2Ping(url, WTFMove(completionHandler));
 }
 
+static LoadedFromOpaqueSource computeLoadedFromOpaqueSource(const Document& document, const HashSet<URL>& nonOpaqueLoadURLs, const URL& url, const std::optional<LoadedFromOpaqueSource> loadedFromOpaqueSource)
+{
+    if (!document.settings().enableOpaqueLoadingForMedia() || url.isEmpty())
+        return LoadedFromOpaqueSource::No;
+
+    if (loadedFromOpaqueSource.value_or(LoadedFromOpaqueSource::No) == LoadedFromOpaqueSource::No)
+        return LoadedFromOpaqueSource::No;
+
+    return nonOpaqueLoadURLs.contains(url) ? LoadedFromOpaqueSource::No : LoadedFromOpaqueSource::Yes;
+}
+
 RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
 {
     assertIsMainThread();
@@ -100,6 +111,9 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     RefPtr document = this->document();
     if (!document)
         return nullptr;
+
+    if (!m_loadedFromOpaqueSource && !request.url().isEmpty())
+        m_nonOpaqueLoadURLs.add(request.url());
 
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? DataBufferingPolicy::BufferData : DataBufferingPolicy::DoNotBufferData;
     auto cachingPolicy = options & LoadOption::DisallowCaching ? CachingPolicy::DisallowCaching : CachingPolicy::AllowCaching;
@@ -224,6 +238,13 @@ bool MediaResourceLoader::verifyMediaResponse(const URL& requestURL, const Resou
         return true;
 
     return validationInformation.origin->canRequest(response.url(), OriginAccessPatternsForWebProcess::singleton());
+}
+
+void MediaResourceLoader::redirectReceived(const URL& url)
+{
+    ASSERT(!url.isEmpty());
+    if (!m_loadedFromOpaqueSource)
+        m_nonOpaqueLoadURLs.add(url);
 }
 
 Ref<MediaResource> MediaResource::create(MediaResourceLoader& loader, CachedResourceHandle<CachedRawResource>&& resource)
