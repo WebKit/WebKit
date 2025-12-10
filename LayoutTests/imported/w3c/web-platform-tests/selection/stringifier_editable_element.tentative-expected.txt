@@ -11,9 +11,9 @@ FAIL toString() works even if a click just occured on a button assert_equals: ex
 PASS toString() works for programatically calling .click() on anchor (without href)
 PASS toString() doesn't work for actual clicking the anchor (without href)
 PASS toString() works for programatically calling .click() on anchor (with href)
-TIMEOUT toString() also works for actual clicking the anchor (with href) Test timed out
-NOTRUN Click on a text prior to toString() moves the seleciton
-NOTRUN Click on a `user-select:none` text prior to toString() doesn't move the seleciton
+PASS toString() also works for actual clicking the anchor (with href)
+PASS Click on a text prior to toString() moves the seleciton
+TIMEOUT Click on a `user-select:none` text prior to toString() doesn't move the seleciton Test timed out
 
 Harness Error (FAIL), message = Error: assert_equals: expected "This is a text" but got ""
 
@@ -26,7 +26,7 @@ FAIL toString() works even if a click just occured on a button assert_equals: ex
 PASS toString() works for programatically calling .click() on anchor (without href)
 PASS toString() doesn't work for actual clicking the anchor (without href)
 PASS toString() works for programatically calling .click() on anchor (with href)
-TIMEOUT toString() also works for actual clicking the anchor (with href) Test timed out
-NOTRUN Click on a text prior to toString() moves the seleciton
-NOTRUN Click on a `user-select:none` text prior to toString() doesn't move the seleciton
+PASS toString() also works for actual clicking the anchor (with href)
+PASS Click on a text prior to toString() moves the seleciton
+TIMEOUT Click on a `user-select:none` text prior to toString() doesn't move the seleciton Test timed out
 
