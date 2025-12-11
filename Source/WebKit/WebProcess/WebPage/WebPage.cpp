@@ -4535,6 +4535,8 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         return { WTFMove(map) };
     };
 
+    WTFBeginSignpost(frame, RunUserAgentJavaScript, "WebPage::runJavaScript: frameID=%" PRIu64 " sourceURL=%" PRIVATE_LOG_STRING, frame->frameID().toUInt64(), parameters.sourceURL.string().ascii().data());
+
     WebCore::RunJavaScriptParameters coreParameters {
         WTFMove(*source),
         WTFMove(parameters.taintedness),
@@ -4547,6 +4549,8 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
     JSLockHolder lock(commonVM());
     frame->protectedCoreLocalFrame()->checkedScript()->executeAsynchronousUserAgentScriptInWorld(world->protectedCoreWorld(), WTFMove(coreParameters), WTFMove(resolveFunction));
+
+    WTFEndSignpost(frame, RunUserAgentJavaScript);
 }
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, std::optional<WebCore::FrameIdentifier> frameID, const ContentWorldData& worldData, bool wantsResult, CompletionHandler<void(Expected<JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>)>&& completionHandler)
