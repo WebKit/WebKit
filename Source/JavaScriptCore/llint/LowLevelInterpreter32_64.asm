@@ -2283,7 +2283,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadi UnlinkedSimpleJumpTable::m_min[t2], t3
     bieq t3, (constexpr INT32_MAX), .opSwitchSlow
 
-    loadp StringImpl::m_data8[t1], t0
+    loadp StringImpl::m_data.latin1[t1], t0
     btinz StringImpl::m_hashAndFlags[t1], HashFlags8BitBuffer, .opSwitchChar8Bit
     loadh [t0], t0
     jmp .opSwitchCharReady

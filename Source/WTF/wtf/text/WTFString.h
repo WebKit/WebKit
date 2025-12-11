@@ -359,7 +359,7 @@ bool codePointCompareLessThan(const String&, const String&);
 
 // Shared global empty and null string.
 struct StaticString {
-    constexpr StaticString(StringImpl::StaticStringImpl* pointer)
+    consteval StaticString(StringImpl::StaticStringImpl* pointer)
         : m_pointer(pointer)
     {
     }

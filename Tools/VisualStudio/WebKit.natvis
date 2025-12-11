@@ -16,7 +16,7 @@
   <Type Name="WTF::StringImplShape">
     <!-- AtomString -->
     <DisplayString Condition="(m_hashAndFlags &amp; 0x10) &amp;&amp; (m_hashAndFlags &amp; 4)">
-      Atom:{m_data8,[m_length]s}
+      Atom:{m_data.latin1,[m_length]s}
     </DisplayString>
     <DisplayString Condition="(m_hashAndFlags &amp; 0x10)">
       Atom:{m_data16,[m_length]su}
@@ -24,14 +24,14 @@
 
     <!-- Symbol -->
     <DisplayString Condition="(m_hashAndFlags &amp; 0x20) &amp;&amp; (m_hashAndFlags &amp; 4)">
-      &lt;{m_data8,[m_length]s}&gt;
+      &lt;{m_data.latin1,[m_length]s}&gt;
     </DisplayString>
     <DisplayString Condition="(m_hashAndFlags &amp; 0x20)">
       &lt;{m_data16,[m_length]su}&gt;
     </DisplayString>
 
     <DisplayString Condition="(m_hashAndFlags &amp; 4)">
-      {m_data8,[m_length]s}
+      {m_data.latin1,[m_length]s}
     </DisplayString>
     <DisplayString Condition="!(m_hashAndFlags &amp; 4)">
       {m_data16,[m_length]su}

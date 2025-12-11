@@ -3045,7 +3045,21 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
             Address(stringImplGPR, StringImpl::flagsOffset()),
             TrustedImm32(StringImpl::flagIs8Bit())));
 
+
+
+        // NEW: stringImplGPR, stringDataGPR
+        auto oldPath = branchTest32(Zero, Address(stringImplGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+        move(stringImplGPR, stringDataGPR);
+        addPtr(TrustedImmPtr(StringImpl::dataOffset()), stringDataGPR);
+        auto newPathEnd = jump();
+        oldPath.link(this);
+        // OLD:
         loadPtr(Address(stringImplGPR, StringImpl::dataOffset()), stringDataGPR);
+        // END OLD:
+        newPathEnd.link(this);
+
+
+
         load32(Address(stringImplGPR, StringImpl::lengthMemoryOffset()), strLengthGPR);
 
         // Clobbering input registers is OK since we already called flushRegisters.

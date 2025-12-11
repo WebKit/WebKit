@@ -1744,7 +1744,21 @@ void SpeculativeJIT::compileStringSlice(Node* node)
 
     // Refill StringImpl* here.
     loadPtr(Address(stringGPR, JSString::offsetOfValue()), temp2GPR);
+
+
+
+    // NEW: temp2GPR, tempGPR
+    auto oldPath = branchTest32(Zero, Address(temp2GPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(temp2GPR, tempGPR);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), tempGPR);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(Address(temp2GPR, StringImpl::dataOffset()), tempGPR);
+    // END OLD:
+    newPathEnd.link(this);
+
+
 
     // Load the character into scratchReg
     zeroExtend32ToWord(startIndexGPR, startIndexGPR);
@@ -1842,7 +1856,19 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
         Zero, Address(tempGPR, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit())));
     load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
+
+
+
+    // NEW: tempGPR, tempGPR
+    auto oldPath = branchTest32(Zero, Address(tempGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(tempGPR, tempGPR);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), tempGPR);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(Address(tempGPR, StringImpl::dataOffset()), tempGPR);
+    // END OLD:
+    newPathEnd.link(this);
 
     auto loopStart = label();
     auto loopDone = branch32(AboveOrEqual, indexGPR, lengthGPR);
@@ -1889,7 +1915,22 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
     speculationCheck(Uncountable, JSValueRegs(), nullptr, branch32(AboveOrEqual, indexGPR, scratch2GPR));
 
     // Load the character into scratch1GPR
+
+
+
+    // NEW: scratch1GPR, scratch4GPR
+    auto oldPath = branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratch1GPR, scratch4GPR);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), scratch4GPR);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch4GPR);
+    // END OLD:
+    newPathEnd.link(this);
+
+
+
     auto is16Bit = branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
     JumpList done;
@@ -2581,13 +2622,43 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
+
+
+    // NEW: scratchReg, scratchReg
+    auto oldPath1 = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratchReg, scratchReg);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), scratchReg);
+    auto newPathEnd1 = jump();
+    oldPath1.link(this);
+    // OLD:
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    // END OLD:
+    newPathEnd1.link(this);
+
+
+
     load8(BaseIndex(scratchReg, indexReg, TimesOne, 0), scratchReg);
     Jump cont8Bit = jump();
 
     is16Bit.link(this);
 
+
+
+
+
+    // NEW: scratchReg, scratchReg
+    auto oldPath2 = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratchReg, scratchReg);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), scratchReg);
+    auto newPathEnd2 = jump();
+    oldPath2.link(this);
+    // OLD:
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    // END OLD:
+    newPathEnd2.link(this);
+
+
+
     load16(BaseIndex(scratchReg, indexReg, TimesTwo, 0), scratchReg);
 
     cont8Bit.link(this);
@@ -2638,7 +2709,21 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
+
+
+    // NEW: scratchReg, scratchReg
+    auto oldPath = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratchReg, scratchReg);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), scratchReg);
+    auto newPathEnd = jump();
+    oldPath.link(this);
+    // OLD:
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    // END OLD:
+    newPathEnd.link(this);
+
+
+
     load8(BaseIndex(scratchReg, propertyTempReg, TimesOne, 0), scratchReg);
 #if USE(JSVALUE32_64)
     if (node->op() == StringAt && node->arrayMode().isOutOfBounds())
@@ -2666,7 +2751,21 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
 
     is16Bit.link(this);
 
+
+
+    // NEW: scratchReg, scratchReg
+    auto oldPath2 = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratchReg, scratchReg);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), scratchReg);
+    auto newPathEnd2 = jump();
+    oldPath2.link(this);
+    // OLD:
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    // END OLD:
+    newPathEnd2.link(this);
+
+
+
     load16(BaseIndex(scratchReg, propertyTempReg, TimesTwo, 0), scratchReg);
 #if USE(JSVALUE32_64)
     if (node->op() == StringAt && node->arrayMode().isOutOfBounds())
@@ -7467,8 +7566,31 @@ void SpeculativeJIT::compileStringEquality(
         Address(rightTempGPR, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit())));
     
+
+
+    // NEW: leftTempGPR, leftTempGPR
+    auto oldPath1 = branchTest32(Zero, Address(leftTempGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(leftTempGPR, leftTempGPR);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), leftTempGPR);
+    auto newPathEnd1 = jump();
+    oldPath1.link(this);
+    // OLD:
     loadPtr(Address(leftTempGPR, StringImpl::dataOffset()), leftTempGPR);
+    // END OLD:
+    newPathEnd1.link(this);
+
+    // NEW: rightTempGPR, rightTempGPR
+    auto oldPath2 = branchTest32(Zero, Address(rightTempGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(rightTempGPR, rightTempGPR);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), rightTempGPR);
+    auto newPathEnd2 = jump();
+    oldPath2.link(this);
+    // OLD:
     loadPtr(Address(rightTempGPR, StringImpl::dataOffset()), rightTempGPR);
+    // END OLD:
+    newPathEnd2.link(this);
+
+
     
     Label loop = label();
     
@@ -9889,8 +10011,31 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
                 TrustedImm32(StringImpl::flagIs8Bit())
             ));
 
+
+
+            // NEW: leftStringGPR, leftStringGPR
+            auto oldPath1 = branchTest32(Zero, Address(leftStringGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+            move(leftStringGPR, leftStringGPR);
+            addPtr(TrustedImmPtr(StringImpl::dataOffset()), leftStringGPR);
+            auto newPathEnd1 = jump();
+            oldPath1.link(this);
+            // OLD:
             loadPtr(Address(leftStringGPR, StringImpl::dataOffset()), leftStringGPR);
+            // END OLD:
+            newPathEnd1.link(this);
+
+            // NEW: rightStringGPR, rightStringGPR
+            auto oldPath2 = branchTest32(Zero, Address(rightStringGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+            move(rightStringGPR, rightStringGPR);
+            addPtr(TrustedImmPtr(StringImpl::dataOffset()), rightStringGPR);
+            auto newPathEnd2 = jump();
+            oldPath2.link(this);
+            // OLD:
             loadPtr(Address(rightStringGPR, StringImpl::dataOffset()), rightStringGPR);
+            // END OLD:
+            newPathEnd2.link(this);
+
+
 
             sub32(TrustedImm32(1), compareLengthGPR);
 
@@ -12614,15 +12759,25 @@ void SpeculativeJIT::emitSwitchCharStringJump(Node* node, SwitchData* data, GPRR
             TrustedImm32(1)),
         data->fallThrough.block);
     
+
+    // NEW: scratch, value
+    auto oldPath1 = branchTest32(Zero, Address(scratch, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(scratch, value);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), value);
+    auto newPathEnd1 = jump();
+    oldPath1.link(this);
+    // OLD:
     loadPtr(Address(scratch, StringImpl::dataOffset()), value);
-    
+    // END OLD:
+    newPathEnd1.link(this);
+
     Jump is8Bit = branchTest32(
         NonZero,
         Address(scratch, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit()));
     
     load16(Address(value), scratch);
-    
+
     Jump ready = jump();
     
     is8Bit.link(this);
@@ -12867,7 +13022,18 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
         Address(tempGPR, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit())));
     
+
+
+    // NEW: tempGPR, string
+    auto oldPath1 = branchTest32(Zero, Address(tempGPR, StringImpl::flagsOffset()), TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+    move(tempGPR, string);
+    addPtr(TrustedImmPtr(StringImpl::dataOffset()), string);
+    auto newPathEnd1 = jump();
+    oldPath1.link(this);
+    // OLD:
     loadPtr(Address(tempGPR, StringImpl::dataOffset()), string);
+    // END OLD:
+    newPathEnd1.link(this);
     
     Vector<StringSwitchCase> cases;
     for (unsigned i = 0; i < data->cases.size(); ++i) {

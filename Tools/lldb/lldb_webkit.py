@@ -613,10 +613,10 @@ class WTFStringImplProvider:
         return self.valobj.GetChildMemberWithName('m_length').GetValueAsUnsigned(0)
 
     def get_data8(self):
-        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data8')
+        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data.latin1')
 
     def get_data16(self):
-        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data16')
+        return self.valobj.GetChildAtIndex(2).GetChildMemberWithName('m_data.char16')
 
     def to_string(self):
         error = lldb.SBError()

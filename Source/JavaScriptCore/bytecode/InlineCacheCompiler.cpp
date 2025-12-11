@@ -2283,7 +2283,22 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
             jit.moveTrustedValue(jsBoolean(true), valueRegs);
         else {
             jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
+
+
+
+            // NEW: scratch2GPR , scratch2GPR
+            auto oldPath = jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(64)); // 64 is the "is immediate flag", if unset take the old path
+            jit.move(scratch2GPR, scratch2GPR);
+            jit.addPtr(CCallHelpers::TrustedImmPtr(StringImpl::dataOffset()), scratch2GPR);
+            auto newPathEnd = jit.jump();
+            oldPath.link(&jit);
+            // OLD:
             jit.loadPtr(CCallHelpers::Address(scratch2GPR, StringImpl::dataOffset()), scratch2GPR);
+            // END OLD:
+            newPathEnd.link(&jit);
+
+
+
             auto is16Bit = jit.branchTest32(CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(StringImpl::flagIs8Bit()));
             jit.zeroExtend32ToWord(propertyGPR, scratchGPR);
             jit.load8(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne, 0), scratch2GPR);
