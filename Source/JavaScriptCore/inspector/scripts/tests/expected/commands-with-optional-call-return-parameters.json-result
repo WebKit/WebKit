@@ -312,6 +312,10 @@ void DatabaseBackendDispatcher::executeAllOptionalParameters(long protocol_reque
 #endif // ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
     auto in_opt_screenColor = Protocol::TestHelpers::parseEnumValueFromString<Protocol::Database::PrimaryColors>(in_opt_screenColor_json);
+    if (!in_opt_screenColor_json.isEmpty() && !in_opt_screenColor) {
+        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, makeString("Unknown screenColor: "_s, in_opt_screenColor_json));
+        return;
+    }
 
     auto result = m_agent->executeAllOptionalParameters(WTFMove(in_opt_columnNames), in_opt_notes, WTFMove(in_opt_timestamp), WTFMove(in_opt_values), WTFMove(in_opt_payload), WTFMove(in_opt_databaseId), WTFMove(in_opt_sqlError), WTFMove(in_opt_screenColor), WTFMove(in_opt_alternateColors), in_opt_printColor);
     if (!result) {

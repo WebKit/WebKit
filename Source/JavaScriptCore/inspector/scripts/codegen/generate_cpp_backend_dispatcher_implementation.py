@@ -256,6 +256,10 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                     parameter_enum_resolutions.append('')
                 parameter_enum_resolutions.append('    auto %(enumVariableName)s = Protocol::%(helpersNamespace)s::parseEnumValueFromString<%(enumType)s>(%(stringVariableName)s);' % enum_args)
                 if parameter.is_optional:
+                    parameter_enum_resolutions.append('    if (!%(stringVariableName)s.isEmpty() && !%(enumVariableName)s) {' % enum_args)
+                    parameter_enum_resolutions.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, makeString("Unknown %(parameterKey)s: "_s, %(stringVariableName)s));' % enum_args)
+                    parameter_enum_resolutions.append('        return;')
+                    parameter_enum_resolutions.append('    }')
                     parameter_expression = 'WTFMove(%s)' % variable_name
                 else:
                     parameter_enum_resolutions.append('    if (!%(enumVariableName)s) {' % enum_args)
