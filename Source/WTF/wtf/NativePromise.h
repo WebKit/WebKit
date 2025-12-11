@@ -409,7 +409,8 @@ private:
     }
 
 public:
-    template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
+    template<typename ResolveValueType_>
+        requires (!std::is_void_v<ResolveValueT>)
     static Ref<NativePromise> createAndResolve(ResolveValueType_&& resolveValue, const Logger::LogSiteIdentifier& resolveSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         auto p = adoptRef(*new NativePromise(resolveSite));
@@ -417,15 +418,15 @@ public:
         return p;
     }
 
-    template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
     static Ref<NativePromise> createAndResolve(const Logger::LogSiteIdentifier& resolveSite = DEFAULT_LOGSITEIDENTIFIER)
-    {
+        requires std::is_void_v<ResolveValueT> {
         auto p = adoptRef(*new NativePromise(resolveSite));
         p->resolve(resolveSite);
         return p;
     }
 
-    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
+    template<typename RejectValueType_>
+        requires (!std::is_void_v<RejectValueT>)
     static Ref<NativePromise> createAndReject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         auto p = adoptRef(*new NativePromise(rejectSite));
@@ -433,9 +434,8 @@ public:
         return p;
     }
 
-    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
     static Ref<NativePromise> createAndReject(const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER)
-    {
+        requires std::is_void_v<RejectValueT> {
         auto p = adoptRef(*new NativePromise(rejectSite));
         p->reject(rejectSite);
         return p;
@@ -465,7 +465,8 @@ private:
         dispatchAll(lock);
     }
 
-    template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
+    template<typename ResolveValueType_>
+        requires (!std::is_void_v<ResolveValueT>)
     void resolve(ResolveValueType_&& resolveValue, const Logger::LogSiteIdentifier& resolveSite)
     {
         static_assert(std::is_convertible_v<ResolveValueType_, ResolveValueT>, "resolve() argument must be implicitly convertible to NativePromise's ResolveValueT");
@@ -477,15 +478,15 @@ private:
             settleImpl(std::forward<ResolveValueType_>(resolveValue), lock);
     }
 
-    template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
     void resolve(const Logger::LogSiteIdentifier& resolveSite)
-    {
+        requires std::is_void_v<ResolveValueT> {
         Locker lock { m_lock };
         PROMISE_LOG(resolveSite, " resolving ", *this);
         settleImpl(Result { }, lock);
     }
 
-    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
+    template<typename RejectValueType_>
+        requires (!std::is_void_v<RejectValueT>)
     void reject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite)
     {
         static_assert(std::is_convertible_v<RejectValueType_, RejectValueT>, "reject() argument must be implicitly convertible to NativePromise's RejectValueT");
@@ -497,9 +498,8 @@ private:
             settleImpl(Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue)), lock);
     }
 
-    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
     void reject(const Logger::LogSiteIdentifier& rejectSite)
-    {
+        requires std::is_void_v<RejectValueT> {
         Locker lock { m_lock };
         PROMISE_LOG(rejectSite, " rejecting ", *this);
         settleImpl(makeUnexpected(detail::VoidPlaceholder()), lock);
@@ -970,16 +970,20 @@ private:
     };
 
     struct LambdaReturnTrait {
-        template <typename T, typename = std::enable_if_t<IsConvertibleToNativePromise<T>>>
+        template <typename T>
+            requires IsConvertibleToNativePromise<T>
         Ref<typename T::PromiseType> lambda();
 
-        template <typename T, typename = std::enable_if_t<std::is_void_v<T>>>
+        template <typename T>
+            requires std::is_void_v<T>
         void lambda();
 
-        template <typename T, typename = std::enable_if_t<IsConvertibleToNativePromise<T>>>
+        template <typename T>
+            requires IsConvertibleToNativePromise<T>
         typename T::PromiseType type();
 
-        template <typename T, typename = std::enable_if_t<std::is_void_v<T>>>
+        template <typename T>
+            requires std::is_void_v<T>
         void type();
     };
 
@@ -1320,16 +1324,17 @@ public:
     static constexpr bool AutoReject = options & PromiseOption::AutoRejectProducer;
     static constexpr bool AutoRejectNonVoid = AutoReject && !std::is_void_v<RejectValueT>;
 
-    template<typename = std::enable_if<!AutoRejectNonVoid>>
     explicit NativePromiseProducer(PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default, const Logger::LogSiteIdentifier& creationSite = DEFAULT_LOGSITEIDENTIFIER)
-        : m_promise(adoptRef(new PromiseType(creationSite)))
-        , m_creationSite(creationSite)
+        requires (!AutoRejectNonVoid)
+            : m_promise(adoptRef(new PromiseType(creationSite)))
+            , m_creationSite(creationSite)
     {
         if constexpr (PromiseType::IsExclusive)
             protect(m_promise)->setDispatchMode(dispatchMode, creationSite);
     }
 
-    template<typename RejectValueT_ = RejectValueT, typename = std::enable_if<AutoRejectNonVoid>>
+    template<typename RejectValueT_ = RejectValueT>
+        requires AutoRejectNonVoid
     explicit NativePromiseProducer(RejectValueT_&& defaulReject, PromiseDispatchMode dispatchMode = PromiseDispatchMode::Default, const Logger::LogSiteIdentifier& creationSite = DEFAULT_LOGSITEIDENTIFIER)
         : m_promise(adoptRef(new PromiseType(creationSite)))
         , m_creationSite(creationSite)
@@ -1368,7 +1373,8 @@ public:
         return m_promise && !protect(m_promise)->isSettled();
     }
 
-    template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
+    template<typename ResolveValueType_>
+        requires (!std::is_void_v<ResolveValueT>)
     void resolve(ResolveValueType_&& resolveValue, const Logger::LogSiteIdentifier& resolveSite = DEFAULT_LOGSITEIDENTIFIER) const
     {
         ASSERT(isNothing());
@@ -1379,9 +1385,8 @@ public:
         protect(m_promise)->resolve(std::forward<ResolveValueType_>(resolveValue), resolveSite);
     }
 
-    template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
     void resolve(const Logger::LogSiteIdentifier& resolveSite = DEFAULT_LOGSITEIDENTIFIER) const
-    {
+        requires std::is_void_v<ResolveValueT> {
         ASSERT(isNothing());
         if (!isNothing()) {
             PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protect(m_promise));
@@ -1390,7 +1395,8 @@ public:
         protect(m_promise)->resolve(resolveSite);
     }
 
-    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
+    template<typename RejectValueType_>
+        requires (!std::is_void_v<RejectValueT>)
     void reject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER) const
     {
         ASSERT(isNothing());
@@ -1401,9 +1407,8 @@ public:
         protect(m_promise)->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
     }
 
-    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
     void reject(const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER) const
-    {
+        requires std::is_void_v<RejectValueT> {
         ASSERT(isNothing());
         if (!isNothing()) {
             PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protect(m_promise));
@@ -1426,9 +1431,8 @@ public:
             protect(m_promise)->settle(std::forward<SettleValue>(result), site);
     }
 
-    template<typename = std::enable_if<PromiseType::IsExclusive>>
     void settleWithFunction(typename PromiseType::ResultRunnable&& resultRunnable, const Logger::LogSiteIdentifier& site = DEFAULT_LOGSITEIDENTIFIER)
-    {
+        requires PromiseType::IsExclusive {
         ASSERT(isNothing());
         if (!isNothing()) {
             PROMISE_LOG(site, " ignored already resolved or rejected ", *protect(m_promise));
@@ -1498,7 +1502,8 @@ public:
         m_promise->template chainTo<ResolveValueT2, RejectValueT2, options2>(WTF::move(chainedPromise), callSite);
     }
 
-    template<typename RejectValueType_, typename = std::enable_if<AutoRejectNonVoid>>
+    template<typename RejectValueType_>
+        requires AutoRejectNonVoid
     void setDefaultReject(RejectValueType_&& rejectValue)
     {
         m_defaultReject = std::forward<RejectValueType_>(rejectValue);
