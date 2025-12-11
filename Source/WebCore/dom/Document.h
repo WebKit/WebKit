@@ -2026,8 +2026,7 @@ public:
     virtual void didChangeViewSize() { }
     bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
-    enum UpdateLayoutIfContentVisibilityChanged : bool { No, Yes };
-    DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged = UpdateLayoutIfContentVisibilityChanged::Yes);
+    DidUpdateAnyContentRelevancy updateRelevancyOfContentVisibilityElements();
     void scheduleContentRelevancyUpdate(ContentRelevancy);
     void updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor);
 
