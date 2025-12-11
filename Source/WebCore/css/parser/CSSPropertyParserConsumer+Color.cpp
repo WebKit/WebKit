@@ -805,13 +805,14 @@ bool isColorKeywordAllowed(CSSValueID id, const CSSParserContext& context)
 
 #if PLATFORM(COCOA)
     case CSSValueAppleSystemTertiaryFill:
+    case CSSValueAppleSystemSecondaryFill:
+    case CSSValueAppleSystemOpaqueSecondaryFill:
 #endif
 #if PLATFORM(IOS_FAMILY)
     case CSSValueAppleSystemQuaternaryFill:
 #endif
 #if PLATFORM(MAC)
     case CSSValueAppleSystemOpaqueFill:
-    case CSSValueAppleSystemOpaqueSecondaryFill:
 #endif
     case CSSValueInternalDocumentTextColor:
         switch (context.mode) {
