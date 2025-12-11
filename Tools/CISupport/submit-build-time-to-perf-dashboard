@@ -1,0 +1,241 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import datetime
+import json
+import os
+import re
+import sys
+
+scripts = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'Scripts')
+sys.path.insert(0, scripts)
+
+import webkitpy
+import requests
+
+from webkitpy.common.checkout.scm.detection import SCMDetector
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.executive import Executive
+
+
+def read_build_time(time_file):
+    """Read the build time from the /usr/bin/time output file."""
+    if not os.path.isfile(time_file):
+        print(f'ERROR: Time file not found: {time_file}\n')
+        return None
+
+    with open(time_file, 'r') as f:
+        content = f.read()
+
+    # Parse the time output format: "real 123.45"
+    match = re.search(r'^real\s+(\d+(?:\.\d+)?)', content, re.MULTILINE)
+    if match:
+        # Perf dashboard expects miliseconds
+        return float(match.group(1)) * 1000.0
+
+    print(f'ERROR: Could not parse build time from {time_file}\n')
+    print(f'Content: {content}\n')
+    return None
+
+
+def get_repository_revisions(source_dir):
+    """Get the repository revisions for the source directory."""
+    filesystem = FileSystem()
+    executive = Executive()
+
+    try:
+        scm = SCMDetector(filesystem, executive).detect_scm_system(source_dir)
+        if not scm:
+            print(f'WARNING: Could not detect SCM system for {source_dir}\n')
+            return {}
+
+        revision = scm.native_revision(source_dir)
+        timestamp = scm.timestamp_of_native_revision(source_dir, revision)
+
+        return {
+            'WebKit': {
+                'revision': revision,
+                'timestamp': timestamp
+            }
+        }
+    except Exception as e:
+        print(f'WARNING: Could not get repository revisions: {e}\n')
+        return {}
+
+
+def load_worker_config(worker_config_path):
+    """Load and parse the worker configuration JSON file."""
+    if not worker_config_path:
+        return {}
+
+    if not os.path.isfile(worker_config_path):
+        print(f'ERROR: Worker config file not found: {worker_config_path}\n')
+        return None
+
+    try:
+        with open(worker_config_path, 'r') as f:
+            worker_config = json.load(f)
+        return worker_config
+    except Exception as e:
+        print(f'ERROR: Failed to parse worker config JSON: {e}\n')
+        return None
+
+
+def construct_report(build_duration, builder_name, build_number, platform,
+                     configuration, architecture, worker_name, revisions,
+                     worker_config=None):
+    """Construct the JSON report following the perf.webkit.org API format."""
+
+    # Format build time in ES5-compatible ISO format
+    utc_timestamp = datetime.datetime.now(datetime.timezone.utc)
+    build_time = utc_timestamp.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+    report = {
+        'builderName': builder_name,
+        'buildTag': str(build_number),
+        'buildTime': build_time,
+        'platform': platform,
+        'tests': {
+            'BuildTime': {
+                'metrics': {
+                    'Time': {
+                        'current': [[build_duration]]
+                    }
+                }
+            }
+        },
+        'revisions': revisions
+    }
+
+    # Merge worker config into report (same pattern as run-perf-tests)
+    # Keys from worker config are prefixed with 'builder' and capitalized
+    if worker_config:
+        for key in worker_config:
+            report['builder' + key.capitalize()] = worker_config[key]
+
+    has_builder_password = 'builderPassword' in report
+    has_worker_password = 'workerPassword' in report
+
+    if not has_builder_password and not has_worker_password:
+        print('ERROR: No authentication credentials found\n')
+        print('Provide --worker-config-json-path with "password" or "workerPassword" key\n')
+        return None
+
+    return report
+
+
+def upload_to_perf_dashboard(report, api_url):
+    """Upload the report to the perf.webkit.org API."""
+
+    # The API expects an array of reports
+    payload = [report]
+
+    # Convert build duration back to seconds for printing
+    build_duration = report["tests"]["BuildTime"]["metrics"]["Time"]["current"][0][0] / 1000.0
+
+
+    print(f'Uploading build time report to {api_url}\n')
+    print(f'Build duration: {build_duration} seconds\n')
+    print(f'Builder: {report["builderName"]}\n')
+    print(f'Build number: {report["buildTag"]}\n')
+    print(f'Platform: {report["platform"]}\n')
+
+    try:
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(api_url, json=payload, headers=headers, timeout=60)
+
+        print(f'Response status: {response.status_code} {response.reason}\n')
+
+        if response.status_code // 100 == 2:
+            print('Successfully uploaded build time metrics\n')
+            return 0
+        else:
+            print(f'ERROR: Upload failed with status {response.status_code}\n')
+            print(f'Response: {response.text}\n')
+            return 1
+
+    except Exception as e:
+        print(f'ERROR: Exception during upload: {e}\n')
+        return 1
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Submit build time metrics to perf.webkit.org dashboard'
+    )
+    parser.add_argument('--time-file', required=True,
+                       help='Path to the time output file from /usr/bin/time')
+    parser.add_argument('--builder-name', required=True,
+                       help='Name of the builder')
+    parser.add_argument('--build-number', required=True,
+                       help='Build number')
+    parser.add_argument('--platform', required=True,
+                       help='Platform name (e.g., mac-sequoia)')
+    parser.add_argument('--configuration', required=True,
+                       help='Build configuration (debug or release)')
+    parser.add_argument('--architecture', required=True,
+                       help='Architecture (e.g., x86_64, arm64)')
+    parser.add_argument('--worker-name', required=True,
+                       help='Worker/bot name')
+    parser.add_argument('--worker-config-json-path',
+                       help='Path to worker configuration JSON file (contains password)')
+    parser.add_argument('--source-dir', default='.',
+                       help='Path to WebKit source directory (default: current directory)')
+    parser.add_argument('--perf-server-url', default='https://perf.webkit.org',
+                       help='URL of the perf dashboard')
+
+    args = parser.parse_args()
+
+    build_duration = read_build_time(args.time_file)
+    if build_duration is None:
+        return 1
+
+    revisions = get_repository_revisions(args.source_dir)
+
+    worker_config = load_worker_config(args.worker_config_json_path)
+    if worker_config is None:
+        return 1
+
+    report = construct_report(
+        build_duration=build_duration,
+        builder_name=args.builder_name,
+        build_number=args.build_number,
+        platform=args.platform,
+        configuration=args.configuration,
+        architecture=args.architecture,
+        worker_name=args.worker_name,
+        revisions=revisions,
+        worker_config=worker_config
+    )
+
+    if report is None:
+        return 1
+
+    api_url = f'{args.perf_server_url}/api/report'
+    return upload_to_perf_dashboard(report, api_url)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

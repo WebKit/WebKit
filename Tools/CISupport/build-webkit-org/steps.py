@@ -51,6 +51,7 @@ if 'uat' in CURRENT_HOSTNAME:
 BUILD_WEBKIT_HOSTNAMES = ['build.webkit.org', 'build']
 TESTING_ENVIRONMENT_HOSTNAMES = ['build.webkit-uat.org', 'build-uat', 'build.webkit-dev.org', 'build-dev']
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
+PERF_WEBKIT_URL = 'https://perf.webkit.org'
 RESULTS_WEBKIT_URL = 'https://results.webkit.org'
 RESULTS_SERVER_API_KEY = 'RESULTS_SERVER_API_KEY'
 S3URL = 'https://s3-us-west-2.amazonaws.com/'
@@ -312,6 +313,13 @@ class WaitForCrashCollection(shell.Compile):
     command = ["python3", "Tools/CISupport/wait-for-crash-collection", "--timeout", str(5 * 60)]
 
 
+class CleanBuild(shell.Compile):
+    name = "delete-WebKitBuild-directory"
+    description = ["deleting WebKitBuild directory"]
+    descriptionDone = ["deleted WebKitBuild directory"]
+    command = ["python3", "Tools/CISupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+
+
 class CleanBuildIfScheduled(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
@@ -335,6 +343,16 @@ class DeleteStaleBuildFiles(shell.Compile):
         if self.getProperty('is_clean'):  # Nothing to be done if WebKitBuild had been removed.
             self.hideStepIf = True
             return SKIPPED
+        return super().run()
+
+
+class DeleteXcodeDerivedData(shell.Compile, ShellMixin):
+    name = 'delete-xcode-derived-data'
+    description = ["deleting Xcode DerivedData contents"]
+    descriptionDone = ["deleted Xcode DerivedData contents"]
+
+    def run(self):
+        self.command = self.shell_command("rm -rf ~/Library/Developer/Xcode/DerivedData")
         return super().run()
 
 
@@ -493,6 +511,113 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin, ShellMixin, AddToLogMixin):
             return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
         if self.results == FAILURE:
             return {'step': f'Failed {self.name}'}
+        return super().getResultSummary()
+
+
+class WebKitBuildTimePerf(shell.Compile, CustomFlagsMixin, ShellMixin, AddToLogMixin):
+    build_command = ['/usr/bin/make']
+    time_command = ['/usr/bin/time', '-p', '-o', 'build-time.txt']
+    filter_command = ['perl', 'Tools/Scripts/filter-build-webkit', '-logfile', 'build-log.txt']
+    name = "compile-webkit"
+    description = ["compiling"]
+    descriptionDone = ["compiled"]
+    warningPattern = ".*arning: .*"
+    cancelled_due_to_huge_logs = False
+    line_count = 0
+
+    @defer.inlineCallbacks
+    def run(self):
+        additionalArguments = self.getProperty('additionalArguments')
+        configuration = self.getProperty('configuration')
+
+        self.log_observer = ParseByLineLogObserver(self.parseOutputLine)
+        self.addLogObserver('stdio', self.log_observer)
+
+        build_command = self.build_command + [f'{configuration}', 'ARGS="-showBuildTimingSummary COMPILATION_CACHE_ENABLE_CACHING=NO"']
+
+        if additionalArguments:
+            build_command += additionalArguments
+
+        full_command = f"{' '.join(self.time_command)} {' '.join(build_command)} 2>&1 | {' '.join(self.filter_command)}"
+        self.command = self.shell_command(full_command)
+
+        rc = yield super().run()
+        defer.returnValue(rc)
+
+    def __init__(self, *args, **kwargs):
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = 60 * 60
+        super().__init__(*args, **kwargs)
+
+    def parseOutputLine(self, line):
+        self.line_count += 1
+        if self.line_count == THRESHOLD_FOR_EXCESSIVE_LOGS:
+            self.handleExcessiveLogging()
+            return
+        # FIXME: Re-enable error and warning filtering from logs.
+
+    def handleExcessiveLogging(self):
+        build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
+        print(f'\n{MSG_FOR_EXCESSIVE_LOGS}, {build_url}\n')
+        self.cancelled_due_to_huge_logs = True
+        self.build.stopBuild(reason=MSG_FOR_EXCESSIVE_LOGS, results=FAILURE)
+        self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
+
+    def follow_up_steps(self):
+        return [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+                additions=f'{self.build.number}'
+            ), UploadFileToS3(
+                'build-log.txt',
+                links={self.name: 'Full build log'},
+                content_type='text/plain',
+            )
+        ]
+
+    def getResultSummary(self):
+        if self.cancelled_due_to_huge_logs:
+            return {'step': MSG_FOR_EXCESSIVE_LOGS, 'build': MSG_FOR_EXCESSIVE_LOGS}
+        if self.results == FAILURE:
+            return {'step': f'Failed {self.name}'}
+        return super().getResultSummary()
+
+
+class UploadBuildTimeToPerfDashboard(shell.ShellCommand):
+    name = "upload-build-time-metrics"
+    description = ["uploading build time metrics"]
+    descriptionDone = ["uploaded build time metrics"]
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        time_file = 'build-time.txt'
+
+        self.command = [
+            "python3", "Tools/CISupport/submit-build-time-to-perf-dashboard",
+            "--time-file", time_file,
+            "--builder-name", self.getProperty("buildername"),
+            "--build-number", self.getProperty("buildnumber"),
+            "--platform", self.getProperty("fullPlatform"),
+            "--configuration", self.getProperty("configuration"),
+            "--architecture", self.getProperty("architecture"),
+            "--worker-name", self.getProperty("workername"),
+            "--worker-config-json-path", "../../perf-test-config.json",
+            "--perf-server-url", PERF_WEBKIT_URL
+        ]
+
+        rc = yield super().run()
+        defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to upload build time metrics'}
+        if self.results in [SUCCESS, WARNINGS]:
+            return {'step': 'Uploaded build time metrics'}
         return super().getResultSummary()
 
 
@@ -1443,7 +1568,7 @@ class RunAndUploadPerfTests(shell.Test):
                "--worker-config-json-path", "../../perf-test-config.json",
                "--no-show-results",
                "--reset-results",
-               "--test-results-server", "perf.webkit.org",
+               "--test-results-server", PERF_WEBKIT_URL,
                "--builder-name", WithProperties("%(buildername)s"),
                "--build-number", WithProperties("%(buildnumber)s"),
                "--platform", WithProperties("%(fullPlatform)s"),

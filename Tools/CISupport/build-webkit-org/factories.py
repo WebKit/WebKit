@@ -327,3 +327,15 @@ class SaferCPPStaticAnalyzerFactory(Factory):
 class CrossTargetDownloadAndPerfTestFactory(DownloadAndPerfTestFactory):
     shouldInstallDependencies = False
     shouldUseCrossTargetImage = True
+
+
+class BuildTimeMeasurementFactory(Factory):
+    """Factory for measuring clean build time and reporting to perf.webkit.org"""
+
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
+        # Initialize with buildOnly=True since we only need to compile
+        Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, device_model, **kwargs)
+        self.addStep(DeleteXcodeDerivedData())
+        self.addStep(CleanBuild())
+        self.addStep(WebKitBuildTimePerf())
+        self.addStep(UploadBuildTimeToPerfDashboard())
