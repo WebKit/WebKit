@@ -39,6 +39,7 @@ from .checkout import Checkout
 from .classify import Classify
 from .credentials import Credentials
 from .find import Find, Info
+from .modify import Modify
 from .pickable import Pickable
 from .publish import Publish
 from .install_git_lfs import InstallGitLFS
@@ -98,7 +99,7 @@ def main(
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
-        Classify, InstallHooks,
+        Classify, InstallHooks, Modify,
     ] + (programs or [])
     if subversion:
         programs.append(SetupGitSvn)
