@@ -72,6 +72,21 @@ static LayoutTestSpellChecker *ensureGlobalLayoutTestSpellChecker()
     return globalSpellChecker;
 }
 
+static NSString *stringByTrimmingTrailingWhitespace(NSString *string)
+{
+    NSRange range = [string rangeOfCharacterFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] options:NSBackwardsSearch];
+
+    if (range.location == NSNotFound || range.location + range.length != string.length)
+        return string;
+
+    NSRange nonWhitespaceRange = [string rangeOfCharacterFromSet:[[NSCharacterSet whitespaceAndNewlineCharacterSet] invertedSet] options:NSBackwardsSearch];
+
+    if (nonWhitespaceRange.location == NSNotFound)
+        return @"";
+
+    return [string substringToIndex:nonWhitespaceRange.location + 1];
+}
+
 static NSTextCheckingType nsTextCheckingType(NSString *typeString)
 {
     if ([typeString isEqualToString:@"orthography"])
@@ -280,7 +295,8 @@ static const char *stringForCorrectionResponse(NSCorrectionResponse correctionRe
 - (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag orthography:(NSOrthography **)orthography wordCount:(NSInteger *)wordCount
 {
     NSArray *result = [super checkString:stringToCheck range:range types:checkingTypes options:options inSpellDocumentWithTag:tag orthography:orthography wordCount:wordCount];
-    if (auto *overrideResult = [_results objectForKey:stringToCheck])
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    if (auto *overrideResult = [_results objectForKey:trimmedKey])
         return overrideResult;
 
     return result;
@@ -296,7 +312,8 @@ static const char *stringForCorrectionResponse(NSCorrectionResponse correctionRe
 
 - (NSInteger)requestCheckingOfString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag completionHandler:(TextCheckingCompletionHandler)completionHandler
 {
-    return [super requestCheckingOfString:stringToCheck range:range types:checkingTypes options:options inSpellDocumentWithTag:tag completionHandler:[overrideResult = retainPtr([_results objectForKey:stringToCheck]), completion = makeBlockPtr(completionHandler), stringToCheck = retainPtr(stringToCheck)] (NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *result, NSOrthography *orthography, NSInteger wordCount) {
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    return [super requestCheckingOfString:stringToCheck range:range types:checkingTypes options:options inSpellDocumentWithTag:tag completionHandler:[overrideResult = retainPtr([_results objectForKey:trimmedKey]), completion = makeBlockPtr(completionHandler), stringToCheck = retainPtr(stringToCheck)] (NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *result, NSOrthography *orthography, NSInteger wordCount) {
         if (overrideResult) {
             completion(sequenceNumber, overrideResult.get(), orthography, wordCount);
             return;
@@ -308,7 +325,8 @@ static const char *stringForCorrectionResponse(NSCorrectionResponse correctionRe
 
 - (NSInteger)requestGrammarCheckingOfString:(NSString *)stringToCheck range:(NSRange)range language:(NSString *)language options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^)(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *results))completionHandler
 {
-    if (RetainPtr overrideResult = [_results objectForKey:stringToCheck]) {
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    if (RetainPtr overrideResult = [_results objectForKey:trimmedKey]) {
         completionHandler(0, overrideResult.get());
         return 0; // Not currently used, so return value doesn't matter. Should be the sequence number.
     }
@@ -321,14 +339,16 @@ static const char *stringForCorrectionResponse(NSCorrectionResponse correctionRe
 
 - (void)requestProofreadingReviewOfString:(NSString *)stringToCheck range:(NSRange)range language:(NSString *)language options:(NSDictionary<NSString *, id> *)options completionHandler:(void (^)(NSArray<NSTextCheckingResult *> *results))completionHandler
 {
-    if (RetainPtr overrideResult = [_results objectForKey:stringToCheck])
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    if (RetainPtr overrideResult = [_results objectForKey:trimmedKey])
         completionHandler(overrideResult.get());
     return [super requestProofreadingReviewOfString:stringToCheck range:range language:language options:options completionHandler:completionHandler];
 }
 
 static NSDictionary *swizzledGrammarDetailsForString(id, SEL, NSString *stringToCheck, NSRange range, NSString *language)
 {
-    for (LayoutTestTextCheckingResult *result in [globalSpellChecker->_results objectForKey:stringToCheck]) {
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    for (LayoutTestTextCheckingResult *result in [globalSpellChecker->_results objectForKey:trimmedKey]) {
         if (!NSEqualRanges(result.range, range))
             continue;
 
@@ -350,7 +370,8 @@ static NSDictionary *swizzledGrammarDetailsForString(id, SEL, NSString *stringTo
 
 - (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes languages:(NSArray<NSString *> *)languagesArray options:(NSDictionary<NSString *, id> *)options
 {
-    if (auto *overrideResult = [_results objectForKey:stringToCheck])
+    NSString *trimmedKey = stringByTrimmingTrailingWhitespace(stringToCheck);
+    if (auto *overrideResult = [_results objectForKey:trimmedKey])
         return overrideResult;
 
     return [super checkString:stringToCheck range:range types:checkingTypes languages:languagesArray options:options];
