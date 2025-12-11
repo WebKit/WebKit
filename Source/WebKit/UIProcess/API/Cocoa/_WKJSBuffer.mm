@@ -28,10 +28,12 @@
 
 #import "NetworkCacheData.h"
 #import "WKNSData.h"
+#import "WKWebViewPrivate.h"
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SharedMemory.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/FileSystem.h>
+#import <wtf/cf/VectorCF.h>
 
 @implementation _WKJSBuffer
 
@@ -65,6 +67,33 @@
     if (!sharedMemory)
         return nil;
     API::Object::constructInWrapper<API::JSBuffer>(self, sharedMemory.releaseNonNull());
+
+    return self;
+}
+
+- (instancetype)initWithString:(NSString *)string resultStringEncoding:(_WKJSBufferStringEncoding *) outEncoding
+{
+    if (!(self = [super init]))
+        return nil;
+    if (!string || string.length || !outEncoding)
+        return nil;
+    RefPtr<WebCore::SharedMemory> buffer;
+    CFStringRef cfstring = (__bridge CFStringRef)string;
+    if (auto span8 = CFStringGetLatin1CStringSpan(cfstring); !span8.empty()) {
+        buffer = WebCore::SharedMemory::allocate(span8.size_bytes());
+        if (!buffer)
+            return nil;
+        memcpySpan(buffer->mutableSpan(), span8);
+        *outEncoding = _WKJSBufferStringEncodingLatin1;
+    } else {
+        buffer = WebCore::SharedMemory::allocate(CFStringGetLength(cfstring) * sizeof(char16_t));
+        if (!buffer)
+            return nil;
+        auto bufferSpan = spanReinterpretCast<char16_t>(buffer->mutableSpan());
+        CFStringCopyCharactersSpan(cfstring, bufferSpan);
+        *outEncoding = _WKJSBufferStringEncodingUniChar;
+    }
+    API::Object::constructInWrapper<API::JSBuffer>(self, buffer.releaseNonNull());
 
     return self;
 }

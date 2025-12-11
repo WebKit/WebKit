@@ -102,3 +102,38 @@ TEST(JSBuffer, EvaluateJavaScriptFromBuffer)
         EXPECT_TRUE(hadError);
     }
 }
+
+TEST(JSBuffer, StringConstructor)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
+    {
+        _WKJSBufferStringEncoding encoding = _WKJSBufferStringEncodingUniChar;
+        RetainPtr jsString8 = adoptNS([[_WKJSBuffer alloc] initWithString:@"'a'+'b'" resultStringEncoding:&encoding]);
+        EXPECT_EQ(encoding, _WKJSBufferStringEncodingLatin1);
+        RetainPtr<NSString> evalResult;
+        bool callbackComplete = false;
+        [webView _evaluateJavaScriptFromBuffer:jsString8.get() withEncoding:encoding withSourceURL:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld withUserGesture:YES completionHandler:[&] (id result, NSError *error) {
+            evalResult = [NSString stringWithFormat:@"%@", result];
+            callbackComplete = true;
+        }];
+        TestWebKitAPI::Util::run(&callbackComplete);
+        EXPECT_WK_STREQ(evalResult.get(), "ab");
+    }
+    {
+        const unichar scriptChars[] = { 0x0027, 0x2022, 0x0027 }; // '<bullet>'.
+        RetainPtr<NSString> script = [NSString stringWithCharacters:scriptChars length:1];
+        _WKJSBufferStringEncoding encoding = _WKJSBufferStringEncodingLatin1;
+        RetainPtr jsString16 = adoptNS([[_WKJSBuffer alloc] initWithString:script.get() resultStringEncoding:&encoding]);
+        EXPECT_EQ(encoding, _WKJSBufferStringEncodingUniChar);
+        RetainPtr<NSString> evalResult;
+        bool callbackComplete = false;
+        [webView _evaluateJavaScriptFromBuffer:jsString16.get() withEncoding:encoding withSourceURL:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld withUserGesture:YES completionHandler:[&] (id result, NSError *error) {
+            evalResult = [NSString stringWithFormat:@"%@", result];
+            callbackComplete = true;
+        }];
+        TestWebKitAPI::Util::run(&callbackComplete);
+        const unichar ch = 0x2022;
+        RetainPtr<NSString> bullet = [NSString stringWithCharacters:&ch length:1];
+        EXPECT_WK_STREQ(evalResult.get(), bullet.get());
+    }
+}

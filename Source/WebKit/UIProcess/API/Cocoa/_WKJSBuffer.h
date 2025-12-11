@@ -27,6 +27,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, _WKJSBufferStringEncoding);
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKJSBuffer : NSObject
 
@@ -35,6 +37,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 
 - (nullable instancetype)initWithData:(NSData *)data;
 - (nullable instancetype)initWithDataInFile:(NSURL *)fileURL;
+- (nullable instancetype)initWithString:(NSString *)string resultStringEncoding:(_WKJSBufferStringEncoding *) outEncoding;
 
 @end
 
