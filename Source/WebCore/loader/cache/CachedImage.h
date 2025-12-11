@@ -174,6 +174,7 @@ private:
         bool allowsAnimation(const Image&) const final;
         const Settings* settings() final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).m_settings.get() : nullptr; }
         bool useSystemDarkAppearance() const final { return !m_cachedImages.isEmptyIgnoringNullReferences() && m_cachedImages.begin()->useSystemDarkAppearance(); }
+        float deviceScaleFactor() const final { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).deviceScaleFactor() : 1; }
 
         WeakHashSet<CachedImage> m_cachedImages;
     };
@@ -187,6 +188,7 @@ private:
     void imageContentChanged(const Image&);
     void scheduleRenderingUpdate(const Image&);
     bool useSystemDarkAppearance() const;
+    float deviceScaleFactor() const;
 
     void updateBufferInternal(const FragmentedSharedBuffer&);
 

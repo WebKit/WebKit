@@ -1063,6 +1063,7 @@ public:
     virtual bool allowsAnimation() const { return true; }
     virtual bool canDestroyDecodedData() const { return true; }
     virtual bool useSystemDarkAppearance() const { return false; }
+    virtual float deviceScaleFactor() const { return 1; }
     virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
     virtual void didRemoveCachedImageClient(CachedImage&) { }
@@ -1155,6 +1156,7 @@ private:
         bool allowsAnimation() const final;
         bool canDestroyDecodedData() const final;
         bool useSystemDarkAppearance() const final;
+        float deviceScaleFactor() const final;
         VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*) final;
         VisibleInViewportState imageVisibleInViewport(const Document&) const final;
         void didRemoveCachedImageClient(CachedImage&) final;

@@ -508,6 +508,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
             }
             m_page->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
+            m_page->setDeviceScaleFactor(observer->deviceScaleFactor());
         }
 
         RefPtr localMainFrame = m_page->localMainFrame();

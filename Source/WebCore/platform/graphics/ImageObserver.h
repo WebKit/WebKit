@@ -61,6 +61,7 @@ public:
     virtual bool allowsAnimation(const Image&) const { return true; }
     virtual const Settings* settings() { return nullptr; }
     virtual bool useSystemDarkAppearance() const { return false; }
+    virtual float deviceScaleFactor() const { return 1; }
 
 protected:
     ImageObserver() = default;

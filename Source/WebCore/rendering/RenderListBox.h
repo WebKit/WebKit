@@ -190,8 +190,6 @@ private:
 
     std::optional<int> optionRowIndex(const HTMLOptionElement&) const;
 
-    float deviceScaleFactor() const final;
-
     LayoutRect rectForScrollbar(const Scrollbar&) const;
 
     void paintScrollbar(PaintInfo&, const LayoutPoint&, Scrollbar&);

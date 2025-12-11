@@ -1182,11 +1182,6 @@ void RenderListBox::setHasScrollbar(ScrollbarOrientation orientation)
     m_scrollbar->styleChanged();
 }
 
-float RenderListBox::deviceScaleFactor() const
-{
-    return page().deviceScaleFactor();
-}
-    
 bool RenderListBox::isVisibleToHitTesting() const
 {
     return visibleToHitTesting();

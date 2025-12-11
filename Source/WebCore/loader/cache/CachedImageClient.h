@@ -47,6 +47,7 @@ public:
 
     virtual bool canDestroyDecodedData() const { return true; }
     virtual bool useSystemDarkAppearance() const { return false; }
+    virtual float deviceScaleFactor() const { return 1; }
 
     // Called when a new decoded frame for a large image is available or when an animated image is ready to advance to the next frame.
     WEBCORE_EXPORT virtual VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect*);

@@ -3035,6 +3035,13 @@ bool RenderObject::CachedImageListener::useSystemDarkAppearance() const
     return false;
 }
 
+float RenderObject::CachedImageListener::deviceScaleFactor() const
+{
+    if (CheckedPtr renderer = m_renderer.get())
+        return renderer->deviceScaleFactor();
+    return 1;
+}
+
 bool RenderObject::CachedImageListener::canDestroyDecodedData() const
 {
     if (CheckedPtr renderer = m_renderer.get())
