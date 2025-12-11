@@ -29,3 +29,4 @@
 FrameCanCreatePaymentSession : bool
 FrameDocumentSecurityOrigin : RefPtr<WebCore::SecurityOrigin> [Headers=<WebCore/SecurityOrigin.h>]
 FrameURLProtocol : String [Headers=<wtf/text/WTFString.h>]
+FrameScrollPosition : WebCore::ScrollPosition [Headers=<WebCore/ScrollTypes.h>]

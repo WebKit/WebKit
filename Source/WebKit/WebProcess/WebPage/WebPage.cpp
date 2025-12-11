@@ -1297,8 +1297,18 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
     ASSERT(frame->page() == this);
 
     RefPtr coreFrame = frame->coreFrame();
-    if (coreFrame)
+    if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(data);
+
+        switch (data.type) {
+        case FrameTreeSyncDataType::FrameScrollPosition:
+            coreFrame->virtualView()->scrollTo(coreFrame->frameTreeSyncData().frameScrollPosition);
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
 void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)

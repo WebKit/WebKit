@@ -3631,6 +3631,9 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
         if (auto* layer = renderView->layer())
             m_frame->editor().renderLayerDidScroll(*layer);
     }
+
+    if (m_frame->settings().siteIsolationEnabled() && oldPosition != newPosition)
+        m_frame->loader().client().broadcastFrameScrollPositionToOtherProcesses(newPosition);
 }
 
 void LocalFrameView::applyRecursivelyWithVisibleRect(NOESCAPE const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
