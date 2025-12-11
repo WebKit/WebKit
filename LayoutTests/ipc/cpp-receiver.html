@@ -1,0 +1,34 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that a Swift receiver handles a message.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const testerID = 447;
+    const processTarget = 'UI'; // Currently only UI is supported for addTesterReceiver.
+    IPC.addTesterReceiver(processTarget);
+    try {
+        let messages = [];
+        // Sync messages don't currently work with the IPCTester arrangement, so we
+        // send an async message. We add a listener to wait for it to be delivered
+        // before we proceed.
+        IPC.addIncomingMessageListener(processTarget, (message) => {
+            if (message.name != IPC.messages.IPCTesterReceiver_AsyncMessage.name)
+                return;
+            messages.push(message);
+        });
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_SendAsyncMessageToReceiver.name, [
+            { type: 'uint32_t', value: 78 },
+        ]);
+        await t.step_wait(() => { return messages.length > 0 }, "Waiting until async message is intercepted");
+        assert_equals(messages.length, 1, `for ${ processTarget }`);
+    } finally {
+        IPC.removeTesterReceiver(processTarget);
+    }
+}, "IPC message handling in Swift");
+</script>
+</body>

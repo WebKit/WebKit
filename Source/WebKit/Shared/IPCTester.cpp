@@ -191,8 +191,10 @@ void IPCTester::sendAsyncMessageToSwiftReceiver(IPC::Connection& connection, uin
 {
 #if ENABLE(IPC_TESTING_SWIFT)
     connection.sendWithAsyncReply(Messages::IPCTesterReceiverSwift::AsyncMessage(arg0 + 1), [arg0](uint32_t newArg0) {
-        ASSERT_UNUSED(arg0, newArg0 == arg0 + 2);
+        ASSERT_UNUSED(arg0, newArg0 == arg0 + 3);
     }, 0);
+#else
+    sendAsyncMessageToReceiver(connection, arg0);
 #endif
 }
 

@@ -2761,6 +2761,9 @@ JSValueRef JSIPC::removeTesterReceiver(JSContextRef context, JSObjectRef, JSObje
     }
 
     WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName());
+#if ENABLE(IPC_TESTING_SWIFT)
+    WebProcess::singleton().removeMessageReceiver(Messages::IPCTesterReceiverSwift::messageReceiverName());
+#endif
     return JSValueMakeUndefined(context);
 }
 
