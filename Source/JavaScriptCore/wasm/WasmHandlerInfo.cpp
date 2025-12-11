@@ -62,7 +62,7 @@ void HandlerInfo::initialize(const UnlinkedHandlerInfo& unlinkedInfo, CodePtr<Ex
     }
 }
 
-const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance, const FixedVector<HandlerInfo>& exceptionHandlers, unsigned index, const Wasm::Tag* exceptionTag)
+const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance, const FixedVector<HandlerInfo>& exceptionHandlers, unsigned index, const Wasm::Tag* exceptionTag, bool skipTailCallInlinedFrame, unsigned skipFirstInlineCSI, unsigned skipLastInlineCSI)
 {
     bool delegating = false;
     unsigned delegateTarget = 0;
@@ -71,6 +71,8 @@ const HandlerInfo* HandlerInfo::handlerForIndex(JSWebAssemblyInstance& instance,
         // that contains the source address is the correct handler to use.
         // This index used is either the BytecodeOffset or a CallSiteIndex.
         if (handler.m_start <= index && handler.m_end > index) {
+            if (skipTailCallInlinedFrame && handler.m_start >= skipFirstInlineCSI && handler.m_end < skipLastInlineCSI)
+                continue;
             if (delegating) {
                 if (handler.m_tryDepth != delegateTarget)
                     continue;

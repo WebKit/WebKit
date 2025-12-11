@@ -3552,7 +3552,8 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
 std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
 {
     if (auto* pcToCodeOriginMap = m_jitCode->pcToCodeOriginMap()) {
-        if (std::optional<CodeOrigin> codeOrigin = pcToCodeOriginMap->findPC(pc))
+        bool isOMGTailCallInlinedOrigin = false;
+        if (std::optional<CodeOrigin> codeOrigin = pcToCodeOriginMap->findPC(pc, isOMGTailCallInlinedOrigin))
             return codeOrigin;
     }
 

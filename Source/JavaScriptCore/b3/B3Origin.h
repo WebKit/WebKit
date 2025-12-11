@@ -53,10 +53,16 @@ public:
         DFGOriginPtr,
         WasmOriginPtr,
         PackedWasmOrigin,
+        OMGTailCallInlinedOrigin
     };
 
     explicit Origin(const Wasm::WasmOrigin* data)
         : m_data(data, WasmOriginPtr)
+    {
+    }
+
+    explicit Origin(const Wasm::WasmOrigin* data, OriginType originType)
+        : m_data(data, originType)
     {
     }
 
@@ -74,10 +80,11 @@ public:
     bool isDFGOrigin() const { return !m_data.bits() || m_data.tag() == DFGOriginPtr; }
     bool isWasmOrigin() const { return !m_data.bits() || m_data.tag() == WasmOriginPtr; }
     bool isPackedWasmOrigin() const { return !m_data.bits() || m_data.tag() == PackedWasmOrigin; }
+    bool isOMGTailCallInlinedOrigin() const { return !m_data.bits() || m_data.tag() == OMGTailCallInlinedOrigin; }
 
     Wasm::WasmOrigin* wasmOrigin() const
     {
-        ASSERT(isWasmOrigin());
+        ASSERT(isWasmOrigin() || isOMGTailCallInlinedOrigin());
         return VALIDATED_REINTERPRET_CAST("WasmOrigin", Wasm::WasmOrigin, m_data.ptr());
     }
 
@@ -87,7 +94,7 @@ public:
         return std::bit_cast<DFG::Node*>(m_data.ptr());
     }
 
-    const Wasm::WasmOrigin* maybeWasmOrigin() const { return isWasmOrigin() ? wasmOrigin() : nullptr; }
+    const Wasm::WasmOrigin* maybeWasmOrigin() const { return (isWasmOrigin() || isOMGTailCallInlinedOrigin()) ? wasmOrigin() : nullptr; }
 
     // You should avoid using this. Use OriginDump instead.
     void dump(PrintStream&) const;

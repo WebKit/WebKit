@@ -100,6 +100,7 @@ public:
         size_t wasmFunctionIndex() const;
 
         CallSiteIndex wasmCallSiteIndex() const;
+        bool isOMGTailCallInlinedOrigin() const { return m_isOMGTailCallInlinedOrigin; }
 
         JS_EXPORT_PRIVATE String functionName() const;
         JS_EXPORT_PRIVATE String sourceURL() const;
@@ -149,6 +150,7 @@ public:
         Wasm::IndexOrName m_wasmFunctionIndexOrName { };
         size_t m_wasmFunctionIndex { 0 };
         uint32_t m_wasmCallSiteIndexBits { };
+        bool m_isOMGTailCallInlinedOrigin { false };
 
         friend class StackVisitor;
     };
