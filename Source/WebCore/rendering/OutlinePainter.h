@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include "RenderElement.h"
 
 namespace WebCore {
@@ -30,6 +31,7 @@ namespace WebCore {
 class RenderInline;
 class RenderListBox;
 struct PaintInfo;
+class GraphicsContext;
 
 class OutlinePainter {
 public:
@@ -43,6 +45,7 @@ public:
 private:
     void paintOutlineWithLineRects(const RenderInline&, const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects) const;
     void paintFocusRing(const RenderElement&, const Vector<LayoutRect>&) const;
+    void paintFocusRingIntoContext(const RenderElement& renderer, const Vector<LayoutRect>&, GraphicsContext&) const;
 
     static void collectFocusRingRects(const RenderElement&, Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
     static void collectFocusRingRectsForInline(const RenderInline&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);

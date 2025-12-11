@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutRepainter.h"
 
+#include "OutlineDisplayListCache.h"
 #include "RenderElement.h"
 #include "RenderLayerModelObject.h"
 
@@ -52,6 +53,10 @@ bool LayoutRepainter::repaintAfterLayout()
     auto requiresFullRepaint = m_forceFullRepaint || m_renderer->selfNeedsLayout() ? RequiresFullRepaint::Yes : RequiresFullRepaint::No;
     // Outline bounds are not used if we're doing a full repaint.
     auto newRects = m_renderer->rectsForRepaintingAfterLayout(m_repaintContainer, (requiresFullRepaint == RequiresFullRepaint::Yes) ? RepaintOutlineBounds::No : m_repaintOutlineBounds);
+
+    if (m_renderer->hasOutline() && m_repaintOutlineBounds == RepaintOutlineBounds::Yes && m_oldRects.outlineBoundsRect != newRects.outlineBoundsRect)
+        OutlineDisplayListCache::singleton().remove(&m_renderer.get());
+
     return m_renderer->repaintAfterLayoutIfNeeded(m_repaintContainer, requiresFullRepaint, m_oldRects, newRects);
 }
 

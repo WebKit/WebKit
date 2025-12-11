@@ -38,6 +38,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "LegacyRenderSVGModelObject.h"
+#include "OutlineDisplayListCache.h"
 #include "PaintInfo.h"
 #include "PathUtilities.h"
 #include "RenderBlockFlow.h"
@@ -49,7 +50,8 @@
 #include "RenderSVGModelObject.h"
 #include "RenderTheme.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
-
+#include "RenderElementStyleInlines.h"
+#include "DisplayListRecorderImpl.h"
 namespace WebCore {
 
 OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
@@ -128,6 +130,7 @@ void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoin
 
     if (styleToUse->outlineStyle() == OutlineStyle::Auto) {
         CheckedPtr paintContainer = m_paintInfo.paintContainer;
+
         auto focusRingRects = collectFocusRingRects(renderer, paintOffset, paintContainer.get());
 
         paintFocusRing(renderer, focusRingRects);
@@ -235,17 +238,18 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 #endif
 }
 
-static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, const Path& path, float outlineWidth, const Color& color)
 {
-    context.drawFocusRing(path, Style::evaluate<float>(style.outlineWidth(), Style::ZoomNeeded { }), color);
+    context.drawFocusRing(path, outlineWidth, color);
 }
 
-static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, float outlineWidth, float outlineOffset, const Color& color)
 {
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, 0, Style::evaluate<float>(style.outlineWidth(), Style::ZoomNeeded { }), color);
+    UNUSED_PARAM(outlineOffset);
+    context.drawFocusRing(rects, 0, outlineWidth, color);
 #else
-    context.drawFocusRing(rects, Style::evaluate<float>(style.outlineOffset(), Style::ZoomNeeded { }), Style::evaluate<float>(style.outlineWidth(), Style::ZoomNeeded { }), color);
+    context.drawFocusRing(rects, outlineOffset, outlineWidth, color);
 #endif
 }
 
@@ -255,26 +259,57 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
 
     ASSERT(style->outlineStyle() == OutlineStyle::Auto);
 
-    auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
+    if (auto cachedDisplayList = OutlineDisplayListCache::singleton().getIfExists(renderer)) {
+        m_paintInfo.context().drawDisplayList(*cachedDisplayList);
+        return;
+    }
+
+    DisplayList::RecorderImpl recorder(
+        m_paintInfo.context().state().clone(GraphicsContextState::Purpose::Initial),
+        { },
+        m_paintInfo.context().getCTM(GraphicsContext::DefinitelyIncludeDeviceScale),
+        m_paintInfo.context().colorSpace(),
+        DisplayList::Recorder::DrawGlyphsMode::Normal
+    );
+
+    paintFocusRingIntoContext(renderer, focusRingRects, recorder);
+
+    auto displayList = recorder.takeDisplayList();
+    m_paintInfo.context().drawDisplayList(displayList);
+
+    OutlineDisplayListCache::singleton().store(renderer, displayList);
+}
+
+void OutlinePainter::paintFocusRingIntoContext(const RenderElement& renderer, const Vector<LayoutRect>& rects, GraphicsContext& context) const
+{
+    CheckedRef style = renderer.style();
+
+    auto styleOptions = renderer.styleColorOptions();
+    styleOptions.add(StyleColorOptions::UseSystemAppearance);
+
+    auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto()
+        ? RenderTheme::singleton().focusRingColor(styleOptions)
+        : style->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+
+    auto outlineWidth = Style::evaluate<float>(style->outlineWidth(), Style::ZoomNeeded { });
     auto outlineOffset = Style::evaluate<float>(style->outlineOffset(), Style::ZoomNeeded { });
+    auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
 
     Vector<FloatRect> pixelSnappedFocusRingRects;
-    for (auto rect : focusRingRects) {
+    for (auto rect : rects) {
         rect.inflate(outlineOffset);
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto styleOptions = renderer.styleColorOptions();
-    styleOptions.add(StyleColorOptions::UseSystemAppearance);
-    auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
+
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style->hasBorderRadius()) {
         Path path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedFocusRingRects, style->border().radii(), outlineOffset, style->writingMode(), deviceScaleFactor);
         if (path.isEmpty()) {
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        drawFocusRing(m_paintInfo.context(), path, style.get(), focusRingColor);
+        drawFocusRing(context, path, outlineWidth, focusRingColor);
     } else
-        drawFocusRing(m_paintInfo.context(), pixelSnappedFocusRingRects, style.get(), focusRingColor);
+        drawFocusRing(context, pixelSnappedFocusRingRects, outlineWidth, outlineOffset, focusRingColor);
 }
 
 Vector<LayoutRect> OutlinePainter::collectFocusRingRects(const RenderElement& renderer, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)

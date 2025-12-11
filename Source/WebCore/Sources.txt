@@ -2857,6 +2857,7 @@ rendering/MarkedText.cpp
 rendering/MotionPath.cpp
 rendering/NinePieceImagePainter.cpp
 rendering/OrderIterator.cpp
+rendering/OutlineDisplayListCache.cpp
 rendering/OutlinePainter.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp

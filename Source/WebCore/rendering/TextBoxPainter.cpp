@@ -28,6 +28,7 @@
 #include "CaretRectComputation.h"
 #include "CompositionHighlight.h"
 #include "DocumentMarkerController.h"
+#include "DocumentView.h"
 #include "Editor.h"
 #include "EventRegion.h"
 #include "GraphicsContext.h"

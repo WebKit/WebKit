@@ -20,6 +20,7 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
+#include "StyleDifference.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>

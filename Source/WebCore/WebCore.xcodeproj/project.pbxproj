@@ -16499,6 +16499,8 @@
 		9DAC7C561AF2CB6400437C44 /* StyleContentAlignmentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleContentAlignmentData.h; sourceTree = "<group>"; };
 		9E5F6AC02E441ABC001C81D8 /* SourceAlphaCoreImageApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceAlphaCoreImageApplier.h; sourceTree = "<group>"; };
 		9E5F6AC12E441B09001C81D8 /* SourceAlphaCoreImageApplier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SourceAlphaCoreImageApplier.mm; sourceTree = "<group>"; };
+		9E61D6302EE705640034963D /* OutlineDisplayListCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OutlineDisplayListCache.h; sourceTree = "<group>"; };
+		9E61D6312EE7059D0034963D /* OutlineDisplayListCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OutlineDisplayListCache.cpp; sourceTree = "<group>"; };
 		9E68A6952DC9406100039106 /* FrameMemoryMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameMemoryMonitor.h; sourceTree = "<group>"; };
 		9E68A6962DC9407300039106 /* FrameMemoryMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMemoryMonitor.cpp; sourceTree = "<group>"; };
 		A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLShaderPrecisionFormat.cpp; sourceTree = "<group>"; };
@@ -40492,6 +40494,8 @@
 				BCEF43DC0E674012001C1287 /* NinePieceImagePainter.h */,
 				CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */,
 				CDE7FC43181904B1002BBB77 /* OrderIterator.h */,
+				9E61D6312EE7059D0034963D /* OutlineDisplayListCache.cpp */,
+				9E61D6302EE705640034963D /* OutlineDisplayListCache.h */,
 				E48359572ED73A1700F72EF6 /* OutlinePainter.cpp */,
 				E48359552ED73A0D00F72EF6 /* OutlinePainter.h */,
 				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,

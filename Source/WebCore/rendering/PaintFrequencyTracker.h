@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/TZoneMallocInlines.h>
-
+#include <wtf/MonotonicTime.h>
 namespace WebCore {
 
 // This class is used to detect when we are painting frequently so that - even in a painting model

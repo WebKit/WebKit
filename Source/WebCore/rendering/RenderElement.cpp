@@ -51,6 +51,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "OutlineDisplayListCache.h"
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PathUtilities.h"
@@ -1124,6 +1125,7 @@ void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* ol
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
         issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().outlineSize() : oldStyle->outlineSize());
+        OutlineDisplayListCache::singleton().remove(this);
     }
 
     bool shouldCheckIfInAncestorChain = false;
@@ -1240,6 +1242,9 @@ void RenderElement::willBeDestroyed()
 
     if (style().contentVisibility() == ContentVisibility::Auto && element())
         ContentVisibilityDocumentState::unobserve(*protectedElement());
+
+    if (hasOutline())
+        OutlineDisplayListCache::singleton().remove(this);
 }
 
 void RenderElement::setNeedsOutOfFlowMovementLayout(const RenderStyle* oldStyle)

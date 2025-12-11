@@ -95,6 +95,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "OutlineDisplayListCache.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -2223,6 +2224,11 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
             sc->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
         }
     }
+
+    // Only invalidates for self-outline changes
+    // FIXME: Check if position change affects any ancestor outline
+    if (geometryChanged && renderer().hasOutline())
+        OutlineDisplayListCache::singleton().remove(&renderer());
 
     return geometryChanged;
 }
