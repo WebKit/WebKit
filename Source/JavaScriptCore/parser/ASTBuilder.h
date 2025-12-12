@@ -998,6 +998,7 @@ public:
     PropertyNode::Type getType(const Property& property) const { return property->type(); }
     bool isUnderscoreProtoSetter(const Property& property) const { return PropertyNode::isUnderscoreProtoSetter(m_vm, *property); }
     bool isResolve(ExpressionNode* expr) const { return expr->isResolveNode(); }
+    void setExpressionIsParenthesized(ExpressionNode* expr) { expr->setIsParenthesized(); }
 
     ExpressionNode* createDestructuringAssignment(const JSTokenLocation& location, DestructuringPattern pattern, ExpressionNode* initializer)
     {
@@ -1626,24 +1627,29 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
+        bool shouldInferName = !loc->isParenthesized();
 
         if (op == Operator::Equal) {
-            if (expr->isBaseFuncExprNode()) {
-                auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
-                metadata->setEcmaName(resolve->identifier());
-            } else if (expr->isClassExprNode())
-                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            if (shouldInferName) {
+                if (expr->isBaseFuncExprNode()) {
+                    auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
+                    metadata->setEcmaName(resolve->identifier());
+                } else if (expr->isClassExprNode())
+                    static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            }
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
             setExceptionLocation(node, start, divot, end);
             return node;
         }
 
         if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
-            if (expr->isBaseFuncExprNode()) {
-                auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
-                metadata->setEcmaName(resolve->identifier());
-            } else if (expr->isClassExprNode())
-                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            if (shouldInferName) {
+                if (expr->isBaseFuncExprNode()) {
+                    auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
+                    metadata->setEcmaName(resolve->identifier());
+                } else if (expr->isClassExprNode())
+                    static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            }
             return new (m_parserArena) ShortCircuitReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
         }
 

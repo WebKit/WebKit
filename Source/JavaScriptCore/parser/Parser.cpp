@@ -5172,6 +5172,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         SetForScope nonLHSCountScope(m_parserState.nonLHSCount);
         TreeExpression result = parseExpression(context);
         handleProductionOrFail(CLOSEPAREN, ")", "end", "compound expression");
+        if (result)
+            context.setExpressionIsParenthesized(result);
         return result;
     }
     case THISTOKEN: {
