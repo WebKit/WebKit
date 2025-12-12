@@ -218,8 +218,6 @@ inline TimerHeapIterator operator-(TimerHeapIterator a, size_t b) { return Timer
 inline ptrdiff_t operator-(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer - b.m_pointer; }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-// ----------------
-
 class TimerHeapLessThanFunction {
 public:
     static bool compare(const TimerBase& a, const RefPtr<ThreadTimerHeapItem>& b)
