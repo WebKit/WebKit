@@ -26,13 +26,16 @@
 #import "config.h"
 #import "ImageTransferSessionVT.h"
 
+#import "CGUtilities.h"
 #import "CVUtilities.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "VideoFrameCV.h"
+#import <Accelerate/Accelerate.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <wtf/Scope.h>
 
 #if !PLATFORM(MACCATALYST)
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -215,27 +218,56 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CGImageRef
     if (!image || !setSize(size))
         return nullptr;
 
-    CVPixelBufferRef rgbBuffer;
-    auto imageSize = IntSize(CGImageGetWidth(image), CGImageGetHeight(image));
-    auto status = CVPixelBufferCreate(kCFAllocatorDefault, imageSize.width(), imageSize.height(), kCVPixelFormatType_32ARGB, nullptr, &rgbBuffer);
-    if (status != kCVReturnSuccess) {
-        RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CVPixelBufferCreate failed with error code: %d", static_cast<int>(status));
-        return nullptr;
+    auto imageSize = cgImageSize(image);
+    RetainPtr<CVPixelBufferRef> buffer;
+    {
+        CVPixelBufferRef rawBuffer = nullptr;
+        auto status = CVPixelBufferCreate(kCFAllocatorDefault, imageSize.width(), imageSize.height(), kCVPixelFormatType_32ARGB, nullptr, &rawBuffer);
+        if (status != kCVReturnSuccess) {
+            RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CVPixelBufferCreate failed with error code: %d", static_cast<int>(status));
+            return nullptr;
+        }
+        auto buffer = adoptCF(rawBuffer);
     }
-
-    CVPixelBufferLockBaseAddress(rgbBuffer, 0);
-    void* data = CVPixelBufferGetBaseAddress(rgbBuffer);
-    auto retainedRGBBuffer = adoptCF(rgbBuffer);
-    auto context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(rgbBuffer), sRGBColorSpaceSingleton(), (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
-    if (!context) {
-        RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CGBitmapContextCreate returned nullptr");
-        return nullptr;
+    bool hasAlpha = cgImageHasAlpha(image);
+    {
+        CGImageAlphaInfo alphaInfo = hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        size_t bitsPerComponent = 8;
+        size_t bytesPerRow = CVPixelBufferGetBytesPerRow(buffer.get());
+        if (CVPixelBufferLockBaseAddress(buffer.get(), 0) != noErr)
+            return nullptr;
+        auto unlock = makeScopeExit([&buffer] {
+            CVPixelBufferUnlockBaseAddress(buffer.get(), 0);
+        });
+        void* data = CVPixelBufferGetBaseAddress(buffer.get());
+        RetainPtr context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), bitsPerComponent, bytesPerRow, sRGBColorSpaceSingleton(), static_cast<CGBitmapInfo>(alphaInfo)));
+        if (!context) {
+            RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CGBitmapContextCreate returned nullptr");
+            return nullptr;
+        }
+        CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), image);
+        if (hasAlpha) {
+            // Currently we unpremultiply instead of marking premultiplied, since other parts of
+            // the code do not expect CVPixelBuffers with alpha premultiplied.
+            vImage_Buffer result {
+                .data = static_cast<uint8_t*>(data),
+                .height = static_cast<vImagePixelCount>(size.height()),
+                .width = static_cast<vImagePixelCount>(size.width()),
+                .rowBytes = bytesPerRow
+            };
+            auto status = vImageUnpremultiplyData_ARGB8888(&result, &result, kvImageNoFlags);
+            ASSERT_UNUSED(status, status == kvImageNoError);
+        }
     }
-
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), image);
-    CVPixelBufferUnlockBaseAddress(rgbBuffer, 0);
-
-    return convertPixelBuffer(rgbBuffer, size);
+    CVBufferSetAttachment(buffer.get(), kCVImageBufferAlphaChannelIsOpaque, hasAlpha ? kCFBooleanFalse : kCFBooleanTrue, kCVAttachmentMode_ShouldPropagate);
+    if (hasAlpha)
+        CVBufferSetAttachment(buffer.get(), kCVImageBufferAlphaChannelModeKey, kCVImageBufferAlphaChannelMode_StraightAlpha, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(buffer.get(), kCVImageBufferCGColorSpaceKey, sRGBColorSpaceSingleton(), kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(buffer.get(), kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    if (PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB())
+        CVBufferSetAttachment(buffer.get(), kCVImageBufferTransferFunctionKey, PAL::kCMFormatDescriptionTransferFunction_sRGB, kCVAttachmentMode_ShouldPropagate);
+    return convertPixelBuffer(buffer.get(), size);
 }
 
 RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixelBufferRef sourceBuffer, const MediaTime& sampleTime, const IntSize& size)

@@ -87,9 +87,20 @@ inline FloatRect cgRoundToDevicePixels(CGAffineTransform deviceMatrix, FloatRect
     return cgRoundToDevicePixelsNonIdentity(deviceMatrix, rect);
 }
 
+inline IntSize cgImageSize(CGImageRef image)
+{
+    return { static_cast<int>(CGImageGetWidth(image)), static_cast<int>(CGImageGetHeight(image)) };
+}
+
 inline IntRect cgImageRect(CGImageRef image)
 {
-    return { 0, 0, static_cast<int>(CGImageGetWidth(image)), static_cast<int>(CGImageGetHeight(image)) };
+    return { { }, cgImageSize(image) };
+}
+
+inline bool cgImageHasAlpha(CGImageRef image)
+{
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(image);
+    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
 }
 
 inline std::span<CGPoint> pointsSpan(const CGPathElement* element)

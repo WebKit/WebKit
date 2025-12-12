@@ -230,42 +230,26 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
 
         RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
+        RefPtr image = imageBuffer ? imageBuffer->copyNativeImage() : nullptr;
+        if (!image)
+            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
+        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
     },
 #endif // ENABLE(OFFSCREEN_CANVAS)
-    [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
+    [&] (RefPtr<ImageBitmap>& imageBitmap) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {
         if (!init.timestamp)
             return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-        if (!image->width() || !image->height())
+        if (!imageBitmap->width() || !imageBitmap->height())
             return Exception { ExceptionCode::InvalidStateError,  "Input image has a bad size"_s };
 
-        RefPtr imageBuffer = image->buffer();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input image has no image buffer"_s };
+        RefPtr image = imageBitmap->copyNativeImage();
+        if (!image)
+            return Exception { ExceptionCode::InvalidStateError,  "Input image has no image"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(image->width()), static_cast<int>(image->height()) }, WTFMove(init));
+        return initializeFrameWithResourceAndSize(context, image.releaseNonNull(), WTFMove(init));
     });
-}
-
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
-{
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
-    IntRect region { IntPoint::zero(), size };
-
-    auto pixelBuffer = buffer.getPixelBuffer(format, region);
-    if (!pixelBuffer)
-        return Exception { ExceptionCode::InvalidStateError,  "Buffer has no frame"_s };
-
-    auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
-
-    if (!videoFrame)
-        return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };
-
-    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& initFrame, Init&& init)
@@ -445,7 +429,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-with-resource-and-size
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithResourceAndSize(ScriptExecutionContext& context, Ref<NativeImage>&& image, Init&& init)
 {
-    auto internalVideoFrame = VideoFrame::fromNativeImage(image.get());
+    auto internalVideoFrame = VideoFrame::createFromNativeImage(image.get());
     if (!internalVideoFrame)
         return Exception { ExceptionCode::TypeError,  "image has no resource"_s };
 

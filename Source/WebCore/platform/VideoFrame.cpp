@@ -64,7 +64,7 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldCloneWith
 }
 
 #if !PLATFORM(COCOA) && !USE(GSTREAMER)
-RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
+RefPtr<VideoFrame> VideoFrame::createFromNativeImage(NativeImage&)
 {
     // FIXME: Add support.
     return nullptr;
