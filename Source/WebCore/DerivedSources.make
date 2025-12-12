@@ -1055,6 +1055,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/ElementCSSInlineStyle+Typedom.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
+    $(WebCore)/css/FontFaceSetLoadEvent.idl \
+    $(WebCore)/css/FontFaceSetLoadEventInit.idl \
     $(WebCore)/css/FontFaceSource.idl \
     $(WebCore)/css/LinkStyle.idl \
     $(WebCore)/css/MediaList.idl \

@@ -33,6 +33,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FontFace.h"
+#include "FontFaceSetLoadEvent.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "JSDOMBinding.h"
@@ -46,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FontFaceSet);
 
-Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
+Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const FontFaceArray& initialFaces)
 {
     Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, initialFaces));
     result->suspendIfNeeded();
@@ -60,7 +61,7 @@ Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, CSSFontFac
     return result;
 }
 
-FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
+FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const FontFaceArray& initialFaces)
     : ActiveDOMObject(&context)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
@@ -260,11 +261,26 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
     }
 }
 
+FontFaceArray FontFaceSet::loadingFonts() const
+{
+    FontFaceArray pendingFontFaces;
+    pendingFontFaces.reserveCapacity(m_pendingPromises.size());
+
+    for (const auto& fontFace : m_pendingPromises.keys()) {
+        if (!fontFace)
+            continue;
+
+        pendingFontFaces.append(*fontFace);
+    }
+
+    return pendingFontFaces;
+}
+
 void FontFaceSet::startedLoading()
 {
     if (m_readyPromise->isFulfilled())
         m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve);
-    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadingEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, FontFaceSetLoadEvent::create(eventNames().loadingEvent, loadingFonts()));
 }
 
 void FontFaceSet::documentDidFinishLoading()

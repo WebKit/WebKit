@@ -108,6 +108,7 @@
     "focus": { "defaultEventHandler": true },
     "focusin": { },
     "focusout": { },
+    "fontfacesetload": { },
     "formdata": { },
     "fullscreenchange": { },
     "fullscreenerror": { },

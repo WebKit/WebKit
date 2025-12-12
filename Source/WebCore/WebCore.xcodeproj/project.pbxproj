@@ -3038,6 +3038,8 @@
 		7ABB0F602CE7C170009A837D /* QuirksData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABB0F5F2CE7C170009A837D /* QuirksData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AC09F4728C0122C004568FC /* TestReportBody.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AC09F4528C00E5D004568FC /* TestReportBody.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AD41E7E2C7607AF00ED9467 /* ScrollingPlatformLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AD41E7D2C7607AA00ED9467 /* ScrollingPlatformLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AD4479E2EEC93920039F9E7 /* JSFontFaceSetLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AD4479A2EEC93600039F9E7 /* JSFontFaceSetLoadEvent.h */; };
+		7AD4479F2EEC939C0039F9E7 /* JSFontFaceSetLoadEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AD4479C2EEC93600039F9E7 /* JSFontFaceSetLoadEventInit.h */; };
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AE335F21ACB09E200E401EF /* WheelEventTestMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE335F01ACB09E200E401EF /* WheelEventTestMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14317,6 +14319,15 @@
 		7AC09F4528C00E5D004568FC /* TestReportBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestReportBody.h; sourceTree = "<group>"; };
 		7AC09F4628C0120C004568FC /* TestReportBody.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestReportBody.idl; sourceTree = "<group>"; };
 		7AD41E7D2C7607AA00ED9467 /* ScrollingPlatformLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingPlatformLayer.h; sourceTree = "<group>"; };
+		7AD447952EEB9DAB0039F9E7 /* FontFaceSetLoadEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FontFaceSetLoadEventInit.idl; sourceTree = "<group>"; };
+		7AD447962EEB9E320039F9E7 /* FontFaceSetLoadEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FontFaceSetLoadEvent.idl; sourceTree = "<group>"; };
+		7AD447972EEBA1570039F9E7 /* FontFaceSetLoadEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontFaceSetLoadEvent.cpp; sourceTree = "<group>"; };
+		7AD447982EEBA1D90039F9E7 /* FontFaceSetLoadEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFaceSetLoadEvent.h; sourceTree = "<group>"; };
+		7AD447992EEBA32C0039F9E7 /* FontFaceSetLoadEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFaceSetLoadEventInit.h; sourceTree = "<group>"; };
+		7AD4479A2EEC93600039F9E7 /* JSFontFaceSetLoadEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSFontFaceSetLoadEvent.h; path = JSFontFaceSetLoadEvent.h; sourceTree = "<group>"; };
+		7AD4479B2EEC93600039F9E7 /* JSFontFaceSetLoadEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSFontFaceSetLoadEvent.cpp; path = JSFontFaceSetLoadEvent.cpp; sourceTree = "<group>"; };
+		7AD4479C2EEC93600039F9E7 /* JSFontFaceSetLoadEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSFontFaceSetLoadEventInit.h; path = JSFontFaceSetLoadEventInit.h; sourceTree = "<group>"; };
+		7AD4479D2EEC93600039F9E7 /* JSFontFaceSetLoadEventInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSFontFaceSetLoadEventInit.cpp; path = JSFontFaceSetLoadEventInit.cpp; sourceTree = "<group>"; };
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
 		7AE335EF1ACB09E200E401EF /* WheelEventTestMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventTestMonitor.cpp; sourceTree = "<group>"; };
 		7AE335F01ACB09E200E401EF /* WheelEventTestMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventTestMonitor.h; sourceTree = "<group>"; };
@@ -34321,6 +34332,10 @@
 				5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */,
 				B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */,
 				B6D9D27914EAC0860090D75E /* JSFocusEvent.h */,
+				7AD4479B2EEC93600039F9E7 /* JSFontFaceSetLoadEvent.cpp */,
+				7AD4479A2EEC93600039F9E7 /* JSFontFaceSetLoadEvent.h */,
+				7AD4479D2EEC93600039F9E7 /* JSFontFaceSetLoadEventInit.cpp */,
+				7AD4479C2EEC93600039F9E7 /* JSFontFaceSetLoadEventInit.h */,
 				0FDA7C1C188322FC00C954B5 /* JSGestureEvent.cpp */,
 				0FDA7C1D188322FC00C954B5 /* JSGestureEvent.h */,
 				8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */,
@@ -40283,6 +40298,11 @@
 				1C24EEA21C729CE40080F8FC /* FontFaceSet.cpp */,
 				1C24EEA31C729CE40080F8FC /* FontFaceSet.h */,
 				1C24EEA11C729B320080F8FC /* FontFaceSet.idl */,
+				7AD447972EEBA1570039F9E7 /* FontFaceSetLoadEvent.cpp */,
+				7AD447982EEBA1D90039F9E7 /* FontFaceSetLoadEvent.h */,
+				7AD447962EEB9E320039F9E7 /* FontFaceSetLoadEvent.idl */,
+				7AD447992EEBA32C0039F9E7 /* FontFaceSetLoadEventInit.h */,
+				7AD447952EEB9DAB0039F9E7 /* FontFaceSetLoadEventInit.idl */,
 				7C3A8ABC2509A256008C477F /* FontFaceSource.idl */,
 				BC4A532E256057CD0028C592 /* FontLoadTimingOverride.h */,
 				C2AB0B031E6DE92C001348C5 /* FontSelectionValueInlines.h */,
@@ -44656,6 +44676,8 @@
 				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
 				C280833F1C6DC26F001451B6 /* JSFontFace.h in Headers */,
 				1C24EEA91C72A7B40080F8FC /* JSFontFaceSet.h in Headers */,
+				7AD4479E2EEC93920039F9E7 /* JSFontFaceSetLoadEvent.h in Headers */,
+				7AD4479F2EEC939C0039F9E7 /* JSFontFaceSetLoadEventInit.h in Headers */,
 				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */,
 				518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */,

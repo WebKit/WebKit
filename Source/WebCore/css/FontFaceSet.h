@@ -38,11 +38,14 @@ template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class DOMException;
+class FontFaceSetLoadEvent;
+
+using FontFaceArray = Vector<Ref<FontFace>>;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
 public:
-    static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
+    static Ref<FontFaceSet> create(ScriptExecutionContext&, const FontFaceArray& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();
 
@@ -93,18 +96,20 @@ private:
         PendingPromise(LoadPromise&&);
 
     public:
-        Vector<Ref<FontFace>> faces;
+        FontFaceArray faces;
         UniqueRef<LoadPromise> promise;
         bool hasReachedTerminalState { false };
     };
 
-    FontFaceSet(ScriptExecutionContext&, const Vector<Ref<FontFace>>&);
+    FontFaceSet(ScriptExecutionContext&, const FontFaceArray&);
     FontFaceSet(ScriptExecutionContext&, CSSFontFaceSet&);
 
     // FontEventClient
     void faceFinished(CSSFontFace&, CSSFontFace::Status) final;
     void startedLoading() final;
     void completedLoading() final;
+
+    FontFaceArray loadingFonts() const;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::FontFaceSet; }

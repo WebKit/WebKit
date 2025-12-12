@@ -1343,6 +1343,8 @@ $(PROJECT_DIR)/css/ElementCSSInlineStyle+Typedom.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
+$(PROJECT_DIR)/css/FontFaceSetLoadEvent.idl
+$(PROJECT_DIR)/css/FontFaceSetLoadEventInit.idl
 $(PROJECT_DIR)/css/FontFaceSource.idl
 $(PROJECT_DIR)/css/LinkStyle.idl
 $(PROJECT_DIR)/css/MediaList.idl
