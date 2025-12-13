@@ -23,6 +23,37 @@ Modules/webdatabase/LocalDOMWindowWebDatabase.cpp
 Modules/webdatabase/SQLTransaction.cpp
 StyleBuilderGenerated.cpp
 StyleExtractorGenerated.cpp
+[ Mac ] accessibility/mac/AXObjectCacheMac.mm
+[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
+[ Mac ] dom/mac/ImageControlsMac.cpp
+[ Mac ] editing/mac/EditorMac.mm
+[ Mac ] page/ContextMenuController.cpp
+[ Mac ] page/mac/EventHandlerMac.mm
+[ Mac ] page/mac/ServicesOverlayController.mm
+[ Mac ] page/scrolling/ScrollLatchingController.cpp
+[ Mac ] platform/cocoa/DragImageCocoa.mm
+[ Mac ] testing/Internals.mm
+[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+[ iOS ] editing/ios/EditorIOS.mm
+[ iOS ] html/ColorInputType.cpp
+[ iOS ] html/HTMLAnchorElement.cpp
+[ iOS ] page/Chrome.cpp
+[ iOS ] page/DOMTimer.cpp
+[ iOS ] page/Page.cpp
+[ iOS ] page/Quirks.cpp
+[ iOS ] page/ios/ContentChangeObserver.cpp
+[ iOS ] page/ios/EventHandlerIOS.mm
+[ iOS ] page/ios/FrameIOS.mm
+[ iOS ] platform/ios/DeviceMotionClientIOS.mm
+[ iOS ] platform/ios/DeviceOrientationClientIOS.mm
+[ iOS ] platform/ios/PlatformScreenIOS.mm
+[ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.h
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
+[ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
+[ iOS ] rendering/RenderLineBreak.cpp
+[ iOS ] rendering/ios/RenderThemeIOS.mm
 accessibility/AXObjectCache.cpp
 accessibility/AXObjectCache.h
 accessibility/AccessibilityListBoxOption.cpp
@@ -39,10 +70,6 @@ accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilitySlider.cpp
 accessibility/AccessibilitySpinButton.cpp
 accessibility/cocoa/AccessibilityObjectCocoa.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-[ Mac ] accessibility/mac/AXObjectCacheMac.mm
-[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 animation/BlendingKeyframes.cpp
 animation/ElementAnimationRareData.cpp
 animation/KeyframeEffect.cpp
@@ -146,7 +173,6 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-[ Mac ] dom/mac/ImageControlsMac.cpp
 editing/AlternativeTextController.cpp
 editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp
@@ -184,19 +210,15 @@ editing/VisibleUnits.cpp
 editing/cocoa/EditorCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm
 editing/cocoa/WebContentReaderCocoa.mm
-[ iOS ] editing/ios/EditorIOS.mm
-[ Mac ] editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
 editing/markup.cpp
 history/CachedFrame.cpp
 html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
-[ iOS ] html/ColorInputType.cpp
 html/FTPDirectoryDocument.cpp
 html/FormAssociatedCustomElement.cpp
 html/FormAssociatedElement.cpp
-[ iOS ] html/HTMLAnchorElement.cpp
 html/HTMLFormElement.cpp
 html/HTMLInputElement.cpp
 html/HTMLLinkElement.cpp
@@ -349,10 +371,7 @@ mathml/MathMLOperatorElement.cpp
 mathml/MathMLPresentationElement.cpp
 mathml/MathMLSelectElement.cpp
 page/AutoscrollController.cpp
-[ iOS ] page/Chrome.cpp
-[ Mac ] page/ContextMenuController.cpp
 page/DOMSelection.cpp
-[ iOS ] page/DOMTimer.cpp
 page/DebugPageOverlays.cpp
 page/DragController.cpp
 page/ElementTargetingController.cpp
@@ -370,7 +389,6 @@ page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
 page/MemoryRelease.cpp
 page/NavigateEvent.cpp
-[ iOS ] page/Page.cpp
 page/PageColorSampler.cpp
 page/PageOverlayController.cpp
 page/PageSerializer.cpp
@@ -379,7 +397,6 @@ page/PerformanceMonitor.cpp
 page/PointerCaptureController.cpp
 page/PointerLockController.cpp
 page/PrintContext.cpp
-[ iOS ] page/Quirks.cpp
 page/RemoteFrame.cpp
 page/ResizeObservation.cpp
 page/ResizeObserver.cpp
@@ -389,14 +406,8 @@ page/SpatialNavigation.cpp
 page/TextIndicator.cpp
 page/VisualViewport.cpp
 page/cocoa/PageCocoa.mm
-[ iOS ] page/ios/ContentChangeObserver.cpp
-[ iOS ] page/ios/EventHandlerIOS.mm
-[ iOS ] page/ios/FrameIOS.mm
-[ Mac ] page/mac/EventHandlerMac.mm
-[ Mac ] page/mac/ServicesOverlayController.mm
 page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollAnchoringController.cpp
-[ Mac ] page/scrolling/ScrollLatchingController.cpp
 page/scrolling/ScrollSnapOffsetsInfo.cpp
 page/scrolling/ScrollingCoordinator.cpp
 page/scrolling/ScrollingStateNode.cpp
@@ -410,7 +421,6 @@ platform/ScrollingEffectsController.cpp
 platform/Widget.cpp
 platform/audio/PlatformMediaSession.cpp
 platform/audio/PlatformMediaSessionInterface.h
-[ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/cocoa/WebAVPlayerLayer.mm
@@ -421,15 +431,8 @@ platform/graphics/ca/TileController.cpp
 platform/graphics/ca/TileCoverageMap.cpp
 platform/graphics/ca/cocoa/WebTiledBackingLayer.mm
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
-[ iOS ] platform/ios/DeviceMotionClientIOS.mm
-[ iOS ] platform/ios/DeviceOrientationClientIOS.mm
-[ iOS ] platform/ios/PlatformScreenIOS.mm
 platform/ios/PlaybackSessionInterfaceIOS.mm
-[ iOS ] platform/ios/TileControllerMemoryHandlerIOS.cpp
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.h
-[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 platform/ios/WebAVPlayerController.mm
-[ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 platform/mock/MockRealtimeVideoSource.cpp
 platform/text/cocoa/LocalizedDateCache.mm
 rendering/AccessibilityRegionContext.cpp
@@ -504,7 +507,6 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
-[ iOS ] rendering/RenderLineBreak.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderListMarker.cpp
@@ -545,7 +547,6 @@ rendering/TextAutoSizing.h
 rendering/TextBoxPainter.cpp
 rendering/TextBoxTrimmer.cpp
 rendering/TextDecorationPainter.cpp
-[ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/line/BreakingContext.h
 rendering/line/LineInlineHeaders.h
 rendering/line/TrailingObjects.cpp
@@ -683,9 +684,7 @@ svg/SVGClipPathElement.cpp
 svg/SVGCursorElement.cpp
 svg/SVGElement.cpp
 svg/SVGElement.h
-svg/SVGFEDiffuseLightingElement.cpp
 svg/SVGFEImageElement.cpp
-svg/SVGFESpecularLightingElement.cpp
 svg/SVGFontFaceElement.cpp
 svg/SVGFontFaceUriElement.cpp
 svg/SVGImageElement.cpp
@@ -700,7 +699,6 @@ svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
 svg/properties/SVGAnimatedString.cpp
 testing/Internals.cpp
-[ Mac ] testing/Internals.mm
 workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerNotificationClient.cpp
