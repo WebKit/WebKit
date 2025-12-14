@@ -28,7 +28,7 @@ CompileFlags:
         $header_file_platform_specific_flags
         $platform_specific_flags
         --include=config.h,
-        -std=c++2a,
+        -std=c++2b,
     ]
 ---
 If:
