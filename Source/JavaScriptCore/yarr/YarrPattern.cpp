@@ -286,7 +286,7 @@ public:
                 // Nothing to do - no canonical equivalents.
                 break;
             case CanonicalizeSet: {
-                char16_t ch;
+                char32_t ch;
                 for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addSorted(ch);
                 break;

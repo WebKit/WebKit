@@ -40,6 +40,7 @@
 #include <wtf/StackCheck.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -279,6 +280,8 @@ public:
             , length(input.size())
             , decodeSurrogatePairs(decodeSurrogatePairs)
         {
+            if constexpr (std::is_same_v<CharType, char16_t>)
+                ASSERT(decodeSurrogatePairs);
         }
 
         void next()
@@ -296,7 +299,7 @@ public:
         {
             ASSERT(pos < length);
             if (pos < length)
-                return input[pos];
+                return brokenCastToUTF32(input[pos]);
             return errorCodePoint;
         }
 
@@ -313,7 +316,7 @@ public:
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
             } else if (decodeSurrogatePairs && p > 0 && U16_IS_TRAIL(result) && U16_IS_LEAD(input[p - 1]))
                 return errorCodePoint;
-            return result;
+            return brokenCastToUTF32(result);
         }
 
         char32_t readCheckedDontAdvance(unsigned negativePositionOffest)
@@ -327,7 +330,7 @@ public:
                     return errorCodePoint;
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
             }
-            return result;
+            return brokenCastToUTF32(result);
         }
 
         // readForCharacterDump() is only for use by the DUMP_CURR_CHAR macro.
@@ -343,7 +346,7 @@ public:
                     return errorCodePoint;
                 return U16_GET_SUPPLEMENTARY(result, input[p + 1]);
             }
-            return result;
+            return brokenCastToUTF32(result);
         }
         
         char32_t tryReadBackward(unsigned negativePositionOffest)
@@ -357,7 +360,7 @@ public:
                 rewind(1);
                 return U16_GET_SUPPLEMENTARY(input[p - 1], result);
             }
-            return result;
+            return brokenCastToUTF32(result);
         }
 
         char32_t readSurrogatePairChecked(unsigned negativePositionOffset)
@@ -384,7 +387,7 @@ public:
                 if (U16_IS_TRAIL(result) && U16_IS_LEAD(input[from + 1]))
                     return errorCodePoint;
             }
-            return result;
+            return brokenCastToUTF32(result);
         }
 
         char32_t prev()
@@ -478,6 +481,24 @@ public:
         }
 
     private:
+        char32_t brokenCastToUTF32(CharType c)
+        {
+            if constexpr (std::is_same_v<CharType, char16_t>)
+                // FIXME: Should use castNonSurrogateUTF16CodeUnitToUTF32 here, but can't because
+                // although YarrInterpreter is surrogate-aware, it only processes *correct*
+                // surrogates and does not handle invalid UTF-16. E.g. if YarrInterpreter were to
+                // ignore an unpaired surrogate, or a trail surrogate before a lead surrogate, then
+                // castNonSurrogateUTF16CodeUnitToUTF32 would assert.
+                return deprecatedBrokenCastUTF16CodeUnitToUTF32IgnoringSurrogates(c);
+            else if constexpr (std::is_same_v<CharType, Latin1Character>)
+                // FIXME: This is broken for non-ASCII characters (0x80..0xff).
+                return deprecatedBrokenCastLatin1CharacterToUTF32WithoutConvertingToUnicode(c);
+            else if constexpr (sizeof (CharType) == 1)
+                return castSingleByteCodeUnitToUTF32(c);
+            else
+                static_assert(false); // Should not be reached.
+        }
+
         const CharType* input;
         unsigned pos;
         unsigned length;

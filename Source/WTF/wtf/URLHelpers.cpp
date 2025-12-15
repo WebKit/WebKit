@@ -38,6 +38,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WTF {
 namespace URLHelpers {
@@ -171,10 +172,13 @@ bool isLookalikeSequence(const std::optional<char32_t>& previousCodePoint, char3
         return false;
 
     auto isLookalikePair = [] (char16_t first, char16_t second) {
-        return isLookalikeCharacterOfScriptType<ScriptType>(first) && !(isOfScriptType<ScriptType>(second) || isASCIIDigitOrValidHostCharacter(second));
+        return isLookalikeCharacterOfScriptType<ScriptType>(static_cast<char32_t>(first)) && !(isOfScriptType<ScriptType>(static_cast<char32_t>(second)) || isASCIIDigitOrValidHostCharacter(second));
     };
-    return isLookalikePair(codePoint, *previousCodePoint)
-        || isLookalikePair(*previousCodePoint, codePoint);
+
+    auto truncatedPreviousCodePoint = static_cast<char16_t>(*previousCodePoint);
+    auto truncatedCodePoint = static_cast<char16_t>(codePoint);
+    return isLookalikePair(truncatedCodePoint, truncatedPreviousCodePoint)
+        || isLookalikePair(truncatedPreviousCodePoint, truncatedCodePoint);
 }
 
 template <>
@@ -408,8 +412,7 @@ static bool allCharactersInAllowedIDNScriptList(std::span<const char16_t> buffer
     size_t i = 0;
     std::optional<char32_t> previousCodePoint;
     while (i < buffer.size()) {
-        char32_t c;
-        U16_NEXT(buffer, i, buffer.size(), c);
+        char32_t c = u16Next(buffer, i);
         UErrorCode error = U_ZERO_ERROR;
         UScriptCode script = uscript_getScript(c, &error);
         if (error != U_ZERO_ERROR) {

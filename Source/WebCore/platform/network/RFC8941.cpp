@@ -35,12 +35,14 @@
 
 namespace RFC8941 {
 
-template<typename CharacterType> constexpr bool isEndOfToken(CharacterType character)
+template<typename CharacterType> static constexpr bool isEndOfToken(CharacterType character)
 {
-    return !RFC7230::isTokenCharacter(character) && character != ':' && character != '/';
+    // FIXME: This cast to char16_t is incorrect. We should probably change
+    // RFC8941 to use CharacterType templates.
+    return !RFC7230::isTokenCharacter(static_cast<char16_t>(character)) && character != ':' && character != '/';
 }
 
-template<typename CharacterType> constexpr bool isEndOfKey(CharacterType character)
+template<typename CharacterType> static constexpr bool isEndOfKey(CharacterType character)
 {
     return !isASCIILower(character) && !isASCIIDigit(character) && character != '_' && character != '-' && character != '.' && character != '*';
 }

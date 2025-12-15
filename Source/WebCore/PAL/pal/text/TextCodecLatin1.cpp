@@ -210,7 +210,7 @@ static Vector<uint8_t> encodeComplexWindowsLatin1(StringView string, Unencodable
         if (b != character || (character & 0xE0) == 0x80) {
             // Look for a way to encode this with Windows Latin-1.
             for (b = 0x80; b < 0xA0; ++b) {
-                if (latin1ConversionTable[b] == character)
+                if (static_cast<char32_t>(latin1ConversionTable[b]) == character)
                     goto gotByte;
             }
             // No way to encode this character with Windows Latin-1.

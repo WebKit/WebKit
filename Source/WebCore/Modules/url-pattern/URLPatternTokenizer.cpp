@@ -46,7 +46,7 @@ bool Token::isNull() const
 // https://urlpattern.spec.whatwg.org/#get-the-next-code-point
 void Tokenizer::getNextCodePoint()
 {
-    m_codepoint = m_input[m_nextIndex++];
+    m_codepoint = static_cast<char32_t>(m_input[m_nextIndex++]);
 
     if (m_input.is8Bit() || !U16_IS_LEAD(m_codepoint) || m_nextIndex >= m_input.length())
         return;

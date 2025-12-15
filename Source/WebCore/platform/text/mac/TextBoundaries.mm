@@ -36,6 +36,7 @@
 #import <wtf/text/StringView.h>
 #import <wtf/text/TextBreakIterator.h>
 #import <wtf/text/TextBreakIteratorInternalICU.h>
+#import <wtf/text/icu/UnicodeExtras.h>
 #import <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -88,9 +89,8 @@ static void findSimpleWordBoundary(StringView text, int position, int* start, in
 
     unsigned startPos = position;
     while (startPos > 0) {
-        int i = startPos;
-        char32_t characterBeforeStartPos;
-        U16_PREV(text, 0, i, characterBeforeStartPos);
+        size_t i = startPos;
+        char32_t characterBeforeStartPos = u16Prev(text, i);
         if (isWordDelimitingCharacter(characterBeforeStartPos)) {
             ASSERT(i >= 0);
             if (!i)
@@ -99,26 +99,24 @@ static void findSimpleWordBoundary(StringView text, int position, int* start, in
             if (!isAmbiguousBoundaryCharacter(characterBeforeStartPos))
                 break;
 
-            char32_t characterBeforeBeforeStartPos;
-            U16_PREV(text, 0, i, characterBeforeBeforeStartPos);
+            char32_t characterBeforeBeforeStartPos = u16Prev(text, i);
             if (isWordDelimitingCharacter(characterBeforeBeforeStartPos))
                 break;
         }
         U16_BACK_1(text, 0, startPos);
     }
     
-    unsigned endPos = position;
+    size_t endPos = position;
     while (endPos < text.length()) {
-        char32_t character;
-        U16_GET(text, 0, endPos, text.length(), character);
+        char32_t character = u16Get(text, endPos);
         if (isWordDelimitingCharacter(character)) {
-            unsigned i = endPos;
+            size_t i = endPos;
             U16_FWD_1(text, i, text.length());
             ASSERT(i <= text.length());
             if (i == text.length())
                 break;
             char32_t characterAfterEndPos;
-            U16_NEXT(text, i, text.length(), characterAfterEndPos);
+            characterAfterEndPos = u16Next(text, i);
             if (!isAmbiguousBoundaryCharacter(character))
                 break;
             if (isWordDelimitingCharacter(characterAfterEndPos))
@@ -130,8 +128,7 @@ static void findSimpleWordBoundary(StringView text, int position, int* start, in
     // The text may consist of all delimiter characters (e.g. "++++++++" or a series of emoji), and returning an empty range
     // makes no sense (and doesn't match findComplexWordBoundary() behavior).
     if (startPos == endPos && endPos < text.length()) {
-        char32_t character;
-        U16_GET(text, 0, endPos, text.length(), character);
+        char32_t character = u16Get(text, endPos);
         if (isSymbolCharacter(character))
             U16_FWD_1(text, endPos, text.length());
     }
@@ -192,9 +189,8 @@ void findWordBoundary(StringView text, int position, int* start, int* end)
     // For complex text (Thai, Japanese, Chinese), visible_units will pass the text in as a 
     // single contiguous run of characters, providing as much context as is possible.
     // We only need one character to determine if the text is complex.
-    char32_t ch;
-    unsigned i = position;
-    U16_NEXT(text, i, text.length(), ch);
+    size_t i = position;
+    char32_t ch = u16Next(text, i);
     bool isComplex = requiresContextForWordBoundary(ch);
 
     // FIXME: This check improves our word boundary behavior, but doesn't actually go far enough.
@@ -202,7 +198,7 @@ void findWordBoundary(StringView text, int position, int* start, int* end)
     if (!isComplex) {
         // Check again for complex text, at the start of the run.
         i = 0;
-        U16_NEXT(text, i, text.length(), ch);
+        ch = u16Next(text, i);
         isComplex = requiresContextForWordBoundary(ch);
     }
 

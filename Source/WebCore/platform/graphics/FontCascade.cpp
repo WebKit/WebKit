@@ -45,6 +45,8 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/text/icu/UnicodeExtras.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 namespace WebCore {
 
@@ -348,7 +350,7 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
 
     auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
         for (size_t i = 0; i < characters.size(); ++i) {
-            auto glyph = font.glyphForCharacter(characters[i]);
+            auto glyph = font.glyphForCharacter(static_cast<char32_t>(characters[i]));
             glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
         }
     };
@@ -1176,7 +1178,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::sp
     }
     if (direction == TextDirection::LTR) {
         for (size_t i = 0; i < characters.size(); ++i) {
-            char32_t character = characters[i];
+            auto character = static_cast<char32_t>(characters[i]);
             if (treatAsSpace(character)) {
                 ++count;
                 isAfterExpansion = true;
@@ -1197,7 +1199,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::sp
         }
     } else {
         for (size_t i = characters.size(); i > 0; --i) {
-            char32_t character = characters[i - 1];
+            auto character = static_cast<char32_t>(characters[i - 1]);
             if (treatAsSpace(character)) {
                 ++count;
                 isAfterExpansion = true;
@@ -1246,11 +1248,11 @@ bool FontCascade::leftExpansionOpportunity(StringView stringView, TextDirection 
 
     char32_t initialCharacter;
     if (direction == TextDirection::LTR) {
-        initialCharacter = stringView[0];
+        initialCharacter = static_cast<char32_t>(stringView[0]);
         if (U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
             initialCharacter = U16_GET_SUPPLEMENTARY(initialCharacter, stringView[1]);
     } else {
-        initialCharacter = stringView[stringView.length() - 1];
+        initialCharacter = static_cast<char32_t>(stringView[stringView.length() - 1]);
         if (U16_IS_TRAIL(initialCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
             initialCharacter = U16_GET_SUPPLEMENTARY(stringView[stringView.length() - 2], initialCharacter);
     }
@@ -1265,11 +1267,11 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
 
     char32_t finalCharacter;
     if (direction == TextDirection::LTR) {
-        finalCharacter = stringView[stringView.length() - 1];
+        finalCharacter = static_cast<char32_t>(stringView[stringView.length() - 1]);
         if (U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
             finalCharacter = U16_GET_SUPPLEMENTARY(stringView[stringView.length() - 2], finalCharacter);
     } else {
-        finalCharacter = stringView[0];
+        finalCharacter = static_cast<char32_t>(stringView[0]);
         if (U16_IS_LEAD(finalCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
             finalCharacter = U16_GET_SUPPLEMENTARY(finalCharacter, stringView[1]);
     }
@@ -1346,8 +1348,7 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     if (textRun.is8Bit())
         baseCharacter = textRun.span8()[offsetInString.value()];
     else {
-        auto characters = textRun.span16();
-        U16_GET(characters, 0, static_cast<unsigned>(offsetInString.value()), characters.size(), baseCharacter);
+        baseCharacter = u16Get(textRun.span16(), offsetInString.value());
     }
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
@@ -1395,10 +1396,10 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
     if (!mark.is8Bit()) {
         size_t i = 0;
         auto span = mark.span16();
-        U16_NEXT(span, i, span.size(), character);
-        ASSERT(U16_IS_SINGLE(character)); // The CSS parser replaces unpaired surrogates with the object replacement character.
+        character = u16Next(span, i);
+        ASSERT_UNUSED(U16_IS_SINGLE(character), character); // The CSS parser replaces unpaired surrogates with the object replacement character.
     } else
-        character = mark[0];
+        character = castNonSurrogateUTF16CodeUnitToUTF32(mark[0]);
 
     std::optional<GlyphData> glyphData(glyphDataForCharacter(character, false, EmphasisMarkVariant));
     return glyphData.value().isValid() ? glyphData : std::nullopt;

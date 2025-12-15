@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Lexer.h>
 #include <wtf/dtoa.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -101,7 +102,15 @@ ALWAYS_INLINE static bool isStrWhiteSpace(CharacterType c)
     // https://tc39.github.io/ecma262/#sec-tonumber-applied-to-the-string-type
     if constexpr (sizeof(c) == 1)
         return Lexer<Latin1Character>::isWhiteSpace(c) || Lexer<Latin1Character>::isLineTerminator(c);
-    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
+    if (!U_IS_BMP(c))
+        return false;
+
+    char16_t c16;
+    if constexpr (std::is_same_v<CharacterType, char16_t>)
+        c16 = c;
+    else if constexpr (std::is_same_v<CharacterType, char32_t>)
+        c16 = castBMPUTF32CodeUnitToUTF16(c);
+    return Lexer<char16_t>::isWhiteSpace(c16) || Lexer<char16_t>::isLineTerminator(c16);
 }
 
 inline static std::optional<double> parseIntDouble(double n)

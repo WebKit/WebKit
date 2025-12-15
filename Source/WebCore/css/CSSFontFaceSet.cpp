@@ -40,6 +40,8 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleProperties.h"
 #include <ranges>
+#include <wtf/text/icu/UnicodeExtras.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 namespace WebCore {
 
@@ -390,10 +392,11 @@ static CodePointsMap codePointsFromString(StringView stringView)
         ASSERT(cluster.length() > 0);
         char32_t character = 0;
         if (cluster.is8Bit())
-            character = cluster[0];
+            // FIXME: This is broken for non-ASCII characters (0x80..0xff).
+            character = deprecatedBrokenCastLatin1CharacterToUTF32WithoutConvertingToUnicode(cluster[0]);
         else {
             auto characters = cluster.span16();
-            U16_GET(characters, 0, 0, characters.size(), character);
+            character = u16Get(characters, 0);
         }
         result.add(character);
     }

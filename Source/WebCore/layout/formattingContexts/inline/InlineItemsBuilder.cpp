@@ -38,6 +38,7 @@
 #include "platform/text/TextSpacing.h"
 #include <wtf/Scope.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -178,7 +179,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList[inlineBoxStartOnBoundaryIndex];
         const RenderStyle& boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         auto boundaryTextAutospace = boundaryOwnerStyle.textAutospace();
-        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox.content().characterAt(start), lastCharacterFromPreviousRun))
+        if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(static_cast<char32_t>(inlineTextBox.content().characterAt(start)), lastCharacterFromPreviousRun))
             spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(boundaryOwnerStyle.fontCascade().primaryFont()));
 
         lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
@@ -350,13 +351,11 @@ static void replaceNonPreservedNewLineAndTabCharactersAndAppend(const InlineText
     auto needsUnicodeHandling = !textContent.is8Bit();
     size_t nonReplacedContentStartPosition = 0;
     for (size_t position = 0; position < contentLength;) {
-        // Note that because of proper code point boundary handling (see U16_NEXT), position is incremented in an unconventional way here.
+        // Note that because of proper code point boundary handling (see u16Next), position is incremented in an unconventional way here.
         auto startPosition = position;
         auto isNewLineOrTabCharacter = [&] {
             if (needsUnicodeHandling) {
-                char32_t character;
-                auto characters = textContent.span16();
-                U16_NEXT(characters, position, contentLength, character);
+                char32_t character = u16Next(textContent.span16(), position);
                 return character == newlineCharacter || character == tabCharacter;
             }
             auto isNewLineOrTab = textContent[position] == newlineCharacter || textContent[position] == tabCharacter;
@@ -742,7 +741,7 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
     auto autospace = inlineTextItem.style().textAutospace();
     if (!autospace.isNoAutospace()) {
         // We need to store information about spacing added between inline text items since it needs to be trimmed during line breaking if the consecutive items are placed on different lines
-        auto characterClass = TextSpacing::characterClass(inlineTextItem.content().characterAt(0));
+        auto characterClass = TextSpacing::characterClass(static_cast<char32_t>(inlineTextItem.content().characterAt(0)));
         if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
             trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(inlineTextItem.style().fontCascade().primaryFont()));
 
@@ -1075,3 +1074,4 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
 
 }
 }
+

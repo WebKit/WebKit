@@ -378,6 +378,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 #if ENABLE(APP_HIGHLIGHTS)
 #include "AppHighlightStorage.h"
@@ -7530,8 +7531,7 @@ static bool isValidNameNonASCII(std::span<const char16_t> characters)
 {
     for (size_t i = 0; i < characters.size();) {
         bool first = !i;
-        char32_t c;
-        U16_NEXT(characters, i, characters.size(), c); // Increments i.
+        char32_t c = u16Next(characters, i); // Increments i.
         if (first ? !isValidNameStart(c) : !isValidNamePart(c))
             return false;
     }
@@ -7608,9 +7608,8 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
     if (isValidLocalName) [[likely]]
         return std::pair<AtomString, AtomString> { { }, { qualifiedName } };
 
-    for (unsigned i = 0; i < length; ) {
-        char32_t c;
-        U16_NEXT(qualifiedName, i, length, c);
+    for (size_t i = 0; i < length; ) {
+        char32_t c = u16Next(qualifiedName.span16(), i);
         if (c == ':') {
             if (sawColon)
                 return Exception { ExceptionCode::InvalidCharacterError, makeString("Unexpected colon in qualified name '"_s, qualifiedName, '\'') };

@@ -35,6 +35,7 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 /*
     Implementation Overview
@@ -666,13 +667,8 @@ DEFINE_BUILTIN_IMPLEMENTATION_I32(jsstring, codePointAt, JSGlobalObject* globalO
     int32_t result;
     if (view->is8Bit())
         result = view->span8()[index];
-    else {
-        char32_t character;
-        auto characters = view->span16();
-        unsigned i = static_cast<unsigned>(index);
-        U16_NEXT(characters, i, length, character);
-        result = static_cast<int32_t>(character);
-    }
+    else
+        result = static_cast<int32_t>(u16Get(view->span16(), static_cast<unsigned>(index)));
     RELEASE_AND_RETURN(scope, toUCPUStrictInt32(result));
 }
 

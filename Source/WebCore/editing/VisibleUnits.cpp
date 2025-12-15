@@ -1868,7 +1868,8 @@ void charactersAroundPosition(const VisiblePosition& position, char32_t& oneAfte
         for (int i = characterString.length() - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
             if (!index && nextPosition.isNull())
                 index++;
-            characters[index++] = characterString[i];
+            //
+            characters[index++] = static_cast<char32_t>(characterString[i]);
         }
     }
     oneAfter = characters[0];

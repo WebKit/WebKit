@@ -55,6 +55,8 @@ template<typename CollectionType, typename KeyType> static auto findInSortedPair
 inline void checkEncodingTableInvariants() { }
 #endif
 
+IGNORE_CLANG_WARNINGS_BEGIN("character-conversion")
+
 struct CompareFirst {
     template<typename TypeA, typename TypeB> bool operator()(const TypeA& a, const TypeB& b)
     {
@@ -131,5 +133,7 @@ template<typename CollectionType, typename KeyType> static auto findInSortedPair
     }
     return std::ranges::equal_range(collection, makeFirstAdapter(key), CompareFirst { });
 }
+
+IGNORE_CLANG_WARNINGS_END // "character-conversion"
 
 }

@@ -40,8 +40,8 @@ public:
     void atomPatternCharacter(char32_t, bool) { }
     void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
     void atomCharacterClassBegin(bool = false) { }
-    void atomCharacterClassAtom(char16_t) { }
-    void atomCharacterClassRange(char16_t, char16_t) { }
+    void atomCharacterClassAtom(char32_t) { }
+    void atomCharacterClassRange(char32_t, char32_t) { }
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
     void atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
     void atomCharacterClassSetOp(CharacterClassSetOp) { }

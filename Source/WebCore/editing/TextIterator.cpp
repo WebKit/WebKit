@@ -78,6 +78,7 @@
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -2079,8 +2080,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     m_overlap = m_buffer.capacity() / 4;
 
     if (m_options.contains(FindOption::AtWordStarts) && targetLength) {
-        char32_t targetFirstCharacter;
-        U16_GET(m_target, 0, 0u, targetLength, targetFirstCharacter);
+        char32_t targetFirstCharacter = u16Get(m_target.span16(), 0);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
         if (isSeparator(targetFirstCharacter)) {
@@ -2272,15 +2272,13 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
     if (!start)
         return true;
 
-    int size = m_buffer.size();
-    int offset = start;
-    char32_t firstCharacter;
+    size_t size = m_buffer.size();
+    size_t offset = start;
     auto buffer = m_buffer.span();
-    U16_GET(buffer, 0, offset, size, firstCharacter);
+    char32_t firstCharacter = u16Get(buffer, offset);
 
     if (m_options.contains(FindOption::TreatMedialCapitalAsWordStart)) {
-        char32_t previousCharacter;
-        U16_PREV(buffer, 0, offset, previousCharacter);
+        char32_t previousCharacter = u16Prev(buffer, offset);
 
         if (isSeparator(firstCharacter)) {
             // The start of a separator run is a word start (".org" in "webkit.org").
@@ -2296,7 +2294,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
             U16_FWD_1(buffer, offset, size);
             char32_t nextCharacter = 0;
             if (offset < size)
-                U16_GET(buffer, 0, offset, size, nextCharacter);
+                nextCharacter = u16Get(buffer, offset);
             if (!isASCIIUpper(nextCharacter) && !isASCIIDigit(nextCharacter) && !isSeparator(nextCharacter))
                 return true;
         } else if (isASCIIDigit(firstCharacter)) {

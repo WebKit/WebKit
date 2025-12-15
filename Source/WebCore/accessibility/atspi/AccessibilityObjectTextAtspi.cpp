@@ -40,6 +40,7 @@
 #include "VisibleUnits.h"
 #include <gio/gio.h>
 #include <wtf/Assertions.h>
+#include <wtf/unicode/CharacterCasts.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -404,7 +405,8 @@ IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGran
         if (!utf16Offset && m_hasListMarkerAtStart)
             return { 0, 1 };
 
-        startPosition = isStartOfWord(offsetPosition) && deprecatedIsEditingWhitespace(offsetPosition.characterBefore()) ? offsetPosition : startOfWord(offsetPosition, WordSide::LeftWordIfOnBoundary);
+        char32_t characterBefore = offsetPosition.characterBefore();
+        startPosition = isStartOfWord(offsetPosition) && U_IS_BMP(characterBefore) && deprecatedIsEditingWhitespace(castBMPUTF32CodeUnitToUTF16(characterBefore)) ? offsetPosition : startOfWord(offsetPosition, WordSide::LeftWordIfOnBoundary);
         endPostion = nextWordPosition(startPosition);
         auto positionAfterSpacingAndFollowingWord = nextWordPosition(endPostion);
         if (positionAfterSpacingAndFollowingWord != endPostion) {

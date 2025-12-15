@@ -82,6 +82,7 @@
 #include "WrapContentsInDummySpanCommand.h"
 #include "markup.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/unicode/CharacterCasts.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -1016,7 +1017,9 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
 
 void CompositeEditCommand::replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNeeded(const VisiblePosition& visiblePosition)
 {
-    if (!deprecatedIsCollapsibleWhitespace(visiblePosition.characterAfter()))
+    // FIXME: Change deprecatedIsCollapsibleWhitespace into a CharacterType template,
+    // or find a better whitespace function to use.
+    if (!deprecatedIsCollapsibleWhitespace(deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(visiblePosition.characterAfter())))
         return;
     
     Position pos = visiblePosition.deepEquivalent().downstream();

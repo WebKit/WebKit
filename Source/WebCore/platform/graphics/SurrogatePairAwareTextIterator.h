@@ -20,8 +20,8 @@
 
 #pragma once
 
-#include <unicode/utf16.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -44,9 +44,11 @@ public:
             return false;
 
         auto relativeIndex = m_currentIndex - m_originalIndex;
-        clusterLength = 0;
-        auto spanAtRelativeIndex = m_characters.subspan(relativeIndex);
-        U16_NEXT(spanAtRelativeIndex, clusterLength, m_endIndex - m_currentIndex, character);
+        auto spanAtRelativeIndex = m_characters.subspan(relativeIndex, m_endIndex - m_currentIndex);
+        size_t offset = 0;
+        character = u16Next(spanAtRelativeIndex, offset);
+        ASSERT(offset == 1 || offset == 2);
+        clusterLength = offset;
         return true;
     }
 

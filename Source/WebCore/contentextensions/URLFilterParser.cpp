@@ -33,6 +33,7 @@
 #include <JavaScriptCore/YarrParser.h>
 #include <wtf/Deque.h>
 #include <wtf/text/CString.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 namespace WebCore {
 
@@ -76,7 +77,7 @@ public:
         return m_parseStatus;
     }
 
-    void atomPatternCharacter(char16_t character, bool)
+    void atomPatternCharacter(char32_t character, bool)
     {
         if (hasError())
             return;
@@ -179,7 +180,7 @@ public:
         m_floatingTerm = Term(Term::CharacterSetTerm, inverted);
     }
 
-    void atomCharacterClassAtom(char16_t character)
+    void atomCharacterClassAtom(char32_t character)
     {
         if (hasError())
             return;
@@ -189,10 +190,10 @@ public:
             return;
         }
 
-        m_floatingTerm.addCharacter(character, m_patternIsCaseSensitive);
+        m_floatingTerm.addCharacter(castBMPUTF32CodeUnitToUTF16(character), m_patternIsCaseSensitive);
     }
 
-    void atomCharacterClassRange(char16_t a, char16_t b)
+    void atomCharacterClassRange(char32_t a, char32_t b)
     {
         if (hasError())
             return;
@@ -203,7 +204,7 @@ public:
         ASSERT(isASCII(b));
 
         for (unsigned i = a; i <= b; ++i)
-            m_floatingTerm.addCharacter(static_cast<char16_t>(i), m_patternIsCaseSensitive);
+            m_floatingTerm.addCharacter(i, m_patternIsCaseSensitive);
     }
 
     void atomClassStringDisjunction(Vector<Vector<char32_t>>)

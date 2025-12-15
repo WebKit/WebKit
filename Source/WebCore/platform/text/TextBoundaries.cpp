@@ -30,16 +30,16 @@
 #include <unicode/ubrk.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
 unsigned endOfFirstWordBoundaryContext(StringView text)
 {
     unsigned length = text.length();
-    for (unsigned i = 0; i < length; ) {
+    for (size_t i = 0; i < length; ) {
         unsigned first = i;
-        char32_t ch;
-        U16_NEXT(text, i, length, ch);
+        char32_t ch = u16Next(text.span16(), i);
         if (!requiresContextForWordBoundary(ch))
             return first;
     }
@@ -49,10 +49,9 @@ unsigned endOfFirstWordBoundaryContext(StringView text)
 unsigned startOfLastWordBoundaryContext(StringView text)
 {
     unsigned length = text.length();
-    for (unsigned i = length; i > 0; ) {
+    for (size_t i = length; i > 0; ) {
         unsigned last = i;
-        char32_t ch;
-        U16_PREV(text, 0, i, ch);
+        char32_t ch = u16Prev(text.span16(), i);
         if (!requiresContextForWordBoundary(ch))
             return last;
     }

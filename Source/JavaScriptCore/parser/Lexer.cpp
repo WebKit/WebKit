@@ -36,6 +36,9 @@
 #include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
+#include <wtf/unicode/CharacterCasts.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -712,7 +715,8 @@ ParsedUnicodeEscapeValue Lexer<CharacterType>::parseUnicodeEscape()
     shift();
     shift();
     shift();
-    return result;
+    // FIXME: What to do if the escape sequence corresponds to a surrogate?
+    return deprecatedBrokenCastUTF16CodeUnitToUTF32IgnoringSurrogates(result);
 }
 
 template <typename T>
@@ -828,7 +832,7 @@ ALWAYS_INLINE char32_t Lexer<char16_t>::currentCodePoint() const
 {
     ASSERT_WITH_MESSAGE(!isIdentStart(errorCodePoint), "error values shouldn't appear as a valid identifier start code point");
     if (!U16_IS_SURROGATE(m_current))
-        return m_current;
+        return castNonSurrogateUTF16CodeUnitToUTF32(m_current);
 
     char16_t trail = peek(1);
     if (!U16_IS_LEAD(m_current) || !U16_IS_SURROGATE_TRAIL(trail)) [[unlikely]]
@@ -2028,9 +2032,9 @@ start:
     }
 
     if constexpr (!std::is_same_v<T, Latin1Character>) {
+        static_assert(std::is_same_v<T, char16_t>);
         if (!isLatin1(m_current)) [[unlikely]] {
-            char32_t codePoint;
-            U16_GET(m_code, 0, 0, m_codeEnd - m_code, codePoint);
+            char32_t codePoint = u16Get(unsafeMakeSpan(m_code, m_codeEnd - m_code), 0);
             if (isNonLatin1IdentStart(codePoint)) {
                 // We are hijacking white space characters for non-latin1 identifier start in the following dispatch since we will never see
                 // these characters in the switch because of `skipWhitespace()` call.
@@ -2801,9 +2805,8 @@ start:
     case  32 /*  32 = Space              CharacterWhiteSpace */:
     case 160 /* 160 = Zs category (nbsp) CharacterWhiteSpace */: {
         if constexpr (ASSERT_ENABLED) {
-            char32_t codePoint;
-            U16_GET(m_code, 0, 0, m_codeEnd - m_code, codePoint);
-            ASSERT(isIdentStart(codePoint));
+            char32_t codePoint = u16Get(unsafeMakeSpan(m_code, m_codeEnd - m_code), 0);
+            ASSERT_UNUSED(isIdentStart(codePoint), codePoint);
         }
         [[fallthrough]];
     }
@@ -2839,10 +2842,12 @@ start:
         if (isLatin1(next)) [[likely]]
             isValidPrivateName = typesOfLatin1Characters[static_cast<Latin1Character>(next)] == CharacterLatin1IdentifierStart || next == '\\';
         else {
-            ASSERT(m_code + 1 < m_codeEnd);
-            char32_t codePoint;
-            U16_GET(m_code + 1, 0, 0, m_codeEnd - (m_code + 1), codePoint);
-            isValidPrivateName = isNonLatin1IdentStart(codePoint);
+            if constexpr (std::is_same_v<T, char16_t>) {
+                ASSERT(m_code + 1 < m_codeEnd);
+                char32_t codePoint = u16Get(unsafeMakeSpan(m_code + 1, m_codeEnd - (m_code + 1)), 0);
+                isValidPrivateName = isNonLatin1IdentStart(codePoint);
+            } else
+                isValidPrivateName = false;
         }
 
         if (isValidPrivateName) {

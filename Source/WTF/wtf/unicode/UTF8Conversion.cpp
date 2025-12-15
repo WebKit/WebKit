@@ -27,7 +27,11 @@
 #include "config.h"
 #include <wtf/unicode/UTF8Conversion.h>
 
+#include <array>
+#include <span>
 #include <unicode/uchar.h>
+#include <unicode/utf16.h>
+#include <unicode/utf8.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringHasherInlines.h>
 #include <wtf/text/icu/UnicodeExtras.h>
@@ -49,30 +53,25 @@ template<> char32_t next<Replacement::None, Latin1Character>(std::span<const Lat
 
 template<> char32_t next<Replacement::None, char8_t>(std::span<const char8_t> characters, size_t& offset)
 {
-    char32_t character;
-    U8_NEXT_SPAN(characters, offset, character);
+    char32_t character = u8Next(characters, offset);
     return U_IS_SURROGATE(character) ? sentinelCodePoint : character;
 }
 
 template<> char32_t next<Replacement::ReplaceInvalidSequences, char8_t>(std::span<const char8_t> characters, size_t& offset)
 {
-    char32_t character;
-    U8_NEXT_OR_FFFD_SPAN(characters, offset, character);
+    char32_t character = u8NextOrFFFD(characters, offset);
     return character;
 }
 
 template<> char32_t next<Replacement::None, char16_t>(std::span<const char16_t> characters, size_t& offset)
 {
-    char32_t character;
-    U16_NEXT(characters, offset, characters.size(), character);
+    char32_t character = u16Next(characters, offset);
     return U_IS_SURROGATE(character) ? sentinelCodePoint : character;
 }
 
 template<> char32_t next<Replacement::ReplaceInvalidSequences, char16_t>(std::span<const char16_t> characters, size_t& offset)
 {
-    char32_t character;
-    U16_NEXT_OR_FFFD(characters, offset, characters.size(), character);
-    return character;
+    return u16NextOrFFFD(characters, offset);
 }
 
 template<> bool append<Replacement::None, char8_t>(std::span<char8_t> characters, size_t& offset, char32_t character)
@@ -177,7 +176,7 @@ UTF16LengthWithHash computeUTF16LengthWithHash(std::span<const char8_t> source)
         if (character == sentinelCodePoint)
             return { };
         if (U_IS_BMP(character)) {
-            hasher.addCharacter(character);
+            hasher.addCharacter(static_cast<char16_t>(character));
             ++lengthUTF16;
         } else {
             hasher.addCharacter(U16_LEAD(character));

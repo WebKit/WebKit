@@ -41,6 +41,7 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 #if PLATFORM(GTK)
 #include <wtf/glib/GUniquePtr.h>
@@ -236,16 +237,15 @@ public:
 
 namespace WebCore {
 
-static void countLeadingSpaces(const CString& utf8String, int32_t& pointerOffset, int32_t& characterOffset)
+static void countLeadingSpaces(const CString& utf8String, size_t& pointerOffset, size_t& characterOffset)
 {
     pointerOffset = 0;
     characterOffset = 0;
     const char* stringData = utf8String.data();
-    char32_t character = 0;
-    while (static_cast<unsigned>(pointerOffset) < utf8String.length()) {
-        int32_t nextPointerOffset = pointerOffset;
-        U8_NEXT(stringData, nextPointerOffset, static_cast<int32_t>(utf8String.length()), character);
-        if (character == static_cast<char32_t>(U_SENTINEL) || !u_isUWhiteSpace(character))
+    while (pointerOffset < utf8String.length()) {
+        size_t nextPointerOffset = pointerOffset;
+        char32_t character = u8Next(stringData, nextPointerOffset);
+        if (character == static_cast<char32_t>(U_SENTINEL) || !u_isUWhiteSpace(character)) // FIXME XXX: This is broken, char32_t is an unsigned type.
             return;
 
         pointerOffset = nextPointerOffset;
@@ -264,8 +264,8 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     // WebCore often passes strings like " wordtohyphenate" to the platform layer. Since
     // libhyphen isn't advanced enough to deal with leading spaces (presumably CoreFoundation
     // can), we should find the appropriate indexes into the string to skip them.
-    int32_t leadingSpaceBytes;
-    int32_t leadingSpaceCharacters;
+    size_t leadingSpaceBytes;
+    size_t leadingSpaceCharacters;
     countLeadingSpaces(utf8StringCopy, leadingSpaceBytes, leadingSpaceCharacters);
 
     // The libhyphen documentation specifies that this array should be 5 bytes longer than

@@ -38,7 +38,7 @@ float SVGTextLayoutEngineSpacing::calculateCSSSpacing(char16_t currentCharacter)
 {
     float spacing = m_font->letterSpacing();
 
-    if (m_font->wordSpacing() && FontCascade::treatAsSpace(currentCharacter) && !FontCascade::treatAsSpace(m_lastCharacter))
+    if (m_font->wordSpacing() && FontCascade::treatAsSpace(static_cast<char32_t>(currentCharacter)) && !FontCascade::treatAsSpace(static_cast<char32_t>(m_lastCharacter)))
         spacing += m_font->wordSpacing();
 
     m_lastCharacter = currentCharacter;

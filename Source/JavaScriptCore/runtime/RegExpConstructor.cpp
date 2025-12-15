@@ -29,6 +29,7 @@
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
 #include "YarrFlags.h"
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace JSC {
 
@@ -116,21 +117,20 @@ JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject,
     StringBuilder builder(OverflowPolicy::RecordOverflow);
     builder.reserveCapacity(string->length());
 
-    for (unsigned i = 0; i < string->length() && !builder.hasOverflowed();) {
+    for (size_t i = 0; i < string->length() && !builder.hasOverflowed();) {
         char32_t codePoint;
         if (string->is8Bit())
             codePoint = string->span8()[i++];
-        else {
-            auto characters = string->span16();
-            U16_NEXT(characters, i, string->length(), codePoint);
-        }
+        else
+            codePoint = u16Next(string->span16(), i);
 
         if (builder.isEmpty() && isASCIIAlphanumeric(codePoint)) {
             builder.append('\\', 'x', toStringWithRadix(codePoint, 16));
             continue;
         }
 
-        if (StringView("^$\\.*+?()[]{}|/"_s).contains(codePoint)) {
+        // FIXME: This could match spuriously. We need a StringView::contains(char32_t).
+        if (StringView("^$\\.*+?()[]{}|/"_s).contains(deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(codePoint))) {
             builder.append('\\', codePoint);
             continue;
         }
@@ -155,7 +155,8 @@ JSC_DEFINE_HOST_FUNCTION(regExpConstructorEscape, (JSGlobalObject* globalObject,
             break;
         }
 
-        if (StringView(",-=<>#&!%:;@~'`\""_s).contains(codePoint) || isStrWhiteSpace(codePoint) || U16_IS_SURROGATE(codePoint)) {
+        // FIXME: This could match spuriously. We need a StringView::contains(char32_t).
+        if (StringView(",-=<>#&!%:;@~'`\""_s).contains(deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(codePoint)) || isStrWhiteSpace(codePoint) || !U_IS_BMP(codePoint)) {
             if (isLatin1(codePoint))
                 builder.append('\\', 'x', pad('0', 2, toStringWithRadix(codePoint, 16)));
             else if (U_IS_BMP(codePoint))

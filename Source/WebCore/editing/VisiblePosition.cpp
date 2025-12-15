@@ -53,6 +53,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -623,15 +624,13 @@ char32_t VisiblePosition::characterAfter() const
     case Position::PositionIsOffsetInAnchor:
         break;
     }
-    unsigned offset = static_cast<unsigned>(pos.offsetInContainerNode());
+    size_t offset = pos.offsetInContainerNode();
     RefPtr textNode = pos.containerText();
     unsigned length = textNode->length();
     if (offset >= length)
         return 0;
 
-    char32_t ch;
-    U16_NEXT(textNode->data(), offset, length, ch);
-    return ch;
+    return u16Next(textNode->data().span16(), offset);
 }
 
 InlineBoxAndOffset VisiblePosition::inlineBoxAndOffset() const

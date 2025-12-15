@@ -95,8 +95,8 @@ void AccessibilityMathMLElement::addChildren()
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator && !mode.isHidden()) {
-        char16_t operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
-        return operatorChar ? String(span(operatorChar)) : String();
+        auto operatorCharacter = downcast<RenderMathMLOperator>(*m_renderer).textContent();
+        return operatorCharacter ? makeString(operatorCharacter) : String { };
     }
 
     return AccessibilityRenderObject::textUnderElement(mode);

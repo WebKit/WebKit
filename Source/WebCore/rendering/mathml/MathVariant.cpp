@@ -207,27 +207,27 @@ char32_t mathVariantMapCodePoint(char32_t codePoint, MathVariant mathvariant)
     };
     static constexpr SortedArrayMap latinExceptionMapTable = { latinExceptionMapTableEntries };
 
-    constexpr char16_t greekUpperTheta = 0x03F4;
-    constexpr char16_t holeGreekUpperTheta = 0x03A2;
-    constexpr char16_t nabla = 0x2207;
-    constexpr char16_t partialDifferential = 0x2202;
-    constexpr char16_t greekUpperAlpha = 0x0391;
-    constexpr char16_t greekUpperOmega = 0x03A9;
-    constexpr char16_t greekLowerAlpha = 0x03B1;
-    constexpr char16_t greekLowerOmega = 0x03C9;
-    constexpr char16_t greekLunateEpsilonSymbol = 0x03F5;
-    constexpr char16_t greekThetaSymbol = 0x03D1;
-    constexpr char16_t greekKappaSymbol = 0x03F0;
-    constexpr char16_t greekPhiSymbol = 0x03D5;
-    constexpr char16_t greekRhoSymbol = 0x03F1;
-    constexpr char16_t greekPiSymbol = 0x03D6;
-    constexpr char16_t greekLetterDigamma = 0x03DC;
+    constexpr char32_t greekUpperTheta = 0x03F4;
+    constexpr char32_t holeGreekUpperTheta = 0x03A2;
+    constexpr char32_t nabla = 0x2207;
+    constexpr char32_t partialDifferential = 0x2202;
+    constexpr char32_t greekUpperAlpha = 0x0391;
+    constexpr char32_t greekUpperOmega = 0x03A9;
+    constexpr char32_t greekLowerAlpha = 0x03B1;
+    constexpr char32_t greekLowerOmega = 0x03C9;
+    constexpr char32_t greekLunateEpsilonSymbol = 0x03F5;
+    constexpr char32_t greekThetaSymbol = 0x03D1;
+    constexpr char32_t greekKappaSymbol = 0x03F0;
+    constexpr char32_t greekPhiSymbol = 0x03D5;
+    constexpr char32_t greekRhoSymbol = 0x03F1;
+    constexpr char32_t greekPiSymbol = 0x03D6;
+    constexpr char32_t greekLetterDigamma = 0x03DC;
     constexpr char32_t greekSmallLetterDigamma = 0x03DD;
     constexpr char32_t mathBoldCapitalDigamma = 0x1D7CA;
     constexpr char32_t mathBoldSmallDigamma = 0x1D7CB;
 
-    constexpr char16_t latinSmallLetterDotlessI = 0x0131;
-    constexpr char16_t latinSmallLetterDotlessJ = 0x0237;
+    constexpr char32_t latinSmallLetterDotlessI = 0x0131;
+    constexpr char32_t latinSmallLetterDotlessJ = 0x0237;
 
     constexpr char32_t mathItalicSmallDotlessI = 0x1D6A4;
     constexpr char32_t mathItalicSmallDotlessJ = 0x1D6A5;

@@ -48,6 +48,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -449,10 +450,7 @@ static inline char32_t codePointAt(const String& string, unsigned position, unsi
     RELEASE_ASSERT(position < length);
     if (string.is8Bit())
         return string.span8()[position];
-    char32_t character;
-    auto characters = string.span16();
-    U16_NEXT(characters, position, length, character);
-    return character;
+    return u16Get(string.span16(), position);
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCodePointAt, (JSGlobalObject* globalObject, CallFrame* callFrame))

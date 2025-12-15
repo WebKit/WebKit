@@ -395,7 +395,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     RefPtr<Font> halfWidthFont;
     auto shouldProcessTextSpacingTrim = !fontDescription.textSpacingTrim().isSpaceAll();
     if (shouldProcessTextSpacingTrim) {
-        TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+        TextSpacing::CharactersData charactersData = { .currentCharacter = static_cast<char32_t>(character), .currentCharacterClass = TextSpacing::characterClass(character) };
         halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.protectedFont(), fontDescription.textSpacingTrim(), charactersData);
         glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
     }
@@ -431,7 +431,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         auto glyphData = m_fontCascade->glyphDataForCharacter(character, false, FontVariant::NormalVariant);
 
         if (shouldProcessTextSpacingTrim) {
-            TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+            TextSpacing::CharactersData charactersData = { .currentCharacter = static_cast<char32_t>(character), .currentCharacterClass = TextSpacing::characterClass(character) };
             halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*glyphData.protectedFont(), fontDescription.textSpacingTrim(), charactersData);
             glyphData.font = halfWidthFont ? halfWidthFont.get() : glyphData.font;
         }
@@ -449,7 +449,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             characterToWrite = u_charMirror(characterToWrite);
 
         Glyph glyph = glyphData.glyph;
-        if (glyphData.font.get() != advanceInternalState.nextRangeFont || character != characterToWrite)
+        if (glyphData.font.get() != advanceInternalState.nextRangeFont || static_cast<char32_t>(character) != characterToWrite)
             glyph = Ref { *advanceInternalState.nextRangeFont }->glyphForCharacter(characterToWrite);
 
         if (!glyph && !characterMustDrawSomething) {
@@ -514,7 +514,7 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
     }
 
     if (hasExtraSpacing()) {
-        bool treatAsSpace = FontCascade::treatAsSpace(character);
+        bool treatAsSpace = FontCascade::treatAsSpace(static_cast<char32_t>(character));
 
         // This is a heuristic to determine if the character is non-visible. Non-visible characters don't get letter-spacing.
         float baseWidth = 0;
@@ -539,7 +539,7 @@ auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBuff
             bool forbidLeftExpansion = isLeftmostCharacter && m_run->expansionBehavior().left == ExpansionBehavior::Behavior::Forbid;
             bool forbidRightExpansion = isRightmostCharacter && m_run->expansionBehavior().right == ExpansionBehavior::Behavior::Forbid;
 
-            bool isIdeograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(character);
+            bool isIdeograph = FontCascade::canExpandAroundIdeographsInComplexText() && FontCascade::isCJKIdeographOrSymbol(static_cast<char32_t>(character));
 
             if (treatAsSpace || isIdeograph || forceLeftExpansion || forceRightExpansion) {
                 auto [expandLeft, expandRight] = expansionLocation(isIdeograph, treatAsSpace, ltr(), m_isAfterExpansion, forbidLeftExpansion, forbidRightExpansion, forceLeftExpansion, forceRightExpansion);
@@ -644,7 +644,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
         auto textAutospaceSpacing = 0.f;
         auto characterClass = TextSpacing::CharacterClass::Undefined;
         if (!textAutospace.isNoAutospace()) {
-            characterClass = TextSpacing::characterClass(m_run.get()[i]);
+            characterClass = TextSpacing::characterClass(static_cast<char32_t>(m_run.get()[i]));
             if (textAutospace.shouldApplySpacing(characterClass, previousCharacterClass)) {
                 textAutospaceSpacing = TextAutospace::textAutospaceSize(glyphBuffer.protectedFontAt(glyphIndexRange->leadingGlyphIndex));
                 glyphBuffer.expandAdvanceToLogicalRight(glyphIndexRange->leadingGlyphIndex, textAutospaceSpacing);
@@ -769,7 +769,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run->length());
         if (!stringOffset)
             continue;
-        auto characterResponsibleForThisGlyph = m_run.get()[stringOffset.value()];
+        auto characterResponsibleForThisGlyph = static_cast<char32_t>(m_run.get()[stringOffset.value()]);
 
         switch (characterResponsibleForThisGlyph) {
         case newlineCharacter:

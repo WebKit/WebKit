@@ -1,5 +1,6 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
 set(TestWebKitAPI_DISABLED_WARNINGS
+    -Wno-character-conversion
     -Wno-dangling-else
     -Wno-sign-compare
     -Wno-undef

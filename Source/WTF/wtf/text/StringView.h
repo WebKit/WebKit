@@ -35,6 +35,7 @@
 #include <wtf/text/Latin1Character.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/UTF8ConversionError.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 #if ASSERT_ENABLED
 #define CHECK_STRINGVIEW_LIFETIME 1
@@ -1017,10 +1018,8 @@ inline char32_t StringView::CodePoints::Iterator::operator*() const
     ASSERT(m_current < m_end);
     if (m_is8Bit)
         return *static_cast<const Latin1Character*>(m_current);
-    char32_t codePoint;
     size_t length = static_cast<const char16_t*>(m_end) - static_cast<const char16_t*>(m_current);
-    U16_GET(static_cast<const char16_t*>(m_current), 0, 0, length, codePoint);
-    return codePoint;
+    return u16Get(unsafeMakeSpan(static_cast<const char16_t*>(m_current), length), 0);
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

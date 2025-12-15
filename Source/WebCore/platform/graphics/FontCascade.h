@@ -323,10 +323,10 @@ public:
 
     static inline char16_t normalizeSpaces(char16_t character)
     {
-        if (treatAsSpace(character))
+        if (treatAsSpace(static_cast<char32_t>(character)))
             return space;
 
-        if (treatAsZeroWidthSpace(character))
+        if (treatAsZeroWidthSpace(static_cast<char32_t>(character)))
             return zeroWidthSpace;
 
         return character;

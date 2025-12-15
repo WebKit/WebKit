@@ -151,6 +151,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/unicode/CharacterCasts.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
@@ -1440,7 +1441,9 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
 
     // FIXME: Should pass false to updateMarkersForWordsAffectedByEditing() to not remove markers if
     // a leading or trailing no-break space is being inserted. See <https://webkit.org/b/212098>.
-    bool isStartOfNewWord = deprecatedIsSpaceOrNewline(selection.visibleStart().characterBefore());
+    // FIXME: Change deprecatedIsCollapsibleWhitespace into a CharacterType template,
+    // or find a better whitespace function to use.
+    bool isStartOfNewWord = deprecatedIsSpaceOrNewline(deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(selection.visibleStart().characterBefore()));
     updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]) || isStartOfNewWord);
 
     bool shouldConsiderApplyingAutocorrection = false;

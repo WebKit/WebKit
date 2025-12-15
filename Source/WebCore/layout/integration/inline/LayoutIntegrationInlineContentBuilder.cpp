@@ -66,7 +66,7 @@ static std::tuple<float, float> glyphOverflowInInlineDirection(size_t firstTextB
         }
         auto character = isLeading ? textContent[0] : textContent[textContent.length() - 1];
         auto& fontCascade = textBox.style().fontCascade();
-        auto glyphData = fontCascade.glyphDataForCharacter(character, !isLeftToRightDirection);
+        auto glyphData = fontCascade.glyphDataForCharacter(static_cast<char32_t>(character), !isLeftToRightDirection);
         return (glyphData.font ? *glyphData.font : fontCascade.primaryFont().get()).boundsForGlyph(glyphData.glyph);
     };
 

@@ -37,6 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/unicode/CharacterCasts.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -816,7 +817,7 @@ char32_t CSSTokenizer::consumeEscape()
             consumedHexDigits++;
         };
         consumeSingleWhitespaceIfNext();
-        auto codePoint = parseInteger<uint32_t>(hexChars, 16).value();
+        char32_t codePoint = parseInteger<char32_t>(hexChars, 16).value();
         if (!codePoint || U_IS_SURROGATE(codePoint) || codePoint > UCHAR_MAX_VALUE)
             return replacementCharacter;
         return codePoint;
@@ -824,7 +825,11 @@ char32_t CSSTokenizer::consumeEscape()
 
     if (cc == kEndOfFileMarker)
         return replacementCharacter;
-    return cc;
+    // FIXME: The CSS spec says we should have removed all surrogates during preprocessing, but
+    // the spec operates on UTF-32 code points, whereas we operate on UTF-16. So
+    // CSSTokenizer::preprocessString removes only *unpaired* surrogates, and therefore, this
+    // character could be a surrogate.
+    return deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(cc);
 }
 
 bool CSSTokenizer::nextTwoCharsAreValidEscape()

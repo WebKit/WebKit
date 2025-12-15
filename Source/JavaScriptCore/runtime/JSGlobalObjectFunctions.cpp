@@ -50,6 +50,8 @@
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/icu/UnicodeExtras.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -95,7 +97,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
         // 4-d-ii-1. Let V be the code unit value of C.
         char32_t codePoint;
         if (!U16_IS_LEAD(character))
-            codePoint = character;
+            codePoint = castNonSurrogateUTF16CodeUnitToUTF32(character);
         else {
             // 4-d-iii. Else,
             // 4-d-iii-1. Increase k by 1.
@@ -181,10 +183,9 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
                         }
                     }
                     if (charLen != 0) {
-                        char32_t character;
-                        int32_t offset = 0;
-                        U8_NEXT(sequence, offset, sequenceLen, character);
-                        if (character == static_cast<char32_t>(U_SENTINEL))
+                        size_t offset = 0;
+                        char32_t character = u8Next(sequence, offset);
+                        if (character == static_cast<char32_t>(U_SENTINEL)) // FIXME XXX: this is broken, char32_t is an unsigned type
                             charLen = 0;
                         else if (!U_IS_BMP(character)) {
                             // Convert to surrogate pair.

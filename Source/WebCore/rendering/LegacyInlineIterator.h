@@ -30,6 +30,7 @@
 #include "RenderText.h"
 #include "UnicodeBidi.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -281,9 +282,10 @@ inline void LegacyInlineIterator::incrementByCodePointInTextNode()
         ++m_pos;
         return;
     }
-    char32_t character;
-    auto characters = text.span16();
-    U16_NEXT(characters, m_pos, text.length(), character);
+    size_t pos = m_pos;
+    u16Next(text.span16(), pos);
+    ASSERT(pos < UINT_MAX);
+    m_pos = pos;
 }
 
 inline void LegacyInlineIterator::setOffset(unsigned position)

@@ -136,6 +136,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 #if PLATFORM(COCOA)
 #include "AXLiveRegionManager.h"
@@ -4247,15 +4248,10 @@ static char32_t characterForCharacterOffset(const CharacterOffset& characterOffs
     if (characterOffset.isNull() || !characterOffset.node->isTextNode())
         return 0;
 
-    char32_t ch = 0;
-    unsigned offset = characterOffset.startIndex + characterOffset.offset;
-    if (offset < characterOffset.node->textContent().length()) {
-        // FIXME: Remove IGNORE_CLANG_WARNINGS macros once one of <rdar://problem/58615489&58615391> is fixed.
-        IGNORE_CLANG_WARNINGS_BEGIN("conditional-uninitialized")
-        U16_NEXT(characterOffset.node->textContent(), offset, characterOffset.node->textContent().length(), ch);
-        IGNORE_CLANG_WARNINGS_END
-    }
-    return ch;
+    size_t offset = characterOffset.startIndex + characterOffset.offset;
+    if (offset < characterOffset.node->textContent().length())
+        return u16Next(characterOffset.node->textContent().span16(), offset);
+    return 0;
 }
 
 char32_t AXObjectCache::characterAfter(const CharacterOffset& characterOffset)

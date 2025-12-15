@@ -341,7 +341,9 @@ template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)
 {
     ASSERT(!m_urlIsSpecial);
-    return WTF::isForbiddenHostCodePoint(character);
+    if (character > 0x7F)
+        return false;
+    return WTF::isForbiddenHostCodePoint(static_cast<char16_t>(character));
 }
 
 template<typename CharacterType>
@@ -798,7 +800,7 @@ void URLParser::copyASCIIStringUntil(const String& string, size_t length)
     else {
         for (auto character : string.span16().first(length)) {
             ASSERT_WITH_SECURITY_IMPLICATION(isASCII(character));
-            appendToASCIIBuffer(character);
+            appendToASCIIBuffer(static_cast<char32_t>(character));
         }
     }
 }
@@ -2693,7 +2695,7 @@ bool URLParser::subdomainStartsWithXNDashDash(CodePointIterator<CharacterType> i
     } state { State::AtSubdomainBegin };
 
     for (; !iterator.atEnd(); advance<CharacterType, ReportSyntaxViolation::No>(iterator)) {
-        CharacterType c = *iterator;
+        auto c = static_cast<CharacterType>(*iterator);
 
         // These characters indicate the end of the host.
         if (c == ':' || c == '/' || c == '?' || c == '#')

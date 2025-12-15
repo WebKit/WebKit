@@ -275,7 +275,8 @@ static inline bool isHTMLSpaceOrDelimiter(CharacterType character)
     return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
-static inline bool isNumberStart(char16_t character)
+template<typename CharacterType>
+static inline bool isNumberStart(CharacterType character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }

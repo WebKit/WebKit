@@ -32,6 +32,7 @@
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -191,7 +192,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
 
-        U16_GET(characters, 0, 0, characters.size(), baseCharacter);
+        baseCharacter = u16Get(characters, 0);
         effectiveFont = m_fontCascade->fallbackRangesAt(0).fontForCharacter(baseCharacter);
         if (!effectiveFont)
             effectiveFont = &m_fontCascade->fallbackRangesAt(0).fontForFirstRange();

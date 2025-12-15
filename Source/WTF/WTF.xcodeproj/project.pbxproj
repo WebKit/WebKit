@@ -682,6 +682,7 @@
 		DDF307ED27C086DF006A526F /* StringConcatenateCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D0017B264DBACF00BCF109 /* StringConcatenateCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307EE27C086DF006A526F /* TextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = A3E4DD921F3A803400DED0B4 /* TextStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307EF27C086EA006A526F /* ICUHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B228C12458DC8200753D91 /* ICUHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DDF307F027C086EA006A526E /* CharacterCasts.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47349151A825B004123FE /* CharacterCasts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F027C086EA006A526F /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47349151A825B004123FF /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F127C086EA006A526F /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4733B151A825B004123FF /* BinarySemaphore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F227C086EA006A526F /* Signals.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD571EA7E1A100525281 /* Signals.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1656,6 +1657,7 @@
 		A8A4733B151A825B004123FF /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeRefCounted.h; sourceTree = "<group>"; };
 		A8A4733F151A825B004123FF /* ThreadSpecific.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSpecific.h; sourceTree = "<group>"; };
+		A8A47349151A825B004123FE /* CharacterCasts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterCasts.h; sourceTree = "<group>"; };
 		A8A47349151A825B004123FF /* CharacterNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterNames.h; sourceTree = "<group>"; };
 		A8A4734A151A825B004123FF /* Collator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collator.h; sourceTree = "<group>"; };
 		A8A4734B151A825B004123FF /* CollatorDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollatorDefault.cpp; sourceTree = "<group>"; };
@@ -2978,6 +2980,7 @@
 			isa = PBXGroup;
 			children = (
 				A8A4734F151A825B004123FF /* icu */,
+				A8A47349151A825B004123FE /* CharacterCasts.h */,
 				A8A47349151A825B004123FF /* CharacterNames.h */,
 				A8A4734A151A825B004123FF /* Collator.h */,
 				A8A4734B151A825B004123FF /* CollatorDefault.cpp */,
@@ -3507,6 +3510,7 @@
 				DDF306D827C08654006A526F /* CFStringSPI.h in Headers */,
 				DDF3071327C086CC006A526F /* CFURLExtras.h in Headers */,
 				DDF306DF27C08654006A526F /* CFXPCBridgeSPI.h in Headers */,
+				DDF307F027C086EA006A526E /* CharacterCasts.h in Headers */,
 				DDF307F027C086EA006A526F /* CharacterNames.h in Headers */,
 				E336BD2F2BAB8A0400E8471C /* CharacterProperties.h in Headers */,
 				DD3DC86627A4BF8E007E5B61 /* CheckedArithmetic.h in Headers */,

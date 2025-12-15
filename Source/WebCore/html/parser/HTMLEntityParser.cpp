@@ -74,7 +74,7 @@ static constexpr DecodedHTMLEntity makeEntity(char32_t character)
         return { replacementCharacter };
     if ((character & ~0x1F) != 0x80) {
         if (U_IS_BMP(character)) {
-            char16_t codeUnit = character;
+            auto codeUnit = static_cast<char16_t>(character);
             return { codeUnit };
         }
         return { U16_LEAD(character), U16_TRAIL(character) };

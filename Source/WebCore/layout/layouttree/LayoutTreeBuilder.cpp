@@ -83,7 +83,7 @@ static BoxType& appendChild(ElementBox& parent, std::unique_ptr<BoxType> newChil
 
 static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuation(const RenderBox& block)
 {
-    // FIXE: This is a workaround of the continuation logic when the relatively positioned parent inline box
+    // FIXME: This is a workaround of the continuation logic when the relatively positioned parent inline box
     // becomes a sibling box of this block and only reachable through the continuation link which we don't have here.
     if (!block.isAnonymous() || !block.isInFlowPositioned() || !block.isContinuation())
         return { };
@@ -95,7 +95,7 @@ static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const Character
 {
     Ref primaryFont = fontCascade.primaryFont();
     for (auto character : characters) {
-        if (!fontCascade.canUseSimplifiedTextMeasuring(character, AutoVariant, whitespaceIsCollapsed, primaryFont))
+        if (!fontCascade.canUseSimplifiedTextMeasuring(static_cast<char32_t>(character), AutoVariant, whitespaceIsCollapsed, primaryFont))
             return false;
     }
     return true;

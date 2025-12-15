@@ -65,6 +65,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/unicode/CharacterCasts.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1140,7 +1141,8 @@ Position Position::trailingWhitespacePosition(Affinity, bool considerNonCollapsi
         return { };
     
     VisiblePosition v(*this);
-    char16_t c = v.characterAfter();
+    // FIXME: Probably need to use U16_GET_SUPPLEMENTARY() here.
+    char16_t c = deprecatedBrokenCastUTF32CodeUnitToUTF16IgnoringSurrogates(v.characterAfter());
     // The space must not be in another paragraph and it must be editable.
     if (!isEndOfParagraph(v) && v.next(CannotCrossEditingBoundary).isNotNull())
         if (considerNonCollapsibleWhitespace ? (isASCIIWhitespace(c) || c == noBreakSpace) : deprecatedIsCollapsibleWhitespace(c))

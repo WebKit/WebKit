@@ -492,8 +492,8 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
             Vector<char16_t, 32> buffer;
             for (int32_t index = 0, count = uset_getItemCount(&set); index < count; ++index) {
                 // start and end are inclusive.
-                UChar32 start = 0;
-                UChar32 end = 0;
+                char32_t start = 0;
+                char32_t end = 0;
                 auto status = callBufferProducingFunction(uset_getItem, &set, index, &start, &end, buffer);
                 ASSERT(U_SUCCESS(status));
                 if (buffer.isEmpty()) {

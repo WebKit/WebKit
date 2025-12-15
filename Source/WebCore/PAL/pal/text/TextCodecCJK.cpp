@@ -300,7 +300,7 @@ static Vector<uint8_t> eucJPEncode(StringView string, Function<void(char32_t, Ve
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
 
-        auto pointer = findFirstInSortedPairs(jis0208EncodeIndex(), codePoint);
+        auto pointer = findFirstInSortedPairs(jis0208EncodeIndex(), static_cast<char16_t>(codePoint));
         if (!pointer) {
             unencodableHandler(codePoint, result);
             continue;
@@ -670,7 +670,7 @@ static Vector<uint8_t> shiftJISEncode(StringView string, Function<void(char32_t,
         if (codePoint == 0x2212)
             codePoint = 0xFF0D;
 
-        auto range = findInSortedPairs(jis0208EncodeIndex(), codePoint);
+        auto range = findInSortedPairs(jis0208EncodeIndex(), static_cast<char16_t>(codePoint));
         if (range.empty()) {
             unencodableHandler(codePoint, result);
             continue;
@@ -723,7 +723,7 @@ static Vector<uint8_t> eucKREncode(StringView string, Function<void(char32_t, Ve
             continue;
         }
 
-        auto pointer = findFirstInSortedPairs(eucKREncodingIndex(), codePoint);
+        auto pointer = findFirstInSortedPairs(eucKREncodingIndex(), static_cast<char16_t>(codePoint));
         if (!pointer) {
             unencodableHandler(codePoint, result);
             continue;
@@ -1033,7 +1033,7 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t,
             result.append(0x80);
             continue;
         }
-        if (auto encoded = gb18030AsymmetricEncode(codePoint)) {
+        if (auto encoded = gb18030AsymmetricEncode(static_cast<char16_t>(codePoint))) {
             result.append(*encoded >> 8);
             result.append(*encoded);
             continue;

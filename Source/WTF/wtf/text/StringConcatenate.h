@@ -109,7 +109,7 @@ public:
     void writeTo(std::span<char16_t> destination) const
     {
         if (U_IS_BMP(m_character)) {
-            destination[0] = m_character;
+            destination[0] = static_cast<char16_t>(m_character);
             return;
         }
         destination[0] = U16_LEAD(m_character);

@@ -38,6 +38,7 @@
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
 #include <wtf/text/CharacterProperties.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -61,12 +62,11 @@ bool GlyphPage::fill(std::span<const char16_t> buffer)
         };
 
     bool haveGlyphs = false;
-    unsigned bufferOffset = 0;
-    for (unsigned i = 0; i < GlyphPage::size; i++) {
+    size_t bufferOffset = 0;
+    for (size_t i = 0; i < GlyphPage::size; i++) {
         if (bufferOffset == buffer.size())
             break;
-        char32_t character;
-        U16_NEXT(buffer, bufferOffset, buffer.size(), character);
+        char32_t character = u16Next(buffer, bufferOffset);
 
         Glyph glyph = FcFreeTypeCharIndex(face, FontCascade::treatAsSpace(character) ? space : character);
         // If the font doesn't support a Default_Ignorable character, replace it with zero with space.

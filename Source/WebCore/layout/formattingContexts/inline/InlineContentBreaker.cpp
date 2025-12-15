@@ -357,7 +357,7 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
             U16_SET_CP_START(text, left, index);
             // We should never find surrogates/segments across inline items.
             ASSERT(index >= inlineTextItem.start());
-            if (canBreakBefore(text[index], lineBreak))
+            if (canBreakBefore(static_cast<char32_t>(text[index]), lineBreak))
                 return index == inlineTextItem.start() ? std::nullopt : std::make_optional(index);
         }
         return { };
@@ -366,7 +366,7 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
     if (auto nextTextRunCandidateIndex = nextTextRunIndex(runs, textRunIndex)) {
         auto& nextInlineTextItem = downcast<InlineTextItem>(runs[*nextTextRunCandidateIndex].inlineItem);
         auto canBreakAtRunBoundary = nextInlineTextItem.isWhitespace() ? nextInlineTextItem.style().whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces :
-            canBreakBefore(nextInlineTextItem.inlineTextBox().content()[nextInlineTextItem.start()], lineBreak);
+            canBreakBefore(static_cast<char32_t>(nextInlineTextItem.inlineTextBox().content()[nextInlineTextItem.start()]), lineBreak);
         if (canBreakAtRunBoundary)
             return inlineTextItem.end();
         return lastValidBreakingPositionInsideTextRun();
@@ -395,14 +395,14 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
     // Find out if the candidate position for arbitrary breaking is valid. We can't always break between any characters.
     auto lineBreak = textRun.style.lineBreak();
     auto text = inlineTextItem.inlineTextBox().content();
-    if (canBreakBefore(text[inlineTextItem.start() + wordBreak.length], lineBreak))
+    if (canBreakBefore(static_cast<char32_t>(text[inlineTextItem.start() + wordBreak.length]), lineBreak))
         return wordBreak;
 
     const auto left = inlineTextItem.start();
     auto right = left + wordBreak.length;
     for (; right > left; --right) {
         U16_SET_CP_START(text, left, right);
-        if (canBreakBefore(text[right], lineBreak))
+        if (canBreakBefore(static_cast<char32_t>(text[right]), lineBreak))
             break;
     }
     if (left == right)
@@ -514,7 +514,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                     if (auto wordBreak = midWordBreak(candidateRun, candidateTextRun.logicalLeft, availableWidth))
                         return PartialRun { wordBreak->length, wordBreak->logicalWidth };
                 }
-                if (canBreakBefore(inlineTextItem.inlineTextBox().content()[inlineTextItem.start()], style.lineBreak()))
+                if (canBreakBefore(static_cast<char32_t>(inlineTextItem.inlineTextBox().content()[inlineTextItem.start()]), style.lineBreak()))
                     return PartialRun { };
                 else {
                     // Since this is an overflowing content and we are allowed to break at arbitrary position, we really ought to find a breaking position.
@@ -529,7 +529,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                         U16_SET_CP_START(text, left, right);
                         while (right < inlineTextItem.end()) {
                             U16_FWD_1(text, right, inlineTextItem.length());
-                            if (canBreakBefore(text[right], style.lineBreak())) {
+                            if (canBreakBefore(static_cast<char32_t>(text[right]), style.lineBreak())) {
                                 if (right == inlineTextItem.end())
                                     return { };
                                 return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, style.fontCascade(), left, right, candidateTextRun.logicalLeft) };

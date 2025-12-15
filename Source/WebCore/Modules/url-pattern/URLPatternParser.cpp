@@ -463,8 +463,9 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
         }
 
         if (!needsGrouping && part.prefix.isEmpty() && previousPart && previousPart->type == PartType::FixedText) {
+            // FIXME: This cast to char16_t is probably not correct.
             if (options.prefixCodepoint.length() == 1
-                && options.prefixCodepoint.startsWith(*StringView(previousPart->value).codePoints().codePointAt(previousPart->value.length() - 1)))
+                && options.prefixCodepoint.startsWith(static_cast<char16_t>(*StringView(previousPart->value).codePoints().codePointAt(previousPart->value.length() - 1))))
                 needsGrouping = true;
         }
 
@@ -535,7 +536,7 @@ String escapePatternString(StringView input)
 }
 
 // https://urlpattern.spec.whatwg.org/#is-a-valid-name-code-point
-bool isValidNameCodepoint(char16_t codepoint, URLPatternUtilities::IsFirst first)
+bool isValidNameCodepoint(char32_t codepoint, URLPatternUtilities::IsFirst first)
 {
     if (first == URLPatternUtilities::IsFirst::Yes)
         return u_hasBinaryProperty(codepoint, UCHAR_ID_START) || codepoint == '_' || codepoint == '$';

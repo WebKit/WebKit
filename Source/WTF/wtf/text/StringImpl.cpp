@@ -371,7 +371,7 @@ char32_t StringImpl::characterStartingAt(unsigned i)
         return span8()[i];
     auto span = span16();
     if (U16_IS_SINGLE(span[i]))
-        return span[i];
+        return static_cast<char32_t>(span[i]);
     if (i + 1 < m_length && U16_IS_LEAD(span[i]) && U16_IS_TRAIL(span[i + 1]))
         return U16_GET_SUPPLEMENTARY(span[i], span[i + 1]);
     return 0;

@@ -27,6 +27,7 @@
 
 #include <unicode/utf16.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 
@@ -47,10 +48,10 @@ public:
         if (m_currentIndex >= m_lastIndex)
             return false;
 
-        auto relativeIndex = m_currentIndex - m_originalIndex;
+        size_t relativeIndex = m_currentIndex - m_originalIndex;
         if (auto result = m_iterator.following(relativeIndex)) {
             clusterLength = result.value() - relativeIndex;
-            U16_NEXT(m_characters, relativeIndex, result.value(), character);
+            character = u16Next(m_characters.subspan(0, result.value()), relativeIndex);
             return true;
         }
         

@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/Latin1Character.h>
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WTF {
 
@@ -96,9 +97,7 @@ template<>
 ALWAYS_INLINE char32_t CodePointIterator<char16_t>::operator*() const
 {
     ASSERT(!atEnd());
-    char32_t c;
-    U16_GET(m_data, 0, 0, m_data.size(), c);
-    return c;
+    return u16Get(m_data, 0);
 }
 
 template<>

@@ -513,6 +513,7 @@ set(WTF_PUBLIC_HEADERS
     threads/BinarySemaphore.h
     threads/Signals.h
 
+    unicode/CharacterCasts.h
     unicode/CharacterNames.h
     unicode/Collator.h
     unicode/UTF8Conversion.h

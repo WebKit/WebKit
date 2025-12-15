@@ -106,7 +106,8 @@ static inline bool isPunctuationForFirstLetter(char32_t c)
 
 static inline bool shouldSkipForFirstLetter(char32_t c)
 {
-    return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
+    // FIXME: This cast to char16_t is probably not correct.
+    return deprecatedIsSpaceOrNewline(static_cast<char16_t>(c)) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
 static bool supportsFirstLetter(RenderBlock& block)

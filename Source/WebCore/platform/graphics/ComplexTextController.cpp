@@ -39,6 +39,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -69,7 +70,7 @@ public:
     {
         m_controller->advance(from, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
-        if (m_fontCascade.wordSpacing() && from && FontCascade::treatAsSpace(m_run[from]))
+        if (m_fontCascade.wordSpacing() && from && FontCascade::treatAsSpace(static_cast<char32_t>(m_run[from])))
             beforeWidth += m_fontCascade.wordSpacing();
         m_controller->advance(from + len, 0, GlyphIterationStyle::ByWholeGlyphs, fallbackFonts);
         float afterWidth = m_controller->runWidthSoFar();
@@ -325,16 +326,14 @@ void ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     ASSERT(remainingCharacters);
 
     std::array<char16_t, 2> buffer;
-    unsigned bufferLength = 1;
     buffer[0] = m_run.get()[currentIndex];
     buffer[1] = 0;
     if (remainingCharacters >= 2) {
         buffer[1] = m_run.get()[currentIndex + 1];
-        bufferLength = 2;
     }
 
-    unsigned i = 0;
-    U16_NEXT(buffer, i, bufferLength, baseCharacter);
+    size_t i = 0;
+    baseCharacter = u16Next(buffer, i);
     if (U_IS_SURROGATE(baseCharacter)) {
         currentIndex += i;
         return;
@@ -406,7 +405,7 @@ void ComplexTextController::collectComplexTextRuns()
     if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_fontCascade->fontDescription());
-        char32_t characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
+        char32_t characterToWrite = capitalizedBase ? capitalizedBase.value() : static_cast<char32_t>(baseOfString[0]);
         unsigned characterIndex = 0;
         U16_APPEND_UNSAFE(m_smallCapsBuffer, characterIndex, characterToWrite);
         for (unsigned i = characterIndex; i < currentIndex; ++i)
@@ -441,7 +440,7 @@ void ComplexTextController::collectComplexTextRuns()
         nextFont = m_fontCascade->fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex));
 
         if (shouldProcessTextSpacingTrim && nextFont && !nextFont->isSystemFontFallbackPlaceholder()) {
-            TextSpacing::CharactersData charactersData = { .currentCharacter = baseCharacter, .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
+            TextSpacing::CharactersData charactersData = { .currentCharacter = static_cast<char32_t>(baseCharacter), .currentCharacterClass = TextSpacing::characterClass(baseCharacter) };
             halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*nextFont, m_fontCascade->textSpacingTrim(), charactersData);
             nextFont = halfWidthFont ? halfWidthFont : nextFont;
         }
@@ -739,7 +738,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (characterIndex > previousCharacterIndex)
                     isMonotonic = false;
             }
-            char16_t character = charactersSpan[characterIndex];
+            auto character = static_cast<char32_t>(charactersSpan[characterIndex]);
 
             bool treatAsSpace = FontCascade::treatAsSpace(character);
             CGGlyph glyph = glyphs[glyphIndex];
@@ -863,9 +862,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             m_totalAdvance += advance;
 
             if (m_forTextEmphasis) {
-                char32_t ch32 = character;
-                if (U16_IS_SURROGATE(character))
-                    U16_GET(charactersSpan, 0, characterIndex, complexTextRun.stringLength(), ch32);
+                char32_t ch32 = u16Get(charactersSpan, characterIndex);
                 // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
                 if (!FontCascade::canReceiveTextEmphasis(ch32) || (U_GET_GC_MASK(character) & U_GC_M_MASK)) {
                     glyph = deletedGlyph;
@@ -916,11 +913,10 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::spa
 {
     auto runLengthInCodeUnits = m_indexEnd - m_indexBegin;
     m_coreTextIndices.reserveInitialCapacity(runLengthInCodeUnits);
-    unsigned r = m_indexBegin;
+    size_t r = m_indexBegin;
     while (r < m_indexEnd) {
         auto currentIndex = r;
-        char32_t character;
-        U16_NEXT(m_characters, r, stringLength(), character);
+        char32_t character = u16Next(m_characters, r);
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
         if (!FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(character))

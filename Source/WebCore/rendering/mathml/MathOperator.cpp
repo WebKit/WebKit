@@ -428,10 +428,10 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
             return;
 
         // We convert the list of Unicode characters into a list of glyph data.
-        assemblyData.topOrRightCodePoint = stretchyCharacter->topChar;
-        assemblyData.extensionCodePoint = stretchyCharacter->extensionChar;
-        assemblyData.bottomOrLeftCodePoint = stretchyCharacter->bottomChar;
-        assemblyData.middleCodePoint = stretchyCharacter->middleChar;
+        assemblyData.topOrRightCodePoint = static_cast<char32_t>(stretchyCharacter->topChar);
+        assemblyData.extensionCodePoint = static_cast<char32_t>(stretchyCharacter->extensionChar);
+        assemblyData.bottomOrLeftCodePoint = static_cast<char32_t>(stretchyCharacter->bottomChar);
+        assemblyData.middleCodePoint = static_cast<char32_t>(stretchyCharacter->middleChar);
     }
 
     auto topOrRight = glyphDataForCodePointOrFallbackGlyph(style, assemblyData.topOrRightCodePoint, assemblyData.topOrRightFallbackGlyph);

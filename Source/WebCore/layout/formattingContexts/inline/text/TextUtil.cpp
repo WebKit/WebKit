@@ -45,6 +45,7 @@
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/TextBreakIterator.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 
 namespace WebCore {
 namespace Layout {
@@ -565,7 +566,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
         }
 
         for (auto character : span) {
-            if (mayBeBidiRTL(character))
+            if (mayBeBidiRTL(static_cast<char32_t>(character)))
                 return true;
         }
         return false;
@@ -588,10 +589,9 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTe
     if (textContent.is8Bit())
         return 1;
     if (inlineTextBox.canUseSimpleFontCodePath()) {
-        char32_t character;
         size_t endOfCodePoint = startPosition;
-        auto characters = textContent.span16();
-        U16_NEXT(characters, endOfCodePoint, textContent.length(), character);
+        auto characters = textContent.span16().subspan(0, textContent.length());
+        u16Next(characters, endOfCodePoint);
         ASSERT(endOfCodePoint > startPosition);
         return endOfCodePoint - startPosition;
     }
@@ -691,7 +691,7 @@ template<typename CharacterType>
 static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const CharacterType> characters, const FontCascade& fontCascade, const Font& primaryFont, bool whitespaceIsCollapsed)
 {
     for (auto character : characters) {
-        if (!fontCascade.canUseSimplifiedTextMeasuring(character, AutoVariant, whitespaceIsCollapsed, primaryFont))
+        if (!fontCascade.canUseSimplifiedTextMeasuring(static_cast<char32_t>(character), AutoVariant, whitespaceIsCollapsed, primaryFont))
             return false;
     }
     return true;
@@ -741,7 +741,7 @@ char32_t TextUtil::lastBaseCharacterFromText(StringView string)
         return 0;
 
     for (size_t characterIndex = string.length(); characterIndex > 0; --characterIndex) {
-        auto character = string.characterAt(characterIndex - 1);
+        auto character = static_cast<char32_t>(string.characterAt(characterIndex - 1));
         if (!isCombiningMark(character))
             return character;
     }

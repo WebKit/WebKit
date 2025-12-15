@@ -34,6 +34,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterCasts.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -56,8 +57,8 @@ template <class T> concept YarrSyntaxCheckable = requires (T& checker, Vector<Ve
     { checker.atomBuiltInCharacterClass(BuiltInCharacterClassID { }, bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin(bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBegin() } -> std::same_as<void>;
-    { checker.atomCharacterClassAtom(char16_t { }) } -> std::same_as<void>;
-    { checker.atomCharacterClassRange(char16_t { }, char16_t { }) } -> std::same_as<void>;
+    { checker.atomCharacterClassAtom(char32_t { }) } -> std::same_as<void>;
+    { checker.atomCharacterClassRange(char32_t { }, char32_t { }) } -> std::same_as<void>;
     { checker.atomPatternCharacter(char32_t { }, bool { }) } -> std::same_as<void>;
     { checker.atomCharacterClassBuiltIn(BuiltInCharacterClassID { }, bool { }) } -> std::same_as<void>;
     { checker.atomClassStringDisjunction(disjunctionStrings) } -> std::same_as<void>;
@@ -1942,10 +1943,27 @@ private:
         return m_size - m_index;
     }
 
+    char32_t brokenCastToUTF32(CharType c)
+    {
+        if constexpr (std::is_same_v<CharType, char16_t>)
+            // FIXME: Should use castNonSurrogateUTF16CodeUnitToUTF32 here, but can't because
+            // YarrParser is not surrogate-aware. It also needs to be able to handle invalid UTF-16.
+            // E.g. if YarrParser were to ignore an unpaired surrogate, or a trail surrogate
+            // before a lead surrogate, then castNonSurrogateUTF16CodeUnitToUTF32 would assert.
+            return deprecatedBrokenCastUTF16CodeUnitToUTF32IgnoringSurrogates(c);
+        else if constexpr (std::is_same_v<CharType, Latin1Character>)
+            // FIXME: This is broken for non-ASCII characters (0x80..0xff).
+            return deprecatedBrokenCastLatin1CharacterToUTF32WithoutConvertingToUnicode(c);
+        else if constexpr (sizeof (CharType) == 1)
+            return castSingleByteCodeUnitToUTF32(c);
+        else
+            static_assert(false); // Should not be reached.
+    }
+
     char32_t peek()
     {
         ASSERT(m_index < m_size);
-        return m_data[m_index];
+        return brokenCastToUTF32(m_data[m_index]);
     }
 
     bool peekIsDigit()
@@ -2046,7 +2064,7 @@ private:
     char32_t consume()
     {
         ASSERT(m_index < m_size);
-        return m_data[m_index++];
+        return brokenCastToUTF32(m_data[m_index++]);
     }
 
     unsigned consumeDigit()
