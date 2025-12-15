@@ -231,12 +231,44 @@ double PerformanceResourceTiming::requestStart() const
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().requestStart);
 }
 
+double PerformanceResourceTiming::finalResponseHeadersStart() const
+{
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+        return 0.0;
+
+    // Return 0 if no final response headers timing was captured.
+    if (!m_resourceTiming.networkLoadMetrics().finalResponseHeadersStart)
+        return 0.0;
+
+    return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().finalResponseHeadersStart);
+}
+
+double PerformanceResourceTiming::firstInterimResponseStart() const
+{
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+        return 0.0;
+
+    // Return 0 if no interim (1xx) response was received.
+    if (!m_resourceTiming.networkLoadMetrics().firstInterimResponseStart)
+        return 0.0;
+
+    return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().firstInterimResponseStart);
+}
+
 double PerformanceResourceTiming::responseStart() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
-    // responseStart is 0 when a network request is not made.
+    // Per https://github.com/w3c/resource-timing/pull/408:
+    // responseStart returns firstInterimResponseStart if present, else finalResponseHeadersStart.
+    if (m_resourceTiming.networkLoadMetrics().firstInterimResponseStart)
+        return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().firstInterimResponseStart);
+
+    if (m_resourceTiming.networkLoadMetrics().finalResponseHeadersStart)
+        return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().finalResponseHeadersStart);
+
+    // Fallback to legacy responseStart for backward compatibility.
     if (!m_resourceTiming.networkLoadMetrics().responseStart)
         return requestStart();
 

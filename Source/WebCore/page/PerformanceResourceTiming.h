@@ -60,6 +60,8 @@ public:
     double connectEnd() const;
     double secureConnectionStart() const;
     double requestStart() const;
+    double finalResponseHeadersStart() const;
+    double firstInterimResponseStart() const;
     double responseStart() const;
     double responseEnd() const;
     uint64_t transferSize() const;

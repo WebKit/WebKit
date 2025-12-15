@@ -833,6 +833,12 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     if (auto networkDataTask = [self existingTask:task]) {
         ASSERT(RunLoop::isMain());
 
+        // Capture the timestamp when the first interim (1xx) response is received.
+        // https://github.com/w3c/resource-timing/pull/408
+        auto& networkLoadMetrics = networkDataTask->networkLoadMetrics();
+        if (!networkLoadMetrics.firstInterimResponseStart)
+            networkLoadMetrics.firstInterimResponseStart = MonotonicTime::now();
+
         WebCore::ResourceResponse resourceResponse(response);
         networkDataTask->didReceiveInformationalResponse(WTFMove(resourceResponse));
     }
@@ -851,6 +857,10 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     LOG(NetworkSession, "%zu didReceiveResponse", taskIdentifier);
     if (auto networkDataTask = [self existingTask:dataTask]) {
         ASSERT(RunLoop::isMain());
+
+        // Capture the timestamp when the final (non-1xx) response headers are received.
+        // https://github.com/w3c/resource-timing/pull/408
+        networkDataTask->networkLoadMetrics().finalResponseHeadersStart = MonotonicTime::now();
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
         RetainPtr<NSURLSessionTaskMetrics> taskMetrics = dataTask._incompleteTaskMetrics;

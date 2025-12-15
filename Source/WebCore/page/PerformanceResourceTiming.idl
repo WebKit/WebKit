@@ -48,6 +48,9 @@ typedef double DOMHighResTimeStamp;
     readonly attribute DOMHighResTimeStamp connectEnd;
     readonly attribute DOMHighResTimeStamp secureConnectionStart;
     readonly attribute DOMHighResTimeStamp requestStart;
+    // https://github.com/w3c/resource-timing/pull/408
+    readonly attribute DOMHighResTimeStamp finalResponseHeadersStart;
+    readonly attribute DOMHighResTimeStamp firstInterimResponseStart;
     readonly attribute DOMHighResTimeStamp responseStart;
     readonly attribute DOMHighResTimeStamp responseEnd;
     readonly attribute unsigned long long transferSize;
