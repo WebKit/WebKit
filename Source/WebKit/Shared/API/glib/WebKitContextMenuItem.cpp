@@ -61,6 +61,9 @@ struct _WebKitContextMenuItemPrivate {
 
     std::unique_ptr<WebContextMenuItemGlib> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
+#if PLATFORM(WPE)
+    CString titleUTF8;
+#endif
 #endif // ENABLE(CONTEXT_MENUS)
 };
 
@@ -356,6 +359,32 @@ WebKitContextMenuAction webkit_context_menu_item_get_stock_action(WebKitContextM
     g_assert_not_reached();
 #endif // ENABLE(CONTEXT_MENUS)
 }
+
+#if PLATFORM(WPE)
+/**
+ * webkit_context_menu_item_get_title:
+ * @item: a #WebKitContextMenuItem
+ *
+ * Gets the title of @item.
+ *
+ * Returns: the title of @item, or %NULL if @item is a separator.
+ *
+ */
+const gchar* webkit_context_menu_item_get_title(WebKitContextMenuItem* item)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
+
+#if ENABLE(CONTEXT_MENUS)
+    if (item->priv->menuItem->type() == WebCore::ContextMenuItemType::Separator)
+        return nullptr;
+    if (item->priv->titleUTF8.isNull())
+        item->priv->titleUTF8 = item->priv->menuItem->title().utf8();
+    return item->priv->titleUTF8.data();
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
+}
+#endif
 
 /**
  * webkit_context_menu_item_is_separator:

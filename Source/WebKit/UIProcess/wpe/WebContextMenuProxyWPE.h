@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameInfoData.h"
 #include "WebContextMenuProxy.h"
 
 #if ENABLE(CONTEXT_MENUS)
@@ -33,14 +34,18 @@ namespace WebKit {
 
 class WebContextMenuProxyWPE final : public WebContextMenuProxy {
 public:
-    static auto create(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
+    static auto create(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyWPE(page, WTFMove(context), userData));
+        return adoptRef(*new WebContextMenuProxyWPE(page, WTFMove(frameInfo), WTFMove(context), userData));
     }
 
+    const FrameInfoData& frameInfo() const { return m_frameInfo; }
+
 private:
-    WebContextMenuProxyWPE(WebPageProxy&, ContextMenuContextData&&, const UserData&);
+    WebContextMenuProxyWPE(WebPageProxy&, FrameInfoData&&, ContextMenuContextData&&, const UserData&);
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
+
+    const FrameInfoData m_frameInfo;
 };
 
 } // namespace WebKit

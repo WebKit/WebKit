@@ -1822,6 +1822,7 @@ public:
     void didDismissContextMenu();
     void contextMenuItemSelected(const WebContextMenuItemData&, const FrameInfoData&);
     void handleContextMenuKeyEvent();
+    const WebCore::IntPoint& activeContextMenuLocation() const;
 #endif
 
 #if USE(UICONTEXTMENU)
@@ -2426,7 +2427,7 @@ public:
     void setHasExecutedAppBoundBehaviorBeforeNavigation() { m_hasExecutedAppBoundBehaviorBeforeNavigation = true; }
 
     WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
-#if ENABLE(CONTEXT_MENUS) && PLATFORM(WIN)
+#if ENABLE(CONTEXT_MENUS) && (PLATFORM(WIN) || PLATFORM(WPE))
     WebContextMenuProxy* activeContextMenu() const { return m_activeContextMenu.get(); }
 #endif
 

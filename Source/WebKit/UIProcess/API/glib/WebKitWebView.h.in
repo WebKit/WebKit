@@ -29,6 +29,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitAuthenticationRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitBackForwardList.h>
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
+#include <@API_INCLUDE_PREFIX@/WebKitContextMenuItem.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitEditorState.h>
 #include <@API_INCLUDE_PREFIX@/WebKitFileChooserRequest.h>
@@ -1072,6 +1073,12 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *
  * Deprecated: 2.40: Use webkit_web_view_call_async_javascript_function() instead.
  */
+#endif
+
+#if PLATFORM(WPE)
+WEBKIT_API void
+webkit_web_view_select_context_menu_item          (WebKitWebView             *web_view,
+                                                   WebKitContextMenuItem     *item);
 #endif
 
 G_END_DECLS

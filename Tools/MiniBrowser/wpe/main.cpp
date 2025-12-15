@@ -61,6 +61,7 @@ static char* timeZone;
 static const char* featureList = nullptr;
 static gboolean enableITP;
 static gboolean printVersion;
+static gboolean testContextMenu;
 static guint windowWidth = 0;
 static guint windowHeight = 0;
 static guint defaultWindowWidthLegacyAPI = 1280;
@@ -130,6 +131,7 @@ static const GOptionEntry commandLineOptions[] =
 #endif
     { "size", 's', 0, G_OPTION_ARG_CALLBACK, reinterpret_cast<gpointer>(parseWindowSize), "Specify the window size to use, e.g. --size=\"800x600\"", nullptr },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
+    { "test-context-menu", 0, 0, G_OPTION_ARG_NONE, &testContextMenu, "Enable context menu API testing. Use G_MESSAGES_DEBUG=all to see debug logs", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
 };
@@ -324,6 +326,104 @@ static void webViewClose(WebKitWebView* webView, gpointer user_data)
         g_application_quit(G_APPLICATION(user_data));
 }
 
+struct ContextMenuTestData {
+    WebKitWebView* webView;
+    WebKitContextMenuItem* item;
+};
+
+static gboolean selectContextMenuItemAfterDelay(gpointer userData)
+{
+    auto* data = static_cast<ContextMenuTestData*>(userData);
+
+    g_debug("Timer fired! Selecting context menu item...");
+    const char* title = webkit_context_menu_item_get_title(data->item);
+    g_debug("Selecting: \"%s\"", title ? title : "(null)");
+
+    webkit_web_view_select_context_menu_item(data->webView, data->item);
+
+    g_object_unref(data->item);
+    delete data;
+
+    return G_SOURCE_REMOVE;
+}
+
+#if ENABLE_2022_GLIB_API
+static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, WebKitHitTestResult* hitTestResult, gpointer)
+#else
+static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, gpointer /*event*/, WebKitHitTestResult* hitTestResult, gpointer)
+#endif
+{
+    g_debug("context-menu signal emitted for webView %p", static_cast<void*>(webView));
+    g_debug("contextMenu: %p, hitTestResult: %p", static_cast<void*>(contextMenu), static_cast<void*>(hitTestResult));
+
+    gint x = 0, y = 0;
+    if (webkit_context_menu_get_position(contextMenu, &x, &y))
+        g_debug("click position: (%d, %d)", x, y);
+    else
+        g_debug("click position: (not available)");
+
+    if (hitTestResult) {
+        guint context = webkit_hit_test_result_get_context(hitTestResult);
+        g_debug("context flags: 0x%x", context);
+        g_debug("is_link: %s", webkit_hit_test_result_context_is_link(hitTestResult) ? "true" : "false");
+        g_debug("is_image: %s", webkit_hit_test_result_context_is_image(hitTestResult) ? "true" : "false");
+        g_debug("is_media: %s", webkit_hit_test_result_context_is_media(hitTestResult) ? "true" : "false");
+        g_debug("is_editable: %s", webkit_hit_test_result_context_is_editable(hitTestResult) ? "true" : "false");
+        g_debug("is_selection: %s", webkit_hit_test_result_context_is_selection(hitTestResult) ? "true" : "false");
+        g_debug("is_scrollbar: %s", webkit_hit_test_result_context_is_scrollbar(hitTestResult) ? "true" : "false");
+
+        const char* linkUri = webkit_hit_test_result_get_link_uri(hitTestResult);
+        const char* linkTitle = webkit_hit_test_result_get_link_title(hitTestResult);
+        const char* linkLabel = webkit_hit_test_result_get_link_label(hitTestResult);
+        const char* imageUri = webkit_hit_test_result_get_image_uri(hitTestResult);
+        const char* mediaUri = webkit_hit_test_result_get_media_uri(hitTestResult);
+
+        g_debug("link_uri: %s", linkUri ? linkUri : "(null)");
+        g_debug("link_title: %s", linkTitle ? linkTitle : "(null)");
+        g_debug("link_label: %s", linkLabel ? linkLabel : "(null)");
+        g_debug("image_uri: %s", imageUri ? imageUri : "(null)");
+        g_debug("media_uri: %s", mediaUri ? mediaUri : "(null)");
+    }
+
+    // Print context menu items
+    GList* items = webkit_context_menu_get_items(contextMenu);
+    g_debug("menu items (%u):", g_list_length(items));
+    for (GList* iter = items; iter; iter = iter->next) {
+        auto* item = WEBKIT_CONTEXT_MENU_ITEM(iter->data);
+        if (webkit_context_menu_item_is_separator(item))
+            g_debug("- (separator)");
+        else {
+            const char* title = webkit_context_menu_item_get_title(item);
+            WebKitContextMenuAction action = webkit_context_menu_item_get_stock_action(item);
+            g_debug("- \"%s\" (action=%d)", title ? title : "(null)", action);
+        }
+    }
+
+    // Test: Select the second non-separator item after 5 seconds delay
+    int itemIndex = 0;
+    for (GList* iter = items; iter; iter = iter->next) {
+        auto* item = WEBKIT_CONTEXT_MENU_ITEM(iter->data);
+        if (!webkit_context_menu_item_is_separator(item)) {
+            itemIndex++;
+            if (itemIndex == 2) {
+                const char* title = webkit_context_menu_item_get_title(item);
+                g_debug("Will select item #%d (\"%s\") after 5 seconds...",
+                    itemIndex, title ? title : "(null)");
+
+                auto* testData = new ContextMenuTestData;
+                testData->webView = webView;
+                testData->item = item;
+                g_object_ref(item);
+
+                g_timeout_add_seconds(5, selectContextMenuItemAfterDelay, testData);
+                break;
+            }
+        }
+    }
+
+    return FALSE; // FALSE: show menu, TRUE: suppress menu
+}
+
 static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer user_data)
 {
     auto backend = createViewBackend(defaultWindowWidthLegacyAPI, defaultWindowHeightLegacyAPI);
@@ -356,6 +456,8 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
 
     g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), user_data);
     g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), user_data);
+    if (testContextMenu)
+        g_signal_connect(newWebView, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
 
     g_hash_table_add(openViews, newWebView);
 
@@ -648,6 +750,8 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
     g_signal_connect(webView, "create", G_CALLBACK(createWebView), application);
     g_signal_connect(webView, "close", G_CALLBACK(webViewClose), application);
+    if (testContextMenu)
+        g_signal_connect(webView, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
     g_hash_table_add(openViews, webView);
 
     WebKitColor color;

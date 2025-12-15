@@ -60,6 +60,11 @@ struct _WebKitContextMenuPrivate {
     GList* items;
     WebKitContextMenuItem* parentItem;
     GRefPtr<GVariant> userData;
+#if PLATFORM(WPE)
+    gint positionX;
+    gint positionY;
+    gboolean hasPosition;
+#endif
 #if PLATFORM(GTK)
 #if USE(GTK4)
     GRefPtr<GdkEvent> event;
@@ -432,5 +437,45 @@ GdkEvent* webkit_context_menu_get_event(WebKitContextMenu* menu)
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU(menu), nullptr);
 
     return menu->priv->event.get();
+}
+#endif
+
+#if PLATFORM(WPE) && ENABLE(CONTEXT_MENUS)
+void webkitContextMenuSetPosition(WebKitContextMenu* menu, gint x, gint y)
+{
+    menu->priv->positionX = x;
+    menu->priv->positionY = y;
+    menu->priv->hasPosition = TRUE;
+}
+
+/**
+ * webkit_context_menu_get_position:
+ * @menu: a #WebKitContextMenu
+ * @x: (out) (optional): return location for the X coordinate
+ * @y: (out) (optional): return location for the Y coordinate
+ *
+ * Gets the position of the context menu.
+ *
+ * Gets the position where the context menu was triggered. This function
+ * only returns valid coordinates when called for a #WebKitContextMenu
+ * passed to #WebKitWebView::context-menu signal; in all other cases,
+ * %FALSE is returned and @x and @y are not modified.
+ *
+ * Returns: %TRUE if the position was set, or %FALSE otherwise.
+ *
+ */
+gboolean webkit_context_menu_get_position(WebKitContextMenu* menu, gint* x, gint* y)
+{
+    g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU(menu), FALSE);
+
+    if (!menu->priv->hasPosition)
+        return FALSE;
+
+    if (x)
+        *x = menu->priv->positionX;
+    if (y)
+        *y = menu->priv->positionY;
+
+    return TRUE;
 }
 #endif

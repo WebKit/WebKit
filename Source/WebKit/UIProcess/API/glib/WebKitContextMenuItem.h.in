@@ -89,6 +89,11 @@ webkit_context_menu_item_get_gaction                      (WebKitContextMenuItem
 WEBKIT_API WebKitContextMenuAction
 webkit_context_menu_item_get_stock_action                 (WebKitContextMenuItem  *item);
 
+#if PLATFORM(WPE)
+WEBKIT_API const gchar *
+webkit_context_menu_item_get_title                        (WebKitContextMenuItem  *item);
+#endif
+
 WEBKIT_API gboolean
 webkit_context_menu_item_is_separator                     (WebKitContextMenuItem  *item);
 

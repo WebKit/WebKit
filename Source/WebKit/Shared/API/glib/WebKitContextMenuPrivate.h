@@ -33,6 +33,9 @@ void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenu
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemData>&);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);
+#if PLATFORM(WPE)
+void webkitContextMenuSetPosition(WebKitContextMenu*, gint x, gint y);
+#endif
 #if PLATFORM(GTK)
 #if USE(GTK4)
 void webkitContextMenuSetEvent(WebKitContextMenu*, GRefPtr<GdkEvent>&&);

@@ -163,6 +163,10 @@ ADD_WK2_TEST(TestDOMElement ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestDOME
 ADD_WK2_TEST(TestGeolocationManager ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestGeolocationManager.cpp)
 ADD_WK2_TEST(TestInputMethodContext ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp)
 
+if (PORT STREQUAL "WPE")
+    ADD_WK2_TEST(TestContextMenuWPE ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestContextMenuWPE.cpp)
+endif ()
+
 if (ENABLE_WEBXR AND USE_OPENXR)
     ADD_WK2_TEST(TestWebKitWebXR ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebXR.cpp)
 endif ()

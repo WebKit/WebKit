@@ -10975,6 +10975,11 @@ void WebPageProxy::handleContextMenuKeyEvent()
     send(Messages::WebPage::ContextMenuForKeyEvent());
 }
 
+const WebCore::IntPoint& WebPageProxy::activeContextMenuLocation() const
+{
+    return internals().activeContextMenuContextData.menuLocation();
+}
+
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(CONTEXT_MENU_EVENT)

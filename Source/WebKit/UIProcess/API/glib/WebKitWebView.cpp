@@ -39,6 +39,9 @@
 #include "SystemSettingsManagerProxy.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
+#if PLATFORM(WPE)
+#include "WebContextMenuProxyWPE.h"
+#endif
 #include "WebFrameProxy.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitBackForwardListPrivate.h"
@@ -3023,6 +3026,12 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
     if (userData)
         webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
+
+    // Set the menu position from the active context menu data.
+    auto& page = webkitWebViewGetPage(webView);
+    auto menuLocation = page.activeContextMenuLocation();
+    webkitContextMenuSetPosition(contextMenu.get(), menuLocation.x(), menuLocation.y());
+
     GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     gboolean returnValue;
     g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(),
@@ -3030,6 +3039,39 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
         nullptr,
 #endif
         hitTestResult.get(), &returnValue);
+}
+
+/**
+ * webkit_web_view_select_context_menu_item:
+ * @web_view: a #WebKitWebView
+ * @item: a #WebKitContextMenuItem
+ *
+ * Selects a context menu item.
+ *
+ * This function should be called by WPE applications that render their own
+ * context menu UI. When the user selects a menu item, call this function to
+ * tell WebKit which item was selected. WebKit will then execute the
+ * corresponding action (e.g., copy, paste, open link, etc.).
+ *
+ * This function must be called while the context menu is still active (i.e.,
+ * after the #WebKitWebView::context-menu signal was emitted and before the
+ * #WebKitWebView::context-menu-dismissed signal is emitted).
+ *
+ */
+void webkit_web_view_select_context_menu_item(WebKitWebView* webView, WebKitContextMenuItem* item)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item));
+
+    auto& page = webkitWebViewGetPage(webView);
+    auto* contextMenuProxy = static_cast<WebContextMenuProxyWPE*>(page.activeContextMenu());
+    if (!contextMenuProxy) {
+        g_warning("webkit_web_view_select_context_menu_item: No active context menu");
+        return;
+    }
+
+    auto itemData = webkitContextMenuItemToWebContextMenuItemData(item);
+    page.contextMenuItemSelected(itemData, contextMenuProxy->frameInfo());
 }
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
