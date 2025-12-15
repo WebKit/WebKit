@@ -1009,7 +1009,7 @@ void Options::notifyOptionsChanged()
         // FIXME: Should support for OSR exit as well.
     }
 
-#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION) || OS(WINDOWS)
+#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION)
     Options::useWasmFastMemory() = false;
 #endif
 
