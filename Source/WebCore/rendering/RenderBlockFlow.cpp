@@ -4180,6 +4180,24 @@ RenderBlockFlowRareData& RenderBlockFlow::ensureRareBlockFlowData()
     return *m_rareBlockFlowData;
 }
 
+void RenderBlockFlow::addNestedInlineBlock(CheckedRef<Layout::Box>&& box)
+{
+    ensureRareBlockFlowData().m_nestedInlineBlocks.append(WTFMove(box));
+}
+
+void RenderBlockFlow::clearNestedInlineBlocks()
+{
+    if (hasRareBlockFlowData())
+        m_rareBlockFlowData->m_nestedInlineBlocks.clear();
+}
+
+Vector<CheckedRef<Layout::Box>>* RenderBlockFlow::nestedInlineBlocks() const
+{
+    if (!hasRareBlockFlowData())
+        return nullptr;
+    return &m_rareBlockFlowData->m_nestedInlineBlocks;
+}
+
 void RenderBlockFlow::materializeRareBlockFlowData()
 {
     ASSERT(!hasRareBlockFlowData());
