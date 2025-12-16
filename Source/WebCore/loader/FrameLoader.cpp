@@ -3086,7 +3086,11 @@ void FrameLoader::didReachLayoutMilestone(OptionSet<LayoutMilestone> milestones)
 
     m_client->willDispatchDidReachLayoutMilestone(milestones);
 
-    m_frame->protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [this, protectedThis = Ref { *this }, milestones, queuedNavigationID] {
+    RefPtr document = m_frame->document();
+    if (!document)
+        return;
+
+    document->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [this, protectedThis = Ref { *this }, milestones, queuedNavigationID] {
         RefPtr loader = activeDocumentLoader();
         if (!loader)
             return;
