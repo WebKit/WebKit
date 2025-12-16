@@ -3368,7 +3368,7 @@ MacroAssembler::Label BBQJIT::addLoopOSREntrypoint()
     // This operation shuffles around values on the stack, until everything is in the right place. Then,
     // it returns the address of the loop we're jumping to in wasmScratchGPR (so we don't interfere with
     // anything we just loaded from the scratch buffer into a register)
-    m_jit.probe(tagCFunction<JITProbePtrTag>(operationWasmLoopOSREnterBBQJIT), nullptr, m_usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
+    m_jit.probe(tagCFunction<JITProbePtrTag>(operationWasmLoopOSREnterBBQJIT), nullptr);
 
     // We expect the loop address to be populated by the probe operation.
     static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
@@ -3483,8 +3483,7 @@ StackMap BBQJIT::makeStackMap(const ControlData& data, Stack& enclosingStack)
         stackMap[stackMapIndex++] = OSREntryValue(toB3Rep(data.argumentLocations()[i]), toB3Type(data.argumentType(i).kind));
 
     RELEASE_ASSERT(stackMapIndex == numElements);
-    unsigned bufferSize = Context::scratchBufferSlotsPerValue(m_callee.savedFPWidth()) * (BBQCallee::extraOSRValuesForLoopIndex + numElements);
-    m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, bufferSize);
+    m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, BBQCallee::extraOSRValuesForLoopIndex + numElements);
     return stackMap;
 }
 
@@ -3517,12 +3516,11 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& 
 
     OSREntryData* osrEntryDataPtr = &osrEntryData;
 
-    addLatePath(origin(), [forceOSREntry, tierUp, tierUpResume, osrEntryDataPtr](BBQJIT& generator, CCallHelpers& jit) {
+    addLatePath(origin(), [forceOSREntry, tierUp, tierUpResume, osrEntryDataPtr](BBQJIT&, CCallHelpers& jit) {
         forceOSREntry.link(&jit);
         tierUp.link(&jit);
 
-        Probe::SavedFPWidth savedFPWidth = generator.m_usesSIMD ? Probe::SavedFPWidth::SaveVectors : Probe::SavedFPWidth::DontSaveVectors; // By the time we reach the late path, we should know whether or not the function uses SIMD.
-        jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr, savedFPWidth);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationWasmTriggerOSREntryNow), osrEntryDataPtr);
         jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::nonPreservedNonArgumentGPR0).linkTo(tierUpResume, &jit);
 
         // operationWasmTriggerOSREntryNow is already restoring callee saves. Thus we do not need to restore them before jumping.

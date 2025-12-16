@@ -63,7 +63,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void*, C
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* sp, CallFrame*, JSWebAssemblyInstance*));
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);
+void loadValuesIntoBuffer(Probe::Context&, const StackMap&, Wasm::Context::ScratchBufferEntry*);
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFrame*, JSWebAssemblyInstance*));
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)

@@ -369,7 +369,7 @@ __asm__(
     ".previous" "\n"
 );
 
-void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth)
+void MacroAssembler::probe(Probe::Function function, void* arg)
 {
     sub32(TrustedImm32(sizeof(IncomingRecord)), sp);
 

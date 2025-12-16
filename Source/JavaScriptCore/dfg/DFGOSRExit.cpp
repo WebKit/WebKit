@@ -276,7 +276,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         debugInfo->kind = exit.m_kind;
         debugInfo->exitIndex = osrExitIndex;
         debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo, SavedFPWidth::DontSaveVectors);
+        jit.probe(tagCFunction<JITProbePtrTag>(operationDebugPrintSpeculationFailure), debugInfo);
     }
 
     // Perform speculation recovery. This only comes into play when an operation

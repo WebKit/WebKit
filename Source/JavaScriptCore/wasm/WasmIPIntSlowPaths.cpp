@@ -211,26 +211,19 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
 }
 
 // This needs to be kept in sync with BBQJIT::makeStackMap.
-template<SavedFPWidth savedFPWidth>
-static ALWAYS_INLINE uint64_t* buildEntryBufferForLoopOSR(Wasm::IPIntCallee* ipintCallee, Wasm::BBQCallee* bbqCallee, JSWebAssemblyInstance* instance, const Wasm::IPIntTierUpCounter::OSREntryData& osrEntryData, IPIntLocal* pl)
+static ALWAYS_INLINE Wasm::Context::ScratchBufferEntry* buildEntryBufferForLoopOSR(Wasm::IPIntCallee* ipintCallee, Wasm::BBQCallee* bbqCallee, JSWebAssemblyInstance* instance, const Wasm::IPIntTierUpCounter::OSREntryData& osrEntryData, IPIntLocal* pl)
 {
     ASSERT(bbqCallee->compilationMode() == Wasm::CompilationMode::BBQMode);
     size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
 
-    constexpr unsigned valueSize = Wasm::Context::scratchBufferSlotsPerValue(savedFPWidth);
-    RELEASE_ASSERT(osrEntryScratchBufferSize >= valueSize * (ipintCallee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth + Wasm::BBQCallee::extraOSRValuesForLoopIndex));
+    RELEASE_ASSERT(osrEntryScratchBufferSize >= ipintCallee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth + Wasm::BBQCallee::extraOSRValuesForLoopIndex);
 
-    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+    auto* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
     if (!buffer)
         return nullptr;
-
-    size_t bufferIndex = 0;
+    auto* currentEntry = buffer;
     auto copyValueToBuffer = [&](const IPIntLocal& local) ALWAYS_INLINE_LAMBDA {
-        if constexpr (savedFPWidth == SavedFPWidth::SaveVectors)
-            *std::bit_cast<v128_t*>(buffer + bufferIndex) = local.v128;
-        else
-            buffer[bufferIndex] = local.i64;
-        bufferIndex += valueSize;
+        *std::bit_cast<v128_t*>(currentEntry++) = local.v128;
     };
 
     // The loop index isn't really an IPIntLocal value, but it occupies the first slot of the OSR scratch buffer
@@ -291,12 +284,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
     auto* bbqCallee = uncheckedDowncast<Wasm::BBQCallee>(compiledCallee.get());
     ASSERT(bbqCallee->compilationMode() == Wasm::CompilationMode::BBQMode);
 
-    uint64_t* buffer;
-    if (bbqCallee->savedFPWidth() == SavedFPWidth::SaveVectors)
-        buffer = buildEntryBufferForLoopOSR<SavedFPWidth::SaveVectors>(callee, bbqCallee, instance, osrEntryData, pl);
-    else
-        buffer = buildEntryBufferForLoopOSR<SavedFPWidth::DontSaveVectors>(callee, bbqCallee, instance, osrEntryData, pl);
-
+    auto* buffer = buildEntryBufferForLoopOSR(callee, bbqCallee, instance, osrEntryData, pl);
     if (!buffer)
         WASM_RETURN_TWO(nullptr, nullptr);
 

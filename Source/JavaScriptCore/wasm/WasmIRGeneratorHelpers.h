@@ -163,18 +163,16 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
 }
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-template<SavedFPWidth savedFPWidth>
-static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
+static inline void SYSV_ABI buildEntryBufferForCatch(Probe::Context& context)
 {
-    unsigned valueSize = Context::scratchBufferSlotsPerValue(savedFPWidth);
     CallFrame* callFrame = context.fp<CallFrame*>();
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
     OptimizingJITCallee* callee = uncheckedDowncast<OptimizingJITCallee>(uncheckedDowncast<Wasm::Callee>(callFrame->callee().asNativeCallee()));
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
     JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
     EncodedJSValue exception = context.gpr<EncodedJSValue>(GPRInfo::returnValueGPR);
-    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
-    loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);
+    auto* buffer = instance->vm().wasmContext.scratchBufferForSize(stackmap.size());
+    loadValuesIntoBuffer(context, stackmap, buffer);
 
     JSValue thrownValue = JSValue::decode(exception);
     void* payload = nullptr;
@@ -185,10 +183,6 @@ static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
     context.gpr(GPRInfo::argumentGPR1) = exception;
     context.gpr(GPRInfo::argumentGPR2) = std::bit_cast<uintptr_t>(payload);
 }
-
-static inline void SYSV_ABI buildEntryBufferForCatchSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::SaveVectors>(context); }
-static inline void SYSV_ABI buildEntryBufferForCatchNoSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::DontSaveVectors>(context); }
-
 
 static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGenerationParams& params, const Checked<int32_t>& tailCallStackOffsetFromFP)
 {

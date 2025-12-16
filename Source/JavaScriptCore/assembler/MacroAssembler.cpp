@@ -57,11 +57,6 @@ void MacroAssembler::probeDebug(Function<void(Probe::Context&)> func)
     probe(tagCFunction<JITProbePtrTag>(stdFunctionCallback), new Function<void(Probe::Context&)>(WTFMove(func)));
 }
 
-void MacroAssembler::probeDebugSIMD(Function<void(Probe::Context&)> func)
-{
-    probe(tagCFunction<JITProbePtrTag>(stdFunctionCallback), new Function<void(Probe::Context&)>(WTFMove(func)), Probe::SavedFPWidth::SaveVectors);
-}
-
 } // namespace JSC
 
 namespace WTF {

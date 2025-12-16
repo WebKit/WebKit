@@ -740,20 +740,18 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, JSWebAssemblyInsta
     }
 }
 
-void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint64_t* buffer, SavedFPWidth savedFPWidth)
+// loadValuesIntoBuffer assumes context saved vector-width FPRs.
+void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, Wasm::Context::ScratchBufferEntry* buffer)
 {
-    ASSERT(Options::useWasmSIMD() || savedFPWidth == SavedFPWidth::DontSaveVectors);
-    unsigned valueSize = Context::scratchBufferSlotsPerValue(savedFPWidth);
-
     constexpr bool verbose = false || WasmOperationsInternal::verbose;
-    dataLogLnIf(verbose, "loadValuesIntoBuffer: valueSize = ", valueSize, "; values.size() = ", values.size());
+    dataLogLnIf(verbose, "loadValuesIntoBuffer: values.size() = ", values.size());
     for (unsigned index = 0; index < values.size(); ++index) {
         const OSREntryValue& value = values[index];
         dataLogLnIf(Options::verboseOSR() || verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
 #if USE(JSVALUE32_64)
         if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
-            std::bit_cast<uint32_t*>(buffer + index * valueSize)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
-            std::bit_cast<uint32_t*>(buffer + index * valueSize)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
+            std::bit_cast<uint32_t*>(buffer + index)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
+            std::bit_cast<uint32_t*>(buffer + index)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
             dataLogLnIf(verbose, "GPR Pair for value ", index, " ",
                 value.gprLo(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)), " ",
                 value.gprHi(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)));
@@ -766,21 +764,20 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             case B3::Double:
                 RELEASE_ASSERT_NOT_REACHED();
             default:
-                *std::bit_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
+                *std::bit_cast<uint64_t*>(buffer + index) = context.gpr(value.gpr());
             }
             dataLogLnIf(verbose, "GPR for value ", index, " ", value.gpr(), " = ", context.gpr(value.gpr()));
         } else if (value.isFPR()) {
             switch (value.type().kind()) {
             case B3::Float:
             case B3::Double:
-                dataLogLnIf(verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr(), savedFPWidth));
-                *std::bit_cast<double*>(buffer + index * valueSize) = context.fpr(value.fpr(), savedFPWidth);
+                dataLogLnIf(verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr()));
+                *std::bit_cast<double*>(buffer + index) = context.fpr(value.fpr());
                 break;
             case B3::V128:
-                RELEASE_ASSERT(valueSize == 2);
 #if CPU(X86_64) || CPU(ARM64)
                 dataLogLnIf(verbose, "Vector FPR for value ", index, " ", value.fpr(), " = ", context.vector(value.fpr()));
-                *std::bit_cast<v128_t*>(buffer + index * valueSize) = context.vector(value.fpr());
+                *std::bit_cast<v128_t*>(buffer + index) = context.vector(value.fpr());
 #else
                 UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -791,20 +788,20 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
         } else if (value.isConstant()) {
             switch (value.type().kind()) {
             case B3::Float:
-                *std::bit_cast<float*>(buffer + index * valueSize) = value.floatValue();
+                *std::bit_cast<float*>(buffer + index) = value.floatValue();
                 break;
             case B3::Double:
-                *std::bit_cast<double*>(buffer + index * valueSize) = value.doubleValue();
+                *std::bit_cast<double*>(buffer + index) = value.doubleValue();
                 break;
             case B3::V128:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             default:
-                *std::bit_cast<uint64_t*>(buffer + index * valueSize) = value.value();
+                *std::bit_cast<uint64_t*>(buffer + index) = value.value();
             }
         } else if (value.isStack()) {
             auto* baseLoad = std::bit_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
-            auto* baseStore = std::bit_cast<uint8_t*>(buffer + index * valueSize);
+            auto* baseStore = std::bit_cast<uint8_t*>(buffer + index);
 
             if (value.type().isFloat() || value.type().isVector()) {
                 dataLogLnIf(verbose, "Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
@@ -839,17 +836,16 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
         context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = 0;
     };
 
-    unsigned valueSize = Context::scratchBufferSlotsPerValue(callee.savedFPWidth());
-    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == valueSize * osrEntryData.values().size());
+    RELEASE_ASSERT(osrEntryCallee.osrEntryScratchBufferSize() == osrEntryData.values().size());
 
-    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
+    auto* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryCallee.osrEntryScratchBufferSize());
     if (!buffer)
         return returnWithoutOSREntry();
 
     dataLogLnIf(Options::verboseOSR(), callee, ": OMG OSR entry: functionCodeIndex=", osrEntryData.functionIndex(), " got entry callee ", RawPointer(&osrEntryCallee));
 
     // 1. Place required values in scratch buffer.
-    loadValuesIntoBuffer(context, osrEntryData.values(), buffer, callee.savedFPWidth());
+    loadValuesIntoBuffer(context, osrEntryData.values(), buffer);
 
     // 2. Restore callee saves.
     auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
@@ -859,7 +855,7 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
         if (entry.reg().isGPR())
             context.gpr(entry.reg().gpr()) = *std::bit_cast<UCPURegister*>(std::bit_cast<uint8_t*>(context.fp()) + entry.offset());
         else
-            context.fpr(entry.reg().fpr(), callee.savedFPWidth()) = *std::bit_cast<double*>(std::bit_cast<uint8_t*>(context.fp()) + entry.offset());
+            context.fpr(entry.reg().fpr()) = *std::bit_cast<double*>(std::bit_cast<uint8_t*>(context.fp()) + entry.offset());
     }
 
     // 3. Function epilogue, like a tail-call.
@@ -1156,15 +1152,15 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
     ASSERT(callee.compilationMode() == Wasm::CompilationMode::BBQMode);
     ASSERT(callee.refCount());
 
-    uint64_t* osrEntryScratchBuffer = std::bit_cast<uint64_t*>(context.gpr(GPRInfo::argumentGPR0));
-    unsigned valueSize = Context::scratchBufferSlotsPerValue(callee.savedFPWidth());
-    unsigned loopIndex = osrEntryScratchBuffer[0]; // First entry in scratch buffer is the loop index when tiering up to BBQ.
+    auto* osrEntryScratchBuffer = std::bit_cast<Wasm::Context::ScratchBufferEntry*>(context.gpr(GPRInfo::argumentGPR0));
+    unsigned loopIndex = *std::bit_cast<uint64_t*>(osrEntryScratchBuffer); // First entry in scratch buffer is the loop index when tiering up to BBQ.
 
     OSREntryData& entryData = callee.tierUpCounter().osrEntryData(loopIndex);
     RELEASE_ASSERT(entryData.loopIndex() == loopIndex);
 
     const StackMap& stackMap = entryData.values();
-    auto writeValueToRep = [&](uint64_t* bufferSlot, const OSREntryValue& value) {
+    auto writeValueToRep = [&](Wasm::Context::ScratchBufferEntry* bufferEntry, const OSREntryValue& value) {
+        uint64_t* bufferSlot = std::bit_cast<uint64_t*>(bufferEntry);
         B3::Type type = value.type();
         // Void signifies an unused exception slot in `try` (since we can't have an exception at that time)
         if (type.kind() == B3::TypeKind::Void)
@@ -1213,11 +1209,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
             RELEASE_ASSERT_NOT_REACHED();
     };
 
-    unsigned indexInScratchBuffer = valueSize * BBQCallee::extraOSRValuesForLoopIndex;
-    for (const auto& entry : stackMap) {
-        writeValueToRep(&osrEntryScratchBuffer[indexInScratchBuffer], entry);
-        indexInScratchBuffer += valueSize;
-    }
+    unsigned indexInScratchBuffer = BBQCallee::extraOSRValuesForLoopIndex;
+    for (const auto& entry : stackMap)
+        writeValueToRep(&osrEntryScratchBuffer[indexInScratchBuffer++], entry);
 
     context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = std::bit_cast<UCPURegister>(callee.loopEntrypoints()[loopIndex].taggedPtr());
 }

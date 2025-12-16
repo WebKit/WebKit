@@ -350,9 +350,9 @@ class BBQCallee final : public OptimizingJITCallee {
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
-    static Ref<BBQCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
+    static Ref<BBQCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
-        return adoptRef(*new BBQCallee(index, WTFMove(name), savedFPWidth));
+        return adoptRef(*new BBQCallee(index, WTFMove(name)));
     }
     ~BBQCallee();
 
@@ -372,7 +372,6 @@ public:
     const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() { return m_loopEntrypoints; }
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
-    SavedFPWidth savedFPWidth() const { return m_savedFPWidth; }
 
     void setEntrypoint(Wasm::Entrypoint&& entrypoint, Vector<UnlinkedWasmToWasmCall>&& unlinkedCalls, StackMaps&& stackmaps, Vector<UnlinkedHandlerInfo>&& exceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>&& exceptionHandlerLocations, Vector<CodeLocationLabel<WasmEntryPtrTag>>&& loopEntrypoints, std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint, unsigned osrEntryScratchBufferSize)
     {
@@ -402,9 +401,8 @@ public:
     }
 
 private:
-    BBQCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
+    BBQCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
         : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTFMove(name))
-        , m_savedFPWidth(savedFPWidth)
     {
     }
 
@@ -417,7 +415,6 @@ private:
     unsigned m_osrEntryScratchBufferSize { 0 };
     unsigned m_stackCheckSize { 0 };
     bool m_didStartCompilingOSREntryCallee { false };
-    SavedFPWidth m_savedFPWidth { SavedFPWidth::DontSaveVectors };
     Vector<UniqueRef<EmbeddedFixedVector<CodeLocationLabel<JSSwitchPtrTag>>>> m_switchJumpTables;
 };
 #endif

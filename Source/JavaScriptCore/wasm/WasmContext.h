@@ -35,15 +35,14 @@
 namespace JSC { namespace Wasm {
 
 struct Context {
-    uint64_t* scratchBufferForSize(size_t numberOfSlots);
+    struct alignas(16) ScratchBufferEntry {
+        uint8_t data[16]; // Large enough for any type (including v128_t)
+    };
 
-    ALWAYS_INLINE static constexpr size_t scratchBufferSlotsPerValue(SavedFPWidth savedFPWidth)
-    {
-        return savedFPWidth == SavedFPWidth::SaveVectors ? 2 : 1;
-    }
+    ScratchBufferEntry* scratchBufferForSize(size_t numberOfSlots);
 
 private:
-    Vector<UniqueArray<uint64_t>> m_scratchBuffers;
+    Vector<UniqueArray<ScratchBufferEntry>> m_scratchBuffers;
     size_t m_sizeOfLastScratchBuffer { 0 };
     Lock m_scratchBufferLock;
 };
