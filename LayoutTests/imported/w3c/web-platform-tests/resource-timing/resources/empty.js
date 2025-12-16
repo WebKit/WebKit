@@ -1,1 +1,1 @@
-/* Nothing here */
+// Empty JavaScript file for preload test

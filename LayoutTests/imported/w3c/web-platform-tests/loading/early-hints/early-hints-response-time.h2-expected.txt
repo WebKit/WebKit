@@ -1,0 +1,12 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didFailLoadWithError
+main frame - didFinishLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+
+PASS Interim response times should correspond to delays (h2)
+
