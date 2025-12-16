@@ -69,13 +69,32 @@ namespace WebKit {
 #define SET_DICT_FROM_PRIMITIVE(KEY, CLASS, PRIMITIVE) \
     [dict setObject:[NSNumber numberWith##PRIMITIVE:m_data.KEY] forKey:@#KEY]
 
+#define EXTRACT_TYPED_VALUE(dictionary, key, type, target) { \
+    id extractedValue = [(NSDictionary *)dictionary objectForKey:key]; \
+    if (extractedValue) \
+        target = (__bridge type##Ref)extractedValue; \
+    }
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLRequest);
 
 CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
 {
     RetainPtr dict = [request _webKitPropertyListData];
 
-    SET_NSURLREQUESTDATA(protocolProperties, NSDictionary, CoreIPCPlistDictionary);
+    if (auto *protocolPropertiesDict = dynamic_objc_cast<NSDictionary>(dict.get()[@"protocolProperties"])) {
+        ProtocolProperties props;
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation", CFBoolean, props.isTopLevelNavigation);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"kCFURLRequestAllowAllPOSTCaching", CFBoolean, props.allowAllPOSTCaching);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertySiteForCookies", CFString, props.siteForCookies);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"_kCFURLCachePartitionKey", CFString, props.cachePartitionKey);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"WKVeryLowLoadPriority", CFBoolean, props.wkVeryLowLoadPriority);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"NSURLRequestFileProtocolExpectedDevice", CFNumber, props.fileProtocolExpectedDevice);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"_kCFURLConnectionPropertyShouldSniff", CFBoolean, props.shouldSniff);
+        EXTRACT_TYPED_VALUE(protocolPropertiesDict, @"kCFURLRequestContentDecoderSkipURLCheck", CFBoolean, props.contentDecoderSkipURLCheck);
+
+        m_data.protocolProperties = WTF::move(props);
+    }
+
     SET_NSURLREQUESTDATA_PRIMITIVE(isMutable, NSNumber, bool);
 
     RetainPtr<id> url = dict.get()[@"URL"];
@@ -223,11 +242,28 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(const RetainPtr<NSURLRequest>& request)
     : CoreIPCNSURLRequest(request.get()) { }
 
 
+#define INJECT_TYPED_VALUE(dictionary, key, value) \
+    if (value) \
+        [dictionary.get() setObject:bridge_cast(value.get()) forKey:key]
+
 RetainPtr<id> CoreIPCNSURLRequest::toID() const
 {
     RetainPtr dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:CoreIPCNSURLRequestData::numberOfFields]);
 
-    SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
+    if (m_data.protocolProperties) {
+        RetainPtr protocolPropertiesDict = adoptNS([[NSMutableDictionary alloc] init]);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation", m_data.protocolProperties->isTopLevelNavigation);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"kCFURLRequestAllowAllPOSTCaching", m_data.protocolProperties->allowAllPOSTCaching);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"_kCFHTTPCookiePolicyPropertySiteForCookies", m_data.protocolProperties->siteForCookies.createCFString());
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"_kCFURLCachePartitionKey", m_data.protocolProperties->cachePartitionKey.createCFString());
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"WKVeryLowLoadPriority", m_data.protocolProperties->wkVeryLowLoadPriority);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"NSURLRequestFileProtocolExpectedDevice", m_data.protocolProperties->fileProtocolExpectedDevice);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"_kCFURLConnectionPropertyShouldSniff", m_data.protocolProperties->shouldSniff);
+        INJECT_TYPED_VALUE(protocolPropertiesDict, @"kCFURLRequestContentDecoderSkipURLCheck", m_data.protocolProperties->contentDecoderSkipURLCheck);
+
+        [dict setObject:protocolPropertiesDict.get() forKey:@"protocolProperties"];
+    }
+
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);
 
     if (auto nsURL = m_data.url.toID())
@@ -344,5 +380,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 #undef SET_DICT_FROM_OPTIONAL_MEMBER
 #undef SET_DICT_FROM_PRIMITIVE
 #undef SET_DICT_FROM_OPTIONAL_PRIMITIVE
+#undef EXTRACT_TYPED_VALUE
+#undef INJECT_TYPED_VALUE
 
 #endif // PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)

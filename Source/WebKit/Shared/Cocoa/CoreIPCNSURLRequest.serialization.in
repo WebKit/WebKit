@@ -96,9 +96,20 @@ header: "CoreIPCNSURLRequest.h"
 using WebKit::CoreIPCNSURLRequestData::BodyParts = Variant<WebKit::CoreIPCString, WebKit::CoreIPCData>;
 using WebKit::CoreIPCNSURLRequestData::HeaderField = std::pair<String, Variant<String, Vector<String>>>;
 
+[CustomHeader, WebKitPlatform] struct WebKit::ProtocolProperties {
+    RetainPtr<CFBooleanRef> isTopLevelNavigation;
+    RetainPtr<CFBooleanRef> allowAllPOSTCaching;
+    String siteForCookies;
+    String cachePartitionKey;
+    RetainPtr<CFBooleanRef> wkVeryLowLoadPriority;
+    RetainPtr<CFNumberRef> fileProtocolExpectedDevice;
+    RetainPtr<CFBooleanRef> shouldSniff;
+    RetainPtr<CFBooleanRef> contentDecoderSkipURLCheck;
+}
+
 header: "CoreIPCNSURLRequest.h"
 [CustomHeader, WebKitPlatform] struct WebKit::CoreIPCNSURLRequestData {
-    std::optional<WebKit::CoreIPCPlistDictionary> protocolProperties;
+    std::optional<WebKit::ProtocolProperties> protocolProperties;
     bool isMutable;
     WebKit::CoreIPCURL url;
     double timeout;

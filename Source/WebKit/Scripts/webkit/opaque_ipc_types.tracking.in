@@ -383,10 +383,6 @@
     [Legacy] StructureParam WTF::CString.span()
 }
 
-[UnsafeWrapper] std::optional<WebKit::CoreIPCPlistDictionary> {
-    [Legacy] StructureParam WebKit::CoreIPCNSURLRequestData.protocolProperties
-}
-
 # Shared Memory
 [SafeWrapper] StructureParam WebCore::ShareableBitmapHandle.m_handle WebCore::SharedMemoryHandle
 [SafeWrapper] StructureParam IPC::StreamServerConnectionHandle.buffer WebCore::SharedMemoryHandle
