@@ -782,6 +782,17 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     [m_webFrame->_private->internalLoadDelegate webFrame:m_webFrame.get() didFinishLoadWithError:nil];
 }
 
+void WebFrameLoaderClient::willDispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (milestones & WebCore::LayoutMilestone::DidFirstLayout) {
+        WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
+        [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
+        [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
+    }
+#endif
+}
+
 void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     WebView *webView = getWebView(m_webFrame.get());
@@ -809,10 +820,6 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
         WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
         if ([getWebView(m_webFrame.get()) drawsBackground])
             [scrollView setDrawsBackground:YES];
-#if !PLATFORM(IOS_FAMILY)
-        [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
-        [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
-#endif
     }
 
     if (milestones & WebCore::LayoutMilestone::DidFirstVisuallyNonEmptyLayout) {

@@ -122,6 +122,7 @@ private:
     void dispatchDidFailLoad(const WebCore::ResourceError&) final;
     void dispatchDidFinishDocumentLoad() final;
     void dispatchDidFinishLoad() final;
+    void willDispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
     void dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) final;
 
     WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;

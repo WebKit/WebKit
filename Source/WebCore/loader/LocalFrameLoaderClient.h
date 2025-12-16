@@ -190,6 +190,7 @@ public:
 #endif
 
     virtual void dispatchDidLayout() { }
+    virtual void willDispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) { }
     virtual void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) { }
     virtual void dispatchDidReachVisuallyNonEmptyState() { }
 
