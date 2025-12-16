@@ -69,7 +69,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorController);
 
 WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope& globalScope)
     : m_instrumentingAgents(InstrumentingAgents::create(*this))
-    , m_injectedScriptManager(WebInjectedScriptManager::create(*this, WebInjectedScriptHost::create()))
+    , m_injectedScriptManager(makeUniqueRef<WebInjectedScriptManager>(*this, WebInjectedScriptHost::create()))
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
@@ -94,8 +94,6 @@ WorkerInspectorController::~WorkerInspectorController()
 
 void WorkerInspectorController::workerTerminating()
 {
-    m_injectedScriptManager->disconnect();
-
     disconnectFrontend(Inspector::DisconnectReason::InspectedTargetDestroyed);
 
     m_agents.discardValues();
@@ -139,6 +137,7 @@ void WorkerInspectorController::connectFrontend(bool isAutomaticInspection, bool
 
     m_forwardingChannel = makeUnique<WorkerToPageFrontendChannel>(m_globalScope);
     m_frontendRouter->connectFrontend(*m_forwardingChannel.get());
+    m_injectedScriptManager->addClient();
     m_agents.didCreateFrontendAndBackend();
 
     updateServiceWorkerPageFrontendCount();
@@ -159,6 +158,7 @@ void WorkerInspectorController::disconnectFrontend(Inspector::DisconnectReason r
     });
 
     m_agents.willDestroyFrontendAndBackend(reason);
+    m_injectedScriptManager->removeClient();
     m_frontendRouter->disconnectFrontend(*m_forwardingChannel.get());
     m_forwardingChannel = nullptr;
 
@@ -195,7 +195,7 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        m_injectedScriptManager.get(),
         m_frontendRouter.get(),
         m_backendDispatcher,
     };
@@ -222,8 +222,6 @@ void WorkerInspectorController::createLazyAgents()
 
     m_debugger = makeUnique<WorkerDebugger>(m_globalScope);
 
-    m_injectedScriptManager->connect();
-
     auto workerContext = workerAgentContext();
 
     m_agents.append(makeUniqueRef<WorkerRuntimeAgent>(workerContext));
@@ -247,9 +245,6 @@ void WorkerInspectorController::createLazyAgents()
     auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(workerContext);
     m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgent.ptr());
     m_agents.append(WTFMove(scriptProfilerAgent));
-
-    if (auto& commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_instrumentingAgents.get());
 }
 
 WorkerDebuggerAgent& WorkerInspectorController::ensureDebuggerAgent()

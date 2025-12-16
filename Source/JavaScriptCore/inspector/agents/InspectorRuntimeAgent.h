@@ -33,6 +33,7 @@
 
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -85,7 +86,8 @@ protected:
     Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluate(InjectedScript&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
     void callFunctionOn(InjectedScript&, const Protocol::Runtime::RemoteObjectId&, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&&);
 
-    InjectedScriptManager& injectedScriptManager() { return m_injectedScriptManager; }
+    InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
+    CheckedRef<InjectedScriptManager> checkedInjectedScriptManager() const { return injectedScriptManager(); }
 
     virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
 
@@ -96,7 +98,7 @@ private:
     void setTypeProfilerEnabledState(bool);
     void setControlFlowProfilerEnabledState(bool);
 
-    InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     JSC::Debugger& m_debugger;
     JSC::VM& m_vm;
     bool m_enabled {false};

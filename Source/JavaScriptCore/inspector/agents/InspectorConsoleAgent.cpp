@@ -76,11 +76,11 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::enable()
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(MessageSource::Other, MessageType::Log, MessageLevel::Warning, makeString(m_expiredConsoleMessageCount, " console messages are not shown."_s));
-        expiredMessage.addToFrontend(m_frontendDispatcher, m_injectedScriptManager, false);
+        expiredMessage.addToFrontend(m_frontendDispatcher, checkedInjectedScriptManager().get(), false);
     }
 
     for (auto& message : m_consoleMessages)
-        message->addToFrontend(m_frontendDispatcher, m_injectedScriptManager, false);
+        message->addToFrontend(m_frontendDispatcher, checkedInjectedScriptManager().get(), false);
 
     return { };
 }
@@ -109,7 +109,7 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::setConsoleClearAPIEnabled(b
 
 bool InspectorConsoleAgent::developerExtrasEnabled() const
 {
-    return m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled();
+    return m_injectedScriptManager->inspectorEnvironment().developerExtrasEnabled();
 }
 
 void InspectorConsoleAgent::mainFrameNavigated()
@@ -128,7 +128,7 @@ void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearRea
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
 
-    m_injectedScriptManager.releaseObjectGroup("console"_s);
+    m_injectedScriptManager->releaseObjectGroup("console"_s);
 
     if (m_enabled)
         m_frontendDispatcher->messagesCleared(reason);
@@ -258,7 +258,7 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
             auto generatePreview = !m_isAddingMessageToFrontend;
             SetForScope isAddingMessageToFrontend(m_isAddingMessageToFrontend, true);
 
-            consoleMessage->addToFrontend(m_frontendDispatcher, m_injectedScriptManager, generatePreview);
+            consoleMessage->addToFrontend(m_frontendDispatcher, checkedInjectedScriptManager().get(), generatePreview);
         }
 
         m_consoleMessages.append(WTFMove(consoleMessage));

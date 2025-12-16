@@ -38,6 +38,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -170,6 +171,7 @@ protected:
     Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(InjectedScript&, const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture);
 
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
+    CheckedRef<InjectedScriptManager> checkedInjectedScriptManager() const { return injectedScriptManager(); }
     virtual InjectedScript injectedScriptForEval(Protocol::ErrorString&, std::optional<Protocol::Runtime::ExecutionContextId>&&) = 0;
 
     JSC::Debugger& debugger() { return m_debugger; }
@@ -250,7 +252,7 @@ private:
     const Ref<DebuggerBackendDispatcher> m_backendDispatcher;
 
     JSC::Debugger& m_debugger;
-    InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     UncheckedKeyHashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
     struct BlackboxedScript {

@@ -242,7 +242,7 @@ LocalFrame::~LocalFrame()
 {
     setView(nullptr);
 
-    m_inspectorController->inspectedFrameDestroyed();
+    m_inspectorController->inspectedFrameWillDestroy();
 
     Ref loader = this->loader();
     if (!loader->isComplete())
@@ -891,6 +891,8 @@ CheckedRef<const ScriptController> LocalFrame::checkedScript() const
 
 void LocalFrame::willDetachPage()
 {
+    m_inspectorController->inspectedFrameWillDetachPage();
+
     if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()))
         parent->loader().checkLoadComplete();
 

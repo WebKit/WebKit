@@ -49,6 +49,7 @@ class FrontendRouter;
 namespace WebCore {
 
 class InspectorBackendClient;
+class InspectorController;
 class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InstrumentingAgents;
@@ -77,9 +78,11 @@ public:
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
+    void disconnectAllFrontends();
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
-    void inspectedFrameDestroyed();
+    void inspectedFrameWillDetachPage();
+    void inspectedFrameWillDestroy();
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
 
@@ -96,12 +99,14 @@ public:
 private:
     friend class InspectorInstrumentation;
 
+    CheckedRef<WebInjectedScriptManager> checkedInjectedScriptManager() const;
+
     FrameAgentContext frameAgentContext();
     void createLazyAgents();
 
     WeakRef<LocalFrame> m_frame;
     const Ref<InstrumentingAgents> m_instrumentingAgents;
-    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
+    const CheckedRef<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<WTF::Stopwatch> m_executionStopwatch;

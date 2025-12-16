@@ -49,6 +49,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -88,11 +89,16 @@ void FrameInspectorController::deref() const
     m_frame->deref();
 }
 
+CheckedRef<WebInjectedScriptManager> FrameInspectorController::checkedInjectedScriptManager() const
+{
+    return m_injectedScriptManager.get();
+}
+
 FrameAgentContext FrameInspectorController::frameAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        checkedInjectedScriptManager().get(),
         m_frontendRouter.get(),
         m_backendDispatcher
     };
@@ -130,6 +136,7 @@ void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& front
 
     if (connectedFirstFrontend) {
         m_agents.didCreateFrontendAndBackend();
+        checkedInjectedScriptManager()->addClient();
         InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
     }
 }
@@ -142,11 +149,12 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
     bool disconnectedLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectedLastFrontend) {
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+        checkedInjectedScriptManager()->removeClient();
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
     }
 }
 
-void FrameInspectorController::inspectedFrameDestroyed()
+void FrameInspectorController::disconnectAllFrontends()
 {
     if (!m_frontendRouter->hasFrontends())
         return;
@@ -157,9 +165,20 @@ void FrameInspectorController::inspectedFrameDestroyed()
     InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
+    checkedInjectedScriptManager()->removeClient();
     m_frontendRouter->disconnectAllFrontends();
 
     m_agents.discardValues();
+}
+
+void FrameInspectorController::inspectedFrameWillDestroy()
+{
+    disconnectAllFrontends();
+}
+
+void FrameInspectorController::inspectedFrameWillDetachPage()
+{
+    disconnectAllFrontends();
 }
 
 void FrameInspectorController::dispatchMessageFromFrontend(const String& message)

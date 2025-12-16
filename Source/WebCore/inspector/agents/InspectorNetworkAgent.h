@@ -40,6 +40,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -141,6 +142,8 @@ public:
 protected:
     InspectorNetworkAgent(WebAgentContext&, const NetworkResourcesData::Settings&);
 
+    CheckedRef<Inspector::InjectedScriptManager> checkedInjectedScriptManager() const { return m_injectedScriptManager.get(); }
+
     virtual Inspector::Protocol::Network::LoaderId loaderIdentifier(DocumentLoader*) = 0;
     virtual Inspector::Protocol::Network::FrameId frameIdentifier(DocumentLoader*) = 0;
     virtual Vector<Ref<WebSocket>> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock()) = 0;
@@ -171,7 +174,7 @@ private:
 
     const UniqueRef<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     const UniqueRef<NetworkResourcesData> m_resourcesData;
 

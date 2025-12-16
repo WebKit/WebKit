@@ -27,6 +27,7 @@
 
 #include "CommandLineAPIHost.h"
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -34,16 +35,19 @@ namespace WebCore {
 
 class LocalDOMWindow;
 
-// FIXME <https://webkit.org/b/302124>: Make the base class InjectedScriptManager ref-counted instead.
-class WebInjectedScriptManager final : public Inspector::InjectedScriptManager, public RefCounted<WebInjectedScriptManager> {
+class WebInjectedScriptManager final : public Inspector::InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(WebInjectedScriptManager);
     WTF_MAKE_TZONE_ALLOCATED(WebInjectedScriptManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInjectedScriptManager);
 public:
-    static Ref<WebInjectedScriptManager> create(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
+    WebInjectedScriptManager(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
 
     ~WebInjectedScriptManager() override;
 
     const RefPtr<CommandLineAPIHost>& commandLineAPIHost() const { return m_commandLineAPIHost; }
+
+    void addClient();
+    void removeClient();
 
     void connect() override;
     void disconnect() override;
@@ -52,12 +56,10 @@ public:
     void discardInjectedScriptsFor(LocalDOMWindow&);
 
 private:
-    WebInjectedScriptManager(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
-
-    bool isConnected() const { return m_commandLineAPIHost; }
     void didCreateInjectedScript(const Inspector::InjectedScript&) override;
 
     RefPtr<CommandLineAPIHost> m_commandLineAPIHost;
+    int m_clientCount { 0 };
 };
 
 } // namespace WebCore

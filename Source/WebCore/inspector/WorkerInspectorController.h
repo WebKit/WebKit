@@ -69,6 +69,8 @@ public:
 
     void dispatchMessageFromFrontend(const String&);
 
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+
     // InspectorEnvironment
     bool developerExtrasEnabled() const override { return true; }
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
@@ -89,7 +91,7 @@ private:
     void updateServiceWorkerPageFrontendCount();
 
     const Ref<InstrumentingAgents> m_instrumentingAgents;
-    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
+    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<WTF::Stopwatch> m_executionStopwatch;

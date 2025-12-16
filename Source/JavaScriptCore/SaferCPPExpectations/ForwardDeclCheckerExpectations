@@ -28,11 +28,9 @@ heap/HeapSnapshotBuilder.h
 heap/MarkedBlock.h
 heap/SlotVisitor.h
 heap/WeakSet.h
-inspector/InspectorAgentBase.h
 inspector/InspectorBackendDispatchers.h
 inspector/JSGlobalObjectConsoleClient.h
 inspector/JSGlobalObjectInspectorController.h
-inspector/agents/InspectorDebuggerAgent.h
 interpreter/StackVisitor.h
 jit/JIT.h
 jit/JITCode.h

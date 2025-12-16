@@ -35,6 +35,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -121,6 +122,8 @@ protected:
 
     virtual bool matchesCurrentContext(ScriptExecutionContext*) const = 0;
 
+    CheckedRef<Inspector::InjectedScriptManager> checkedInjectedScriptManager() const { return m_injectedScriptManager.get(); }
+
     const UniqueRef<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
 
     MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
@@ -148,7 +151,7 @@ private:
 
     const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;

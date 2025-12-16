@@ -33,6 +33,7 @@
 
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,8 +66,9 @@ public:
 
 private:
     Ref<Page> protectedInspectedPage() const;
+    CheckedRef<Inspector::InjectedScriptManager> checkedInjectedScriptManager() const { return m_injectedScriptManager.get(); }
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;

@@ -153,7 +153,7 @@ private:
 
     WeakRef<Page> m_page;
     const Ref<InstrumentingAgents> m_instrumentingAgents;
-    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
+    const UniqueRef<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const UniqueRef<InspectorOverlay> m_overlay;

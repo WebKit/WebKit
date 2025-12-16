@@ -37,6 +37,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
+class JSGlobalObject;
 class JSValue;
 }
 
@@ -56,14 +57,7 @@ struct EventListenerInfo;
 class CommandLineAPIHost : public RefCounted<CommandLineAPIHost> {
 public:
     static Ref<CommandLineAPIHost> create();
-    ~CommandLineAPIHost();
-
-    void init(InstrumentingAgents& instrumentingAgents)
-    {
-        m_instrumentingAgents = &instrumentingAgents;
-    }
-
-    void disconnect();
+    ~CommandLineAPIHost() = default;
 
     void copyText(const String& text);
 
@@ -99,7 +93,6 @@ public:
 private:
     CommandLineAPIHost();
 
-    WeakPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<InspectableObject> m_inspectedObject; // $0
     Inspector::PerGlobalObjectWrapperWorld m_wrappers;
 };

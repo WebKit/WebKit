@@ -205,7 +205,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         return makeUnexpected(errorString);
 
     auto* state = inspectorCanvas->scriptExecutionContext()->globalObject();
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = checkedInjectedScriptManager()->injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 
     JSC::JSValue value = inspectorCanvas->resolveContext(state);

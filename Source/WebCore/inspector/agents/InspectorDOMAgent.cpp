@@ -1312,7 +1312,7 @@ void InspectorDOMAgent::focusNode()
         return;
 
     auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
+    auto injectedScript = checkedInjectedScriptManager()->injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return;
 
@@ -1860,7 +1860,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectedNode(Ins
 
     m_inspectedNode = node;
 
-    if (auto& commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
+    CheckedRef manager = m_injectedScriptManager;
+    if (auto& commandLineAPIHost = static_cast<WebInjectedScriptManager&>(manager.get()).commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(makeUnique<InspectableNode>(node));
 
     m_suppressEventListenerChangedEvent = false;
@@ -3124,7 +3125,7 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 
 Node* InspectorDOMAgent::nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    InjectedScript injectedScript = checkedInjectedScriptManager()->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return nullptr;
 
@@ -3154,7 +3155,7 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNod
         return nullptr;
 
     auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
+    auto injectedScript = checkedInjectedScriptManager()->injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return nullptr;
 

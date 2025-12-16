@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/MonotonicTime.h>
@@ -86,10 +87,12 @@ public:
     void countReset(JSC::JSGlobalObject*, const String& label);
 
 protected:
+    CheckedRef<InjectedScriptManager> checkedInjectedScriptManager() const { return m_injectedScriptManager.get(); }
+
     void addConsoleMessage(std::unique_ptr<ConsoleMessage>);
     void clearMessages(Protocol::Console::ClearReason);
 
-    InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     const UniqueRef<ConsoleFrontendDispatcher> m_frontendDispatcher;
     const Ref<ConsoleBackendDispatcher> m_backendDispatcher;
     InspectorHeapAgent* m_heapAgent { nullptr };

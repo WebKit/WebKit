@@ -35,6 +35,7 @@
 #include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
@@ -94,13 +95,15 @@ protected:
     virtual void enable();
     virtual void disable();
 
+    CheckedRef<Inspector::InjectedScriptManager> checkedInjectedScriptManager() const { return m_injectedScriptManager.get(); }
+
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
 private:
     void breakOnURLIfNeeded(const String&);
 
     const Ref<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     struct EventBreakpoint {
         String eventName;

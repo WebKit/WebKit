@@ -634,7 +634,7 @@ void InspectorIndexedDBAgent::requestData(const String& securityOrigin, const St
         }
     }
 
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&mainWorldGlobalObject(*frame));
+    auto injectedScript = checkedInjectedScriptManager()->injectedScriptFor(&mainWorldGlobalObject(*frame));
     auto dataLoader = DataLoader::create(document, WTFMove(callback), injectedScript, objectStoreName, indexName, WTFMove(idbKeyRange), skipCount, pageSize);
     dataLoader->start(idbFactory, document->protectedSecurityOrigin().ptr(), databaseName);
 }

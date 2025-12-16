@@ -53,7 +53,9 @@ InjectedScriptManager::InjectedScriptManager(InspectorEnvironment& environment, 
 {
 }
 
-InjectedScriptManager::~InjectedScriptManager() = default;
+InjectedScriptManager::~InjectedScriptManager()
+{
+}
 
 void InjectedScriptManager::connect()
 {

@@ -1030,7 +1030,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         return makeUnexpected("Missing frame of web socket for given requestId"_s);
 
     auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
+    auto injectedScript = checkedInjectedScriptManager()->injectedScriptFor(&globalObject);
     ASSERT(!injectedScript.hasNoValue());
 
     auto object = injectedScript.wrapObject(webSocketAsScriptValue(globalObject, *webSocket), objectGroup);
