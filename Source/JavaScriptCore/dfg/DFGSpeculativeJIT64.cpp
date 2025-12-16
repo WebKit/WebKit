@@ -2344,11 +2344,11 @@ void SpeculativeJIT::emitUntypedBranch(Edge nodeUse, BasicBlock* taken, BasicBlo
         bool isDefinitelyBigInt32 = !needsTypeCheck(nodeUse, SpecCell | SpecBoolean | SpecInt32Only | SpecFullDouble | SpecBigInt32);
         Jump skipBigInt32Case;
         if (!isDefinitelyBigInt32)
-            skipBigInt32Case = branchIfNotBigInt32(valueGPR, tempGPR);
+            skipBigInt32Case = branchIfNotBigInt32(valueGPR, temp1GPR);
 
-        move(valueGPR, tempGPR);
-        urshift64(TrustedImm32(16), tempGPR);
-        branchTest32(NonZero, tempGPR, taken);
+        move(valueGPR, temp1GPR);
+        urshift64(TrustedImm32(16), temp1GPR);
+        branchTest32(NonZero, temp1GPR, taken);
         // Here we fallthrough to the jump(notTaken) below and outside this branch.
 
         if (!isDefinitelyBigInt32)

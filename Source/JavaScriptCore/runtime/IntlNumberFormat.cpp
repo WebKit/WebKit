@@ -1423,7 +1423,7 @@ IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalO
 
 #if USE(BIGINT32)
             if (bigInt.isBigInt32())
-                return IntlMathematicalValue { value.bigInt32AsInt32() };
+                return IntlMathematicalValue { static_cast<double>(bigInt.bigInt32AsInt32()) };
 #endif
 
             auto* heapBigInt = bigInt.asHeapBigInt();

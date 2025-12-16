@@ -2052,6 +2052,13 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int32_t y)
     return compareImpl(HeapBigIntImpl { x }, Int32BigIntImpl { y });
 }
 
+JSBigInt::ComparisonResult JSBigInt::compare(int32_t x, int32_t y)
+{
+    if (x == y)
+        return ComparisonResult::Equal;
+    return x > y ? ComparisonResult::GreaterThan : ComparisonResult::LessThan;
+}
+
 JSBigInt::ComparisonResult JSBigInt::compare(JSBigInt* x, int64_t y)
 {
     return compareImpl(HeapBigIntImpl { x }, Int64BigIntImpl { y });
@@ -2087,8 +2094,8 @@ JSBigInt::ComparisonResult JSBigInt::compare(JSValue x, JSValue y)
     ASSERT(x.isBigInt() && y.isBigInt());
 #if USE(BIGINT32)
     if (x.isBigInt32() && y.isBigInt32()) {
-        int32_t x1 = x.asBigInt32();
-        int32_t y1 = y.asBigInt32();
+        int32_t x1 = x.bigInt32AsInt32();
+        int32_t y1 = y.bigInt32AsInt32();
         if (x1 == y1)
             return JSBigInt::ComparisonResult::Equal;
         if (x1 < y1)

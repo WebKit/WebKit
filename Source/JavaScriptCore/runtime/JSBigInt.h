@@ -107,6 +107,16 @@ public:
 
     unsigned length() const { return m_length; }
 
+    ALWAYS_INLINE static JSValue makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, int32_t value)
+    {
+#if USE(BIGINT32)
+        UNUSED_PARAM(globalObject);
+        return jsBigInt32(value);
+#else
+        return JSBigInt::createFrom(globalObject, static_cast<int64_t>(value));
+#endif
+    }
+
     ALWAYS_INLINE static JSValue makeHeapBigIntOrBigInt32(JSGlobalObject* globalObject, int64_t value)
     {
 #if USE(BIGINT32)
@@ -167,6 +177,7 @@ public:
     static ComparisonResult compare(JSBigInt* x, JSBigInt* y);
     static ComparisonResult compare(int32_t x, JSBigInt* y);
     static ComparisonResult compare(JSBigInt* x, int32_t y);
+    static ComparisonResult compare(int32_t x, int32_t y);
     static ComparisonResult compare(JSBigInt* x, int64_t y);
     static ComparisonResult compare(JSValue x, int64_t y);
     static ComparisonResult compare(JSBigInt* x, uint64_t y);
