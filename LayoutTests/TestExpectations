@@ -8191,3 +8191,7 @@ media/wireless-playback-media-player/ [ Skip ]
 webkit.org/b/295810 [ Debug ] fast/dynamic/disappearing-content-on-size-change-crash.html [ Timeout ]
 
 [ Debug ] fast/inline/continuation-with-anon-wrappers.html [ Slow ]
+# webkit.org/b/304239 Resource Timing interim response tests (waiting for implementation from webkit.org/b/304235)
+imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/interim-response-times.html [ Failure ]
+imported/w3c/web-platform-tests/resource-timing/interim-response-times.h2.html [ Failure ]
