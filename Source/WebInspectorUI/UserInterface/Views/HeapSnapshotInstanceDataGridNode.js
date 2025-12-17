@@ -186,10 +186,10 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
                 } else
                     this._populatePreview(containerElement);
 
-                containerElement.addEventListener("contextmenu", this._contextMenuHandler.bind(this));
+                containerElement.addEventListener("contextmenu", this._contextMenuHandler.bindWeak(this));
 
                 idElement.addEventListener("click", WI.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode.bind(null, this._node));
-                idElement.addEventListener("mouseover", this._mouseoverHandler.bind(this));
+                idElement.addEventListener("mouseover", this._mouseoverHandler.bindWeak(this));
             }
 
             return containerElement;

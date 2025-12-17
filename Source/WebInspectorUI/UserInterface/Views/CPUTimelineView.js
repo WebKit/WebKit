@@ -232,7 +232,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this._energyInfoPopover = null;
         this._energyInfoPopoverContentElement = null;
-        energyInfoElement.addEventListener("click", (event) => {
+        energyInfoElement.addEventListener("click", bindWeak(function(event) {
             if (!this._energyInfoPopover)
                 this._energyInfoPopover = new WI.Popover;
 
@@ -261,7 +261,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             this._energyInfoPopover.windowResizeHandler = () => {
                 this._energyInfoPopover.present(calculateTargetFrame(), preferredEdges);
             };
-        });
+        }, this));
 
         this._energyChart = new WI.GaugeChart({
             height: 110,
@@ -309,15 +309,15 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this.addSubview(this._cpuUsageView);
         detailsContainerElement.appendChild(this._cpuUsageView.element);
 
-        this._cpuUsageView.rangeChart.element.addEventListener("click", this._handleIndicatorClick.bind(this));
+        this._cpuUsageView.rangeChart.element.addEventListener("click", this._handleIndicatorClick.bindWeak(this));
 
         this._threadsDetailsElement = detailsContainerElement.appendChild(document.createElement("details"));
         this._threadsDetailsElement.open = WI.settings.cpuTimelineThreadDetailsExpanded.value;
-        this._threadsDetailsElement.addEventListener("toggle", (event) => {
+        this._threadsDetailsElement.addEventListener("toggle", bindWeak(function(event) {
             WI.settings.cpuTimelineThreadDetailsExpanded.value = this._threadsDetailsElement.open;
             if (this._threadsDetailsElement.open)
                 this.updateLayout(WI.CPUTimelineView.LayoutReason.Internal);
-        });
+        }, this));
 
         let threadsSubtitleElement = this._threadsDetailsElement.appendChild(document.createElement("summary"));
         threadsSubtitleElement.classList.add("subtitle", "threads", "expandable");
@@ -386,10 +386,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let filterClearElement = numberCell.appendChild(document.createElement("span"));
             filterClearElement.className = "filter-clear";
             filterClearElement.textContent = multiplicationSign;
-            filterClearElement.addEventListener("click", (event) => {
+            filterClearElement.addEventListener("click", bindWeak(function(event) {
                 this._resetSourcesFilters();
                 this._layoutStatisticsAndSources();
-            });
+            }, this));
         }
         {
             let {row, headerCell, numberCell, labelCell} = this._createTableRow(this._sourcesTable);
@@ -415,8 +415,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this._clearSources();
 
-        this.element.addEventListener("click", this._handleGraphClick.bind(this));
-        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
+        this.element.addEventListener("click", this._handleGraphClick.bindWeak(this));
+        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bindWeak(this));
 
         this._overlayMarker = new WI.TimelineMarker(-1, WI.TimelineMarker.Type.TimeStamp);
         this._timelineRuler.addMarker(this._overlayMarker);
@@ -803,33 +803,31 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let span = document.createElement("span");
             span.className = "filter";
             span.textContent = name;
-            span.addEventListener("mouseup", (event) => {
+            span.addEventListener("mouseup", bindWeak(function(event) {
                 if (span.classList.contains("active"))
                     this._removeSourcesFilter(type, name);
                 else
                     this._addSourcesFilter(type, name);
 
                 this._layoutStatisticsAndSources();
-            });
+            }, this));
 
             span.classList.toggle("active", this._sourcesFilter[type].has(name));
 
             return span;
         };
 
-        let expandAllSections = () => {
+        let expandAllSections = bindWeak(function(event) {
             this._sectionLimit = Infinity;
             this._layoutStatisticsAndSources();
-        };
+        }, this);
 
         function createEllipsisElement() {
             let span = document.createElement("span");
             span.className = "show-more";
             span.role = "button";
             span.textContent = ellipsis;
-            span.addEventListener("click", (event) => {
-                expandAllSections();
-            });
+            span.addEventListener("click", expandAllSections);
             return span;
         }
 
@@ -928,19 +926,17 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         if (isFinite(sectionLimit) && hasFilters)
             sectionLimit = CPUTimelineView.defaultSectionLimit * 2;
 
-        let expandAllSections = () => {
+        let expandAllSections = bindWeak(function(event) {
             this._sectionLimit = Infinity;
             this._layoutStatisticsAndSources();
-        };
+        }, this);
 
         function createEllipsisElement() {
             let span = document.createElement("span");
             span.className = "show-more";
             span.role = "button";
             span.textContent = ellipsis;
-            span.addEventListener("click", (event) => {
-                expandAllSections();
-            });
+            span.addEventListener("click", expandAllSections);
             return span;
         }
 
@@ -1415,10 +1411,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let span = document.createElement("span");
             span.className = "filter active";
             span.textContent = name;
-            span.addEventListener("mouseup", (event) => {
+            span.addEventListener("mouseup", bindWeak(function(event) {
                 this._removeSourcesFilter(type, name);
                 this._layoutStatisticsAndSources();
-            });
+            }, this));
             return span;
         };
 

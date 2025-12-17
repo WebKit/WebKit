@@ -67,9 +67,9 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
 
                 if (this.record.domNode) {
                     let goToArrow = fragment.appendChild(WI.createGoToArrowButton());
-                    goToArrow.addEventListener("click", (event) => {
+                    goToArrow.addEventListener("click", bindWeak(function(event) {
                         WI.showMainFrameDOMTree(this.record.domNode, {ignoreSearchTab: true});
-                    });
+                    }, this));
                 }
 
                 return fragment;

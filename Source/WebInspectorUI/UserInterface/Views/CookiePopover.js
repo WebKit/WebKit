@@ -187,7 +187,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             return {rowElement};
         }
 
-        let boundHandleInputKeyDown = this._handleInputKeyDown.bind(this);
+        let boundHandleInputKeyDown = this._handleInputKeyDown.bindWeak(this);
 
         function createInputRow(id, label, type, value) {
             let inputElement = document.createElement("input");
@@ -222,9 +222,9 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         let expiresInputRow = createInputRow("expires", WI.unlocalizedString("Expires"), "datetime-local", data.expires);
         this._expiresInputElement = expiresInputRow.inputElement;
         this._expiresInputElement.step = 1; // Causes the seconds field to be shown.
-        this._expiresInputElement.addEventListener("input", (event) => {
+        this._expiresInputElement.addEventListener("input", bindWeak(function(event) {
             this._expiresInputElement.classList.toggle("invalid", isNaN(this._parseExpires()));
-        });
+        }, this));
 
         this._httpOnlyCheckboxElement = createInputRow("http-only", WI.unlocalizedString("HttpOnly"), "checkbox", data.httpOnly).inputElement;
 
@@ -252,9 +252,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             this.update();
         };
 
-        this._sessionCheckboxElement.addEventListener("change", (event) => {
-            toggleExpiresRow();
-        });
+        this._sessionCheckboxElement.addEventListener("change", toggleExpiresRow.bindWeak(this));
 
         toggleExpiresRow();
 
@@ -265,9 +263,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
                 this.update();
             };
 
-            this._partitionedCheckboxElement.addEventListener("change", (event) => {
-                togglePartitionKeyInput();
-            });
+            this._partitionedCheckboxElement.addEventListener("change", togglePartitionKeyInput.bindWeak(this));
 
             togglePartitionKeyInput();
         }

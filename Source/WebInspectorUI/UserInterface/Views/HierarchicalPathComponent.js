@@ -64,11 +64,11 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
 
         this._selectElement = document.createElement("select");
         this._selectElement.setAttribute("dir", "auto");
-        this._selectElement.addEventListener("mouseover", this._selectElementMouseOver.bind(this));
-        this._selectElement.addEventListener("mouseout", this._selectElementMouseOut.bind(this));
-        this._selectElement.addEventListener("mousedown", this._selectElementMouseDown.bind(this));
-        this._selectElement.addEventListener("mouseup", this._selectElementMouseUp.bind(this));
-        this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
+        this._selectElement.addEventListener("mouseover", this._selectElementMouseOver.bindWeak(this));
+        this._selectElement.addEventListener("mouseout", this._selectElementMouseOut.bindWeak(this));
+        this._selectElement.addEventListener("mousedown", this._selectElementMouseDown.bindWeak(this));
+        this._selectElement.addEventListener("mouseup", this._selectElementMouseUp.bindWeak(this));
+        this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bindWeak(this));
         this._element.appendChild(this._selectElement);
 
         this._previousSibling = null;

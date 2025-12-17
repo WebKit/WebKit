@@ -1029,7 +1029,7 @@ WI.Resource = class Resource extends WI.SourceCode
         // Create an <img> element that we'll use to load the image resource
         // so that we can query its intrinsic size.
         var image = new Image;
-        image.addEventListener("load", imageDidLoad.bind(this), false);
+        image.addEventListener("load", imageDidLoad.bindWeak(this));
 
         // Set the image source using an object URL once we've obtained its data.
         this.requestContent().then((content) => {

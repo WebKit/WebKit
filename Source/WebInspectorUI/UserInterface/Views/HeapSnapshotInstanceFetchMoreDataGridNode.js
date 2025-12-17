@@ -65,13 +65,17 @@ WI.HeapSnapshotInstanceFetchMoreDataGridNode = class HeapSnapshotInstanceFetchMo
             let buttonElement = fragment.appendChild(document.createElement("span"));
             buttonElement.classList.add("more");
             buttonElement.textContent = WI.UIString("Show %d More").format(this._batchCount);
-            buttonElement.addEventListener("click", (event) => { this._fetchCallback(this._batchCount); });
+            buttonElement.addEventListener("click", bindWeak(function(event) {
+                this._fetchCallback(this._batchCount);
+            }, this));
         }
 
         let buttonElement = fragment.appendChild(document.createElement("span"));
         buttonElement.classList.add("more");
         buttonElement.textContent = WI.UIString("Show Remaining (%d)").format(this._remainingCount);
-        buttonElement.addEventListener("click", (event) => { this._fetchCallback(this._remainingCount); });
+        buttonElement.addEventListener("click", bindWeak(function(event) {
+            this._fetchCallback(this._remainingCount);
+        }, this));
 
         return fragment;
     }

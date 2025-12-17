@@ -34,6 +34,11 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
 
         this._eventSamplingTimerIdentifier = undefined;
         this._initialDelayBeforeSamplingTimerIdentifier = undefined;
+
+        this._boundHandleWindowFocus = null;
+        this._boundHandleWindowBlur = null;
+        this._boundHandleWindowKeyDown = null;
+        this._boundHandleWindowMouseDown = null;
     }
 
     // Static
@@ -49,10 +54,18 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         const options = {
             capture: true,
         };
-        window.addEventListener("focus", this, options);
-        window.addEventListener("blur", this, options);
-        window.addEventListener("keydown", this, options);
-        window.addEventListener("mousedown", this, options);
+
+        this._boundHandleWindowFocus ||= this._handleWindowFocus.bindWeak(this);
+        window.addEventListener("focus", this._boundHandleWindowFocus, options);
+
+        this._boundHandleWindowBlur ||= this._handleWindowBlur.bindWeak(this);
+        window.addEventListener("blur", this._boundHandleWindowBlur, options);
+
+        this._boundHandleWindowKeyDown ||= this._handleWindowKeyDown.bindWeak(this);
+        window.addEventListener("keydown", this._boundHandleWindowKeyDown, options);
+
+        this._boundHandleWindowMouseDown ||= this._handleWindowMouseDown.bindWeak(this);
+        window.addEventListener("mousedown", this._boundHandleWindowMouseDown, options);
 
         // If it's been less than 10 seconds since the frontend loaded, wait a bit.
         if (performance.now() - WI.frontendCompletedLoadTimestamp < TabActivityDiagnosticEventRecorder.initialDelayBeforeSamplingInterval)
@@ -67,34 +80,14 @@ WI.TabActivityDiagnosticEventRecorder = class TabActivityDiagnosticEventRecorder
         const options = {
             capture: true,
         };
-        window.removeEventListener("focus", this, options);
-        window.removeEventListener("blur", this, options);
-        window.removeEventListener("keydown", this, options);
-        window.removeEventListener("mousedown", this, options);
+        window.removeEventListener("focus", this._boundHandleWindowFocus, options);
+        window.removeEventListener("blur", this._boundHandleWindowBlur, options);
+        window.removeEventListener("keydown", this._boundHandleWindowKeyDown, options);
+        window.removeEventListener("mousedown", this._boundHandleWindowMouseDown, options);
 
         this._stopInitialDelayBeforeSamplingTimer();
         this._stopEventSamplingTimer();
 
-    }
-
-    // Public
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "focus":
-            this._handleWindowFocus(event);
-            break;
-        case "blur":
-            this._handleWindowBlur(event);
-            break;
-        case "keydown":
-            this._handleWindowKeyDown(event);
-            break;
-        case "mousedown":
-            this._handleWindowMouseDown(event);
-            break;
-        }
     }
 
     // Private

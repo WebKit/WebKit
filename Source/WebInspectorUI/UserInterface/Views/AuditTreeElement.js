@@ -267,9 +267,9 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
             this.status = document.createElement("input");
             this.status.type = "checkbox";
             this._updateTestGroupDisabled();
-            this.status.addEventListener("change", () => {
+            this.status.addEventListener("change", bindWeak(function(event) {
                 this.representedObject.disabled = !this.representedObject.disabled;
-            });
+            }, this));
 
             this.addClassName("editing-audits");
             return;
@@ -295,7 +295,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.status.title = WI.UIString("Start");
-            this.status.addEventListener("click", this._handleStatusClick.bind(this));
+            this.status.addEventListener("click", this._handleStatusClick.bindWeak(this));
 
             if (!className)
                 className = "show-on-hover";

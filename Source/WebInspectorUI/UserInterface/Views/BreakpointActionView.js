@@ -42,7 +42,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         header.className = "breakpoint-action-block-header";
 
         var picker = header.appendChild(document.createElement("select"));
-        picker.addEventListener("change", this._pickerChanged.bind(this));
+        picker.addEventListener("change", this._pickerChanged.bindWeak(this));
 
         for (var key in WI.BreakpointAction.Type) {
             var type = WI.BreakpointAction.Type[key];
@@ -58,12 +58,12 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
         let appendActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         appendActionButton.className = "breakpoint-action-append-button";
-        appendActionButton.addEventListener("click", this._appendActionButtonClicked.bind(this));
+        appendActionButton.addEventListener("click", this._appendActionButtonClicked.bindWeak(this));
         appendActionButton.title = WI.UIString("Add new breakpoint action after this action");
 
         let removeActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         removeActionButton.className = "breakpoint-action-remove-button";
-        removeActionButton.addEventListener("click", this._removeAction.bind(this));
+        removeActionButton.addEventListener("click", this._removeAction.bindWeak(this));
         removeActionButton.title = WI.UIString("Delete this breakpoint action");
 
         this._bodyElement = this._element.appendChild(document.createElement("div"));
@@ -134,7 +134,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
             this._emulateUserGestureCheckbox = emulateUserGestureLabel.appendChild(document.createElement("input"));
             this._emulateUserGestureCheckbox.type = "checkbox";
             this._emulateUserGestureCheckbox.checked = this._action.emulateUserGesture;
-            this._emulateUserGestureCheckbox.addEventListener("change", this._handleEmulateUserGestureCheckboxChange.bind(this));
+            this._emulateUserGestureCheckbox.addEventListener("change", this._handleEmulateUserGestureCheckboxChange.bindWeak(this));
 
             emulateUserGestureLabel.appendChild(document.createTextNode(WI.UIString("Emulate User Gesture", "Emulate User Gesture @ breakpoint action configuration", "Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction.")));
 
@@ -147,7 +147,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
             var input = this._bodyElement.appendChild(document.createElement("input"));
             input.placeholder = WI.UIString("Message");
-            input.addEventListener("input", this._handleLogInputInput.bind(this));
+            input.addEventListener("input", this._handleLogInputInput.bindWeak(this));
             input.value = this._action.data || "";
             input.spellcheck = false;
             if (!omitFocus)
@@ -182,7 +182,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
             this._codeMirrorClientHeight = NaN;
 
-            this._codeMirror.on("changes", this._handleJavaScriptCodeMirrorChanges.bind(this));
+            this._codeMirror.on("changes", this._handleJavaScriptCodeMirrorChanges.bindWeak(this));
 
             var completionController = new WI.CodeMirrorCompletionController(this._delegate.breakpointActionViewCodeMirrorCompletionControllerMode(this, this._codeMirror), this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);

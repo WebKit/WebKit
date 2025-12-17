@@ -127,7 +127,7 @@ WI.GraphicsOverviewContentView = class GraphicsOverviewContentView extends WI.Co
             createSection("css-animation", WI.UIString("CSS Animations"), new WI.AnimationCollectionContentView(animationCollection.animationCollectionForType(WI.Animation.Type.CSSAnimation)));
             createSection("css-transition", WI.UIString("CSS Transitions"), new WI.AnimationCollectionContentView(animationCollection.animationCollectionForType(WI.Animation.Type.CSSTransition)));
 
-            this.element.addEventListener("click", this._handleClick.bind(this));
+            this.element.addEventListener("click", this._handleClick.bindWeak(this));
         } else
             this.addSubview(this._canvasOverviewContentView);
     }

@@ -39,8 +39,11 @@ WI.Slider = class Slider extends WI.Object
         this._knobY = 0;
         this._maxY = 0;
 
-        this._element.addEventListener("mousedown", this);
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("mousedown", this._handleMousedown.bindWeak(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
+
+        this._boundHandleMousemove = null;
+        this._boundHandleMouseup = null;
     }
 
     // Public
@@ -91,23 +94,6 @@ WI.Slider = class Slider extends WI.Object
         this.knobY = this._value;
     }
 
-    // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mousedown":
-            this._handleMousedown(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseup":
-            this._handleMouseup(event);
-            break;
-        }
-    }
-
     // Private
 
     _handleMousedown(event)
@@ -123,8 +109,11 @@ WI.Slider = class Slider extends WI.Object
 
         this._element.classList.add("dragging");
 
-        window.addEventListener("mousemove", this, true);
-        window.addEventListener("mouseup", this, true);
+        this._boundHandleMousemove ||= this._handleMousemove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+
+        this._boundHandleMouseup ||= this._handleMouseup.bindWeak(this);
+        window.addEventListener("mouseup", this._boundHandleMouseup, {capture: true});
 
         this._element.focus();
     }
@@ -141,8 +130,8 @@ WI.Slider = class Slider extends WI.Object
     {
         this._element.classList.remove("dragging");
 
-        window.removeEventListener("mousemove", this, true);
-        window.removeEventListener("mouseup", this, true);
+        window.removeEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+        window.removeEventListener("mouseup", this._boundHandleMouseup, {capture: true});
     }
 
     _handleKeyDown(event)

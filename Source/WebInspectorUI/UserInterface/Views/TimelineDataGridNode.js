@@ -365,7 +365,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
         }
 
         let button = WI.createGoToArrowButton();
-        button.addEventListener("click", buttonClicked.bind(this));
+        button.addEventListener("click", buttonClicked.bindWeak(this));
 
         let contentElement = cellElement.firstChild;
         contentElement.appendChild(button);

@@ -37,7 +37,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._configureDOMTreeBadgesNavigationItem.tooltip = WI.UIString("Choose which badges are shown in the DOM tree");
         this._configureDOMTreeBadgesNavigationItem.enabled = InspectorBackend.hasEvent("CSS.nodeLayoutFlagsChanged") || InspectorBackend.hasEvent("CSS.nodeLayoutContextTypeChanged");
         this._configureDOMTreeBadgesNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        WI.addMouseDownContextMenuHandlers(this._configureDOMTreeBadgesNavigationItem.element, this._populateConfigureDOMTreeBadgesNavigationItemContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._configureDOMTreeBadgesNavigationItem.element, this._populateConfigureDOMTreeBadgesNavigationItemContextMenu.bindWeak(this));
 
         WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
         this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show rulers"), WI.UIString("Hide rulers"), "Images/Rulers.svg", 16, 16);
@@ -68,7 +68,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._paintFlashingButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this.element.classList.add("dom-tree");
-        this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
+        this.element.addEventListener("click", this._mouseWasClicked.bindWeak(this));
 
         this._domTreeOutline = new WI.DOMTreeOutline({omitRootDOMNode: true, excludeRevealElementContextMenu: true, showInspectedNode: true, showBadges: true});
         this._domTreeOutline.allowsEmptySelection = false;

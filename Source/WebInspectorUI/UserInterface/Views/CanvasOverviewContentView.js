@@ -48,7 +48,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         this._recordingAutoCaptureFrameCountInputElement = document.createElement("input");
         this._recordingAutoCaptureFrameCountInputElement.type = "number";
         this._recordingAutoCaptureFrameCountInputElement.min = 0;
-        this._recordingAutoCaptureFrameCountInputElement.addEventListener("input", this._handleRecordingAutoCaptureInput.bind(this));
+        this._recordingAutoCaptureFrameCountInputElement.addEventListener("input", this._handleRecordingAutoCaptureInput.bindWeak(this));
         this._recordingAutoCaptureFrameCountInputElementValue = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
 
         const label = null;

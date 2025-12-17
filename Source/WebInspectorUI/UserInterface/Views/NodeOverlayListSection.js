@@ -71,7 +71,7 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
         listHeading.textContent = this._label;
 
         let optionsElement = listHeading.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "options", WI.UIString("Options")));
-        WI.addMouseDownContextMenuHandlers(optionsElement, (contextMenu) => {
+        WI.addMouseDownContextMenuHandlers(optionsElement, bindWeak(function(contextMenu) {
             let shouldDisable = this._nodeSet.some((domNode) => domNode.layoutOverlayShowing);
             contextMenu.appendItem(shouldDisable ? WI.UIString("Disable All") : WI.UIString("Enable All"), () => {
                 for (let node of this._nodeSet) {
@@ -81,7 +81,7 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
                         node.showLayoutOverlay();
                 }
             });
-        });
+        }, this));
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-overlay-list");

@@ -95,7 +95,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
 
-        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
+        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bindWeak(this));
 
         for (let record of timeline.records)
             this._processRecord(record);

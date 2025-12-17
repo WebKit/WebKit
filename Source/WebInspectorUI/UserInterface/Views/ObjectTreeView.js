@@ -61,7 +61,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         if (this._object.preview) {
             this._previewView = new WI.ObjectPreviewView(this._object, this._object.preview);
             this._previewView.setOriginatingObjectInfo(this._object, providedPropertyPath ? propertyPath : null);
-            this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
+            this._previewView.element.addEventListener("click", this._handlePreviewOrTitleElementClick.bindWeak(this));
             this._element.appendChild(this._previewView.element);
 
             if (this._previewView.lossless && !this._propertyPath.parent && !forceExpanding) {
@@ -72,7 +72,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
             this._titleElement = document.createElement("span");
             this._titleElement.className = "title";
             this._titleElement.appendChild(WI.FormattedValue.createElementForRemoteObject(this._object));
-            this._titleElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
+            this._titleElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bindWeak(this));
             this._element.appendChild(this._titleElement);
         }
 

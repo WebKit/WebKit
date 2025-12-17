@@ -101,7 +101,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
         this._remoteObject = remoteObject;
         this._propertyPath = propertyPath || null;
 
-        this.element.addEventListener("contextmenu", this._contextMenuHandler.bind(this));
+        this.element.addEventListener("contextmenu", this._contextMenuHandler.bindWeak(this));
     }
 
     // Private

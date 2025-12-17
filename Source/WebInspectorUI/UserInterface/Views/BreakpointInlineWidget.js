@@ -45,8 +45,8 @@ WI.BreakpointInlineWidget = class BreakpointInlineWidget
 
         this._element = document.createElement("span");
         this._element.classList.add("inline-widget", "breakpoint");
-        this._element.addEventListener("click", this._handleClick.bind(this));
-        this._element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
+        this._element.addEventListener("click", this._handleClick.bindWeak(this));
+        this._element.addEventListener("contextmenu", this._handleContextmenu.bindWeak(this));
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._handleBreakpointsEnabledDidChange, this);
 

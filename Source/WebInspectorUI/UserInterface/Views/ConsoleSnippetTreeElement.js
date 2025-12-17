@@ -42,9 +42,9 @@ WI.ConsoleSnippetTreeElement = class ConsoleSnippetTreeElement extends WI.Script
 
         this.status = document.createElement("img");
         this.status.title = WI.UIString("Run");
-        this.status.addEventListener("click", (event) => {
+        this.status.addEventListener("click", bindWeak(function(event) {
             this.representedObject.run();
-        });
+        }, this));
     }
 
     ondelete()

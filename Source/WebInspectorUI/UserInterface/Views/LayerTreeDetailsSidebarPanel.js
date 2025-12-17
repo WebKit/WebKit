@@ -146,9 +146,9 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         this._dataGrid.createSettings("layer-tree-details-sidebar-panel");
 
         var element = this._dataGrid.element;
-        element.addEventListener("focus", this._dataGridGainedFocus.bind(this), false);
-        element.addEventListener("blur", this._dataGridLostFocus.bind(this), false);
-        element.addEventListener("click", this._dataGridWasClicked.bind(this), false);
+        element.addEventListener("focus", this._dataGridGainedFocus.bindWeak(this));
+        element.addEventListener("blur", this._dataGridLostFocus.bindWeak(this));
+        element.addEventListener("click", this._dataGridWasClicked.bindWeak(this));
 
         this._childLayersRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Child Layers"));
         var group = new WI.DetailsSectionGroup([this._childLayersRow]);

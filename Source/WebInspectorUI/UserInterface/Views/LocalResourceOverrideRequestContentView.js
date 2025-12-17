@@ -85,9 +85,9 @@ WI.LocalResourceOverrideRequestContentView = class LocalResourceOverrideRequestC
             addOption(WI.LocalResourceOverride.ResourceErrorType.AccessControl);
 
             selectElement.value = this.representedObject.resourceErrorType;
-            selectElement.addEventListener("change", (event) => {
+            selectElement.addEventListener("change", bindWeak(function(event) {
                 this.representedObject.resourceErrorType = selectElement.value;
-            });
+            }, this));
 
             message = document.createDocumentFragment();
             String.format(WI.UIString("Block URL with %s error"), [selectElement], String.standardFormatters, message, (a, b) => {

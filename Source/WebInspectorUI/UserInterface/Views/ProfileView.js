@@ -62,8 +62,8 @@ WI.ProfileView = class ProfileView extends WI.ContentView
         this._dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._dataGridSortChanged, this);
         this._dataGrid.addEventListener(WI.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
         this._dataGrid.addEventListener(WI.DataGrid.Event.ExpandedNode, this._dataGridNodeExpanded, this);
-        this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
-        this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
+        this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bindWeak(this));
+        this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bindWeak(this));
         this._dataGrid.indentWidth = 20;
         this._dataGrid.sortColumnIdentifier = "totalTime";
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Descending;

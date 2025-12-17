@@ -68,8 +68,8 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
 
         this._offsetXInput = offsetXRow.inputElement;
         this._offsetXInput.spellcheck = false;
-        this._offsetXInput.addEventListener("input", this._handleOffsetXInputInput.bind(this));
-        this._offsetXInput.addEventListener("keydown", this._handleOffsetXInputKeyDown.bind(this));
+        this._offsetXInput.addEventListener("input", this._handleOffsetXInputInput.bindWeak(this));
+        this._offsetXInput.addEventListener("keydown", this._handleOffsetXInputKeyDown.bindWeak(this));
 
         let offsetSliderDataElement = offsetXRow.rowElement.appendChild(document.createElement("td"));
         offsetSliderDataElement.setAttribute("rowspan", 3);
@@ -83,8 +83,8 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         this._offsetSliderSVG.setAttribute("tabindex", 0);
         this._offsetSliderSVG.setAttribute("width", offsetSliderContainerSize);
         this._offsetSliderSVG.setAttribute("height", offsetSliderContainerSize);
-        this._offsetSliderSVG.addEventListener("mousedown", this);
-        this._offsetSliderSVG.addEventListener("keydown", this);
+        this._offsetSliderSVG.addEventListener("mousedown", this._handleOffsetSliderSVGMouseDown.bindWeak(this));
+        this._offsetSliderSVG.addEventListener("keydown", this._handleOffsetSliderSVGKeyDown.bindWeak(this));
 
         this._offsetSliderSVGMouseDownPoint = null;
 
@@ -115,35 +115,35 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
 
         this._offsetYInput = offsetYRow.inputElement;
         this._offsetYInput.spellcheck = false;
-        this._offsetYInput.addEventListener("input", this._handleOffsetYInputInput.bind(this));
-        this._offsetYInput.addEventListener("keydown", this._handleOffsetYInputKeyDown.bind(this));
+        this._offsetYInput.addEventListener("input", this._handleOffsetYInputInput.bindWeak(this));
+        this._offsetYInput.addEventListener("keydown", this._handleOffsetYInputKeyDown.bindWeak(this));
 
         let insetRow = createInputRow("inset", WI.UIString("Inset", "Inset @ Box Shadow Editor", "Checkbox label for the inset of a CSS box shadow."));
 
         this._insetCheckbox = insetRow.inputElement;
         this._insetCheckbox.type = "checkbox";
-        this._insetCheckbox.addEventListener("change", this._handleInsetCheckboxChange.bind(this));
+        this._insetCheckbox.addEventListener("change", this._handleInsetCheckboxChange.bindWeak(this));
 
         let blurRadiusRow = createInputRow("blur-radius", WI.UIString("Blur", "Blur @ Box Shadow Editor", "Input label for the blur radius of a CSS box shadow"));
 
         this._blurRadiusInput = blurRadiusRow.inputElement;
         this._blurRadiusInput.spellcheck = false;
-        this._blurRadiusInput.addEventListener("input", this._handleBlurRadiusInputInput.bind(this));
-        this._blurRadiusInput.addEventListener("keydown", this._handleBlurRadiusInputKeyDown.bind(this));
+        this._blurRadiusInput.addEventListener("input", this._handleBlurRadiusInputInput.bindWeak(this));
+        this._blurRadiusInput.addEventListener("keydown", this._handleBlurRadiusInputKeyDown.bindWeak(this));
         this._blurRadiusInput.min = 0;
 
         this._blurRadiusSlider = createSlider(blurRadiusRow.rowElement, 0, 100);
-        this._blurRadiusSlider.addEventListener("input", this._handleBlurRadiusSliderInput.bind(this));
+        this._blurRadiusSlider.addEventListener("input", this._handleBlurRadiusSliderInput.bindWeak(this));
 
         let spreadRadiusRow = createInputRow("spread-radius", WI.UIString("Spread", "Spread @ Box Shadow Editor", "Input label for the spread radius of a CSS box shadow"));
 
         this._spreadRadiusInput = spreadRadiusRow.inputElement;
         this._spreadRadiusInput.spellcheck = false;
-        this._spreadRadiusInput.addEventListener("input", this._handleSpreadRadiusInputInput.bind(this));
-        this._spreadRadiusInput.addEventListener("keydown", this._handleSpreadRadiusInputKeyDown.bind(this));
+        this._spreadRadiusInput.addEventListener("input", this._handleSpreadRadiusInputInput.bindWeak(this));
+        this._spreadRadiusInput.addEventListener("keydown", this._handleSpreadRadiusInputKeyDown.bindWeak(this));
 
         this._spreadRadiusSlider = createSlider(spreadRadiusRow.rowElement, -50, 50);
-        this._spreadRadiusSlider.addEventListener("input", this._handleSpreadRadiusSliderInput.bind(this));
+        this._spreadRadiusSlider.addEventListener("input", this._handleSpreadRadiusSliderInput.bindWeak(this));
 
         this._colorPicker = new WI.ColorPicker;
         this._colorPicker.addEventListener(WI.ColorPicker.Event.ColorChanged, this._handleColorChanged, this);
@@ -152,6 +152,9 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
         this.boxShadow = new WI.BoxShadow;
 
         WI.addWindowKeydownListener(this);
+
+        this._boundHandleWindowMouseMove = null;
+        this._boundHandleWindowMouseUp = null;
     }
 
     // Public
@@ -197,33 +200,6 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
 
         let color = this._boxShadow?.color || WI.Color.fromString("transparent");
         this._colorPicker.color = color;
-    }
-
-    // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "keydown":
-            console.assert(event.target === this._offsetSliderSVG);
-            this._handleOffsetSliderSVGKeyDown(event);
-            return;
-
-        case "mousedown":
-            console.assert(event.target === this._offsetSliderSVG);
-            this._handleOffsetSliderSVGMouseDown(event);
-            return;
-
-        case "mousemove":
-            this._handleWindowMouseMove(event);
-            return;
-
-        case "mouseup":
-            this._handleWindowMouseUp(event);
-            return;
-        }
-
-        console.assert();
     }
 
     // Private
@@ -382,8 +358,11 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
 
         this._offsetSliderSVG.focus();
 
-        window.addEventListener("mousemove", this, true);
-        window.addEventListener("mouseup", this, true);
+        this._boundHandleWindowMouseMove ||= this._handleWindowMouseMove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleWindowMouseMove, {capture: true});
+
+        this._boundHandleWindowMouseUp ||= this._handleWindowMouseUp.bindWeak(this);
+        window.addEventListener("mouseup", this._boundHandleWindowMouseUp, {capture: true});
 
         this._updateBoxShadowOffsetFromSliderMouseEvent(event, true);
     }
@@ -397,8 +376,8 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
     {
         this._offsetSliderSVGMouseDownPoint = null;
 
-        window.removeEventListener("mousemove", this, true);
-        window.removeEventListener("mouseup", this, true);
+        window.removeEventListener("mousemove", this._boundHandleWindowMouseMove, {capture: true});
+        window.removeEventListener("mouseup", this._boundHandleWindowMouseUp, {capture: true});
     }
 
     _handleOffsetXInputInput(event)

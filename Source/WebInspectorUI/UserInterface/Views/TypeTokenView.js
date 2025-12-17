@@ -91,7 +91,7 @@ WI.TypeTokenView = class TypeTokenView extends WI.Object
     {
         var timeoutID = null;
 
-        this.element.addEventListener("mouseover", function() {
+        this.element.addEventListener("mouseover", bindWeak(function(event) {
             function showPopoverAfterDelay()
             {
                 timeoutID = null;
@@ -103,7 +103,7 @@ WI.TypeTokenView = class TypeTokenView extends WI.Object
 
             if (this._shouldShowPopover())
                 timeoutID = setTimeout(showPopoverAfterDelay.bind(this), WI.TypeTokenView.DelayHoverTime);
-        }.bind(this));
+        }, this));
 
         this.element.addEventListener("mouseout", function() {
             if (timeoutID)

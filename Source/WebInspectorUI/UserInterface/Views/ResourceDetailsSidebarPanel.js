@@ -603,7 +603,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         dataValue.append(sizeValue);
 
         var goToButton = dataValue.appendChild(WI.createGoToArrowButton());
-        goToButton.addEventListener("click", this._goToRequestDataClicked.bind(this));
+        goToButton.addEventListener("click", this._goToRequestDataClicked.bindWeak(this));
 
         var dataRow = new WI.DetailsSectionSimpleRow(WI.UIString("Data"));
         dataRow.value = dataValue;

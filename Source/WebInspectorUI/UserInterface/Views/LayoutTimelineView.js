@@ -89,8 +89,8 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         this._showingHighlight = false;
         this._showingHighlightForRecord = null;
 
-        this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
-        this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
+        this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bindWeak(this));
+        this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bindWeak(this));
 
         this.element.classList.add("layout");
         this.addSubview(this._dataGrid);

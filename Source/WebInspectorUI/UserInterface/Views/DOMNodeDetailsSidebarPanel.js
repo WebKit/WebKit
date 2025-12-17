@@ -84,7 +84,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         }
 
         let eventListenersFilterElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter", WI.UIString("Grouping Method"));
-        WI.addMouseDownContextMenuHandlers(eventListenersFilterElement, this._populateEventListenersFilterContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(eventListenersFilterElement, this._populateEventListenersFilterContextMenu.bindWeak(this));
 
         this._eventListenersSectionGroup = new WI.DetailsSectionGroup;
         let eventListenersSection = new WI.DetailsSection("dom-node-event-listeners", WI.UIString("Event Listeners"), [this._eventListenersSectionGroup], eventListenersFilterElement);

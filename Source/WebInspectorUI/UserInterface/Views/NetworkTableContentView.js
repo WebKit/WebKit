@@ -93,7 +93,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._otherFiltersNavigationItem = new WI.NavigationItem("network-other-filters-button", "button");
         this._otherFiltersNavigationItem.tooltip = WI.UIString("Other filter options\u2026");
         this._otherFiltersNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-        WI.addMouseDownContextMenuHandlers(this._otherFiltersNavigationItem.element, this._handleOtherFiltersNavigationItemContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._otherFiltersNavigationItem.element, this._handleOtherFiltersNavigationItemContextMenu.bindWeak(this));
         this._updateOtherFiltersNavigationItemState();
         this._otherFiltersNavigationItem.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "glyph"));
 
@@ -673,12 +673,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let disclosureElement = cell.appendChild(document.createElement("img"));
             disclosureElement.classList.add("disclosure");
             disclosureElement.classList.toggle("expanded", !!entry.expanded);
-            disclosureElement.addEventListener("click", (event) => {
+            disclosureElement.addEventListener("click", bindWeak(function(event) {
                 entry.expanded = !entry.expanded;
 
                 this._updateFilteredEntries();
                 this._reloadTable();
-            });
+            }, this));
 
             createIconElement();
 
@@ -948,11 +948,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 eventElement.classList.add("dom-event");
                 positionByStartOffset(eventElement, startTimestamp - paddingForCentering);
                 setWidthForDuration(eventElement, startTimestamp, endTimestamp + paddingForCentering);
-                eventElement.addEventListener("mousedown", (event) => {
+                eventElement.addEventListener("mousedown", bindWeak(function(event) {
                     if (event.button !== 0 || event.ctrlKey)
                         return;
                     this._handleNodeEntryMousedownWaterfall(entry, domEvents);
-                });
+                }, this));
 
                 for (let domEvent of domEvents)
                     entry.domEventElements.set(domEvent, eventElement);
@@ -1003,11 +1003,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // Mouse block sits on top and accepts mouse events on this group.
         let padSeconds = 10 * secondsPerPixel;
         let mouseBlock = appendBlock(startTime - padSeconds, responseEnd + padSeconds, "mouse-tracking");
-        mouseBlock.addEventListener("mousedown", (event) => {
+        mouseBlock.addEventListener("mousedown", bindWeak(function(event) {
             if (event.button !== 0 || event.ctrlKey)
                 return;
             this._handleResourceEntryMousedownWaterfall(entry);
-        });
+        }, this));
 
         // Super small visualization.
         let totalWidth = (responseEnd - startTime) / secondsPerPixel;
@@ -1702,7 +1702,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         if (!this._emptyFilterResultsMessageElement) {
             let buttonElement = document.createElement("button");
             buttonElement.textContent = WI.UIString("Clear Filters");
-            buttonElement.addEventListener("click", () => { this._resetFilters(); });
+            buttonElement.addEventListener("click", bindWeak(function(event) {
+                this._resetFilters();
+            }, this));
 
             this._emptyFilterResultsMessageElement = WI.createMessageTextView(WI.UIString("No Filter Results"));
             this._emptyFilterResultsMessageElement.appendChild(buttonElement);

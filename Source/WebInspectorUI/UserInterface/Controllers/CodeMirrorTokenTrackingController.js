@@ -45,14 +45,23 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
         this._hoveredMarker = null;
         this._ignoreNextMouseMove = false;
 
-        const hidePopover = this._hidePopover.bind(this);
+        const hidePopover = this._hidePopover.bindWeak(this);
 
         this._codeMirror.addKeyMap({
-            "Cmd-Enter": this._handleCommandEnterKey.bind(this),
+            "Cmd-Enter": this._handleCommandEnterKey.bindWeak(this),
             "Esc": hidePopover
         });
 
         this._codeMirror.on("cursorActivity", hidePopover);
+
+        this._boundMouseEntered = null;
+        this._boundMouseLeft = null;
+        this._boundHandleMouseMove = null;
+        this._boundHandleMouseOut = null;
+        this._boundMouseButtonWasPressedOverEditor = null;
+        this._boundMouseButtonWasReleasedOverEditor = null;
+        this._boundHandleMouseWheel = null;
+        this._boundWindowLostFocus = null;
     }
 
     // Public
@@ -81,13 +90,16 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
 
         var wrapper = this._codeMirror.getWrapperElement();
         if (enabled) {
-            wrapper.addEventListener("mouseenter", this);
-            wrapper.addEventListener("mouseleave", this);
+            this._boundMouseEntered ||= this._mouseEntered.bindWeak(this);
+            wrapper.addEventListener("mouseenter", this._boundMouseEntered);
+
+            this._boundMouseLeft ||= this._mouseLeft.bindWeak(this);
+            wrapper.addEventListener("mouseleave", this._boundMouseLeft);
             this._updateHoveredTokenInfo({left: WI.mouseCoords.x, top: WI.mouseCoords.y});
             this._startTracking();
         } else {
-            wrapper.removeEventListener("mouseenter", this);
-            wrapper.removeEventListener("mouseleave", this);
+            wrapper.removeEventListener("mouseenter", this._boundMouseEntered);
+            wrapper.removeEventListener("mouseleave", this._boundMouseLeft);
             this._stopTracking();
         }
     }
@@ -177,7 +189,8 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
         var className = this._classNameForHighlightedRange || "";
         this._codeMirrorMarkedText = this._codeMirror.markText(range.start, range.end, {className});
 
-        window.addEventListener("mousemove", this, true);
+        this._boundHandleMouseMove ||= this._handleMouseMove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
     }
 
     removeHighlightedRange()
@@ -188,7 +201,7 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
         this._codeMirrorMarkedText.clear();
         this._codeMirrorMarkedText = null;
 
-        window.removeEventListener("mousemove", this, true);
+        window.removeEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
     }
 
     // Private
@@ -202,12 +215,24 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
         this._ignoreNextMouseMove = false;
 
         var wrapper = this._codeMirror.getWrapperElement();
-        wrapper.addEventListener("mousemove", this, true);
-        wrapper.addEventListener("mouseout", this, false);
-        wrapper.addEventListener("mousedown", this, false);
-        wrapper.addEventListener("mouseup", this, false);
-        wrapper.addEventListener("mousewheel", this, false);
-        window.addEventListener("blur", this, true);
+
+        this._boundHandleMouseMove ||= this._handleMouseMove.bindWeak(this);
+        wrapper.addEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
+
+        this._boundHandleMouseOut ||= this._handleMouseOut.bindWeak(this);
+        wrapper.addEventListener("mouseout", this._boundHandleMouseOut);
+
+        this._boundMouseButtonWasPressedOverEditor ||= this._mouseButtonWasPressedOverEditor.bindWeak(this);
+        wrapper.addEventListener("mousedown", this._boundMouseButtonWasPressedOverEditor);
+
+        this._boundMouseButtonWasReleasedOverEditor ||= this._mouseButtonWasReleasedOverEditor.bindWeak(this);
+        wrapper.addEventListener("mouseup", this._boundMouseButtonWasReleasedOverEditor);
+
+        this._boundHandleMouseWheel ||= this._handleMouseWheel.bindWeak(this);
+        wrapper.addEventListener("mousewheel", this._boundHandleMouseWheel);
+
+        this._boundWindowLostFocus ||= this._windowLostFocus.bindWeak(this);
+        window.addEventListener("blur", this._boundWindowLostFocus, {capture: true});
     }
 
     _stopTracking()
@@ -219,50 +244,35 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
         this._candidate = null;
 
         var wrapper = this._codeMirror.getWrapperElement();
-        wrapper.removeEventListener("mousemove", this, true);
-        wrapper.removeEventListener("mouseout", this, false);
-        wrapper.removeEventListener("mousedown", this, false);
-        wrapper.removeEventListener("mouseup", this, false);
-        wrapper.removeEventListener("mousewheel", this, false);
-        window.removeEventListener("blur", this, true);
-        window.removeEventListener("mousemove", this, true);
+        wrapper.removeEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
+        wrapper.removeEventListener("mouseout", this._boundHandleMouseOut);
+        wrapper.removeEventListener("mousedown", this._boundMouseButtonWasPressedOverEditor);
+        wrapper.removeEventListener("mouseup", this._boundMouseButtonWasReleasedOverEditor);
+        wrapper.removeEventListener("mousewheel", this._boundHandleMouseWheel);
+        window.removeEventListener("blur", this._boundWindowLostFocus, {capture: true});
+        window.removeEventListener("mousemove", this._boundHandleMouseMove, {capture: true});
 
         this._resetTrackingStates();
     }
 
-    handleEvent(event)
+    _handleMouseMove(event)
     {
-        switch (event.type) {
-        case "mouseenter":
-            this._mouseEntered(event);
-            break;
-        case "mouseleave":
-            this._mouseLeft(event);
-            break;
-        case "mousemove":
-            if (event.currentTarget === window)
-                this._mouseMovedWithMarkedText(event);
-            else
-                this._mouseMovedOverEditor(event);
-            break;
-        case "mouseout":
-            // Only deal with a mouseout event that has the editor wrapper as the target.
-            if (!event.currentTarget.contains(event.relatedTarget))
-                this._mouseMovedOutOfEditor(event);
-            break;
-        case "mousedown":
-            this._mouseButtonWasPressedOverEditor(event);
-            break;
-        case "mouseup":
-            this._mouseButtonWasReleasedOverEditor(event);
-            break;
-        case "mousewheel":
-            this._ignoreNextMouseMove = true;
-            break;
-        case "blur":
-            this._windowLostFocus(event);
-            break;
-        }
+        if (event.currentTarget === window)
+            this._mouseMovedWithMarkedText(event);
+        else
+            this._mouseMovedOverEditor(event);
+    }
+
+    _handleMouseOut(event)
+    {
+        // Only deal with a mouseout event that has the editor wrapper as the target.
+        if (!event.currentTarget.contains(event.relatedTarget))
+            this._mouseMovedOutOfEditor(event);
+    }
+
+    _handleMouseWheel(event)
+    {
+        this._ignoreNextMouseMove = true;
     }
 
     _handleCommandEnterKey(codeMirror)

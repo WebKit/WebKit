@@ -42,6 +42,9 @@ WI.GradientSlider = class GradientSlider extends WI.Object
         this._canvas = document.createElement("canvas");
 
         this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
+
+        this._boundHandleMousemove = null;
+        this._boundHandleMouseup = null;
     }
 
     // Public
@@ -54,10 +57,10 @@ WI.GradientSlider = class GradientSlider extends WI.Object
             this._element.appendChild(this._canvas);
 
             this._addArea = this._element.appendChild(document.createElement("div"));
-            this._addArea.addEventListener("mouseover", this);
-            this._addArea.addEventListener("mousemove", this);
-            this._addArea.addEventListener("mouseout", this);
-            this._addArea.addEventListener("click", this);
+            this._addArea.addEventListener("mouseover", this._handleMouseover.bindWeak(this));
+            this._addArea.addEventListener("mousemove", this._handleMousemove.bindWeak(this));
+            this._addArea.addEventListener("mouseout", this._handleMouseout.bindWeak(this));
+            this._addArea.addEventListener("click", this._handleClick.bindWeak(this));
             this._addArea.className = WI.GradientSlider.AddAreaClassName;
         }
         return this._element;
@@ -81,24 +84,6 @@ WI.GradientSlider = class GradientSlider extends WI.Object
     }
 
     // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mouseover":
-            this._handleMouseover(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseout":
-            this._handleMouseout(event);
-            break;
-        case "click":
-            this._handleClick(event);
-            break;
-        }
-    }
 
     handleKeydownEvent(event)
     {
@@ -286,7 +271,7 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
 
         this._well = this._element.appendChild(document.createElement("div"));
 
-        this._element.addEventListener("mousedown", this);
+        this._element.addEventListener("mousedown", this._handleMousedown);
     }
 
     // Public
@@ -344,38 +329,21 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
             this.delegate.knobSelectionChanged(this);
     }
 
-    // Protected
-
-    handleEvent(event)
-    {
-        event.preventDefault();
-        event.stopPropagation();
-
-        switch (event.type) {
-        case "mousedown":
-            this._handleMousedown(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseup":
-            this._handleMouseup(event);
-            break;
-        case "transitionend":
-            this._handleTransitionEnd(event);
-            break;
-        }
-    }
-
     // Private
 
     _handleMousedown(event)
     {
+        event.preventDefault();
+        event.stopPropagation();
+
         this._moved = false;
         this._detaching = false;
 
-        window.addEventListener("mousemove", this, true);
-        window.addEventListener("mouseup", this, true);
+        this._boundHandleMousemove ||= this._handleMousemove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+
+        this._boundHandleMouseup ||= this._handleMouseup.bindWeak(this);
+        window.addEventListener("mouseup", this._boundHandleMouseup, {capture: true});
 
         this._startX = this.x;
         this._startMouseX = event.pageX;
@@ -384,6 +352,9 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
 
     _handleMousemove(event)
     {
+        event.preventDefault();
+        event.stopPropagation();
+
         var w = WI.GradientSlider.Width;
 
         this._moved = true;
@@ -413,22 +384,21 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
 
     _handleMouseup(event)
     {
-        window.removeEventListener("mousemove", this, true);
-        window.removeEventListener("mouseup", this, true);
+        event.preventDefault();
+        event.stopPropagation();
+
+        window.removeEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+        window.removeEventListener("mouseup", this._boundHandleMouseup, {capture: true});
 
         if (this._detaching) {
-            this.element.addEventListener("transitionend", this);
+            this.element.addEventListener("transitionend", function(event) {
+                this.classList.remove(WI.GradientSliderKnob.FadeOutClassName);
+                this.remove();
+            }, {once: true});
             this.element.classList.add(WI.GradientSliderKnob.FadeOutClassName);
             this.selected = false;
         } else if (!this._moved)
             this.selected = !this.selected;
-    }
-
-    _handleTransitionEnd(event)
-    {
-        this.element.removeEventListener("transitionend", this);
-        this.element.classList.remove(WI.GradientSliderKnob.FadeOutClassName);
-        this.element.remove();
     }
 
     _updateTransform()

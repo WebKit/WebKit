@@ -42,7 +42,7 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
 
         this._previewContainer = this._element.createChild("div", "preview");
         this._previewContainer.title = WI.UIString("Restart animation");
-        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
+        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bindWeak(this));
 
         this._previewElement = this._previewContainer.createChild("div");
 
@@ -102,8 +102,8 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
             if (!isNaN(max))
                 this[key].max = max;
 
-            this[key].addEventListener("input", this._handleNumberInputInput.bind(this));
-            this[key].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
+            this[key].addEventListener("input", this._handleNumberInputInput.bindWeak(this));
+            this[key].addEventListener("keydown", this._handleNumberInputKeydown.bindWeak(this));
         }
 
         createCoordinateInput.call(this, "inX", {min: 0, max: 1});
@@ -113,9 +113,12 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
 
         this._selectedControl = null;
         this._mouseDownPosition = null;
-        this._curveContainer.addEventListener("mousedown", this);
+        this._curveContainer.addEventListener("mousedown", this._handleMousedown.bindWeak(this));
 
         WI.addWindowKeydownListener(this);
+
+        this._boundHandleMousemove = null;
+        this._boundHandleMouseup = null;
     }
 
     // Public
@@ -150,21 +153,6 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
     }
 
     // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mousedown":
-            this._handleMousedown(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseup":
-            this._handleMouseup(event);
-            break;
-        }
-    }
 
     handleKeydownEvent(event)
     {
@@ -214,8 +202,12 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
             return;
 
         event.stop();
-        window.addEventListener("mousemove", this, true);
-        window.addEventListener("mouseup", this, true);
+
+        this._boundHandleMousemove ||= this._handleMousemove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+
+        this._boundHandleMouseup ||= this._handleMouseup.bindWeak(this);
+        window.addEventListener("mouseup", this._boundHandleMouseup, {capture: true});
 
         this._previewContainer.classList.remove("animate");
         this._timingElement.classList.remove("animate");
@@ -234,8 +226,8 @@ WI.CubicBezierTimingFunctionEditor = class CubicBezierTimingFunctionEditor exten
         this._mouseDownPosition = null;
         this._triggerPreviewAnimation();
 
-        window.removeEventListener("mousemove", this, true);
-        window.removeEventListener("mouseup", this, true);
+        window.removeEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+        window.removeEventListener("mouseup", this._boundHandleMouseup, {capture: true});
     }
 
     _updateControlPointsForMouseEvent(event, calculateSelectedControlPoint)

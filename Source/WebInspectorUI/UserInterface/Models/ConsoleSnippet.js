@@ -75,7 +75,7 @@ WI.ConsoleSnippet = class ConsoleSnippet extends WI.LocalScript
             WI.consoleLogViewController.appendImmediateExecutionWithResult(this.title, result, {
                 addSpecialUserLogClass: true,
                 shouldRevealConsole: true,
-                handleClick: (event) => {
+                handleClick: bindWeak(function(event) {
                     if (!WI.consoleManager.snippets.has(this))
                         return;
 
@@ -84,7 +84,7 @@ WI.ConsoleSnippet = class ConsoleSnippet extends WI.LocalScript
                         ignoreNetworkTab: true,
                         ignoreSearchTab: true,
                     });
-                },
+                }, this),
             });
         });
     }

@@ -29,7 +29,7 @@ WI.LinearTimingFunctionEditor = class LinearTimingFunctionEditor extends WI.Obje
     {
         super();
 
-        this._boundUpdateLinearTimingFunction = this._updateLinearTimingFunction.bind(this);
+        this._boundUpdateLinearTimingFunction = this._updateLinearTimingFunction.bindWeak(this);
 
         this._element = document.createElement("div");
         this._element.classList.add("linear-timing-function-editor");
@@ -46,7 +46,7 @@ WI.LinearTimingFunctionEditor = class LinearTimingFunctionEditor extends WI.Obje
         this._previewContainer = this._element.appendChild(document.createElement("div"))
         this._previewContainer.classList.add("preview");
         this._previewContainer.title = WI.UIString("Restart animation");
-        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
+        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bindWeak(this));
 
         this._previewElement = this._previewContainer.appendChild(document.createElement("div"));
 
@@ -88,7 +88,7 @@ WI.LinearTimingFunctionEditor = class LinearTimingFunctionEditor extends WI.Obje
 
         let addPointButton = pointsTableActionCell.appendChild(document.createElement("button"));
         addPointButton.textContent = WI.UIString("Add");
-        addPointButton.addEventListener("click", this._handleAddPointButtonClick.bind(this));
+        addPointButton.addEventListener("click", this._handleAddPointButtonClick.bindWeak(this));
 
         this._pointInputs = [];
     }

@@ -245,7 +245,7 @@ WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSecti
                 keyElement.checked = item.checked;
                 keyElement[WI.ChartDetailsSectionRow.DataItemIdSymbol] = id;
 
-                keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bind(this));
+                keyElement.addEventListener("change", this._legendItemCheckboxValueChanged.bindWeak(this));
 
                 this._addCheckboxColorFilter(className, rgb[0], rgb[1], rgb[2]);
             } else {

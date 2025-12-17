@@ -43,7 +43,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         this.addSubview(this._chart);
         this.element.appendChild(this._chart.element);
 
-        this._chart.element.addEventListener("click", this._handleChartClick.bind(this));
+        this._chart.element.addEventListener("click", this._handleChartClick.bindWeak(this));
 
         this._legendElement = this.element.appendChild(document.createElement("div"));
         this._legendElement.classList.add("legend");

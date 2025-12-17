@@ -158,7 +158,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this.element.appendChild(boxModelSection.element);
 
         let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter");
-        WI.addMouseDownContextMenuHandlers(propertyFiltersElement, (contextMenu) => {
+        WI.addMouseDownContextMenuHandlers(propertyFiltersElement, bindWeak(function(contextMenu) {
             contextMenu.appendCheckboxItem(WI.UIString("Show All"), () => {
                 this._computedStyleShowAllSetting.value = !this._computedStyleShowAllSetting.value;
 
@@ -170,7 +170,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
                 propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStylePreferShorthandsSetting.value);
-        });
+        }, this));
 
         this._computedStyleSection = new WI.ComputedStyleSection(this);
         this._computedStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);

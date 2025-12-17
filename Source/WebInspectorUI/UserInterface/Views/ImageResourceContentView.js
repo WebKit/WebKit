@@ -106,14 +106,14 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         this._updateImageGrid();
 
         // Drag-and-Drop should not be considered as the same "kind" of interaction as those below.
-        this._imageElement.addEventListener("dragstart", (event) => {
+        this._imageElement.addEventListener("dragstart", bindWeak(function(event) {
             console.assert(!this._draggingInternalImageElement);
             this._draggingInternalImageElement = true;
-        });
-        this._imageElement.addEventListener("dragend", (event) => {
+        }, this));
+        this._imageElement.addEventListener("dragend", bindWeak(function(event) {
             console.assert(this._draggingInternalImageElement);
             this._draggingInternalImageElement = false;
-        });
+        }, this));
 
         if (!this._disableInteractions) {
             this._gestureController = new WI.GestureController(this._imageElement, this, {container: this._imageContainer, supportsScale: true, supportsTranslate: true});

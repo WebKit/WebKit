@@ -34,10 +34,10 @@ WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
 
         this._titleElement = document.createElement("span");
         this._element.appendChild(this._titleElement);
-        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
 
         this._selectElement = document.createElement("select");
-        this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
+        this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bindWeak(this));
         this._element.appendChild(this._selectElement);
 
         this._element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "arrows"));

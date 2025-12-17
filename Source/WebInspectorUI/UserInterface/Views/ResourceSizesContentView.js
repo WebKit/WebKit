@@ -199,14 +199,26 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
             goToButton.addEventListener("click", handler);
         }
 
-        if (bytesSentHeader)
-            appendGoToArrow(this._sendingHeaderBytesElement, () => { this._delegate.sizesContentViewGoToHeaders(this); });
-        if (bytesSentBody)
-            appendGoToArrow(this._sendingBodyBytesElement, () => { this._delegate.sizesContentViewGoToRequestBody(this); });
-        if (bytesReceivedHeader)
-            appendGoToArrow(this._receivingHeaderBytesElement, () => { this._delegate.sizesContentViewGoToHeaders(this); });
-        if (bytesReceivedBody)
-            appendGoToArrow(this._receivingBodyBytesElement, () => { this._delegate.sizesContentViewGoToResponseBody(this); });
+        if (bytesSentHeader) {
+            appendGoToArrow(this._sendingHeaderBytesElement, bindWeak(function(event) {
+                this._delegate.sizesContentViewGoToHeaders(this);
+            }, this));
+        }
+        if (bytesSentBody) {
+            appendGoToArrow(this._sendingBodyBytesElement, bindWeak(function(event) {
+                this._delegate.sizesContentViewGoToRequestBody(this);
+            }, this));
+        }
+        if (bytesReceivedHeader) {
+            appendGoToArrow(this._receivingHeaderBytesElement, bindWeak(function(event) {
+                this._delegate.sizesContentViewGoToHeaders(this);
+            }, this));
+        }
+        if (bytesReceivedBody) {
+            appendGoToArrow(this._receivingBodyBytesElement, bindWeak(function(event) {
+                this._delegate.sizesContentViewGoToResponseBody(this);
+            }, this));
+        }
     }
 
     _refreshResourceSizeSection()

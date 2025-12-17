@@ -49,13 +49,16 @@ WI.ColorSquare = class ColorSquare
         this._svgElement = null;
         this._polylineElement = null;
 
-        this._element.addEventListener("mousedown", this);
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("mousedown", this._handleMousedown.bindWeak(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
 
         this._crosshairElement = this._element.appendChild(document.createElement("div"));
         this._crosshairElement.className = "crosshair";
 
         this.dimension = dimension;
+
+        this._boundHandleMousemove = null;
+        this._boundHandleMouseup = null;
     }
 
     // Public
@@ -117,23 +120,6 @@ WI.ColorSquare = class ColorSquare
         this._updateBaseColor();
     }
 
-    // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mousedown":
-            this._handleMousedown(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseup":
-            this._handleMouseup(event);
-            break;
-        }
-    }
-
     // Private
 
     get _saturation()
@@ -153,8 +139,12 @@ WI.ColorSquare = class ColorSquare
         if (event.button !== 0 || event.ctrlKey)
             return;
 
-        window.addEventListener("mousemove", this, true);
-        window.addEventListener("mouseup", this, true);
+        this._boundHandleMousemove ||= this._handleMousemove.bindWeak(this);
+        window.addEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+
+        this._boundHandleMouseup ||= this._handleMouseup.bindWeak(this);
+        window.addEventListener("mouseup", this._boundHandleMouseup, {capture: true});
+
         this._updateColorForMouseEvent(event);
 
         // Prevent text selection.
@@ -169,8 +159,8 @@ WI.ColorSquare = class ColorSquare
 
     _handleMouseup(event)
     {
-        window.removeEventListener("mousemove", this, true);
-        window.removeEventListener("mouseup", this, true);
+        window.removeEventListener("mousemove", this._boundHandleMousemove, {capture: true});
+        window.removeEventListener("mouseup", this._boundHandleMouseup, {capture: true});
     }
 
     _handleKeyDown(event)

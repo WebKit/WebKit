@@ -71,10 +71,10 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
         this._valueTextFieldElement.name = tag;
         this._valueTextFieldElement.className = "value";
 
-        this._valueTextFieldElement.addEventListener("keydown", this._handleValueTextFieldKeydown.bind(this), {signal: abortSignal});
-        this._valueTextFieldElement.addEventListener("input", this._handleValueTextFieldInput.bind(this), {signal: abortSignal});
-        this._valueTextFieldElement.addEventListener("blur", this._handleValueTextFieldBlur.bind(this), {signal: abortSignal});
-        this._valueSliderElement.addEventListener("input", this._handleValueSliderInput.bind(this), {signal: abortSignal});
+        this._valueTextFieldElement.addEventListener("keydown", this._handleValueTextFieldKeydown.bindWeak(this), {signal: abortSignal});
+        this._valueTextFieldElement.addEventListener("input", this._handleValueTextFieldInput.bindWeak(this), {signal: abortSignal});
+        this._valueTextFieldElement.addEventListener("blur", this._handleValueTextFieldBlur.bindWeak(this), {signal: abortSignal});
+        this._valueSliderElement.addEventListener("input", this._handleValueSliderInput.bindWeak(this), {signal: abortSignal});
 
         this.label = name;
         this.value = value ?? defaultValue;

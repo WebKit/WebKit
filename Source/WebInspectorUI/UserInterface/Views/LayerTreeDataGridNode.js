@@ -101,7 +101,7 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
         fragment.appendChild(document.createElement("img")).className = "icon";
 
         var goToButton = this._makeOutlet("goToButton", fragment.appendChild(WI.createGoToArrowButton()));
-        goToButton.addEventListener("click", this._goToArrowWasClicked.bind(this), false);
+        goToButton.addEventListener("click", this._goToArrowWasClicked.bindWeak(this));
 
         var label = this._makeOutlet("label", fragment.appendChild(document.createElement("span")));
         label.className = "label";

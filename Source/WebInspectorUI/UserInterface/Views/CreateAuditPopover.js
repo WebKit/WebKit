@@ -70,12 +70,12 @@ WI.CreateAuditPopover = class CreateAuditPopover extends WI.Popover
 
         this._nameInputElement = editorWrapper.appendChild(document.createElement("input"));
         this._nameInputElement.placeholder = WI.UIString("Name");
-        this._nameInputElement.addEventListener("keydown", (event) => {
+        this._nameInputElement.addEventListener("keydown", bindWeak(function(event) {
             if (event.keyCode === WI.KeyboardShortcut.Key.Enter.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode) {
                 event.stop();
                 this.dismiss();
             }
-        });
+        }, this));
 
         editorWrapper.appendChild(WI.ReferencePage.AuditTab.CreatingAudits.createLinkElement());
 

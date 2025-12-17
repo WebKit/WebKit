@@ -289,7 +289,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                 this._popoverCallStackIconElement.className = "call-stack";
                 fragment.appendChild(this._popoverCallStackIconElement);
 
-                this._popoverCallStackIconElement.addEventListener("click", (event) => {
+                this._popoverCallStackIconElement.addEventListener("click", bindWeak(function(event) {
                     if (!this._popover) {
                         this._popover = new WI.Popover(this);
                         this._popover.windowResizeHandler = () => { this._presentPopoverBelowCallStackElement(); };
@@ -306,7 +306,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                     this._popover.content = popoverContent;
 
                     this._presentPopoverBelowCallStackElement();
-                });
+                }, this));
             }
 
             let pair = this._summarySection.appendKeyValuePair(WI.UIString("Initiator"), fragment);
@@ -475,7 +475,9 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._requestDataSection.appendKeyValuePair(WI.UIString("Encoding"), encoding);
 
         let goToButton = detailsElement.appendChild(WI.createGoToArrowButton());
-        goToButton.addEventListener("click", () => { this._delegate.headersContentViewGoToRequestData(this); });
+        goToButton.addEventListener("click", bindWeak(function(event) {
+            this._delegate.headersContentViewGoToRequestData(this);
+        }, this));
         this._requestDataSection.appendKeyValuePair(WI.UIString("Request Data"), goToButton);
     }
 
@@ -514,9 +516,9 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (!this._bouncyHighlightElement) {
             this._bouncyHighlightElement = document.createElement("div");
             this._bouncyHighlightElement.className = "bouncy-highlight";
-            this._bouncyHighlightElement.addEventListener("animationend", (event) => {
+            this._bouncyHighlightElement.addEventListener("animationend", bindWeak(function(event) {
                 this._bouncyHighlightElement.remove();
-            });
+            }, this));
         }
 
         this._bouncyHighlightElement.remove();

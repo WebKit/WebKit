@@ -42,9 +42,10 @@ WI.Resizer = class Resizer extends WI.Object
         else if (this._orientation === WI.Resizer.RuleOrientation.Vertical)
             this._element.classList.add("vertical-rule");
 
-        this._element.addEventListener("mousedown", this._resizerMouseDown.bind(this), false);
-        this._resizerMouseMovedEventListener = this._resizerMouseMoved.bind(this);
-        this._resizerMouseUpEventListener = this._resizerMouseUp.bind(this);
+        this._element.addEventListener("mousedown", this._resizerMouseDown.bindWeak(this));
+
+        this._resizerMouseMovedEventListener = null;
+        this._resizerMouseUpEventListener = null;
     }
 
     // Public
@@ -99,9 +100,12 @@ WI.Resizer = class Resizer extends WI.Object
             document.body.style.cursor = "row-resize";
         }
 
+        this._resizerMouseMovedEventListener ||= this._resizerMouseMoved.bindWeak(this);
+        this._resizerMouseUpEventListener ||= this._resizerMouseUp.bindWeak(this);
+
         // Register these listeners on the document so we can track the mouse if it leaves the resizer.
-        document.addEventListener("mousemove", this._resizerMouseMovedEventListener, false);
-        document.addEventListener("mouseup", this._resizerMouseUpEventListener, false);
+        document.addEventListener("mousemove", this._resizerMouseMovedEventListener);
+        document.addEventListener("mouseup", this._resizerMouseUpEventListener);
 
         event.preventDefault();
         event.stopPropagation();
@@ -139,8 +143,8 @@ WI.Resizer = class Resizer extends WI.Object
             delete WI._elementDraggingGlassPane;
         }
 
-        document.removeEventListener("mousemove", this._resizerMouseMovedEventListener, false);
-        document.removeEventListener("mouseup", this._resizerMouseUpEventListener, false);
+        document.removeEventListener("mousemove", this._resizerMouseMovedEventListener);
+        document.removeEventListener("mouseup", this._resizerMouseUpEventListener);
 
         event.preventDefault();
         event.stopPropagation();

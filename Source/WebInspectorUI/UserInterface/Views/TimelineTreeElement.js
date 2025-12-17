@@ -67,7 +67,7 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
     {
         super.onattach();
 
-        this.listItemElement.addEventListener("click", this._clickHandler.bind(this));
+        this.listItemElement.addEventListener("click", this._clickHandler.bindWeak(this));
     }
 
     // Private
@@ -89,7 +89,9 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
         checkboxElement.checked = !this._placeholder;
 
         let button = new WI.TreeElementStatusButton(checkboxElement);
-        checkboxElement.addEventListener("change", () => { this._dispatchEnabledDidChangeEvent(); });
+        checkboxElement.addEventListener("change", bindWeak(function(event) {
+            this._dispatchEnabledDidChangeEvent();
+        }, this));
 
         this.status = checkboxElement;
     }

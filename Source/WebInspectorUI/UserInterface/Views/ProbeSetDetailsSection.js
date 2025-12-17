@@ -134,7 +134,7 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
         content.classList.add(WI.ProbeSetDetailsSection.ProbePopoverElementStyleClassName);
         content.createChild("div").textContent = WI.UIString("Add New Probe Expression");
         let textBox = content.createChild("input");
-        textBox.addEventListener("keypress", createProbeFromEnteredExpression.bind(this, popover));
+        textBox.addEventListener("keypress", createProbeFromEnteredExpression.bindWeak(this, popover));
         textBox.addEventListener("click", function (event) { event.target.select(); });
         textBox.spellcheck = false;
         textBox.placeholder = WI.UIString("Expression");

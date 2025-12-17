@@ -132,7 +132,9 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         case WI.SettingEditor.Type.Checkbox:
             editorElement = document.createElement("input");
             editorElement.type = "checkbox";
-            editorElement.addEventListener("change", (event) => { this.value = event.target.checked; });
+            editorElement.addEventListener("change", bindWeak(function(event) {
+                this.value = event.target.checked;
+            }, this));
             break;
 
         case WI.SettingEditor.Type.Numeric:
@@ -144,11 +146,11 @@ WI.SettingEditor = class SettingEditor extends WI.Object
             if (options.max !== undefined)
                 editorElement.max = options.max;
 
-            editorElement.addEventListener("change", (event) => {
+            editorElement.addEventListener("change", bindWeak(function(event) {
                 let currentValue = this._value;
                 let newValue = parseInt(event.target.value);
                 this.value = isNaN(newValue) ? currentValue : newValue;
-            });
+            }, this));
             break;
 
         case WI.SettingEditor.Type.Select:
@@ -173,7 +175,9 @@ WI.SettingEditor = class SettingEditor extends WI.Object
                 optionElement.textContent = value;
             }
 
-            editorElement.addEventListener("change", (event) => { this.value = event.target.value; });
+            editorElement.addEventListener("change", bindWeak(function(event) {
+                this.value = event.target.value;
+            }, this));
             break;
 
         default:

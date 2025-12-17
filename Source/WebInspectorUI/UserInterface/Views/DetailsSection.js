@@ -35,9 +35,9 @@ WI.DetailsSection = class DetailsSection extends WI.Object
         this._element.classList.add(identifier, "details-section");
 
         this._headerElement = document.createElement("div");
-        this._headerElement.addEventListener("mousedown", this._headerElementMouseDown.bind(this));
-        this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
-        this._headerElement.addEventListener("keydown", this._handleHeaderElementKeyDown.bind(this));
+        this._headerElement.addEventListener("mousedown", this._headerElementMouseDown.bindWeak(this));
+        this._headerElement.addEventListener("click", this._headerElementClicked.bindWeak(this));
+        this._headerElement.addEventListener("keydown", this._handleHeaderElementKeyDown.bindWeak(this));
         this._headerElement.className = "header";
         this._headerElement.tabIndex = 0;
         this._element.appendChild(this._headerElement);
@@ -45,8 +45,8 @@ WI.DetailsSection = class DetailsSection extends WI.Object
         if (optionsElement instanceof HTMLElement) {
             this._optionsElement = optionsElement;
             this._optionsElement.classList.add("options");
-            this._optionsElement.addEventListener("mousedown", this._optionsElementMouseDown.bind(this));
-            this._optionsElement.addEventListener("mouseup", this._optionsElementMouseUp.bind(this));
+            this._optionsElement.addEventListener("mousedown", this._optionsElementMouseDown.bindWeak(this));
+            this._optionsElement.addEventListener("mouseup", this._optionsElementMouseUp.bindWeak(this));
             this._headerElement.appendChild(this._optionsElement);
         }
 

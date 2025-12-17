@@ -172,7 +172,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
     initialLayout()
     {
         if (this._contentViewConstructor)
-            this.element.addEventListener("click", this._handleClick.bind(this));
+            this.element.addEventListener("click", this._handleClick.bindWeak(this));
 
         if (!this.representedObject.size || !this._contentViewConstructor)
             this.showContentPlaceholder();

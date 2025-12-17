@@ -33,12 +33,17 @@ WI.HoverMenu = class HoverMenu extends WI.Object
 
         this._element = document.createElement("div");
         this._element.className = "hover-menu";
-        this._element.addEventListener("transitionend", this, true);
+        this._element.addEventListener("transitionend", function(event) {
+            if (!this.classList.contains(WI.HoverMenu.VisibleClassName))
+                this.remove();
+        }, {capture: true});
 
         this._outlineElement = this._element.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "svg"));
 
         this._button = this._element.appendChild(document.createElement("img"));
-        this._button.addEventListener("click", this);
+        this._button.addEventListener("click", this._handleClickEvent.bindWeak(this));
+
+        this._boundHandleScroll = null;
     }
 
     // Public
@@ -56,7 +61,8 @@ WI.HoverMenu = class HoverMenu extends WI.Object
         this._drawOutline(rects);
         this._element.classList.add(WI.HoverMenu.VisibleClassName);
 
-        window.addEventListener("scroll", this, true);
+        this._boundHandleScroll ||= this._handleScroll.bindWeak(this);
+        window.addEventListener("scroll", this._boundHandleScroll, {capture: true});
     }
 
     dismiss(discrete)
@@ -69,29 +75,16 @@ WI.HoverMenu = class HoverMenu extends WI.Object
 
         this._element.classList.remove(WI.HoverMenu.VisibleClassName);
 
-        window.removeEventListener("scroll", this, true);
-    }
-
-    // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "scroll":
-            if (!this._element.contains(event.target))
-                this.dismiss(true);
-            break;
-        case "click":
-            this._handleClickEvent(event);
-            break;
-        case "transitionend":
-            if (!this._element.classList.contains(WI.HoverMenu.VisibleClassName))
-                this._element.remove();
-            break;
-        }
+        window.removeEventListener("scroll", this._boundHandleScroll, {capture: true});
     }
 
     // Private
+
+    _handleScroll(event)
+    {
+        if (!this._element.contains(event.target))
+            this.dismiss(true);
+    }
 
     _handleClickEvent(event)
     {

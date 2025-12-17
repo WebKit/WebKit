@@ -43,7 +43,7 @@ WI.Popover = class Popover extends WI.Object
 
         this._element = document.createElement("div");
         this._element.className = "popover";
-        this._element.addEventListener("transitionend", this, true);
+        this._element.addEventListener("transitionend", this._handleTransitionEnd.bindWeak(this), {capture: true});
 
         this._container = this._element.appendChild(document.createElement("div"));
         this._container.className = "container";
@@ -51,6 +51,11 @@ WI.Popover = class Popover extends WI.Object
         this._backgroundCanvasContext = null;
 
         this._drawBackgroundAnimationIdentifier = undefined;
+
+        this._boundHandleWindowMouseActivity = null;
+        this._boundHandleWindowResize = null;
+        this._boundHandleWindowKeyPress = null;
+        this._boundUpdate = null;
     }
 
     // Public
@@ -156,10 +161,10 @@ WI.Popover = class Popover extends WI.Object
         console.assert(this._isListeningForPopoverEvents);
         this._isListeningForPopoverEvents = false;
 
-        window.removeEventListener("mousedown", this, true);
-        window.removeEventListener("scroll", this, true);
-        window.removeEventListener("resize", this, true);
-        window.removeEventListener("keypress", this, true);
+        window.removeEventListener("mousedown", this._boundHandleWindowMouseActivity, {capture: true});
+        window.removeEventListener("scroll", this._boundHandleWindowMouseActivity, {capture: true});
+        window.removeEventListener("resize", this._boundHandleWindowResize, {capture: true});
+        window.removeEventListener("keypress", this._boundHandleWindowKeyPress, {capture: true});
         WI.tabBrowser.contentViewContainer.removeEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this.dismiss, this);
 
         this._prefersDarkColorSchemeMediaQueryList.removeListener(this._boundUpdate);
@@ -172,43 +177,6 @@ WI.Popover = class Popover extends WI.Object
             this.delegate.willDismissPopover(this);
 
         WI.Popover._visibleInstance = null;
-    }
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mousedown":
-        case "scroll":
-            if (!this._element.contains(event.target) && !event.target.closest("." + WI.Popover.IgnoreAutoDismissClassName)
-                && !event[WI.Popover.EventPreventDismissSymbol]) {
-                this.dismiss();
-            }
-            break;
-        case "resize":
-            this.resize();
-            break;
-        case "keypress":
-            if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode)
-                this.dismiss();
-            break;
-        case "transitionend":
-            if (event.target === this._element) {
-                document.body.removeChild(this._element);
-                this._element.classList.remove(WI.Popover.FadeOutClassName);
-                this._container.textContent = "";
-                if (this.delegate && typeof this.delegate.didDismissPopover === "function")
-                    this.delegate.didDismissPopover(this);
-
-                this._dismissing = false;
-
-                if (this._backgroundCanvasContext) {
-                    WI.Popover._backgroundCanvasContexts.push(new WeakRef(this._backgroundCanvasContext));
-                    this._backgroundCanvasContext = null;
-                }
-                break;
-            }
-            break;
-        }
     }
 
     // Private
@@ -605,14 +573,19 @@ WI.Popover = class Popover extends WI.Object
         if (!this._isListeningForPopoverEvents) {
             this._isListeningForPopoverEvents = true;
 
-            window.addEventListener("mousedown", this, true);
-            window.addEventListener("scroll", this, true);
-            window.addEventListener("resize", this, true);
-            window.addEventListener("keypress", this, true);
+            this._boundHandleWindowMouseActivity ||= this._handleWindowMouseActivity.bindWeak(this);
+            window.addEventListener("mousedown", this._boundHandleWindowMouseActivity, {capture: true});
+            window.addEventListener("scroll", this._boundHandleWindowMouseActivity, {capture: true});
+
+            this._boundHandleWindowResize ||= this._handleWindowResize.bindWeak(this);
+            window.addEventListener("resize", this._boundHandleWindowResize, {capture: true});
+
+            this._boundHandleWindowKeyPress ||= this._handleWindowKeyPress.bindWeak(this);
+            window.addEventListener("keypress", this._boundHandleWindowKeyPress, {capture: true});
+
             WI.tabBrowser.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this.dismiss, this);
 
-            if (!this._boundUpdate)
-                this._boundUpdate = this._update.bind(this);
+            this._boundUpdate ||= this._update.bindWeak(this);
 
             if (!this._prefersDarkColorSchemeMediaQueryList)
                 this._prefersDarkColorSchemeMediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
@@ -620,6 +593,43 @@ WI.Popover = class Popover extends WI.Object
 
             WI.quickConsole.keyboardShortcutDisabled = true;
         }
+    }
+
+    _handleTransitionEnd(event)
+    {
+        if (event.target === this._element) {
+            document.body.removeChild(this._element);
+            this._element.classList.remove(WI.Popover.FadeOutClassName);
+            this._container.textContent = "";
+            if (this.delegate && typeof this.delegate.didDismissPopover === "function")
+                this.delegate.didDismissPopover(this);
+
+            this._dismissing = false;
+
+            if (this._backgroundCanvasContext) {
+                WI.Popover._backgroundCanvasContexts.push(new WeakRef(this._backgroundCanvasContext));
+                this._backgroundCanvasContext = null;
+            }
+        }
+    }
+
+    _handleWindowMouseActivity(event)
+    {
+        if (!this._element.contains(event.target) && !event.target.closest("." + WI.Popover.IgnoreAutoDismissClassName)
+            && !event[WI.Popover.EventPreventDismissSymbol]) {
+            this.dismiss();
+        }
+    }
+
+    _handleWindowResize(event)
+    {
+        this.resize();
+    }
+
+    _handleWindowKeyPress(event)
+    {
+        if (event.keyCode === WI.KeyboardShortcut.Key.Escape.keyCode)
+            this.dismiss();
     }
 };
 

@@ -42,9 +42,9 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
         this._containerElement = document.createElement("div");
         this._containerElement.classList.add("completion-suggestions-container");
-        this._containerElement.addEventListener("mousedown", this._mouseDown.bind(this));
-        this._containerElement.addEventListener("mouseup", this._mouseUp.bind(this));
-        this._containerElement.addEventListener("click", this._itemClicked.bind(this));
+        this._containerElement.addEventListener("mousedown", this._mouseDown.bindWeak(this));
+        this._containerElement.addEventListener("mouseup", this._mouseUp.bindWeak(this));
+        this._containerElement.addEventListener("click", this._itemClicked.bindWeak(this));
         this._element.appendChild(this._containerElement);
     }
 

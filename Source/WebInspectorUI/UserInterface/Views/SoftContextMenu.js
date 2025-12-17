@@ -43,7 +43,7 @@ WI.SoftContextMenu = class SoftContextMenu
         this._contextMenuElement.style.left = event.pageX + "px";
         this._contextMenuElement.style.top = event.pageY + "px";
         this._contextMenuElement.tabIndex = 0;
-        this._contextMenuElement.addEventListener("keydown", this._menuKeyDown.bind(this), false);
+        this._contextMenuElement.addEventListener("keydown", this._menuKeyDown.bindWeak(this));
         for (let item of this._items)
             this._contextMenuElement.appendChild(this._createMenuItem(item));
 
@@ -51,7 +51,7 @@ WI.SoftContextMenu = class SoftContextMenu
         if (!isSubMenu) {
             this._glassPaneElement = document.createElement("div");
             this._glassPaneElement.className = "soft-context-menu-glass-pane";
-            this._glassPaneElement.addEventListener("mousedown", this._glassPaneMouseDown.bind(this), false);
+            this._glassPaneElement.addEventListener("mousedown", this._glassPaneMouseDown.bindWeak(this));
             this._glassPaneElement.appendChild(this._contextMenuElement);
             document.body.appendChild(this._glassPaneElement);
             this._focus();
@@ -118,11 +118,11 @@ WI.SoftContextMenu = class SoftContextMenu
         } else
             menuItemElement._actionId = item.id;
 
-        menuItemElement.addEventListener("contextmenu", this._menuItemContextMenu.bind(this), false);
-        menuItemElement.addEventListener("mousedown", this._menuItemMouseDown.bind(this), false);
-        menuItemElement.addEventListener("mouseup", this._menuItemMouseUp.bind(this), false);
-        menuItemElement.addEventListener("mouseover", this._menuItemMouseOver.bind(this), false);
-        menuItemElement.addEventListener("mouseout", this._menuItemMouseOut.bind(this), false);
+        menuItemElement.addEventListener("contextmenu", this._menuItemContextMenu.bindWeak(this));
+        menuItemElement.addEventListener("mousedown", this._menuItemMouseDown.bindWeak(this));
+        menuItemElement.addEventListener("mouseup", this._menuItemMouseUp.bindWeak(this));
+        menuItemElement.addEventListener("mouseover", this._menuItemMouseOver.bindWeak(this));
+        menuItemElement.addEventListener("mouseout", this._menuItemMouseOut.bindWeak(this));
 
         return menuItemElement;
     }
@@ -134,10 +134,10 @@ WI.SoftContextMenu = class SoftContextMenu
         separatorElement._isSeparator = true;
         separatorElement.createChild("div", "line");
 
-        separatorElement.addEventListener("contextmenu", this._menuItemContextMenu.bind(this), false);
-        separatorElement.addEventListener("mousedown", this._menuItemMouseDown.bind(this), false);
-        separatorElement.addEventListener("mouseup", this._menuItemMouseUp.bind(this), false);
-        separatorElement.addEventListener("mouseover", this._menuItemMouseOver.bind(this), false);
+        separatorElement.addEventListener("contextmenu", this._menuItemContextMenu.bindWeak(this));
+        separatorElement.addEventListener("mousedown", this._menuItemMouseDown.bindWeak(this));
+        separatorElement.addEventListener("mouseup", this._menuItemMouseUp.bindWeak(this));
+        separatorElement.addEventListener("mouseover", this._menuItemMouseOver.bindWeak(this));
 
         return separatorElement;
     }

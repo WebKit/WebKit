@@ -42,6 +42,26 @@ function nullish(value)
     return value === null || value === undefined;
 }
 
+function bindWeak(func, thisObject, ...bindArgs)
+{
+    return func.bindWeak(thisObject, ...bindArgs);
+}
+
+Object.defineProperty(Function.prototype, "bindWeak",
+{
+    value(thisObject, ...bindArgs)
+    {
+        let thisObjectWeakRef = new WeakRef(thisObject);
+        return (...callArgs) => {
+            let unwrapped = thisObjectWeakRef.deref();
+            if (!unwrapped)
+                return undefined;
+
+            return this.call(unwrapped, ...bindArgs, ...callArgs);
+        };
+    },
+});
+
 Object.defineProperty(Object, "shallowEqual",
 {
     value(a, b)

@@ -57,8 +57,8 @@ WI.CanvasTreeElement = class CanvasTreeElement extends WI.FolderizedTreeElement
     {
         super.onattach();
 
-        this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
-        this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+        this.element.addEventListener("mouseover", this._handleMouseOver.bindWeak(this));
+        this.element.addEventListener("mouseout", this._handleMouseOut.bindWeak(this));
 
         this.onpopulate();
     }

@@ -37,9 +37,9 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._restoreSelectedExecutionContextForFrame = null;
 
         this.element.classList.add("quick-console");
-        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
-        this.element.addEventListener("dragover", this._handleDragOver.bind(this));
-        this.element.addEventListener("drop", this._handleDrop.bind(this), true); // Ensure that dropping a DOM node doesn't copy text.
+        this.element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this));
+        this.element.addEventListener("dragover", this._handleDragOver.bindWeak(this));
+        this.element.addEventListener("drop", this._handleDrop.bindWeak(this), {capture: true}); // Ensure that dropping a DOM node doesn't copy text.
 
         this.prompt = new WI.ConsolePrompt(null, "text/javascript");
         this.addSubview(this.prompt);
@@ -59,7 +59,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._navigationBar.addNavigationItem(this._activeExecutionContextNavigationItemDivider);
 
         this._activeExecutionContextNavigationItem = new WI.NavigationItem("active-execution-context");
-        WI.addMouseDownContextMenuHandlers(this._activeExecutionContextNavigationItem.element, this._populateActiveExecutionContextNavigationItemContextMenu.bind(this));
+        WI.addMouseDownContextMenuHandlers(this._activeExecutionContextNavigationItem.element, this._populateActiveExecutionContextNavigationItemContextMenu.bindWeak(this));
         this._navigationBar.addNavigationItem(this._activeExecutionContextNavigationItem);
 
         this._updateActiveExecutionContextDisplay();

@@ -70,7 +70,7 @@ WI.IndexedDatabaseObjectStoreContentView = class IndexedDatabaseObjectStoreConte
         this._dataGrid = new WI.DataGrid(columnInfo);
         this._dataGrid.variableHeightRows = true;
         this._dataGrid.filterDelegate = this;
-        this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bind(this));
+        this._dataGrid.scrollContainer.addEventListener("scroll", this._dataGridScrolled.bindWeak(this));
         this.addSubview(this._dataGrid);
 
         this._entries = [];

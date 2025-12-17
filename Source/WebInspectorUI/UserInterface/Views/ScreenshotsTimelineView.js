@@ -88,9 +88,9 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
                 }, {once: true});
                 imageElement.src = record.imageData;
 
-                imageElement.addEventListener("click", (event) => {
+                imageElement.addEventListener("click", bindWeak(function(event) {
                     this._selectTimelineRecord(record);
-                });
+                }, this));
 
                 if (record === this._selectedRecord)
                     selectedElement = imageElement;

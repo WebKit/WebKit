@@ -47,7 +47,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             this._spinnerTimeout = undefined;
         }, 100);
 
-        this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
+        this.element.addEventListener("click", this._mouseWasClicked.bindWeak(this));
 
         // Request content last so the spinner will always be removed in case the content is immediately available.
         resource.requestContent().then(this._contentAvailable.bind(this)).catch(this.showGenericErrorMessage.bind(this));
@@ -90,7 +90,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the content is available.
                 this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
                 if (WI.NetworkManager.supportsOverridingRequests() || WI.NetworkManager.supportsBlockingRequests())
-                    WI.addMouseDownContextMenuHandlers(this._createLocalResourceOverrideButtonNavigationItem.element, this._populateCreateLocalResourceOverrideContextMenu.bind(this));
+                    WI.addMouseDownContextMenuHandlers(this._createLocalResourceOverrideButtonNavigationItem.element, this._populateCreateLocalResourceOverrideContextMenu.bindWeak(this));
                 else
                     this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
             }

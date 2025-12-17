@@ -162,7 +162,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             if (!this._toggleBlackboxedImageElement) {
                 this._toggleBlackboxedImageElement = document.createElement("img");
                 this._toggleBlackboxedImageElement.classList.add("toggle-script-blackbox");
-                this._toggleBlackboxedImageElement.addEventListener("click", this._handleToggleBlackboxedImageElementClicked.bind(this));
+                this._toggleBlackboxedImageElement.addEventListener("click", this._handleToggleBlackboxedImageElementClicked.bindWeak(this));
             }
 
             this.status = this._toggleBlackboxedImageElement;

@@ -31,8 +31,8 @@ WI.ExpandableView = class ExpandableView
 
         if (childElement) {
             this._disclosureButton = this._element.createChild("button", "disclosure-button");
-            this._disclosureButton.addEventListener("click", this._onDisclosureButtonClick.bind(this));
-            this._disclosureButton.addEventListener("keydown", this._handleDisclosureButtonKeyDown.bind(this));
+            this._disclosureButton.addEventListener("click", this._onDisclosureButtonClick.bindWeak(this));
+            this._disclosureButton.addEventListener("keydown", this._handleDisclosureButtonKeyDown.bindWeak(this));
         }
 
         this._element.append(titleElement);

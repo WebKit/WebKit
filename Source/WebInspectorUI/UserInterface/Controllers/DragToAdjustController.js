@@ -34,6 +34,11 @@ WI.DragToAdjustController = class DragToAdjustController
         this._enabled = false;
         this._dragging = false;
         this._tracksMouseClickAndDrag = false;
+
+        this._boundHandleMouseEnter = null;
+        this._boundHandleMouseLeave = null;
+        this._boundHandleMouseMove = null;
+        this._boundMouseWasPressed = null;
     }
 
     // Public
@@ -59,11 +64,14 @@ WI.DragToAdjustController = class DragToAdjustController
             return;
 
         if (enabled) {
-            this._element.addEventListener("mouseenter", this);
-            this._element.addEventListener("mouseleave", this);
+            this._boundHandleMouseEnter ||= this._handleMouseEnter.bindWeak(this);
+            this._element.addEventListener("mouseenter", this._boundHandleMouseEnter);
+
+            this._boundHandleMouseLeave ||= this._handleMouseLeave.bindWeak(this);
+            this._element.addEventListener("mouseleave", this._boundHandleMouseLeave);
         } else {
-            this._element.removeEventListener("mouseenter", this);
-            this._element.removeEventListener("mouseleave", this);
+            this._element.removeEventListener("mouseenter", this._boundHandleMouseEnter);
+            this._element.removeEventListener("mouseleave", this._boundHandleMouseLeave);
         }
     }
 
@@ -82,10 +90,12 @@ WI.DragToAdjustController = class DragToAdjustController
 
         if (active) {
             WI.notifications.addEventListener(WI.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
-            this._element.addEventListener("mousemove", this);
+
+            this._boundHandleMouseMove ||= this._handleMouseMove.bindWeak(this);
+            this._element.addEventListener("mousemove", this._boundHandleMouseMove);
         } else {
             WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._modifiersDidChange, this);
-            this._element.removeEventListener("mousemove", this);
+            this._element.removeEventListener("mousemove", this._boundHandleMouseMove);
             this._setTracksMouseClickAndDrag(false);
         }
 
@@ -102,41 +112,6 @@ WI.DragToAdjustController = class DragToAdjustController
 
         if (this._delegate && typeof this._delegate.dragToAdjustControllerDidReset === "function")
             this._delegate.dragToAdjustControllerDidReset(this);
-    }
-
-    // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "mouseenter":
-            if (!this._dragging) {
-                if (this._delegate && typeof this._delegate.dragToAdjustControllerCanBeActivated === "function")
-                    this.active = this._delegate.dragToAdjustControllerCanBeActivated(this);
-                else
-                    this.active = true;
-            }
-            break;
-        case "mouseleave":
-            if (!this._dragging)
-                this.active = false;
-            break;
-        case "mousemove":
-            if (this._dragging)
-                this._mouseWasDragged(event);
-            else
-                this._mouseMoved(event);
-            break;
-        case "mousedown":
-            this._mouseWasPressed(event);
-            break;
-        case "mouseup":
-            this._mouseWasReleased(event);
-            break;
-        case "contextmenu":
-            event.preventDefault();
-            break;
-        }
     }
 
     // Private
@@ -162,12 +137,15 @@ WI.DragToAdjustController = class DragToAdjustController
 
         if (tracksMouseClickAndDrag) {
             this._element.classList.add(WI.DragToAdjustController.StyleClassName);
-            window.addEventListener("mousedown", this, true);
-            window.addEventListener("contextmenu", this, true);
+
+            this._boundMouseWasPressed ||= this._mouseWasPressed.bindWeak(this);
+            window.addEventListener("mousedown", this._boundMouseWasPressed, {capture: true});
+
+            window.addEventListener("contextmenu", this._handleContextMenu, {capture: true});
         } else {
             this._element.classList.remove(WI.DragToAdjustController.StyleClassName);
-            window.removeEventListener("mousedown", this, true);
-            window.removeEventListener("contextmenu", this, true);
+            window.removeEventListener("mousedown", this._boundMouseWasPressed, {capture: true});
+            window.removeEventListener("contextmenu", this._handleContextMenu, {capture: true});
             this._setDragging(false);
         }
 
@@ -224,14 +202,33 @@ WI.DragToAdjustController = class DragToAdjustController
         event.stopPropagation();
     }
 
-    _mouseWasReleased(event)
+    _handleMouseEnter(event)
     {
-        this._setDragging(false);
+        if (!this._dragging) {
+            if (this._delegate && typeof this._delegate.dragToAdjustControllerCanBeActivated === "function")
+                this.active = this._delegate.dragToAdjustControllerCanBeActivated(this);
+            else
+                this.active = true;
+        }
+    }
 
+    _handleMouseLeave(event)
+    {
+        if (!this._dragging)
+            this.active = false;
+    }
+
+    _handleMouseMove(event)
+    {
+        if (this._dragging)
+            this._mouseWasDragged(event);
+        else
+            this._mouseMoved(event);
+    }
+
+    _handleContextMenu(event)
+    {
         event.preventDefault();
-        event.stopPropagation();
-
-        this.reset();
     }
 };
 

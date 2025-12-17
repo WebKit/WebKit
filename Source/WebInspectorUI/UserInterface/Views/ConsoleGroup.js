@@ -54,8 +54,8 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
 
         var titleElement = messageView.element;
         titleElement.classList.add(WI.LogContentView.ItemWrapperStyleClassName);
-        titleElement.addEventListener("click", this._titleClicked.bind(this));
-        titleElement.addEventListener("mousedown", this._titleMouseDown.bind(this));
+        titleElement.addEventListener("click", this._titleClicked.bindWeak(this));
+        titleElement.addEventListener("mousedown", this._titleMouseDown.bindWeak(this));
 
         if (groupElement && messageView.message.type === WI.ConsoleMessage.MessageType.StartGroupCollapsed)
             groupElement.classList.add("collapsed");

@@ -209,7 +209,15 @@ WI.ContextMenu = class ContextMenu extends WI.ContextSubMenuItem
                 console.assert(event.type !== "mousedown" || this._beforeShowCallbacks.length > 0, "Calling show() in a mousedown handler should have a before show callback to enable quick selection.");
 
                 this._menuObject = menuObject;
-                this._event.target.addEventListener("contextmenu", this, true);
+                this._event.target.addEventListener("contextmenu", (event) => {
+                    for (let callback of this._beforeShowCallbacks)
+                        callback(this);
+
+                    InspectorFrontendHost.showContextMenu(event, this._menuObject);
+                    this._menuObject = null;
+
+                    event.stopImmediatePropagation();
+                }, {capture: true, once: true});
                 InspectorFrontendHost.dispatchEventAsContextMenuEvent(this._event);
             } else
                 InspectorFrontendHost.showContextMenu(this._event, menuObject);
@@ -222,22 +230,6 @@ WI.ContextMenu = class ContextMenu extends WI.ContextSubMenuItem
     addBeforeShowCallback(callback)
     {
         this._beforeShowCallbacks.push(callback);
-    }
-
-    // Protected
-
-    handleEvent(event)
-    {
-        console.assert(event.type === "contextmenu");
-
-        for (let callback of this._beforeShowCallbacks)
-            callback(this);
-
-        this._event.target.removeEventListener("contextmenu", this, true);
-        InspectorFrontendHost.showContextMenu(event, this._menuObject);
-        this._menuObject = null;
-
-        event.stopImmediatePropagation();
     }
 
     // Private

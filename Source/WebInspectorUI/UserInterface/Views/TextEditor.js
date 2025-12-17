@@ -39,11 +39,11 @@ WI.TextEditor = class TextEditor extends WI.View
             styleSelectedText: true,
         });
 
-        this._codeMirror.on("focus", this._editorFocused.bind(this));
-        this._codeMirror.on("change", this._contentChanged.bind(this));
-        this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
-        this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
-        this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
+        this._codeMirror.on("focus", this._editorFocused.bindWeak(this));
+        this._codeMirror.on("change", this._contentChanged.bindWeak(this));
+        this._codeMirror.on("gutterClick", this._gutterMouseDown.bindWeak(this));
+        this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bindWeak(this));
+        this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bindWeak(this), {capture: true});
 
         this._completionController = new WI.CodeMirrorCompletionController(WI.CodeMirrorCompletionController.Mode.Basic, this._codeMirror, this);
         this._tokenTrackingController = new WI.CodeMirrorTokenTrackingController(this._codeMirror, this);
@@ -1158,13 +1158,13 @@ WI.TextEditor = class TextEditor extends WI.View
         this.element.appendChild(this._bouncyHighlightElement);
 
         // Reposition the highlight if the editor scrolls.
-        this._bouncyHighlightScrollHandler = () => { positionBouncyHighlight.call(this); };
+        this._bouncyHighlightScrollHandler = positionBouncyHighlight.bindWeak(this);
         this.addScrollHandler(this._bouncyHighlightScrollHandler);
 
         // Listen for the end of the animation so we can remove the element.
-        this._bouncyHighlightElement.addEventListener("animationend", () => {
+        this._bouncyHighlightElement.addEventListener("animationend", bindWeak(function(event) {
             this._removeBouncyHighlightElementIfNeeded();
-        });
+        }, this));
     }
 
     _removeBouncyHighlightElementIfNeeded()
@@ -1527,12 +1527,12 @@ WI.TextEditor = class TextEditor extends WI.View
             this._columnNumberWithDraggedBreakpoint = columnNumber;
         }
 
-        this._documentMouseMovedEventListener = this._documentMouseMoved.bind(this);
-        this._documentMouseUpEventListener = this._documentMouseUp.bind(this);
+        this._documentMouseMovedEventListener ||= this._documentMouseMoved.bindWeak(this);
+        this._documentMouseUpEventListener ||= this._documentMouseUp.bindWeak(this);
 
         // Register these listeners on the document so we can track the mouse if it leaves the gutter.
-        document.addEventListener("mousemove", this._documentMouseMovedEventListener, true);
-        document.addEventListener("mouseup", this._documentMouseUpEventListener, true);
+        document.addEventListener("mousemove", this._documentMouseMovedEventListener, {capture: true});
+        document.addEventListener("mouseup", this._documentMouseUpEventListener, {capture: true});
     }
 
     _gutterContextMenu(codeMirror, lineNumber, gutterElement, event)
@@ -1621,8 +1621,8 @@ WI.TextEditor = class TextEditor extends WI.View
 
         event.preventDefault();
 
-        document.removeEventListener("mousemove", this._documentMouseMovedEventListener, true);
-        document.removeEventListener("mouseup", this._documentMouseUpEventListener, true);
+        document.removeEventListener("mousemove", this._documentMouseMovedEventListener, {capture: true});
+        document.removeEventListener("mouseup", this._documentMouseUpEventListener, {capture: true});
 
         var delegateImplementsBreakpointClicked = this._delegate && typeof this._delegate.textEditorBreakpointClicked === "function";
         var delegateImplementsBreakpointRemoved = this._delegate && typeof this._delegate.textEditorBreakpointRemoved === "function";
@@ -1663,8 +1663,6 @@ WI.TextEditor = class TextEditor extends WI.View
                 this._delegate.textEditorBreakpointClicked(this, this._lineNumberWithMousedDownBreakpoint, this._columnNumberWithMousedDownBreakpoint);
         }
 
-        delete this._documentMouseMovedEventListener;
-        delete this._documentMouseUpEventListener;
         delete this._lineNumberWithMousedDownBreakpoint;
         delete this._lineNumberWithDraggedBreakpoint;
         delete this._columnNumberWithMousedDownBreakpoint;

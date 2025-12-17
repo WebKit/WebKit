@@ -42,7 +42,7 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
 
         this._populate();
 
-        this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this._element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
     }
 
     // Public

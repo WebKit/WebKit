@@ -44,7 +44,7 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
         this._iframeElement = this.element.appendChild(document.createElement("iframe"));
         this._iframeElement.src = sourceURL;
-        this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
+        this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bindWeak(this));
     }
 
     // Static

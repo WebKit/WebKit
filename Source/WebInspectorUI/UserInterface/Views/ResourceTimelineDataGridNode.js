@@ -44,6 +44,8 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             this.resource.addEventListener(WI.Resource.Event.SizeDidChange, this._needsRefresh, this);
             this.resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._needsRefresh, this);
         }
+
+        this._mouseEnterRecordBarListener = null;
     }
 
     // Public
@@ -191,8 +193,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         if (!recordBar.records.length || recordBar.records[0].type !== WI.TimelineRecord.Type.Network)
             return;
 
-        console.assert(!this._mouseEnterRecordBarListener);
-        this._mouseEnterRecordBarListener = this._mouseoverRecordBar.bind(this);
+        this._mouseEnterRecordBarListener ||= this._mouseoverRecordBar.bindWeak(this);
         recordBar.element.addEventListener("mouseenter", this._mouseEnterRecordBarListener);
     }
 
@@ -205,7 +206,6 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             return;
 
         recordBar.element.removeEventListener("mouseenter", this._mouseEnterRecordBarListener);
-        this._mouseEnterRecordBarListener = null;
     }
 
     filterableDataForColumn(columnIdentifier)
@@ -427,7 +427,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             this.dataGrid._popover.present(bounds.pad(2), preferredEdges);
         };
 
-        recordBar.element.addEventListener("mouseleave", () => {
+        recordBar.element.addEventListener("mouseleave", bindWeak(function(event) {
             if (!this.dataGrid)
                 return;
 
@@ -435,7 +435,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
                 if (this.dataGrid)
                     this.dataGrid._popover.dismiss();
             }, WI.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
-        }, {once: true});
+        }, this), {once: true});
 
         this.dataGrid._popover.presentNewContentWithFrame(popoverContentElement, targetFrame.pad(2), preferredEdges);
     }

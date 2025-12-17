@@ -35,14 +35,14 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
 
         this._enabled = true;
 
-        this.element.addEventListener("click", this._mouseClicked.bind(this));
+        this.element.addEventListener("click", this._mouseClicked.bindWeak(this));
 
         // Don't move the focus on the button when clicking on it. This matches macOS behavior.
-        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this), true);
+        this.element.addEventListener("mousedown", this._handleMouseDown.bindWeak(this), {capture: true});
 
         this._role = role;
         if (this._role === "button")
-            this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
+            this.element.addEventListener("keydown", this._handleKeyDown.bindWeak(this));
 
         if (label)
             this.element.setAttribute("aria-label", label);

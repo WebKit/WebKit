@@ -31,7 +31,7 @@ WI.ScrubberNavigationItem = class ScrubberNavigationItem extends WI.FlexibleSpac
 
         this._sliderElement = this._element.appendChild(document.createElement("input"));
         this._sliderElement.type = "range";
-        this._sliderElement.addEventListener("input", this._sliderChanged.bind(this));
+        this._sliderElement.addEventListener("input", this._sliderChanged.bindWeak(this));
     }
 
     // Public

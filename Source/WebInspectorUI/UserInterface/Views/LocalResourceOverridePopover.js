@@ -265,10 +265,10 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             let typeDataElement = typeRowElement.appendChild(document.createElement("td"));
             typeDataElement.appendChild(this._typeSelectElement);
 
-            this._typeSelectElement.addEventListener("change", (event) => {
+            this._typeSelectElement.addEventListener("change", bindWeak(function(event) {
                 toggleInputsForType();
                 this.update();
-            });
+            }, this));
 
             this._typeSelectElement.id = "local-resource-override-popover-type-input-field";
             typeLabelElement.setAttribute("for", this._typeSelectElement.id);
@@ -277,7 +277,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         let urlRow = createRow(WI.UIString("URL"), "url", valueData.url || "", placeholderData.url);
         this._urlCodeMirror = urlRow.codeMirror;
 
-        let updateURLCodeMirrorMode = () => {
+        let updateURLCodeMirrorMode = bindWeak(function() {
             let isRegex = this._isRegexCheckbox && this._isRegexCheckbox.checked;
 
             this._urlCodeMirror.setOption("mode", isRegex ? "text/x-regex" : "text/x-local-override-url");
@@ -290,7 +290,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                         this._urlCodeMirror.setValue("http://" + url);
                 }
             }
-        };
+        }, this);
 
         // COMPATIBILITY (iOS 13.4): `Network.addInterception` did not exist yet.
         if (InspectorBackend.hasCommand("Network.addInterception", "caseSensitive")) {
@@ -312,9 +312,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             this._isRegexCheckbox = isRegexLabel.appendChild(document.createElement("input"));
             this._isRegexCheckbox.type = "checkbox";
             this._isRegexCheckbox.checked = localResourceOverride ? localResourceOverride.isRegex : false;
-            this._isRegexCheckbox.addEventListener("change", (event) => {
-                updateURLCodeMirrorMode();
-            });
+            this._isRegexCheckbox.addEventListener("change", updateURLCodeMirrorMode);
 
             isRegexLabel.append(WI.UIString("Regular Expression"));
         }
@@ -337,7 +335,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             this._methodSelectElement = methodDataElement.appendChild(document.createElement("select"));
 
-            updateMethodOptions = () => {
+            updateMethodOptions = bindWeak(function() {
                 let isPassthrough = !!this._isPassthroughCheckbox?.checked;
 
                 let oldValue = this._methodSelectElement.value;
@@ -379,7 +377,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 }
 
                 this._methodSelectElement.value = oldValue || (!isPassthrough && ("method" in valueData ? valueData.method : placeholderData.method)) || "";
-            };
+            }, this);
 
             this._methodSelectElement.id = "local-resource-override-popover-method-input-field";
             methodLabelElement.setAttribute("for", this._methodSelectElement.id);
@@ -417,13 +415,13 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             mappedDirectoryPathEditorElement.title = this._mappedDirectoryPathValueElement.textContent;
 
-            let updateMappedDirectoryPath = async () => {
+            let updateMappedDirectoryPath = bindWeak(function(event) {
                 WI.FileUtilities.import((files) => {
                     this._mappedDirectoryPathValueElement.textContent = WI.FileUtilities.longestCommonPrefix(files, {directory: true});
 
                     mappedDirectoryPathEditorElement.title = this._mappedDirectoryPathValueElement.textContent;
                 }, {directory: true});
-            };
+            }, this);
             mappedDirectoryPathLabelElement.addEventListener("click", updateMappedDirectoryPath);
             mappedDirectoryPathEditorElement.addEventListener("click", updateMappedDirectoryPath);
         }
@@ -492,7 +490,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         let addHeaderButton = headersData.appendChild(document.createElement("button"));
         addHeaderButton.className = "add-header";
         addHeaderButton.textContent = WI.UIString("Add Header");
-        addHeaderButton.addEventListener("click", (event) => {
+        addHeaderButton.addEventListener("click", bindWeak(function(event) {
             let newNode = new WI.DataGridNode({
                 name: WI.UIString("Header", "Header @ Local Override Popover New Headers Data Grid Item", "Placeholder text in an editable field for the name of a HTTP header"),
                 value: WI.UIString("value", "value @ Local Override Popover New Headers Data Grid Item", "Placeholder text in an editable field for the value of a HTTP header"),
@@ -501,7 +499,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             toggleHeadersDataGridVisibility(false);
             this.update();
             this._headersDataGrid.startEditingNode(newNode);
-        });
+        }, this));
 
         let mappedFilePathRowElement = null;
         if (WI.LocalResource.canMapToFile()) {
@@ -530,14 +528,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             mappedFilePathEditorElement.title = this._mappedFilePathValueElement.textContent;
 
-            let updateMappedFilePath = async () => {
+            let updateMappedFilePath = bindWeak(function(event) {
                 WI.FileUtilities.import((files) => {
                     console.assert(files.length === 1);
                     this._mappedFilePathValueElement.textContent = WI.FileUtilities.longestCommonPrefix(files);
 
                     mappedFilePathEditorElement.title = this._mappedFilePathValueElement.textContent;
                 });
-            };
+            }, this);
             mappedFilePathLabelElement.addEventListener("click", updateMappedFilePath);
             mappedFilePathEditorElement.addEventListener("click", updateMappedFilePath);
         }
@@ -558,9 +556,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         this._isPassthroughCheckbox = isPassthroughLabel.appendChild(document.createElement("input"));
         this._isPassthroughCheckbox.type = "checkbox";
         this._isPassthroughCheckbox.checked = !!localResourceOverride?.isPassthrough;
-        this._isPassthroughCheckbox.addEventListener("change", (event) => {
-            updateMethodOptions?.();
-        });
+        if (updateMethodOptions)
+            this._isPassthroughCheckbox.addEventListener("change", updateMethodOptions);
 
         let isPassthroughLabelText = isPassthroughLabel.appendChild(document.createTextNode(""));
 
@@ -631,7 +628,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         });
 
         // Update statusText when statusCode changes.
-        this._statusCodeCodeMirror.on("change", (cm) => {
+        this._statusCodeCodeMirror.on("change", bindWeak(function(cm) {
             let statusCode = parseInt(cm.getValue());
             if (isNaN(statusCode)) {
                 this._statusTextCodeMirror.setValue("");
@@ -640,10 +637,10 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             let statusText = WI.HTTPUtilities.statusTextForStatusCode(statusCode);
             this._statusTextCodeMirror.setValue(statusText);
-        });
+        }, this));
 
         // Update mimeType when URL gets a file extension.
-        this._urlCodeMirror.on("change", (cm) => {
+        this._urlCodeMirror.on("change", bindWeak(function(cm) {
             if (this._isRegexCheckbox && this._isRegexCheckbox.checked)
                 return;
 
@@ -657,13 +654,13 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             this._mimeTypeCodeMirror.setValue(mimeType);
             contentTypeDataGridNode.data = {name: "Content-Type", value: mimeType};
-        });
+        }, this));
 
         // Update Content-Type header when mimeType changes.
-        this._mimeTypeCodeMirror.on("change", (cm) => {
+        this._mimeTypeCodeMirror.on("change", bindWeak(function(cm) {
             let mimeType = cm.getValue() || cm.getOption("placeholder");
             contentTypeDataGridNode.data = {name: "Content-Type", value: mimeType};
-        });
+        }, this));
 
         updateURLCodeMirrorMode();
 
@@ -779,10 +776,11 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             ...options,
         });
 
+        let boundDismiss = this.dismiss.bindWeak(this);
         codeMirror.addKeyMap({
-            "Enter": () => { this.dismiss(); },
-            "Shift-Enter": () => { this.dismiss(); },
-            "Esc": () => { this.dismiss(); },
+            "Enter": boundDismiss,
+            "Shift-Enter": boundDismiss,
+            "Esc": boundDismiss,
         });
 
         return codeMirror;
