@@ -32,6 +32,7 @@ namespace WebCore {
 class StyleRuleNamespace;
 
 class CSSNamespaceRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSNamespaceRule);
 public:
     static Ref<CSSNamespaceRule> create(StyleRuleNamespace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSNamespaceRule(rule, sheet)); }
 

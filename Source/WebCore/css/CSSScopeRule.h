@@ -32,6 +32,7 @@ namespace WebCore {
 class StyleRuleScope;
 
 class CSSScopeRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSScopeRule);
 public:
     static Ref<CSSScopeRule> create(StyleRuleScope&, CSSStyleSheet* parent);
 

@@ -57,6 +57,7 @@ private:
 };
 
 class CSSPositionTryRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionTryRule);
 public:
     static Ref<CSSPositionTryRule> create(StyleRulePositionTry&, CSSStyleSheet*);
     virtual ~CSSPositionTryRule();

@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSSFontFeatureValuesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFeatureValuesRule);
 public:
     static Ref<CSSFontFeatureValuesRule> create(StyleRuleFontFeatureValues& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFeatureValuesRule(rule, sheet)); }
     virtual ~CSSFontFeatureValuesRule() = default;
@@ -68,6 +69,7 @@ private:
 };
 
 class CSSFontFeatureValuesBlockRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFeatureValuesBlockRule);
 public:
     static Ref<CSSFontFeatureValuesBlockRule> create(StyleRuleFontFeatureValuesBlock& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFeatureValuesBlockRule(rule, sheet)); }
     virtual ~CSSFontFeatureValuesBlockRule() = default;

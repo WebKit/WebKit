@@ -33,6 +33,7 @@ class CSSFunctionDescriptors;
 class StyleRuleFunctionDeclarations;
 
 class CSSFunctionDeclarations final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionDeclarations);
 public:
     static Ref<CSSFunctionDeclarations> create(StyleRuleFunctionDeclarations& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFunctionDeclarations(rule, sheet)); };
 

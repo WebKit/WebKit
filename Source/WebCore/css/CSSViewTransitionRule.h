@@ -57,6 +57,7 @@ private:
 };
 
 class CSSViewTransitionRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSViewTransitionRule);
 public:
     using ViewTransitionNavigation = WebCore::ViewTransitionNavigation;
 

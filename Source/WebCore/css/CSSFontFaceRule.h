@@ -29,6 +29,7 @@ class CSSFontFaceDescriptors;
 class StyleRuleFontFace;
 
 class CSSFontFaceRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceRule);
 public:
     static Ref<CSSFontFaceRule> create(StyleRuleFontFace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFaceRule(rule, sheet)); }
 

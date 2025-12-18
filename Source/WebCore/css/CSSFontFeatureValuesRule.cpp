@@ -27,8 +27,12 @@
 #include "CSSFontFeatureValuesRule.h"
 
 #include "CSSMarkup.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFeatureValuesRule);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFeatureValuesBlockRule);
 
 CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& fontFeatureValuesRule, CSSStyleSheet* parent)
     : CSSRule(parent)

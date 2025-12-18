@@ -28,8 +28,11 @@
 #include "MediaQueryParser.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMediaRule);
 
 CSSMediaRule::CSSMediaRule(StyleRuleMedia& mediaRule, CSSStyleSheet* parent)
     : CSSConditionRule(mediaRule, parent)

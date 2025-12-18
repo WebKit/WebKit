@@ -30,7 +30,11 @@
 #include "config.h"
 #include "CSSConditionRule.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSConditionRule);
 
 CSSConditionRule::CSSConditionRule(StyleRuleGroup& group, CSSStyleSheet* parent)
     : CSSGroupingRule(group, parent)

@@ -31,8 +31,11 @@
 #include "GenericMediaQuerySerialization.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSContainerRule);
 
 CSSContainerRule::CSSContainerRule(StyleRuleContainer& rule, CSSStyleSheet* parent)
     : CSSConditionRule(rule, parent)

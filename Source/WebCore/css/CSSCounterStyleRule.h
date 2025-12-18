@@ -66,6 +66,7 @@ private:
 };
 
 class CSSCounterStyleRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCounterStyleRule);
 public:
     static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CSSStyleSheet*);
     virtual ~CSSCounterStyleRule();

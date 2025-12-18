@@ -66,6 +66,7 @@ private:
 };
 
 class CSSKeyframesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframesRule);
 public:
     static Ref<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSKeyframesRule(rule, sheet)); }
 

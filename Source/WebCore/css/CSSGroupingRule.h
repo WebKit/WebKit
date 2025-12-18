@@ -32,6 +32,7 @@ class CSSRuleList;
 class StyleRuleGroup;
 
 class CSSGroupingRule : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGroupingRule);
 public:
     virtual ~CSSGroupingRule();
 
