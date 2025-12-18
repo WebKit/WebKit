@@ -149,11 +149,12 @@ class Package(object):
             else:
                 raise OSError('{} has an unrecognized package format'.format(self.path))
 
-    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=None, aliases=None, implicit_deps=None):
+    def __init__(self, import_name, version=None, pypi_name=None, custom_install=False, slow_install=False, wheel=None, aliases=None, implicit_deps=None):
         self.name = import_name
         self.version = version
         self._archives = []
         self.pypi_name = pypi_name or self.name
+        self.custom_install = custom_install
         self.slow_install = slow_install
         self.wheel = wheel
         self.aliases = aliases or []
@@ -164,6 +165,7 @@ class Package(object):
                 "import_name={self.name!r}, "
                 "version={self.version!r}, "
                 "pypi_name={self.pypi_name!r}, "
+                "custom_install={self.custom_install!r}, "
                 "slow_install={self.slow_install!r}, "
                 "wheel={self.wheel!r}, "
                 "aliases={self.aliases!r}, "
@@ -176,6 +178,9 @@ class Package(object):
         if not AutoInstall.directory:
             raise ValueError('No AutoInstall directory, Package cannot resolve location')
         return os.path.join(AutoInstall.directory, *self.name.split('.'))
+
+    def do_custom_install(self, unpack_location):
+        pass
 
     def do_post_install(self, archive_path):
         pass
@@ -410,7 +415,12 @@ class Package(object):
                             element.endswith('.dist-info') for element in to_be_moved
                         )
                     ):
-                        raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
+                        if self.custom_install:
+                            # Binary-only package installation, bypassing Python-specific setup.py logic
+                            self.do_custom_install(temp_location)
+                            to_be_moved = []
+                        else:
+                            raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
                     for file in to_be_moved:
                         target = os.path.join(AutoInstall.directory, file)
                         if os.path.isdir(target):
