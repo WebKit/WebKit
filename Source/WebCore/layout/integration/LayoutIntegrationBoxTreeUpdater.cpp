@@ -146,25 +146,21 @@ CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
 
 void BoxTreeUpdater::tearDown()
 {
-    if (m_document->renderTreeBeingDestroyed())
+    if (m_document->renderTreeBeingDestroyed()) {
+        if (auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(m_rootRenderer))
+            renderBlockFlow->clearNestedInlineBlocks();
         return rootLayoutBox().destroyChildren();
-
-    Vector<CheckedRef<Layout::Box>> boxesToDetach;
-    for (auto& constLayoutBox : formattingContextBoxes(rootLayoutBox())) {
-        auto& layoutBox = const_cast<Layout::Box&>(constLayoutBox);
-        auto* renderer = layoutBox.rendererForIntegration();
-        if (!renderer)
-            continue;
-
-        auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
-        auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->inlineLayout();
-        if (isLFCInlineBlock)
-            boxesToDetach.append(layoutBox);
     }
-
-    for (auto& toDetach : boxesToDetach) {
-        auto detachedBox = toDetach->removeFromParent();
-        initialContainingBlock().appendChild(WTFMove(detachedBox));
+    auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(m_rootRenderer);
+    if (renderBlockFlow && renderBlockFlow->hasRareBlockFlowData()) {
+        auto* cachedNestedInlineBlocks = renderBlockFlow->nestedInlineBlocks();
+        if (cachedNestedInlineBlocks && !cachedNestedInlineBlocks->isEmpty()) {
+            for (auto& toDetach : *cachedNestedInlineBlocks) {
+                auto detachedBox = toDetach->removeFromParent();
+                initialContainingBlock().appendChild(WTFMove(detachedBox));
+            }
+            renderBlockFlow->clearNestedInlineBlocks();
+        }
     }
 
     if (&rootLayoutBox().parent() == &initialContainingBlock())
@@ -320,7 +316,10 @@ void BoxTreeUpdater::buildTreeForInlineContent()
                 return existingChildBox->removeFromParent();
             return createLayoutBox(childRenderer);
         };
-        insertChild(childLayoutBox(), childRenderer, childRenderer.previousSibling());
+        auto childBox = childLayoutBox();
+        if (is<RenderBlockFlow>(childRenderer))
+            downcast<RenderBlockFlow>(m_rootRenderer).addNestedInlineBlock(childBox.get());
+        insertChild(WTFMove(childBox), childRenderer, childRenderer.previousSibling());
     }
 }
 

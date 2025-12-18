@@ -107,6 +107,8 @@ public:
 
     SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
+    Vector<CheckedRef<Layout::Box>> m_nestedInlineBlocks;
+
     bool m_didBreakAtLineToAvoidWidow : 1;
 };
 
@@ -563,6 +565,10 @@ public:
     RenderBlockFlowRareData* rareBlockFlowData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }
     RenderBlockFlowRareData& ensureRareBlockFlowData();
     void materializeRareBlockFlowData();
+
+    void addNestedInlineBlock(CheckedRef<Layout::Box>&&);
+    void clearNestedInlineBlocks();
+    Vector<CheckedRef<Layout::Box>>* nestedInlineBlocks() const;
 
 #if ENABLE(TEXT_AUTOSIZING)
     void adjustComputedFontSizes(float size, float visibleWidth);
