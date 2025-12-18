@@ -43,17 +43,21 @@ class LinuxChromeDriver(LinuxBrowserDriver):
         self._default_browser_arguments += ['--homepage', url]
         super().launch_url(url, options, browser_build_path, browser_path)
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
+        from selenium.webdriver.chrome.service import Service
         options = Options()
         for option_switch in self._default_browser_arguments:
             options.add_argument(option_switch)
         if browser_build_path:
             binary_path = os.path.join(browser_build_path, 'chromium-browser')
             options.binary_location = binary_path
+        elif browser_path:
+            options.binary_location = browser_path
         driver_executable = self.webdriver_binary_path
-        driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
+        service = Service(executable_path=driver_executable)
+        driver = webdriver.Chrome(service=service, options=options)
         super().launch_webdriver(url, driver)
         return driver
 

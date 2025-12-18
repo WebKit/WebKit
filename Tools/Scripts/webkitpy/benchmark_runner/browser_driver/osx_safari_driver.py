@@ -104,7 +104,7 @@ class OSXSafariDriver(OSXBrowserDriver):
 
         subprocess.Popen(['open', '-a', safari_app_path, url], env=env)
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         from selenium import webdriver
         driver = webdriver.Safari(quiet=False)
         self._launch_webdriver(url=url, driver=driver)

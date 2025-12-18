@@ -17,22 +17,25 @@ class OSXChromeDriverBase(OSXBrowserDriver):
     def launch_url(self, url, options, browser_build_path, browser_path):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=self.launch_args_with_url(url))
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         from selenium import webdriver
-        chrome_options = self._create_chrome_options(browser_build_path)
+        chrome_options = self._create_chrome_options(browser_build_path, browser_path)
         driver_executable = self.webdriver_binary_path
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
 
-    def _create_chrome_options(self, browser_build_path):
+    def _create_chrome_options(self, browser_build_path, browser_path):
         from selenium.webdriver.chrome.options import Options
         chrome_options = Options()
         chrome_options.add_argument("--disable-web-security")
         chrome_options.add_argument("--user-data-dir")
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument(self._window_size_arg())
-        self._set_chrome_binary_location(chrome_options, browser_build_path)
+        if browser_build_path:
+            self._set_chrome_binary_location(chrome_options, browser_build_path)
+        elif browser_path:
+            chrome_options.binary_location = browser_path
         return chrome_options
 
     def _window_size_arg(self):

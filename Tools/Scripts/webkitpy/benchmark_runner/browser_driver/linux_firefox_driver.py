@@ -40,14 +40,18 @@ class LinuxFirefoxDriver(LinuxBrowserDriver):
                                    url]
         super(LinuxFirefoxDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         from selenium import webdriver
         from selenium.webdriver.firefox.options import Options
+        from selenium.webdriver.firefox.service import Service
         options = Options()
         if browser_build_path:
             binary_path = os.path.join(browser_build_path, 'firefox-bin')
             options.binary_location = binary_path
+        elif browser_path:
+            options.binary_location = browser_path
         driver_executable = self.webdriver_binary_path
-        driver = webdriver.Firefox(firefox_options=options, executable_path=driver_executable)
+        service = Service(executable_path=driver_executable, service_args=["--profile-root", self._temp_profiledir])
+        driver = webdriver.Firefox(service=service, options=options)
         super(LinuxFirefoxDriver, self).launch_webdriver(url, driver)
         return driver

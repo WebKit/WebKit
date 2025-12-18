@@ -23,7 +23,7 @@ class BenchmarkRunner(object):
     def __init__(self, plan_file, local_copy, count_override, timeout_override, build_dir, output_file, platform,
                  browser, browser_path, subtests=None, scale_unit=True, show_iteration_values=False, device_id=None,
                  diagnose_dir=None, generate_pgo_profiles=False, profile_output_dir=None, trace_type=None,
-                 profiling_interval=None, browser_args=None):
+                 profiling_interval=None, browser_args=None, http_server_type=None):
         self._plan_name, self._plan = BenchmarkRunner._load_plan_data(plan_file)
         if 'options' not in self._plan:
             self._plan['options'] = {}
