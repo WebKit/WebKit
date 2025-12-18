@@ -39,7 +39,12 @@
 	}
 	p {
 		font-size: 1rem;
-		margin-block-start: 2rlh;
+		margin-block-start: 2lh;
 	}
-
+	footer {
+		margin-block-start: 1lh;
+	}
+  footer p {
+		margin-block: 0;
+	}
 }

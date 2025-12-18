@@ -2,7 +2,7 @@
 <html lang="en-US">
 <head>
   <meta charset="utf-8">
-  <title>Museum demo</title>
+  <title>CSS Grid Lanes — Museum demo</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../universal.css">
@@ -12,14 +12,15 @@
 </head>
 <body>
   <aside class="interface">
-    <nav>Demos: <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a></nav>
+    <nav>Demos: <a href="../">Home</a> | <a href="../photos/">Photos</a> | <a href="../megamenu/">Mega menu</a> | <a href="../newspaper/">Newspaper</a></nav>
     <section class="layout-switcher">
       <label for="layout-select">Switch layouts:</label>
       <select name="layouts" id="layout-select">
         <option value="one">CSS Grid Level 1</option>
-        <option selected value="two">Symmetrical columnar layout</option>
-        <option value="three">With subgrid and item placement</option>
-        <option value="four">Wide content is wider</option>
+        <option value="two">Grid Lanes — classic "waterfall" layout</option>
+        <option selected value="twoandahalf">Grid Lanes — with item placement</option>
+        <!-- <option value="three">Grid Lanes — with subgrid</option>
+        <option value="four">Grid Lanes — wide content is wider</option> -->
       </select>
     </section>
     <section class="number-toggle">
@@ -35,6 +36,13 @@
 <pre class="two"><code>main { 
   display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+}</code></pre>
+<pre class="twoandahalf"><code>main {
+  display: grid-lanes;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  header { 
+    grid-column: -2 / -1; 
+  }
 }</code></pre>
 <pre class="three"><code>main {
   display: grid-lanes; 
