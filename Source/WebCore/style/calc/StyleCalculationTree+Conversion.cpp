@@ -65,7 +65,6 @@ static auto toCSS(const Child&, const ToCSSConversionOptions&) -> CSSCalc::Child
 static auto toCSS(const Number&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 static auto toCSS(const Percentage&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 static auto toCSS(const Dimension&, const ToCSSConversionOptions&) -> CSSCalc::Child;
-static auto toCSS(const IndirectNode<Blend>&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 template<typename CalculationOp> auto toCSS(const IndirectNode<CalculationOp>&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 
 static auto toStyle(const CSSCalc::Random::Sharing&, const ToStyleConversionOptions&) -> Random::Fixed;
@@ -169,35 +168,6 @@ CSSCalc::Child toCSS(const Dimension& root, const ToCSSConversionOptions& option
     }
 
     return CSSCalc::makeChild(CSSCalc::CanonicalDimension { .value = root.value, .dimension = options.canonicalDimension });
-}
-
-CSSCalc::Child toCSS(const IndirectNode<Blend>& root, const ToCSSConversionOptions& options)
-{
-    // FIXME: (http://webkit.org/b/122036) Create a CSSCalc::Tree equivalent of Blend.
-
-    auto createBlendHalf = [](const auto& child, const auto& options, auto progress) -> CSSCalc::Child {
-        auto product = multiply(
-            toCSS(child, options),
-            CSSCalc::makeChild(CSSCalc::Number { .value = progress })
-        );
-
-        if (auto replacement = CSSCalc::simplify(product, options.simplification))
-            return WTFMove(*replacement);
-
-        auto type = toType(product);
-        return CSSCalc::makeChild(WTFMove(product), *type);
-    };
-
-    auto sum = add(
-        createBlendHalf(root->from, options, 1 - root->progress),
-        createBlendHalf(root->to, options, root->progress)
-    );
-
-    if (auto replacement = simplify(sum, options.simplification))
-        return WTFMove(*replacement);
-
-    auto type = CSSCalc::toType(sum);
-    return CSSCalc::makeChild(WTFMove(sum), *type);
 }
 
 template<typename CalculationOp> CSSCalc::Child toCSS(const IndirectNode<CalculationOp>& root, const ToCSSConversionOptions& options)

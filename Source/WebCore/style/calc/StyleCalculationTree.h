@@ -74,9 +74,6 @@ struct Sign;
 struct Progress;
 struct Random;
 
-// Non-standard
-struct Blend;
-
 template<typename Op>
 concept Leaf = requires(Op) {
     Op::isLeaf == true;
@@ -161,8 +158,7 @@ using Node = Variant<
     IndirectNode<Abs>,
     IndirectNode<Sign>,
     IndirectNode<Progress>,
-    IndirectNode<Random>,
-    IndirectNode<Blend>
+    IndirectNode<Random>
 >;
 
 struct Child {
@@ -523,18 +519,6 @@ struct Random {
     bool operator==(const Random&) const = default;
 };
 
-// Non-standard
-struct Blend {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Blend);
-    static constexpr auto op = CSSCalc::Operator::Blend;
-
-    double progress;
-    Child from;
-    Child to;
-
-    bool operator==(const Blend&) const = default;
-};
-
 static_assert(sizeof(Child) <= 16, "Child should stay small");
 
 // MARK: Construction
@@ -564,6 +548,21 @@ template<typename Op> Child makeChild(Op&& op)
     return ChildConstruction<Op>::make(WTFMove(op));
 }
 
+inline Child makeChildWithValueBasedOn(double value, const Number&)
+{
+    return makeChild(Number { .value = value });
+}
+
+inline Child makeChildWithValueBasedOn(double value, const Percentage&)
+{
+    return makeChild(Percentage { .value = value });
+}
+
+inline Child makeChildWithValueBasedOn(double value, const Dimension&)
+{
+    return makeChild(Dimension { .value = value });
+}
+
 // Convenience constructors
 
 inline Child number(double value)
@@ -581,31 +580,13 @@ inline Child dimension(double value)
     return makeChild(Dimension { .value = value });
 }
 
-inline Child add(Child&& a, Child&& b)
-{
-    Vector<Child> sumChildren;
-    sumChildren.append(WTFMove(a));
-    sumChildren.append(WTFMove(b));
-    return makeChild(Sum { .children = WTFMove(sumChildren) });
-}
+Child addAllowingAnyDepth(Child&&, Child&&);
+Child subtractAllowingAnyDepth(Child&&, Child&&);
+Child blendAllowingAnyDepth(Child&& from, Child&& to, double progress);
 
-inline Child multiply(Child&& a, Child&& b)
-{
-    Vector<Child> productChildren;
-    productChildren.append(WTFMove(a));
-    productChildren.append(WTFMove(b));
-    return makeChild(Product { .children = WTFMove(productChildren) });
-}
-
-inline Child subtract(Child&& a, Child&& b)
-{
-    return add(WTFMove(a), makeChild(Negate { .a = WTFMove(b) }));
-}
-
-inline Child blend(Child&& from, Child&& to, double progress)
-{
-    return makeChild(Blend { .progress = progress, .from = WTFMove(from), .to = WTFMove(to) });
-}
+std::optional<Child> add(Child&&, Child&&);
+std::optional<Child> subtract(Child&&, Child&&);
+std::optional<Child> blend(Child&& from, Child&& to, double progress);
 
 // MARK: Dumping
 
@@ -821,16 +802,6 @@ template<size_t I> const auto& get(const Random& root)
         return root.step;
 }
 
-template<size_t I> const auto& get(const Blend& root)
-{
-    if constexpr (!I)
-        return root.progress;
-    else if constexpr (I == 1)
-        return root.from;
-    else if constexpr (I == 2)
-        return root.to;
-}
-
 // MARK: Child Definition
 
 template<typename T>
@@ -979,7 +950,6 @@ OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(Random, 4);
-OP_TUPLE_LIKE_CONFORMANCE(Blend, 3);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE
 
