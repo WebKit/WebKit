@@ -1,4 +1,3 @@
 
-
-FAIL Verify read fails on detaching iframe promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+PASS Verify read fails on detaching iframe
 

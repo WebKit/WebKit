@@ -31,11 +31,12 @@ function reformatHtml(html) {
 const html_with_script =
   '<title>Title of the document</title> <script>const a = 5;</scr'
   + 'ipt> <p>Hello World</p>';
-const html_script = '<script>const a = 5;</scr'
+const html_script =
+  '<script>const a = 5;</scr'
   + 'ipt>';
-  promise_test(async t => {
-  await test_driver.set_permission({name: 'clipboard-read'}, 'granted');
-  await test_driver.set_permission({name: 'clipboard-write'}, 'granted');
+promise_test(async t => {
+  await tryGrantReadPermission();
+  await tryGrantWritePermission();
   const blobInput = new Blob([html_with_script], {type: 'text/html'});
   const clipboardItem = new ClipboardItem({'text/html': blobInput});
   await waitForUserActivation();
