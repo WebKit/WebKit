@@ -462,8 +462,8 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
         return makeUniqueRefWithoutRefCountedCheck<WebLocalFrameLoaderClient>(localFrame, frameLoader, WTFMove(protectedThis), makeInvalidator());
     };
     auto localFrame = parent ? LocalFrame::createProvisionalSubframe(*corePage, WTFMove(clientCreator), m_frameID, parameters.effectiveSandboxFlags, parameters.effectiveReferrerPolicy, parameters.scrollingMode, *parent, Ref { remoteFrame->frameTreeSyncData() }) : LocalFrame::createMainFrame(*corePage, WTFMove(clientCreator), m_frameID, parameters.effectiveSandboxFlags, parameters.effectiveReferrerPolicy, nullptr, Ref { remoteFrame->frameTreeSyncData() });
-    ASSERT(!m_provisionalFrame);
-    m_provisionalFrame = localFrame.ptr();
+    ASSERT(!remoteFrame->provisionalLocalFrame());
+    remoteFrame->setProvisionalFrame(localFrame.ptr());
     m_frameIDBeforeProvisionalNavigation = parameters.frameIDBeforeProvisionalNavigation;
     localFrame->init();
     localFrame->protectedDocument()->setURL(URL { aboutBlankURL() });
@@ -476,7 +476,11 @@ void WebFrame::createProvisionalFrame(ProvisionalFrameCreationParameters&& param
 
 void WebFrame::destroyProvisionalFrame()
 {
-    if (RefPtr frame = std::exchange(m_provisionalFrame, nullptr)) {
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!remoteFrame)
+        return;
+
+    if (RefPtr frame = remoteFrame->takeProvisionalLocalFrame()) {
         if (auto* client = dynamicDowncast<WebLocalFrameLoaderClient>(frame->loader().client()))
             client->takeFrameInvalidator().release();
         frame->loader().detachFromParent();
@@ -487,12 +491,12 @@ void WebFrame::destroyProvisionalFrame()
 
 void WebFrame::commitProvisionalFrame()
 {
-    RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
-    if (!localFrame)
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!remoteFrame)
         return;
 
-    RefPtr remoteFrame = coreRemoteFrame();
-    if (!remoteFrame) {
+    RefPtr localFrame = remoteFrame->takeProvisionalLocalFrame();
+    if (!localFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -536,6 +540,12 @@ void WebFrame::commitProvisionalFrame()
 
     if (ownerElement)
         ownerElement->scheduleInvalidateStyleAndLayerComposition();
+}
+
+WebCore::LocalFrame* WebFrame::provisionalFrame()
+{
+    RefPtr remoteFrame = coreRemoteFrame();
+    return remoteFrame ? remoteFrame->provisionalLocalFrame() : nullptr;
 }
 
 void WebFrame::removeFromTree()

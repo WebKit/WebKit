@@ -130,7 +130,7 @@ public:
     void commitProvisionalFrame();
     void destroyProvisionalFrame();
     void loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
-    WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
+    WebCore::LocalFrame* provisionalFrame();
 
     Awaitable<std::optional<FrameInfoData>> getFrameInfo();
     FrameInfoData info(WithCertificateInfo = WithCertificateInfo::No) const;
@@ -297,7 +297,6 @@ private:
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;
-    RefPtr<WebCore::LocalFrame> m_provisionalFrame;
 
     struct PolicyCheck {
         ForNavigationAction forNavigationAction { ForNavigationAction::No };

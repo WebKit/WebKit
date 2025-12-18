@@ -30,8 +30,9 @@
 #include "AutoplayPolicy.h"
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
-#include "HTMLFrameOwnerElement.h"
 #include "FrameInlines.h"
+#include "HTMLFrameOwnerElement.h"
+#include "LocalFrame.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "RemoteDOMWindow.h"
@@ -204,6 +205,17 @@ const SecurityOrigin& RemoteFrame::frameDocumentSecurityOriginOrOpaque() const
 AutoplayPolicy RemoteFrame::autoplayPolicy() const
 {
     return m_autoplayPolicy;
+}
+
+RefPtr<LocalFrame> RemoteFrame::takeProvisionalLocalFrame()
+{
+    return std::exchange(m_provisionalLocalFrame, nullptr);
+}
+
+void RemoteFrame::setProvisionalFrame(LocalFrame* provisionalLocalFrame)
+{
+    ASSERT(!m_provisionalLocalFrame);
+    m_provisionalLocalFrame = provisionalLocalFrame;
 }
 
 } // namespace WebCore
