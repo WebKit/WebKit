@@ -587,22 +587,22 @@ void JSPromise::triggerPromiseReactions(VM& vm, JSGlobalObject* globalObject, St
     auto* current = head;
     while (current) {
         JSValue promise = current->promise();
-        JSValue handler = isResolved ? current->onFulfilled() : current->onRejected();
+        JSValue handlerOrEncodedTask = isResolved ? current->onFulfilledOrEncodedTask() : current->onRejectedOrEncodedTask();
         JSValue context = current->context();
         current = current->next();
 
-        if (handler.isInt32()) {
-            auto task = static_cast<InternalMicrotask>(handler.asInt32());
+        if (handlerOrEncodedTask.isInt32()) {
+            auto task = static_cast<InternalMicrotask>(handlerOrEncodedTask.asInt32());
             globalObject->queueMicrotask(task, promise, argument, jsNumber(static_cast<int32_t>(status)), context);
             continue;
         }
 
         if (promise.isUndefinedOrNull()) {
-            globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithoutPromise, handler, argument, context, jsUndefined());
+            globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithoutPromise, handlerOrEncodedTask, argument, context, jsUndefined());
             continue;
         }
 
-        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, promise, handler, argument, context);
+        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, promise, handlerOrEncodedTask, argument, context);
     }
 }
 
