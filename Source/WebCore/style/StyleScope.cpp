@@ -668,8 +668,8 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
     Vector<RefPtr<CSSStyleSheet>> result;
 
     if (CheckedPtr extensionStyleSheets = m_document->extensionStyleSheetsIfExists()) {
-        if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet())
-            result.append(pageUserSheet);
+        if (RefPtr pageUserSheet = extensionStyleSheets->pageUserSheet())
+            result.append(WTFMove(pageUserSheet));
         result.appendVector(extensionStyleSheets->documentUserStyleSheets());
         result.appendVector(extensionStyleSheets->injectedUserStyleSheets());
         result.appendVector(extensionStyleSheets->injectedAuthorStyleSheets());

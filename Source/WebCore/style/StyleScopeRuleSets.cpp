@@ -123,7 +123,7 @@ void ScopeRuleSets::initializeUserStyle()
 
     auto userStyle = RuleSet::create();
 
-    if (auto* pageUserSheet = extensionStyleSheets->pageUserSheet()) {
+    if (RefPtr pageUserSheet = extensionStyleSheets->pageUserSheet()) {
         RuleSetBuilder builder(userStyle, mediaQueryEvaluator, &m_styleResolver);
         builder.addRulesFromSheet(pageUserSheet->contents());
     }

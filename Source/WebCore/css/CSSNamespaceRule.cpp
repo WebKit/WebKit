@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,15 @@
 
 #include "CSSMarkup.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNamespaceRule);
+
+CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_namespaceRule(namespaceRule)
 {
 }

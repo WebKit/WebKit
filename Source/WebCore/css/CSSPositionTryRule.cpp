@@ -28,8 +28,11 @@
 
 #include "CSSPositionTryDescriptors.h"
 #include "CSSSerializationContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPositionTryRule);
 
 Ref<StyleRulePositionTry> StyleRulePositionTry::create(AtomString&& name, Ref<StyleProperties>&& properties)
 {
@@ -60,13 +63,13 @@ MutableStyleProperties& StyleRulePositionTry::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-Ref<CSSPositionTryRule> CSSPositionTryRule::create(StyleRulePositionTry& rule, CSSStyleSheet* parent)
+Ref<CSSPositionTryRule> CSSPositionTryRule::create(StyleRulePositionTry& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSPositionTryRule(rule, parent));
+    return adoptRef(*new CSSPositionTryRule(rule, WTFMove(parent)));
 }
 
-CSSPositionTryRule::CSSPositionTryRule(StyleRulePositionTry& rule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSPositionTryRule::CSSPositionTryRule(StyleRulePositionTry& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_positionTryRule(rule)
     , m_propertiesCSSOMWrapper(nullptr)
 {

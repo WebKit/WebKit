@@ -28,16 +28,19 @@
 
 #include "CSSMarkup.h"
 #include "StyleRuleFunction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-Ref<CSSFunctionRule> CSSFunctionRule::create(StyleRuleFunction& rule, CSSStyleSheet* parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFunctionRule);
+
+Ref<CSSFunctionRule> CSSFunctionRule::create(StyleRuleFunction& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSFunctionRule(rule, parent));
+    return adoptRef(*new CSSFunctionRule(rule, WTFMove(parent)));
 }
 
-CSSFunctionRule::CSSFunctionRule(StyleRuleFunction& rule, CSSStyleSheet* parent)
-    : CSSGroupingRule(rule, parent)
+CSSFunctionRule::CSSFunctionRule(StyleRuleFunction& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSGroupingRule(rule, WTFMove(parent))
 {
 }
 

@@ -57,7 +57,9 @@ namespace Style {
 class Scope;
 }
 
-class CSSStyleSheet final : public StyleSheet, public CanMakeSingleThreadWeakPtr<CSSStyleSheet> {
+class CSSStyleSheet final : public StyleSheet, public CanMakeSingleThreadWeakPtr<CSSStyleSheet>, CanMakeCheckedPtr<CSSStyleSheet> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleSheet);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSStyleSheet);
 public:
     struct Init {
         String baseURL;
@@ -98,7 +100,7 @@ public:
 
     // For CSSRuleList.
     unsigned length() const;
-    CSSRule* item(unsigned index);
+    RefPtr<CSSRule> item(unsigned index);
 
     void clearOwnerNode() final;
     WEBCORE_EXPORT CSSImportRule* ownerRule() const final;
@@ -163,6 +165,9 @@ public:
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
 
     bool isDetached() const;
+
+    void decrementCheckedPtrCount() const { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void incrementCheckedPtrCount() const { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule, std::optional<bool> isOriginClean);

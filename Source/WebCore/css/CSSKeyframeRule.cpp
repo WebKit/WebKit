@@ -33,10 +33,13 @@
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSKeyframeRule);
 
 void StyleRuleKeyframe::Key::writeToString(StringBuilder& str) const
 {

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Tyler Wilcock <twilco.o@protonmail.com>.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,8 +67,10 @@ private:
 };
 
 class CSSCounterStyleRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSCounterStyleRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSCounterStyleRule);
 public:
-    static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CSSStyleSheet*);
+    static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CheckedPtr<CSSStyleSheet>&&);
     virtual ~CSSCounterStyleRule();
 
     String cssText() const final;
@@ -100,6 +103,7 @@ public:
 
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);
+    CSSCounterStyleRule(StyleRuleCounterStyle&, CheckedPtr<CSSStyleSheet>&& parent);
 
     bool setterInternal(CSSPropertyID, const String&);
     RefPtr<CSSValue> cssValueFromText(CSSPropertyID, const String&);

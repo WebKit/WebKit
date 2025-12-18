@@ -76,6 +76,8 @@ private:
 };
 
 class CSSKeyframeRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframeRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSKeyframeRule);
 public:
     virtual ~CSSKeyframeRule();
 

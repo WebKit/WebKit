@@ -32,16 +32,19 @@ namespace WebCore {
 class StyleRuleInternalBaseAppearance;
 
 class CSSInternalBaseAppearanceRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSInternalBaseAppearanceRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSInternalBaseAppearanceRule);
 public:
-    static Ref<CSSInternalBaseAppearanceRule> create(StyleRuleInternalBaseAppearance& rule, CSSStyleSheet* parent)
+    static Ref<CSSInternalBaseAppearanceRule> create(StyleRuleInternalBaseAppearance& rule, CheckedPtr<CSSStyleSheet>&& parent)
     {
-        return adoptRef(*new CSSInternalBaseAppearanceRule(rule, parent));
+        return adoptRef(*new CSSInternalBaseAppearanceRule(rule, WTFMove(parent)));
     }
 
     String cssText() const final;
 
 private:
     CSSInternalBaseAppearanceRule(StyleRuleInternalBaseAppearance&, CSSStyleSheet*);
+    CSSInternalBaseAppearanceRule(StyleRuleInternalBaseAppearance&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::InternalBaseAppearance; }
 };

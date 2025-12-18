@@ -79,22 +79,22 @@ static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url
     return styleSheet;
 }
 
-CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
+RefPtr<CSSStyleSheet> ExtensionStyleSheets::pageUserSheet()
 {
     if (m_pageUserSheet)
-        return m_pageUserSheet.get();
+        return m_pageUserSheet;
     
     RefPtr owningPage = m_document->page();
     if (!owningPage)
-        return nullptr;
+        return { };
     
     String userSheetText = owningPage->userStyleSheet();
     if (userSheetText.isEmpty())
-        return nullptr;
+        return { };
     
     m_pageUserSheet = createExtensionsStyleSheet(protectedDocument().get(), m_document->settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
 
-    return m_pageUserSheet.get();
+    return m_pageUserSheet;
 }
 
 void ExtensionStyleSheets::clearPageUserSheet()

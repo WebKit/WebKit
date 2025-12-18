@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,12 @@
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSViewTransitionRule);
 
 static std::optional<ViewTransitionNavigation> toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
 {
@@ -76,13 +79,13 @@ Ref<StyleRuleViewTransition> StyleRuleViewTransition::create(Ref<StyleProperties
 
 StyleRuleViewTransition::~StyleRuleViewTransition() = default;
 
-Ref<CSSViewTransitionRule> CSSViewTransitionRule::create(StyleRuleViewTransition& rule, CSSStyleSheet* sheet)
+Ref<CSSViewTransitionRule> CSSViewTransitionRule::create(StyleRuleViewTransition& rule, CheckedPtr<CSSStyleSheet>&& sheet)
 {
-    return adoptRef(*new CSSViewTransitionRule(rule, sheet));
+    return adoptRef(*new CSSViewTransitionRule(rule, WTFMove(sheet)));
 }
 
-CSSViewTransitionRule::CSSViewTransitionRule(StyleRuleViewTransition& viewTransitionRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSViewTransitionRule::CSSViewTransitionRule(StyleRuleViewTransition& viewTransitionRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_viewTransitionRule(viewTransitionRule)
 {
 }

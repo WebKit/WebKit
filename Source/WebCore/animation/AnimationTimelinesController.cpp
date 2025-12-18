@@ -28,6 +28,7 @@
 
 #include "AnimationEventBase.h"
 #include "CSSAnimation.h"
+#include "CSSStyleSheet.h"
 #include "CSSTransition.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentEventLoop.h"

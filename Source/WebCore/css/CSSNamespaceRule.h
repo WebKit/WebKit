@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@ namespace WebCore {
 class StyleRuleNamespace;
 
 class CSSNamespaceRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSNamespaceRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSNamespaceRule);
 public:
-    static Ref<CSSNamespaceRule> create(StyleRuleNamespace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSNamespaceRule(rule, sheet)); }
+    static Ref<CSSNamespaceRule> create(StyleRuleNamespace& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSNamespaceRule(rule, WTFMove(sheet))); }
 
     virtual ~CSSNamespaceRule();
 
@@ -42,6 +44,7 @@ public:
 
 private:
     CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);
+    CSSNamespaceRule(StyleRuleNamespace&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Namespace; }
     String cssText() const final;

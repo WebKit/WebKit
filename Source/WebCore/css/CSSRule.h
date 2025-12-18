@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,8 @@
 
 #include <WebCore/CSSParserEnum.h>
 #include <WebCore/StyleRuleType.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/CompactVariant.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 
@@ -42,7 +44,9 @@ namespace CSS {
 struct SerializationContext;
 }
 
-class CSSRule : public RefCountedAndCanMakeWeakPtr<CSSRule> {
+class CSSRule : public RefCountedAndCanMakeWeakPtr<CSSRule>, public CanMakeCheckedPtr<CSSRule> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSRule);
 public:
     virtual ~CSSRule() = default;
 
@@ -54,10 +58,12 @@ public:
     virtual String cssText(const CSS::SerializationContext&) const { return cssText(); }
     virtual void reattach(StyleRuleBase&) = 0;
 
-    void setParentStyleSheet(CSSStyleSheet*);
-    void setParentRule(CSSRule*);
+    void setParentStyleSheet(CheckedPtr<CSSStyleSheet>&&);
+    void setParentRule(CheckedPtr<CSSRule>&&);
     CSSStyleSheet* parentStyleSheet() const;
-    CSSRule* parentRule() const { return m_parentIsRule ? m_parentRule : nullptr; }
+    CheckedPtr<CSSStyleSheet> checkedParentStyleSheet() const;
+    CSSRule* parentRule() const;
+    CheckedPtr<CSSRule> checkedParentRule() const;
     bool hasStyleRuleAncestor() const;
     CSSParserEnum::NestedContext nestedContext() const;
     virtual RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
@@ -66,7 +72,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);
 
 protected:
-    explicit CSSRule(CSSStyleSheet*);
+    explicit CSSRule(CheckedPtr<CSSStyleSheet>&&);
 
     bool hasCachedSelectorText() const { return m_hasCachedSelectorText; }
     void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
@@ -75,38 +81,59 @@ protected:
 
 private:
     mutable unsigned char m_hasCachedSelectorText : 1;
-    unsigned char m_parentIsRule : 1;
-    union {
-        CSSRule* m_parentRule;
-        CSSStyleSheet* m_parentStyleSheet;
-    };
+
+    using ParentRuleOrStyleSheet = WTF::CompactVariant<CheckedPtr<CSSRule>, CheckedPtr<CSSStyleSheet>>;
+    ParentRuleOrStyleSheet m_parentRuleOrStyleSheet;
 };
 
-inline CSSRule::CSSRule(CSSStyleSheet* parent)
+inline CSSRule::CSSRule(CheckedPtr<CSSStyleSheet>&& parent)
     : m_hasCachedSelectorText(false)
-    , m_parentIsRule(false)
-    , m_parentStyleSheet(parent)
+    , m_parentRuleOrStyleSheet(WTFMove(parent))
 {
 }
 
-inline void CSSRule::setParentStyleSheet(CSSStyleSheet* styleSheet)
+inline void CSSRule::setParentStyleSheet(CheckedPtr<CSSStyleSheet>&& checkedStyleSheet)
 {
-    m_parentIsRule = false;
-    m_parentStyleSheet = styleSheet;
+    m_parentRuleOrStyleSheet = WTFMove(checkedStyleSheet);
 }
 
-inline void CSSRule::setParentRule(CSSRule* rule)
+inline void CSSRule::setParentRule(CheckedPtr<CSSRule>&& checkedRule)
 {
-    m_parentIsRule = true;
-    m_parentRule = rule;
+    m_parentRuleOrStyleSheet = WTFMove(checkedRule);
 }
 
 inline CSSStyleSheet* CSSRule::parentStyleSheet() const
 {
-    if (m_parentIsRule)
-        return m_parentRule ? m_parentRule->parentStyleSheet() : nullptr;
-    return m_parentStyleSheet;
+    return WTF::switchOn(m_parentRuleOrStyleSheet,
+        [&](const CheckedPtr<CSSStyleSheet>& stylesheet) { return stylesheet.get(); },
+        [&](const CheckedPtr<CSSRule>& rule) { return rule ? rule->parentStyleSheet() : nullptr; }
+    );
 }
+
+inline CheckedPtr<CSSStyleSheet> CSSRule::checkedParentStyleSheet() const
+{
+    return WTF::switchOn(m_parentRuleOrStyleSheet,
+        [&](const CheckedPtr<CSSStyleSheet>& stylesheet) { return stylesheet; },
+        [&](const CheckedPtr<CSSRule>& rule) { return CheckedPtr<CSSStyleSheet>(rule->parentStyleSheet()); }
+    );
+}
+
+inline CSSRule* CSSRule::parentRule() const
+{
+    return WTF::switchOn(m_parentRuleOrStyleSheet,
+        [&](const CheckedPtr<CSSStyleSheet>&) { return static_cast<CSSRule*>(nullptr); },
+        [&](const CheckedPtr<CSSRule>& rule) { return rule.get(); }
+    );
+}
+
+inline CheckedPtr<CSSRule> CSSRule::checkedParentRule() const
+{
+    return WTF::switchOn(m_parentRuleOrStyleSheet,
+        [&](const CheckedPtr<CSSStyleSheet>&) { return CheckedPtr<CSSRule>(); },
+        [&](const CheckedPtr<CSSRule>& rule) { return rule; }
+    );
+}
+
 
 } // namespace WebCore
 

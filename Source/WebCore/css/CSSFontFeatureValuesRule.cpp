@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,21 @@
 #include "CSSFontFeatureValuesRule.h"
 
 #include "CSSMarkup.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFeatureValuesRule);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFontFeatureValuesBlockRule);
+
 CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& fontFeatureValuesRule, CSSStyleSheet* parent)
     : CSSRule(parent)
+    , m_fontFeatureValuesRule(fontFeatureValuesRule)
+{
+}
+
+CSSFontFeatureValuesRule::CSSFontFeatureValuesRule(StyleRuleFontFeatureValues& fontFeatureValuesRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_fontFeatureValuesRule(fontFeatureValuesRule)
 {
 }
@@ -85,8 +95,8 @@ void CSSFontFeatureValuesRule::reattach(StyleRuleBase& rule)
     m_fontFeatureValuesRule = downcast<StyleRuleFontFeatureValues>(rule);
 }
 
-CSSFontFeatureValuesBlockRule::CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock& block , CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSFontFeatureValuesBlockRule::CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock& block, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_fontFeatureValuesBlockRule(block)
 {
 }

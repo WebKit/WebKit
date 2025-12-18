@@ -28,6 +28,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "ContextDestructionObserverInlines.h"
+#include "CSSRule.h"
 #include "Document.h"
 #include "FormData.h"
 #include "HeaderFieldTokenizer.h"

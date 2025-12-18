@@ -34,15 +34,16 @@ using MediaQueryList = Vector<MediaQuery>;
 }
 
 class CSSImportRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImportRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSImportRule);
 public:
-    static Ref<CSSImportRule> create(StyleRuleImport& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSImportRule(rule, sheet)); }
+    static Ref<CSSImportRule> create(StyleRuleImport& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSImportRule(rule, WTFMove(sheet))); }
 
     virtual ~CSSImportRule();
 
     WEBCORE_EXPORT String href() const;
     WEBCORE_EXPORT MediaList& media() const;
-    WEBCORE_EXPORT CSSStyleSheet* styleSheet() const;
-    RefPtr<CSSStyleSheet> protectedStyleSheet() const;
+    WEBCORE_EXPORT RefPtr<CSSStyleSheet> styleSheet() const;
     String layerName() const;
     String supportsText() const;
 
@@ -50,6 +51,7 @@ private:
     friend class MediaList;
 
     CSSImportRule(StyleRuleImport&, CSSStyleSheet*);
+    CSSImportRule(StyleRuleImport&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
     String cssText() const final;

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGZoomAndPan.h"
 
+#include "CSSRule.h"
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

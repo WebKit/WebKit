@@ -19,6 +19,7 @@
 #include "config.h"
 #include "DOMParser.h"
 
+#include "CSSRule.h"
 #include "CommonAtomStrings.h"
 #include "ExceptionOr.h"
 #include "HTMLDocument.h"

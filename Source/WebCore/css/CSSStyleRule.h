@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,10 +36,11 @@ class StyleRuleWithNesting;
 class StyleRuleCSSStyleProperties;
 
 class CSSStyleRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSStyleRule);
 public:
-    static Ref<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSStyleRule(rule, sheet)); }
-    static Ref<CSSStyleRule> create(StyleRuleWithNesting& rule, CSSStyleSheet* sheet) { return adoptRef(* new CSSStyleRule(rule, sheet)); };
-
+    static Ref<CSSStyleRule> create(StyleRule& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSStyleRule(rule, WTFMove(sheet))); }
+    static Ref<CSSStyleRule> create(StyleRuleWithNesting& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(* new CSSStyleRule(rule, WTFMove(sheet))); };
     virtual ~CSSStyleRule();
 
     WEBCORE_EXPORT String selectorText() const;
@@ -54,13 +55,13 @@ public:
     WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     unsigned length() const;
-    CSSRule* item(unsigned index) const;
+    RefPtr<CSSRule> item(unsigned index) const;
 
     StylePropertyMap& styleMap();
 
 private:
-    CSSStyleRule(StyleRule&, CSSStyleSheet*);
-    CSSStyleRule(StyleRuleWithNesting&, CSSStyleSheet*);
+    CSSStyleRule(StyleRule&, CheckedPtr<CSSStyleSheet>&&);
+    CSSStyleRule(StyleRuleWithNesting&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Style; }
     String cssText() const final;

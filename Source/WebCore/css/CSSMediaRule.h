@@ -35,8 +35,10 @@ using MediaQueryList = Vector<MediaQuery>;
 }
 
 class CSSMediaRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSMediaRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSMediaRule);
 public:
-    static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSMediaRule(rule, sheet)); }
+    static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSMediaRule(rule, WTFMove(sheet))); }
     virtual ~CSSMediaRule();
 
     WEBCORE_EXPORT MediaList* media() const;
@@ -44,7 +46,7 @@ public:
 private:
     friend class MediaList;
 
-    CSSMediaRule(StyleRuleMedia&, CSSStyleSheet*);
+    CSSMediaRule(StyleRuleMedia&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Media; }
     String cssText() const final;

@@ -28,6 +28,7 @@
 #include "CSSFontFeatureValue.h"
 
 #include "CSSPrimitiveValue.h"
+#include "CSSStyleSheet.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

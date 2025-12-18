@@ -1,7 +1,7 @@
 /**
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -27,12 +27,15 @@
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSMediaRule::CSSMediaRule(StyleRuleMedia& mediaRule, CSSStyleSheet* parent)
-    : CSSConditionRule(mediaRule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSMediaRule);
+
+CSSMediaRule::CSSMediaRule(StyleRuleMedia& mediaRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSConditionRule(mediaRule, WTFMove(parent))
 {
 }
 

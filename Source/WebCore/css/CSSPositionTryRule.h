@@ -57,8 +57,10 @@ private:
 };
 
 class CSSPositionTryRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPositionTryRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSPositionTryRule);
 public:
-    static Ref<CSSPositionTryRule> create(StyleRulePositionTry&, CSSStyleSheet*);
+    static Ref<CSSPositionTryRule> create(StyleRulePositionTry&, CheckedPtr<CSSStyleSheet>&&);
     virtual ~CSSPositionTryRule();
 
     StyleRuleType styleRuleType() const { return StyleRuleType::PositionTry; }
@@ -72,7 +74,7 @@ public:
     WEBCORE_EXPORT CSSPositionTryDescriptors& style();
 
 private:
-    CSSPositionTryRule(StyleRulePositionTry&, CSSStyleSheet*);
+    CSSPositionTryRule(StyleRulePositionTry&, CheckedPtr<CSSStyleSheet>&&);
 
     Ref<StyleRulePositionTry> m_positionTryRule;
     RefPtr<CSSPositionTryDescriptors> m_propertiesCSSOMWrapper;

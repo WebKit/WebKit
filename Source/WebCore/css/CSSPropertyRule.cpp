@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,19 +30,22 @@
 #include "CSSParserTokenRange.h"
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSPropertyRule::CSSPropertyRule(StyleRuleProperty& rule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPropertyRule);
+
+CSSPropertyRule::CSSPropertyRule(StyleRuleProperty& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_propertyRule(rule)
 {
 }
 
-Ref<CSSPropertyRule> CSSPropertyRule::create(StyleRuleProperty& rule, CSSStyleSheet* parent)
+Ref<CSSPropertyRule> CSSPropertyRule::create(StyleRuleProperty& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSPropertyRule(rule, parent));
+    return adoptRef(*new CSSPropertyRule(rule, WTFMove(parent)));
 }
 
 CSSPropertyRule::~CSSPropertyRule() = default;

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "WebSocketHandshake.h"
 
+#include "CSSRule.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "HTTPHeaderMap.h"

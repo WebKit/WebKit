@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,15 @@
 #include "CSSRule.h"
 
 #include "StyleRule.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSFontFeatureValuesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFeatureValuesRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontFeatureValuesRule);
 public:
-    static Ref<CSSFontFeatureValuesRule> create(StyleRuleFontFeatureValues& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFeatureValuesRule(rule, sheet)); }
+    static Ref<CSSFontFeatureValuesRule> create(StyleRuleFontFeatureValues& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSFontFeatureValuesRule(rule, WTFMove(sheet))); }
     virtual ~CSSFontFeatureValuesRule() = default;
 
     const Vector<AtomString>& fontFamilies() const
@@ -59,6 +62,7 @@ public:
 
 private:
     CSSFontFeatureValuesRule(StyleRuleFontFeatureValues&, CSSStyleSheet* parent);
+    CSSFontFeatureValuesRule(StyleRuleFontFeatureValues&, CheckedPtr<CSSStyleSheet>&& parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValues; }
     String cssText() const final;
@@ -68,12 +72,16 @@ private:
 };
 
 class CSSFontFeatureValuesBlockRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFeatureValuesBlockRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontFeatureValuesBlockRule);
 public:
     static Ref<CSSFontFeatureValuesBlockRule> create(StyleRuleFontFeatureValuesBlock& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFeatureValuesBlockRule(rule, sheet)); }
+    static Ref<CSSFontFeatureValuesBlockRule> create(StyleRuleFontFeatureValuesBlock& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSFontFeatureValuesBlockRule(rule, WTFMove(sheet))); }
     virtual ~CSSFontFeatureValuesBlockRule() = default;
 
 private:
     CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock&, CSSStyleSheet* parent);
+    CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock&, CheckedPtr<CSSStyleSheet>&& parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFeatureValuesBlock; }
     String cssText() const final;

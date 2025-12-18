@@ -242,7 +242,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
 {
     StringBuilder cssText;
     for (unsigned i = 0; i < styleSheet->length(); ++i) {
-        CSSRule* rule = styleSheet->item(i);
+        RefPtr rule = styleSheet->item(i);
         String itemText = rule->cssText();
         if (!itemText.isEmpty()) {
             cssText.append(itemText);
@@ -255,7 +255,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
             auto importURL = document->completeURL(importRule->href());
             if (m_resourceURLs.contains(importURL))
                 continue;
-            serializeCSSStyleSheet(importRule->protectedStyleSheet().get(), importURL);
+            serializeCSSStyleSheet(importRule->styleSheet().get(), importURL);
         } else if (is<CSSFontFaceRule>(*rule)) {
             // FIXME: Add support for font face rule. It is not clear to me at this point if the actual otf/eot file can
             // be retrieved from the CSSFontFaceRule object.

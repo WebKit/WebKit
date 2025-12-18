@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,12 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSKeyframesRule);
 
 StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
     : StyleRuleBase(StyleRuleType::Keyframes)
@@ -100,8 +103,8 @@ void StyleRuleKeyframes::shrinkToFit()
     m_keyframes.shrinkToFit();
 }
 
-CSSKeyframesRule::CSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSKeyframesRule::CSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_keyframesRule(keyframesRule)
     , m_childRuleCSSOMWrappers(keyframesRule.keyframes().size())
 {
@@ -111,9 +114,9 @@ CSSKeyframesRule::~CSSKeyframesRule()
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
-    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
-        if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->setParentRule(0);
+    for (RefPtr wrapper : m_childRuleCSSOMWrappers) {
+        if (wrapper)
+            wrapper->setParentRule(nullptr);
     }
 }
 
@@ -151,8 +154,8 @@ void CSSKeyframesRule::deleteRule(const String& s)
 
     m_keyframesRule->wrapperRemoveKeyframe(*i);
 
-    if (m_childRuleCSSOMWrappers[*i])
-        m_childRuleCSSOMWrappers[*i]->setParentRule(nullptr);
+    if (RefPtr wrapper = m_childRuleCSSOMWrappers[*i])
+        wrapper->setParentRule(nullptr);
     m_childRuleCSSOMWrappers.removeAt(*i);
 }
 

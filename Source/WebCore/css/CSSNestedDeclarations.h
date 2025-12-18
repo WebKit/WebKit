@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,15 +31,17 @@ class StyleRuleCSSStyleProperties;
 class StyleRuleNestedDeclarations;
 
 class CSSNestedDeclarations final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSNestedDeclarations);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSNestedDeclarations);
 public:
-    static Ref<CSSNestedDeclarations> create(StyleRuleNestedDeclarations& rule, CSSStyleSheet* sheet) { return adoptRef(* new CSSNestedDeclarations(rule, sheet)); };
+    static Ref<CSSNestedDeclarations> create(StyleRuleNestedDeclarations& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(* new CSSNestedDeclarations(rule, WTFMove(sheet))); };
 
     virtual ~CSSNestedDeclarations();
 
     WEBCORE_EXPORT CSSStyleProperties& style();
 
 private:
-    CSSNestedDeclarations(StyleRuleNestedDeclarations&, CSSStyleSheet*);
+    CSSNestedDeclarations(StyleRuleNestedDeclarations&, CheckedPtr<CSSStyleSheet>&&);
 
     String cssText() const final;
     String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;

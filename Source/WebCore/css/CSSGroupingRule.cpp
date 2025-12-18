@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,15 @@
 #include "CSSStyleSheet.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSGroupingRule::CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSGroupingRule);
+
+CSSGroupingRule::CSSGroupingRule(StyleRuleGroup& groupRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_groupRule(groupRule)
     , m_childRuleCSSOMWrappers(groupRule.childRules().size())
 {
@@ -132,8 +135,8 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
 
     m_groupRule->wrapperRemoveRule(index);
 
-    if (m_childRuleCSSOMWrappers[index])
-        m_childRuleCSSOMWrappers[index]->setParentRule(nullptr);
+    if (RefPtr wrapper = m_childRuleCSSOMWrappers[index])
+        wrapper->setParentRule(nullptr);
     m_childRuleCSSOMWrappers.removeAt(index);
 
     return { };
@@ -202,15 +205,15 @@ unsigned CSSGroupingRule::length() const
     return m_groupRule->childRules().size(); 
 }
 
-CSSRule* CSSGroupingRule::item(unsigned index) const
-{ 
+RefPtr<CSSRule> CSSGroupingRule::item(unsigned index) const
+{
     if (index >= length())
-        return nullptr;
+        return { };
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
     auto& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
         rule = m_groupRule->childRules()[index]->createCSSOMWrapper(const_cast<CSSGroupingRule&>(*this));
-    return rule.get();
+    return rule;
 }
 
 CSSRuleList& CSSGroupingRule::cssRules() const
@@ -224,8 +227,8 @@ void CSSGroupingRule::reattach(StyleRuleBase& rule)
 {
     m_groupRule = downcast<StyleRuleGroup>(rule);
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
-        if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->reattach(m_groupRule->childRules()[i]);
+        if (RefPtr wrapper = m_childRuleCSSOMWrappers[i])
+            wrapper->reattach(m_groupRule->childRules()[i]);
     }
 }
 

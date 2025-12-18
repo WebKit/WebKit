@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,10 +36,13 @@
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStyleRule);
 
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
@@ -48,16 +51,16 @@ static SelectorTextCache& selectorTextCache()
     return cache;
 }
 
-CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSStyleRule::CSSStyleRule(StyleRule& styleRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_styleRule(styleRule)
     , m_styleMap(DeclaredStylePropertyMap::create(*this))
     , m_childRuleCSSOMWrappers(0)
 {
 }
 
-CSSStyleRule::CSSStyleRule(StyleRuleWithNesting& styleRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSStyleRule::CSSStyleRule(StyleRuleWithNesting& styleRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_styleRule(styleRule)
     , m_styleMap(DeclaredStylePropertyMap::create(*this))
     , m_childRuleCSSOMWrappers(styleRule.nestedRules().size())
@@ -281,8 +284,8 @@ ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
     CSSStyleSheet::RuleMutationScope mutationScope(this);
     rules.removeAt(index);
 
-    if (m_childRuleCSSOMWrappers[index])
-        m_childRuleCSSOMWrappers[index]->setParentRule(nullptr);
+    if (RefPtr wrapper = m_childRuleCSSOMWrappers[index])
+        wrapper->setParentRule(nullptr);
     m_childRuleCSSOMWrappers.removeAt(index);
 
     return { };
@@ -293,7 +296,7 @@ unsigned CSSStyleRule::length() const
     return nestedRules().size();
 }
 
-CSSRule* CSSStyleRule::item(unsigned index) const
+RefPtr<CSSRule> CSSStyleRule::item(unsigned index) const
 {
     if (index >= length())
         return nullptr;
@@ -304,7 +307,7 @@ CSSRule* CSSStyleRule::item(unsigned index) const
     if (!rule)
         rule = nestedRules()[index]->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
 
-    return rule.get();
+    return rule;
 }
 
 CSSRuleList& CSSStyleRule::cssRules() const
