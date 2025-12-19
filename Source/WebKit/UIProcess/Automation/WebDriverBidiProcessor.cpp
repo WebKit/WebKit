@@ -72,15 +72,56 @@ WebDriverBidiProcessor::~WebDriverBidiProcessor()
 void WebDriverBidiProcessor::processBidiMessage(const String& message)
 {
     RefPtr session = m_session.get();
-    if (!session) {
-        LOG(Automation, "processBidiMessage of length %d not delivered, session is gone!", message.length());
+    if (!session)
+        return;
+
+    // Workaround: validate optional enum values the dispatcher drops; see Dispatcher-Enum-Validation.md.
+    RefPtr messageValue = JSON::Value::parseJSON(message);
+    if (!messageValue) {
+        m_backendDispatcher->dispatch(message);
         return;
     }
 
-    LOG(Automation, "[s:%s] processBidiMessage of length %d", session->sessionIdentifier().utf8().data(), message.length());
-    LOG(Automation, "%s", message.utf8().data());
+    auto messageObject = messageValue->asObject();
+    if (!messageObject) {
+        m_backendDispatcher->dispatch(message);
+        return;
+    }
 
-    m_backendDispatcher->dispatch(message);
+    auto method = messageObject->getString("method"_s);
+    if (method.isNull() || method != "script.evaluate"_s) {
+        m_backendDispatcher->dispatch(message);
+        return;
+    }
+
+    auto params = messageObject->getObject("params"_s);
+    if (!params) {
+        m_backendDispatcher->dispatch(message);
+        return;
+    }
+
+    auto resultOwnershipValue = params->getString("resultOwnership"_s);
+    if (resultOwnershipValue.isNull()) {
+        m_backendDispatcher->dispatch(message);
+        return;
+    }
+
+    String ownershipString = resultOwnershipValue;
+    if (ownershipString == "root"_s || ownershipString == "none"_s) {
+        m_backendDispatcher->dispatch(message);
+        return;
+    }
+
+    // Invalid resultOwnership value - send error response
+    auto errorObj = JSON::Object::create();
+    errorObj->setString("type"_s, "error"_s);
+    errorObj->setString("message"_s, "Invalid resultOwnership value"_s);
+    errorObj->setString("error"_s, "invalid argument"_s);
+    if (auto idNumber = messageObject->getInteger("id"_s))
+        errorObj->setInteger("id"_s, *idNumber);
+    else if (auto idString = messageObject->getString("id"_s); !idString.isNull())
+        errorObj->setString("id"_s, idString);
+    session->sendBidiMessage(errorObj->toJSONString());
 }
 
 // Translate internal error messages that come from the inspector protocol payload.
@@ -115,7 +156,7 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case Inspector::Protocol::Automation::ErrorMessage::JavaScriptTimeout:
         return "script timeout"_s;
     case Inspector::Protocol::Automation::ErrorMessage::WindowNotFound:
-        return "no such window"_s;
+        return "no such browsing context"_s;
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:

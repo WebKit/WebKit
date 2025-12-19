@@ -87,6 +87,8 @@
             "enum": [
                 "array",
                 "arraybuffer",
+                "bigint",
+                "boolean",
                 "date",
                 "error",
                 "function",
@@ -95,13 +97,17 @@
                 "map",
                 "node",
                 "nodelist",
+                "null",
+                "number",
                 "object",
                 "promise",
                 "proxy",
                 "regexp",
                 "set",
+                "string",
                 "symbol",
                 "typedarray",
+                "undefined",
                 "weakmap",
                 "weakset",
                 "window"
@@ -122,7 +128,7 @@
             "properties": [
                 { "name": "maxDomDepth", "type": "number", "optional": true },
                 { "name": "maxObjectDepth", "type": "number", "optional": true },
-                { "name": "includesShadowTree", "type": "string", "enum": ["none", "open", "all"], "optional": true }
+                { "name": "includeShadowTree", "type": "string", "enum": ["none", "open", "all"], "optional": true }
             ]
         },
         {

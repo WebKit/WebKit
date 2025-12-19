@@ -30,6 +30,7 @@
 
 #include "WebDriverBidiBackendDispatchers.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -49,6 +50,30 @@ public:
     void evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions,  std::optional<bool>&& optionalUserActivation, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&) override;
 
 private:
+    struct ParsedStackTrace {
+        Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>> callFrames;
+        unsigned topLineNumber { 0 };
+        unsigned topColumnNumber { 0 };
+    };
+
+    RefPtr<Inspector::Protocol::BidiScript::RemoteValue> serializeAsRemoteValue(RefPtr<JSON::Value>);
+
+    void finishEvaluateBidiScriptResult(const String& realmId, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
+
+    // Exception handling helpers
+    ParsedStackTrace parseStackTrace(const String& stackTraceString);
+    RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> buildExceptionDetailsFromExceptionValue(RefPtr<JSON::Value> exceptionValue);
+
+    static Ref<Inspector::Protocol::BidiScript::StackTrace> createEmptyStackTrace();
+    static RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> createExceptionDetails(const String& text, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>&&, unsigned lineNumber = 0, unsigned columnNumber = 0);
+
+    // Stubbed realm registry to decouple evaluate from fabricated ids.
+    class RealmRegistryStub {
+    public:
+        String realmIdForContext(const String& contextId) const;
+        std::optional<String> contextForRealmId(const String& realmId) const;
+    } m_realmRegistry;
+
     WeakPtr<WebAutomationSession> m_session;
     Ref<Inspector::BidiScriptBackendDispatcher> m_scriptDomainDispatcher;
 };
