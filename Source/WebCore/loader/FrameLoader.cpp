@@ -3090,6 +3090,10 @@ void FrameLoader::didReachLayoutMilestone(OptionSet<LayoutMilestone> milestones)
 {
     ASSERT(m_frame->isMainFrame());
 
+    RefPtr documentLoader = activeDocumentLoader();
+    if (!documentLoader)
+        return;
+
     auto queuedNavigationID = protectedActiveDocumentLoader()->navigationID();
 
     m_client->willDispatchDidReachLayoutMilestone(milestones);
