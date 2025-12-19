@@ -81,6 +81,8 @@ public:
 
     void inspectedFrameDestroyed();
 
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
