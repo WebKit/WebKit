@@ -77,12 +77,12 @@ aside.interface:has(button.hidden) {
 aside.interface {
 	display: grid;
 	grid-template-columns: max-content 1fr;
-	gap: 1lh 2rem;
+	gap: 1lh 2lh;
 	background-color: light-dark(#eee, #444);
 	box-shadow:inset 0 -12px 12px  light-dark(rgba(0, 0, 0, .05), rgba(0, 0, 0, .08));
-	padding: 2rem calc(2vw + 1rem);
+	padding: 2em calc(2vw + 1em);
 	font-family: -apple-system, system-ui;
-	font-size: 70%;
+	font-size: 12px;
 	pre {
 		display: none;
 		margin: 0;
@@ -126,6 +126,7 @@ input[type="checkbox"][switch] {
 }
 body:has(option[value="one"]:checked) .interface pre.one,
 body:has(option[value="two"]:checked) .interface pre.two,
+body:has(option[value="twoandahalf"]:checked) .interface pre.twoandahalf,
 body:has(option[value="three"]:checked) .interface pre.three,
 body:has(option[value="four"]:checked) .interface pre.four,
 body:has(option[value="five"]:checked) .interface pre.five,
@@ -136,8 +137,4 @@ body:has(option[value="nine"]:checked) .interface pre.nine,
 body:has(option[value="ten"]:checked) .interface pre.ten,
 body:has(option[value="eleven"]:checked) .interface pre.eleven {
 	display: block;
-}
-aside pre.code {
-	color: #aaa;
-	margin-block-start: 0.5lh;
 }

@@ -1,6 +1,10 @@
 /* --------------------------------------------
    Overall styles for Newspaper layout
 ----------------------------------------------- */
+:root {
+	font-size: 12px;
+}
+
 main {
 	font-family: system-ui, sans-serif;
 	/* font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif; */

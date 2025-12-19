@@ -66,23 +66,13 @@ main {
 }
 
 /* --------------------------------------------
-   Demo controls
+   Demo control overrides
 ----------------------------------------------- */
 
-aside.interface:has(button.hidden) {
-  display: none;
-}
-
 aside.interface {
-  display: grid;
-  grid-template-columns: max-content 1fr;
   background: color(display-p3 0.106 0.361 0.575);
   box-shadow:inset 0 -12px 12px  light-dark(rgba(0, 0, 0, .05), rgba(0, 0, 0, .08));
   color: white;
-  padding: 2rem calc(2vw + 1rem);
-  font-family: -apple-system, system-ui;
-  font-size: 70%;
-  gap: 1lh 2rem;
   a {
      color: color(display-p3 0.455 0.747 0.99);
   }
@@ -90,59 +80,11 @@ aside.interface {
      background: color(display-p3 0.818 0.906 0.98)
   }
   pre {
-    display: none;
-    margin: 0;
     color: #444;
-    text-wrap-mode: wrap;
-    width: max-content;
-    font-size: 104%;
-    line-height: 1.3;
-  }
-}
-nav {
- grid-area: 1 / 1;
- margin-block-start: 0.4lh;
-}
-section.layout-switcher {
-  grid-area: 2 / 1;
-}
-section.number-toggle {
-  grid-area: 3 / 1 ;
-  p {
-    margin: 0.25lh;
   }
 }
 section.show-code {
-  grid-area: 1 / 2 ;
-  grid-row: span 5;
-  padding: 0.5rem 2rem;
   background: #fbfbfb;
-  border-radius: 1ch;
-  overflow: scroll;
-}
-button.hide-controls {
-  grid-area: 4 / 1;
-  place-self: start;
-}
-label {
-  display: inline-block;
-}
-input[type="checkbox"][switch] {
-  vertical-align: text-top;
-}
-
-body:has(option[value="one"]:checked) .interface pre.one,
-body:has(option[value="two"]:checked) .interface pre.two,
-body:has(option[value="three"]:checked) .interface pre.three,
-body:has(option[value="four"]:checked) .interface pre.four,
-body:has(option[value="five"]:checked) .interface pre.five,
-body:has(option[value="six"]:checked) .interface pre.six,
-body:has(option[value="seven"]:checked) .interface pre.seven {
-  display: block;
-}
-aside pre.code {
-  color: #aaa;
-  margin-block-start: 0.5lh;
 }
 
 /* --------------------------------------------
@@ -182,6 +124,23 @@ body:has(option[value="one"]:checked) main {
 body:has(option[value="two"]:checked) main { /* before applying masonry */
   display: grid-lanes;
   grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+}
+
+/* ---- With item placement ---- */
+
+body:has(option[value="twoandahalf"]:checked) main { /* before applying masonry */
+  display: grid-lanes;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+}
+
+/* ---- With item placement ---- */
+
+body:has(option[value="twoandahalf"]:checked) main { /* before applying masonry */
+  display: grid-lanes;
+  grid-template-columns: repeat(auto-fill, minmax(24ch, 1fr));
+  header {
+    grid-column: -2 / -1;
+  }
 }
 
 /* ---- With subgrid and item placement ---- */
