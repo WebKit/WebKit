@@ -9544,9 +9544,18 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
         return angle::Result::Continue;
     }
 
+    ANGLE_VK_CHECK_MATH(contextVk,
+                        formatInfo.computeRowPitch(type, glExtents.width, unpack.alignment,
+                                                   unpack.rowLength, inputRowPitch));
+
+    ANGLE_VK_CHECK_MATH(contextVk,
+                        formatInfo.computeDepthPitch(glExtents.height, unpack.imageHeight,
+                                                     *inputRowPitch, inputDepthPitch));
+
     ANGLE_VK_CHECK_MATH(
-        contextVk, formatInfo.computeRowDepthSkipBytes(type, glExtents, unpack, is3D, inputRowPitch,
-                                                       inputDepthPitch, inputSkipBytes));
+        contextVk, formatInfo.computeSkipBytes(type, *inputRowPitch, *inputDepthPitch, unpack, is3D,
+                                               inputSkipBytes));
+
     return angle::Result::Continue;
 }
 
@@ -11505,8 +11514,11 @@ angle::Result ImageHelper::GetReadPixelsParams(ContextVk *contextVk,
     const gl::InternalFormat &sizedFormatInfo = gl::GetInternalFormatInfo(format, type);
 
     GLuint outputPitch = 0;
-    ANGLE_VK_CHECK_MATH(contextVk, sizedFormatInfo.computeRowSkipBytes(type, area.width, packState,
-                                                                       &outputPitch, skipBytesOut));
+    ANGLE_VK_CHECK_MATH(contextVk,
+                        sizedFormatInfo.computeRowPitch(type, area.width, packState.alignment,
+                                                        packState.rowLength, &outputPitch));
+    ANGLE_VK_CHECK_MATH(contextVk, sizedFormatInfo.computeSkipBytes(type, outputPitch, 0, packState,
+                                                                    false, skipBytesOut));
 
     ANGLE_TRY(GetPackPixelsParams(sizedFormatInfo, outputPitch, packState, packBuffer, area,
                                   clippedArea, paramsOut, skipBytesOut));

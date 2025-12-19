@@ -714,12 +714,16 @@ void CaptureTexImage2D_pixels(const State &glState,
 
     const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
     const gl::PixelUnpackState &unpack           = glState.getUnpackState();
+
     GLuint srcRowPitch = 0;
+    (void)internalFormatInfo.computeRowPitch(type, width, unpack.alignment, unpack.rowLength,
+                                             &srcRowPitch);
     GLuint srcDepthPitch = 0;
+    (void)internalFormatInfo.computeDepthPitch(height, unpack.imageHeight, srcRowPitch,
+                                               &srcDepthPitch);
     GLuint srcSkipBytes = 0;
-    (void)internalFormatInfo.computeRowDepthSkipBytes(type, gl::Extents{width, height, 0}, unpack,
-                                                      false, &srcRowPitch, &srcDepthPitch,
-                                                      &srcSkipBytes);
+    (void)internalFormatInfo.computeSkipBytes(type, srcRowPitch, srcDepthPitch, unpack, false,
+                                              &srcSkipBytes);
 
     // For the last row of pixels, we don't round up to the unpack alignment. This often affects
     // 1x1 sized textures because they may be 1 or 2 bytes wide with an alignment of 4 bytes.

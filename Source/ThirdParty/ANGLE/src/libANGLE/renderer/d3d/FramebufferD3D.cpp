@@ -224,10 +224,13 @@ angle::Result FramebufferD3D::readPixels(const gl::Context *context,
     ContextD3D *contextD3D = GetImplAs<ContextD3D>(context);
 
     GLuint outputPitch = 0;
-    GLuint outputSkipBytes = 0;
+    ANGLE_CHECK_GL_MATH(contextD3D,
+                        sizedFormatInfo.computeRowPitch(type, area.width, pack.alignment,
+                                                        pack.rowLength, &outputPitch));
 
-    ANGLE_CHECK_GL_MATH(contextD3D, sizedFormatInfo.computeRowSkipBytes(
-                                        type, area.width, pack, &outputPitch, &outputSkipBytes));
+    GLuint outputSkipBytes = 0;
+    ANGLE_CHECK_GL_MATH(contextD3D, sizedFormatInfo.computeSkipBytes(type, outputPitch, 0, pack,
+                                                                     false, &outputSkipBytes));
     outputSkipBytes += (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes +
                        (clippedArea.y - area.y) * outputPitch;
 

@@ -904,14 +904,20 @@ angle::Result TextureStorage11::setData(const gl::Context *context,
 
     Context11 *context11 = GetImplAs<Context11>(context);
 
-    const gl::Box area = destBox ? *destBox : gl::Box{static_cast<int>(image->getWidth(), static_cast<int>(image->getHeight()), static_cast<int>(image->getDepth())};
+    const int width    = destBox ? destBox->width : static_cast<int>(image->getWidth());
+    const int height   = destBox ? destBox->height : static_cast<int>(image->getHeight());
+    const int depth    = destBox ? destBox->depth : static_cast<int>(image->getDepth());
     GLuint srcRowPitch = 0;
+    ANGLE_CHECK_GL_MATH(context11,
+                        internalFormatInfo.computeRowPitch(type, width, unpack.alignment,
+                                                           unpack.rowLength, &srcRowPitch));
     GLuint srcDepthPitch = 0;
+    ANGLE_CHECK_GL_MATH(context11, internalFormatInfo.computeDepthPitch(
+                                       height, unpack.imageHeight, srcRowPitch, &srcDepthPitch));
     GLuint srcSkipBytes = 0;
-
-    ANGLE_CHECK_GL_MATH(context11, internalFormatInfo.computeRowDepthSkipBytes(
-                                       type, area, unpack, index.usesTex3D(), &srcRowPitch,
-                                       &srcDepthPitch, &srcSkipBytes));
+    ANGLE_CHECK_GL_MATH(
+        context11, internalFormatInfo.computeSkipBytes(type, srcRowPitch, srcDepthPitch, unpack,
+                                                       index.usesTex3D(), &srcSkipBytes));
 
     const d3d11::Format &d3d11Format =
         d3d11::Format::Get(image->getInternalFormat(), mRenderer->getRenderer11DeviceCaps());
