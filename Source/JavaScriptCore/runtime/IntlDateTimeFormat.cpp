@@ -717,7 +717,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
         m_calendar = WTFMove(calendar);
         // Handling "islamicc" candidate for backward compatibility.
-        if (m_calendar == "islamicc"_s)
+        if (m_calendar == "islamicc"_s || isFallbackIslamic(m_calendar))
             m_calendar = "islamic-civil"_s;
     }
 

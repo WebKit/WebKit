@@ -1531,6 +1531,12 @@ bool isWellFormedCurrencyCode(StringView currency)
     return currency.length() == 3 && currency.containsOnly<isASCIIAlpha>();
 }
 
+// #9 in https://tc39.es/proposal-intl-era-monthcode/#sec-createdatetimeformat
+bool isFallbackIslamic(StringView calendar)
+{
+    return calendar == "islamic"_s || calendar == "islamic-rgsa"_s;
+}
+
 std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
 {
     ASSERT(localeID);
@@ -1625,6 +1631,7 @@ const Vector<String>& intlAvailableCalendars()
             return StringImpl::createStaticStringImpl(string.span16());
         };
 
+        bool isIslamicFallback = false;
         availableCalendars.construct();
         for (int32_t i = 0; i < count; ++i) {
             int32_t length = 0;
@@ -1638,7 +1645,13 @@ const Vector<String>& intlAvailableCalendars()
             // as whole ECMAScript's i18n is relying on Unicode Local Identifiers.
             if (!isUnicodeLocaleIdentifierType(calendar))
                 continue;
-            availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
+            if (calendar == "islamic-civil"_s || isFallbackIslamic(calendar)) {
+                if (!isIslamicFallback) {
+                    availableCalendars->append(createImmortalThreadSafeString("islamic-civil"_s));
+                    isIslamicFallback = true;
+                }
+            } else
+                availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
         }
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
