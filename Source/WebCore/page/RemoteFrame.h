@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class IntPoint;
+class LocalFrame;
 class RemoteDOMWindow;
 class RemoteFrameClient;
 class RemoteFrameView;
@@ -86,6 +87,10 @@ public:
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
     const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
 
+    LocalFrame* provisionalLocalFrame() { return m_provisionalLocalFrame.get(); }
+    WEBCORE_EXPORT RefPtr<LocalFrame> takeProvisionalLocalFrame();
+    WEBCORE_EXPORT void setProvisionalFrame(LocalFrame*);
+
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
@@ -115,6 +120,7 @@ private:
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     AutoplayPolicy m_autoplayPolicy;
     bool m_preventsParentFromBeingComplete { true };
+    RefPtr<LocalFrame> m_provisionalLocalFrame;
 };
 
 } // namespace WebCore
