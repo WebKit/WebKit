@@ -38,14 +38,17 @@ public:
     ALWAYS_INLINE ~AsyncNodeDeletionQueue();
 
     ALWAYS_INLINE void addIfSubtreeSizeIsUnderLimit(NodeVector&&, unsigned subTreeSize);
-    ALWAYS_INLINE void deleteNodesNow();
+    ALWAYS_INLINE void deleteNodes(unsigned maxToDelete);
+    ALWAYS_INLINE void deleteAllNodes();
+    ALWAYS_INLINE unsigned nodeCount() const;
+
     ALWAYS_INLINE static ContainerNode::CanDelayNodeDeletion canNodeBeDeletedAsync(const Node&);
     ALWAYS_INLINE static bool isNodeLikelyLarge(const Node&);
 
 private:
-    Vector<Ref<Node>> m_queue;
-    unsigned m_nodeCount { 0 };
-    static constexpr unsigned s_maxSizeAsyncNodeDeletionQueue = 100000;
+    // We store at each queue item the _total_ number of nodes in the queue (for O(1) check).
+    Vector<std::pair<NodeVector, unsigned>> m_queue;
+    static constexpr unsigned s_maxSizeAsyncNodeDeletionQueue = 100'000;
 };
 
 } // namespace WebCore

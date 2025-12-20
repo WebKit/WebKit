@@ -851,6 +851,13 @@ public:
         shrink(size() - 1); 
     }
 
+    void removeLastElements(size_t n)
+    {
+        if (size() < n) [[unlikely]]
+            OverflowHandler::overflowed();
+        shrink(size() - n);
+    }
+
     void fill(const T&, size_t);
     void fill(const T& val) { fill(val, size()); }
 

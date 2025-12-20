@@ -923,7 +923,7 @@ void Document::removedLastRef()
         m_documentElement = nullptr;
         m_focusNavigationStartingNode = nullptr;
         m_userActionElements.clear();
-        m_asyncNodeDeletionQueue.deleteNodesNow();
+        m_asyncNodeDeletionQueue.deleteAllNodes();
 #if ENABLE(FULLSCREEN_API)
         fullscreen().clear();
 #endif

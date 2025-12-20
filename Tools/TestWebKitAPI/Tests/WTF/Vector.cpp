@@ -684,8 +684,12 @@ TEST(WTF_Vector, RemoveLast)
     EXPECT_EQ(10U, v.size());
     EXPECT_FALSE(v.removeLast(1));
     EXPECT_EQ(10U, v.size());
-    v.clear();
+    v.removeLastElements(3);
+    EXPECT_EQ(7U, v.size());
+    v.removeLastElements(7);
+    EXPECT_TRUE(v.isEmpty());
 
+    v.clear();
     v.fill(1, 10);
     EXPECT_EQ(10U, v.size());
     EXPECT_TRUE(v.removeLast(1));

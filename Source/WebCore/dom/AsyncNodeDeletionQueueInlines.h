@@ -40,18 +40,33 @@ namespace WebCore {
 ALWAYS_INLINE AsyncNodeDeletionQueue::AsyncNodeDeletionQueue() = default;
 ALWAYS_INLINE AsyncNodeDeletionQueue::~AsyncNodeDeletionQueue() = default;
 
-ALWAYS_INLINE void AsyncNodeDeletionQueue::addIfSubtreeSizeIsUnderLimit(NodeVector&& children, unsigned subTreeSize)
+ALWAYS_INLINE unsigned AsyncNodeDeletionQueue::nodeCount() const
 {
-    if (m_nodeCount + subTreeSize > s_maxSizeAsyncNodeDeletionQueue)
-        return;
-    m_nodeCount += subTreeSize;
-    m_queue.appendVector(WTFMove(children));
+    if (m_queue.isEmpty())
+        return 0;
+    return m_queue.last().second;
 }
 
-ALWAYS_INLINE void AsyncNodeDeletionQueue::deleteNodesNow()
+ALWAYS_INLINE void AsyncNodeDeletionQueue::addIfSubtreeSizeIsUnderLimit(NodeVector&& children, unsigned subTreeSize)
+{
+    auto newNodeCount = nodeCount() + subTreeSize;
+    if (newNodeCount > s_maxSizeAsyncNodeDeletionQueue)
+        return;
+    m_queue.append({ WTFMove(children), newNodeCount });
+}
+
+ALWAYS_INLINE void AsyncNodeDeletionQueue::deleteNodes(unsigned maxNodesToDelete)
+{
+    if (m_queue.isEmpty())
+        return;
+    // auto index = m_queue.size() > maxNodesToDelete ? m_queue.size() - maxNodesToDelete : 0;
+    auto number = std::min<unsigned>(m_queue.size(), maxNodesToDelete);
+    m_queue.removeLastElements(number);
+}
+
+ALWAYS_INLINE void AsyncNodeDeletionQueue::deleteAllNodes()
 {
     m_queue.clear();
-    m_nodeCount = 0;
 }
 
 ALWAYS_INLINE ContainerNode::CanDelayNodeDeletion AsyncNodeDeletionQueue::canNodeBeDeletedAsync(const Node& node)
