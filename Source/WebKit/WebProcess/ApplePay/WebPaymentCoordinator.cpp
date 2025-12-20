@@ -108,15 +108,15 @@ void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, c
     sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName), WTF::move(completionHandler));
 }
 
-bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
+void WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, Vector<URL>&& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr webPage = m_webPage.get();
-    if (!webPage)
-        return false;
+    if (!webPage) {
+        completionHandler(false);
+        return;
+    }
 
-    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL, linkIconURLs, paymentRequest));
-    auto [result] = sendResult.takeReplyOr(false);
-    return result;
+    sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(webPage->identifier(), webPage->webPageProxyIdentifier(), originatingURL, WTFMove(linkIconURLs), paymentRequest), WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinator::completeMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)

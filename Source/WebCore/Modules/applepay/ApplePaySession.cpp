@@ -611,8 +611,17 @@ ExceptionOr<void> ApplePaySession::begin(Document& document)
     Ref paymentCoordinator = this->paymentCoordinator();
     if (paymentCoordinator->hasActiveSession())
         return Exception { ExceptionCode::InvalidAccessError, "Page already has an active payment session."_s };
-    if (!paymentCoordinator->beginPaymentSession(document, *this, m_paymentRequest))
-        return Exception { ExceptionCode::InvalidAccessError, "There is already has an active payment session."_s };
+
+    paymentCoordinator->beginPaymentSession(document, *this, m_paymentRequest, [weakThis = WeakPtr { *this }](bool success) {
+        RefPtr strongThis = weakThis.get();
+        if (!strongThis)
+            return;
+
+        if (success)
+            strongThis->m_state = State::Active;
+        else
+            strongThis->protectedPaymentCoordinator()->didCancelPaymentSession({ });
+    });
 
     m_state = State::Active;
     return { };

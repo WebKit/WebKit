@@ -42,11 +42,14 @@
 #include "Page.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
+#include "PaymentSessionError.h"
 #include "UserContentProvider.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 
 #define PAYMENT_COORDINATOR_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ApplePay, "%p - PaymentCoordinator::" fmt, this, ##__VA_ARGS__)
 #define PAYMENT_COORDINATOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ApplePay, "%p - PaymentCoordinator::" fmt, this, ##__VA_ARGS__)
@@ -106,29 +109,40 @@ void PaymentCoordinator::openPaymentSetup(Document& document, const String& merc
     m_client->openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
-bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest)
+static Vector<URL> linkIconURLs(Document& document)
+{
+    return LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
+        return icon.url;
+    });
+}
+
+void PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_activeSession);
 
     RefPtr page = document.page();
     if (!page)
-        return false;
+        return completionHandler(false);
 
-    auto linkIconURLs = LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }).map([](auto& icon) {
-        return icon.url;
-    });
-    auto showPaymentUI = m_client->showPaymentUI(page->mainFrameURL(), WTFMove(linkIconURLs), paymentRequest);
-    PAYMENT_COORDINATOR_RELEASE_LOG("beginPaymentSession() -> %d", showPaymentUI);
-    if (!showPaymentUI)
-        return false;
+    m_client->showPaymentUI(page->mainFrameURL(), linkIconURLs(document), paymentRequest, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), paymentSession = Ref { paymentSession }, document = Ref { document }, &paymentRequest](bool success) mutable {
+        RefPtr strongThis = weakThis.get();
+        if (!strongThis)
+            return completionHandler(false);
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
-    if (paymentRequest.shippingContactEditingMode() == ApplePayShippingContactEditingMode::Enabled)
-        document.addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_s);
+        if (paymentRequest.shippingContactEditingMode() == ApplePayShippingContactEditingMode::Enabled)
+            document->addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, "`enabled` is a deprecated value for `shippingContactEditingMode`. Please use `available` instead."_s);
 #endif
 
-    m_activeSession = paymentSession;
-    return true;
+        strongThis->m_activeSession = WTFMove(paymentSession);
+
+        if (!success) {
+            strongThis->didCancelPaymentSession({ });
+            return completionHandler(false);
+        }
+
+        completionHandler(true);
+    });
 }
 
 void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession& paymentMerchantSession)

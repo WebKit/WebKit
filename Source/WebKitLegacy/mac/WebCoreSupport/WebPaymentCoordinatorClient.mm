@@ -68,9 +68,11 @@ void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&,
     });
 }
 
-bool WebPaymentCoordinatorClient::showPaymentUI(const URL&, const Vector<URL>&, const WebCore::ApplePaySessionPaymentRequest&)
+void WebPaymentCoordinatorClient::showPaymentUI(const URL&, Vector<URL>&&, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    return false;
+    callOnMainThread([completionHandler = WTFMove(completionHandler)] mutable {
+        completionHandler(false);
+    });
 }
 
 void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::PaymentMerchantSession&)

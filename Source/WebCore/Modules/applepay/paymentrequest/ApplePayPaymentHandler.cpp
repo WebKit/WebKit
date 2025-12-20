@@ -73,6 +73,7 @@
 #include "PaymentValidationErrors.h"
 #include "Settings.h"
 #include <JavaScriptCore/JSONObject.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -251,12 +252,12 @@ static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPa
         request.setShippingType(convert(options.shippingType));
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
+void ApplePayPaymentHandler::show(Document& document,  CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     Ref paymentCoordinator = this->paymentCoordinator();
     auto validatedRequest = convertAndValidate(document, m_applePayRequest->version, *m_applePayRequest, paymentCoordinator.get());
     if (validatedRequest.hasException())
-        return validatedRequest.releaseException();
+        return completionHandler(validatedRequest.releaseException());
 
     ApplePaySessionPaymentRequest request = validatedRequest.releaseReturnValue();
     request.setRequester(ApplePaySessionPaymentRequest::Requester::PaymentRequest);
@@ -272,7 +273,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 
     auto modifierException = firstApplicableModifier();
     if (modifierException.hasException())
-        return modifierException.releaseException();
+        return completionHandler(modifierException.releaseException());
     auto modifierData = modifierException.releaseReturnValue();
     std::optional<ApplePayModifier> applePayModifier;
     if (modifierData)
@@ -281,7 +282,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     if (details.displayItems) {
         auto convertedLineItems = convertAndValidate(*details.displayItems, expectedCurrency);
         if (convertedLineItems.hasException())
-            return convertedLineItems.releaseException();
+            return completionHandler(convertedLineItems.releaseException());
         Vector<ApplePayLineItem>  lineItems = convertedLineItems.releaseReturnValue();
         if (applePayModifier)
             lineItems.appendVector(applePayModifier->additionalLineItems);
@@ -294,11 +295,11 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 
     auto shippingMethods = computeShippingMethods();
     if (shippingMethods.hasException())
-        return shippingMethods.releaseException();
+        return completionHandler(shippingMethods.releaseException());
     request.setShippingMethods(shippingMethods.releaseReturnValue());
 
     if (modifierException.hasException())
-        return modifierException.releaseException();
+        return completionHandler(modifierException.releaseException());
     if (applePayModifier) {
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
@@ -329,12 +330,13 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     };
     auto exception = PaymentRequestValidator::validate(request, fieldsToValidate);
     if (exception.hasException())
-        return exception.releaseException();
+        return completionHandler(exception.releaseException());
 
-    if (!paymentCoordinator->beginPaymentSession(document, *this, request))
-        return Exception { ExceptionCode::AbortError };
-
-    return { };
+    paymentCoordinator->beginPaymentSession(document, *this, request, [completionHandler = WTFMove(completionHandler)](bool success) mutable {
+        if (!success)
+            return completionHandler(Exception { ExceptionCode::AbortError });
+        completionHandler({ });
+    });
 }
 
 void ApplePayPaymentHandler::hide()
@@ -959,7 +961,7 @@ ExceptionOr<void> ApplePayPaymentHandler::complete(Document& document, std::opti
     return { };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& validationErrors)
+void ApplePayPaymentHandler::retry(PaymentValidationErrors&& validationErrors, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     Vector<Ref<ApplePayError>> errors;
 
@@ -968,13 +970,13 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
 
     auto exception = computePaymentMethodErrors(validationErrors.paymentMethod.get(), errors);
     if (exception.hasException())
-        return exception.releaseException();
+        return completionHandler(exception.releaseException());
 
     // computePaymentMethodErrors() may run JS, which may abort the request so we need to
     // make sure we still have an active session.
     Ref paymentCoordinator = this->paymentCoordinator();
     if (!paymentCoordinator->hasActiveSession())
-        return Exception { ExceptionCode::AbortError };
+        return completionHandler(Exception { ExceptionCode::AbortError });
 
     // Ensure there is always at least one error to avoid having a final result.
     if (errors.isEmpty())
@@ -985,7 +987,7 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
     authorizationResult.errors = WTFMove(errors);
     ASSERT(!authorizationResult.isFinalState());
     paymentCoordinator->completePaymentSession(WTFMove(authorizationResult));
-    return { };
+    completionHandler({ });
 }
 
 unsigned ApplePayPaymentHandler::version() const

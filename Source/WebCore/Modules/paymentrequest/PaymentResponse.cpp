@@ -130,13 +130,20 @@ void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred
     ASSERT(hasPendingActivity());
     ASSERT(m_state == State::Created);
 
-    auto exception = request->retry(WTFMove(errors));
-    if (exception.hasException()) {
-        promise.reject(exception.releaseException());
-        return;
-    }
+    request->retry(WTFMove(errors), [weakThis = WeakPtr { * this }, promise = WTFMove(promise)](ExceptionOr<void>&& exception) mutable {
+        RefPtr strongThis = weakThis.get();
+        if (!strongThis) {
+            promise.reject(Exception { ExceptionCode::AbortError });
+            return;
+        }
 
-    m_retryPromise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+        if (exception.hasException()) {
+            promise.reject(exception.releaseException());
+            return;
+        }
+
+        strongThis->m_retryPromise = makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    });
 }
 
 void PaymentResponse::abortWithException(Exception&& exception)

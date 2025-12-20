@@ -34,6 +34,7 @@
 #include "JSApplePayAMSUIRequest.h"
 #include "JSDOMConvert.h"
 #include "Page.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -130,15 +131,17 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::convertData(Document& document, J
     return { };
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::show(Document&)
+void ApplePayAMSUIPaymentHandler::show(Document&, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     ASSERT(m_applePayAMSUIRequest);
 
     Ref page = this->page();
-    if (!page->startApplePayAMSUISession(page->mainFrameURL(), *this, *m_applePayAMSUIRequest))
-        return Exception { ExceptionCode::AbortError };
+    if (!page->startApplePayAMSUISession(page->mainFrameURL(), *this, *m_applePayAMSUIRequest)) {
+        completionHandler(Exception { ExceptionCode::AbortError });
+        return;
+    }
 
-    return { };
+    completionHandler({ });
 }
 
 void ApplePayAMSUIPaymentHandler::hide()
@@ -170,9 +173,9 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional
     return { };
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::retry(PaymentValidationErrors&&)
+void ApplePayAMSUIPaymentHandler::retry(PaymentValidationErrors&&, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
-    return show(Ref { document() }.get());
+    return show(Ref { document() }.get(), WTFMove(completionHandler));
 }
 
 } // namespace WebCore

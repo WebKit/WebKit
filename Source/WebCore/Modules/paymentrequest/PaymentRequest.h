@@ -35,6 +35,7 @@
 #include "PaymentMethodChangeEvent.h"
 #include "PaymentOptions.h"
 #include "PaymentResponse.h"
+#include <wtf/Forward.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -104,7 +105,7 @@ public:
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void reject(Exception&&);
     ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData);
-    ExceptionOr<void> retry(PaymentValidationErrors&&);
+    void retry(PaymentValidationErrors&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
     void cancel();
 
     using MethodIdentifier = Variant<String, URL>;
