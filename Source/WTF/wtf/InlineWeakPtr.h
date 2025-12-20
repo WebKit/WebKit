@@ -115,7 +115,7 @@ inline InlineWeakPtr<T>& InlineWeakPtr<T>::operator=(const InlineWeakPtr& o)
 template<typename T>
 inline InlineWeakPtr<T>& InlineWeakPtr<T>::operator=(InlineWeakPtr&& o)
 {
-    InlineWeakPtr ptr = WTFMove(o);
+    InlineWeakPtr ptr = WTF::move(o);
     swap(ptr);
     return *this;
 }
@@ -173,7 +173,7 @@ template<typename P> struct InlineWeakPtrHashTraits : public SimpleClassHashTrai
     static PeekType peek(P* value) { return value; }
 
     using TakeType = InlineWeakPtr<P>;
-    static TakeType take(InlineWeakPtr<P>&& value) { return isEmptyValue(value) ? nullptr : InlineWeakPtr<P>(WTFMove(value)); }
+    static TakeType take(InlineWeakPtr<P>&& value) { return isEmptyValue(value) ? nullptr : InlineWeakPtr<P>(WTF::move(value)); }
 };
 
 template<typename P> struct HashTraits<InlineWeakPtr<P>> : InlineWeakPtrHashTraits<P> { };

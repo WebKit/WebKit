@@ -1029,7 +1029,7 @@ for (Vector<RefPtr<FrameView> >::iterator it = frameViews.begin(); it != end; ++
 
 ```cpp
 [this] { return m_member; }
-[this]() mutable { return doWork(WTFMove(m_object)); }
+[this]() mutable { return doWork(WTF::move(m_object)); }
 ```
 
 ###### Wrong:

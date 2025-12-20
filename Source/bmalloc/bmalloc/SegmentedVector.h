@@ -153,7 +153,7 @@ public:
     T takeLast()
     {
         BASSERT(!isEmpty());
-        T result = WTFMove(last());
+        T result = std::move(last());
         --m_size;
         return result;
     }

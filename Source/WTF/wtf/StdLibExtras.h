@@ -1563,9 +1563,6 @@ static constexpr auto dereferenceView = std::views::transform([](auto&& x) -> de
 
 } // namespace WTF
 
-// FIXME: get rid of WTF::move() and use WTF::move() directly.
-#define WTFMove(value) WTF::move(value)
-
 namespace WTF {
 namespace detail {
 template<typename T, typename U> using copy_const = std::conditional_t<std::is_const_v<T>, const U, U>;

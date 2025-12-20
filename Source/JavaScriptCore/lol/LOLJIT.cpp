@@ -177,7 +177,7 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
     RELEASE_ASSERT(!JITCode::isJIT(m_profiledCodeBlock->jitType()));
 
     if (sizeMarker) [[unlikely]]
-        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, Ref(m_plan));
+        m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, Ref(m_plan));
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -526,7 +526,7 @@ void LOLJIT::privateCompileMainPass()
             RELEASE_ASSERT_NOT_REACHED();
         }
         if (sizeMarker) [[unlikely]]
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, Ref(m_plan));
+            m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, Ref(m_plan));
 
         if (LOLJITInternal::verbose)
             dataLogLn("At ", bytecodeOffset, ": added ", m_slowCases.size() - previousSlowCasesSize, "(", m_slowCases.size(), ") allocator: ", m_fastAllocator);
@@ -733,7 +733,7 @@ void LOLJIT::privateCompileSlowCases()
 
         if (sizeMarker) [[unlikely]] {
             m_bytecodeIndex = BytecodeIndex(m_bytecodeIndex.offset() + currentInstruction->size());
-            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, Ref(m_plan));
+            m_vm->jitSizeStatistics->markEnd(WTF::move(*sizeMarker), *this, Ref(m_plan));
         }
 
         nextBytecodeIndexWithFlushForJumpTargetsIfNeeded(m_replayAllocator, false);

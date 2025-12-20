@@ -463,7 +463,7 @@ void SQLTransaction::deliverSuccessCallback()
     // Spec 4.3.2.8: Deliver success callback.
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
     if (successCallback) {
-        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [successCallback = WTFMove(successCallback)]() mutable {
+        m_database->document().checkedEventLoop()->queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback)]() mutable {
             successCallback->invoke();
         });
     }
