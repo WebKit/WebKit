@@ -31,6 +31,7 @@
 #include "WebDriverBidiBackendDispatchers.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -54,6 +55,8 @@ struct BidiEventSubscription {
     {
         return browsingContextIDs.isEmpty() && userContextIDs.isEmpty();
     }
+
+    String asString() const;
 };
 
 class BidiSessionAgent final : public Inspector::BidiSessionBackendDispatcherHandler {

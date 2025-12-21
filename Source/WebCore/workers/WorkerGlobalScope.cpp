@@ -485,7 +485,8 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
         FrameConsoleClient::logMessageToSystemConsole(*message);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    AutomationInstrumentation::addMessageToConsole(message);
+    // FIXME What's the related browsing context for Workers?
+    AutomationInstrumentation::addMessageToConsole(std::nullopt, message);
 #endif
     InspectorInstrumentation::addMessageToConsole(*this, WTF::move(message));
 }
@@ -509,7 +510,8 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
         message = makeUnique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    AutomationInstrumentation::addMessageToConsole(message);
+    // FIXME What's the related browsing context for Workers?
+    AutomationInstrumentation::addMessageToConsole(std::nullopt, message);
 #endif
     InspectorInstrumentation::addMessageToConsole(*this, WTF::move(message));
 }

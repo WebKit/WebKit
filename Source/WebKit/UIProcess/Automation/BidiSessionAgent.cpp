@@ -75,11 +75,14 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
             addResult.iterator->value++;
     }
 
-    // FIXME: Support by-context subscriptions.
-    // https://bugs.webkit.org/show_bug.cgi?id=282981
-    // Also: spec says we need to convert into top-level browsing contexts.
-    if (contexts && contexts->length())
-        LOG(Automation, "BidiSessionAgent::subscribe: Ignoring contexts parameter, as by-context subscriptions are not supported yet.");
+    HashSet<BrowsingContext> subscriptionNavigables;
+
+    if (contexts && contexts->length()) {
+        for (const auto& context : *contexts.get()) {
+            auto topLevelContext = m_session->topLevelHandleForHandle(context->asString());
+            subscriptionNavigables.add(topLevelContext);
+        }
+    }
 
     if (userContexts && userContexts->length())
         LOG(Automation, "BidiSessionAgent::subscribe: Ignoring userContexts parameter, as by-user-context subscriptions are not supported yet.");
@@ -87,7 +90,7 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
     LOG(Automation, "BidiSessionAgent::subscribe: adding subscriptionID=%s, events=%s",
         subscriptionID.utf8().data(),
         events->toJSONString().utf8().data());
-    m_eventSubscriptions.add(subscriptionID, BidiEventSubscription { subscriptionID, WTF::move(atomEventNames), { }, { } });
+    m_eventSubscriptions.add(subscriptionID, BidiEventSubscription { subscriptionID, WTF::move(atomEventNames), WTF::move(subscriptionNavigables), { } });
 
     callback({ subscriptionID });
 }
@@ -221,14 +224,26 @@ bool BidiSessionAgent::eventIsEnabled(const String& eventName, const HashSet<Str
     if (!m_eventSubscriptionCounts.contains(atomEventName))
         return false;
 
+    HashSet<String> topLevelNavigables;
+    for (const auto& browsingContext : browsingContexts) {
+        auto topLevelBrowsingContext = m_session->topLevelHandleForHandle(browsingContext);
+        topLevelNavigables.add(topLevelBrowsingContext);
+    }
+
     for (const auto& subscription : m_eventSubscriptions) {
-        // FIXME: Add support to subscribe to specific browsing contexts
-        // https://bugs.webkit.org/show_bug.cgi?id=282981
-        if (!subscription.value.isGlobal())
+        if (!subscription.value.events.contains(atomEventName))
             continue;
 
-        if (subscription.value.events.contains(atomEventName))
+        if (subscription.value.isGlobal())
             return true;
+
+        // FIXME Add support to subscribe by user-context.
+        for (auto& subscribedBrowsingContext : subscription.value.browsingContextIDs) {
+            for (auto& incomingBrowsingContext : topLevelNavigables) {
+                if (subscribedBrowsingContext == incomingBrowsingContext)
+                    return true;
+            }
+        }
     }
 
     return false;

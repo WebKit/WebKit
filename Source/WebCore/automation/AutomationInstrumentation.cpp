@@ -35,6 +35,7 @@
 
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/LocalFrame.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Observer.h>
 #include <wtf/StdLibExtras.h>
@@ -63,14 +64,20 @@ void AutomationInstrumentation::clearClient()
     automationClient().clear();
 }
 
-void AutomationInstrumentation::addMessageToConsole(const std::unique_ptr<ConsoleMessage>& message)
+void AutomationInstrumentation::addMessageToConsole(LocalFrame& frame, const std::unique_ptr<ConsoleMessage>& message)
+{
+    auto frameIdentifier = frame.frameID();
+    addMessageToConsole({ frameIdentifier }, message);
+}
+
+void AutomationInstrumentation::addMessageToConsole(std::optional<FrameIdentifier> frameId, const std::unique_ptr<ConsoleMessage>& message)
 {
     if (!automationClient()) [[likely]]
         return;
 
-    WTF::ensureOnMainThread([source = message->source(), type = message->type(), level = message->level(), messageText = message->message(), timestamp = message->timestamp()] {
+    WTF::ensureOnMainThread([frameId = frameId, source = message->source(), type = message->type(), level = message->level(), messageText = message->message(), timestamp = message->timestamp()] {
         if (RefPtr client = automationClient().get())
-            client->addMessageToConsole(source, level, messageText, type, timestamp);
+            client->addMessageToConsole(frameId, source, level, messageText, type, timestamp);
     });
 }
 

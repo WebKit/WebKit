@@ -3959,13 +3959,13 @@
     "imported/w3c/webdriver/tests/bidi/session/subscribe/events.py": {
         "subtests": {
             "test_subscribe_to_module": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/291371"}}
             },
             "test_subscribe_to_one_event_and_then_to_module": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/291371"}}
             },
             "test_subscribe_to_module_and_then_to_one_event_again": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/291371"}}
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/291371"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/283784"}}
@@ -4019,13 +4019,24 @@
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288107"}}
     },
+    "imported/w3c/webdriver/tests/bidi/session/unsubscribe/contexts.py": {
+        "subtests": {
+            "test_unsubscribe_from_one_context_after_navigation": {
+                "expected": {"all": {"status": ["PASS"]}}
+            },
+            "test_unsubscribe_from_one_context": {
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287930"}}
+            }
+        },
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287930"}}
+    },
     "imported/w3c/webdriver/tests/bidi/session/unsubscribe/events.py": {
         "subtests": {
             "test_unsubscribe_from_module": {
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_subscribe_to_module_unsubscribe_from_one_event": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/291371"}}
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287930"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287930"}}
@@ -4091,7 +4102,7 @@
                 "expected": {"all": {"status": ["PASS"]}}
             },
             "test_unsubscribe_partially_from_one_context": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/287930"}}
+                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/287930"}}
             }
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287930"}}

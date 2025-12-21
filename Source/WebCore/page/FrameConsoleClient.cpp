@@ -167,7 +167,7 @@ void FrameConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&&
     }
 
 #if ENABLE(WEBDRIVER_BIDI)
-    AutomationInstrumentation::addMessageToConsole(consoleMessage);
+    AutomationInstrumentation::addMessageToConsole(frame.get(), consoleMessage);
 #endif
     InspectorInstrumentation::addMessageToConsole(frame.get(), WTF::move(consoleMessage));
 }
@@ -219,10 +219,10 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
     unsigned lineNumber = message->line();
     unsigned columnNumber = message->column();
 
-#if ENABLE(WEBDRIVER_BIDI)
-    AutomationInstrumentation::addMessageToConsole(message);
-#endif
     Ref frame = m_frame.get();
+#if ENABLE(WEBDRIVER_BIDI)
+    AutomationInstrumentation::addMessageToConsole(frame.get(), message);
+#endif
     InspectorInstrumentation::addMessageToConsole(frame.get(), WTF::move(message));
 
     RefPtr page = frame->page();

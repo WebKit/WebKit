@@ -342,6 +342,22 @@ String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> 
     return handle;
 }
 
+String WebAutomationSession::topLevelHandleForHandle(const String& handle)
+{
+    if (m_handleWebPageMap.contains(handle))
+        return handle;
+
+    bool notFound;
+    if (auto frameID = webFrameIDForHandle(handle, notFound)) {
+        if (RefPtr frame = WebFrameProxy::webFrame(*frameID)) {
+            if (RefPtr page = frame->page())
+                return handleForWebPageProxy(*page);
+        }
+    }
+
+    return nullString();
+}
+
 String WebAutomationSession::effectiveHandleForWebFrameProxy(const WebFrameProxy& webFrameProxy)
 {
     if (webFrameProxy.isMainFrame()) {
@@ -809,7 +825,8 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page, const St
 
         // FIXME: propagate the 'userPromptHandler' from session capabilities.
         auto userPromptHandlerType = Inspector::Protocol::BidiSession::UserPromptHandlerType::Accept;
-        if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptOpened"_s, { }))
+        auto browsingContextHandle = handleForWebPageProxy(page);
+        if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptOpened"_s, { browsingContextHandle }))
             m_bidiProcessor->browsingContextDomainNotifier().userPromptOpened(handleForWebPageProxy(page), userPromptType, userPromptHandlerType, message, m_client->defaultTextOfCurrentJavaScriptDialogOnPage(*this, page).value_or(defaultText.value_or(emptyString())));
 #endif
 
@@ -986,7 +1003,8 @@ static String navigationIDToProtocolString(std::optional<WebCore::NavigationIden
 void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.domContentLoaded"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.domContentLoaded"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().domContentLoaded(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(timestamp.secondsSinceEpoch().milliseconds()), frame.url().string());
 #endif
 
@@ -1010,7 +1028,8 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, st
 void WebAutomationSession::loadCompletedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.load"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.load"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().load(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(timestamp.secondsSinceEpoch().milliseconds()), frame.url().string());
 #endif
 }
@@ -1060,31 +1079,36 @@ void WebAutomationSession::didCreatePage(WebPageProxy& page)
 
 void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationStarted"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationStarted"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
 }
 
 void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationCommitted"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationCommitted"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().navigationCommitted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
 }
 
 void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationFailed"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationFailed"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
 }
 
 void WebAutomationSession::navigationAbortedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationAborted"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.navigationAborted"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
 }
 
 void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.fragmentNavigated"_s, { }))
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.fragmentNavigated"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().fragmentNavigated(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
 }
 
@@ -1136,7 +1160,7 @@ void WebAutomationSession::willDestroyFrame(const WebFrameProxy& frame)
 
 void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
 {
-    auto contextHandle = effectiveHandleForWebFrameProxy(frame);
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
     auto url = frame.url().string();
     String parentHandle = "null"_s;
     if (RefPtr parentFrame = frame.parentFrame())
@@ -1152,8 +1176,8 @@ void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
         userContext = contextId;
     }
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextCreated"_s, { }))
-        m_bidiProcessor->browsingContextDomainNotifier().contextCreated(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextCreated"_s, { browsingContextHandle }))
+        m_bidiProcessor->browsingContextDomainNotifier().contextCreated(browsingContextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
 }
 
 void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNodeData& tree, std::optional<String>&& parentContext)
@@ -1166,15 +1190,15 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
     if (!page)
         return;
 
-    String contextHandle;
+    String browsingContextHandle;
     String originalOpenerHandle = "null"_s;
 
     if (tree.info.isMainFrame) {
-        contextHandle = handleForWebPageProxy(*page);
+        browsingContextHandle = handleForWebPageProxy(*page);
         if (RefPtr openerPage = this->getOpenerPage(*page))
             originalOpenerHandle = handleForWebPageProxy(*openerPage);
     } else
-        contextHandle = handleForWebFrameID(tree.info.frameID);
+        browsingContextHandle = handleForWebFrameID(tree.info.frameID);
 
     String url = tree.info.request.url().string();
     auto [clientWindow, userContext] = getClientWindowAndUserContext(*page);
@@ -1182,16 +1206,16 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
     // FIXME: Use JSON null instead of string "null" when Inspector::Protocol supports RefPtr<String> or std::optional<String>
     String parentContextHandle = parentContext.value_or("null"_s);
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextCreated"_s, { }))
-        m_bidiProcessor->browsingContextDomainNotifier().contextCreated(contextHandle, url, originalOpenerHandle, parentContextHandle, WTF::move(children), clientWindow, userContext);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextCreated"_s, { browsingContextHandle }))
+        m_bidiProcessor->browsingContextDomainNotifier().contextCreated(browsingContextHandle, url, originalOpenerHandle, parentContextHandle, WTF::move(children), clientWindow, userContext);
 
     for (const auto& child : tree.children)
-        recursivelyEmitContextCreatedEvent(child, contextHandle);
+        recursivelyEmitContextCreatedEvent(child, browsingContextHandle);
 }
 
 void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 {
-    auto contextHandle = handleForWebPageProxy(page);
+    auto browsingContextHandle = handleForWebPageProxy(page);
     auto url = page.currentURL();
 
     String parentContext = "null"_s;
@@ -1206,16 +1230,18 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 
     auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextDestroyed"_s, { }))
-        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextDestroyed"_s, { })) {
+        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(browsingContextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+        // FIXME Run the remaining subscription cleanup steps, removing any remaining subscription with empty target top level traversable id's.
+    }
 
-    m_handleWebPageMap.remove(contextHandle);
+    m_handleWebPageMap.remove(browsingContextHandle);
     m_webPageHandleMap.remove(page.identifier());
 }
 
 void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
 {
-    auto contextHandle = effectiveHandleForWebFrameProxy(frame);
+    auto browsingContextHandle = effectiveHandleForWebFrameProxy(frame);
     auto url = frame.url().string();
     String parentHandle = "null"_s;
     if (RefPtr parentFrame = frame.parentFrame())
@@ -1230,8 +1256,8 @@ void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
         userContext = contextId;
     }
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextDestroyed"_s, { }))
-        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.contextDestroyed"_s, { parentHandle }))
+        m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(browsingContextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
 
     // Note: Frame handle cleanup is done by didDestroyFrame(), so we don't duplicate that here
 }
@@ -1586,7 +1612,7 @@ CommandResult<void> WebAutomationSession::dismissCurrentJavaScriptDialog(const I
     auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!apiDialogType, InternalError);
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptClosed"_s, { }))
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptClosed"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(*page), toProtocolUserPromptType(apiDialogType.value()), false, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, *page).value_or(emptyString()));
 #endif
     m_client->dismissCurrentJavaScriptDialogOnPage(*this, *page);
@@ -1609,7 +1635,7 @@ CommandResult<void> WebAutomationSession::acceptCurrentJavaScriptDialog(const In
     auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!apiDialogType, InternalError);
 
-    if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptClosed"_s, { }))
+    if (m_bidiProcessor->eventIsEnabled("browsingContext.userPromptClosed"_s, { browsingContextHandle }))
         m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(*page), toProtocolUserPromptType(apiDialogType.value()), true, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, *page).value_or(emptyString()));
 #endif
 
@@ -2895,10 +2921,17 @@ static String logEntryTypeForMessage(const JSC::MessageSource& messageSource)
 }
 #endif // ENABLE(WEBDRIVER_BIDI)
 
-void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
+void WebAutomationSession::logEntryAdded(std::optional<WebCore::FrameIdentifier> frameID, const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    if (!m_bidiProcessor->eventIsEnabled("log.entryAdded"_s, { }))
+    // FIXME Store logged messages in a buffer to avoid losing messages that are logged before the Bidi processor is created.
+    // https://bugs.webkit.org/show_bug.cgi?id=282980
+    HashSet<String> contexts;
+    if (RefPtr webFrame = WebFrameProxy::webFrame(*frameID)) {
+        if (String handle = effectiveHandleForWebFrameProxy(*webFrame.get()); !handle.isEmpty())
+            contexts.add(handle);
+    }
+    if (!m_bidiProcessor->eventIsEnabled("log.entryAdded"_s, contexts))
         return;
     // FIXME Support getting source information
     // https://bugs.webkit.org/show_bug.cgi?id=282978
