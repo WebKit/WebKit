@@ -163,7 +163,7 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(Opt
 #endif
     // FIXME: Ensure the correctness of the CG GaussianBlur filter (http://webkit.org/b/243816).
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
-    if (m_stdX == m_stdY && preferredFilterRenderingModes.contains(FilterRenderingMode::GraphicsContext))
+    if (m_stdX == m_stdY && m_edgeMode == EdgeModeType::None && preferredFilterRenderingModes.contains(FilterRenderingMode::GraphicsContext))
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes & preferredFilterRenderingModes;
