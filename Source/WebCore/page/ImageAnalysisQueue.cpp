@@ -143,12 +143,12 @@ void ImageAnalysisQueue::enqueueAllImagesRecursive(Frame& frame)
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
     if (localFrame) {
         if (RefPtr document = localFrame->document()) {
-            for (auto& image : descendantsOfType<HTMLImageElement>(*document))
-                enqueueIfNeeded(image);
+            for (Ref image : descendantsOfType<HTMLImageElement>(*document))
+                enqueueIfNeeded(image.get());
         }
     }
 
-    for (auto* nextFrame = frame.tree().firstChild(); nextFrame; nextFrame = nextFrame->tree().nextSibling())
+    for (RefPtr nextFrame = frame.tree().firstChild(); nextFrame; nextFrame = nextFrame->tree().nextSibling())
         enqueueAllImagesRecursive(*nextFrame);
 }
 
@@ -163,14 +163,15 @@ void ImageAnalysisQueue::resumeProcessing()
             continue;
 
         m_pendingRequestCount++;
-        m_page->resetTextRecognitionResult(*element);
+        RefPtr webPage = m_page.get();
+        webPage->resetTextRecognitionResult(*element);
 
         if (auto* image = element->cachedImage(); image && !image->errorOccurred())
             m_queuedElements.set(*element, image->url());
 
         auto allowSnapshots = m_languageIdentifiers.target.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
-        m_page->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, page = m_page] (auto&&) {
-            if (!page || page->imageAnalysisQueueIfExists() != this)
+        webPage->chrome().client().requestTextRecognition(*element, { m_languageIdentifiers.source, m_languageIdentifiers.target, allowSnapshots }, [this, protectedThis = Ref { *this }, webPage] (auto&&) {
+            if (!webPage || webPage->imageAnalysisQueueIfExists() != this)
                 return;
 
             if (m_pendingRequestCount)
