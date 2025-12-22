@@ -690,6 +690,10 @@ namespace JSC {
         template<typename OperationType>
         void appendCallWithExceptionCheck(Address);
         template<typename OperationType>
+        MacroAssembler::Call appendCallNoExceptionCheck(const CodePtr<CFunctionPtrTag>);
+        template<typename OperationType>
+        void appendCallNoExceptionCheck(Address);
+        template<typename OperationType>
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const CodePtr<CFunctionPtrTag>, VirtualRegister result);
         template<typename OperationType>
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
@@ -723,7 +727,7 @@ namespace JSC {
         MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, VirtualRegister result, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallSetJSValueResult<OperationType>(operation, result);
+            return appendCallSetJSValueResult<OperationType>(operation, result); // I think this is actually doing an exception check
         }
 
         template<typename OperationType, typename... Args>
@@ -731,7 +735,7 @@ namespace JSC {
         void callOperationNoExceptionCheck(Address target, VirtualRegister result, Args... args)
         {
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            return appendCallSetJSValueResult<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset), result);
+            return appendCallSetJSValueResult<OperationType>(Address(GPRInfo::nonArgGPR0, target.offset), result); // I think this is actually doing an exception check
         }
 
         template<typename OperationType, typename... Args>
