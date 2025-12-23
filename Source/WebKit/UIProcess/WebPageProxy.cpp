@@ -1798,12 +1798,11 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     Ref browsingContextGroup = m_browsingContextGroup;
     Ref preferences = m_preferences;
 
-
     // If an empty site openes a new page, this new page should be in the same process
     // as the opener. To do so, we can pass the opener's origin to BrowsingContextGroup::ensureProcessForSite.
     Site effectiveSite = site.isEmpty() && internals().openerOrigin ? Site { *internals().openerOrigin } : site;
 
-    m_mainFrame = WebFrameProxy::create(*this, browsingContextGroup->ensureProcessForSite(effectiveSite, site, process, preferences), generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, WebFrameProxy::protectedWebFrame(m_openerFrameIdentifier).get(), IsMainFrame::Yes);
+    m_mainFrame = WebFrameProxy::create(*this, browsingContextGroup->ensureProcessForSite(effectiveSite, site, process, preferences, std::nullopt, LoadedWebArchive::No, InjectBrowsingContextIntoProcess::Yes, ShouldReuseProcessFromOpaqueOrigin::Yes), generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, WebFrameProxy::protectedWebFrame(m_openerFrameIdentifier).get(), IsMainFrame::Yes);
     if (preferences->siteIsolationEnabled())
         browsingContextGroup->addPage(*this);
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *protectedDrawingArea(), m_mainFrame->frameID(), std::nullopt)), 0);
@@ -5529,7 +5528,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
 
     // FIXME: Assert the equality of data stores regardless of whether site isolation is enabled or not.
     ASSERT(!protectedPreferences()->siteIsolationEnabled() || newProcess->websiteDataStore() == &websiteDataStore());
-    Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, loadedWebArchive, InjectBrowsingContextIntoProcess::No);
+    Ref frameProcess = browsingContextGroup.ensureProcessForSite(navigationSite, Site { mainFrame()->url() }, newProcess, preferences, std::nullopt, loadedWebArchive, InjectBrowsingContextIntoProcess::No);
     // Make sure we destroy any existing ProvisionalPageProxy object *before* we construct a new one.
     // It is important from the previous provisional page to unregister itself before we register a
     // new one to avoid confusion.
@@ -7624,7 +7623,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (auto frameProcessSite = frame->frameProcess().site(); frameProcessSite && !frame->frameProcess().isArchiveProcess()) {
         auto frameSite = Site { frame->url() };
         if (frameProcessSite->isEmpty() && !frameSite.isEmpty())
-            frame->setProcess(protectedBrowsingContextGroup()->ensureProcessForSite(frameSite, Site { protectedMainFrame()->url() }, frame->frameProcess().process(), preferences));
+            frame->setProcess(protectedBrowsingContextGroup()->ensureProcessForSite(frameSite, Site { protectedMainFrame()->url() }, frame->frameProcess().process(), preferences, std::nullopt, LoadedWebArchive::No, InjectBrowsingContextIntoProcess::Yes, ShouldReuseProcessFromOpaqueOrigin::Yes));
     }
 
     if (frame->isMainFrame()) {

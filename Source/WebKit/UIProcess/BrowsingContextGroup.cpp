@@ -83,7 +83,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 
         Ref process = pageConfiguration->protectedProcessPool()->processForSite(websiteDataStore.get(), WebProcessPool::IsSharedProcess::Yes, site, mainFrameSite, domainsWithUserInteraction, lockdownMode, enhancedSecurity, pageConfiguration.get(), ProcessSwapDisposition::Other);
         ASSERT(!process->isInProcessCache());
-        Ref frameProcess = FrameProcess::create(process, protectedThis, std::nullopt, mainFrameSite, preferences, LoadedWebArchive::No, InjectBrowsingContextIntoProcess::Yes);
+        Ref frameProcess = FrameProcess::create(process, protectedThis, std::nullopt, mainFrameSite, preferences, LoadedWebArchive::No, InjectBrowsingContextIntoProcess::Yes, std::nullopt);
         ASSERT(frameProcess->isSharedProcess());
         ASSERT(frameProcess->process().isSharedProcess());
         frameProcess->process().addSharedProcessDomain(site.domain());
@@ -92,12 +92,25 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     });
 }
 
-Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, const std::optional<WebCore::SecurityOriginData>& effectiveOrigin, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess, ShouldReuseProcessFromOpaqueOrigin shouldReuseProcessFromOpaqueOrigin)
 {
     if (preferences.siteIsolationEnabled()) {
         if ((m_sharedProcess && m_sharedProcessSites.contains(site)) || process.isSharedProcess()) {
             ASSERT(&m_sharedProcess->process() == &process);
             return *m_sharedProcess;
+        }
+        if (shouldReuseProcessFromOpaqueOrigin == ShouldReuseProcessFromOpaqueOrigin::Yes) {
+            if (RefPtr opaqueOriginProcess = processForOpaqueOrigin(process.coreProcessIdentifier())) {
+                if (!site.isEmpty())
+                    m_processMap.set(site, opaqueOriginProcess);
+                return opaqueOriginProcess.releaseNonNull();
+            }
+        }
+        if (site.isEmpty() && effectiveOrigin) {
+            if (RefPtr existingProcess = processForSite(Site { *effectiveOrigin })) {
+                if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
+                    return existingProcess.releaseNonNull();
+            }
         }
         if (RefPtr existingProcess = processForSite(site)) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
@@ -105,7 +118,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
         }
     }
 
-    return FrameProcess::create(process, *this, site, mainFrameSite, preferences, loadedWebArchive, injectBrowsingContextIntoProcess);
+    return FrameProcess::create(process, *this, site, mainFrameSite, preferences, loadedWebArchive, injectBrowsingContextIntoProcess, effectiveOrigin);
 }
 
 RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
@@ -113,6 +126,16 @@ RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
     if (m_sharedProcessSites.contains(site))
         return m_sharedProcess.get();
     RefPtr process = m_processMap.get(site);
+    if (!process)
+        return nullptr;
+    if (process->process().state() == WebProcessProxy::State::Terminated)
+        return nullptr;
+    return process;
+}
+
+RefPtr<FrameProcess> BrowsingContextGroup::processForOpaqueOrigin(const WebCore::ProcessIdentifier& processID)
+{
+    RefPtr process = m_opaqueOriginProcessMap.get(processID);
     if (!process)
         return nullptr;
     if (process->process().state() == WebProcessProxy::State::Terminated)
@@ -166,8 +189,16 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
     auto& site = *process.site();
     if (m_processMap.get(site) == &process)
         return;
-    ASSERT(!m_processMap.get(site) || m_processMap.get(site)->process().state() == WebProcessProxy::State::Terminated);
-    m_processMap.set(site, process);
+    if (site.isEmpty() && !process.effectiveOrigin()) {
+        WebCore::ProcessIdentifier opaqueProcessID = process.process().coreProcessIdentifier();
+        ASSERT(!m_opaqueOriginProcessMap.get(opaqueProcessID) || m_opaqueOriginProcessMap.get(opaqueProcessID)->process().state() == WebProcessProxy::State::Terminated);
+        m_opaqueOriginProcessMap.set(opaqueProcessID, process);
+    } else {
+        auto& effectiveSite = process.effectiveOrigin() ? Site { *process.effectiveOrigin() } : site;
+        ASSERT(!m_processMap.get(effectiveSite) || m_processMap.get(effectiveSite)->process().state() == WebProcessProxy::State::Terminated);
+        ASSERT(!effectiveSite.isEmpty());
+        m_processMap.set(effectiveSite, process);
+    }
     for (Ref page : m_pages) {
         if (site == Site(URL(page->currentURL())))
             continue;

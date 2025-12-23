@@ -56,14 +56,17 @@ enum class IsMainFrame : bool;
 
 enum class InjectBrowsingContextIntoProcess : bool { No, Yes };
 
+enum class ShouldReuseProcessFromOpaqueOrigin : bool { No, Yes };
+
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
     static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
     ~BrowsingContextGroup();
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
-    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
+    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, const std::optional<WebCore::SecurityOriginData>&, LoadedWebArchive = LoadedWebArchive::No, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes, ShouldReuseProcessFromOpaqueOrigin = ShouldReuseProcessFromOpaqueOrigin::No);
     RefPtr<FrameProcess> processForSite(const WebCore::Site&);
+    RefPtr<FrameProcess> processForOpaqueOrigin(const WebCore::ProcessIdentifier&);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     void removeFrameProcess(FrameProcess&);
@@ -91,6 +94,7 @@ private:
     WeakHashSet<WebPageProxy> m_pagesInSharedProcess;
 
     HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
+    HashMap<WebCore::ProcessIdentifier, WeakPtr<FrameProcess>> m_opaqueOriginProcessMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 };

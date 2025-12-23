@@ -2354,13 +2354,13 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol() && !siteIsolationEnabled)
         return { WTF::move(sourceProcess), nullptr, "Navigation within the same non-HTTP(s) protocol"_s };
 
-    if (!sourceURL.isValid()
+    if ((!siteIsolationEnabled && !sourceURL.isValid())
         || !targetURL.isValid()
-        || sourceURL.isEmpty()
+        || (!siteIsolationEnabled && sourceURL.isEmpty())
         || (siteIsolationEnabled ? targetSite.matches(sourceURL) : targetSite.domain().matches(sourceURL)))
         return { WTF::move(sourceProcess), nullptr, "Navigation is same-site"_s };
 
-    if (sourceURL.protocolIsAbout()) {
+    if (sourceURL.protocolIsAbout() || sourceURL.isEmpty()) {
         if (auto sourceSite = sourceProcess->site()) {
             if (!siteIsolationEnabled && sourceSite->domain().matches(targetURL))
                 return { WTF::move(sourceProcess), nullptr, "Navigation is treated as same-site (matched domain)"_s };
@@ -2368,10 +2368,17 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
                 return { WTF::move(sourceProcess), nullptr, "Navigation is treated as same-site (matched site)"_s };
         }
 
-        const bool treatAsSameSiteForAboutNavigation = [&sourceProcess, &siteIsolationEnabled] {
+        const bool treatAsSameSiteWhenNavigatingFromAbout = [&] {
             if (sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads())
                 return false;
             if (siteIsolationEnabled) {
+                // navigation is either happening in a separate window or iframe
+                if ((sourceURL.isAboutBlank() || sourceURL.isEmpty())
+                    && !sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads()
+                    && ((page.mainFrame() && page.mainFrame()->opener()) || frameInfo.parentFrameID)
+                    && !(targetURL.isAboutBlank() || targetURL.isEmpty())) {
+                    return false;
+                }
                 auto sourceSite = sourceProcess->site();
                 if (sourceSite)
                     return sourceSite->isEmpty();
@@ -2381,7 +2388,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
             return true;
         }();
 
-        if (treatAsSameSiteForAboutNavigation)
+        if (treatAsSameSiteWhenNavigatingFromAbout)
             return { WTF::move(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
     }
 

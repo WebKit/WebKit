@@ -810,12 +810,7 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
-// FIXME: Re-enable this test once https://bugs.webkit.org/show_bug.cgi?id=300844 is resolved
-#if !defined(NDEBUG)
-TEST(SiteIsolation, DISABLED_OpenBeforeInitialLoad)
-#else
 TEST(SiteIsolation, OpenBeforeInitialLoad)
-#endif
 {
     HTTPServer server({
         { "/webkit"_s, { "<script>alert('loaded')</script>"_s } }
@@ -7743,5 +7738,250 @@ TEST(SiteIsolation, CrossSiteIFrameCanReceiveDeviceMotionEvents)
 }
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, OpenFromAboutBlankOpenerWithOpaqueOrigin)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "<script>alert('loaded')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr<WKWebView> opened;
+    uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = navigationDelegate.get();
+        opened.get().UIDelegate = uiDelegate.get();
+        return opened.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/webkit')" completionHandler:nil];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            // this represents an empty, opaque origin which can come from
+            // a page has newly been opened to about:blank without being
+            // previously navigated to a non-about:blank site
+            "://"_s,
+        },
+        { RemoteFrame },
+    });
+    checkFrameTreesInProcesses(opened.get(), {
+        { RemoteFrame },
+        { "https://webkit.org"_s },
+    });
+}
+
+TEST(SiteIsolation, NavigateFrameFromAboutBlankParentWithOpaqueOrigin)
+{
+    HTTPServer server({
+        { "/iframe1"_s, { "<script>alert('loaded iframe1')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:
+        @"var iframe1 = document.createElement('iframe');"
+        "document.body.appendChild(iframe1);"
+        "iframe1.src = 'https://apple.com/iframe1';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded iframe1");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            // this represents an empty, opaque origin which can come from
+            // a page has newly been opened to about:blank without being
+            // previously navigated to a non-about:blank site
+            { "://"_s, { { RemoteFrame } } },
+            { RemoteFrame, { { "https://apple.com"_s } } },
+        },
+    });
+}
+
+// These two test are almost the same as
+// SiteIsolation.OpenFromAboutBlankOpenerWithOpaqueOrigin and
+// SiteIsolation.NavigateFrameFromEmptyParentWithOpaqueOrigin, respectively,
+// with the subtle difference being that here, we don't explictly navigate the main
+// page to "about:blank" before calling window.open().
+// This means the opener has an empty url, as opposed to an explicit "about:blank" url.
+// While these seem logically equivalent, they are handled different in navigation logic.
+// For example, some navigation logic looks at URL::isEmpty() vs. URL::isAboutBlank().
+//      "about:blank" - isEmpty: false, isAboutBlank: true
+//      "" - isEmpty: true, isAboutBlank: false
+TEST(SiteIsolation, OpenFromEmptyOpenerWithOpaqueOrigin)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "<script>alert('loaded')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr<WKWebView> opened;
+    uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = navigationDelegate.get();
+        opened.get().UIDelegate = uiDelegate.get();
+        return opened.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/webkit')" completionHandler:nil];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            // this represents an empty, opaque origin which can come from
+            // a page has newly been opened to about:blank without being
+            // previously navigated to a non-about:blank site
+            "://"_s,
+        },
+        { RemoteFrame },
+    });
+    checkFrameTreesInProcesses(opened.get(), {
+        { RemoteFrame },
+        { "https://webkit.org"_s },
+    });
+}
+
+TEST(SiteIsolation, NavigateFrameFromEmptyParentWithOpaqueOrigin)
+{
+    HTTPServer server({
+        { "/iframe1"_s, { "<script>alert('loaded iframe1')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView evaluateJavaScript:
+        @"var iframe1 = document.createElement('iframe');"
+        "document.body.appendChild(iframe1);"
+        "iframe1.src = 'https://apple.com/iframe1';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded iframe1");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            // this represents an empty, opaque origin which can come from
+            // a page has newly been opened to about:blank without being
+            // previously navigated to a non-about:blank site
+            { "://"_s, { { RemoteFrame } } },
+            { RemoteFrame, { { "https://apple.com"_s } } },
+        },
+    });
+}
+
+TEST(SiteIsolation, OpenWindowAndNavigateIframeFromAboutBlankWithOpaqueOrigin)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "<script>alert('loaded')</script>"_s } },
+        { "/iframe1"_s, { "<script>alert('loaded iframe1')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // Taken from openerAndOpenedViews but without waiting for the load at the end since it was
+    // originally hanging when navigating the opener to about:blank.
+    __block WebViewAndDelegates opener;
+    __block WebViewAndDelegates opened;
+    opener.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [opener.navigationDelegate allowAnyTLSCertificate];
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    opener.webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    opener.webView.get().navigationDelegate = opener.navigationDelegate.get();
+    opener.uiDelegate = adoptNS([TestUIDelegate new]);
+    opener.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        enableSiteIsolation(configuration);
+        opened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [opened.navigationDelegate allowAnyTLSCertificate];
+        opened.uiDelegate = adoptNS([TestUIDelegate new]);
+        opened.webView.get().navigationDelegate = opened.navigationDelegate.get();
+        opened.webView.get().UIDelegate = opened.uiDelegate.get();
+        return opened.webView.get();
+    };
+    [opener.webView setUIDelegate:opener.uiDelegate.get()];
+    opener.webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    [opener.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+    [opener.navigationDelegate waitForDidFinishNavigation];
+
+    [opener.webView evaluateJavaScript:@"window.open('https://webkit.org/webkit')" completionHandler:nil];
+    [opened.navigationDelegate waitForDidFinishNavigation];
+
+    [opener.webView evaluateJavaScript:
+        @"var iframe1 = document.createElement('iframe');"
+        "document.body.appendChild(iframe1);"
+        "iframe1.src = 'https://apple.com/iframe1';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([opener.uiDelegate waitForAlert], "loaded iframe1");
+
+    checkFrameTreesInProcesses(opener.webView.get(), {
+        {
+            { RemoteFrame, { { "https://apple.com"_s } } },
+            // this represents an empty, opaque origin which can come from
+            // a page has newly been opened to about:blank without being
+            // previously navigated to a non-about:blank site
+            { "://"_s, { { RemoteFrame } } },
+            { RemoteFrame, { { RemoteFrame } } },
+        },
+    });
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        {
+            { "https://webkit.org"_s },
+            { RemoteFrame },
+            { RemoteFrame },
+        },
+    });
+}
+
+TEST(SiteIsolation, SameSiteAboutBlankOpenerAndChildIframe)
+{
+    HTTPServer server({
+        { "/webkit"_s, { "This is webkit.org/webkit"_s } },
+        { "/iframe1"_s, { "<script>alert('loaded iframe1')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr<WKWebView> opened;
+    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedNavigationDelegate.get();
+        opened.get().UIDelegate = uiDelegate.get();
+        return opened.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.open('about:blank');" completionHandler:nil];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    [opened evaluateJavaScript:
+        @"var iframe1 = document.createElement('iframe');"
+        "document.body.appendChild(iframe1);"
+        "iframe1.src = 'https://webkit.org/iframe1';"
+    completionHandler:nil];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded iframe1");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://webkit.org"_s },
+    });
+    checkFrameTreesInProcesses(opened.get(), {
+        {
+            "https://webkit.org"_s,
+            { { "https://webkit.org"_s } }
+        },
+    });
+}
 
 }

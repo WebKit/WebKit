@@ -49,21 +49,24 @@ public:
     bool isSharedProcess() const { return !m_site; }
     const WebCore::Site& sharedProcessMainFrameSite() const { ASSERT(!m_site); return m_mainFrameSite; }
     bool isArchiveProcess() const { return m_isArchiveProcess; }
+    const std::optional<WebCore::SecurityOriginData>& effectiveOrigin() const { return m_effectiveOrigin; }
 
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
     static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
-        const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+        const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess,
+        const std::optional<WebCore::SecurityOriginData>& effectiveOrigin)
     {
-        return adoptRef(*new FrameProcess(process, group, site, mainFrameSite, preferences, loadedWebArchive, injectBrowsingContextIntoProcess));
+        return adoptRef(*new FrameProcess(process, group, site, mainFrameSite, preferences, loadedWebArchive, injectBrowsingContextIntoProcess, effectiveOrigin));
     }
-    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite, const WebPreferences&, LoadedWebArchive, InjectBrowsingContextIntoProcess);
+    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite, const WebPreferences&, LoadedWebArchive, InjectBrowsingContextIntoProcess, const std::optional<WebCore::SecurityOriginData>&);
 
     const Ref<WebProcessProxy> m_process;
     WeakPtr<BrowsingContextGroup> m_browsingContextGroup;
     const std::optional<WebCore::Site> m_site;
     const WebCore::Site m_mainFrameSite;
     bool m_isArchiveProcess;
+    const std::optional<WebCore::SecurityOriginData> m_effectiveOrigin;
 };
 
 }

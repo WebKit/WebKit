@@ -36,12 +36,14 @@
 namespace WebKit {
 
 FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group, const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite,
-    const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+    const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess,
+    const std::optional<WebCore::SecurityOriginData>& effectiveOrigin)
     : m_process(process)
     , m_browsingContextGroup(group)
     , m_site(site)
     , m_mainFrameSite(mainFrameSite)
     , m_isArchiveProcess(loadedWebArchive == LoadedWebArchive::Yes)
+        , m_effectiveOrigin(effectiveOrigin)
 {
     if (!preferences.siteIsolationEnabled()) {
         m_browsingContextGroup = nullptr;

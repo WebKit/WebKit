@@ -530,7 +530,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     auto mainFrameDomain = mainFrameSite.domain();
 
     m_provisionalFrame = nullptr;
-    m_provisionalFrame = adoptRef(*new ProvisionalFrameProxy(*this, group.ensureProcessForSite(navigationSite, mainFrameSite, process, page->protectedPreferences())));
+    m_provisionalFrame = adoptRef(*new ProvisionalFrameProxy(*this, group.ensureProcessForSite(navigationSite, mainFrameSite, process, page->protectedPreferences(), std::nullopt)));
     page->protectedWebsiteDataStore()->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, [pageID = page->webPageIDInProcess(process), completionHandler = WTF::move(completionHandler)] mutable {
         completionHandler(pageID);
     });
