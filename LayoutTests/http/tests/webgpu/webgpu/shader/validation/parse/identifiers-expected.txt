@@ -29,7 +29,7 @@ FAIL :module_var_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:13: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :module_var_name:ident="bf16"
 PASS :module_var_name:ident="bitcast"
@@ -203,7 +203,7 @@ FAIL :module_var_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     var<private> non_coherent : i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -215,7 +215,7 @@ FAIL :module_var_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     var<private> noncoherent : i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:282:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -316,7 +316,7 @@ FAIL :module_const_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:6: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :module_const_name:ident="bf16"
 PASS :module_const_name:ident="bitcast"
@@ -490,7 +490,7 @@ FAIL :module_const_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     const non_coherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -502,7 +502,7 @@ FAIL :module_const_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     const noncoherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:295:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -603,7 +603,7 @@ FAIL :override_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:9: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :override_name:ident="bf16"
 PASS :override_name:ident="bitcast"
@@ -777,7 +777,7 @@ FAIL :override_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     override non_coherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -789,7 +789,7 @@ FAIL :override_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     override noncoherent : i32 = 0;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:308:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -890,7 +890,7 @@ FAIL :function_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:3: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_name:ident="bf16"
 PASS :function_name:ident="bitcast"
@@ -1064,7 +1064,7 @@ FAIL :function_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     fn non_coherent() {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1076,7 +1076,7 @@ FAIL :function_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     fn noncoherent() {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:320:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1177,7 +1177,7 @@ FAIL :struct_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:7: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :struct_name:ident="bf16"
 PASS :struct_name:ident="bitcast"
@@ -1351,7 +1351,7 @@ FAIL :struct_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     struct non_coherent { i : i32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1363,7 +1363,7 @@ FAIL :struct_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     struct noncoherent { i : i32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:333:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1464,7 +1464,7 @@ FAIL :alias_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:6: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :alias_name:ident="bf16"
 PASS :alias_name:ident="bitcast"
@@ -1638,7 +1638,7 @@ FAIL :alias_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     alias non_coherent = i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1650,7 +1650,7 @@ FAIL :alias_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     alias noncoherent = i32;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:346:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1751,7 +1751,7 @@ FAIL :function_param_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:5: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_param_name:ident="bf16"
 PASS :function_param_name:ident="bitcast"
@@ -1925,7 +1925,7 @@ FAIL :function_param_name:ident="non_coherent" assert_unreached:
 
     ---- shader ----
     fn F(non_coherent : i32) {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1937,7 +1937,7 @@ FAIL :function_param_name:ident="noncoherent" assert_unreached:
 
     ---- shader ----
     fn F(noncoherent : i32) {}
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:359:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2040,7 +2040,7 @@ FAIL :function_const_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:8: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_const_name:ident="bf16"
 PASS :function_const_name:ident="bitcast"
@@ -2216,7 +2216,7 @@ FAIL :function_const_name:ident="non_coherent" assert_unreached:
     fn F() {
       const non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2230,7 +2230,7 @@ FAIL :function_const_name:ident="noncoherent" assert_unreached:
     fn F() {
       const noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:373:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2333,7 +2333,7 @@ FAIL :function_let_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:6: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_let_name:ident="bf16"
 PASS :function_let_name:ident="bitcast"
@@ -2509,7 +2509,7 @@ FAIL :function_let_name:ident="non_coherent" assert_unreached:
     fn F() {
       let non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2523,7 +2523,7 @@ FAIL :function_let_name:ident="noncoherent" assert_unreached:
     fn F() {
       let noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:387:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2626,7 +2626,7 @@ FAIL :function_var_name:ident="binding_array" assert_unreached:
   - (in subcase: ) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:6: Expected a Identifier, but got a ReservedWord
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_var_name:ident="bf16"
 PASS :function_var_name:ident="bitcast"
@@ -2802,7 +2802,7 @@ FAIL :function_var_name:ident="non_coherent" assert_unreached:
     fn F() {
       var non_coherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2816,7 +2816,7 @@ FAIL :function_var_name:ident="noncoherent" assert_unreached:
     fn F() {
       var noncoherent = 1;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/identifiers.spec.js:401:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

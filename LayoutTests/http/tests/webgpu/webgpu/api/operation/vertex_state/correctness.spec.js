@@ -775,10 +775,13 @@ fn((t) => {
   const formatInfo = kVertexFormatInfo[format];
   const formatSize = formatInfo.byteSize;
   const makeMultipleOf = Math.min(formatSize, 4);
-  const offset = Math.floor(clamp(makeValueTestVariant(arrayStride, offsetVariant), {
+  const offset =
+  Math.floor(
+    clamp(makeValueTestVariant(arrayStride, offsetVariant), {
       min: 0,
       max: arrayStride - formatSize
-  }) / makeMultipleOf) * makeMultipleOf;
+    }) / makeMultipleOf
+  ) * makeMultipleOf;
 
   t.runTest([
   {
@@ -1077,7 +1080,9 @@ fn((t) => {
   const formatInfo = kVertexFormatInfo[format];
   const formatSize = formatInfo.byteSize;
   const makeMultipleOf = Math.min(formatSize, 4);
-  const offset = Math.floor(t.makeLimitVariant('maxVertexBufferArrayStride', offsetVariant) / makeMultipleOf) * makeMultipleOf;
+  const offset =
+  Math.floor(t.makeLimitVariant('maxVertexBufferArrayStride', offsetVariant) / makeMultipleOf) *
+  makeMultipleOf;
   const kCount = 10;
 
   // Create the stride 0 part of the test, first by faking a single vertex being drawn and

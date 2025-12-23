@@ -59,6 +59,10 @@ PASS :valid_only_with_vertex_position_builtin:name="clip_distances";stage="verte
 PASS :valid_only_with_vertex_position_builtin:name="clip_distances";stage="vertex";io="out";type="array%3Cf32,7%3E";use_struct=false
 PASS :valid_only_with_vertex_position_builtin:name="clip_distances";stage="vertex";io="out";type="array%3Cf32,8%3E";use_struct=true
 PASS :valid_only_with_vertex_position_builtin:name="clip_distances";stage="vertex";io="out";type="array%3Cf32,8%3E";use_struct=false
+PASS :valid_only_with_vertex_position_builtin:name="primitive_id";stage="fragment";io="in";type="u32";use_struct=true
+PASS :valid_only_with_vertex_position_builtin:name="primitive_id";stage="fragment";io="in";type="u32";use_struct=false
+PASS :valid_only_with_position_in_non_entry_point_struct:has_position=true
+PASS :valid_only_with_position_in_non_entry_point_struct:has_position=false
 PASS :not_valid_on_user_defined_io:use_invariant=true
 PASS :not_valid_on_user_defined_io:use_invariant=false
 

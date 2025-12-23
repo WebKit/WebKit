@@ -12,7 +12,10 @@ textures.
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { raceWithRejectOnTimeout, unreachable, assert } from '../../../../../common/util/util.js';
 import { kTextureUsages } from '../../../../capability_info.js';
-import { kAllTextureFormats, kValidTextureFormatsForCopyE2T } from '../../../../format_info.js';
+import {
+  kAllTextureFormats,
+  isTextureFormatUsableWithCopyExternalImageToTexture } from
+'../../../../format_info.js';
 import { kResourceStates, AllFeaturesMaxLimitsGPUTest } from '../../../../gpu_test.js';
 import {
 
@@ -688,7 +691,7 @@ fn(async (t) => {
   });
   void t.device.popErrorScope();
 
-  const success = kValidTextureFormatsForCopyE2T.includes(format);
+  const success = isTextureFormatUsableWithCopyExternalImageToTexture(t.device, format);
 
   t.runTest({ source: imageBitmap }, { texture: dstTexture }, copySize, success);
 });

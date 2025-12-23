@@ -196,7 +196,6 @@ fn((t) => {
   const wgsl = `
 enable subgroups;
 
-diagnostic(off, subgroup_branching);
 
 var<workgroup> wgmem : u32;
 

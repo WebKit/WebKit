@@ -93,10 +93,6 @@ def generateTests(ctsCheckoutDir):
                     window.location.href = "/webgpu/cts.https.html?q=webgpu:{}:*";
                 </script>
             """.format(",".join(listing)))
-        # FIXME: Import reftests
-        reftestsPath = pathlib.Path(destinationPath, "webgpu", "web_platform", "reftests")
-        if reftestsPath.is_dir():
-            shutil.rmtree(reftestsPath)
 
 def checkoutAndBuildInTemporaryDirectory(continuation):
     try:

@@ -38,5 +38,45 @@ PASS :initializer:case="init_runtime_expr"
 PASS :initializer:case="const_func_init"
 PASS :initializer:case="non_const_func_init"
 PASS :initializer:case="mix_order_init"
+PASS :initializer:case="logical_lhs_override"
+PASS :initializer:case="logical_rhs_override"
+PASS :initializer:case="logical_both_override"
 PASS :function_scope:
+PASS :array_size:case="workgroup_var";stage="const"
+PASS :array_size:case="workgroup_var";stage="override"
+PASS :array_size:case="private_var";stage="const"
+PASS :array_size:case="private_var";stage="override"
+PASS :array_size:case="uniform_var";stage="const"
+PASS :array_size:case="uniform_var";stage="override"
+PASS :array_size:case="storage_var";stage="const"
+PASS :array_size:case="storage_var";stage="override"
+PASS :array_size:case="function_var";stage="const"
+PASS :array_size:case="function_var";stage="override"
+PASS :array_size:case="workgroup_ptr_param";stage="const"
+PASS :array_size:case="workgroup_ptr_param";stage="override"
+PASS :array_size:case="private_ptr_param";stage="const"
+FAIL :array_size:case="private_ptr_param";stage="override" assert_unreached:
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    override size = 1;
+    fn f(a: ptr<private, array<u32, size>>) {}
+
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/decl/override.spec.js:307:24
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+ Reached unreachable code
+PASS :array_size:case="workgroup_ptr_let";stage="const"
+PASS :array_size:case="workgroup_ptr_let";stage="override"
+PASS :array_size:case="private_ptr_let";stage="const"
+PASS :array_size:case="private_ptr_let";stage="override"
+PASS :array_size:case="array_in_struct";stage="const"
+PASS :array_size:case="array_in_struct";stage="override"
+PASS :array_size:case="array_in_array";stage="const"
+PASS :array_size:case="array_in_array";stage="override"
+PASS :array_size:case="construct_array";stage="const"
+PASS :array_size:case="construct_array";stage="override"
 

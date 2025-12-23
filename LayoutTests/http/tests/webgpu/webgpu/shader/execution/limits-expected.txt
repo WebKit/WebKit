@@ -10,7 +10,7 @@ FAIL :nesting_depth_composite_array: assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:150: composite type may not be nested more than 15 levels
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :nesting_depth_braces:
 PASS :function_parameters:
@@ -31,7 +31,7 @@ FAIL :function_array_byte_size:type="u32" assert_unreached:
      expected ==     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: The combined byte size of all variables in this function exceeds 8192 bytes
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :function_array_byte_size:type="vec4u" assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 511.
@@ -41,7 +41,7 @@ FAIL :function_array_byte_size:type="vec4u" assert_unreached:
      expected ==     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: The combined byte size of all variables in this function exceeds 8192 bytes
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_variable_combined_byte_size:type="bool"
 FAIL :function_variable_combined_byte_size:type="u32" assert_unreached:
@@ -52,7 +52,7 @@ FAIL :function_variable_combined_byte_size:type="u32" assert_unreached:
      expected ==     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: The combined byte size of all variables in this function exceeds 8192 bytes
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :function_variable_combined_byte_size:type="vec4u" assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 127.
@@ -62,7 +62,7 @@ FAIL :function_variable_combined_byte_size:type="vec4u" assert_unreached:
      expected ==     00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: The combined byte size of all variables in this function exceeds 8192 bytes
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :workgroup_array_byte_size:type="bool"
 PASS :workgroup_array_byte_size:type="u32"

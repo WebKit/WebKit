@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x412
+  RenderBlock {HTML} at (0,0) size 800x412
+    RenderBody {BODY} at (8,8) size 784x396
+layer at (8,8) size 128x128
+  RenderHTMLCanvas {CANVAS} at (0,0) size 128x128
+layer at (141,8) size 128x128
+  RenderHTMLCanvas {CANVAS} at (133,0) size 128x128
+layer at (274,8) size 128x128
+  RenderHTMLCanvas {CANVAS} at (266,0) size 128x128
+layer at (407,8) size 128x128
+  RenderHTMLCanvas {CANVAS} at (399,0) size 128x128
+layer at (540,8) size 128x128
+  RenderHTMLCanvas {CANVAS} at (532,0) size 128x128
+layer at (8,140) size 128x128
+  RenderHTMLCanvas {CANVAS} at (0,132) size 128x128
+layer at (141,140) size 128x128
+  RenderHTMLCanvas {CANVAS} at (133,132) size 128x128
+layer at (274,140) size 128x128
+  RenderHTMLCanvas {CANVAS} at (266,132) size 128x128
+layer at (407,140) size 128x128
+  RenderHTMLCanvas {CANVAS} at (399,132) size 128x128
+layer at (540,140) size 128x128
+  RenderHTMLCanvas {CANVAS} at (532,132) size 128x128
+layer at (8,272) size 128x128
+  RenderHTMLCanvas {CANVAS} at (0,264) size 128x128
+layer at (141,272) size 128x128
+  RenderHTMLCanvas {CANVAS} at (133,264) size 128x128

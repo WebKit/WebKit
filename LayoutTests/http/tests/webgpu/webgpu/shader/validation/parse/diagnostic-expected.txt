@@ -8,7 +8,7 @@ FAIL :valid_params:severity="off";rule="derivative_uniformity";type="attribute" 
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="off";rule="derivative_uniformity";type="directive"
 FAIL :valid_params:severity="off";rule="subgroup_uniformity";type="attribute" assert_unreached:
@@ -20,7 +20,7 @@ FAIL :valid_params:severity="off";rule="subgroup_uniformity";type="attribute" as
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="off";rule="subgroup_uniformity";type="directive"
 FAIL :valid_params:severity="info";rule="derivative_uniformity";type="attribute" assert_unreached:
@@ -32,7 +32,7 @@ FAIL :valid_params:severity="info";rule="derivative_uniformity";type="attribute"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="info";rule="derivative_uniformity";type="directive"
 FAIL :valid_params:severity="info";rule="subgroup_uniformity";type="attribute" assert_unreached:
@@ -44,7 +44,7 @@ FAIL :valid_params:severity="info";rule="subgroup_uniformity";type="attribute" a
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="info";rule="subgroup_uniformity";type="directive"
 FAIL :valid_params:severity="warning";rule="derivative_uniformity";type="attribute" assert_unreached:
@@ -56,7 +56,7 @@ FAIL :valid_params:severity="warning";rule="derivative_uniformity";type="attribu
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="warning";rule="derivative_uniformity";type="directive"
 FAIL :valid_params:severity="warning";rule="subgroup_uniformity";type="attribute" assert_unreached:
@@ -68,7 +68,7 @@ FAIL :valid_params:severity="warning";rule="subgroup_uniformity";type="attribute
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="warning";rule="subgroup_uniformity";type="directive"
 FAIL :valid_params:severity="error";rule="derivative_uniformity";type="attribute" assert_unreached:
@@ -80,7 +80,7 @@ FAIL :valid_params:severity="error";rule="derivative_uniformity";type="attribute
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="error";rule="derivative_uniformity";type="directive"
 FAIL :valid_params:severity="error";rule="subgroup_uniformity";type="attribute" assert_unreached:
@@ -92,7 +92,7 @@ FAIL :valid_params:severity="error";rule="subgroup_uniformity";type="attribute" 
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_params:severity="error";rule="subgroup_uniformity";type="directive"
 PASS :invalid_severity:severity="none";type="attribute"
@@ -111,7 +111,7 @@ FAIL :warning_unknown_rule:type="attribute";rule="unknown" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :warning_unknown_rule:type="attribute";rule="blahblahblah" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
@@ -119,7 +119,7 @@ FAIL :warning_unknown_rule:type="attribute";rule="blahblahblah" assert_unreached
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :warning_unknown_rule:type="attribute";rule="derivative_uniform" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
@@ -127,24 +127,24 @@ FAIL :warning_unknown_rule:type="attribute";rule="derivative_uniform" assert_unr
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :warning_unknown_rule:type="directive";rule="unknown" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
 
-    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:124:28
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:125:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
  Reached unreachable code
 FAIL :warning_unknown_rule:type="directive";rule="blahblahblah" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
 
-    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:124:28
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:125:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
  Reached unreachable code
 FAIL :warning_unknown_rule:type="directive";rule="derivative_uniform" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
 
-    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:124:28
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:125:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:121:25
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="module";rule="derivative_uniformity"
@@ -158,7 +158,7 @@ FAIL :valid_locations:type="attribute";location="function";rule="derivative_unif
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="function";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -169,7 +169,7 @@ FAIL :valid_locations:type="attribute";location="function";rule="subgroup_unifor
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="compound";rule="derivative_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -180,7 +180,7 @@ FAIL :valid_locations:type="attribute";location="compound";rule="derivative_unif
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="compound";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -191,7 +191,7 @@ FAIL :valid_locations:type="attribute";location="compound";rule="subgroup_unifor
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="if_stmt";rule="derivative_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -202,7 +202,7 @@ FAIL :valid_locations:type="attribute";location="if_stmt";rule="derivative_unifo
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="if_stmt";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -213,7 +213,7 @@ FAIL :valid_locations:type="attribute";location="if_stmt";rule="subgroup_uniform
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="if_then";rule="derivative_uniformity"
 PASS :valid_locations:type="attribute";location="if_then";rule="subgroup_uniformity"
@@ -228,7 +228,7 @@ FAIL :valid_locations:type="attribute";location="switch_stmt";rule="derivative_u
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="switch_stmt";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -239,7 +239,7 @@ FAIL :valid_locations:type="attribute";location="switch_stmt";rule="subgroup_uni
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="switch_body";rule="derivative_uniformity"
 PASS :valid_locations:type="attribute";location="switch_body";rule="subgroup_uniformity"
@@ -256,7 +256,7 @@ FAIL :valid_locations:type="attribute";location="loop_stmt";rule="derivative_uni
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="loop_stmt";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -267,7 +267,7 @@ FAIL :valid_locations:type="attribute";location="loop_stmt";rule="subgroup_unifo
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="loop_body";rule="derivative_uniformity"
 PASS :valid_locations:type="attribute";location="loop_body";rule="subgroup_uniformity"
@@ -282,7 +282,7 @@ FAIL :valid_locations:type="attribute";location="while_stmt";rule="derivative_un
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="while_stmt";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -293,7 +293,7 @@ FAIL :valid_locations:type="attribute";location="while_stmt";rule="subgroup_unif
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="while_body";rule="derivative_uniformity"
 PASS :valid_locations:type="attribute";location="while_body";rule="subgroup_uniformity"
@@ -306,7 +306,7 @@ FAIL :valid_locations:type="attribute";location="for_stmt";rule="derivative_unif
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :valid_locations:type="attribute";location="for_stmt";rule="subgroup_uniformity" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -317,7 +317,7 @@ FAIL :valid_locations:type="attribute";location="for_stmt";rule="subgroup_unifor
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :valid_locations:type="attribute";location="for_body";rule="derivative_uniformity"
 PASS :valid_locations:type="attribute";location="for_body";rule="subgroup_uniformity"
@@ -367,7 +367,7 @@ FAIL :invalid_locations:type="attribute";location="struct";rule="derivative_unif
 
     ---- shader ----
     @diagnostic(info, derivative_uniformity) struct S { x : u32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:160:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -378,7 +378,7 @@ FAIL :invalid_locations:type="attribute";location="struct";rule="subgroup_unifor
 
     ---- shader ----
     @diagnostic(info, subgroup_uniformity) struct S { x : u32 }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:160:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -439,7 +439,7 @@ FAIL :conflicting_directive:s1="off";s2="info" assert_unreached:
     ---- shader ----
     diagnostic(off, derivative_uniformity);
     diagnostic(info, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -451,7 +451,7 @@ FAIL :conflicting_directive:s1="off";s2="warning" assert_unreached:
     ---- shader ----
     diagnostic(off, derivative_uniformity);
     diagnostic(warning, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -463,7 +463,7 @@ FAIL :conflicting_directive:s1="off";s2="error" assert_unreached:
     ---- shader ----
     diagnostic(off, derivative_uniformity);
     diagnostic(error, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -475,7 +475,7 @@ FAIL :conflicting_directive:s1="info";s2="off" assert_unreached:
     ---- shader ----
     diagnostic(info, derivative_uniformity);
     diagnostic(off, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -488,7 +488,7 @@ FAIL :conflicting_directive:s1="info";s2="warning" assert_unreached:
     ---- shader ----
     diagnostic(info, derivative_uniformity);
     diagnostic(warning, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -500,7 +500,7 @@ FAIL :conflicting_directive:s1="info";s2="error" assert_unreached:
     ---- shader ----
     diagnostic(info, derivative_uniformity);
     diagnostic(error, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -512,7 +512,7 @@ FAIL :conflicting_directive:s1="warning";s2="off" assert_unreached:
     ---- shader ----
     diagnostic(warning, derivative_uniformity);
     diagnostic(off, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -524,7 +524,7 @@ FAIL :conflicting_directive:s1="warning";s2="info" assert_unreached:
     ---- shader ----
     diagnostic(warning, derivative_uniformity);
     diagnostic(info, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -537,7 +537,7 @@ FAIL :conflicting_directive:s1="warning";s2="error" assert_unreached:
     ---- shader ----
     diagnostic(warning, derivative_uniformity);
     diagnostic(error, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -549,7 +549,7 @@ FAIL :conflicting_directive:s1="error";s2="off" assert_unreached:
     ---- shader ----
     diagnostic(error, derivative_uniformity);
     diagnostic(off, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -561,7 +561,7 @@ FAIL :conflicting_directive:s1="error";s2="info" assert_unreached:
     ---- shader ----
     diagnostic(error, derivative_uniformity);
     diagnostic(info, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -573,7 +573,7 @@ FAIL :conflicting_directive:s1="error";s2="warning" assert_unreached:
     ---- shader ----
     diagnostic(error, derivative_uniformity);
     diagnostic(warning, derivative_uniformity);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:171:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -695,7 +695,7 @@ FAIL :duplicate_attribute_same_location:loc="function";same_rule=false assert_un
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :duplicate_attribute_same_location:loc="compound";same_rule=true
 FAIL :duplicate_attribute_same_location:loc="compound";same_rule=false assert_unreached:
@@ -813,7 +813,7 @@ FAIL :duplicate_attribute_same_location:loc="compound";same_rule=false assert_un
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :duplicate_attribute_same_location:loc="if_stmt";same_rule=true
 FAIL :duplicate_attribute_same_location:loc="if_stmt";same_rule=false assert_unreached:
@@ -931,7 +931,7 @@ FAIL :duplicate_attribute_same_location:loc="if_stmt";same_rule=false assert_unr
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :duplicate_attribute_same_location:loc="if_then";same_rule=true assert_unreached:
   - (in subcase: s1="off";s2="off") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -939,7 +939,7 @@ FAIL :duplicate_attribute_same_location:loc="if_then";same_rule=true assert_unre
 
     ---- shader ----
     fn foo() { if true @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -949,7 +949,7 @@ FAIL :duplicate_attribute_same_location:loc="if_then";same_rule=true assert_unre
 
     ---- shader ----
     fn foo() { if true @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1088,7 +1088,7 @@ FAIL :duplicate_attribute_same_location:loc="if_else";same_rule=true assert_unre
 
     ---- shader ----
     fn foo() { if true { } else @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1098,7 +1098,7 @@ FAIL :duplicate_attribute_same_location:loc="if_else";same_rule=true assert_unre
 
     ---- shader ----
     fn foo() { if true { } else @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1347,7 +1347,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_stmt";same_rule=false assert
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :duplicate_attribute_same_location:loc="switch_body";same_rule=true assert_unreached:
   - (in subcase: s1="off";s2="off") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -1355,7 +1355,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_body";same_rule=true assert_
 
     ---- shader ----
     fn foo() { switch 0 @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { default { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1365,7 +1365,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_body";same_rule=true assert_
 
     ---- shader ----
     fn foo() { switch 0 @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { default { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1504,7 +1504,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_default";same_rule=true asse
 
     ---- shader ----
     fn foo() { switch 0 { default @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1514,7 +1514,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_default";same_rule=true asse
 
     ---- shader ----
     fn foo() { switch 0 { default @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1653,7 +1653,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_case";same_rule=true assert_
 
     ---- shader ----
     fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } default { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1663,7 +1663,7 @@ FAIL :duplicate_attribute_same_location:loc="switch_case";same_rule=true assert_
 
     ---- shader ----
     fn foo() { switch 0 { case 0 @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } default { } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1912,7 +1912,7 @@ FAIL :duplicate_attribute_same_location:loc="loop_stmt";same_rule=false assert_u
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :duplicate_attribute_same_location:loc="loop_body";same_rule=true assert_unreached:
   - (in subcase: s1="off";s2="off") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -1920,7 +1920,7 @@ FAIL :duplicate_attribute_same_location:loc="loop_body";same_rule=true assert_un
 
     ---- shader ----
     fn foo() { loop @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break; } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1930,7 +1930,7 @@ FAIL :duplicate_attribute_same_location:loc="loop_body";same_rule=true assert_un
 
     ---- shader ----
     fn foo() { loop @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break; } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2069,7 +2069,7 @@ FAIL :duplicate_attribute_same_location:loc="loop_continuing";same_rule=true ass
 
     ---- shader ----
     fn foo() { loop { continuing @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break if true; } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2079,7 +2079,7 @@ FAIL :duplicate_attribute_same_location:loc="loop_continuing";same_rule=true ass
 
     ---- shader ----
     fn foo() { loop { continuing @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break if true; } } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2328,7 +2328,7 @@ FAIL :duplicate_attribute_same_location:loc="while_stmt";same_rule=false assert_
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :duplicate_attribute_same_location:loc="while_body";same_rule=true assert_unreached:
   - (in subcase: s1="off";s2="off") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -2336,7 +2336,7 @@ FAIL :duplicate_attribute_same_location:loc="while_body";same_rule=true assert_u
 
     ---- shader ----
     fn foo() { while true @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { break; } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2346,7 +2346,7 @@ FAIL :duplicate_attribute_same_location:loc="while_body";same_rule=true assert_u
 
     ---- shader ----
     fn foo() { while true @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { break; } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2595,7 +2595,7 @@ FAIL :duplicate_attribute_same_location:loc="for_stmt";same_rule=false assert_un
   - (in subcase: s1="error";s2="error") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :duplicate_attribute_same_location:loc="for_body";same_rule=true assert_unreached:
   - (in subcase: s1="off";s2="off") VALIDATION FAILED: Missing expected compilationInfo 'error' message.
@@ -2603,7 +2603,7 @@ FAIL :duplicate_attribute_same_location:loc="for_body";same_rule=true assert_unr
 
     ---- shader ----
     fn foo() { for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) @diagnostic(off, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="off") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2613,7 +2613,7 @@ FAIL :duplicate_attribute_same_location:loc="for_body";same_rule=true assert_unr
 
     ---- shader ----
     fn foo() { for (var i = 0; i < 10; i++) @diagnostic(off, derivative_uniformity) @diagnostic(info, derivative_uniformity) { } }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:194:24
   - (in subcase: s1="off";s2="info") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2755,7 +2755,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="info"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:51: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2766,7 +2766,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="warni
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:51: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2777,7 +2777,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="off";s2="error
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:51: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2788,7 +2788,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="off"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:52: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2799,7 +2799,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="warn
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:52: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2810,7 +2810,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="info";s2="erro
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:52: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2821,7 +2821,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="o
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:55: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2832,7 +2832,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="i
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:55: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2843,7 +2843,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="warning";s2="e
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:55: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2854,7 +2854,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="off
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:53: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2865,7 +2865,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="inf
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:53: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2876,7 +2876,7 @@ FAIL :conflicting_attribute_different_location:loc="compound";s1="error";s2="war
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:53: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2887,7 +2887,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="info" 
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2898,7 +2898,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="warnin
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2909,7 +2909,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="off";s2="error"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2920,7 +2920,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="off" 
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2931,7 +2931,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="warni
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2942,7 +2942,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="info";s2="error
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2953,7 +2953,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="of
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2964,7 +2964,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="in
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2975,7 +2975,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="warning";s2="er
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2986,7 +2986,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="off"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -2997,7 +2997,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="info
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3008,7 +3008,7 @@ FAIL :conflicting_attribute_different_location:loc="if_stmt";s1="error";s2="warn
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3019,7 +3019,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="in
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3030,7 +3030,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="wa
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3041,7 +3041,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="off";s2="er
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3052,7 +3052,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="o
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3063,7 +3063,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="w
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3074,7 +3074,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="info";s2="e
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3085,7 +3085,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3096,7 +3096,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3107,7 +3107,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="warning";s2
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3118,7 +3118,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3129,7 +3129,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3140,7 +3140,7 @@ FAIL :conflicting_attribute_different_location:loc="switch_stmt";s1="error";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :conflicting_attribute_different_location:loc="switch_body";s1="off";s2="info"
 PASS :conflicting_attribute_different_location:loc="switch_body";s1="off";s2="warning"
@@ -3175,7 +3175,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="info
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3186,7 +3186,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="warn
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3197,7 +3197,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="off";s2="erro
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3208,7 +3208,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="off
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3219,7 +3219,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="war
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3230,7 +3230,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="info";s2="err
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3241,7 +3241,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3252,7 +3252,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3263,7 +3263,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="warning";s2="
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3274,7 +3274,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="of
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3285,7 +3285,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="in
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3296,7 +3296,7 @@ FAIL :conflicting_attribute_different_location:loc="loop_stmt";s1="error";s2="wa
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3307,7 +3307,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="inf
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3318,7 +3318,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="war
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3329,7 +3329,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="off";s2="err
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3340,7 +3340,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="of
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3351,7 +3351,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="wa
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3362,7 +3362,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="info";s2="er
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3373,7 +3373,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2=
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3384,7 +3384,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2=
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3395,7 +3395,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="warning";s2=
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3406,7 +3406,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="o
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3417,7 +3417,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="i
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3428,7 +3428,7 @@ FAIL :conflicting_attribute_different_location:loc="while_stmt";s1="error";s2="w
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3439,7 +3439,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="info"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3450,7 +3450,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="warni
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3461,7 +3461,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="off";s2="error
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3472,7 +3472,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="off"
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3483,7 +3483,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="warn
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3494,7 +3494,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="info";s2="erro
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3505,7 +3505,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="o
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3516,7 +3516,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="i
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="error" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3527,7 +3527,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="warning";s2="e
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3538,7 +3538,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="off
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="info" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3549,7 +3549,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="inf
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="warning" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3560,7 +3560,7 @@ FAIL :conflicting_attribute_different_location:loc="for_stmt";s1="error";s2="war
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     1:11: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :after_other_directives:directive="enable%20f16"
 PASS :after_other_directives:directive="requires%20readonly_and_readwrite_storage_textures"
@@ -3589,7 +3589,7 @@ FAIL :diagnostic_scoping:case="override_global_off" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     11:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :diagnostic_scoping:case="override_global_on"
 FAIL :diagnostic_scoping:case="override_global_warn" assert_unreached:
@@ -3598,12 +3598,12 @@ FAIL :diagnostic_scoping:case="override_global_warn" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     11:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_scoping:case="global_if_nothing_else_warn" assert_unreached:
   - VALIDATION FAILED: Missing expected 'warning' message.
 
-    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:124:28
+    expectCompileWarning@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:125:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/diagnostic.spec.js:465:27
  Reached unreachable code
 FAIL :diagnostic_scoping:case="deepest_nesting_warn" assert_unreached:
@@ -3612,7 +3612,7 @@ FAIL :diagnostic_scoping:case="deepest_nesting_warn" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     9:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_scoping:case="deepest_nesting_off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3639,7 +3639,7 @@ FAIL :diagnostic_scoping:case="deepest_nesting_off" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     9:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :diagnostic_scoping:case="deepest_nesting_error"
 FAIL :diagnostic_scoping:case="other_nest_unaffected" assert_unreached:
@@ -3648,7 +3648,7 @@ FAIL :diagnostic_scoping:case="other_nest_unaffected" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     11:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :diagnostic_scoping:case="deeper_nest_no_effect"
 PASS :diagnostic_scoping:case="call_unaffected_error"
@@ -3658,7 +3658,7 @@ FAIL :diagnostic_scoping:case="call_unaffected_warn" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     12:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_scoping:case="call_unaffected_off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3686,7 +3686,7 @@ FAIL :diagnostic_scoping:case="call_unaffected_off" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     12:6: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :diagnostic_scoping:case="if_condition_error"
 FAIL :diagnostic_scoping:case="if_condition_warn" assert_unreached:
@@ -3695,7 +3695,7 @@ FAIL :diagnostic_scoping:case="if_condition_warn" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     10:8: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_scoping:case="if_condition_off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3721,7 +3721,7 @@ FAIL :diagnostic_scoping:case="if_condition_off" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     10:8: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :diagnostic_scoping:case="switch_error"
 FAIL :diagnostic_scoping:case="switch_warn" assert_unreached:
@@ -3730,7 +3730,7 @@ FAIL :diagnostic_scoping:case="switch_warn" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     9:8: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_scoping:case="switch_off" assert_unreached:
   - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -3758,6 +3758,6 @@ FAIL :diagnostic_scoping:case="switch_off" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     9:8: Not a valid statement
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 

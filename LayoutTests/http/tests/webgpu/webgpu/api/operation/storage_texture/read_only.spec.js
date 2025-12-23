@@ -110,8 +110,7 @@ class F extends AllFeaturesMaxLimitsGPUTest {
           outputBufferTypedData[4 * texelDataIndex] = 0;
           outputBufferTypedData[4 * texelDataIndex + 1] = 0;
           outputBufferTypedData[4 * texelDataIndex + 2] = 0;
-          outputBufferTypedData[4 * texelDataIndex + 3] = 0;
-
+          outputBufferTypedData[4 * texelDataIndex + 3] = 1;
           // Packed formats like rgb10a2unorm, rg11b10ufloat, and rgb10a2uint store multiple color components within a single 32-bit integer.
           // This means their TypedArray uses a single element per texel, so they are handled separately from other formats
           if (format === 'rgb10a2unorm') {
@@ -141,10 +140,17 @@ class F extends AllFeaturesMaxLimitsGPUTest {
             outputBufferTypedData[texelDataIndex * 4 + 2] = 0;
           } else if (format === 'rgb10a2uint') {
             const texelValue = 4 * texelDataIndex + 1;
+            const r = texelValue % 1024;
+            const g = texelValue * 2 % 1024;
+            const b = texelValue * 3 % 1024;
+            const a = 3;
+            const packedValue = a << 30 | b << 20 | g << 10 | r;
             const texelComponentIndex = texelDataIndex;
-            texelTypedDataView[texelComponentIndex] = texelValue;
-            const outputTexelComponentIndex = texelDataIndex * 4;
-            outputBufferTypedData[outputTexelComponentIndex] = texelValue;
+            texelTypedDataView[texelComponentIndex] = packedValue;
+            outputBufferTypedData[texelDataIndex * 4] = r;
+            outputBufferTypedData[texelDataIndex * 4 + 1] = g;
+            outputBufferTypedData[texelDataIndex * 4 + 2] = b;
+            outputBufferTypedData[texelDataIndex * 4 + 3] = a;
           } else {
             for (let component = 0; component < componentCount; ++component) {
               switch (format) {

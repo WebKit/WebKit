@@ -6,7 +6,7 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
     ---- shader ----
 
     const v  = pow((-9223372036854775807 - 1), (-9223372036854775807 - 1));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-9223372036854775808n") EXPECTATION FAILED: Expected validation error
@@ -18,7 +18,7 @@ FAIL :values:stage="constant";type="abstract-int" assert_unreached:
     ---- shader ----
 
     const v  = pow((-9223372036854775807 - 1), -4611686018427387905);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-4611686018427387905n") EXPECTATION FAILED: Expected validation error
@@ -136,7 +136,7 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
     ---- shader ----
 
     const v  = pow(-1.7976931348623157e+308, -1.7976931348623157e+308);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-1.7976931348623157e+308) EXPECTATION FAILED: Expected validation error
@@ -148,7 +148,7 @@ FAIL :values:stage="constant";type="abstract-float" assert_unreached:
     ---- shader ----
 
     const v  = pow(-1.7976931348623157e+308, -8.958978968711217e+102);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-8.958978968711217e+102) EXPECTATION FAILED: Expected validation error
@@ -502,7 +502,7 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
     ---- shader ----
 
     const v  = pow(-3.4028234663852886e+38f, -3.4028234663852886e+38f);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
@@ -514,7 +514,7 @@ FAIL :values:stage="constant";type="f32" assert_unreached:
     ---- shader ----
 
     const v  = pow(-3.4028234663852886e+38f, -11728123330560.0f);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
@@ -895,7 +895,7 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(-65504.0h, -65504.0h);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
@@ -911,7 +911,7 @@ FAIL :values:stage="constant";type="f16" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(-65504.0h, 0.0h);
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b="_negzero_") EXPECTATION FAILED: Expected validation error
@@ -1216,7 +1216,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-9223372036854775808n") EXPECTATION FAILED: Expected validation error
@@ -1228,7 +1228,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2((-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec2(-4611686018427387905, -4611686018427387905));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-4611686018427387905n") EXPECTATION FAILED: Expected validation error
@@ -1346,7 +1346,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-9223372036854775808n") EXPECTATION FAILED: Expected validation error
@@ -1358,7 +1358,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec3(-4611686018427387905, -4611686018427387905, -4611686018427387905));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-4611686018427387905n") EXPECTATION FAILED: Expected validation error
@@ -1476,7 +1476,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-9223372036854775808n") EXPECTATION FAILED: Expected validation error
@@ -1488,7 +1488,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-int%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4((-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1), (-9223372036854775807 - 1)), vec4(-4611686018427387905, -4611686018427387905, -4611686018427387905, -4611686018427387905));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a="-9223372036854775808n";b="-4611686018427387905n") EXPECTATION FAILED: Expected validation error
@@ -1606,7 +1606,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2(-1.7976931348623157e+308, -1.7976931348623157e+308), vec2(-1.7976931348623157e+308, -1.7976931348623157e+308));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-1.7976931348623157e+308) EXPECTATION FAILED: Expected validation error
@@ -1618,7 +1618,7 @@ FAIL :values:stage="constant";type="vec2%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2(-1.7976931348623157e+308, -1.7976931348623157e+308), vec2(-8.958978968711217e+102, -8.958978968711217e+102));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-8.958978968711217e+102) EXPECTATION FAILED: Expected validation error
@@ -1972,7 +1972,7 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2(-3.4028234663852886e+38f, -3.4028234663852886e+38f), vec2(-3.4028234663852886e+38f, -3.4028234663852886e+38f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
@@ -1984,7 +1984,7 @@ FAIL :values:stage="constant";type="vec2%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec2(-3.4028234663852886e+38f, -3.4028234663852886e+38f), vec2(-11728123330560.0f, -11728123330560.0f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
@@ -2365,7 +2365,7 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec2(-65504.0h, -65504.0h), vec2(-65504.0h, -65504.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
@@ -2381,7 +2381,7 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec2(-65504.0h, -65504.0h), vec2(0.0h, 0.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b="_negzero_") EXPECTATION FAILED: Expected validation error
@@ -2686,7 +2686,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308), vec3(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-1.7976931348623157e+308) EXPECTATION FAILED: Expected validation error
@@ -2698,7 +2698,7 @@ FAIL :values:stage="constant";type="vec3%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308), vec3(-8.958978968711217e+102, -8.958978968711217e+102, -8.958978968711217e+102));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-8.958978968711217e+102) EXPECTATION FAILED: Expected validation error
@@ -3052,7 +3052,7 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f), vec3(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
@@ -3064,7 +3064,7 @@ FAIL :values:stage="constant";type="vec3%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec3(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f), vec3(-11728123330560.0f, -11728123330560.0f, -11728123330560.0f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
@@ -3445,7 +3445,7 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
@@ -3461,7 +3461,7 @@ FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(0.0h, 0.0h, 0.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b="_negzero_") EXPECTATION FAILED: Expected validation error
@@ -3766,7 +3766,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308), vec4(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-1.7976931348623157e+308) EXPECTATION FAILED: Expected validation error
@@ -3778,7 +3778,7 @@ FAIL :values:stage="constant";type="vec4%3Cabstract-float%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4(-1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308, -1.7976931348623157e+308), vec4(-8.958978968711217e+102, -8.958978968711217e+102, -8.958978968711217e+102, -8.958978968711217e+102));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-1.7976931348623157e+308;b=-8.958978968711217e+102) EXPECTATION FAILED: Expected validation error
@@ -4132,7 +4132,7 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f), vec4(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
@@ -4144,7 +4144,7 @@ FAIL :values:stage="constant";type="vec4%3Cf32%3E" assert_unreached:
     ---- shader ----
 
     const v  = pow(vec4(-3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f, -3.4028234663852886e+38f), vec4(-11728123330560.0f, -11728123330560.0f, -11728123330560.0f, -11728123330560.0f));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
@@ -4525,7 +4525,7 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
@@ -4541,7 +4541,7 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
     ---- shader ----
     enable f16;
     const v  = pow(vec4(-65504.0h, -65504.0h, -65504.0h, -65504.0h), vec4(0.0h, 0.0h, 0.0h, 0.0h));
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:171:30
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b="_negzero_") EXPECTATION FAILED: Expected validation error
@@ -4842,15 +4842,15 @@ FAIL :values:stage="constant";type="vec4%3Cf16%3E" assert_unreached:
 FAIL :values:stage="override";type="f32" assert_unreached:
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) INFO: subcase ran
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) INFO: subcase ran
@@ -5170,15 +5170,15 @@ FAIL :values:stage="override";type="f32" assert_unreached:
 FAIL :values:stage="override";type="f16" assert_unreached:
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran
@@ -5492,15 +5492,15 @@ FAIL :values:stage="override";type="f16" assert_unreached:
 FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) INFO: subcase ran
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) INFO: subcase ran
@@ -5820,15 +5820,15 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
 FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran
@@ -6142,15 +6142,15 @@ FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
 FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) INFO: subcase ran
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) INFO: subcase ran
@@ -6470,15 +6470,15 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
 FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran
@@ -6792,15 +6792,15 @@ FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
 FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-3.4028234663852886e+38) INFO: subcase ran
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-3.4028234663852886e+38;b=-11728123330560) INFO: subcase ran
@@ -7120,15 +7120,15 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
 FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-65504) INFO: subcase ran
   - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/pow.spec.js:80:37
   - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran

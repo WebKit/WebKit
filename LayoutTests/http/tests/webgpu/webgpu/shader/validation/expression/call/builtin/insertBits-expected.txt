@@ -112,7 +112,7 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       var newbits : u32;
       let tmp = insertBits(e, newbits, 2u, 31u);
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:169:24
   - (in subcase: offset=2;count=31;in_shader=false) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -131,7 +131,7 @@ FAIL :count_offset:offsetStage="constant";countStage="constant" assert_unreached
       var newbits : u32;
       let tmp = insertBits(e, newbits, 2u, 31u);
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:169:24
   - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -339,15 +339,15 @@ FAIL :count_offset:offsetStage="constant";countStage="override" assert_unreached
   - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
   - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
   - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
@@ -390,15 +390,15 @@ FAIL :count_offset:offsetStage="override";countStage="constant" assert_unreached
   - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
   - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
   - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran
@@ -440,15 +440,15 @@ FAIL :count_offset:offsetStage="override";countStage="override" assert_unreached
   - (in subcase: offset=2;count=31;in_shader=false) INFO: subcase ran
   - (in subcase: offset=2;count=31;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=2;count=31;in_shader=true) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=false) INFO: subcase ran
   - (in subcase: offset=31;count=2;in_shader=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/insertBits.spec.js:174:27
   - (in subcase: offset=31;count=2;in_shader=true) INFO: subcase ran
   - (in subcase: offset=33;count=0;in_shader=false) INFO: subcase ran

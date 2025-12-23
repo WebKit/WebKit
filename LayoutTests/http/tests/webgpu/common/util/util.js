@@ -303,6 +303,16 @@ export function reorder(order, arr) {
   }
 }
 
+/**
+ * A typed version of Object.entries
+ */
+
+export function typedEntries(obj) {
+  // The cast is done once, inside the helper function,
+  // keeping the call site clean and type-safe.
+  return Object.entries(obj);
+}
+
 const TypedArrayBufferViewInstances = [
 new Uint8Array(),
 new Uint8ClampedArray(),

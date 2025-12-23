@@ -8,7 +8,8 @@ UniqueFeaturesOrLimitsGPUTest } from
 const kEnables = {
   f16: 'shader-f16',
   subgroups: 'subgroups',
-  clip_distances: 'clip-distances'
+  clip_distances: 'clip-distances',
+  chromium_experimental_primitive_id: 'chromium-experimental-primitive-id'
 };
 
 /**

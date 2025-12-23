@@ -206,7 +206,10 @@ PASS :render_pipeline,color_target:isAsync=true;format="rg11b10ufloat";enable_fe
 PASS :render_pipeline,color_target:isAsync=true;format="rg11b10ufloat";enable_feature=false;check="RENDER_ATTACHMENT"
 PASS :render_pipeline,color_target:isAsync=true;format="rg11b10ufloat";enable_feature=false;check="blendable"
 PASS :render_pipeline,color_target:isAsync=true;format="rg11b10ufloat";enable_feature=false;check="multisample"
-PASS :render_pass,resolvable:
+PASS :render_pass,resolvable:format="r8snorm";enable_feature=true
+PASS :render_pass,resolvable:format="rg8snorm";enable_feature=true
+PASS :render_pass,resolvable:format="rgba8snorm";enable_feature=true
+PASS :render_pass,resolvable:format="rg11b10ufloat";enable_feature=true
 PASS :bind_group_layout,storage_texture:format="r8unorm";access="read-only";enable_feature=true
 PASS :bind_group_layout,storage_texture:format="r8unorm";access="read-only";enable_feature=false
 PASS :bind_group_layout,storage_texture:format="r8unorm";access="write-only";enable_feature=true

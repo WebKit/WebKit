@@ -31,12 +31,12 @@ FAIL :render_pass_commands:command="pushDebugGroup" assert_unreached:
   - (in subcase: finishBeforeCommand="no") INFO: subcase ran
   - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
   - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
  Reached unreachable code
@@ -44,12 +44,12 @@ FAIL :render_pass_commands:command="popDebugGroup" assert_unreached:
   - (in subcase: finishBeforeCommand="no") INFO: subcase ran
   - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
   - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
  Reached unreachable code
@@ -57,12 +57,12 @@ FAIL :render_pass_commands:command="insertDebugMarker" assert_unreached:
   - (in subcase: finishBeforeCommand="no") INFO: subcase ran
   - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
   - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:317:26
   - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
  Reached unreachable code

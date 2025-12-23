@@ -37,7 +37,8 @@ export const kBuiltins = [
 { name: 'clip_distances', stage: 'vertex', io: 'out', type: 'array<f32,5>' },
 { name: 'clip_distances', stage: 'vertex', io: 'out', type: 'array<f32,6>' },
 { name: 'clip_distances', stage: 'vertex', io: 'out', type: 'array<f32,7>' },
-{ name: 'clip_distances', stage: 'vertex', io: 'out', type: 'array<f32,8>' }];
+{ name: 'clip_distances', stage: 'vertex', io: 'out', type: 'array<f32,8>' },
+{ name: 'primitive_id', stage: 'fragment', io: 'in', type: 'u32' }];
 
 
 // List of types to test against.
@@ -338,6 +339,8 @@ fn((t) => {
       code += 'enable subgroup;\n';
     } else if (t.params.name === 'clip_distances') {
       code += 'enable clip_distances;\n';
+    } else if (t.params.name === 'primitive_id') {
+      code += 'enable chromium_experimental_primitive_id;\n';
     }
   }
   if (t.params.use === 'alias') {

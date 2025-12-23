@@ -62,11 +62,18 @@
 
 
 
+
+
+
+
+
+
 /** Test configuration options. Globally modifiable global state. */
 export const globalTestConfig = {
   enableDebugLogs: false,
   maxSubcasesInFlight: 100,
   subcasesBetweenAttemptingGC: 5000,
+  casesBetweenReplacingDevice: Infinity,
   testHeartbeatCallback: () => {},
   noRaceWithRejectOnTimeout: false,
   unrollConstEvalLoops: false,

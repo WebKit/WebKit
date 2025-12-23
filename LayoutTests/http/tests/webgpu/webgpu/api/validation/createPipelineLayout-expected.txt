@@ -38,6 +38,6 @@ FAIL :bind_group_layouts,set_pipeline_with_null_bind_group_layouts: assert_unrea
   - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
   - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 

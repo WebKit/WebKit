@@ -18,13 +18,13 @@ FAIL :bind_groups_and_pipeline_layout_mismatch:encoderType="render%20bundle";cal
   - (in subcase: setBindGroup0=true;setBindGroup1=true;setUnusedBindGroup2=false;useU32Array=true) INFO: subcase ran
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:510:12
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=false) INFO: subcase ran
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:510:12
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=true) INFO: subcase ran
@@ -49,13 +49,13 @@ FAIL :bind_groups_and_pipeline_layout_mismatch:encoderType="render%20bundle";cal
   - (in subcase: setBindGroup0=true;setBindGroup1=true;setUnusedBindGroup2=false;useU32Array=true) INFO: subcase ran
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:510:12
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=false) INFO: subcase ran
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:510:12
   - (in subcase: setBindGroup0=true;setBindGroup1=false;setUnusedBindGroup2=true;useU32Array=true) INFO: subcase ran
@@ -106,13 +106,13 @@ FAIL :bgl_binding_mismatch:encoderType="render%20bundle";call="draw";callWithZer
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,2];useU32Array=true) INFO: subcase ran
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:696:12
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=false) INFO: subcase ran
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:696:12
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=true) INFO: subcase ran
@@ -139,13 +139,13 @@ FAIL :bgl_binding_mismatch:encoderType="render%20bundle";call="drawIndexed";call
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,2];useU32Array=true) INFO: subcase ran
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:696:12
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=false) INFO: subcase ran
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:696:12
   - (in subcase: bgBindings=[0,1,2];plBindings=[0,1,3];useU32Array=true) INFO: subcase ran
@@ -186,13 +186,13 @@ PASS :bgl_visibility_mismatch:encoderType="render%20pass";call="drawIndexedIndir
 FAIL :bgl_visibility_mismatch:encoderType="render%20bundle";call="draw";callWithZero=true assert_unreached:
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:748:12
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=false) INFO: subcase ran
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:748:12
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=true) INFO: subcase ran
@@ -327,13 +327,13 @@ PASS :bgl_visibility_mismatch:encoderType="render%20bundle";call="draw";callWith
 FAIL :bgl_visibility_mismatch:encoderType="render%20bundle";call="drawIndexed";callWithZero=true assert_unreached:
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:748:12
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=false) INFO: subcase ran
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:748:12
   - (in subcase: bgVisibility=0;plVisibility=1;useU32Array=true) INFO: subcase ran
@@ -486,13 +486,13 @@ FAIL :bgl_resource_type_mismatch:encoderType="render%20bundle";call="draw";callW
   - (in subcase: bgResourceType="uniformBuf";plResourceType="uniformBuf";useU32Array=false) INFO: subcase ran
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:822:12
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=true) INFO: subcase ran
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:822:12
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=false) INFO: subcase ran
@@ -607,13 +607,13 @@ FAIL :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndexed
   - (in subcase: bgResourceType="uniformBuf";plResourceType="uniformBuf";useU32Array=false) INFO: subcase ran
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=true) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:822:12
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=true) INFO: subcase ran
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=false) EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
     runTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:296:19
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js:822:12
   - (in subcase: bgResourceType="uniformBuf";plResourceType="filtSamp";useU32Array=false) INFO: subcase ran
@@ -729,49 +729,49 @@ PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndexed
 PASS :bgl_resource_type_mismatch:encoderType="render%20bundle";call="drawIndexedIndirect";callWithZero=false
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;computeCommand="dispatch"
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;computeCommand="dispatch"
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;computeCommand="dispatchIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;computeCommand="dispatch" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;computeCommand="dispatchIndirect"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,compute_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;computeCommand="dispatch"
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="draw"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed"
@@ -779,19 +779,19 @@ PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:empt
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Null";bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect"
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="draw"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed"
@@ -799,19 +799,19 @@ PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:empt
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Undefined";bindGroupLayoutEntryCount=4;renderCommand="drawIndexedIndirect"
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="draw" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndexed" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=3;renderCommand="drawIndexedIndirect" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="draw"
 PASS :empty_bind_group_layouts_never_requires_empty_bind_groups,render_pass:emptyBindGroupLayoutType="Empty";bindGroupLayoutEntryCount=4;renderCommand="drawIndexed"

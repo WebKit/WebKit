@@ -1,0 +1,32 @@
+
+FAIL :logical:case="logical_lhs_override" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 00000000 00000000 00000000
+       failed ->           xx       xx       xx       xx
+     expected ==     00000004 00000004 00000004 00000004
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
+ Reached unreachable code
+FAIL :logical:case="logical_rhs_override" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 00000000 00000000 00000000
+       failed ->           xx       xx       xx       xx
+     expected ==     00000004 00000004 00000004 00000004
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
+ Reached unreachable code
+FAIL :logical:case="logical_both_override" assert_unreached:
+  - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 3.
+     Starting at index 0:
+       actual == 0x: 00000000 00000000 00000000 00000000
+       failed ->           xx       xx       xx       xx
+     expected ==     00000004 00000004 00000004 00000004
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
+ Reached unreachable code
+

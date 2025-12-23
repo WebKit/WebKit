@@ -4,7 +4,7 @@ PASS :basic:isAsync=true
 FAIL :no_attachment:isAsync=false assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:417:30
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:38:33
  Reached unreachable code
@@ -24,7 +24,7 @@ FAIL :vertex_state_only:isAsync=false assert_unreached:
   - (in subcase: depthStencilFormat="depth32float";hasColor=true) INFO: subcase ran
   - (in subcase: depthStencilFormat="";hasColor=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:417:30
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:84:33
   - (in subcase: depthStencilFormat="";hasColor=true) INFO: subcase ran

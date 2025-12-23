@@ -10,7 +10,7 @@ FAIL :line_comment_terminators:blankspace=["%5Cu000b","vertical_tab"] assert_unr
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -22,7 +22,7 @@ FAIL :line_comment_terminators:blankspace=["%5Cf","form_feed"] assert_unreached:
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -34,7 +34,7 @@ FAIL :line_comment_terminators:blankspace=["%5Cr","carriage_return"] assert_unre
 
     ---- shader ----
     // Line comment\rconst invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -47,7 +47,7 @@ FAIL :line_comment_terminators:blankspace=["%C2%85","next_line"] assert_unreache
 
     ---- shader ----
     // Line commentconst invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -59,7 +59,7 @@ FAIL :line_comment_terminators:blankspace=["%E2%80%A8","line_separator"] assert_
 
     ---- shader ----
     // Line comment const invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -71,7 +71,7 @@ FAIL :line_comment_terminators:blankspace=["%E2%80%A9","paragraph_separator"] as
 
     ---- shader ----
     // Line comment const invalid_outside_comment = should_fail
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/parse/comments.spec.js:61:24
   - (in subcase: ) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

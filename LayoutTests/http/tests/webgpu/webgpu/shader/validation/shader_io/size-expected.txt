@@ -36,7 +36,7 @@ FAIL :size_non_struct:attr="struct" assert_unreached:
     @workgroup_size(1)
     @compute fn main() {
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/size.spec.js:216:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

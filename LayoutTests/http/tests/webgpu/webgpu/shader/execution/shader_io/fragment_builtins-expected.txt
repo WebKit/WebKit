@@ -233,4 +233,8 @@ PASS :subgroup_invocation_id:size=[35,2]
 PASS :subgroup_invocation_id:size=[2,35]
 PASS :subgroup_invocation_id:size=[53,13]
 PASS :subgroup_invocation_id:size=[13,53]
+PASS :primitive_index,basic:
+PASS :primitive_index,primitive_reset:
+PASS :primitive_index,discarded_primitves:
+PASS :primitive_index,topologies:
 

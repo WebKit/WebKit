@@ -7,7 +7,8 @@ import { skipTestCase } from '../../../common/util/util.js';
 import { kCanvasAlphaModes } from '../../capability_info.js';
 import {
   getBaseFormatForRegularTextureFormat,
-  kValidTextureFormatsForCopyE2T } from
+  isTextureFormatPossiblyUsableWithCopyExternalImageToTexture,
+  kRegularTextureFormats } from
 
 '../../format_info.js';
 import { TextureUploadingUtils } from '../../util/copy_to_texture.js';
@@ -486,7 +487,8 @@ desc(
 params((u) =>
 u.
 combine('canvasType', kAllCanvasTypes).
-combine('dstColorFormat', kValidTextureFormatsForCopyE2T).
+combine('dstColorFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstColorFormat)).
 combine('dstAlphaMode', kCanvasAlphaModes).
 combine('srcDoFlipYDuringCopy', [true, false]).
 beginSubcases().
@@ -494,8 +496,9 @@ combine('width', [1, 2, 4, 15]).
 combine('height', [1, 2, 4, 15])
 ).
 fn((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
-  const { width, height, canvasType, dstAlphaMode } = t.params;
+  const { width, height, canvasType, dstAlphaMode, dstColorFormat } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstColorFormat);
 
   const { canvas, expectedSourceData } = t.init2DCanvasContent({
     canvasType,
@@ -547,7 +550,8 @@ params((u) =>
 u.
 combine('canvasType', kAllCanvasTypes).
 combine('contextName', ['webgl', 'webgl2']).
-combine('dstColorFormat', kValidTextureFormatsForCopyE2T).
+combine('dstColorFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstColorFormat)).
 combine('srcPremultiplied', [true, false]).
 combine('dstAlphaMode', kCanvasAlphaModes).
 combine('srcDoFlipYDuringCopy', [true, false]).
@@ -556,8 +560,17 @@ combine('width', [1, 2, 4, 15]).
 combine('height', [1, 2, 4, 15])
 ).
 fn((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
-  const { width, height, canvasType, contextName, srcPremultiplied, dstAlphaMode } = t.params;
+  const {
+    width,
+    height,
+    canvasType,
+    contextName,
+    srcPremultiplied,
+    dstAlphaMode,
+    dstColorFormat
+  } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstColorFormat);
 
   const { canvas, expectedSourceData } = t.initGLCanvasContent({
     canvasType,
@@ -613,7 +626,8 @@ params((u) =>
 u.
 combine('canvasType', kAllCanvasTypes).
 combine('srcAndDstInSameGPUDevice', [true, false]).
-combine('dstColorFormat', kValidTextureFormatsForCopyE2T)
+combine('dstColorFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstColorFormat))
 // .combine('srcAlphaMode', kCanvasAlphaModes)
 .combine('srcAlphaMode', ['premultiplied']).
 combine('dstAlphaMode', kCanvasAlphaModes).
@@ -626,9 +640,17 @@ beforeAllSubcases((t) => {
   t.usesMismatchedDevice();
 }).
 fn((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
-  const { width, height, canvasType, srcAndDstInSameGPUDevice, srcAlphaMode, dstAlphaMode } =
-  t.params;
+  const {
+    width,
+    height,
+    canvasType,
+    srcAndDstInSameGPUDevice,
+    srcAlphaMode,
+    dstAlphaMode,
+    dstColorFormat
+  } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstColorFormat);
 
   const device = srcAndDstInSameGPUDevice ? t.device : t.mismatchedDevice;
   const { canvas: source, expectedSourceData } = t.initSourceWebGPUCanvas({
@@ -681,7 +703,8 @@ desc(
 params((u) =>
 u.
 combine('canvasType', kAllCanvasTypes).
-combine('dstColorFormat', kValidTextureFormatsForCopyE2T).
+combine('dstColorFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstColorFormat)).
 combine('dstAlphaMode', kCanvasAlphaModes).
 combine('srcDoFlipYDuringCopy', [true, false]).
 beginSubcases().
@@ -689,8 +712,9 @@ combine('width', [1, 2, 4, 15]).
 combine('height', [1, 2, 4, 15])
 ).
 fn(async (t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
-  const { width, height, canvasType, dstAlphaMode } = t.params;
+  const { width, height, canvasType, dstAlphaMode, dstColorFormat } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstColorFormat);
 
   const canvas = createCanvas(t, canvasType, width, height);
 
@@ -755,7 +779,8 @@ params((u) =>
 u.
 combine('srcColorSpace', ['srgb', 'display-p3']).
 combine('dstColorSpace', ['srgb', 'display-p3']).
-combine('dstColorFormat', kValidTextureFormatsForCopyE2T).
+combine('dstColorFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstColorFormat)).
 combine('dstPremultiplied', [true, false]).
 combine('srcDoFlipYDuringCopy', [true, false]).
 beginSubcases().
@@ -763,7 +788,6 @@ combine('width', [1, 2, 4, 15, 255, 256]).
 combine('height', [1, 2, 4, 15, 255, 256])
 ).
 fn((t) => {
-  t.skipIfTextureFormatNotSupported(t.params.dstColorFormat);
   const {
     width,
     height,
@@ -773,6 +797,8 @@ fn((t) => {
     dstPremultiplied,
     srcDoFlipYDuringCopy
   } = t.params;
+  t.skipIfTextureFormatNotSupported(dstColorFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstColorFormat);
   const { canvas, expectedSourceData } = t.init2DCanvasContentWithColorSpace({
     width,
     height,

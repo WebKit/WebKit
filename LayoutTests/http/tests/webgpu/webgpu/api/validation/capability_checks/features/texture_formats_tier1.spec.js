@@ -16,7 +16,8 @@ when the feature is not enabled. This includes:
 import {
   kTextureFormatTier1AllowsRenderAttachmentBlendableMultisample,
   kTextureFormatTier1ThrowsWhenNotEnabled,
-  kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly } from
+  kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly,
+  kTextureFormatTier1AllowsResolve } from
 '../../../../format_info.js';
 import { UniqueFeaturesOrLimitsGPUTest } from '../../../../gpu_test.js';
 import * as vtu from '../../validation_test_utils.js';
@@ -217,13 +218,55 @@ g.test('render_pass,resolvable').
 desc(
   `
   Test creating a render pass with resolve with a color target format enabled by
-  'texture-formats-tier1' fails if the feature is not enabled.
+  'texture-formats-tier1' success if the feature is enabled.
 
-  It's not clear this can be tested because you won't be able to create a render pipeline
-  that passes validation which you need before you can create a render pass that resolves.
+  Note: It's not possible to test the failure case (feature disabled).
+  Because you won't be able to create a render pipeline that passes validation which
+  you need before you can create a render pass that resolves.
   `
 ).
-unimplemented();
+params((u) =>
+u.combine('format', kTextureFormatTier1AllowsResolve).combine('enable_feature', [true])
+).
+beforeAllSubcases((t) => {
+  const { enable_feature } = t.params;
+  if (enable_feature) {
+    t.selectDeviceOrSkipTestCase('texture-formats-tier1');
+  }
+}).
+fn((t) => {
+  const { format } = t.params;
+
+  const size = [1, 1, 1];
+  const sampleCount = 4;
+
+  const msaaTexture = t.createTextureTracked({
+    format,
+    size,
+    sampleCount,
+    usage: GPUTextureUsage.RENDER_ATTACHMENT
+  });
+
+  const resolveTexture = t.createTextureTracked({
+    format,
+    size,
+    usage: GPUTextureUsage.RENDER_ATTACHMENT
+  });
+
+  const descriptor = {
+    colorAttachments: [
+    {
+      view: msaaTexture.createView(),
+      resolveTarget: resolveTexture.createView(),
+      loadOp: 'clear',
+      storeOp: 'store'
+    }]
+
+  };
+
+  const encoder = t.device.createCommandEncoder();
+  encoder.beginRenderPass(descriptor);
+});
 
 g.test('bind_group_layout,storage_texture').
 desc(

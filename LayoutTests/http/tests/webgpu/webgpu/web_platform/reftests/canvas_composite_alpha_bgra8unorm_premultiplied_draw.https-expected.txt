@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x40
+  RenderBlock {HTML} at (0,0) size 800x40
+    RenderBody {BODY} at (8,8) size 784x24 [bgcolor=#F0E68C]
+      RenderText {#text} at (20,6) size 4x18
+        text run at (20,6) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 20x20
+  RenderHTMLCanvas {CANVAS} at (0,0) size 20x20
+layer at (32,8) size 20x20
+  RenderHTMLCanvas {CANVAS} at (24,0) size 20x20 [bgcolor=#8CF0E6]

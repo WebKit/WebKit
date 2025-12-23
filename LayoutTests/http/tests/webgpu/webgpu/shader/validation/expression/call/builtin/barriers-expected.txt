@@ -39,7 +39,7 @@ FAIL :no_return_value:assign=true;rhs="storageBarrier" assert_unreached:
     fn foo() {
       _ =  storageBarrier();
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -55,7 +55,7 @@ FAIL :no_return_value:assign=true;rhs="textureBarrier" assert_unreached:
     fn foo() {
       _ =  textureBarrier();
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -71,7 +71,7 @@ FAIL :no_return_value:assign=true;rhs="workgroupBarrier" assert_unreached:
     fn foo() {
       _ =  workgroupBarrier();
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/barriers.spec.js:108:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

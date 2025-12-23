@@ -1,0 +1,71 @@
+
+PASS :invalid_swizzle:
+FAIL :only_identity_swizzle: assert_unreached:
+  - (in subcase: swizzle="rgba") INFO: subcase ran
+  - (in subcase: swizzle="0000") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/features/texture_component_swizzle.spec.js:88:26
+  - (in subcase: swizzle="0000") INFO: subcase ran
+  - (in subcase: swizzle="1111") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/features/texture_component_swizzle.spec.js:88:26
+  - (in subcase: swizzle="1111") INFO: subcase ran
+  - (in subcase: swizzle="rrrr") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="rrrr") INFO: subcase ran
+  - (in subcase: swizzle="gggg") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="gggg") INFO: subcase ran
+  - (in subcase: swizzle="bbbb") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="bbbb") INFO: subcase ran
+  - (in subcase: swizzle="aaaa") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="aaaa") INFO: subcase ran
+  - (in subcase: swizzle="abgr") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="abgr") INFO: subcase ran
+  - (in subcase: swizzle="gbar") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="gbar") INFO: subcase ran
+  - (in subcase: swizzle="barg") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="barg") INFO: subcase ran
+  - (in subcase: swizzle="argb") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="argb") INFO: subcase ran
+  - (in subcase: swizzle="0gba") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="0gba") INFO: subcase ran
+  - (in subcase: swizzle="r0ba") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="r0ba") INFO: subcase ran
+  - (in subcase: swizzle="rg0a") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="rg0a") INFO: subcase ran
+  - (in subcase: swizzle="rgb0") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="rgb0") INFO: subcase ran
+  - (in subcase: swizzle="1gba") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="1gba") INFO: subcase ran
+  - (in subcase: swizzle="r1ba") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="r1ba") INFO: subcase ran
+  - (in subcase: swizzle="rg1a") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="rg1a") INFO: subcase ran
+  - (in subcase: swizzle="rgb1") VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: swizzle="rgb1") INFO: subcase ran
+ Reached unreachable code
+PASS :no_render_no_resolve_no_storage:useCase="texture-binding"
+PASS :no_render_no_resolve_no_storage:useCase="color-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="depth-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="stencil-attachment"
+PASS :no_render_no_resolve_no_storage:useCase="resolve-target"
+PASS :no_render_no_resolve_no_storage:useCase="storage-binding"
+PASS :compatibility_mode:
+

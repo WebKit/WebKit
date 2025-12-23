@@ -1,0 +1,32 @@
+layer at (0,0) size 785x838
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x838
+  RenderBlock {HTML} at (0,0) size 785x838
+    RenderBody {BODY} at (8,21) size 769x801 [color=#F7F7FF] [bgcolor=#26267F]
+      RenderBlock {DIV} at (0,0) size 769x663
+        RenderBlock {H1} at (0,0) size 769x38
+          RenderText {#text} at (277,0) size 215x38
+            text run at (277,0) width 215: "Rotating Cube"
+        RenderBlock (anonymous) at (0,59) size 769x604
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,682) size 769x119
+        RenderBlock {H2} at (0,0) size 769x28
+          RenderText {#text} at (261,0) size 247x28
+            text run at (261,0) width 247: "WebGPU not available"
+        RenderBlock {P} at (0,47) size 769x37
+          RenderText {#text} at (15,0) size 739x36
+            text run at (15,0) width 416: "Make sure you are on a system with WebGPU enabled. In "
+            text run at (430,0) width 324: "Safari, first make sure the Developer Menu is"
+            text run at (79,18) width 162: "visible (Preferences > "
+            text run at (240,18) width 450: "Advanced), then Develop > Experimental Features > WebGPU."
+        RenderBlock {P} at (0,99) size 769x19
+          RenderText {#text} at (13,0) size 706x18
+            text run at (13,0) width 511: "In addition, you must be using Safari Technology Preview 92 or above. "
+            text run at (523,0) width 196: "You can get the latest STP "
+          RenderInline {A} at (718,0) size 34x18 [color=#0000EE]
+            RenderText {#text} at (718,0) size 34x18
+              text run at (718,0) width 34: "here"
+          RenderText {#text} at (751,0) size 5x18
+            text run at (751,0) width 5: "."
+layer at (93,81) size 600x600
+  RenderHTMLCanvas {CANVAS} at (84,0) size 601x600

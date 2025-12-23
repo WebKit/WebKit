@@ -127,25 +127,25 @@ PASS :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=
 FAIL :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=1 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:649:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=2 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:649:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=4 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:649:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=8 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:649:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="color-attachment";viewUsage=16
@@ -153,20 +153,20 @@ PASS :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=0
 FAIL :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=1 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=2 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=4
 FAIL :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=8 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="sampled-texture";viewUsage=16
@@ -174,19 +174,19 @@ PASS :subresources,texture_view_usages:bindingType="writeonly-storage-texture";v
 FAIL :subresources,texture_view_usages:bindingType="writeonly-storage-texture";viewUsage=1 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="writeonly-storage-texture";viewUsage=2 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="writeonly-storage-texture";viewUsage=4 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="writeonly-storage-texture";viewUsage=8
@@ -195,19 +195,19 @@ PASS :subresources,texture_view_usages:bindingType="readonly-storage-texture";vi
 FAIL :subresources,texture_view_usages:bindingType="readonly-storage-texture";viewUsage=1 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="readonly-storage-texture";viewUsage=2 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="readonly-storage-texture";viewUsage=4 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="readonly-storage-texture";viewUsage=8
@@ -216,19 +216,19 @@ PASS :subresources,texture_view_usages:bindingType="readwrite-storage-texture";v
 FAIL :subresources,texture_view_usages:bindingType="readwrite-storage-texture";viewUsage=1 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="readwrite-storage-texture";viewUsage=2 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 FAIL :subresources,texture_view_usages:bindingType="readwrite-storage-texture";viewUsage=4 assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js:668:32
  Reached unreachable code
 PASS :subresources,texture_view_usages:bindingType="readwrite-storage-texture";viewUsage=8

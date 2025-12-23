@@ -25,14 +25,14 @@ import {
   raceWithRejectOnTimeout,
   unreachable } from
 '../../common/util/util.js';
-import { getDefaultLimitsForDevice, kLimits } from '../capability_info.js';
+import { getDefaultLimitsForDevice, kPossibleLimits } from '../capability_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../gpu_test.js';
 
 // MAINTENANCE_TODO: Remove this filter when these limits are added to the spec.
 const isUnspecifiedLimit = (limit) =>
 /maxStorage(Buffer|Texture)sIn(Vertex|Fragment)Stage/.test(limit);
 
-const kSpecifiedLimits = kLimits.filter((s) => !isUnspecifiedLimit(s));
+const kSpecifiedLimits = kPossibleLimits.filter((s) => !isUnspecifiedLimit(s));
 
 
 

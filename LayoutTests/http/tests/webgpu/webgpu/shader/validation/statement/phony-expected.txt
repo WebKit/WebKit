@@ -25,7 +25,7 @@ FAIL :rhs_constructible:type="atomic_u32" assert_unreached:
     fn f() {
       _ = xu;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:63:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -41,7 +41,7 @@ FAIL :rhs_constructible:type="atomic_i32" assert_unreached:
     fn f() {
       _ = xi;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:63:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -59,7 +59,7 @@ FAIL :rhs_with_decl:test="storage_unsized" assert_unreached:
 
       _ = x;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:124:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -76,7 +76,7 @@ FAIL :rhs_with_decl:test="storage_atomic" assert_unreached:
 
       _ = x;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:124:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -99,7 +99,7 @@ FAIL :rhs_with_decl:test="workgroup_atomic" assert_unreached:
 
       _ = x;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/phony.spec.js:124:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -133,7 +133,7 @@ FAIL :parse:test="in_for_init" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: Invalid for-loop initialization clause
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :parse:test="in_for_init_semi"
 FAIL :parse:test="in_for_update" assert_unreached:
@@ -149,7 +149,7 @@ FAIL :parse:test="in_for_update" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: Invalid for-loop update clause
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :parse:test="in_for_update_semi"
 PASS :parse:test="in_block"

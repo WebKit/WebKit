@@ -369,7 +369,7 @@ FAIL :array_zero_value:case="valid_array" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:57: cannot use override value in constant expression
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :array_zero_value:case="invalid_rta"
 PASS :array_zero_value:case="invalid_override_array"
@@ -395,7 +395,7 @@ FAIL :array_value:case="valid_array" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     8:57: cannot use override value in constant expression
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :array_value:case="invalid_rta"
 PASS :array_value:case="invalid_override_array"

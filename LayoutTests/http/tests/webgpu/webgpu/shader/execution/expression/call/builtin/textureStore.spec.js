@@ -15,8 +15,6 @@ If an out-of-bounds access occurs, the built-in function should not be executed.
 import { unreachable, iterRange, range } from '../../../../../../common/util/util.js';
 import {
   isTextureFormatPossiblyStorageReadWritable,
-  kTextureFormatTier1ThrowsWhenNotEnabled,
-  kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly,
   kPossibleStorageTextureFormats } from
 '../../../../../format_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
@@ -28,7 +26,7 @@ import {
   pack4x8unorm,
   pack4x8snorm,
   pack2x16unorm,
-  pack2x16snorm, } from
+  pack2x16snorm } from
 '../../../../../util/conversion.js';
 import { align, clamp } from '../../../../../util/math.js';
 import { getTextureDimensionFromView, virtualMipSize } from '../../../../../util/texture/base.js';
@@ -44,18 +42,17 @@ export const g = makeTestGroup(AllFeaturesMaxLimitsGPUTest);
 // so we can check clamping behavior.
 function inputArray(format) {
   switch (format) {
-    case 'rgba8snorm':
     case 'r8snorm':
     case 'rg8snorm':
+    case 'rgba8snorm':
     case 'r16snorm':
     case 'rg16snorm':
     case 'rgba16snorm':
       return [-1.1, 1.0, -0.6, -0.3, 0, 0.3, 0.6, 1.0, 1.1];
-    case 'rgba8unorm':
-    case 'bgra8unorm':
     case 'r8unorm':
     case 'rg8unorm':
-    case 'rgb10a2unorm':
+    case 'rgba8unorm':
+    case 'bgra8unorm':
     case 'r16unorm':
     case 'rg16unorm':
     case 'rgba16unorm':
@@ -63,10 +60,7 @@ function inputArray(format) {
     case 'r8uint':
     case 'rg8uint':
     case 'rgba8uint':
-    case 'rgb10a2uint':
       return [0, 8, 16, 24, 32, 64, 100, 128, 200, 255, 256, 512];
-    case 'r16uint':
-    case 'rg16uint':
     case 'rgba16uint':
       return [0, 8, 16, 24, 32, 64, 100, 128, 200, 255, 0xffff, 0x1ffff];
     case 'rgba32uint':
@@ -77,24 +71,33 @@ function inputArray(format) {
     case 'rg8sint':
     case 'rgba8sint':
       return [-128, -100, -64, -32, -16, -8, 0, 8, 16, 32, 64, 100, 127];
-    case 'r16sint':
-    case 'rg16sint':
     case 'rgba16sint':
       return [-32768, -32769, -100, -64, -32, -16, -8, 0, 8, 16, 32, 64, 100, 127, 0x7fff, 0x8000];
     case 'r32sint':
     case 'rg32sint':
     case 'rgba32sint':
       return [-0x8000000, -32769, -100, -64, -32, -16, -8, 0, 8, 16, 32, 64, 100, 127, 0x7ffffff];
-    case 'rg11b10ufloat':
+    case 'r16float':
     case 'rg16float':
     case 'rgba16float':
     case 'rgba32float':
     case 'r32float':
     case 'rg32float':
-    case 'r16float':
       // Stick with simple values to avoid rounding issues.
       return [-100, -50, -32, -16, -8, -1, 0, 1, 8, 16, 32, 50, 100];
+    case 'r16uint': // [0, 65535]
+    case 'rg16uint':
+      return [0, 1000, 32768, 65535, 65536, 70000];
+    case 'r16sint': // [-32768, 32767]
+    case 'rg16sint':
+      return [-32769, -32768, -1000, 0, 1000, 32767, 32768];
 
+    case 'rgb10a2uint':
+      return [0, 500, 1023, 1024, 3, 4];
+    case 'rgb10a2unorm':
+      return [-0.1, 0, 0.5, 1.0, 1.1];
+    case 'rg11b10ufloat':
+      return [1, 0.5, 0, 1];
     default:
       unreachable(`unhandled format ${format}`);
       break;
@@ -130,7 +133,6 @@ fn((t) => {
   const { format, stage, access, viewDimension, mipLevel } = t.params;
   t.skipIfTextureFormatNotSupported(format);
   t.skipIfTextureFormatNotUsableWithStorageAccessMode(access, format);
-  t.skipIf(kTextureFormatTier1ThrowsWhenNotEnabled.includes(format) || kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly.includes(format), "16-bit s/unorm formats not correctly implemented");
 
   const { componentType } = getTextureFormatTypeInfo(format);
   const values = inputArray(format);
@@ -276,6 +278,35 @@ struct VOut {
 
   let bytesPerTexel = 4;
   switch (format) {
+    case 'r8unorm':
+    case 'r8uint':
+    case 'r8snorm':
+    case 'r8sint':
+      bytesPerTexel = 1;
+      break;
+    case 'r16unorm':
+    case 'r16uint':
+    case 'r16snorm':
+    case 'r16sint':
+    case 'r16float':
+    case 'rg8unorm':
+    case 'rg8uint':
+    case 'rg8snorm':
+    case 'rg8sint':
+      bytesPerTexel = 2;
+      break;
+    case 'rg16unorm':
+    case 'rg16uint':
+    case 'rg16snorm':
+    case 'rg16sint':
+    case 'rg16float':
+    case 'rg11b10ufloat':
+    case 'rgb10a2uint':
+    case 'rgb10a2unorm':
+      bytesPerTexel = 4;
+      break;
+    case 'rgba16unorm':
+    case 'rgba16snorm':
     case 'rgba16uint':
     case 'rgba16sint':
     case 'rgba16float':
@@ -295,6 +326,7 @@ struct VOut {
 
   const buffer = ttu.copyWholeTextureToNewBufferSimple(t, texture, mipLevel);
   const u32sPerTexel = bytesPerTexel / 4;
+  const u8sPerTexel = bytesPerTexel;
   const bytesPerRow = align(testMipLevelSize[0] * bytesPerTexel, 256);
   const texelsPerRow = bytesPerRow / bytesPerTexel;
   const texelsPerSlice = texelsPerRow * testMipLevelSize[1];
@@ -307,126 +339,248 @@ struct VOut {
     const c = v.map((v) => clamp(v, { min: -1, max: 1 }));
     return pack4x8snorm(c[0], c[1], c[2], c[3]);
   };
-  const clampedPack2x16unorm = (...v) => {
-    const c = v.map((v) => clamp(v, { min: 0, max: 1 }));
-    return pack2x16unorm(c[0], c[1]);
-  };
-  const clampedPack2x16snorm = (...v) => {
-    const c = v.map((v) => clamp(v, { min: -1, max: 1 }));
-    return pack2x16snorm(c[0], c[1]);
-  };
-  const expected = new Uint32Array([
-  // iterate over each u32
-  ...iterRange(buffer.size / 4, (i) => {
-    const texelId = i / u32sPerTexel | 0;
-    const z = texelId / texelsPerSlice | 0;
-    const y = (texelId / texelsPerRow | 0) % testMipLevelSize[1];
-    const x = texelId % texelsPerRow;
-    // buffer is padded to 256 per row so when x is out of range just return 0
-    if (x >= testMipLevelSize[0]) {
-      return 0;
-    }
-    const id = x + y + z;
-    const unit = i % u32sPerTexel;
-
-    switch (format) {
-    case 'r16snorm':
-    case 'rg16snorm':
-    case 'rgba16snorm': {
-        const vals = range(2, i => getValue(id + i));
-        return clampedPack2x16snorm(vals[0], vals[1]);
-    }
-    case 'r8unorm':
-    case 'rg8unorm':
-    case 'rgb10a2unorm':
-    case 'rgba8unorm':{
-          const vals = range(4, (i) => getValue(id + i));
-          return clampedPack4x8unorm(vals[0], vals[1], vals[2], vals[3]);
-        }
-      case 'bgra8unorm':{
-          const vals = range(4, (i) => getValue(id + i));
-          return clampedPack4x8unorm(vals[2], vals[1], vals[0], vals[3]);
-        }
-      case 'r16unorm':
-      case 'rg16unorm':
-      case 'rgba16unorm': {
-          const vals = range(2, (i) => getValue(id + i));
-          return clampedPack2x16unorm(vals[0], vals[1]);
+  if (format.startsWith('r8') || format.startsWith('rg8')) {
+    const expected = new Uint8Array([
+    // iterate over each u8
+    ...iterRange(buffer.size, (i) => {
+      const texelId = i / u8sPerTexel | 0;
+      const z = texelId / texelsPerSlice | 0;
+      const y = (texelId / texelsPerRow | 0) % testMipLevelSize[1];
+      const x = texelId % texelsPerRow;
+      // buffer is padded to 256 per row so when x is out of range just return 0
+      if (x >= testMipLevelSize[0]) {
+        return 0;
       }
-      case 'r8snorm':
-      case 'rg8snorm':
-      case 'rgba8snorm':{
-          const vals = range(4, i => getValue(id + i));
-          return clampedPack4x8snorm(vals[0], vals[1], vals[2], vals[3]);
-        }
-      case 'r32uint':
-        return clamp(getValue(id), { min: 0, max: 0xffffffff });
-      case 'r32sint':
-        return clamp(getValue(id), { min: -0x80000000, max: 0x7fffffff });
-      case 'rg32uint':
-      case 'rgba32uint':
-        return clamp(getValue(id + unit), { min: 0, max: 0xffffffff });
-      case 'rg32sint':
-      case 'rgba32sint':
-        return clamp(getValue(id + unit), { min: -0x80000000, max: 0x7fffffff });
-      case 'r8uint':
-      case 'rg8uint':
-      case 'rgb10a2uint':
-      case 'rgba8uint':{
-          const vals = range(4, (i) => clamp(getValue(id + i), { min: 0, max: 255 }));
-          return (
-            (vals[3] & 0xff) << 24 |
-            (vals[2] & 0xff) << 16 |
-            (vals[1] & 0xff) << 8 |
-            vals[0] & 0xff);
+      const id = x + y + z;
+      const unit = i % u8sPerTexel;
+      switch (format) {
+        case 'r8snorm':{
+            const vals = getValue(id);
+            const c = clamp(vals, { min: -1, max: 1 });
+            return Math.floor(0.5 + 127 * c);
+          }
+        case 'r8unorm':{
+            const vals = getValue(id);
+            const c = clamp(vals, { min: 0, max: 1 });
+            return Math.floor(0.5 + 255 * c);
+          }
+        case 'r8uint':{
+            const val = clamp(getValue(id), { min: 0, max: 255 });
+            return val & 0xff;
+          }
+        case 'r8sint':{
+            const val = clamp(getValue(id), { min: -0x80, max: 0x7f });
+            return val & 0xff;
+          }
+        case 'rg8snorm':{
+            const vals = getValue(id + unit);
+            const c = clamp(vals, { min: -1, max: 1 });
+            return Math.floor(0.5 + 127 * c);
+          }
+        case 'rg8unorm':{
+            const vals = getValue(id + unit);
+            const c = clamp(vals, { min: 0, max: 1 });
+            return Math.floor(0.5 + 255 * c);
+          }
+        case 'rg8uint':{
+            const val = clamp(getValue(id + unit), { min: 0, max: 255 });
+            return val & 0xff;
+          }
+        case 'rg8sint':{
+            const val = clamp(getValue(id + unit), { min: -0x80, max: 0x7f });
+            return val & 0xff;
+          }
+        default:
+          unreachable(`unhandled format ${format}`);
+          break;
+      }
+    })]
+    );
+    t.expectGPUBufferValuesEqual(buffer, expected);
+  } else if (format.startsWith('r16')) {
+    const expected = new Uint16Array([
+    // iterate over each u16
+    ...iterRange(buffer.size / 2, (i) => {
+      const texelId = i;
+      const z = texelId / texelsPerSlice | 0;
+      const y = (texelId / texelsPerRow | 0) % testMipLevelSize[1];
+      const x = texelId % texelsPerRow;
+      // buffer is padded to 256 per row so when x is out of range just return 0
+      if (x >= testMipLevelSize[0]) {
+        return 0;
+      }
+      const id = x + y + z;
+      switch (format) {
+        case 'r16sint':{
+            const vals = clamp(getValue(id), { min: -0x8000, max: 0x7fff });
+            return vals & 0xffff;
+          }
+        case 'r16uint':{
+            const vals = clamp(getValue(id), { min: 0, max: 0xffff });
+            return vals & 0xffff;
+          }
+        case 'r16snorm':{
+            const vals = getValue(id);
+            const c = clamp(vals, { min: -1, max: 1 });
+            return Math.floor(0.5 + 32767 * c);
+          }
+        case 'r16unorm':{
+            const vals = getValue(id);
+            const c = clamp(vals, { min: 0, max: 1 });
+            return Math.floor(0.5 + 65535 * c);
+          }
+        case 'r16float':{
+            const vals = numberToFloatBits(getValue(id), kFloat16Format);
+            return vals & 0xffff;
+          }
+        default:
+          unreachable(`unhandled format ${format}`);
+          break;
+      }
+    })]
+    );
+    t.expectGPUBufferValuesEqual(buffer, expected);
+  } else {
+    const expected = new Uint32Array([
+    // iterate over each u32
+    ...iterRange(buffer.size / 4, (i) => {
+      const texelId = i / u32sPerTexel | 0;
+      const z = texelId / texelsPerSlice | 0;
+      const y = (texelId / texelsPerRow | 0) % testMipLevelSize[1];
+      const x = texelId % texelsPerRow;
+      // buffer is padded to 256 per row so when x is out of range just return 0
+      if (x >= testMipLevelSize[0]) {
+        return 0;
+      }
+      const id = x + y + z;
+      const unit = i % u32sPerTexel;
+      switch (format) {
+        case 'rgba8unorm':{
+            const vals = range(4, (i) => getValue(id + i));
+            return clampedPack4x8unorm(vals[0], vals[1], vals[2], vals[3]);
+          }
+        case 'bgra8unorm':{
+            const vals = range(4, (i) => getValue(id + i));
+            return clampedPack4x8unorm(vals[2], vals[1], vals[0], vals[3]);
+          }
+        case 'rgba8snorm':{
+            const vals = range(4, (i) => getValue(id + i));
+            return clampedPack4x8snorm(vals[0], vals[1], vals[2], vals[3]);
+          }
+        case 'r32uint':
+          return clamp(getValue(id), { min: 0, max: 0xffffffff });
+        case 'r32sint':
+          return clamp(getValue(id), { min: -0x80000000, max: 0x7fffffff });
+        case 'rg32uint':
+        case 'rgba32uint':
+          return clamp(getValue(id + unit), { min: 0, max: 0xffffffff });
+        case 'rg32sint':
+        case 'rgba32sint':
+          return clamp(getValue(id + unit), { min: -0x80000000, max: 0x7fffffff });
+        case 'rgba8uint':{
+            const vals = range(4, (i) => clamp(getValue(id + i), { min: 0, max: 255 }));
+            return (
+              (vals[3] & 0xff) << 24 |
+              (vals[2] & 0xff) << 16 |
+              (vals[1] & 0xff) << 8 |
+              vals[0] & 0xff);
 
-        }
-      case 'r8sint':
-      case 'rg8sint':
-      case 'rgba8sint':{
-          const vals = range(4, (i) => clamp(getValue(id + i), { min: -0x80, max: 0x7f }));
-          return (
-            (vals[3] & 0xff) << 24 |
-            (vals[2] & 0xff) << 16 |
-            (vals[1] & 0xff) << 8 |
-            vals[0] & 0xff);
+          }
+        case 'rgba8sint':{
+            const vals = range(4, (i) => clamp(getValue(id + i), { min: -0x80, max: 0x7f }));
+            return (
+              (vals[3] & 0xff) << 24 |
+              (vals[2] & 0xff) << 16 |
+              (vals[1] & 0xff) << 8 |
+              vals[0] & 0xff);
 
-        }
-      case 'r16uint':
-      case 'rg16uint':
-      case 'rgba16uint':{
-          const vals = range(2, (i) => clamp(getValue(id + unit * 2 + i), { min: 0, max: 0xffff }));
-          return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
-        }
-      case 'r16sint':
-      case 'rg16sint':
-      case 'rgba16sint':{
-          const vals = range(2, (i) =>
-          clamp(getValue(id + unit * 2 + i), { min: -0x8000, max: 0x7fff })
-          );
-          return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
-        }
-      case 'rg11b10ufloat':
-      case 'r32float':
-      case 'rg32float':
-      case 'rgba32float':{
-          return numberToFloatBits(getValue(id + unit), kFloat32Format);
-        }
-      case 'r16float':
-      case 'rg16float':
-      case 'rgba16float':{
-          const vals = range(2, (i) =>
-          numberToFloatBits(getValue(id + unit * 2 + i), kFloat16Format)
-          );
-          return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
-        }
-      default:
-        unreachable(`unhandled format ${format}`);
-        break;
-    }
-  })]
-  );
-  t.expectGPUBufferValuesEqual(buffer, expected);
+          }
+        case 'rgba16uint':{
+            const vals = range(2, (i) =>
+            clamp(getValue(id + unit * 2 + i), { min: 0, max: 0xffff })
+            );
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+        case 'rgba16sint':{
+            const vals = range(2, (i) =>
+            clamp(getValue(id + unit * 2 + i), { min: -0x8000, max: 0x7fff })
+            );
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+        case 'r32float':
+        case 'rg32float':
+        case 'rgba32float':{
+            return numberToFloatBits(getValue(id + unit), kFloat32Format);
+          }
+        case 'rgba16float':{
+            const vals = range(2, (i) =>
+            numberToFloatBits(getValue(id + unit * 2 + i), kFloat16Format)
+            );
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+
+        case 'rg16uint':{
+            const vals = range(2, (i) => clamp(getValue(id + i), { min: 0, max: 0xffff }));
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+        case 'rg16sint':{
+            const vals = range(2, (i) => clamp(getValue(id + i), { min: -0x8000, max: 0x7fff }));
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+        case 'rg16unorm':{
+            const vals = range(2, (i) => getValue(id + i));
+            return pack2x16unorm(vals[0], vals[1]);
+          }
+        case 'rg16snorm':{
+            const vals = range(2, (i) => getValue(id + i));
+            return pack2x16snorm(vals[0], vals[1]);
+          }
+        case 'rg16float':{
+            const vals = range(2, (i) => numberToFloatBits(getValue(id + i), kFloat16Format));
+            return (vals[1] & 0xffff) << 16 | vals[0] & 0xffff;
+          }
+        case 'rgba16unorm':{
+            const vals = range(2, (i) => clamp(getValue(id + unit * 2 + i), { min: 0, max: 1 }));
+            return pack2x16unorm(vals[0], vals[1]);
+          }
+        case 'rgba16snorm':{
+            const vals = range(2, (i) => clamp(getValue(id + unit * 2 + i), { min: -1, max: 1 }));
+            return pack2x16snorm(vals[0], vals[1]);
+          }
+        case 'rgb10a2uint':{
+            const r = Math.max(Math.min(getValue(id), 1023), 0);
+            const g = Math.max(Math.min(getValue(id + 1), 1023), 0);
+            const b = Math.max(Math.min(getValue(id + 2), 1023), 0);
+            const a = Math.max(Math.min(getValue(id + 3), 3), 0);
+            return a << 30 | b << 20 | g << 10 | r;
+          }
+        case 'rgb10a2unorm':{
+            const r = Math.round(Math.max(Math.min(getValue(id), 1), 0) * 1023);
+            const g = Math.round(Math.max(Math.min(getValue(id + 1), 1), 0) * 1023);
+            const b = Math.round(Math.max(Math.min(getValue(id + 2), 1), 0) * 1023);
+            const a = Math.round(Math.max(Math.min(getValue(id + 3), 1), 0) * 3);
+            return a << 30 | b << 20 | g << 10 | r;
+          }
+        case 'rg11b10ufloat':{
+            const float11 = { zero: 0, one: 0x3c0, half: 0x380 }; // 11 bits: 1, 0, 0.5
+            const float10 = { zero: 0, one: 0x1e0, half: 0x1c0 }; // 10 bits: 1, 0, 0.5
+            const mapValue = (
+            val,
+            { zero, one, half }) =>
+            val === 0 ? zero : val === 1 ? one : half;
+            const r = mapValue(getValue(id), float11);
+            const g = mapValue(getValue(id + 1), float11);
+            const b = mapValue(getValue(id + 2), float10);
+            return b << 22 | g << 11 | r;
+          }
+        default:
+          unreachable(`unhandled format ${format}`);
+          break;
+      }
+    })]
+    );
+    t.expectGPUBufferValuesEqual(buffer, expected);
+  }
 });
 
 g.test('bgra8unorm_swizzle').

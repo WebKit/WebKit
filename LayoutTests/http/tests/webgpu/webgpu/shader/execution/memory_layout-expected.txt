@@ -430,7 +430,18 @@ PASS :read_layout:case="array_mat4x4h_stride";aspace="workgroup"
 PASS :read_layout:case="array_mat4x4h_stride";aspace="function"
 PASS :read_layout:case="array_mat4x4h_stride";aspace="private"
 PASS :write_layout:case="vec2u_align8";aspace="storage"
-PASS :write_layout:case="vec2u_align8";aspace="workgroup"
+FAIL :write_layout:case="vec2u_align8";aspace="workgroup" assert_unreached:
+  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
+     Starting at index 0:
+       actual == 0x: 00000000 38dd39ee 00000000
+       failed ->                    xx
+     expected ==     00000000 00000000 00000000
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
+  - (in subcase: ) INFO: subcase ran
+ Reached unreachable code
 PASS :write_layout:case="vec2u_align8";aspace="function"
 PASS :write_layout:case="vec2u_align8";aspace="private"
 PASS :write_layout:case="vec3u_align16";aspace="storage"
@@ -457,12 +468,12 @@ PASS :write_layout:case="vec4h_align8";aspace="storage"
 FAIL :write_layout:case="vec4h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1.
      Starting at index 0:
-       actual == 0x: ffff0000 ffffffff 00000000
+       actual == 0x: 86cf0000 663878ce 00000000
        failed ->           xx       xx
      expected ==     00000000 00000000 00000000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -472,12 +483,12 @@ PASS :write_layout:case="vec2f_align8";aspace="storage"
 FAIL :write_layout:case="vec2f_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff 00000000
+       actual == 0x: 00000000 3bf83c00 00000000
        failed ->                    xx
      expected ==     00000000 00000000 00000000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -515,12 +526,12 @@ PASS :write_layout:case="mat2x2f_align8";aspace="storage"
 FAIL :write_layout:case="mat2x2f_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff 42280000
+       actual == 0x: 00000000 3068d800 42280000
        failed ->                    xx
      expected ==     00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -530,12 +541,12 @@ PASS :write_layout:case="mat3x2f_align8";aspace="storage"
 FAIL :write_layout:case="mat3x2f_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ff342721 42280000
+       actual == 0x: 00000000 544033f6 42280000
        failed ->                    xx
      expected ==     00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -545,12 +556,12 @@ PASS :write_layout:case="mat4x2f_align8";aspace="storage"
 FAIL :write_layout:case="mat4x2f_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff 42280000
+       actual == 0x: 00000000 3ba13ba1 42280000
        failed ->                    xx
      expected ==     00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -560,12 +571,12 @@ PASS :write_layout:case="mat2x3f_align16";aspace="storage"
 FAIL :write_layout:case="mat2x3f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff ffffffff ffffffff 42280000
+       actual == 0x: 00000000 c27d887d 08548721 01d42542 42280000
        failed ->                    xx       xx       xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -575,12 +586,12 @@ PASS :write_layout:case="mat3x3f_align16";aspace="storage"
 FAIL :write_layout:case="mat3x3f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ff342721 ff342721 ff342721 42280000
+       actual == 0x: 00000000 c27dca7d 094f8721 85462142 42280000
        failed ->                    xx       xx       xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -590,12 +601,12 @@ PASS :write_layout:case="mat4x3f_align16";aspace="storage"
 FAIL :write_layout:case="mat4x3f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff ffffffff ffffffff 42280000
+       actual == 0x: 00000000 24c89820 c2564423 b1321ceb 42280000
        failed ->                    xx       xx       xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -605,12 +616,12 @@ PASS :write_layout:case="mat2x4f_align16";aspace="storage"
 FAIL :write_layout:case="mat2x4f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff ffffffff ffffffff 42280000
-       failed ->                    xx       xx       xx
+       actual == 0x: 00000000 83451f0b 00000000 150a0895 42280000
+       failed ->                    xx                xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -620,12 +631,12 @@ PASS :write_layout:case="mat3x4f_align16";aspace="storage"
 FAIL :write_layout:case="mat3x4f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff ffffffff ffffffff 42280000
+       actual == 0x: 00000000 3ba13ba1 3ba13ba1 3ba13ba1 42280000
        failed ->                    xx       xx       xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -635,12 +646,12 @@ PASS :write_layout:case="mat4x4f_align16";aspace="storage"
 FAIL :write_layout:case="mat4x4f_align16";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 3.
      Starting at index 0:
-       actual == 0x: 00000000 ffbbbbbb ffffffff ffffffff 42280000
+       actual == 0x: 00000000 38c8d820 c0564603 b1321ceb 42280000
        failed ->                    xx       xx       xx
      expected ==     00000000 00000000 00000000 00000000 42280000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -662,12 +673,12 @@ PASS :write_layout:case="mat2x3h_align8";aspace="storage"
 FAIL :write_layout:case="mat2x3h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ff1a1a1a 00005140
+       actual == 0x: 00000000 ffffffff 00005140
        failed ->                    xx
      expected ==     00000000 00000000 00005140
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -677,42 +688,31 @@ PASS :write_layout:case="mat3x3h_align8";aspace="storage"
 FAIL :write_layout:case="mat3x3h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ff342721 00005140
+       actual == 0x: 00000000 30e89820 00005140
        failed ->                    xx
      expected ==     00000000 00000000 00005140
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
 PASS :write_layout:case="mat3x3h_align8";aspace="function"
 PASS :write_layout:case="mat3x3h_align8";aspace="private"
 PASS :write_layout:case="mat4x3h_align8";aspace="storage"
-FAIL :write_layout:case="mat4x3h_align8";aspace="workgroup" assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
-     Starting at index 0:
-       actual == 0x: 00000000 39de39de 00005140
-       failed ->                    xx
-     expected ==     00000000 00000000 00005140
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
-  - (in subcase: ) INFO: subcase ran
- Reached unreachable code
+PASS :write_layout:case="mat4x3h_align8";aspace="workgroup"
 PASS :write_layout:case="mat4x3h_align8";aspace="function"
 PASS :write_layout:case="mat4x3h_align8";aspace="private"
 PASS :write_layout:case="mat2x4h_align8";aspace="storage"
 FAIL :write_layout:case="mat2x4h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 ffffffff 00005140
+       actual == 0x: 00000000 2cc52e46 00005140
        failed ->                    xx
      expected ==     00000000 00000000 00005140
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -722,12 +722,12 @@ PASS :write_layout:case="mat3x4h_align8";aspace="storage"
 FAIL :write_layout:case="mat3x4h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 2f672e46 00005140
+       actual == 0x: 00000000 ff10101d 00005140
        failed ->                    xx
      expected ==     00000000 00000000 00005140
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -737,12 +737,12 @@ PASS :write_layout:case="mat4x4h_align8";aspace="storage"
 FAIL :write_layout:case="mat4x4h_align8";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 1 through 1.
      Starting at index 0:
-       actual == 0x: 00000000 30442f47 00005140
+       actual == 0x: 00000000 e62858ce 00005140
        failed ->                    xx
      expected ==     00000000 00000000 00005140
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code
@@ -836,12 +836,12 @@ PASS :write_layout:case="struct_align_vec2h";aspace="storage"
 FAIL :write_layout:case="struct_align_vec2h";aspace="workgroup" assert_unreached:
   - (in subcase: ) EXPECTATION FAILED: Array had unexpected contents at indices 0 through 1.
      Starting at index 0:
-       actual == 0x: ffff0000 ffff5140 00000000
+       actual == 0x: 06db0000 3cf85140 00000000
        failed ->           xx       xx
      expected ==     00000000 00005140 00000000
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/memory_layout.spec.js:1187:31
   - (in subcase: ) INFO: subcase ran
  Reached unreachable code

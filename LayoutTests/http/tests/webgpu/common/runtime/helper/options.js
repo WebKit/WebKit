@@ -60,6 +60,8 @@ searchParams = getWindowURL().searchParams)
 
 
 
+
+
 export const kDefaultCTSOptions = {
   worker: null,
   debug: false,
@@ -69,6 +71,8 @@ export const kDefaultCTSOptions = {
   blockAllFeatures: false,
   unrollConstEvalLoops: false,
   powerPreference: null,
+  subcasesBetweenAttemptingGC: '5000',
+  casesBetweenReplacingDevice: 'Infinity',
   logToWebSocket: false
 };
 
@@ -121,6 +125,30 @@ Note: The spec requires bc or etc2+astc which means tests checking that one or o
     { value: null, description: 'default' },
     { value: 'low-power', description: 'low-power' },
     { value: 'high-performance', description: 'high-performance' }]
+
+  },
+  subcasesBetweenAttemptingGC: {
+    description:
+    'After this many subcases, run attemptGarbageCollection(). (For custom values, edit the URL.)',
+    parser: optionString,
+    selectValueDescriptions: [
+    { value: null, description: 'default' },
+    { value: 'Infinity', description: 'Infinity' },
+    { value: '5000', description: '5000' },
+    { value: '50', description: '50' },
+    { value: '1', description: '1' }]
+
+  },
+  casesBetweenReplacingDevice: {
+    description:
+    'After this many cases use a device, destroy and replace it to free GPU resources. (For custom values, edit the URL.)',
+    parser: optionString,
+    selectValueDescriptions: [
+    { value: null, description: 'default' },
+    { value: 'Infinity', description: 'Infinity' },
+    { value: '5000', description: '5000' },
+    { value: '50', description: '50' },
+    { value: '1', description: '1' }]
 
   },
   logToWebSocket: { description: 'send some logs to ws://localhost:59497/' }

@@ -77,13 +77,13 @@ PASS :max_shader_variable_location:isAsync=true;locationDelta=-1
 PASS :max_shader_variable_location:isAsync=true;locationDelta=-2
 FAIL :max_variables_count,output:isAsync=false;numVariablesDelta=0;topology="triangle-list" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: vertexScalarComponents > maxVertexShaderOutputComponents
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :max_variables_count,output:isAsync=false;numVariablesDelta=0;topology="point-list"
 PASS :max_variables_count,output:isAsync=false;numVariablesDelta=1;topology="triangle-list"
 FAIL :max_variables_count,output:isAsync=false;numVariablesDelta=-1;topology="point-list" assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: vertexScalarComponents > maxVertexShaderOutputComponents
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :max_variables_count,output:isAsync=true;numVariablesDelta=0;topology="triangle-list" assert_unreached:
   - EXPECTATION FAILED: REJECTED
@@ -105,13 +105,13 @@ FAIL :max_variables_count,output:isAsync=true;numVariablesDelta=-1;topology="poi
  Reached unreachable code
 FAIL :max_variables_count,input:isAsync=false;numVariablesDelta=0;useExtraBuiltinInputs=false assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: vertexScalarComponents > maxVertexShaderOutputComponents
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :max_variables_count,input:isAsync=false;numVariablesDelta=0;useExtraBuiltinInputs=true
 PASS :max_variables_count,input:isAsync=false;numVariablesDelta=1;useExtraBuiltinInputs=false
 FAIL :max_variables_count,input:isAsync=false;numVariablesDelta=-1;useExtraBuiltinInputs=true assert_unreached:
   - EXCEPTION: Error: Unexpected validation error occurred: vertexScalarComponents > maxVertexShaderOutputComponents
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :max_variables_count,input:isAsync=true;numVariablesDelta=0;useExtraBuiltinInputs=false assert_unreached:
   - EXPECTATION FAILED: REJECTED

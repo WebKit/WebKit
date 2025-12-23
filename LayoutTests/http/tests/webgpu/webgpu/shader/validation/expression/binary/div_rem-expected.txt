@@ -787,16 +787,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="i32";rhs="i32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -817,16 +817,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Ci32%3E";rhs="vec2%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -855,16 +855,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -921,16 +921,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Ci32%3E";rhs="vec3%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -973,16 +973,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1067,16 +1067,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Ci32%3E";rhs="vec4%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1133,16 +1133,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1255,16 +1255,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="u32";rhs="u32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1279,16 +1279,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cu32%3E";rhs="vec2%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1317,16 +1317,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1383,16 +1383,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cu32%3E";rhs="vec3%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1435,16 +1435,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1529,16 +1529,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cu32%3E";rhs="vec4%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1595,16 +1595,16 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -1717,8 +1717,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="f16";rhs="f16" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1733,8 +1733,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1747,8 +1747,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1763,8 +1763,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1777,8 +1777,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1813,8 +1813,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf16%3E";rhs="vec3%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1827,8 +1827,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf16%3E";rhs="vec3%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1853,8 +1853,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1867,8 +1867,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1923,8 +1923,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf16%3E";rhs="vec4%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1937,8 +1937,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf16%3E";rhs="vec4%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1973,8 +1973,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -1987,8 +1987,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2063,8 +2063,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="f32";rhs="f32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2079,8 +2079,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2093,8 +2093,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2109,8 +2109,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2123,8 +2123,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec2%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2159,8 +2159,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf32%3E";rhs="vec3%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2173,8 +2173,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf32%3E";rhs="vec3%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2199,8 +2199,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2213,8 +2213,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec3%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2269,8 +2269,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf32%3E";rhs="vec4%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2283,8 +2283,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf32%3E";rhs="vec4%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2319,8 +2319,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2333,8 +2333,8 @@ FAIL :scalar_vector_out_of_range:op="div";lhs="vec4%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -2409,16 +2409,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="i32";rhs="i32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2439,16 +2439,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Ci32%3E";rhs="vec2%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2477,16 +2477,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2543,16 +2543,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Ci32%3E";rhs="vec3%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2595,16 +2595,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2689,16 +2689,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Ci32%3E";rhs="vec4%3Ci32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2755,16 +2755,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Ci32%3E";rhs="i32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2877,16 +2877,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="u32";rhs="u32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2901,16 +2901,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cu32%3E";rhs="vec2%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -2939,16 +2939,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -3005,16 +3005,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cu32%3E";rhs="vec3%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -3057,16 +3057,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -3151,16 +3151,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cu32%3E";rhs="vec4%3Cu32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -3217,16 +3217,16 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cu32%3E";rhs="u32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=true;stage="override") INFO: subcase ran
@@ -3339,8 +3339,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="f16";rhs="f16" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3355,8 +3355,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3369,8 +3369,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf16%3E";rhs="vec2%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3385,8 +3385,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3399,8 +3399,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3435,8 +3435,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf16%3E";rhs="vec3%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3449,8 +3449,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf16%3E";rhs="vec3%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3475,8 +3475,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3489,8 +3489,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3545,8 +3545,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf16%3E";rhs="vec4%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3559,8 +3559,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf16%3E";rhs="vec4%3Cf16%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3595,8 +3595,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3609,8 +3609,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf16%3E";rhs="f16" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3685,8 +3685,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="f32";rhs="f32" assert_unreached:
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3701,8 +3701,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3715,8 +3715,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf32%3E";rhs="vec2%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3731,8 +3731,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3745,8 +3745,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec2%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3781,8 +3781,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf32%3E";rhs="vec3%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3795,8 +3795,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf32%3E";rhs="vec3%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3821,8 +3821,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3835,8 +3835,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec3%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3891,8 +3891,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf32%3E";rhs="vec4%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3905,8 +3905,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf32%3E";rhs="vec4%3Cf32%3E
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3941,8 +3941,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=0;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran
@@ -3955,8 +3955,8 @@ FAIL :scalar_vector_out_of_range:op="rem";lhs="vec4%3Cf32%3E";rhs="f32" assert_u
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="constant") INFO: subcase ran
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") EXPECTATION FAILED: Expected validation error
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1143:34
-    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:209:24
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1151:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:210:24
     validateConstOrOverrideBinaryOpEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:264:27
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/div_rem.spec.js:188:38
   - (in subcase: swap=false;nonOneIndex=1;leftValue=42;rightValue=0;error=true;leftRuntime=false;stage="override") INFO: subcase ran

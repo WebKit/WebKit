@@ -385,7 +385,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -408,7 +408,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc1-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm";dimension="3d" assert_unreached:
@@ -431,7 +431,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -454,7 +454,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc2-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm";dimension="3d" assert_unreached:
@@ -477,7 +477,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -500,7 +500,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc3-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-unorm";dimension="3d" assert_unreached:
@@ -523,7 +523,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-unorm";dimension="3
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-snorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-snorm";dimension="3d" assert_unreached:
@@ -546,7 +546,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc4-r-snorm";dimension="3
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-unorm";dimension="3d" assert_unreached:
@@ -569,7 +569,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-unorm";dimension="
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-snorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-snorm";dimension="3d" assert_unreached:
@@ -592,7 +592,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc5-rg-snorm";dimension="
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-ufloat";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-ufloat";dimension="3d" assert_unreached:
@@ -615,7 +615,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-ufloat";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-float";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-float";dimension="3d" assert_unreached:
@@ -638,7 +638,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc6h-rgb-float";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm";dimension="3d" assert_unreached:
@@ -661,7 +661,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -684,7 +684,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="bc7-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="etc2-rgb8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyB2T";format="etc2-rgb8unorm-srgb";dimension="2d"
@@ -717,7 +717,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm-srgb";dimension="3d" assert_unreached:
@@ -740,7 +740,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-4x4-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm";dimension="3d" assert_unreached:
@@ -763,7 +763,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm-srgb";dimension="3d" assert_unreached:
@@ -786,7 +786,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x4-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm";dimension="3d" assert_unreached:
@@ -809,7 +809,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -832,7 +832,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-5x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm";dimension="3d" assert_unreached:
@@ -855,7 +855,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -878,7 +878,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm";dimension="3d" assert_unreached:
@@ -901,7 +901,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -924,7 +924,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-6x6-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm";dimension="3d" assert_unreached:
@@ -947,7 +947,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -970,7 +970,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm";dimension="3d" assert_unreached:
@@ -993,7 +993,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -1016,7 +1016,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x6-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm";dimension="3d" assert_unreached:
@@ -1039,7 +1039,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm-srgb";dimension="3d" assert_unreached:
@@ -1062,7 +1062,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-8x8-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm";dimension="3d" assert_unreached:
@@ -1085,7 +1085,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -1108,7 +1108,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x5-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm";dimension="3d" assert_unreached:
@@ -1131,7 +1131,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -1154,7 +1154,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x6-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm";dimension="3d" assert_unreached:
@@ -1177,7 +1177,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm-srgb";dimension="3d" assert_unreached:
@@ -1200,7 +1200,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x8-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm";dimension="3d" assert_unreached:
@@ -1223,7 +1223,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm-srgb";dimension="3d" assert_unreached:
@@ -1246,7 +1246,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-10x10-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm";dimension="3d" assert_unreached:
@@ -1269,7 +1269,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm-srgb";dimension="3d" assert_unreached:
@@ -1292,7 +1292,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x10-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm";dimension="3d" assert_unreached:
@@ -1315,7 +1315,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(12)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm-srgb";dimension="3d" assert_unreached:
@@ -1338,7 +1338,7 @@ FAIL :bytes_per_row_alignment:method="CopyB2T";format="astc-12x12-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyBufferToTexture: copySize.height(1) is not divisible by blockHeight(12)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r8unorm";dimension="1d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="r8unorm";dimension="2d"
@@ -1493,7 +1493,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -1516,7 +1516,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc1-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm";dimension="3d" assert_unreached:
@@ -1539,7 +1539,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -1562,7 +1562,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc2-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm";dimension="3d" assert_unreached:
@@ -1585,7 +1585,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -1608,7 +1608,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc3-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-unorm";dimension="3d" assert_unreached:
@@ -1631,7 +1631,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-unorm";dimension="3
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-snorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-snorm";dimension="3d" assert_unreached:
@@ -1654,7 +1654,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc4-r-snorm";dimension="3
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-unorm";dimension="3d" assert_unreached:
@@ -1677,7 +1677,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-unorm";dimension="
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-snorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-snorm";dimension="3d" assert_unreached:
@@ -1700,7 +1700,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc5-rg-snorm";dimension="
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-ufloat";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-ufloat";dimension="3d" assert_unreached:
@@ -1723,7 +1723,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-ufloat";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-float";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-float";dimension="3d" assert_unreached:
@@ -1746,7 +1746,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc6h-rgb-float";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm";dimension="3d" assert_unreached:
@@ -1769,7 +1769,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm-srgb";dimension="3d" assert_unreached:
@@ -1792,7 +1792,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="bc7-rgba-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="etc2-rgb8unorm";dimension="2d"
 PASS :bytes_per_row_alignment:method="CopyT2B";format="etc2-rgb8unorm-srgb";dimension="2d"
@@ -1825,7 +1825,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm-srgb";dimension="3d" assert_unreached:
@@ -1848,7 +1848,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-4x4-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm";dimension="3d" assert_unreached:
@@ -1871,7 +1871,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm-srgb";dimension="3d" assert_unreached:
@@ -1894,7 +1894,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x4-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(4)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm";dimension="3d" assert_unreached:
@@ -1917,7 +1917,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -1940,7 +1940,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-5x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm";dimension="3d" assert_unreached:
@@ -1963,7 +1963,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -1986,7 +1986,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm";dimension="3d" assert_unreached:
@@ -2009,7 +2009,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -2032,7 +2032,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-6x6-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm";dimension="3d" assert_unreached:
@@ -2055,7 +2055,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -2078,7 +2078,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x5-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm";dimension="3d" assert_unreached:
@@ -2101,7 +2101,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -2124,7 +2124,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x6-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm";dimension="3d" assert_unreached:
@@ -2147,7 +2147,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm";dimension
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm-srgb";dimension="3d" assert_unreached:
@@ -2170,7 +2170,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-8x8-unorm-srgb";dime
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm";dimension="3d" assert_unreached:
@@ -2193,7 +2193,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm-srgb";dimension="3d" assert_unreached:
@@ -2216,7 +2216,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x5-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(5)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm";dimension="3d" assert_unreached:
@@ -2239,7 +2239,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm-srgb";dimension="3d" assert_unreached:
@@ -2262,7 +2262,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x6-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(6)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm";dimension="3d" assert_unreached:
@@ -2285,7 +2285,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm";dimensio
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm-srgb";dimension="3d" assert_unreached:
@@ -2308,7 +2308,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x8-unorm-srgb";dim
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(8)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm";dimension="3d" assert_unreached:
@@ -2331,7 +2331,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm-srgb";dimension="3d" assert_unreached:
@@ -2354,7 +2354,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-10x10-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm";dimension="3d" assert_unreached:
@@ -2377,7 +2377,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm-srgb";dimension="3d" assert_unreached:
@@ -2400,7 +2400,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x10-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(10)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm";dimension="3d" assert_unreached:
@@ -2423,7 +2423,7 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm";dimensi
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(12)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm-srgb";dimension="2d"
 FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm-srgb";dimension="3d" assert_unreached:
@@ -2446,6 +2446,6 @@ FAIL :bytes_per_row_alignment:method="CopyT2B";format="astc-12x12-unorm-srgb";di
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=2) INFO: subcase ran
   - (in subcase: bytesPerRow=512;copyHeightInBlocks=3) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: GPUCommandEncoder.copyTextureToBuffer: copySize.height(1) is not divisible by blockHeight(12)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 

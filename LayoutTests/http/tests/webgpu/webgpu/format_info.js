@@ -1660,6 +1660,7 @@ export const kAllTextureFormats = keysOf(kAllTextureFormatInfo);
  * * isTextureFormatPossiblyStorageReadable
  * * isTextureFormatPossiblyStorageReadWritable
  * * isTextureFormatPossiblyFilterableAsTextureF32
+ * * isTextureFormatPossiblyUsableWithCopyExternalImageToTexture
  *
  * These are also usable before or during a test
  *
@@ -1683,6 +1684,7 @@ export const kAllTextureFormats = keysOf(kAllTextureFormatInfo);
  * * isTextureFormatUsableAsStorageTexture
  * * isTextureFormatUsableAsReadWriteStorageTexture
  * * isTextureFormatUsableAsStorageFormatInCreateShaderModule
+ * * isTextureFormatUsableWithCopyExternalImageToTexture
  *
  * Per-GPUTextureFormat info.
  */
@@ -1827,22 +1829,41 @@ export const kOptionalTextureFormats = kAllTextureFormats.filter(
   (t) => kTextureFormatInfo[t].feature !== undefined
 );
 
-/** Valid GPUTextureFormats for `copyExternalImageToTexture`, by spec. */
-export const kValidTextureFormatsForCopyE2T = [
-'r8unorm',
-'r16float',
-'r32float',
-'rg8unorm',
-'rg16float',
-'rg32float',
-'rgba8unorm',
-'rgba8unorm-srgb',
-'bgra8unorm',
-'bgra8unorm-srgb',
-'rgb10a2unorm',
-'rgba16float',
-'rgba32float'];
+function isSnormTextureFormat(format) {
+  return format.endsWith('snorm');
+}
 
+/**
+ * Returns true if a texture can be possibly used with copyExternalImageToTexture.
+ * The texture may require certain features to be enabled.
+ */
+export function isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(
+format)
+{
+  return (
+    isColorTextureFormat(format) &&
+    !isSintOrUintFormat(format) &&
+    !isCompressedTextureFormat(format) &&
+    !isSnormTextureFormat(format) &&
+    isTextureFormatPossiblyUsableAsColorRenderAttachment(format));
+
+}
+
+/**
+ * Returns true if a texture can be used with copyExternalImageToTexture.
+ */
+export function isTextureFormatUsableWithCopyExternalImageToTexture(
+device,
+format)
+{
+  return (
+    isColorTextureFormat(format) &&
+    !isSintOrUintFormat(format) &&
+    !isCompressedTextureFormat(format) &&
+    !isSnormTextureFormat(format) &&
+    isTextureFormatColorRenderable(device, format));
+
+}
 
 //
 // Other related stuff
@@ -2315,6 +2336,10 @@ export function isStencilTextureFormat(format) {
   return !!kTextureFormatInfo[format].stencil;
 }
 
+export function isDepthStencilTextureFormat(format) {
+  return isDepthTextureFormat(format) && isStencilTextureFormat(format);
+}
+
 export function isDepthOrStencilTextureFormat(format) {
   return isDepthTextureFormat(format) || isStencilTextureFormat(format);
 }
@@ -2333,6 +2358,9 @@ format)
 {
   if (format === 'rg11b10ufloat') {
     return device.features.has('rg11b10ufloat-renderable');
+  }
+  if (isTextureFormatTier1EnablesRenderAttachmentBlendableMultisample(format)) {
+    return device.features.has('texture-formats-tier1');
   }
   return kTextureFormatInfo[format].colorRender || isDepthOrStencilTextureFormat(format);
 }
@@ -2372,9 +2400,20 @@ export function isTextureFormatBlendable(device, format) {
 /**
  * Returns the texture's type (float, unsigned-float, sint, uint, depth)
  */
-export function getTextureFormatType(format) {
+export function getTextureFormatType(format, aspect = 'all') {
   const info = kTextureFormatInfo[format];
-  const type = info.color?.type ?? info.depth?.type ?? info.stencil?.type;
+  let type;
+  switch (aspect) {
+    case 'all':
+      type = info.color?.type ?? info.depth?.type ?? info.stencil?.type;
+      break;
+    case 'depth-only':
+      type = info.depth?.type;
+      break;
+    case 'stencil-only':
+      type = info.stencil?.type;
+      break;
+  }
   assert(!!type);
   return type;
 }

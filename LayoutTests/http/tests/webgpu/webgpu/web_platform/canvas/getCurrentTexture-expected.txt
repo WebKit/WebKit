@@ -13,10 +13,10 @@ FAIL :multiple_frames:canvasType="onscreen" assert_unreached:
        failed ->        xx xx       xx xx                                                                                     ...
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:763:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:932:43
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:200:28
   - (in subcase: clearTexture=true) EXPECTATION FAILED: Array had unexpected contents at indices 2 through 263.
      Starting at index 1:
@@ -42,10 +42,10 @@ FAIL :multiple_frames:canvasType="offscreen" assert_unreached:
        failed ->        xx xx       xx xx                                                                                     ...
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:763:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:932:43
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:200:28
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:234:25
     @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:246:15
@@ -57,10 +57,10 @@ FAIL :multiple_frames:canvasType="offscreen" assert_unreached:
        failed ->        xx xx       xx xx                                                                                     ...
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ...
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:755:38
-    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:924:43
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:703:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:719:40
+    expectGPUBufferRepeatsSingleValue@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:763:38
+    expectSingleColor@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:932:43
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:200:28
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:234:25
     frameCheck@http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js:234:25

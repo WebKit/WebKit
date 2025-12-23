@@ -573,6 +573,14 @@ export const listing = [
       "api",
       "operation",
       "texture_view",
+      "texture_component_swizzle"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "operation",
+      "texture_view",
       "write"
     ]
   },
@@ -678,6 +686,15 @@ export const listing = [
       "capability_checks",
       "features",
       "query_types"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
+      "capability_checks",
+      "features",
+      "texture_component_swizzle"
     ]
   },
   {
@@ -4016,6 +4033,13 @@ export const listing = [
       "execution",
       "memory_model",
       "weak"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "override"
     ]
   },
   {

@@ -7,9 +7,7 @@ Returns the number of layers (elements) of an array texture.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
 import {
   isTextureFormatPossiblyStorageReadWritable,
-  kPossibleStorageTextureFormats,
-  kTextureFormatTier1ThrowsWhenNotEnabled,
-  kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly } from
+  kPossibleStorageTextureFormats } from
 '../../../../../format_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import { kShaderStages } from '../../../../validation/decl/util.js';
@@ -216,7 +214,6 @@ fn((t) => {
   skipIfNoStorageTexturesInStage(t, stage);
   t.skipIfTextureFormatNotSupported(format);
   t.skipIfTextureFormatNotUsableWithStorageAccessMode(access_mode, format);
-  t.skipIf(kTextureFormatTier1ThrowsWhenNotEnabled.includes(format) || kTextureFormatsTier1EnablesStorageReadOnlyWriteOnly.includes(format), "16-bit s/unorm formats not correctly implemented");
 
   const texture = t.createTextureTracked({
     format,

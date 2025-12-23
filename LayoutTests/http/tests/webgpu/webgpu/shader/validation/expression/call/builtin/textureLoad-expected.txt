@@ -547,7 +547,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="abstra
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=-1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -563,7 +563,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="abstra
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2327,7 +2327,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="i32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=-1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2343,7 +2343,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="i32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4095,7 +4095,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="u32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4111,7 +4111,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_2d";coordType="u32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5308,7 +5308,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="abstra
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=-1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5324,7 +5324,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="abstra
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -7088,7 +7088,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="i32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=-1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -7104,7 +7104,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="i32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -8856,7 +8856,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="u32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -8872,7 +8872,7 @@ FAIL :coords_argument,storage:textureType="texture_storage_3d";coordType="u32" a
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:233:24
   - (in subcase: format="rgba8unorm";value=1) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -10391,7 +10391,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d%3Crgba8unorm,%20r
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -10407,7 +10407,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d%3Crgba8unorm,%20r
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -12213,7 +12213,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d%3Cr32uint,%20read
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -12229,7 +12229,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d%3Cr32uint,%20read
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -14035,7 +14035,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d_array%3Crgba8unor
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -14051,7 +14051,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d_array%3Crgba8unor
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -15857,7 +15857,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d_array%3Cr32uint,%
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -15873,7 +15873,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_2d_array%3Cr32uint,%
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -17679,7 +17679,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_3d%3Crgba8unorm,%20r
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -17695,7 +17695,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_3d%3Crgba8unorm,%20r
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -19501,7 +19501,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_3d%3Cr32uint,%20read
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8unorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -19517,7 +19517,7 @@ FAIL :texture_type,storage:testTextureType="texture_storage_3d%3Cr32uint,%20read
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureLoad.spec.js:541:24
   - (in subcase: textureType="texture_storage_1d";format="r8snorm") EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

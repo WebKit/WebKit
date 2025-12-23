@@ -405,7 +405,8 @@ export class LimitTestsImpl extends GPUTestBase {
     const limit = this.limit;
     // MAINTENANCE_TODO: consider removing this skip if the spec has no optional limits.
     this.skipIf(
-      this._adapter?.limits[limit] === undefined && !!this.limitTestParams.limitOptional,
+      this._adapter?.limits[limit] === undefined && !!this.limitTestParams.limitOptional ||
+      getDefaultLimitsForCTS()[limit] === undefined,
       `${limit} is missing but optional for now`
     );
     this.defaultLimit = getDefaultLimitForAdapter(this.adapter, limit);

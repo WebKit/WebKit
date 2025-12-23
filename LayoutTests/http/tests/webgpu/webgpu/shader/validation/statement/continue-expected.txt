@@ -24,7 +24,7 @@ FAIL :placement:stmt="loop_continue_before_decl_used_in_continuing" assert_unrea
       return vec4f(1);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -42,7 +42,7 @@ FAIL :placement:stmt="loop_nested_continue_before_decl_used_in_continuing" asser
       return vec4f(1);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/continue.spec.js:103:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

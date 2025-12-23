@@ -38,7 +38,8 @@ import {
   isStencilTextureFormat,
   textureViewDimensionAndFormatCompatibleForDevice,
   textureDimensionAndFormatCompatibleForDevice,
-  isTextureFormatUsableWithStorageAccessMode } from
+  isTextureFormatUsableWithStorageAccessMode,
+  isTextureFormatUsableWithCopyExternalImageToTexture } from
 './format_info.js';
 import { checkElementsEqual, checkElementsBetween } from './util/check_contents.js';
 import { CommandBufferMaker } from './util/command_buffer_maker.js';
@@ -641,6 +642,13 @@ export class GPUTestBase extends Fixture {
     this.skipIf(
       !this.canCallCopyTextureToBufferWithTextureFormat(format),
       `can not use copyTextureToBuffer with ${format}`
+    );
+  }
+
+  skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(format) {
+    this.skipIf(
+      !isTextureFormatUsableWithCopyExternalImageToTexture(this.device, format),
+      `can not use copyExternalImageToTexture with ${format}`
     );
   }
 

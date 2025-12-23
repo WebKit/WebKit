@@ -106,28 +106,28 @@ PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorA
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="writeonly-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="writeonly-storage-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readonly-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readonly-storage-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readwrite-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=0;colorAttachmentLayer=1;bgLevel=0;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readwrite-storage-texture";inSamePass=false
@@ -302,28 +302,28 @@ PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorA
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="writeonly-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="writeonly-storage-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readonly-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readonly-storage-texture";inSamePass=false
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readwrite-storage-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=1;bgLayer=0;bgLayerCount=3;bgUsage="readwrite-storage-texture";inSamePass=false
@@ -348,7 +348,7 @@ PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorA
 FAIL :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=2;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=true assert_unreached:
   - VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:282:26
  Reached unreachable code
 PASS :subresources,color_attachment_and_bind_group:colorAttachmentLevel=1;colorAttachmentLayer=1;bgLevel=1;bgLevelCount=2;bgLayer=0;bgLayerCount=3;bgUsage="sampled-texture";inSamePass=false
@@ -378,13 +378,13 @@ FAIL :subresources,depth_stencil_attachment_and_bind_group:dsLevel=0;dsLayer=1;b
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
@@ -435,13 +435,13 @@ FAIL :subresources,depth_stencil_attachment_and_bind_group:dsLevel=1;dsLayer=1;b
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
@@ -468,13 +468,13 @@ FAIL :subresources,depth_stencil_attachment_and_bind_group:dsLevel=1;dsLayer=1;b
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=true;stencilReadOnly=false;bgAspect="stencil-only";inSamePass=false) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:416:26
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=true) INFO: subcase ran
   - (in subcase: depthReadOnly=false;stencilReadOnly=true;bgAspect="depth-only";inSamePass=false) INFO: subcase ran
@@ -687,7 +687,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -696,7 +696,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -704,7 +704,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -713,7 +713,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -721,7 +721,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -730,7 +730,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -739,7 +739,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -747,7 +747,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -755,7 +755,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -763,7 +763,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -901,7 +901,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -910,7 +910,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -918,7 +918,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -927,7 +927,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -935,7 +935,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -944,7 +944,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -953,7 +953,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -961,7 +961,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -969,7 +969,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -977,7 +977,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":0,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1083,7 +1083,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1092,7 +1092,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1100,7 +1100,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1109,7 +1109,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1117,7 +1117,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1126,7 +1126,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1135,7 +1135,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1143,7 +1143,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1151,7 +1151,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1159,7 +1159,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1169,7 +1169,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1178,7 +1178,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1186,7 +1186,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1195,7 +1195,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1203,7 +1203,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1212,7 +1212,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1221,7 +1221,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1229,7 +1229,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1237,7 +1237,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1245,7 +1245,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":0,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":0,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1607,7 +1607,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1616,7 +1616,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1624,7 +1624,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1633,7 +1633,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1641,7 +1641,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1650,7 +1650,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1659,7 +1659,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1667,7 +1667,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1675,7 +1675,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1683,7 +1683,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1705,7 +1705,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":2};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1714,7 +1714,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":2};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1835,7 +1835,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1844,7 +1844,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1852,7 +1852,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1861,7 +1861,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1869,7 +1869,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1878,7 +1878,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1887,7 +1887,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1895,7 +1895,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1903,7 +1903,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1911,7 +1911,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1933,7 +1933,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":2};bg1Layers={"base":0,"count":3};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -1942,7 +1942,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":2};bg1Layers={"base":0,"count":3};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2031,7 +2031,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2040,7 +2040,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2048,7 +2048,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2057,7 +2057,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2065,7 +2065,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2074,7 +2074,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2083,7 +2083,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2091,7 +2091,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2099,7 +2099,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2107,7 +2107,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2117,7 +2117,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2126,7 +2126,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2134,7 +2134,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2143,7 +2143,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2151,7 +2151,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2160,7 +2160,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readonly-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2169,7 +2169,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readonly-storage-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2177,7 +2177,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2185,7 +2185,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2193,7 +2193,7 @@ FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="readonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2223,7 +2223,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":2};bg1Layers={"base":1,"count":1};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2232,7 +2232,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":2};bg1Layers={"base":1,"count":1};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2241,7 +2241,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":2};bg1Layers={"base":1,"count":2};bgUsage0="writeonly-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2250,7 +2250,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":1};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":2};bg1Layers={"base":1,"count":2};bgUsage0="readwrite-storage-texture";bgUsage1="sampled-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2327,7 +2327,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2336,7 +2336,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":1,"count":1};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2377,7 +2377,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2386,7 +2386,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":1,"count":2};bg1Levels={"base":1,"count":1};bg1Layers={"base":0,"count":3};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2419,7 +2419,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2428,7 +2428,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":1};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2437,7 +2437,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="writeonly-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran
@@ -2446,7 +2446,7 @@ PASS :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers
 FAIL :subresources,multiple_bind_groups:bg0Levels={"base":1,"count":2};bg0Layers={"base":0,"count":3};bg1Levels={"base":1,"count":1};bg1Layers={"base":1,"count":2};bgUsage0="sampled-texture";bgUsage1="readwrite-storage-texture" assert_unreached:
   - (in subcase: inSamePass=true) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js:552:26
   - (in subcase: inSamePass=true) INFO: subcase ran
   - (in subcase: inSamePass=false) INFO: subcase ran

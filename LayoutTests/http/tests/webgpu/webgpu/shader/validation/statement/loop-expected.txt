@@ -42,7 +42,7 @@ FAIL :parse:test="continuing_break" assert_unreached:
       let expr = true;
       loop { continuing {} break; }
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/statement/loop.spec.js:89:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

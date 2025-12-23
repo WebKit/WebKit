@@ -30,37 +30,37 @@ PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="over
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=1 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=2 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=3 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=4 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=5 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=6 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";visibility=7 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=1
 PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";visibility=2
@@ -72,37 +72,37 @@ PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testVal
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=1 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=2 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=3 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=4 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=5 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=6 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 FAIL :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";visibility=7 assert_unreached:
   - EXPECTATION FAILED: Uniform buffers count(45) exceeded max count per stage(44):
     expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:681:16
+    expectGPUErrorAsync@http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:682:16
  Reached unreachable code
 PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=1
 PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";visibility=2

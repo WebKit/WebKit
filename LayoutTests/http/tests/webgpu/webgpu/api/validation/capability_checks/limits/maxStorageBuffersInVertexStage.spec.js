@@ -25,7 +25,7 @@ const kExtraLimits = {
 };
 
 export const { g, description } = makeLimitTestGroup(limit, {
-  // MAINTAINANCE_TODO: remove once this limit is required.
+  // MAINTENANCE_TODO: remove once this limit is required.
   limitOptional: true
 });
 

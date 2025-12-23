@@ -989,7 +989,7 @@ FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
       var v : i32 = 0;
       return v << 32u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1004,7 +1004,7 @@ FAIL :partial_eval_errors:op="%3C%3C";type="i32" assert_unreached:
       var v : i32 = 0;
       return v << 33u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1046,7 +1046,7 @@ FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
       var v : u32 = 0;
       return v << 32u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1061,7 +1061,7 @@ FAIL :partial_eval_errors:op="%3C%3C";type="u32" assert_unreached:
       var v : u32 = 0;
       return v << 33u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1103,7 +1103,7 @@ FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
       var v : i32 = 0;
       return v >> 32u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1118,7 +1118,7 @@ FAIL :partial_eval_errors:op="%3E%3E";type="i32" assert_unreached:
       var v : i32 = 0;
       return v >> 33u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1160,7 +1160,7 @@ FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
       var v : u32 = 0;
       return v >> 32u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=32) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1175,7 +1175,7 @@ FAIL :partial_eval_errors:op="%3E%3E";type="u32" assert_unreached:
       var v : u32 = 0;
       return v >> 33u;
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/binary/bitwise_shift.spec.js:317:26
   - (in subcase: stage="shader";value=33) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

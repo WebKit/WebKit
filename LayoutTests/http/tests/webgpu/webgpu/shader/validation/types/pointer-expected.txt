@@ -43,7 +43,7 @@ FAIL :access_mode:aspace="storage";access="write";comma="" assert_unreached:
 
     ---- shader ----
     alias T = ptr<storage, u32, write>;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/pointer.spec.js:63:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -54,7 +54,7 @@ FAIL :access_mode:aspace="storage";access="write";comma="," assert_unreached:
 
     ---- shader ----
     alias T = ptr<storage, u32, write,>;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/pointer.spec.js:63:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -109,7 +109,7 @@ FAIL :type:case="sampler" assert_unreached:
         struct T { s : array<S> }
         alias u32_alias = u32;
         alias Type = ptr<storage, sampler>;
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/types/pointer.spec.js:139:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

@@ -196,7 +196,7 @@ FAIL :return_type:returnType="vec4%3Cf32%3E";textureType="texture_1d%3Cf32%3E" a
   - (in subcase: offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:21: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d%3Cf32%3E"
 PASS :return_type:returnType="vec4%3Cf32%3E";textureType="texture_2d_array%3Cf32%3E"
@@ -346,7 +346,7 @@ FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="abstract-int"
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractInt>, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="abstract-float" assert_unreached:
   - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -393,7 +393,7 @@ FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="abstract-floa
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, <AbstractFloat>, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="f32" assert_unreached:
   - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -440,7 +440,7 @@ FAIL :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="f32" assert_u
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="f16"
 PASS :coords_argument:textureType="texture_1d%3Cf32%3E";coordType="vec2%3Cabstract-int%3E"
@@ -876,7 +876,7 @@ FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="abstract-int" 
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="abstract-float" assert_unreached:
   - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -923,7 +923,7 @@ FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="abstract-float
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractFloat>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="f32" assert_unreached:
   - (in subcase: value=-1;offset=false) VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -970,7 +970,7 @@ FAIL :level_argument:textureType="texture_1d%3Cf32%3E";levelType="f32" assert_un
   - (in subcase: value=1;offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, f32)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="f16"
 PASS :level_argument:textureType="texture_1d%3Cf32%3E";levelType="vec2%3Cabstract-int%3E"
@@ -1323,7 +1323,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
   - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1343,7 +1343,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
   - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1374,7 +1374,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
   - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1394,7 +1394,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:290:24
   - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1484,7 +1484,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:328:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1505,7 +1505,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleLevel.spec.js:328:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1547,7 +1547,7 @@ FAIL :texture_type:testTextureType="texture_1d%3Cf32%3E" assert_unreached:
   - (in subcase: textureType="texture_depth_cube_array";offset=false) INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     5:10: no matching overload for initializer textureSampleLevel(ref<handle, texture_1d<f32>, read>, ref<handle, sampler, read>, f32, <AbstractInt>)
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :texture_type:testTextureType="texture_1d%3Cu32%3E"
 PASS :texture_type:testTextureType="texture_2d%3Cf32%3E"

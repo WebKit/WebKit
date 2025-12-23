@@ -115,9 +115,10 @@ g.test('attachments,one_color_attachment').
 desc(`Test that a render pass works with only one color attachment.`).
 paramsSubcasesOnly((u) => u.combine('bindTextureResource', [false, true])).
 fn((t) => {
+  const { bindTextureResource } = t.params;
   const colorTexture = t.createTestTexture({ format: 'rgba8unorm' });
   const descriptor = {
-    colorAttachments: [t.getColorAttachment(colorTexture)]
+    colorAttachments: [t.getColorAttachment(colorTexture, { bindTextureResource })]
   };
 
   t.tryRenderPass(true, descriptor);
@@ -127,10 +128,13 @@ g.test('attachments,one_depth_stencil_attachment').
 desc(`Test that a render pass works with only one depthStencil attachment.`).
 paramsSubcasesOnly((u) => u.combine('bindTextureResource', [false, true])).
 fn((t) => {
+  const { bindTextureResource } = t.params;
   const depthStencilTexture = t.createTestTexture({ format: 'depth24plus-stencil8' });
   const descriptor = {
     colorAttachments: [],
-    depthStencilAttachment: t.getDepthStencilAttachment(depthStencilTexture)
+    depthStencilAttachment: t.getDepthStencilAttachment(depthStencilTexture, {
+      bindTextureResource
+    })
   };
 
   t.tryRenderPass(true, descriptor);

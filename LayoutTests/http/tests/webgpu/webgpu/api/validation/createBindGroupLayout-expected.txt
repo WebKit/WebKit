@@ -7,7 +7,7 @@ FAIL :visibility:visibility=1 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -18,7 +18,7 @@ FAIL :visibility:visibility=1 assert_unreached:
   - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
@@ -27,12 +27,12 @@ FAIL :visibility:visibility=2 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -55,7 +55,7 @@ FAIL :visibility:visibility=3 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -66,7 +66,7 @@ FAIL :visibility:visibility=3 assert_unreached:
   - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
@@ -77,7 +77,7 @@ FAIL :visibility:visibility=5 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -88,7 +88,7 @@ FAIL :visibility:visibility=5 assert_unreached:
   - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
@@ -97,12 +97,12 @@ FAIL :visibility:visibility=6 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"uniform"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -125,7 +125,7 @@ FAIL :visibility:visibility=7 assert_unreached:
   - (in subcase: entry={"buffer":{"type":"storage"}}) INFO: subcase ran
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"buffer":{"type":"read-only-storage"}}) INFO: subcase ran
   - (in subcase: entry={"sampler":{"type":"comparison"}}) INFO: subcase ran
@@ -136,7 +136,7 @@ FAIL :visibility:visibility=7 assert_unreached:
   - (in subcase: entry={"storageTexture":{"access":"write-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:163:26
   - (in subcase: entry={"storageTexture":{"access":"read-only","format":"r32float"}}) INFO: subcase ran
   - (in subcase: entry={"storageTexture":{"access":"read-write","format":"r32float"}}) INFO: subcase ran
@@ -147,7 +147,7 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=1 assert_unreached:
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -155,12 +155,12 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=2 assert_unreached:
   - (in subcase: type="uniform") INFO: subcase ran
   - (in subcase: type="storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -169,7 +169,7 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=3 assert_unreached:
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -179,7 +179,7 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=5 assert_unreached:
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -187,12 +187,12 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=6 assert_unreached:
   - (in subcase: type="uniform") INFO: subcase ran
   - (in subcase: type="storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -201,7 +201,7 @@ FAIL :visibility,VERTEX_shader_stage_buffer_type:shaderStage=7 assert_unreached:
   - (in subcase: type="storage") INFO: subcase ran
   - (in subcase: type="read-only-storage") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:190:26
   - (in subcase: type="read-only-storage") INFO: subcase ran
  Reached unreachable code
@@ -210,7 +210,7 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=1 assert
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") INFO: subcase ran
@@ -219,12 +219,12 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=1 assert
 FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=2 assert_unreached:
   - (in subcase: access="_undef_") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") VALIDATION FAILED: Validation succeeded unexpectedly.
@@ -238,7 +238,7 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=3 assert
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") INFO: subcase ran
@@ -249,7 +249,7 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=5 assert
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") INFO: subcase ran
@@ -258,12 +258,12 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=5 assert
 FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=6 assert_unreached:
   - (in subcase: access="_undef_") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") VALIDATION FAILED: Validation succeeded unexpectedly.
@@ -277,7 +277,7 @@ FAIL :visibility,VERTEX_shader_stage_storage_texture_access:shaderStage=7 assert
   - (in subcase: access="_undef_") INFO: subcase ran
   - (in subcase: access="read-only") VALIDATION FAILED: Validation succeeded unexpectedly.
     eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1209:36
     @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js:226:26
   - (in subcase: access="read-only") INFO: subcase ran
   - (in subcase: access="read-write") INFO: subcase ran

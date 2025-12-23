@@ -21,6 +21,12 @@ export function setupWorkerEnvironment(ctsOptions) {
   globalTestConfig.compatibility = compatibility;
   globalTestConfig.enforceDefaultLimits = ctsOptions.enforceDefaultLimits;
   globalTestConfig.blockAllFeatures = ctsOptions.blockAllFeatures;
+  if (ctsOptions.subcasesBetweenAttemptingGC) {
+    globalTestConfig.subcasesBetweenAttemptingGC = Number(ctsOptions.subcasesBetweenAttemptingGC);
+  }
+  if (ctsOptions.casesBetweenReplacingDevice) {
+    globalTestConfig.casesBetweenReplacingDevice = Number(ctsOptions.casesBetweenReplacingDevice);
+  }
   globalTestConfig.logToWebSocket = ctsOptions.logToWebSocket;
 
   const log = new Logger();

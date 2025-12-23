@@ -7,10 +7,12 @@ TODO:
 - Test resource usage transitions with read-write storage textures
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../common/util/util.js';
+import { Float16Array } from '../../../../external/petamoriken/float16/float16.js';
 import { kTextureDimensions } from '../../../capability_info.js';
 import {
   getBlockInfoForColorTextureFormat,
   getBlockInfoForTextureFormat,
+  getTextureFormatType,
   kPossibleStorageTextureFormats } from
 '../../../format_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../../../gpu_test.js';
@@ -35,15 +37,81 @@ class F extends AllFeaturesMaxLimitsGPUTest {
       for (let y = 0; y < height; ++y) {
         for (let x = 0; x < width; ++x) {
           const index = z * width * height + y * width + x;
+          const baseValue = 2 * index + 1;
           switch (format) {
+            case 'r8unorm':
+            case 'r8uint':
+              initialTypedData[index] = baseValue % 256;
+              break;
+            case 'r8sint':
+              initialTypedData[index] = baseValue % 256 - 128;
+              break;
+            case 'rgba8unorm':
+            case 'rgba8uint':
+              initialTypedData[index * 4 + 0] = baseValue * 1 % 256; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2 % 256; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3 % 256; // B
+              initialTypedData[index * 4 + 3] = 255;
+              break;
+            case 'rgba8sint':
+              initialTypedData[index * 4 + 0] = baseValue * 1 % 256 - 128; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2 % 256 - 128; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3 % 256 - 128; // B
+              initialTypedData[index * 4 + 3] = 127;
+              break;
+            case 'r16uint':
+              initialTypedData[index] = baseValue % 65536;
+              break;
+            case 'r16sint':
+              initialTypedData[index] = baseValue % 65536 - 32768;
+              break;
+            case 'r16float':
+              initialTypedData[index] = baseValue;
+              break;
+            case 'rgba16uint':
+              initialTypedData[index * 4 + 0] = baseValue * 1 % 65536; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2 % 65536; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3 % 65536; // B
+              initialTypedData[index * 4 + 3] = 65535;
+              break;
+            case 'rgba16sint':
+              initialTypedData[index * 4 + 0] = baseValue * 1 % 65536 - 32768; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2 % 65536 - 32768; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3 % 65536 - 32768; // B
+              initialTypedData[index * 4 + 3] = 32767;
+              break;
+            case 'rgba16float':
+              initialTypedData[index * 4 + 0] = baseValue * 1; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3; // B
+              initialTypedData[index * 4 + 3] = 1.0;
+              break;
             case 'r32sint':
-              initialTypedData[index] = (index & 1 ? 1 : -1) * (2 * index + 1);
+              initialTypedData[index] = (index & 1 ? 1 : -1) * baseValue;
               break;
             case 'r32uint':
-              initialTypedData[index] = 2 * index + 1;
+              initialTypedData[index] = baseValue;
               break;
             case 'r32float':
-              initialTypedData[index] = (2 * index + 1) / 10.0;
+              initialTypedData[index] = baseValue / 10.0;
+              break;
+            case 'rgba32uint':
+              initialTypedData[index * 4 + 0] = baseValue * 1; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3; // B
+              initialTypedData[index * 4 + 3] = baseValue;
+              break;
+            case 'rgba32sint':
+              initialTypedData[index * 4 + 0] = (index & 1 ? 1 : -1) * baseValue * 1; // R
+              initialTypedData[index * 4 + 1] = (index & 1 ? 1 : -1) * baseValue * 2; // G
+              initialTypedData[index * 4 + 2] = (index & 1 ? 1 : -1) * baseValue * 3; // B
+              initialTypedData[index * 4 + 3] = baseValue;
+              break;
+            case 'rgba32float':
+              initialTypedData[index * 4 + 0] = baseValue * 1 / 10.0; // R
+              initialTypedData[index * 4 + 1] = baseValue * 2 / 10.0; // G
+              initialTypedData[index * 4 + 2] = baseValue * 3 / 10.0; // B
+              initialTypedData[index * 4 + 3] = 1.0;
               break;
           }
         }
@@ -54,11 +122,31 @@ class F extends AllFeaturesMaxLimitsGPUTest {
 
   getTypedArrayBuffer(arrayBuffer, format) {
     switch (format) {
+      case 'r8unorm':
+      case 'r8uint':
+      case 'rgba8unorm':
+      case 'rgba8uint':
+        return new Uint8Array(arrayBuffer);
+      case 'r8sint':
+      case 'rgba8sint':
+        return new Int8Array(arrayBuffer);
+      case 'r16uint':
+      case 'rgba16uint':
+        return new Uint16Array(arrayBuffer);
+      case 'r16sint':
+      case 'rgba16sint':
+        return new Int16Array(arrayBuffer);
+      case 'r16float':
+      case 'rgba16float':
+        return new Float16Array(arrayBuffer);
       case 'r32sint':
+      case 'rgba32sint':
         return new Int32Array(arrayBuffer);
       case 'r32uint':
+      case 'rgba32uint':
         return new Uint32Array(arrayBuffer);
       case 'r32float':
+      case 'rgba32float':
         return new Float32Array(arrayBuffer);
       default:
         unreachable();
@@ -86,6 +174,48 @@ class F extends AllFeaturesMaxLimitsGPUTest {
     );
     const expectedTypedData = this.getTypedArrayBuffer(expectedData, format);
     const initialTypedData = this.getTypedArrayBuffer(initialData, format);
+
+    const getFormatRange = (fmt) => {
+      switch (fmt) {
+        case 'r8uint':
+        case 'r8unorm':
+        case 'rgba8unorm':
+          return { min: 0, max: 255 };
+        case 'r8sint':
+          return { min: -128, max: 127 };
+        case 'rgba8uint':
+          return { min: 0, max: 255 };
+        case 'rgba8sint':
+          return { min: -128, max: 127 };
+        case 'r16uint':
+          return { min: 0, max: 65535 };
+        case 'r16sint':
+          return { min: -32768, max: 32767 };
+        case 'rgba16uint':
+          return { min: 0, max: 65535 };
+        case 'rgba16sint':
+          return { min: -32768, max: 32767 };
+        case 'r32uint':
+          return { min: 0, max: 4294967295 };
+        case 'r32sint':
+          return { min: -2147483648, max: 2147483647 };
+        case 'rgba32uint':
+          return { min: 0, max: 4294967295 };
+        case 'rgba32sint':
+          return { min: -2147483648, max: 2147483647 };
+        case 'r16float':
+          return { min: -65504, max: 65504 };
+        case 'rgba16float':
+          return { min: -65504, max: 65504 };
+        default:
+          return { min: -Infinity, max: Infinity };
+      }
+    };
+
+    const isRGBAChannel = format.startsWith('rgba');
+
+    const { min, max } = getFormatRange(format);
+
     for (let z = 0; z < depthOrArrayLayers; ++z) {
       for (let y = 0; y < height; ++y) {
         for (let x = 0; x < width; ++x) {
@@ -97,14 +227,30 @@ class F extends AllFeaturesMaxLimitsGPUTest {
                 (depthOrArrayLayers - 1 - z) * width * height +
                 (height - 1 - y) * width + (
                 width - 1 - x);
-                expectedTypedData[expectedIndex] = initialTypedData[initialIndex];
+                if (isRGBAChannel) {
+                  for (let c = 0; c < 4; c++) {
+                    expectedTypedData[expectedIndex * 4 + c] = initialTypedData[initialIndex * 4 + c];
+                  }
+                } else {
+                  expectedTypedData[expectedIndex] = initialTypedData[initialIndex];
+                }
                 break;
               }
             case 'fragment':{
                 // In the fragment shader we double the original texel value of the read-write storage
                 // texture.
                 const initialIndex = z * width * height + y * width + x;
-                expectedTypedData[expectedIndex] = initialTypedData[initialIndex] * 2;
+                if (isRGBAChannel) {
+                  for (let c = 0; c < 4; c++) {
+                    let value = initialTypedData[initialIndex * 4 + c] * 2;
+                    value = Math.max(min, Math.min(max, value));
+                    expectedTypedData[expectedIndex * 4 + c] = value;
+                  }
+                } else {
+                  let value = initialTypedData[initialIndex] * 2;
+                  value = Math.max(min, Math.min(max, value));
+                  expectedTypedData[expectedIndex] = value;
+                }
                 break;
               }
           }
@@ -380,15 +526,24 @@ fn((t) => {
   );
   t.queue.submit([commandEncoder.finish()]);
 
-  switch (format) {
-    case 'r32sint':
-      t.expectGPUBufferValuesEqual(readbackBuffer, new Int32Array(expectedData));
-      break;
-    case 'r32uint':
+  switch (getTextureFormatType(format)) {
+    case 'uint':
       t.expectGPUBufferValuesEqual(readbackBuffer, new Uint32Array(expectedData));
       break;
-    case 'r32float':
-      t.expectGPUBufferValuesEqual(readbackBuffer, new Float32Array(expectedData));
+    case 'sint':
+      t.expectGPUBufferValuesEqual(readbackBuffer, new Int32Array(expectedData));
+
+      break;
+    case 'float':
+    case 'unfilterable-float':
+      if (format === 'r8unorm' || format === 'rgba8unorm') {
+        t.expectGPUBufferValuesEqual(readbackBuffer, new Uint8Array(expectedData));
+      } else {
+        t.expectGPUBufferValuesEqual(readbackBuffer, new Float32Array(expectedData));
+      }
+      break;
+    default:
+      unreachable();
       break;
   }
 });

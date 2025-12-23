@@ -273,7 +273,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -297,7 +297,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -375,7 +375,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -401,7 +401,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -481,7 +481,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -505,7 +505,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -583,7 +583,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -609,7 +609,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="storage";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -689,7 +689,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="texture_3d";
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -713,7 +713,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="texture_3d";
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -791,7 +791,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="texture_3d";
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -817,7 +817,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="texture_3d";
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -897,7 +897,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="uniform";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -921,7 +921,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="uniform";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -999,7 +999,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="uniform";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1025,7 +1025,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_2d";b_kind="uniform";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1105,7 +1105,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="textur
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1129,7 +1129,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="textur
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1207,7 +1207,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="textur
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1233,7 +1233,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="textur
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1313,7 +1313,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="unifor
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1337,7 +1337,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="unifor
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1415,7 +1415,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="unifor
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1441,7 +1441,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="texture_external";b_kind="unifor
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1521,7 +1521,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1545,7 +1545,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1623,7 +1623,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1649,7 +1649,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="texture_3d";usa
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1729,7 +1729,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1753,7 +1753,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1831,7 +1831,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1857,7 +1857,7 @@ FAIL :single_entry_point:stage="vertex";a_kind="uniform";b_kind="uniform";usage=
       return vec4f();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1936,7 +1936,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_3d";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -1959,7 +1959,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_3d";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2034,7 +2034,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_3d";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2059,7 +2059,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_3d";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2136,7 +2136,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_stora
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2159,7 +2159,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_stora
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2234,7 +2234,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_stora
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2259,7 +2259,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="texture_stora
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2336,7 +2336,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="uniform";usag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2359,7 +2359,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="uniform";usag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2434,7 +2434,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="uniform";usag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2459,7 +2459,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="storage";b_kind="uniform";usag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2536,7 +2536,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_3d
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2559,7 +2559,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_3d
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2634,7 +2634,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_3d
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2659,7 +2659,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_3d
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2736,7 +2736,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_st
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2759,7 +2759,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_st
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2834,7 +2834,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_st
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2859,7 +2859,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="texture_st
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2936,7 +2936,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="uniform";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -2959,7 +2959,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="uniform";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3034,7 +3034,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="uniform";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3059,7 +3059,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_2d";b_kind="uniform";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3136,7 +3136,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3159,7 +3159,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3234,7 +3234,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3259,7 +3259,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3336,7 +3336,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3359,7 +3359,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3434,7 +3434,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3459,7 +3459,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="text
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3536,7 +3536,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="unif
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3559,7 +3559,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="unif
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3634,7 +3634,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="unif
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3659,7 +3659,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="texture_external";b_kind="unif
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3736,7 +3736,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_3d";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3759,7 +3759,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_3d";u
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3834,7 +3834,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_3d";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3859,7 +3859,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_3d";u
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3936,7 +3936,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_stora
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -3959,7 +3959,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_stora
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4034,7 +4034,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_stora
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4059,7 +4059,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="texture_stora
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4136,7 +4136,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="uniform";usag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4159,7 +4159,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="uniform";usag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4234,7 +4234,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="uniform";usag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4259,7 +4259,7 @@ FAIL :single_entry_point:stage="fragment";a_kind="uniform";b_kind="uniform";usag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4336,7 +4336,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_3d";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4359,7 +4359,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_3d";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4434,7 +4434,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_3d";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4459,7 +4459,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_3d";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4536,7 +4536,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_storag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4559,7 +4559,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_storag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4634,7 +4634,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_storag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4659,7 +4659,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="texture_storag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4736,7 +4736,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="uniform";usage
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4759,7 +4759,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="uniform";usage
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4834,7 +4834,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="uniform";usage
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4859,7 +4859,7 @@ FAIL :single_entry_point:stage="compute";a_kind="storage";b_kind="uniform";usage
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4936,7 +4936,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_3d"
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -4959,7 +4959,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_3d"
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5034,7 +5034,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_3d"
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5059,7 +5059,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_3d"
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5136,7 +5136,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_sto
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5159,7 +5159,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_sto
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5234,7 +5234,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_sto
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5259,7 +5259,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="texture_sto
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5336,7 +5336,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="uniform";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5359,7 +5359,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="uniform";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5434,7 +5434,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="uniform";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5459,7 +5459,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_2d";b_kind="uniform";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5536,7 +5536,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5559,7 +5559,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5634,7 +5634,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5659,7 +5659,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5736,7 +5736,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5759,7 +5759,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5834,7 +5834,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5859,7 +5859,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="textu
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5936,7 +5936,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="unifo
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -5959,7 +5959,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="unifo
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6034,7 +6034,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="unifo
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6059,7 +6059,7 @@ FAIL :single_entry_point:stage="compute";a_kind="texture_external";b_kind="unifo
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6136,7 +6136,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_3d";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6159,7 +6159,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_3d";us
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6234,7 +6234,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_3d";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6259,7 +6259,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_3d";us
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6336,7 +6336,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_storag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6359,7 +6359,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_storag
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6434,7 +6434,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_storag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6459,7 +6459,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="texture_storag
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6536,7 +6536,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="uniform";usage
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6559,7 +6559,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="uniform";usage
       _ = resource_a; _ = resource_b;
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:123:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6634,7 +6634,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="uniform";usage
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=0;b_binding=0) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -6659,7 +6659,7 @@ FAIL :single_entry_point:stage="compute";a_kind="uniform";b_kind="uniform";usage
       use_a(); use_b();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_io/group_and_binding.spec.js:131:26
   - (in subcase: a_group=0;b_group=0;a_binding=3;b_binding=3) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)

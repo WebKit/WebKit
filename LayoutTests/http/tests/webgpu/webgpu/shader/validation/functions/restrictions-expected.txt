@@ -18,7 +18,7 @@ FAIL :entry_point_call_target:stage="%40fragment";entry_point="with" assert_unre
       bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -39,7 +39,7 @@ FAIL :entry_point_call_target:stage="%40vertex";entry_point="with" assert_unreac
       let tmp = bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -60,7 +60,7 @@ FAIL :entry_point_call_target:stage="%40compute%20%40workgroup_size(1,1,1)";entr
       bar();
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:97:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -192,7 +192,7 @@ FAIL :function_parameter_types:case="invalid_ptr8" assert_unreached:
 
     fn foo(param : ptr<function, texture_external>) {
     }
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/functions/restrictions.spec.js:313:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -388,7 +388,7 @@ FAIL :function_attributes:case="diagnostic";placement="func" assert_unreached:
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     2:0: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :function_attributes:case="diagnostic";placement="param"
 PASS :function_attributes:case="diagnostic";placement="ret"

@@ -1,5 +1,10 @@
 
-PASS :attachments,one_color_attachment:
+FAIL :attachments,one_color_attachment: assert_unreached:
+  - (in subcase: bindTextureResource=false) INFO: subcase ran
+  - (in subcase: bindTextureResource=true) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: zero color and depth targets
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
+ Reached unreachable code
 PASS :attachments,one_depth_stencil_attachment:
 PASS :attachments,same_size:
 PASS :attachments,color_depth_mismatch:

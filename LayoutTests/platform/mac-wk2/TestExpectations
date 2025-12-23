@@ -1610,7 +1610,7 @@ fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
 
 webkit.org/b/293808 [ Sequoia+ arm64 ] http/tests/webgpu/webgpu/api [ Slow ]
 webkit.org/b/293808 [ Sequoia+ arm64 ] http/tests/webgpu/webgpu/shader [ Slow ]
-[ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]
+[ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/web_platform [ Slow ]
 
 [ arm64 ] http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_formats.html [ Pass ]
 

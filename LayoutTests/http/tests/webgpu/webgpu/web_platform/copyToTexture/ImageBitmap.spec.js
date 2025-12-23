@@ -13,7 +13,8 @@ TODO: Test zero-sized copies from all sources (just make sure params cover it) (
 `;import { makeTestGroup } from '../../../common/framework/test_group.js';
 import {
   getBaseFormatForRegularTextureFormat,
-  kValidTextureFormatsForCopyE2T } from
+  isTextureFormatPossiblyUsableWithCopyExternalImageToTexture,
+  kRegularTextureFormats } from
 '../../format_info.js';
 import { TextureUploadingUtils, kCopySubrectInfo } from '../../util/copy_to_texture.js';
 
@@ -55,7 +56,8 @@ combine('alpha', ['none', 'premultiply']).
 combine('orientation', ['none', 'flipY']).
 combine('colorSpaceConversion', ['none', 'default']).
 combine('srcFlipYInCopy', [true, false]).
-combine('dstFormat', kValidTextureFormatsForCopyE2T).
+combine('dstFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstFormat)).
 combine('dstPremultiplied', [true, false]).
 beginSubcases().
 combine('width', [1, 2, 4, 15, 255, 256]).
@@ -76,6 +78,7 @@ fn(async (t) => {
     srcFlipYInCopy
   } = t.params;
   t.skipIfTextureFormatNotSupported(dstFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstFormat);
 
   const testColors = kTestColorsAll;
 
@@ -176,7 +179,8 @@ u.
 combine('orientation', ['none', 'flipY']).
 combine('colorSpaceConversion', ['none', 'default']).
 combine('srcFlipYInCopy', [true, false]).
-combine('dstFormat', kValidTextureFormatsForCopyE2T).
+combine('dstFormat', kRegularTextureFormats).
+filter((t) => isTextureFormatPossiblyUsableWithCopyExternalImageToTexture(t.dstFormat)).
 combine('dstPremultiplied', [true, false]).
 beginSubcases().
 combine('width', [1, 2, 4, 15, 255, 256]).
@@ -195,7 +199,8 @@ fn(async (t) => {
     dstPremultiplied,
     srcFlipYInCopy
   } = t.params;
-  t.skipIfTextureFormatNotSupported(t.params.dstFormat);
+  t.skipIfTextureFormatNotSupported(dstFormat);
+  t.skipIfTextureFormatPossiblyNotUsableWithCopyExternalImageToTexture(dstFormat);
 
   // CTS sometimes runs on worker threads, where document is not available.
   // In this case, OffscreenCanvas can be used instead of <canvas>.

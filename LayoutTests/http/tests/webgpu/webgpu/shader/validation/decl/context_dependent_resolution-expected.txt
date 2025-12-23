@@ -78,7 +78,7 @@ FAIL :diagnostic_severity_names:case="error" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_severity_names:case="warning" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -131,7 +131,7 @@ FAIL :diagnostic_severity_names:case="warning" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_severity_names:case="off" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -184,7 +184,7 @@ FAIL :diagnostic_severity_names:case="off" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_severity_names:case="info" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -237,7 +237,7 @@ FAIL :diagnostic_severity_names:case="info" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_rule_names:case="derivative_uniformity" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -287,7 +287,7 @@ FAIL :diagnostic_rule_names:case="derivative_uniformity" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_rule_names:case="unknown_rule" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -337,7 +337,7 @@ FAIL :diagnostic_rule_names:case="unknown_rule" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_rule_names:case="unknown" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -387,7 +387,7 @@ FAIL :diagnostic_rule_names:case="unknown" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 FAIL :diagnostic_rule_names:case="rule" assert_unreached:
   - (in subcase: decl="override") VALIDATION FAILED: Unexpected compilationInfo 'error' message.
@@ -437,7 +437,7 @@ FAIL :diagnostic_rule_names:case="rule" assert_unreached:
   - (in subcase: decl="var<private>") INFO: subcase ran
   - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
     4:2: invalid attribute for function declaration
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:465:44
  Reached unreachable code
 PASS :enable_names:case="f16"
 PASS :language_names:case="readonly_and_readwrite_storage_textures"

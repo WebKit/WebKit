@@ -497,7 +497,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
   - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -517,7 +517,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstr
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
   - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -548,7 +548,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
   - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -568,7 +568,7 @@ FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:278:24
   - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -602,7 +602,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
@@ -623,7 +623,7 @@ FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" as
       return vec4f(0);
     }
 
-    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:73:28
+    expectCompileResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:74:28
     @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/textureSampleBias.spec.js:316:24
   - EXPECTATION FAILED: Expected validation error
       at (elided: below max severity)
