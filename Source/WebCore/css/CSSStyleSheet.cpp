@@ -45,10 +45,13 @@
 #include "StyleSheetContents.h"
 #include "StyleSheetContentsCache.h"
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleSheet);
 
 static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 {
@@ -69,7 +72,7 @@ private:
     void deref() const final { m_styleSheet->deref(); }
 
     unsigned length() const final { return m_styleSheet->length(); }
-    CSSRule* item(unsigned index) const final { return m_styleSheet->item(index); }
+    RefPtr<CSSRule> item(unsigned index) const final { return m_styleSheet->item(index); }
 
     CSSStyleSheet* styleSheet() const final { return m_styleSheet.get(); }
 
@@ -314,7 +317,7 @@ unsigned CSSStyleSheet::length() const
     return m_contents->ruleCount();
 }
 
-CSSRule* CSSStyleSheet::item(unsigned index)
+RefPtr<CSSRule> CSSStyleSheet::item(unsigned index)
 {
     unsigned ruleCount = length();
     if (index >= ruleCount)
@@ -327,7 +330,7 @@ CSSRule* CSSStyleSheet::item(unsigned index)
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
     if (!cssRule)
         cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(*this);
-    return cssRule.get();
+    return cssRule;
 }
 
 bool CSSStyleSheet::canAccessRules() const

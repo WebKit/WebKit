@@ -29,6 +29,7 @@
 #include "AnimationEventBase.h"
 #include "AnimationTimelinesController.h"
 #include "CSSProperty.h"
+#include "CSSStyleSheet.h"
 #include "CSSTransition.h"
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"

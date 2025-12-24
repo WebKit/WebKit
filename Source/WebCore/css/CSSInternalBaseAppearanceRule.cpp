@@ -27,11 +27,14 @@
 #include "CSSInternalBaseAppearanceRule.h"
 
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-CSSInternalBaseAppearanceRule::CSSInternalBaseAppearanceRule(StyleRuleInternalBaseAppearance& rule, CSSStyleSheet* parent)
-    : CSSGroupingRule(rule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSInternalBaseAppearanceRule);
+
+CSSInternalBaseAppearanceRule::CSSInternalBaseAppearanceRule(StyleRuleInternalBaseAppearance& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSGroupingRule(rule, WTFMove(parent))
 {
 }
 

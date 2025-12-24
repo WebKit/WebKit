@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ServiceWorkerRegistrationPushAPI.h"
 
+#include "CSSRule.h"
+#include "CSSStyleSheet.h"
 #include "PushManager.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"

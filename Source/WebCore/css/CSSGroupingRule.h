@@ -32,6 +32,8 @@ class CSSRuleList;
 class StyleRuleGroup;
 
 class CSSGroupingRule : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSGroupingRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSGroupingRule);
 public:
     virtual ~CSSGroupingRule();
 
@@ -39,11 +41,11 @@ public:
     WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     unsigned length() const;
-    CSSRule* item(unsigned index) const;
+    RefPtr<CSSRule> item(unsigned index) const;
     virtual bool isCSSConditionRule() const { return false; }
 
 protected:
-    CSSGroupingRule(StyleRuleGroup&, CSSStyleSheet* parent);
+    CSSGroupingRule(StyleRuleGroup&, CheckedPtr<CSSStyleSheet>&& parent);
     const StyleRuleGroup& groupRule() const { return m_groupRule; }
     StyleRuleGroup& groupRule() { return m_groupRule; }
     Ref<const StyleRuleGroup> protectedGroupRule() const;

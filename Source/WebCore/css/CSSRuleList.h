@@ -21,15 +21,15 @@
 
 #pragma once
 
+#include <WebCore/CSSRule.h>
 #include <wtf/AbstractRefCounted.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CSSRule;
 class CSSStyleSheet;
 
 class CSSRuleList : public AbstractRefCounted {
@@ -38,7 +38,7 @@ public:
     virtual ~CSSRuleList();
 
     virtual unsigned length() const = 0;
-    virtual CSSRule* item(unsigned index) const = 0;
+    virtual RefPtr<CSSRule> item(unsigned index) const = 0;
     bool isSupportedPropertyIndex(unsigned index) const { return item(index); }
     
     virtual CSSStyleSheet* styleSheet() const = 0;
@@ -63,7 +63,7 @@ private:
     StaticCSSRuleList();
 
     unsigned length() const final { return m_rules.size(); }
-    CSSRule* item(unsigned index) const final { return index < m_rules.size() ? m_rules[index].get() : nullptr; }
+    RefPtr<CSSRule> item(unsigned index) const final { return index < m_rules.size() ? m_rules[index] : nullptr; }
 
     Vector<RefPtr<CSSRule>> m_rules;
 };
@@ -78,15 +78,15 @@ public:
     {
     }
     
-    void ref() const final { m_rule.ref(); }
-    void deref() const final { m_rule.deref(); }
+    void ref() const final { m_rule->ref(); }
+    void deref() const final { m_rule->deref(); }
 
 private:
-    unsigned length() const final { return m_rule.length(); }
-    CSSRule* item(unsigned index) const final { return m_rule.item(index); }
-    CSSStyleSheet* styleSheet() const final { return m_rule.parentStyleSheet(); }
+    unsigned length() const final { return m_rule->length(); }
+    RefPtr<CSSRule> item(unsigned index) const final { return m_rule->item(index); }
+    CSSStyleSheet* styleSheet() const final { return m_rule->parentStyleSheet(); }
     
-    Rule& m_rule;
+    CheckedRef<Rule> m_rule;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<class Rule>, LiveCSSRuleList<Rule>);

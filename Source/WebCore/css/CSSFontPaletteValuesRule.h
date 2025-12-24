@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,10 @@ class StyleRuleCSSStyleProperties;
 class StyleRuleFontPaletteValues;
 
 class CSSFontPaletteValuesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontPaletteValuesRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontPaletteValuesRule);
 public:
-    static Ref<CSSFontPaletteValuesRule> create(StyleRuleFontPaletteValues& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontPaletteValuesRule(rule, sheet)); }
+    static Ref<CSSFontPaletteValuesRule> create(StyleRuleFontPaletteValues& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSFontPaletteValuesRule(rule, WTFMove(sheet))); }
 
     virtual ~CSSFontPaletteValuesRule();
 
@@ -46,6 +48,7 @@ public:
 
 private:
     CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CSSStyleSheet* parent);
+    CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CheckedPtr<CSSStyleSheet>&& parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
     String cssText() const final;

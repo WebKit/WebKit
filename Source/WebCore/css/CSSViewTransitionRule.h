@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,10 +57,12 @@ private:
 };
 
 class CSSViewTransitionRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSViewTransitionRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSViewTransitionRule);
 public:
     using ViewTransitionNavigation = WebCore::ViewTransitionNavigation;
 
-    static Ref<CSSViewTransitionRule> create(StyleRuleViewTransition&, CSSStyleSheet*);
+    static Ref<CSSViewTransitionRule> create(StyleRuleViewTransition&, CheckedPtr<CSSStyleSheet>&&);
     virtual ~CSSViewTransitionRule();
 
     String cssText() const final;
@@ -71,7 +73,7 @@ public:
     Vector<AtomString> types() const { return Ref { m_viewTransitionRule }->types(); }
 
 private:
-    CSSViewTransitionRule(StyleRuleViewTransition&, CSSStyleSheet* parent);
+    CSSViewTransitionRule(StyleRuleViewTransition&, CheckedPtr<CSSStyleSheet>&&);
 
     Ref<StyleRuleViewTransition> m_viewTransitionRule;
 };

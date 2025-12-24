@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,16 +28,19 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "css/parser/CSSParserEnum.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-struct SameSizeAsCSSRule : public RefCountedAndCanMakeWeakPtr<SameSizeAsCSSRule> {
+struct SameSizeAsCSSRule : public RefCountedAndCanMakeWeakPtr<SameSizeAsCSSRule>, public CanMakeCheckedPtr<SameSizeAsCSSRule> {
     virtual ~SameSizeAsCSSRule();
     unsigned char bitfields;
-    void* pointerUnion;
+    WTF::CompactVariant<CheckedPtr<CSSRule>> pointerUnion;
 };
 
 static_assert(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), "CSSRule should stay small");
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRule);
 
 unsigned short CSSRule::typeForCSSOM() const
 {

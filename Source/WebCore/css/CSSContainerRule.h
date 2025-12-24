@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@ namespace WebCore {
 class StyleRuleContainer;
 
 class CSSContainerRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSContainerRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSContainerRule);
 public:
-    static Ref<CSSContainerRule> create(StyleRuleContainer&, CSSStyleSheet* parent);
+    static Ref<CSSContainerRule> create(StyleRuleContainer&, CheckedPtr<CSSStyleSheet>&& parent);
 
     String cssText() const final;
     String conditionText() const final;
@@ -43,7 +45,7 @@ public:
 private:
     const StyleRuleContainer& styleRuleContainer() const;
 
-    CSSContainerRule(StyleRuleContainer&, CSSStyleSheet*);
+    CSSContainerRule(StyleRuleContainer&, CheckedPtr<CSSStyleSheet>&&);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Container; }
 };
 

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "ResolvedScopedName.h"
 
+#include "CSSStyleSheet.h"
 #include "ScopedName.h"
 #include "StyleScope.h"
 

@@ -32,8 +32,10 @@ namespace WebCore {
 class StyleRuleFunction;
 
 class CSSFunctionRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFunctionRule);
 public:
-    static Ref<CSSFunctionRule> create(StyleRuleFunction&, CSSStyleSheet* parent);
+    static Ref<CSSFunctionRule> create(StyleRuleFunction&, CheckedPtr<CSSStyleSheet>&& parent);
 
     struct FunctionParameter {
         String name;
@@ -50,7 +52,7 @@ public:
 private:
     const StyleRuleFunction& styleRuleFunction() const;
 
-    CSSFunctionRule(StyleRuleFunction&, CSSStyleSheet*);
+    CSSFunctionRule(StyleRuleFunction&, CheckedPtr<CSSStyleSheet>&&);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Function; }
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,21 @@
 #include "CSSStyleSheet.h"
 #include "GenericMediaQuerySerialization.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSContainerRule::CSSContainerRule(StyleRuleContainer& rule, CSSStyleSheet* parent)
-    : CSSConditionRule(rule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSContainerRule);
+
+CSSContainerRule::CSSContainerRule(StyleRuleContainer& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSConditionRule(rule, WTFMove(parent))
 {
 }
 
-Ref<CSSContainerRule> CSSContainerRule::create(StyleRuleContainer& rule, CSSStyleSheet* parent)
+Ref<CSSContainerRule> CSSContainerRule::create(StyleRuleContainer& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSContainerRule(rule, parent));
+    return adoptRef(*new CSSContainerRule(rule, WTFMove(parent)));
 }
 
 const StyleRuleContainer& CSSContainerRule::styleRuleContainer() const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,8 +66,10 @@ private:
 };
 
 class CSSKeyframesRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframesRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSKeyframesRule);
 public:
-    static Ref<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSKeyframesRule(rule, sheet)); }
+    static Ref<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSKeyframesRule(rule, WTFMove(sheet))); }
 
     virtual ~CSSKeyframesRule();
 
@@ -90,7 +92,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 
 private:
-    CSSKeyframesRule(StyleRuleKeyframes&, CSSStyleSheet* parent);
+    CSSKeyframesRule(StyleRuleKeyframes&, CheckedPtr<CSSStyleSheet>&& parent);
 
     Ref<StyleRuleKeyframes> m_keyframesRule;
     mutable Vector<RefPtr<CSSKeyframeRule>> m_childRuleCSSOMWrappers;

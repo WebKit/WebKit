@@ -31,6 +31,7 @@
 #include "config.h"
 #include "Crypto.h"
 
+#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "SubtleCrypto.h"

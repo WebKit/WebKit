@@ -31,6 +31,7 @@
 
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ElementChildIteratorInlines.h"

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021 Apple Inc. All right reserved.
+ * Copyright (C) 2021-2025 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSStyleSheet.h"
 #include "StyleBuilderState.h"
 #include "StyleFilterImage.h"
 #include <wtf/text/MakeString.h>

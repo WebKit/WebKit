@@ -1194,10 +1194,10 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
 
     ASSERT(m_pageStyleSheet->length());
     unsigned lastRuleIndex = m_pageStyleSheet->length() - 1;
-    CSSRule* rule = m_pageStyleSheet->item(lastRuleIndex);
+    RefPtr rule = m_pageStyleSheet->item(lastRuleIndex);
     ASSERT(rule);
 
-    CSSStyleRule* styleRule = dynamicDowncast<CSSStyleRule>(rule);
+    CSSStyleRule* styleRule = dynamicDowncast<CSSStyleRule>(rule.get());
     if (!styleRule) {
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
@@ -1816,7 +1816,7 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
         return;
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
-        CSSRule* rule = ruleList->item(i);
+        RefPtr rule = ruleList->item(i);
         if (!rule)
             continue;
 
@@ -1824,7 +1824,7 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
         case RuleFlatteningStrategy::CommitSelfThenChildren: {
             result->append(rule);
 
-            auto childRuleList = asCSSRuleList(rule);
+            auto childRuleList = asCSSRuleList(rule.get());
             ASSERT(childRuleList);
             collectFlatRules(WTF::move(childRuleList), result);
             break;

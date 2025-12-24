@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@ namespace WebCore {
 class StyleRuleScope;
 
 class CSSScopeRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSScopeRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSScopeRule);
 public:
-    static Ref<CSSScopeRule> create(StyleRuleScope&, CSSStyleSheet* parent);
+    static Ref<CSSScopeRule> create(StyleRuleScope&, CheckedPtr<CSSStyleSheet>&& parent);
 
     String cssText() const final;
     String start() const;
@@ -42,7 +44,7 @@ public:
 private:
     const StyleRuleScope& styleRuleScope() const;
 
-    CSSScopeRule(StyleRuleScope&, CSSStyleSheet*);
+    CSSScopeRule(StyleRuleScope&, CheckedPtr<CSSStyleSheet>&&);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Scope; }
 };
 

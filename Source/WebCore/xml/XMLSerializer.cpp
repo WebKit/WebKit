@@ -20,6 +20,7 @@
 #include "config.h"
 #include "XMLSerializer.h"
 
+#include "CSSRule.h"
 #include "markup.h"
 
 namespace WebCore {

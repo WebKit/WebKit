@@ -35,8 +35,8 @@ namespace WebCore {
 
 inline WebCoreOpaqueRoot root(MediaList* mediaList)
 {
-    if (CSSRule* parentRule = mediaList->parentRule())
-        return root(parentRule);
+    if (RefPtr parentRule = mediaList->parentRule())
+        return root(parentRule.get());
     if (CSSStyleSheet* parentStyleSheet = mediaList->parentStyleSheet())
         return root(parentStyleSheet);
     return WebCoreOpaqueRoot { mediaList };

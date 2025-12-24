@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Tyler Wilcock <twilco.o@protonmail.com>.
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +36,13 @@
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSCounterStyleRule);
 
 StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
     : StyleRuleBase(StyleRuleType::CounterStyle)
@@ -102,13 +106,13 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
 
 StyleRuleCounterStyle::~StyleRuleCounterStyle() = default;
 
-Ref<CSSCounterStyleRule> CSSCounterStyleRule::create(StyleRuleCounterStyle& rule, CSSStyleSheet* sheet)
+Ref<CSSCounterStyleRule> CSSCounterStyleRule::create(StyleRuleCounterStyle& rule, CheckedPtr<CSSStyleSheet>&& sheet)
 {
-    return adoptRef(*new CSSCounterStyleRule(rule, sheet));
+    return adoptRef(*new CSSCounterStyleRule(rule, WTFMove(sheet)));
 }
 
-CSSCounterStyleRule::CSSCounterStyleRule(StyleRuleCounterStyle& counterStyleRule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+CSSCounterStyleRule::CSSCounterStyleRule(StyleRuleCounterStyle& counterStyleRule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_counterStyleRule(counterStyleRule)
 {
 }

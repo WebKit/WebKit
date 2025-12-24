@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Motorola Mobility Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,15 +37,17 @@ namespace WebCore {
 class StyleRuleSupports;
 
 class CSSSupportsRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSSupportsRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSSupportsRule);
 public:
-    static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
+    static Ref<CSSSupportsRule> create(StyleRuleSupports&, CheckedPtr<CSSStyleSheet>&& parent);
 
     String cssText() const final;
     String cssText(const CSS::SerializationContext&) const final;
     String conditionText() const final;
 
 private:
-    CSSSupportsRule(StyleRuleSupports&, CSSStyleSheet*);
+    CSSSupportsRule(StyleRuleSupports&, CheckedPtr<CSSStyleSheet>&&);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Supports; }
 };
 

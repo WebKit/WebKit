@@ -29,8 +29,10 @@ class CSSFontFaceDescriptors;
 class StyleRuleFontFace;
 
 class CSSFontFaceRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFontFaceRule);
 public:
-    static Ref<CSSFontFaceRule> create(StyleRuleFontFace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFaceRule(rule, sheet)); }
+    static Ref<CSSFontFaceRule> create(StyleRuleFontFace& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSFontFaceRule(rule, WTFMove(sheet))); }
 
     virtual ~CSSFontFaceRule();
 
@@ -38,6 +40,7 @@ public:
 
 private:
     CSSFontFaceRule(StyleRuleFontFace&, CSSStyleSheet* parent);
+    CSSFontFaceRule(StyleRuleFontFace&, CheckedPtr<CSSStyleSheet>&& parent);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFace; }
     String cssText() const final;

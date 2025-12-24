@@ -58,7 +58,7 @@ public:
     explicit ExtensionStyleSheets(Document&);
     ~ExtensionStyleSheets();
 
-    CSSStyleSheet* pageUserSheet();
+    RefPtr<CSSStyleSheet> pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet>>& documentUserStyleSheets() const { return m_userStyleSheets; }
     const Vector<RefPtr<CSSStyleSheet>>& injectedUserStyleSheets() const;
     const Vector<RefPtr<CSSStyleSheet>>& injectedAuthorStyleSheets() const;

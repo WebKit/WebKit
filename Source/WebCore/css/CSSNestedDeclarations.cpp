@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +26,15 @@
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
-
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSNestedDeclarations::CSSNestedDeclarations(StyleRuleNestedDeclarations& rule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSNestedDeclarations);
+
+CSSNestedDeclarations::CSSNestedDeclarations(StyleRuleNestedDeclarations& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_styleRule(rule)
 {
 }

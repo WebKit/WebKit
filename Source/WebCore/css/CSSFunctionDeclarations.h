@@ -33,15 +33,17 @@ class CSSFunctionDescriptors;
 class StyleRuleFunctionDeclarations;
 
 class CSSFunctionDeclarations final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionDeclarations);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSFunctionDeclarations);
 public:
-    static Ref<CSSFunctionDeclarations> create(StyleRuleFunctionDeclarations& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFunctionDeclarations(rule, sheet)); };
+    static Ref<CSSFunctionDeclarations> create(StyleRuleFunctionDeclarations& rule, CheckedPtr<CSSStyleSheet>&& sheet) { return adoptRef(*new CSSFunctionDeclarations(rule, WTFMove(sheet))); };
 
     virtual ~CSSFunctionDeclarations();
 
     CSSFunctionDescriptors& style();
 
 private:
-    CSSFunctionDeclarations(StyleRuleFunctionDeclarations&, CSSStyleSheet*);
+    CSSFunctionDeclarations(StyleRuleFunctionDeclarations&, CheckedPtr<CSSStyleSheet>&&);
 
     String cssText() const final;
     String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;

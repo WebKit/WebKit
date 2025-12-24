@@ -28,14 +28,18 @@
 
 #include "CSSFunctionDescriptors.h"
 #include "CSSSerializationContext.h"
+#include "CSSStyleSheet.h"
 #include "MutableStyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRuleFunction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-CSSFunctionDeclarations::CSSFunctionDeclarations(StyleRuleFunctionDeclarations& rule, CSSStyleSheet* parent)
-    : CSSRule(parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFunctionDeclarations);
+
+CSSFunctionDeclarations::CSSFunctionDeclarations(StyleRuleFunctionDeclarations& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSRule(WTFMove(parent))
     , m_styleRule(rule)
 {
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +27,21 @@
 #include "CSSScopeRule.h"
 
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSScopeRule::CSSScopeRule(StyleRuleScope& rule, CSSStyleSheet* parent)
-    : CSSGroupingRule(rule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSScopeRule);
+
+CSSScopeRule::CSSScopeRule(StyleRuleScope& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSGroupingRule(rule, WTFMove(parent))
 {
 }
 
-Ref<CSSScopeRule> CSSScopeRule::create(StyleRuleScope& rule, CSSStyleSheet* parent)
+Ref<CSSScopeRule> CSSScopeRule::create(StyleRuleScope& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSScopeRule(rule, parent));
+    return adoptRef(*new CSSScopeRule(rule, WTFMove(parent)));
 }
 
 const StyleRuleScope& CSSScopeRule::styleRuleScope() const

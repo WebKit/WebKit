@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@ namespace WebCore {
 class StyleRuleProperty;
 
 class CSSPropertyRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPropertyRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSPropertyRule);
 public:
-    static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
+    static Ref<CSSPropertyRule> create(StyleRuleProperty&, CheckedPtr<CSSStyleSheet>&& parent);
     virtual ~CSSPropertyRule();
 
     String name() const;
@@ -44,7 +46,7 @@ public:
     String cssText() const final;
 
 private:
-    CSSPropertyRule(StyleRuleProperty&, CSSStyleSheet*);
+    CSSPropertyRule(StyleRuleProperty&, CheckedPtr<CSSStyleSheet>&&);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Property; }
     void reattach(StyleRuleBase&) final;
 

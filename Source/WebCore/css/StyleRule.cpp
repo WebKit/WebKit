@@ -180,81 +180,82 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
 
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
+    CheckedPtr<CSSStyleSheet> checkedParentSheet { parentSheet };
     // FIXME: const_cast is required here because a wrapper for a style rule can be used to *modify* the style rule's selector; use of const in the style system is thus inaccurate.
     auto wrapper = const_cast<StyleRuleBase&>(*this).visitDerived(WTF::makeVisitor(
-        [&](StyleRule& rule) -> Ref<CSSRule> {
-            return CSSStyleRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRule& rule) mutable -> Ref<CSSRule> {
+            return CSSStyleRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleWithNesting& rule) -> Ref<CSSRule> {
-            return CSSStyleRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleWithNesting& rule) mutable -> Ref<CSSRule> {
+            return CSSStyleRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleNestedDeclarations& rule) -> Ref<CSSRule> {
-            return CSSNestedDeclarations::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleNestedDeclarations& rule) mutable -> Ref<CSSRule> {
+            return CSSNestedDeclarations::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRulePage& rule) -> Ref<CSSRule> {
-            return CSSPageRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRulePage& rule) mutable -> Ref<CSSRule> {
+            return CSSPageRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFontFace& rule) -> Ref<CSSRule> {
-            return CSSFontFaceRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFontFace& rule) mutable -> Ref<CSSRule> {
+            return CSSFontFaceRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFontFeatureValues& rule) -> Ref<CSSRule> {
-            return CSSFontFeatureValuesRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFontFeatureValues& rule) mutable -> Ref<CSSRule> {
+            return CSSFontFeatureValuesRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFontFeatureValuesBlock& rule) -> Ref<CSSRule> {
-            return CSSFontFeatureValuesBlockRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFontFeatureValuesBlock& rule) mutable -> Ref<CSSRule> {
+            return CSSFontFeatureValuesBlockRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFontPaletteValues& rule) -> Ref<CSSRule> {
-            return CSSFontPaletteValuesRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFontPaletteValues& rule) mutable -> Ref<CSSRule> {
+            return CSSFontPaletteValuesRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleMedia& rule) -> Ref<CSSRule> {
-            return CSSMediaRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleMedia& rule) mutable -> Ref<CSSRule> {
+            return CSSMediaRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleSupports& rule) -> Ref<CSSRule> {
-            return CSSSupportsRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleSupports& rule) mutable -> Ref<CSSRule> {
+            return CSSSupportsRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleImport& rule) -> Ref<CSSRule> {
-            return CSSImportRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleImport& rule) mutable -> Ref<CSSRule> {
+            return CSSImportRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleKeyframes& rule) -> Ref<CSSRule> {
-            return CSSKeyframesRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleKeyframes& rule) mutable -> Ref<CSSRule> {
+            return CSSKeyframesRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleNamespace& rule) -> Ref<CSSRule> {
-            return CSSNamespaceRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleNamespace& rule) mutable -> Ref<CSSRule> {
+            return CSSNamespaceRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleCounterStyle& rule) -> Ref<CSSRule> {
-            return CSSCounterStyleRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleCounterStyle& rule) mutable -> Ref<CSSRule> {
+            return CSSCounterStyleRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleLayer& rule) -> Ref<CSSRule> {
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleLayer& rule) mutable -> Ref<CSSRule> {
             if (rule.isStatement())
-                return CSSLayerStatementRule::create(rule, parentSheet);
-            return CSSLayerBlockRule::create(rule, parentSheet);
+                return CSSLayerStatementRule::create(rule, WTFMove(parentSheet));
+            return CSSLayerBlockRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleContainer& rule) -> Ref<CSSRule> {
-            return CSSContainerRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleContainer& rule) mutable -> Ref<CSSRule> {
+            return CSSContainerRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleProperty& rule) -> Ref<CSSRule> {
-            return CSSPropertyRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleProperty& rule) mutable -> Ref<CSSRule> {
+            return CSSPropertyRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleScope& rule) -> Ref<CSSRule> {
-            return CSSScopeRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleScope& rule) mutable -> Ref<CSSRule> {
+            return CSSScopeRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleStartingStyle& rule) -> Ref<CSSRule> {
-            return CSSStartingStyleRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleStartingStyle& rule) mutable -> Ref<CSSRule> {
+            return CSSStartingStyleRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleViewTransition& rule) -> Ref<CSSRule> {
-            return CSSViewTransitionRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleViewTransition& rule) mutable -> Ref<CSSRule> {
+            return CSSViewTransitionRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRulePositionTry& rule) -> Ref<CSSRule> {
-            return CSSPositionTryRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRulePositionTry& rule) mutable -> Ref<CSSRule> {
+            return CSSPositionTryRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFunction& rule) -> Ref<CSSRule> {
-            return CSSFunctionRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFunction& rule) mutable -> Ref<CSSRule> {
+            return CSSFunctionRule::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleFunctionDeclarations& rule) -> Ref<CSSRule> {
-            return CSSFunctionDeclarations::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleFunctionDeclarations& rule) mutable -> Ref<CSSRule> {
+            return CSSFunctionDeclarations::create(rule, WTFMove(parentSheet));
         },
-        [&](StyleRuleInternalBaseAppearance& rule) -> Ref<CSSRule> {
-            return CSSInternalBaseAppearanceRule::create(rule, parentSheet);
+        [&, parentSheet = WTFMove(checkedParentSheet)](StyleRuleInternalBaseAppearance& rule) mutable -> Ref<CSSRule> {
+            return CSSInternalBaseAppearanceRule::create(rule, WTFMove(parentSheet));
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,13 +34,15 @@
 namespace WebCore {
 
 class CSSConditionRule : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSConditionRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSConditionRule);
 public:
     virtual String conditionText() const = 0;
 
     bool isCSSConditionRule() const final { return true; }
 
 protected:
-    CSSConditionRule(StyleRuleGroup&, CSSStyleSheet* parent);
+    CSSConditionRule(StyleRuleGroup&, CheckedPtr<CSSStyleSheet>&& parent);
 };
 
 } // namespace WebCore

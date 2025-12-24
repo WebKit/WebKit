@@ -42,18 +42,18 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
 
-    if (CSSStyleSheet* styleSheet = jsCSSRuleList->wrapped().styleSheet()) {
+    if (RefPtr styleSheet = jsCSSRuleList->wrapped().styleSheet()) {
         if (reason) [[unlikely]]
             *reason = "CSSStyleSheet is opaque root"_s;
 
-        return containsWebCoreOpaqueRoot(visitor, styleSheet);
+        return containsWebCoreOpaqueRoot(visitor, styleSheet.get());
     }
     
-    if (CSSRule* cssRule = jsCSSRuleList->wrapped().item(0)) {
+    if (RefPtr cssRule = jsCSSRuleList->wrapped().item(0)) {
         if (reason) [[unlikely]]
             *reason = "CSSRule is opaque root"_s;
 
-        return containsWebCoreOpaqueRoot(visitor, cssRule);
+        return containsWebCoreOpaqueRoot(visitor, cssRule.get());
     }
     return false;
 }

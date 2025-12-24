@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,14 @@
 #include "CSSStartingStyleRule.h"
 
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-CSSStartingStyleRule::CSSStartingStyleRule(StyleRuleStartingStyle& rule, CSSStyleSheet* parent)
-    : CSSGroupingRule(rule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSStartingStyleRule);
+
+CSSStartingStyleRule::CSSStartingStyleRule(StyleRuleStartingStyle& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSGroupingRule(rule, WTFMove(parent))
 {
 }
 

@@ -24,6 +24,7 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include "ContainerNodeInlines.h"
+#include "CSSRule.h"
 #include "FilterEffect.h"
 #include "LegacyRenderSVGResourceFilterPrimitive.h"
 #include "NodeName.h"

@@ -31,6 +31,7 @@
 #import "CSSColorValue.h"
 #import "CSSComputedStyleDeclaration.h"
 #import "CSSPrimitiveValue.h"
+#import "CSSRule.h"
 #import "CSSSerializationContext.h"
 #import "CharacterData.h"
 #import "ColorCocoa.h"

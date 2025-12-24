@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Motorola Mobility Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,18 +34,21 @@
 #include "CSSStyleSheet.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSSupportsRule::CSSSupportsRule(StyleRuleSupports& rule, CSSStyleSheet* parent)
-    : CSSConditionRule(rule, parent)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSupportsRule);
+
+CSSSupportsRule::CSSSupportsRule(StyleRuleSupports& rule, CheckedPtr<CSSStyleSheet>&& parent)
+    : CSSConditionRule(rule, WTFMove(parent))
 {
 }
 
-Ref<CSSSupportsRule> CSSSupportsRule::create(StyleRuleSupports& rule, CSSStyleSheet* parent)
+Ref<CSSSupportsRule> CSSSupportsRule::create(StyleRuleSupports& rule, CheckedPtr<CSSStyleSheet>&& parent)
 {
-    return adoptRef(*new CSSSupportsRule(rule, parent));
+    return adoptRef(*new CSSSupportsRule(rule, WTFMove(parent)));
 }
 
 String CSSSupportsRule::cssText() const

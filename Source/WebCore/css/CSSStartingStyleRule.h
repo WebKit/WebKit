@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +32,18 @@ namespace WebCore {
 class StyleRuleStartingStyle;
 
 class CSSStartingStyleRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStartingStyleRule);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSStartingStyleRule);
 public:
-    static Ref<CSSStartingStyleRule> create(StyleRuleStartingStyle& rule, CSSStyleSheet* parent)
+    static Ref<CSSStartingStyleRule> create(StyleRuleStartingStyle& rule, CheckedPtr<CSSStyleSheet>&& parent)
     {
-        return adoptRef(*new CSSStartingStyleRule(rule, parent));
+        return adoptRef(*new CSSStartingStyleRule(rule, WTFMove(parent)));
     }
 
     String cssText() const final;
 
 private:
-    CSSStartingStyleRule(StyleRuleStartingStyle&, CSSStyleSheet*);
+    CSSStartingStyleRule(StyleRuleStartingStyle&, CheckedPtr<CSSStyleSheet>&&);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::StartingStyle; }
 };
