@@ -312,6 +312,74 @@ static JSArray* tryCreateArrayFromDirectArguments(JSGlobalObject* globalObject, 
     return tryCreateArrayFromArguments(globalObject, arguments);
 }
 
+static int32_t getLengthFromLengthOnlyObject(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+
+    if (!value.isObject()) [[unlikely]]
+        return -1;
+
+    JSObject* object = asObject(value);
+    Structure* structure = object->structure();
+
+    if (object->getPrototypeDirect() != globalObject->objectPrototype())
+        return -1;
+    if (structure->maxOffset())
+        return -1;
+    if (hasIndexedProperties(structure->indexingType()))
+        return -1;
+    PropertyOffset lengthOffset = object->getDirectOffset(vm, vm.propertyNames->length);
+    if (lengthOffset == invalidOffset)
+        return -1;
+    JSValue lengthValue = object->getDirect(lengthOffset);
+    if (!lengthValue.isInt32()) [[unlikely]]
+        return -1;
+    return lengthValue.asInt32();
+}
+
+static ALWAYS_INLINE JSArray* tryCreateArrayFromLength(JSGlobalObject* globalObject, int32_t length)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!length)
+        RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    IndexingType resultIndexingType = resultStructure->indexingType();
+
+    if (hasAnyArrayStorage(resultIndexingType)) [[unlikely]]
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+
+    auto vectorLength = Butterfly::optimalContiguousVectorLength(resultStructure, length);
+    void* memory = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (!memory) [[unlikely]]
+        return nullptr;
+    auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
+    resultButterfly->setVectorLength(vectorLength);
+    resultButterfly->setPublicLength(length);
+
+    ASSERT(hasContiguous(resultIndexingType));
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    auto* data = resultButterfly->contiguous().data();
+    auto pattern = std::bit_cast<const WriteBarrier<Unknown>>(JSValue::encode(jsUndefined()));
+#if OS(DARWIN)
+    memset_pattern8(data, &pattern, sizeof(JSValue) * length);
+#else
+    std::fill(data, data + length, pattern);
+#endif
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+    Butterfly::clearRange(resultIndexingType, resultButterfly, length, vectorLength);
+    return JSArray::createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
+}
+
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -356,7 +424,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    } else if (int32_t length = getLengthFromLengthOnlyObject(globalObject, items); length >= 0) {
+        // For `Array.from({ length })
+        result = tryCreateArrayFromLength(globalObject, length);
+        RETURN_IF_EXCEPTION(scope, { });
     }
+
     if (result)
         return JSValue::encode(result);
     return JSValue::encode(jsUndefined());
