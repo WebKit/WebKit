@@ -39,8 +39,8 @@ function test()
         {
             message: "SampleIds from any probe are sequential and start counting from one.",
             predicate: function samplesHaveSequentialIds() {
-                    let initialSampleId = samples[0].sampleId;
-                    for (let i = 0; i < samples.length; ++i) {
+                let initialSampleId = samples[0].sampleId;
+                for (let i = 0; i < samples.length; ++i) {
                     let expectedSampleId = initialSampleId + i;
                     if (samples[i].sampleId !== expectedSampleId)
                         return false;

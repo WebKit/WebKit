@@ -557,7 +557,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         if (typeof parameter === "object")
             return WI.RemoteObject.fromPayload(parameter, this._message.target);
-        
         return WI.RemoteObject.fromPrimitiveValue(parameter);
     }
 
