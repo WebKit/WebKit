@@ -3055,16 +3055,6 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
             );
         }
 
-        // A positioned element that specified both top/bottom or that specifies
-        // height should be treated as though it has a height explicitly specified
-        // that can be used for any percentage computations.
-        auto isOutOfFlowPositionedWithSpecifiedHeight = isOutOfFlowPositioned() && (!style.logicalHeight().isAuto() || (!style.logicalTop().isAuto() && !style.logicalBottom().isAuto()));
-        if (isOutOfFlowPositionedWithSpecifiedHeight) {
-            // Don't allow this to affect the block' size() member variable, since this
-            // can get called while the block is still laying out its kids.
-            return std::max(0_lu, computeLogicalHeight(logicalHeight(), 0_lu).m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
-        }
-
         if (style.logicalHeight().isPercentOrCalculated()) {
             if (auto heightWithScrollbar = computePercentageLogicalHeight(style.logicalHeight())) {
                 auto contentBoxHeightWithScrollbar = adjustContentBoxLogicalHeightForBoxSizing(*heightWithScrollbar);
@@ -3073,6 +3063,17 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
                 return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), { }));
             }
             return { };
+        }
+
+        // A positioned element that specified both top/bottom or that specifies
+        // height should be treated as though it has a height explicitly specified
+        // that can be used for any percentage computations.
+        if (isOutOfFlowPositioned() && !style.hasStaticBlockPosition(style.writingMode().isHorizontal())) {
+            // Don't allow this to affect the block' size() member variable, since this
+            // can get called while the block is still laying out its kids.
+            PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
+            constraints.computeInsets();
+            return std::max(0_lu, constraints.availableContentSpace() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
         }
 
         if (isRenderView())
