@@ -12,9 +12,6 @@ function test()
     var samples = [];
     const expectedSampleCount = 4;
 
-    // Reset the sampleId counter at the start of each test
-    let sampleIdCounter = 1;
-
     function receivedAllExpectedSamples() {
         return samples.length === expectedSampleCount;
     }
