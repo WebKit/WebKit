@@ -549,15 +549,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     _createRemoteObjectIfNeeded(parameter)
     {
-        if (parameter instanceof WI.RemoteObject)
-            return parameter;
-
-        if (parameter === null || parameter === undefined)
-        return WI.RemoteObject.fromPrimitiveValue(parameter);
-
-        if (typeof parameter === "object")
-            return WI.RemoteObject.fromPayload(parameter, this._message.target);
-        return WI.RemoteObject.fromPrimitiveValue(parameter);
+        console.assert(parameter instanceof WI.RemoteObject);
+        return parameter;
     }
 
     _appendFormattedArguments(element, parameters)
