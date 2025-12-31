@@ -635,10 +635,12 @@ if (ENABLE_WPE_QT_API)
             PUBLIC
                 Qt::Quick
             PRIVATE
+                bmalloc
                 Epoxy::Epoxy
                 GLib::GLib
                 GLib::Object
                 WebKit
+                WTF
         )
         target_include_directories(qtwpe PRIVATE
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
