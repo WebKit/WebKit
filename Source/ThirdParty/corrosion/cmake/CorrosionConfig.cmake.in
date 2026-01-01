@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+if (Corrosion_FOUND)
+    return()
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${PACKAGE_PREFIX_DIR}/@CMAKE_INSTALL_DATADIR@/cmake")
+
+include(Corrosion)

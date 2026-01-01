@@ -96,7 +96,7 @@ void LibWebRTCNetworkManager::close()
 
 void LibWebRTCNetworkManager::unregisterMDNSNames()
 {
-    WebProcess::singleton().protectedLibWebRTCNetwork()->protectedMDNSRegister()->unregisterMDNSNames(m_documentIdentifier);
+    WebProcess::singleton().protectedLibWebRTCNetwork()->mDNSRegister()->unregisterMDNSNames(m_documentIdentifier);
 }
 
 void LibWebRTCNetworkManager::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
@@ -235,7 +235,7 @@ void LibWebRTCNetworkManager::CreateNameForAddress(const webrtc::IPAddress& addr
         if (!weakThis)
             return;
 
-        WebProcess::singleton().protectedLibWebRTCNetwork()->protectedMDNSRegister()->registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = std::move(callback)](auto name, auto error) mutable {
+        WebProcess::singleton().protectedLibWebRTCNetwork()->mDNSRegister()->registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = std::move(callback)](auto name, auto error) mutable {
             WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = std::move(callback), name = WTF::move(name).isolatedCopy(), error] {
                 RELEASE_LOG_ERROR_IF(error, WebRTC, "MDNS registration of a host candidate failed with error %hhu", enumToUnderlyingType(*error));
                 // In case of error, we provide the name to let gathering complete.

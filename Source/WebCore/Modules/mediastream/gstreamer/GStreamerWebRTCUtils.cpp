@@ -763,7 +763,7 @@ void forEachTransceiver(const GRefPtr<GstElement>& webrtcBin, Function<bool(GRef
 
 class SDPStringBuilder {
 public:
-    SDPStringBuilder(const GstSDPMessage*);
+    SDPStringBuilder(const GstSDPMessage*, std::optional<HashMap<String, String>> mdnsRegistry, bool);
 
     String toString() { return m_stringBuilder.toString(); }
 
@@ -775,6 +775,8 @@ private:
     void appendMedia(const GstSDPMedia*);
 
     StringBuilder m_stringBuilder;
+    std::optional<HashMap<String, String>> m_mdnsRegistry;
+    bool m_filterICECandidates;
 };
 
 void SDPStringBuilder::appendAttribute(const GstSDPAttribute* attribute)
@@ -790,6 +792,11 @@ void SDPStringBuilder::appendAttribute(const GstSDPAttribute* attribute)
             return;
         if (!GStreamerRegistryScanner::singleton().isRtpHeaderExtensionSupported(tokens[1]))
             return;
+    }
+
+    if (key == "candidate"_s && m_mdnsRegistry && m_filterICECandidates) {
+        auto filteredSdp = maybeObfuscateSDPCandidate(makeString("candidate:"_s, value), *m_mdnsRegistry);
+        value = filteredSdp.substring(10);
     }
 
     m_stringBuilder.append("a="_s, key);
@@ -865,13 +872,15 @@ void SDPStringBuilder::appendMedia(const GstSDPMedia* media)
         appendAttribute(gst_sdp_media_get_attribute(media, i));
 }
 
-String sdpAsString(const GstSDPMessage* sdp)
+String sdpAsString(const GstSDPMessage* sdp, std::optional<HashMap<String, String>> mdnsRegistry, bool filterICECandidates)
 {
-    SDPStringBuilder builder(sdp);
+    SDPStringBuilder builder(sdp, mdnsRegistry, filterICECandidates);
     return builder.toString();
 }
 
-SDPStringBuilder::SDPStringBuilder(const GstSDPMessage* sdp)
+SDPStringBuilder::SDPStringBuilder(const GstSDPMessage* sdp, std::optional<HashMap<String, String>> mdnsRegistry, bool filterICECandidates)
+    : m_mdnsRegistry(mdnsRegistry)
+    , m_filterICECandidates(filterICECandidates)
 {
     m_stringBuilder.append("v="_s, unsafeSpan(gst_sdp_message_get_version(sdp)), CRLF);
 
@@ -964,6 +973,91 @@ bool sdpMediaHasRTPHeaderExtension(const GstSDPMedia* media, const String& uri)
             return true;
     }
     return false;
+}
+
+String iceCandidateFieldsAsString(const RTCIceCandidateFields& fields)
+{
+    StringBuilder builder;
+
+    builder.append("candidate:"_s, fields.foundation, ' ');
+
+    if (fields.component) {
+        switch (*fields.component) {
+        case RTCIceComponent::Rtp:
+            builder.append(1);
+            break;
+        case RTCIceComponent::Rtcp:
+            builder.append(2);
+            break;
+        };
+        builder.append(' ');
+    };
+
+    if (fields.protocol) {
+        switch (*fields.protocol) {
+        case RTCIceProtocol::Tcp:
+            builder.append("tcp"_s);
+            break;
+        case RTCIceProtocol::Udp:
+            builder.append("udp"_s);
+            break;
+        }
+        builder.append(' ');
+    };
+
+    if (fields.priority)
+        builder.append(*fields.priority, ' ');
+
+    builder.append(fields.address, ' ');
+    if (fields.port)
+        builder.append(*fields.port, ' ');
+
+    if (fields.type) {
+        builder.append("typ "_s);
+        switch (*fields.type) {
+        case RTCIceCandidateType::Host:
+            builder.append("host"_s);
+            break;
+        case RTCIceCandidateType::Prflx:
+            builder.append("prflx"_s);
+            break;
+        case RTCIceCandidateType::Relay:
+            builder.append("relay"_s);
+            break;
+        case RTCIceCandidateType::Srflx:
+            builder.append("srflx"_s);
+            break;
+        };
+        builder.append(' ');
+    }
+
+    if (!fields.relatedAddress.isEmpty())
+        builder.append("raddr "_s, fields.relatedAddress, ' ');
+    if (fields.relatedPort)
+        builder.append("rport "_s, *fields.relatedPort, ' ');
+
+    if (fields.tcpType) {
+        builder.append("tcptype "_s);
+        switch (*fields.tcpType) {
+        case RTCIceTcpCandidateType::Active:
+            builder.append("active"_s);
+            break;
+        case RTCIceTcpCandidateType::Passive:
+            builder.append("passive"_s);
+            break;
+        case RTCIceTcpCandidateType::So:
+            builder.append("so"_s);
+            break;
+        }
+        builder.append(' ');
+    }
+
+    if (!fields.usernameFragment.isEmpty())
+        builder.append("ufrag "_s, fields.usernameFragment);
+
+    return builder.toString().trim([](auto c) {
+        return c == ' ';
+    });
 }
 
 #undef CRLF
@@ -1144,6 +1238,46 @@ bool validateRTPHeaderExtensions(const GstSDPMessage* previousSDP, const GstSDPM
         }
     }
     return true;
+}
+
+String maybeObfuscateSDPCandidate(const String& sdp, const HashMap<String, String>& mdnsRegistry)
+{
+    ensureDebugCategoryInitialized();
+    auto fields = parseIceCandidateSDP(sdp);
+    if (!fields || fields->type != RTCIceCandidateType::Host) {
+        GST_DEBUG("ICE candidate type is not host, no need to obfuscate");
+        return sdp;
+    }
+
+    if (fields->address.contains(".local"_s))
+        return sdp;
+
+    StringBuilder builder;
+    bool addBrackets = URL::isIPv6Address(fields->address) && fields->port;
+    if (addBrackets)
+        builder.append('[');
+    builder.append(fields->address);
+    if (addBrackets)
+        builder.append(']');
+
+    auto ipAddress = builder.toString();
+    String mdnsAddress;
+    for (const auto& [key, value] : mdnsRegistry) {
+        if (key.startsWith(ipAddress)) {
+            mdnsAddress = value;
+            break;
+        }
+    }
+
+    if (mdnsAddress.isEmpty()) {
+        GST_WARNING("%s not found in mDNS cache", ipAddress.ascii().data());
+        return sdp;
+    }
+
+    fields->address = WTF::move(mdnsAddress);
+    auto result = iceCandidateFieldsAsString(*fields);
+    GST_DEBUG("Obfuscated ICE candidate: %s", result.ascii().data());
+    return result;
 }
 
 #undef GST_CAT_DEFAULT

@@ -163,7 +163,7 @@ public:
     void newDataChannel(UniqueRef<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
 
     virtual void disableICECandidateFiltering();
-    void enableICECandidateFiltering();
+    virtual void enableICECandidateFiltering();
 
     virtual std::optional<bool> canTrickleIceCandidates() const = 0;
 

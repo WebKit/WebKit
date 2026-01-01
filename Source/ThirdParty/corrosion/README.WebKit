@@ -1,0 +1,16 @@
+This directory contains a copy of the Corrosion project.
+
+  - URL: https://github.com/corrosion-rs/corrosion.git
+  - Commit: 56a1ed11ad7841255048659024363cd0fade31f4
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/corrosion/*
+  cp -ar ../path/to/corrosion/* Source/ThirdParty/corrosion/
+  git checkout -- \
+      Source/ThirdParty/corrosion/README.WebKit
+  rm -fr Source/ThirdParty/corrosion/test
+
+Then check whether the updated sources require any changes to the CMake build system, and update the
+git commit identifier and tag in this file.

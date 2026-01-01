@@ -422,6 +422,17 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
      ["-readability/naming/underscores"]),
 
+    ([  # Ignore formatting and whitespace issues in 3rd-party mdns-service and corrosion.
+        os.path.join('Source', 'ThirdParty', 'corrosion'),
+        os.path.join('Source', 'ThirdParty', 'mdns-service-rs')],
+     ["-build",
+      "-legal/copyright",
+      "-list",
+      "-readability",
+      "-runtime",
+      "-safercpp",
+      "-whitespace"]),
+
     ([  # c code with underscores in variable names and tabs for the Makefile
      os.path.join('Tools', 'Scripts', 'webkitpy', 'binary_bundling', 'dlopenwrap')],
      ["-readability/naming/underscores",

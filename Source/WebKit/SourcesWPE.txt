@@ -40,7 +40,6 @@ NetworkProcess/cache/NetworkCacheDataGLib.cpp
 NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp
 
 NetworkProcess/glib/DNSCache.cpp
-NetworkProcess/glib/NetworkMDNSRegisterGLib.cpp
 NetworkProcess/glib/WebKitCachedResolver.cpp
 NetworkProcess/glib/WebKitOverridingResolver.cpp
 

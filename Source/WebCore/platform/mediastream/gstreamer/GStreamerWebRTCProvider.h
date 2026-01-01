@@ -30,6 +30,7 @@ namespace WebCore {
 class WEBCORE_EXPORT GStreamerWebRTCProvider : public WebRTCProvider {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerWebRTCProvider);
 public:
+    GStreamerWebRTCProvider();
     std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind) final;
     std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind) final;
 

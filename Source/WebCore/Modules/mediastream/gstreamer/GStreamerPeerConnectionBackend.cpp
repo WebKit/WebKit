@@ -97,7 +97,9 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     : PeerConnectionBackend(peerConnection)
     , m_endpoint(GStreamerMediaEndpoint::create(*this))
 {
+#if !USE(LIBRICE)
     disableICECandidateFiltering();
+#endif
 
 #if !RELEASE_LOG_DISABLED && !defined(GST_DISABLE_GST_DEBUG)
     // PeerConnectionBackend relies on the Document logger, so to prevent duplicate messages in case
@@ -464,6 +466,18 @@ bool GStreamerPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
 std::optional<bool> GStreamerPeerConnectionBackend::canTrickleIceCandidates() const
 {
     return m_endpoint->canTrickleIceCandidates();
+}
+
+void GStreamerPeerConnectionBackend::disableICECandidateFiltering()
+{
+    PeerConnectionBackend::disableICECandidateFiltering();
+    m_endpoint->disableICECandidateFiltering();
+}
+
+void GStreamerPeerConnectionBackend::enableICECandidateFiltering()
+{
+    PeerConnectionBackend::enableICECandidateFiltering();
+    m_endpoint->enableICECandidateFiltering();
 }
 
 RTCPeerConnection& GStreamerPeerConnectionBackend::connection()

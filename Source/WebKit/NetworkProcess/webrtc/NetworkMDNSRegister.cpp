@@ -51,16 +51,12 @@ NetworkMDNSRegister::PendingRegistrationRequest::PendingRegistrationRequest(Ref<
 {
 }
 
-#if !USE(GLIB)
 NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connection)
     : m_connection(connection)
 {
 }
-#endif
 
-#if !USE(GLIB)
 NetworkMDNSRegister::~NetworkMDNSRegister() = default;
-#endif
 
 void NetworkMDNSRegister::ref() const
 {
@@ -111,7 +107,7 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
     if (errorCode) {
-        request->connection->protectedMDNSRegister()->closeAndForgetService(service);
+        request->connection->mDNSRegister()->closeAndForgetService(service);
         request->completionHandler(request->name, WebCore::MDNSRegisterError::DNSSD);
         return;
     }

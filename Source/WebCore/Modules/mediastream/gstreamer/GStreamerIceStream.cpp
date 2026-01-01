@@ -159,14 +159,14 @@ static gboolean webkitGstWebRTCIceStreamGatherCandidates(GstWebRTCICEStream* ice
 
     Vector<GUniquePtr<RiceAddress>> riceAddresses;
     Vector<RiceTransportType> riceTransports;
-    for (const auto& address : addresses) {
-        GUniquePtr<RiceAddress> addr(rice_address_new_from_string(address.ascii().data()));
+    for (const auto& address : addresses.keys()) {
+        auto& [addressString, protocol] = address;
+        GUniquePtr<RiceAddress> addr(rice_address_new_from_string(addressString.ascii().data()));
         if (!addr) [[unlikely]]
             continue;
 
         riceAddresses.append(WTF::move(addr));
-        riceTransports.append(RICE_TRANSPORT_TYPE_UDP);
-        riceTransports.append(RICE_TRANSPORT_TYPE_TCP);
+        riceTransports.append(fromRTCIceProtocol(protocol));
     }
     Vector<const RiceAddress*> riceAddressValues;
     for (const auto& addr : riceAddresses)
@@ -203,15 +203,7 @@ bool webkitGstWebRTCIceStreamGatherCandidates(WebKitGstIceStream* stream)
 
 void webkitGstWebRTCIceStreamHandleIncomingData(const WebKitGstIceStream* stream, WebCore::RTCIceProtocol protocol, String&& from, String&& to, SharedMemory::Handle&& handle)
 {
-    RiceTransportType transport;
-    switch (protocol) {
-    case WebCore::RTCIceProtocol::Tcp:
-        transport = RICE_TRANSPORT_TYPE_TCP;
-        break;
-    case WebCore::RTCIceProtocol::Udp:
-        transport = RICE_TRANSPORT_TYPE_UDP;
-        break;
-    };
+    RiceTransportType transport = fromRTCIceProtocol(protocol);
     auto riceFrom = riceAddressFromString(from);
     auto riceTo = riceAddressFromString(to);
 

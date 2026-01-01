@@ -31,6 +31,7 @@
 #include "RTCDtlsTransport.h"
 #include "RTCError.h"
 #include "RTCIceCandidate.h"
+#include "RTCIceCandidateFields.h"
 #include "RTCIceComponent.h"
 #include "RTCIceConnectionState.h"
 #include "RTCIceProtocol.h"
@@ -47,6 +48,7 @@
 #include <gst/webrtc/webrtc.h>
 #undef GST_USE_UNSTABLE_API
 
+#include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -389,13 +391,17 @@ inline GstWebRTCKind webrtcKindFromCaps(const GRefPtr<GstCaps>& caps)
 
 void forEachTransceiver(const GRefPtr<GstElement>&, Function<bool(GRefPtr<GstWebRTCRTPTransceiver>&&)>&&);
 
-String sdpAsString(const GstSDPMessage*);
+String sdpAsString(const GstSDPMessage*, std::optional<HashMap<String, String>> = std::nullopt, bool filterICECandidates = false);
 
 bool sdpMediaHasRTPHeaderExtension(const GstSDPMedia*, const String&);
 
 WARN_UNUSED_RETURN GRefPtr<GstCaps> extractMidAndRidFromRTPBuffer(const GstMappedRtpBuffer&, const GstSDPMessage*);
 
 bool validateRTPHeaderExtensions(const GstSDPMessage* previousSDP, const GstSDPMessage* newSDP);
+
+String iceCandidateFieldsAsString(const RTCIceCandidateFields&);
+
+String maybeObfuscateSDPCandidate(const String&, const HashMap<String, String>&);
 
 } // namespace WebCore
 

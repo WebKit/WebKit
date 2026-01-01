@@ -431,6 +431,13 @@ js/dom/lockdown-mode [ Skip ]
 
 webkit.org/b/302297 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
+# WPE doesn't enable librice, so ICE candidates filtering and mDNS support are not expected to work.
+webrtc/datachannel/filter-ice-candidate.html [ Skip ]
+webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
+webrtc/filtering-ice-candidate-after-reload.html [ Skip ]
+http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
+http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

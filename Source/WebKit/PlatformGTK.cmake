@@ -10,6 +10,10 @@ if (USE_SKIA)
     include(Platform/Skia.cmake)
 endif ()
 
+if (ENABLE_MDNS_SERVICE)
+    include(Platform/MDNSService.cmake)
+endif ()
+
 set(WebKit_OUTPUT_NAME webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION})
 set(WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)

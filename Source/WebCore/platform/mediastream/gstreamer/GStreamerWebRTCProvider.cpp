@@ -29,7 +29,6 @@
 #include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
-#include "NotImplemented.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -39,6 +38,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerWebRTCProvider);
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {
     return makeUniqueRef<GStreamerWebRTCProvider>();
+}
+
+GStreamerWebRTCProvider::GStreamerWebRTCProvider()
+{
+    m_supportsMDNS = true;
 }
 
 bool WebRTCProvider::webRTCAvailable()

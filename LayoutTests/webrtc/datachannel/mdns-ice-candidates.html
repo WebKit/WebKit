@@ -191,7 +191,7 @@ promise_test(async (test) => {
     });
 
     assert_true(lines.length > 0, "candidates are gathered");
-    assert_true(lines[0].includes(' host '), "candidate is host");
+    assert_true(lines[0].includes(' host'), "candidate is host");
     assert_true(lines[0].includes('.local '), "candidate is mDNS");
 }, "Ensure that local description SDP filtering is correctly filtering mDNS local candidates");
 

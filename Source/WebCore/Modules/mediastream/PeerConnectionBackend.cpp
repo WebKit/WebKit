@@ -177,11 +177,9 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
     , m_logIdentifier(peerConnection.logIdentifier())
 #endif
 {
-#if USE(LIBWEBRTC)
     RefPtr document = peerConnection.document();
     if (RefPtr page = document ? document->page() : nullptr)
         m_shouldFilterICECandidates = page->webRTCProvider().isSupportingMDNS();
-#endif
 
 #if RELEASE_LOG_DISABLED
     m_logIdentifierString = makeString(hex(reinterpret_cast<uintptr_t>(this)));

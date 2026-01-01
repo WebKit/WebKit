@@ -1,0 +1,19 @@
+This directory contains a copy of the mDNS service from Firefox.
+
+  - URL: https://github.com/mozilla-firefox/firefox
+  - Commit: 7d8644b9d4470a675bf670c2dc7664cc01f14ece
+  - Directory: dom/media/webrtc/transport/mdns_service
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/mdns-service-rs/*
+  cp -ar ../path/to/firefox/dom/media/webrtc/transport/mdns_service/* Source/ThirdParty/mdns-service-rs/
+  git checkout -- \
+      Source/ThirdParty/mdns-service-rs/README.WebKit \
+      Source/ThirdParty/mdns-service-rs/0001-mdns_service-Remove-gecko-profiler-dependency.patch
+  cd Source/ThirdParty/mdns-service-rs
+  cat 0001-mdns_service-Remove-gecko-profiler-dependency.patch | patch -p6
+
+Then check whether the updated sources require any changes to the CMake build system, and update the
+git commit identifier and tag in this file.

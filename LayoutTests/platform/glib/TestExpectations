@@ -2549,6 +2549,9 @@ http/tests/webrtc/audioSessionInFrames.html [ Failure ]
 
 webrtc/clone-audio-track.html [ Pass Failure ]
 
+# Fails because our endpoint notifies TCP candidates also on non-Discard ports.
+webrtc/datachannel/filter-ice-candidate.html [ Failure ]
+
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 # These tests are macOS-specific. In Linux changing the PipeWire capture source on the fly is not supported.
@@ -2563,12 +2566,6 @@ webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-get
 
 # Missing support for qpSum WebRTC stats.
 webkit.org/b/269285 webrtc/h265.html [ Failure Timeout ]
-
-# Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
-webrtc/datachannel/filter-ice-candidate.html [ Skip ]
-webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
-http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
-http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Skip ]
 
 # The GstWebRTC backend doesn't support transforms yet.
 webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Pass ]
@@ -2655,7 +2652,6 @@ webkit.org/b/235885 webrtc/canvas-to-peer-connection-2d.html [ Crash Failure Tim
 webkit.org/b/235885 webrtc/captureCanvas-webrtc.html [ Crash Failure Timeout Pass ]
 webkit.org/b/235885 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure Pass ]
 webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
-webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Failure ]
 webkit.org/b/235885 webrtc/multi-video.html [ Failure Pass ]
 webkit.org/b/235885 webrtc/negotiatedneeded-event-addStream.html [ Failure Pass ]
 webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Skip ]

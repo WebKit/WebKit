@@ -15,6 +15,10 @@ if (USE_SKIA)
     include(Platform/Skia.cmake)
 endif ()
 
+if (ENABLE_MDNS_SERVICE)
+    include(Platform/MDNSService.cmake)
+endif ()
+
 set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
 set(WebProcess_OUTPUT_NAME WPEWebProcess)
 set(NetworkProcess_OUTPUT_NAME WPENetworkProcess)

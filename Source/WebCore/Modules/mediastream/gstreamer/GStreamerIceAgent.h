@@ -87,7 +87,8 @@ public:
 
     virtual void send(unsigned, RTCIceProtocol, String&&, String&&, SharedMemory::Handle&&) = 0;
 
-    virtual Vector<String> gatherSocketAddresses(unsigned) = 0;
+    using Socket = std::pair<String, RTCIceProtocol>;
+    virtual HashMap<Socket, String> gatherSocketAddresses(ScriptExecutionContextIdentifier, unsigned) = 0;
     virtual void finalizeStream(unsigned) = 0;
 
 protected:
@@ -102,8 +103,9 @@ protected:
 WebKitGstIceAgent* webkitGstWebRTCCreateIceAgent(const String&, WebCore::ScriptExecutionContext*);
 
 const GRefPtr<RiceAgent>& webkitGstWebRTCIceAgentGetRiceAgent(WebKitGstIceAgent*);
+
 Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstIceAgent*);
-Vector<String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent*, unsigned);
+HashMap<std::pair<String, WebCore::RTCIceProtocol>, String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent*, unsigned);
 
 GstWebRTCICETransport *webkitGstWebRTCIceAgentCreateTransport(WebKitGstIceAgent*, GThreadSafeWeakPtr<WebKitGstIceStream>&&, WebCore::RTCIceComponent);
 
@@ -115,5 +117,6 @@ void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent*, 
 void webkitGstWebRTCIceAgentComponentStateChangedForStream(WebKitGstIceAgent*, unsigned, RiceAgentComponentStateChange&);
 void webkitGstWebRTCIceAgentNewSelectedPairForStream(WebKitGstIceAgent*, unsigned, RiceAgentSelectedPair&);
 void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent*);
+const HashMap<String, String>& webkitGstWebRTCIceAgentGetMDNSRegistry(WebKitGstIceAgent*);
 
 #endif // USE(GSTREAMER_WEBRTC) && USE(LIBRICE)

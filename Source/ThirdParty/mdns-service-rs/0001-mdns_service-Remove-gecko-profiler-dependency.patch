@@ -1,0 +1,58 @@
+From 92595c0d57b48284ce4b6a92e2227e777185aff3 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 3 Jan 2026 10:24:41 +0000
+Subject: [PATCH] mdns_service: Remove gecko-profiler dependency
+
+---
+ dom/media/webrtc/transport/mdns_service/Cargo.toml | 1 -
+ dom/media/webrtc/transport/mdns_service/src/lib.rs | 8 --------
+ 2 files changed, 9 deletions(-)
+
+diff --git a/dom/media/webrtc/transport/mdns_service/Cargo.toml b/dom/media/webrtc/transport/mdns_service/Cargo.toml
+index d63f1f5e1510..c80eb14d3f3a 100644
+--- a/dom/media/webrtc/transport/mdns_service/Cargo.toml
++++ b/dom/media/webrtc/transport/mdns_service/Cargo.toml
+@@ -8,7 +8,6 @@ license = "MPL-2.0"
+ [dependencies]
+ byteorder = "1.3.1"
+ dns-parser = "0.8.0"
+-gecko-profiler = { path = "../../../../../tools/profiler/rust-api" }
+ log = "0.4"
+ socket2 = { version = "0.5", features = ["all"] }
+ uuid = { version = "1.0", features = ["v4"] }
+diff --git a/dom/media/webrtc/transport/mdns_service/src/lib.rs b/dom/media/webrtc/transport/mdns_service/src/lib.rs
+index fbd07b45f8c2..60ba1f215a0b 100644
+--- a/dom/media/webrtc/transport/mdns_service/src/lib.rs
++++ b/dom/media/webrtc/transport/mdns_service/src/lib.rs
+@@ -204,12 +204,6 @@ fn handle_mdns_socket(
+     hosts: &mut HashMap<String, Vec<u8>>,
+     pending_queries: &mut HashMap<String, Query>,
+ ) -> bool {
+-    // Record a simple marker to see how often this is called.
+-    gecko_profiler::add_untyped_marker(
+-        "handle_mdns_socket",
+-        gecko_profiler::gecko_profiler_category!(Network),
+-        Default::default(),
+-    );
+ 
+     match socket.recv_from(&mut buffer) {
+         Ok((amt, _)) => {
+@@ -438,7 +432,6 @@ impl MDNSService {
+         let thread_name = "mdns_service";
+         let builder = thread::Builder::new().name(thread_name.into());
+         self.handle = Some(builder.spawn(move || {
+-            gecko_profiler::register_thread(thread_name);
+             let mdns_addr = std::net::SocketAddr::from(([224, 0, 0, 251], port));
+             let mut buffer: [u8; 9_000] = [0; 9_000];
+             let mut hosts = HashMap::new();
+@@ -512,7 +505,6 @@ impl MDNSService {
+                     break;
+                 }
+             }
+-            gecko_profiler::unregister_thread();
+         })?);
+ 
+         Ok(())
+-- 
+2.52.0
+

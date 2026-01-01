@@ -86,6 +86,10 @@ public:
 
     std::optional<bool> canTrickleIceCandidates() const;
 
+    enum class FilterICECandidates : bool { No, Yes };
+    void disableICECandidateFiltering() { m_isICECandidateFilteringEnabled = FilterICECandidates::No; }
+    void enableICECandidateFiltering() { m_isICECandidateFilteringEnabled = FilterICECandidates::Yes; }
+
     void configureSource(RealtimeOutgoingMediaSourceGStreamer&, GUniquePtr<GstStructure>&&);
 
     ExceptionOr<RefPtr<GStreamerRtpSenderBackend>> addTrack(MediaStreamTrack&, const FixedVector<String>&);
@@ -146,6 +150,11 @@ private:
 
     void setDescription(const RTCSessionDescription*, DescriptionType, Function<void(const GstSDPMessage&)>&& successCallback, Function<void(const GError*)>&& failureCallback);
     void initiate(bool isInitiator, GstStructure*);
+
+    std::optional<std::pair<RTCSdpType, String>> fetchDescription(ASCIILiteral name);
+
+    enum class GatherSignalingState : bool { No, Yes };
+    std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromWebRTCBin(GatherSignalingState = GatherSignalingState::No);
 
     void onIceConnectionChange();
     void onIceGatheringChange();
@@ -237,6 +246,7 @@ private:
     NetSimOptions m_sinkNetSimOptions;
 
     GUniquePtr<GstSDPMessage> completeSDPAnswer(const String&, const GstSDPMessage*);
+    GUniquePtr<GstSDPMessage> completeSDPOffer(const String&, const GstSDPMessage*);
 
     void updatePtDemuxSrcPadCaps(GstElement*, GstPad*);
 
@@ -244,6 +254,13 @@ private:
     HashMap<uint32_t, GRefPtr<GstBuffer>> m_inputBuffers;
 
     RTPHeaderExtensionMapping m_rtpHeaderExtensions;
+
+#if USE(LIBRICE)
+    typedef struct _WebKitGstIceAgent WebKitGstIceAgent;
+    GRefPtr<WebKitGstIceAgent> m_iceAgent;
+#endif
+
+    FilterICECandidates m_isICECandidateFilteringEnabled { FilterICECandidates::Yes };
 };
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 
 #include "RTCNetwork.h"
 #include "SharedPreferencesForWebProcess.h"
+#include <WebCore/ExceptionData.h>
 #include <WebCore/MDNSRegisterError.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -50,10 +51,16 @@
 #include <dns_sd.h>
 #endif
 
-#if USE(GLIB)
-#include <gio/gio.h>
-#include <wtf/glib/GRefPtr.h>
-#endif
+#if USE(GLIB) && ENABLE(MDNS_SERVICE)
+#include "mdns_service.h"
+#include <wtf/glib/GUniquePtr.h>
+
+using MDNSService = struct MDNSService;
+
+namespace WTF {
+WTF_DEFINE_GPTR_DELETER(MDNSService, mdns_service_stop);
+}
+#endif // USE(GLIB) && ENABLE(MDNS_SERVICE)
 
 namespace IPC {
 class Connection;
@@ -101,15 +108,22 @@ public:
         String name;
         String address;
         PAL::SessionID sessionID;
-        CompletionHandler<void(const String &, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
-#if USE(GLIB)
-        GRefPtr<GCancellable> cancellable;
-#endif
+        CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)> completionHandler;
     };
+
+    using RegisterMDNSNameCallback = CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>;
+    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String &ipAddress, RegisterMDNSNameCallback &&);
+
+#if USE(GLIB)
+    bool isStarted() const { return !!m_mdnsService; }
+    void start(const String& address);
+
+    using ResolveCallback = CompletionHandler<void(Expected<String, WebCore::ExceptionData>&&)>;
+    void resolveAddress(const String&, ResolveCallback&&);
+#endif
 
 private:
     void unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier);
-    void registerMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
     PAL::SessionID sessionID() const;
 
@@ -122,9 +136,8 @@ private:
     struct DNSServiceDeallocator;
     HashMap<WebCore::ScriptExecutionContextIdentifier, std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>> m_services;
 #endif
-#if USE(GLIB)
-    GRefPtr<GCancellable> m_cancellable;
-    GRefPtr<GDBusProxy> m_dbusProxy;
+#if USE(GLIB) && ENABLE(MDNS_SERVICE)
+    GUniquePtr<MDNSService> m_mdnsService;
 #endif
 };
 

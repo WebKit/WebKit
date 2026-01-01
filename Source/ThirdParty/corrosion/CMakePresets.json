@@ -1,0 +1,290 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 22,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "ninja",
+            "hidden": true,
+            "generator": "Ninja"
+        },
+        {
+            "name": "ninja-mc",
+            "hidden": true,
+            "generator": "Ninja Multi-Config"
+        },
+        {
+            "name": "make",
+            "hidden": true,
+            "generator": "Unix Makefiles"
+        },
+        {
+            "name": "vs-2019",
+            "hidden": true,
+            "generator": "Visual Studio 16 2019"
+        },
+        {
+            "name": "vs-2022",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022"
+        },
+        {
+            "name": "windows-only",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-10-cross",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME": "Windows",
+                "CMAKE_SYSTEM_VERSION": "10.0"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "x86_64-pc-windows-msvc",
+            "hidden": true,
+            "inherits": ["windows-only"],
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "x86_64-pc-windows-msvc"
+            }
+        },
+        {
+            "name": "i686-pc-windows-msvc",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "i686-pc-windows-msvc"
+            }
+        },
+        {
+            "name": "aarch64-pc-windows-msvc",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "aarch64-pc-windows-msvc"
+            }
+        },
+        {
+            "name": "x86_64-unknown-linux-gnu",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "x86_64-unknown-linux-gnu"
+            }
+        },
+        {
+            "name": "i686-unknown-linux-gnu",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "i686-unknown-linux-gnu"
+            }
+        },
+        {
+            "name": "aarch64-unknown-linux-gnu",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "aarch64-unknown-linux-gnu"
+            }
+        },
+        {
+            "name": "x86_64-apple-darwin",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "x86_64-apple-darwin"
+            }
+        },
+        {
+            "name": "aarch64-apple-darwin",
+            "hidden": true,
+            "cacheVariables": {
+                "Rust_CARGO_TARGET": "aarch64-apple-darwin"
+            }
+        },
+        {
+            "name": "vs-platform-arm64",
+            "hidden": true,
+            "inherits": ["aarch64-pc-windows-msvc","windows-10-cross"],
+            "architecture": {
+                "value": "ARM64"
+            }
+        },
+        {
+            "name": "vs-platform-x64",
+            "hidden": true,
+            "inherits": ["x86_64-pc-windows-msvc"],
+            "architecture": {
+                "value": "x64"
+            }
+        },
+        {
+            "name": "vs-platform-i686",
+            "hidden": true,
+            "inherits": ["i686-pc-windows-msvc", "windows-10-cross"],
+            "architecture": {
+                "value": "Win32"
+            }
+        },
+        {
+            "name": "vs-2019-x86_64",
+            "inherits": ["vs-platform-x64", "vs-2019"]
+        },
+        {
+            "name": "vs-2022-x86_64",
+            "inherits": ["vs-platform-x64", "vs-2022"]
+        },
+        {
+            "name": "vs-2019-i686",
+            "inherits": ["vs-platform-i686", "vs-2019"]
+        },
+        {
+            "name": "vs-2022-i686",
+            "inherits": ["vs-platform-i686", "vs-2022"]
+        },
+        {
+            "name": "vs-2019-aarch64",
+            "inherits": ["vs-platform-arm64", "vs-2019"]
+        },
+        {
+            "name": "vs-2022-aarch64",
+            "inherits": ["vs-platform-arm64", "vs-2022"]
+        },
+        {
+            "name": "clang",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "host-gcc",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "clang-cl",
+            "hidden": true,
+            "inherits": ["windows-only"],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl"
+            }
+        },
+        {
+            "name": "cl",
+            "hidden": true,
+            "inherits": ["windows-only"],
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            }
+        },
+        {
+            "name": "ninja-x86_64-pc-windows-msvc-cl",
+            "inherits": ["ninja", "x86_64-pc-windows-msvc", "cl"]
+        },
+        {
+            "name": "ninja-x86_64-pc-windows-msvc-clang-cl",
+            "inherits": ["ninja", "x86_64-pc-windows-msvc", "clang-cl"]
+        },
+        {
+            "name": "ninja-x86_64-pc-windows-msvc-clang",
+            "inherits": ["ninja", "x86_64-pc-windows-msvc", "clang"]
+        },
+        {
+            "name": "ninja-i686-pc-windows-msvc-cl",
+            "inherits": ["ninja", "i686-pc-windows-msvc", "cl", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-i686-pc-windows-msvc-clang-cl",
+            "inherits": ["ninja", "i686-pc-windows-msvc", "clang-cl", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-i686-pc-windows-msvc-clang",
+            "inherits": ["ninja", "i686-pc-windows-msvc", "clang", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-aarch64-pc-windows-msvc-cl",
+            "inherits": ["ninja", "aarch64-pc-windows-msvc", "cl", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-aarch64-pc-windows-msvc-clang-cl",
+            "inherits": ["ninja", "aarch64-pc-windows-msvc", "clang-cl", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-aarch64-pc-windows-msvc-clang",
+            "inherits": ["ninja", "aarch64-pc-windows-msvc", "clang", "windows-10-cross"]
+        },
+        {
+            "name": "ninja-x86_64-pc-windows-gnullvm",
+            "inherits": ["ninja", "windows-only", "clang"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/x86_64-pc-windows-gnullvm.cmake"
+        },
+        {
+            "name": "make-x86_64-pc-windows-gnullvm",
+            "inherits": ["make", "windows-only", "clang"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/x86_64-pc-windows-gnullvm.cmake"
+        },
+        {
+            "name": "ninja-x86_64-pc-windows-gnu-gcc",
+            "inherits": ["ninja", "host-gcc", "windows-only"]
+        },
+        {
+            "name": "make-x86_64-pc-windows-gnu-gcc",
+            "inherits": ["make", "host-gcc", "windows-only"]
+        },
+        {
+            "name": "x86_64-unknown-linux-gnu-clang",
+            "inherits": ["x86_64-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "x86_64-unknown-linux-gnu-gcc",
+            "inherits": ["x86_64-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "i686-unknown-linux-gnu-clang",
+            "inherits": ["i686-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "i686-unknown-linux-gnu-gcc",
+            "inherits": ["i686-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "aarch64-unknown-linux-gnu-clang",
+            "inherits": ["aarch64-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "aarch64-unknown-linux-gnu-gcc",
+            "inherits": ["aarch64-unknown-linux-gnu"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "x86_64-apple-darwin-clang",
+            "inherits": ["x86_64-apple-darwin", "clang"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        },
+        {
+            "name": "aarch64-apple-darwin-clang",
+            "inherits": ["aarch64-apple-darwin"],
+            "toolchainFile": "${sourceDir}/.github/scripts/toolchains/${presetName}.cmake"
+        }
+    ]
+}

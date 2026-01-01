@@ -27,7 +27,6 @@
 #include "GStreamerIceStream.h"
 #include "GStreamerWebRTCUtils.h"
 #include "GUniquePtrRice.h"
-#include "NotImplemented.h"
 #include "RiceGioBackend.h"
 #include "RiceUtilities.h"
 #include "ScriptExecutionContext.h"
@@ -105,6 +104,8 @@ typedef struct _WebKitGstIceAgentPrivate {
     Vector<GRefPtr<RiceTurnConfig>> turnConfigs;
 
     GRefPtr<GSource> recvSource;
+
+    HashMap<String, String> mdnsRegistry;
 } WebKitGstIceAgentPrivate;
 
 typedef struct _WebKitGstIceAgent {
@@ -408,14 +409,19 @@ static Expected<CandidateAddress, ExceptionData> getCandidateAddress(StringView 
     result.address = tokens[4];
 
     StringBuilder prefixBuilder;
+    prefixBuilder.append("a=candidate:"_s);
     for (unsigned i = 0; i < 4; i++)
-        prefixBuilder.append(tokens[i]);
-    result.prefix = prefixBuilder.toString();
+        prefixBuilder.append(tokens[i], ' ');
+    result.prefix = prefixBuilder.toString().trim([](auto c) {
+        return c == ' ';
+    });
 
     StringBuilder suffixBuilder;
     for (unsigned i = 5; i < tokens.size(); i++)
-        suffixBuilder.append(tokens[i]);
-    result.suffix = suffixBuilder.toString();
+        suffixBuilder.append(tokens[i], ' ');
+    result.suffix = suffixBuilder.toString().trim([](auto c) {
+        return c == ' ';
+    });
     return result;
 }
 
@@ -424,13 +430,15 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
     GRefPtr riceStream = webkitGstWebRTCIceStreamGetRiceStream(WEBKIT_GST_WEBRTC_ICE_STREAM(iceStream));
     if (!riceStream) [[unlikely]] {
         GST_DEBUG_OBJECT(ice, "ICE stream not found");
-        gst_promise_reply(promise, nullptr);
+        if (promise)
+            gst_promise_reply(promise, nullptr);
         return;
     }
     if (!candidateSdp) {
         GST_DEBUG_OBJECT(ice, "Signaling end-of-candidates");
         rice_stream_end_of_remote_candidates(riceStream.get());
-        gst_promise_reply(promise, nullptr);
+        if (promise)
+            gst_promise_reply(promise, nullptr);
         return;
     }
 
@@ -441,7 +449,8 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         GST_DEBUG_OBJECT(ice, "Adding remote candidate: %s", candidateSdp);
         rice_stream_add_remote_candidate(riceStream.get(), candidate.get());
         g_main_context_wakeup(backend->priv->runLoop->mainContext());
-        gst_promise_reply(promise, nullptr);
+        if (promise)
+            gst_promise_reply(promise, nullptr);
         return;
     }
 
@@ -451,8 +460,10 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         auto errorMessage = makeString("Failed to retrieve address from candidate: "_s, localAddressResult.error().message);
         auto errorMessageString = errorMessage.utf8();
         GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
-        GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-        gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+        if (promise) {
+            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+            gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+        }
         return;
     }
 
@@ -461,14 +472,17 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         auto errorMessage = makeString("Candidate address \""_s, localAddress.address, "\" does not end with '.local'"_s);
         auto errorMessageString = errorMessage.utf8();
         GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
-        GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-        gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+        if (promise) {
+            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+            gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+        }
         return;
     }
 
     auto iceBackend = backend->priv->iceBackend;
     if (!iceBackend) [[unlikely]] {
-        gst_promise_reply(promise, nullptr);
+        if (promise)
+            gst_promise_reply(promise, nullptr);
         return;
     }
 
@@ -477,9 +491,10 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
             auto& errorMessage = result.exception().message();
             auto errorMessageString = errorMessage.utf8();
             GST_ERROR("%s", errorMessageString.data());
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-
-            gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+            if (promise) {
+                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+                gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+            }
             return;
         }
 
@@ -489,13 +504,16 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         GUniquePtr<RiceCandidate> newCandidate(rice_candidate_new_from_sdp_string(newCandidateSdpString.data()));
         if (newCandidate) {
             rice_stream_add_remote_candidate(riceStream.get(), newCandidate.get());
-            gst_promise_reply(promise.get(), nullptr);
             g_main_context_wakeup(backend->priv->runLoop->mainContext());
+            if (promise)
+                gst_promise_reply(promise.get(), nullptr);
         } else {
             auto errorMessage = "Unable to create Rice candidate from SDP"_s;
             GST_ERROR("%s", errorMessage.characters());
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessage.characters()));
-            gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+            if (promise) {
+                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessage.characters()));
+                gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
+            }
         }
     });
 }
@@ -701,9 +719,6 @@ static void webkit_gst_webrtc_ice_backend_class_init(WebKitGstIceAgentClass* kla
     iceClass->set_http_proxy = webkitGstWebRTCIceAgentSetHttpProxy;
     iceClass->get_http_proxy = webkitGstWebRTCIceAgentGetHttpProxy;
     iceClass->get_selected_pair = webkitGstWebRTCIceAgentGetSelectedPair;
-    // TODO:
-    // - get_local_candidates
-    // - get_remote_candidates
 #if GST_CHECK_VERSION(1, 27, 0)
     iceClass->close = webkitGstWebRTCIceAgentClose;
 #endif
@@ -742,13 +757,21 @@ Vector<GRefPtr<RiceTurnConfig>> webkitGstWebRTCIceAgentGetTurnConfigs(WebKitGstI
     return result;
 }
 
-Vector<String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent* agent, unsigned streamId)
+HashMap<std::pair<String, WebCore::RTCIceProtocol>, String> webkitGstWebRTCIceAgentGatherSocketAddresses(WebKitGstIceAgent* agent, unsigned streamId)
 {
     auto backend = agent->priv->iceBackend;
     if (!backend)
         return { };
 
-    return backend->gatherSocketAddresses(streamId);
+    RELEASE_ASSERT(agent->priv->identifier);
+    auto addresses = backend->gatherSocketAddresses(*agent->priv->identifier, streamId);
+    GST_DEBUG_OBJECT(GST_WEBRTC_ICE(agent), "%u socket addresses gathered for stream %u", addresses.size(), streamId);
+    for (auto& [address, mdnsHostname] : addresses) {
+        auto& [addressString, protocol] = address;
+        GST_DEBUG_OBJECT(GST_WEBRTC_ICE(agent), "  %s %s -> %s", addressString.ascii().data(), protocol == RTCIceProtocol::Udp ? "UDP" : "TCP", mdnsHostname.ascii().data());
+        agent->priv->mdnsRegistry.set(address.first, mdnsHostname);
+    }
+    return addresses;
 }
 
 GstWebRTCICETransport* webkitGstWebRTCIceAgentCreateTransport(WebKitGstIceAgent* agent, GThreadSafeWeakPtr<WebKitGstIceStream>&& stream, RTCIceComponent component)
@@ -790,15 +813,17 @@ void webkitGstWebRTCIceAgentGatheringDoneForStream(WebKitGstIceAgent* agent, uns
     });
 }
 
-void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* agent, unsigned streamId, RiceAgentGatheredCandidate& candidate)
+void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* agent, unsigned streamId, RiceAgentGatheredCandidate& gatheredCandidate)
 {
+    const auto& candidate = gatheredCandidate.gathered.candidate;
+
     findStreamAndApply(agent->priv->streams, streamId, [&](const auto* stream) {
-        auto sdp = GMallocString::unsafeAdoptFromUTF8(rice_candidate_to_sdp_string(&candidate.gathered.candidate));
+        auto sdp = GMallocString::unsafeAdoptFromUTF8(rice_candidate_to_sdp_string(&candidate));
         ASSERT(startsWith(sdp.span(), "a="_s));
         String strippedSdp(sdp.span().subspan(2));
 
         agent->priv->onCandidate(GST_WEBRTC_ICE(agent), streamId, strippedSdp.utf8().data(), agent->priv->onCandidateData);
-        webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, candidate.gathered);
+        webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, gatheredCandidate.gathered);
     });
 }
 
@@ -814,6 +839,11 @@ void webkitGstWebRTCIceAgentComponentStateChangedForStream(WebKitGstIceAgent* ag
     findStreamAndApply(agent->priv->streams, streamId, [&](const auto* stream) {
         webkitGstWebRTCIceStreamComponentStateChanged(stream, change);
     });
+}
+
+const HashMap<String, String>& webkitGstWebRTCIceAgentGetMDNSRegistry(WebKitGstIceAgent* agent)
+{
+    return agent->priv->mdnsRegistry;
 }
 
 #undef GST_CAT_DEFAULT

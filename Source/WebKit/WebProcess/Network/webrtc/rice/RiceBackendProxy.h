@@ -59,8 +59,10 @@ private:
 
     // RiceBackend (Web -> Network)
     void resolveAddress(const String&, WebCore::RiceBackend::ResolveAddressCallback&&) final;
+
     void send(unsigned, WebCore::RTCIceProtocol, String&&, String&&, WebCore::SharedMemory::Handle&&) final;
-    Vector<String> gatherSocketAddresses(unsigned) final;
+    HashMap<WebCore::RiceBackend::Socket, String> gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned) final;
+
     void finalizeStream(unsigned) final;
 
     void refRiceBackend() final { ref(); }

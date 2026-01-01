@@ -84,6 +84,9 @@ private:
 
     std::optional<bool> canTrickleIceCandidates() const final;
 
+    void disableICECandidateFiltering() final;
+    void enableICECandidateFiltering() final;
+
     void startGatheringStatLogs(Function<void(String&&)>&&) final;
     void stopGatheringStatLogs() final;
     void provideStatLogs(String&&);

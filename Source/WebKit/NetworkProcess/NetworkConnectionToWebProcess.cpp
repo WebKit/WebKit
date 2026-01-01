@@ -308,7 +308,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
 #endif
 #if ENABLE(WEB_RTC)
     if (decoder.messageReceiverName() == Messages::NetworkMDNSRegister::messageReceiverName()) {
-        protectedMDNSRegister()->didReceiveMessage(connection, decoder);
+        mDNSRegister()->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
