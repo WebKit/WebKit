@@ -50,17 +50,17 @@ static void ensureDebugCategoryIsRegistered()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerRtpSenderBackend);
 
-Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
+Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
 {
     return adoptRef(*new GStreamerRtpSenderBackend(WTF::move(backend), WTF::move(rtcSender)));
 }
 
-Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
+Ref<GStreamerRtpSenderBackend> GStreamerRtpSenderBackend::create(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
 {
     return adoptRef(*new GStreamerRtpSenderBackend(WTF::move(backend), WTF::move(rtcSender), WTF::move(source), WTF::move(initData)));
 }
 
-GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
+GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender)
     : m_peerConnectionBackend(WTF::move(backend))
     , m_rtcSender(WTF::move(rtcSender))
 {
@@ -68,7 +68,7 @@ GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnec
     GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed without associated source");
 }
 
-GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
+GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
     : m_peerConnectionBackend(WTF::move(backend))
     , m_rtcSender(WTF::move(rtcSender))
     , m_source(WTF::move(source))

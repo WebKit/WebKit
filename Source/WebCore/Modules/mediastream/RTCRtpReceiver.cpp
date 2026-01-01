@@ -44,7 +44,7 @@
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
-#define LOGIDENTIFIER_RECEIVER Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
+#define LOGIDENTIFIER_RECEIVER Logger::LogSiteIdentifier(logClassName(), __func__, connection->logIdentifier())
 #else
 #define LOGIDENTIFIER_RECEIVER
 #endif
@@ -82,11 +82,12 @@ void RTCRtpReceiver::stop()
 
 void RTCRtpReceiver::getStats(Ref<DeferredPromise>&& promise)
 {
-    if (!m_connection) {
+    RefPtr connection = m_connection.get();
+    if (!connection) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
-    m_connection->getStats(*this, WTF::move(promise));
+    connection->getStats(*this, WTF::move(promise));
 }
 
 std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionContext& context, const String& kind)
@@ -96,7 +97,8 @@ std::optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutio
 
 ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&& transform)
 {
-    ALWAYS_LOG_IF(m_connection, LOGIDENTIFIER_RECEIVER);
+    RefPtr connection = m_connection.get();
+    ALWAYS_LOG_IF(connection, LOGIDENTIFIER_RECEIVER);
 
     if (transform && m_transform && *transform == *m_transform)
         return { };

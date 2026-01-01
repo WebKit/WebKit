@@ -35,9 +35,9 @@ class GStreamerPeerConnectionBackend;
 class GStreamerRtpSenderBackend final : public RTCRtpSenderBackend, public RefCounted<GStreamerRtpSenderBackend> {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerRtpSenderBackend);
 public:
-    static Ref<GStreamerRtpSenderBackend> create(WeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&);
+    static Ref<GStreamerRtpSenderBackend> create(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&);
     using Source = Variant<std::nullptr_t, Ref<RealtimeOutgoingAudioSourceGStreamer>, Ref<RealtimeOutgoingVideoSourceGStreamer>>;
-    static Ref<GStreamerRtpSenderBackend> create(WeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&, Source&&, GUniquePtr<GstStructure>&& initData);
+    static Ref<GStreamerRtpSenderBackend> create(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&, Source&&, GUniquePtr<GstStructure>&& initData);
 
     // RTCRtpSenderBackend.
     void ref() const final { RefCounted::ref(); }
@@ -83,8 +83,8 @@ public:
     void dispatchBitrateRequest(uint32_t bitrate);
 
 private:
-    GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&);
-    GStreamerRtpSenderBackend(WeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&, Source&&, GUniquePtr<GstStructure>&& initData);
+    GStreamerRtpSenderBackend(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&);
+    GStreamerRtpSenderBackend(ThreadSafeWeakPtr<GStreamerPeerConnectionBackend>&&, GRefPtr<GstWebRTCRTPSender>&&, Source&&, GUniquePtr<GstStructure>&& initData);
 
     void clearSource();
     bool replaceTrack(RTCRtpSender&, MediaStreamTrack*) final;
@@ -97,7 +97,7 @@ private:
 
     void startSource();
 
-    WeakPtr<GStreamerPeerConnectionBackend> m_peerConnectionBackend;
+    ThreadSafeWeakPtr<GStreamerPeerConnectionBackend> m_peerConnectionBackend;
     GRefPtr<GstWebRTCRTPSender> m_rtcSender;
     Source m_source;
     GUniquePtr<GstStructure> m_initData;

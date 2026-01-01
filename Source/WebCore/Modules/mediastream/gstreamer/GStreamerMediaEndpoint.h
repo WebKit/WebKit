@@ -55,10 +55,10 @@ class GStreamerMediaEndpoint : public ThreadSafeRefCountedAndCanMakeThreadSafeWe
 #endif
 {
 public:
-    static Ref<GStreamerMediaEndpoint> create(GStreamerPeerConnectionBackend& peerConnection) { return adoptRef(*new GStreamerMediaEndpoint(peerConnection)); }
+    static Ref<GStreamerMediaEndpoint> create(const GStreamerPeerConnectionBackend& peerConnection) { return adoptRef(*new GStreamerMediaEndpoint(peerConnection)); }
     ~GStreamerMediaEndpoint();
 
-    bool setConfiguration(MediaEndpointConfiguration&);
+    bool setConfiguration(const MediaEndpointConfiguration&);
     void restartIce();
 
     void doSetLocalDescription(const RTCSessionDescription*);
@@ -131,7 +131,7 @@ protected:
 #endif
 
 private:
-    GStreamerMediaEndpoint(GStreamerPeerConnectionBackend&);
+    explicit GStreamerMediaEndpoint(const GStreamerPeerConnectionBackend&);
 
     RefPtr<GStreamerPeerConnectionBackend> peerConnectionBackend() const;
 
@@ -192,7 +192,7 @@ private:
 
     HashMap<String, RealtimeMediaSource::Type> m_mediaForMid;
 
-    WeakPtr<GStreamerPeerConnectionBackend> m_peerConnectionBackend;
+    ThreadSafeWeakPtr<GStreamerPeerConnectionBackend> m_peerConnectionBackend;
     GRefPtr<GstElement> m_webrtcBin;
     GRefPtr<GstElement> m_pipeline;
 

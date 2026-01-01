@@ -186,7 +186,7 @@ private:
     RefPtr<LibWebRTCPeerConnectionBackend> protectedPeerConnectionBackend() const;
     RefPtr<webrtc::PeerConnectionInterface> createBackend(LibWebRTCProvider&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
-    WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
+    ThreadSafeWeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     const Ref<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
     const RefPtr<webrtc::PeerConnectionInterface> m_backend;
 

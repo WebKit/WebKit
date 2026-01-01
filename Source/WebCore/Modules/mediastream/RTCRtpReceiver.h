@@ -99,7 +99,7 @@ private:
     const Ref<MediaStreamTrack> m_track;
     RefPtr<RTCDtlsTransport> m_transport;
     std::unique_ptr<RTCRtpReceiverBackend> m_backend;
-    WeakPtr<PeerConnectionBackend> m_connection;
+    ThreadSafeWeakPtr<PeerConnectionBackend> m_connection;
     std::unique_ptr<RTCRtpTransform> m_transform;
     const RefPtr<RTCEncodedStreamProducer> m_encodedStreamProducer;
     Vector<WeakPtr<MediaStream>> m_associatedStreams;

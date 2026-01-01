@@ -16,7 +16,6 @@ Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDataChannelRemoteHandler.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCPeerConnection.cpp
-Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSFrameTransform.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/RTCRtpTransform.cpp

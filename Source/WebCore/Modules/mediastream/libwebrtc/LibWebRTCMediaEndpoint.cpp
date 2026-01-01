@@ -134,7 +134,6 @@ LibWebRTCMediaEndpoint::~LibWebRTCMediaEndpoint()
 
 void LibWebRTCMediaEndpoint::setPeerConnectionBackend(LibWebRTCPeerConnectionBackend& peerConnectionBackend)
 {
-    ASSERT(!m_peerConnectionBackend);
     m_peerConnectionBackend = peerConnectionBackend;
 }
 
@@ -156,10 +155,13 @@ static std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> createLibWeb
 
 RefPtr<webrtc::PeerConnectionInterface> LibWebRTCMediaEndpoint::createBackend(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
-    Ref peerConnectionBackend = *m_peerConnectionBackend;
+    RefPtr peerConnectionBackend = m_peerConnectionBackend.get();
+    if (!peerConnectionBackend)
+        return nullptr;
+
     Ref document = *downcast<Document>(peerConnectionBackend->protectedConnection()->scriptExecutionContext());
     if (!m_rtcSocketFactory)
-        lazyInitialize(m_rtcSocketFactory, createLibWebRTCMediaEndpointSocketFactory(client, peerConnectionBackend, document));
+        lazyInitialize(m_rtcSocketFactory, createLibWebRTCMediaEndpointSocketFactory(client, *peerConnectionBackend, document));
 
     return toRefPtr(client.createPeerConnection(document->identifier(), *this, m_rtcSocketFactory.get(), WTF::move(configuration)));
 }

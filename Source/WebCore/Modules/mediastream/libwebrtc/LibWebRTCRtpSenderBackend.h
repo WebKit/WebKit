@@ -85,7 +85,7 @@ private:
 
     RefPtr<LibWebRTCPeerConnectionBackend> protectedPeerConnectionBackend() const;
 
-    WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
+    ThreadSafeWeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     RefPtr<webrtc::RtpSenderInterface> m_rtcSender;
     Source m_source;
     const RefPtr<RTCRtpTransformBackend> m_transformBackend;

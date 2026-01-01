@@ -91,7 +91,6 @@ private:
 
     friend class GStreamerMediaEndpoint;
     friend class GStreamerRtpSenderBackend;
-    RTCPeerConnection& connection();
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 

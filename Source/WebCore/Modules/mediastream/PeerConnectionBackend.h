@@ -42,7 +42,7 @@
 #include "RTCSignalingState.h"
 #include <wtf/FixedVector.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 class PeerConnectionBackend;
@@ -88,7 +88,7 @@ using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 using CreatePeerConnectionBackend = const std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&, MediaEndpointConfiguration&&);
 
 class PeerConnectionBackend
-    : public CanMakeWeakPtr<PeerConnectionBackend>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PeerConnectionBackend, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #if PLATFORM(WPE) || PLATFORM(GTK)
@@ -104,6 +104,9 @@ public:
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend();
+
+    void ref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     using CreateCallback = Function<void(ExceptionOr<RTCSessionDescriptionInit>&&)>;
     void createOffer(RTCOfferOptions&&, CreateCallback&&);
@@ -181,8 +184,6 @@ public:
 
     virtual bool isLocalDescriptionSet() const = 0;
 
-    void finishedRegisteringMDNSName(const String& ipAddress, const String& name);
-
     struct CertificateInformation {
         enum class Type { RSASSAPKCS1v15, ECDSAP256 };
         struct RSA {
@@ -229,9 +230,6 @@ public:
     virtual void startGatheringStatLogs(Function<void(String&&)>&&) { }
     virtual void stopGatheringStatLogs() { }
 
-    WEBCORE_EXPORT void ref() const;
-    WEBCORE_EXPORT void deref() const;
-
 protected:
     void doneGatheringCandidates();
 
@@ -272,7 +270,7 @@ private:
     virtual void doStop() = 0;
 
 protected:
-    Ref<RTCPeerConnection> protectedPeerConnection() const;
+    Ref<RTCPeerConnection> peerConnection() const;
     WeakRef<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_peerConnection;
 
 private:
