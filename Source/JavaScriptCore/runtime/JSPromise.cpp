@@ -558,35 +558,24 @@ void JSPromise::triggerPromiseReactions(VM& vm, JSGlobalObject* globalObject, St
     if (!head)
         return;
 
-    // Reverse the order of singly-linked-list.
+
+    bool isResolved = status == JSPromise::Status::Fulfilled;
+    JSPromiseReaction* tail = head;
     JSPromiseReaction* previous = nullptr;
     {
         auto* current = head;
         while (current) {
             auto* next = current->next();
             current->setNext(vm, previous);
+            if (!isResolved && !current->onFulfilled().isInt32())
+                current->setOnFulfilled(vm, current->onRejected());
+            current->setOnRejected(vm, argument);
             previous = current;
             current = next;
         }
     }
     head = previous;
-
-    bool isResolved = status == JSPromise::Status::Fulfilled;
-    auto* current = head;
-    while (current) {
-        JSValue promise = current->promise();
-        JSValue handler = isResolved ? current->onFulfilled() : current->onRejected();
-        JSValue context = current->context();
-        current = current->next();
-
-        if (handler.isInt32()) {
-            auto task = static_cast<InternalMicrotask>(handler.asInt32());
-            globalObject->queueMicrotask(task, static_cast<uint8_t>(status), promise, argument, context);
-            continue;
-        }
-        ASSERT(context.isUndefinedOrNull());
-        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, static_cast<uint8_t>(status), promise, handler, argument);
-    }
+    globalObject->queueMicrotask(InternalMicrotask::PromiseReactionChain, static_cast<uint8_t>(status), JSValue(head), JSValue(tail), jsUndefined());
 }
 
 void JSPromise::resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject* globalObject, JSValue resolution, InternalMicrotask task, JSValue context)
@@ -615,7 +604,7 @@ void JSPromise::resolveWithInternalMicrotaskForAsyncAwait(JSGlobalObject* global
                 error,
                 context,
             } };
-            runInternalMicrotask(globalObject, task, static_cast<uint8_t>(JSPromise::Status::Rejected), arguments);
+            runInternalMicrotaskImpl(globalObject, task, static_cast<uint8_t>(JSPromise::Status::Rejected), arguments);
             return;
         }
 

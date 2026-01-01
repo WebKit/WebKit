@@ -189,6 +189,7 @@ public:
     }
 
     JS_EXPORT_PRIVATE bool hasMicrotasksForFullyActiveDocument() const;
+    bool tryMergePromiseReactionChain(VM&, QueuedTask& newTask);
 
     DECLARE_VISIT_AGGREGATE;
 

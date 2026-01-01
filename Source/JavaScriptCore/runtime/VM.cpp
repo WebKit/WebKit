@@ -1361,7 +1361,7 @@ void VM::drainMicrotasks()
                         return dispatcher->run(task);
 
                     auto catchScope = DECLARE_CATCH_SCOPE(*this);
-                    runInternalMicrotask(globalObject, task.job(), task.payload(), task.arguments());
+                    runInternalMicrotaskImpl(globalObject, task.job(), task.payload(), task.arguments());
                     catchScope.clearExceptionExceptTermination();
                     return QueuedTask::Result::Executed;
                 });

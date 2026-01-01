@@ -32,6 +32,7 @@
 #include "JSGlobalObject.h"
 #include "JSMicrotask.h"
 #include "JSObject.h"
+#include "JSPromiseReaction.h"
 #include "SlotVisitorInlines.h"
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -65,7 +66,7 @@ QueuedTaskResult DebuggableMicrotaskDispatcher::run(QueuedTask& task)
             return QueuedTask::Result::Executed;
     }
 
-    runInternalMicrotask(globalObject, task.job(), task.payload(), task.arguments());
+    runInternalMicrotaskImpl(globalObject, task.job(), task.payload(), task.arguments());
     if (!catchScope.clearExceptionExceptTermination()) [[unlikely]]
         return QueuedTask::Result::Executed;
 
@@ -103,15 +104,61 @@ void MicrotaskQueue::visitAggregateImpl(Visitor& visitor)
 }
 DEFINE_VISIT_AGGREGATE(MicrotaskQueue);
 
+bool MarkedMicrotaskDeque::tryMergePromiseReactionChain(VM& vm, QueuedTask& newTask)
+{
+    if (m_queue.isEmpty())
+        return false;
+
+    QueuedTask& lastTask = m_queue.last();
+
+    // Must match: task type, globalObject, dispatcher, status (payload).
+    if (lastTask.job() != InternalMicrotask::PromiseReactionChain)
+        return false;
+    if (lastTask.globalObject() != newTask.globalObject())
+        return false;
+    if (lastTask.dispatcher() != newTask.dispatcher())
+        return false;
+    if (lastTask.payload() != newTask.payload())
+        return false;
+
+    // Get tail of existing chain and head/tail of new chain.
+    auto* existingTail = jsCast<JSPromiseReaction*>(lastTask.m_arguments[1].asCell());
+    auto* newHead = jsCast<JSPromiseReaction*>(newTask.m_arguments[0].asCell());
+    auto* newTail = jsCast<JSPromiseReaction*>(newTask.m_arguments[1].asCell());
+
+    // Link chains: existing tail -> new head (write barrier handled by setNext).
+    existingTail->setNext(vm, newHead);
+
+    // Update tail pointer in existing task.
+    lastTask.m_arguments[1] = JSValue(newTail);
+
+    // Handle GC marking: if merged into already-marked entry, reset cursor.
+    size_t lastIndex = m_queue.size() - 1;
+    if (lastIndex < m_markedBefore)
+        m_markedBefore = lastIndex;
+
+    return true;
+}
+
 void MicrotaskQueue::enqueue(QueuedTask&& task)
 {
     auto* globalObject = task.globalObject();
     auto identifier = task.identifier();
-    m_queue.enqueue(WTF::move(task));
     if (globalObject) {
-        if (auto* debugger = globalObject->debugger(); debugger && identifier) [[unlikely]]
+        if (auto* debugger = globalObject->debugger(); debugger && identifier) [[unlikely]] {
+            m_queue.enqueue(WTF::move(task));
             debugger->didQueueMicrotask(globalObject, identifier.value());
+            return;
+        }
+
+        if (task.job() == InternalMicrotask::PromiseReactionChain) {
+            VM& vm = globalObject->vm();
+            if (m_queue.tryMergePromiseReactionChain(vm, task))
+                return;
+        }
     }
+
+    m_queue.enqueue(WTF::move(task));
 }
 
 bool MarkedMicrotaskDeque::hasMicrotasksForFullyActiveDocument() const

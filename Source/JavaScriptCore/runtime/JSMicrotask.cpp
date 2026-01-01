@@ -597,7 +597,62 @@ static void asyncGeneratorResumeNextReturn(JSGlobalObject* globalObject, JSAsync
     }
 }
 
-void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments)
+static void promiseReactionJob(JSGlobalObject* globalObject, VM& vm, JSValue promiseOrCapability, JSValue handler, JSValue argument)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue result;
+    JSValue error;
+    {
+        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(&argument), 1 }, "handler is not a function"_s);
+        if (catchScope.exception()) {
+            if (promiseOrCapability.isUndefinedOrNull()) {
+                scope.release();
+                return;
+            }
+            error = catchScope.exception()->value();
+            if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                scope.release();
+                return;
+            }
+        }
+
+        if (promiseOrCapability.isUndefinedOrNull()) {
+            scope.release();
+            return;
+        }
+    }
+
+    if (error) {
+        if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
+            RELEASE_AND_RETURN(scope, promise->rejectPromise(vm, globalObject, error));
+
+        JSValue reject = promiseOrCapability.get(globalObject, vm.propertyNames->reject);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        MarkedArgumentBuffer arguments;
+        arguments.append(error);
+        ASSERT(!arguments.hasOverflowed());
+        scope.release();
+        call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
+        return;
+    }
+
+    if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
+        RELEASE_AND_RETURN(scope, promise->resolvePromise(globalObject, result));
+
+    JSValue resolve = promiseOrCapability.get(globalObject, vm.propertyNames->resolve);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(result);
+    ASSERT(!arguments.hasOverflowed());
+    scope.release();
+    call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
+}
+
+void runInternalMicrotaskImpl(JSGlobalObject* globalObject, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -701,58 +756,43 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         RELEASE_AND_RETURN(scope, internalPromiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseReactionJob: {
-        JSValue promiseOrCapability = arguments[0];
-        JSValue handler = arguments[1];
+        RELEASE_AND_RETURN(scope, promiseReactionJob(globalObject, vm, arguments[0], arguments[1], arguments[2]));
+    }
 
-        JSValue result;
-        JSValue error;
-        {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 1 }, "handler is not a function"_s);
-            if (catchScope.exception()) {
-                if (promiseOrCapability.isUndefinedOrNull()) {
-                    scope.release();
-                    return;
+    case InternalMicrotask::PromiseReactionChain: {
+        auto* head = jsCast<JSPromiseReaction*>(arguments[0].asCell());
+        auto status = static_cast<JSPromise::Status>(payload);
+
+        // Execute each reaction (chain is already in FIFO order).
+        auto* current = head;
+        while (current) {
+            JSValue promise = current->promise();
+            JSValue handler = current->onFulfilled();
+            JSValue argument = current->onRejected();
+            JSValue context = current->context();
+            JSPromiseReaction* next = current->next();
+            {
+                auto catchScope = DECLARE_CATCH_SCOPE(vm);
+                if (handler.isInt32()) {
+                    // Internal handler (encoded as int32).
+                    auto internalTask = static_cast<InternalMicrotask>(handler.asInt32());
+                    std::array<JSValue, maxMicrotaskArguments> internalArgs { { promise, argument, context } };
+                    runInternalMicrotaskImpl(globalObject, internalTask, static_cast<uint8_t>(status), std::span<const JSValue, maxMicrotaskArguments>(internalArgs.data(), maxMicrotaskArguments));
+                } else {
+                    // User JS callback - inline PromiseReactionJob logic.
+                    ASSERT(context.isUndefinedOrNull());
+                    promiseReactionJob(globalObject, vm, promise, handler, argument);
                 }
-                error = catchScope.exception()->value();
-                if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
-                    scope.release();
-                    return;
+                if (catchScope.exception()) [[unlikely]] {
+                    if (catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                        scope.release();
+                        return;
+                    }
                 }
             }
-
-            if (promiseOrCapability.isUndefinedOrNull()) {
-                scope.release();
-                return;
-            }
+            current = next;
         }
-
-        if (error) {
-            if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
-                RELEASE_AND_RETURN(scope, promise->rejectPromise(vm, globalObject, error));
-
-            JSValue reject = promiseOrCapability.get(globalObject, vm.propertyNames->reject);
-            RETURN_IF_EXCEPTION(scope, void());
-
-            MarkedArgumentBuffer arguments;
-            arguments.append(error);
-            ASSERT(!arguments.hasOverflowed());
-            scope.release();
-            call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
-            return;
-        }
-
-        if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
-            RELEASE_AND_RETURN(scope, promise->resolvePromise(globalObject, result));
-
-        JSValue resolve = promiseOrCapability.get(globalObject, vm.propertyNames->resolve);
-        RETURN_IF_EXCEPTION(scope, void());
-
-        MarkedArgumentBuffer arguments;
-        arguments.append(result);
-        ASSERT(!arguments.hasOverflowed());
         scope.release();
-        call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
         return;
     }
 
@@ -853,6 +893,11 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         return;
     }
     }
+}
+
+void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments)
+{
+    return runInternalMicrotaskImpl(globalObject, task, payload, arguments);
 }
 
 } // namespace JSC

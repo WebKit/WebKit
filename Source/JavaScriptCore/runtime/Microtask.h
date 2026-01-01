@@ -49,6 +49,7 @@ enum class InternalMicrotask : uint8_t {
     InternalPromiseAllResolveJob,
 
     PromiseReactionJob,
+    PromiseReactionChain,
 
     AsyncFunctionResume,
     AsyncFromSyncIteratorContinue,
