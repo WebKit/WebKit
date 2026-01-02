@@ -144,7 +144,7 @@ void WorkerThreadableWebSocketChannel::resume()
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel::Peer);
 
 WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider)
-    : m_workerClientWrapper(clientWrapper.ptr())
+    : m_workerClientWrapper(WTF::move(clientWrapper))
     , m_mainWebSocketChannel(ThreadableWebSocketChannel::create(downcast<Document>(context), *this, provider))
     , m_taskMode(taskMode)
     , m_workerContextIdentifier(workerContextIdentifier)
@@ -235,14 +235,10 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
     Ref channel = *m_mainWebSocketChannel;
     String subprotocol = channel->subprotocol();
     String extensions = channel->extensions();
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), subprotocol = WTF::move(subprotocol).isolatedCopy(), extensions = WTF::move(extensions).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), subprotocol = WTF::move(subprotocol).isolatedCopy(), extensions = WTF::move(extensions).isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->setSubprotocol(subprotocol);
         workerClientWrapper->setExtensions(extensions);
@@ -254,11 +250,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(String&& message)
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), message = WTF::move(message).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), message = WTF::move(message).isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didReceiveMessage(WTF::move(message));
     }, m_taskMode);
@@ -268,11 +260,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData(Vector<uint8_t
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), binaryData = WTF::move(binaryData)](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), binaryData = WTF::move(binaryData)](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didReceiveBinaryData(WTF::move(binaryData));
     }, m_taskMode);
@@ -282,11 +270,7 @@ void WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount(unsigned bu
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), bufferedAmount](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), bufferedAmount](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didUpdateBufferedAmount(bufferedAmount);
     }, m_taskMode);
@@ -296,11 +280,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didStartClosingHandshake();
     }, m_taskMode);
@@ -311,11 +291,7 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned unhandledBuffered
     ASSERT(isMainThread());
     m_mainWebSocketChannel = nullptr;
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reason);
     }, m_taskMode);
@@ -325,11 +301,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError(String&& rea
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull(), reason = WTF::move(reason).isolatedCopy()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get(), reason = WTF::move(reason).isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didReceiveMessageError(WTF::move(reason));
     }, m_taskMode);
@@ -339,11 +311,7 @@ void WorkerThreadableWebSocketChannel::Peer::didUpgradeURL()
 {
     ASSERT(isMainThread());
 
-    RefPtr workerClientWrapper = m_workerClientWrapper.get();
-    if (!workerClientWrapper)
-        return;
-    
-    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = workerClientWrapper.releaseNonNull()](ScriptExecutionContext& context) mutable {
+    ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_workerContextIdentifier, [workerClientWrapper = m_workerClientWrapper.get()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->didUpgradeURL();
     }, m_taskMode);

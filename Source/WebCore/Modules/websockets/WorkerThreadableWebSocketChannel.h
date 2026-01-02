@@ -102,7 +102,7 @@ public:
     private:
         Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&);
 
-        ThreadSafeWeakPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+        ThreadSafeWeakRef<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
         String m_taskMode;
         ScriptExecutionContextIdentifier m_workerContextIdentifier;
