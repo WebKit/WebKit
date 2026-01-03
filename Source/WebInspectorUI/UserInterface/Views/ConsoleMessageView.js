@@ -90,7 +90,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             break;
         }
 
-        // FIXME: The location link should include stack trace information.
         this._appendLocationLink();
 
         this._messageBodyElement = this._element.appendChild(document.createElement("span"));
@@ -447,24 +446,21 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             this._messageBodyElement.appendChild(savedVariableElement);
     }
 
-    _appendLocationLink()
-    {
-        if (this._message.source === WI.ConsoleMessage.MessageSource.Network) {
-            if (this._message.url) {
-                var anchor = WI.linkifyURLAsNode(this._message.url, this._message.url, "console-message-url");
-                anchor.classList.add("console-message-location");
-                this._element.appendChild(anchor);
-            }
-            return;
-        }
+    _appendLocationLink(stackTrace) {
+        // If no stackTrace is passed, use the message’s stackTrace.
+        stackTrace = stackTrace || this._message.stackTrace;
 
-        var callFrame;
-        let firstNonNativeNonAnonymousNotBlackboxedCallFrame = this._message.stackTrace?.firstNonNativeNonAnonymousNotBlackboxedCallFrame;
-        if (firstNonNativeNonAnonymousNotBlackboxedCallFrame) {
-            // JavaScript errors and console.* methods.
-            callFrame = firstNonNativeNonAnonymousNotBlackboxedCallFrame;
-        } else if (this._message.url && !this._shouldHideURL(this._message.url)) {
-            // CSS warnings have no stack traces.
+        // Ensure we have a stackTrace object with frames.
+        if (!stackTrace || !stackTrace.callFrames.length)
+        return;
+
+        console.assert(stackTrace instanceof WI.StackTrace);
+
+        // Pick the first non-native, non-anonymous, not blackboxed frame
+        let callFrame = stackTrace.firstNonNativeNonAnonymousNotBlackboxedCallFrame;
+
+        // If no suitable frame, fall back to message URL (for CSS warnings, etc.)
+        if (!callFrame && this._message.url && !this._shouldHideURL(this._message.url)) {
             callFrame = WI.CallFrame.fromPayload(this._message.target, {
                 functionName: "",
                 url: this._message.url,
@@ -473,6 +469,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             });
         }
 
+        // If we have a callFrame, create and append the link
         if (callFrame && (!callFrame.isConsoleEvaluation || WI.settings.debugShowConsoleEvaluations.value)) {
             let existingCallFrameView = this._callFrameView;
 
@@ -482,12 +479,14 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             if (existingCallFrameView)
                 this._element.replaceChild(this._callFrameView, existingCallFrameView);
             else
-                this._element.appendChild(this._callFrameView);
+                this._element.insertBefore(this._callFrameView, this._element.firstChild);
+
             return;
         }
 
+        // If no callFrame, but there's exactly one parameter, attempt to resolve a location from it
         if (this._message.parameters && this._message.parameters.length === 1) {
-            var parameter = this._createRemoteObjectIfNeeded(this._message.parameters[0]);
+            let parameter = this._createRemoteObjectIfNeeded(this._message.parameters[0]);
 
             parameter.findFunctionSourceCodeLocation().then((result) => {
                 if (result === WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound || result === WI.RemoteObject.SourceCodeLocationPromise.MissingObjectId)
