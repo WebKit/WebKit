@@ -62,7 +62,8 @@ class DevicePort(DarwinPort):
         configurations = []
         for build_type in self.ALL_BUILD_TYPES:
             for architecture in self.ARCHITECTURES:
-                configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type))
+                for reality in self.REALITIES:
+                    configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type, reality=reality))
         return configurations
 
     def child_processes(self):
@@ -253,7 +254,12 @@ class DevicePort(DarwinPort):
         device_type = host.device_type if host else self.DEVICE_TYPE
         model = device_type.hardware_family
         if model and device_type.hardware_type:
-            model += u' {}'.format(device_type.hardware_type)
+            model += f' {device_type.hardware_type}'
+            if self.is_simulator():
+                # FIXME: rdar://135638815
+                # While this is the easiest way to implement this, it reduces our long-term options for sorting/grouping results in resultsdbpy.
+                # We should add a is_virtual_machine parameter to resultsdbpy, akin to is_simulator.
+                model += f' on {self.hw_model}'
 
         version = self.device_version()
         for table in [INTERNAL_TABLE, PUBLIC_TABLE]:
