@@ -87,7 +87,7 @@ GstElement* GStreamerAudioCapturer::createConverter()
     gst_bin_add_many(GST_BIN_CAST(bin), audioconvert, audioresample, nullptr);
     gst_element_link(audioconvert, audioresample);
 
-#if USE(GSTREAMER_WEBRTC)
+#if 0 // USE(GSTREAMER_WEBRTC)
     if (auto audioFilter = makeGStreamerElement("audiornnoise"_s)) {
         auto audioconvert2 = makeGStreamerElement("audioconvert"_s);
         auto audioresample2 = makeGStreamerElement("audioresample"_s);
