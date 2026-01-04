@@ -190,6 +190,17 @@ public:
     IteratorType begin() const { return m_begin; }
     EndIterator end() const { return { }; }
 
+    // Collects all boxes into a Vector for operations that require random access,
+    // such as reverse iteration. This is necessary because BoxIterator is
+    // forward-only and doesn't support bidirectional iteration.
+    Vector<IteratorType> collectBoxes() const
+    {
+        Vector<IteratorType> boxes;
+        for (auto box = m_begin; box; ++box)
+            boxes.append(box);
+        return boxes;
+    }
+
 private:
     IteratorType m_begin;
 };

@@ -717,14 +717,15 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction)
 {
     auto hitTestInlineBoxes = [&] {
-        for (auto& box : InlineIterator::boxesFor(*this)) {
-            auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(box);
-            if (!textBox)
+        // Reverse paint order: later text is on top (in overlap case).
+        for (auto& box : InlineIterator::boxesFor(*this).collectBoxes() | std::views::reverse) {
+            if (!box->isSVGText())
                 continue;
 
+            auto& textBox = downcast<InlineIterator::SVGTextBox>(*box);
             PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
 
-            auto& renderer = textBox->renderer();
+            auto& renderer = textBox.renderer();
             if (!isVisibleToHitTesting(renderer.style(), request) && hitRules.requireVisible)
                 continue;
 
@@ -733,7 +734,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             if (!hitsStroke && !hitsFill)
                 continue;
 
-            FloatRect rect = textBox->logicalRectIgnoringInlineDirection();
+            FloatRect rect = textBox.logicalRectIgnoringInlineDirection();
             rect.moveBy(accumulatedOffset);
             if (!locationInContainer.intersects(rect))
                 continue;
@@ -744,7 +745,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             float baseline = renderer.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
 
             AffineTransform fragmentTransform;
-            for (auto& fragment : textBox->textFragments()) {
+            for (auto& fragment : textBox.textFragments()) {
                 FloatQuad fragmentQuad(FloatRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height));
                 fragment.buildFragmentTransform(fragmentTransform);
                 if (!fragmentTransform.isIdentity())
@@ -760,7 +761,6 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
         }
         return false;
     };
-
 
     if (hitTestInlineBoxes()) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
