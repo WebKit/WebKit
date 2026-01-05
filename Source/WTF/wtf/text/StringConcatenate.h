@@ -380,32 +380,6 @@ struct IndentationScope {
     Indentation<N>& m_indentation;
 };
 
-template<unsigned N> class StringTypeAdapter<Indentation<N>> {
-public:
-    StringTypeAdapter(Indentation<N> indentation)
-        : m_indentation { indentation }
-    {
-    }
-
-    unsigned length() const
-    {
-        return m_indentation.value * N;
-    }
-
-    bool is8Bit() const
-    {
-        return true;
-    }
-
-    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
-    {
-        std::fill_n(destination.data(), m_indentation.value * N, ' ');
-    }
-
-private:
-    Indentation<N> m_indentation;
-};
-
 struct ASCIICaseConverter {
     StringView::CaseConvertType type;
     StringView string;
