@@ -107,19 +107,6 @@ template<typename T> static Ref<InputType> createInputType(HTMLInputElement& ele
     return T::create(element);
 }
 
-template<typename DowncastedType>
-ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const String& value)
-{
-    auto& inputType = static_cast<const DowncastedType&>(baseInputType);
-    return inputType.typeMismatch()
-        || inputType.stepMismatch(value)
-        || inputType.rangeUnderflow(value)
-        || inputType.rangeOverflow(value)
-        || inputType.patternMismatch(value)
-        || inputType.valueMissing(value)
-        || inputType.hasBadInput();
-}
-
 static InputTypeFactoryMap createInputTypeFactoryMap()
 {
     struct InputType {
@@ -191,69 +178,15 @@ RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const 
 
 InputType::~InputType() = default;
 
-template<typename T> static bool validateInputType(const T& inputType, const String& value)
-{
-    ASSERT(inputType.canSetStringValue());
-    return !inputType.typeMismatchFor(value)
-        && !inputType.stepMismatch(value)
-        && !inputType.rangeUnderflow(value)
-        && !inputType.rangeOverflow(value)
-        && !inputType.patternMismatch(value)
-        && !inputType.valueMissing(value);
-}
-
 bool InputType::isValidValue(const String& value) const
 {
-    switch (m_type) {
-    case Type::Button:
-        return validateInputType(uncheckedDowncast<ButtonInputType>(*this), value);
-    case Type::Checkbox:
-        return validateInputType(uncheckedDowncast<CheckboxInputType>(*this), value);
-    case Type::Color:
-        return validateInputType(uncheckedDowncast<ColorInputType>(*this), value);
-    case Type::Date:
-        return validateInputType(uncheckedDowncast<DateInputType>(*this), value);
-    case Type::DateTimeLocal:
-        return validateInputType(uncheckedDowncast<DateTimeLocalInputType>(*this), value);
-    case Type::Email:
-        return validateInputType(uncheckedDowncast<EmailInputType>(*this), value);
-    case Type::File:
-        return validateInputType(uncheckedDowncast<FileInputType>(*this), value);
-    case Type::Hidden:
-        return validateInputType(uncheckedDowncast<HiddenInputType>(*this), value);
-    case Type::Image:
-        return validateInputType(uncheckedDowncast<ImageInputType>(*this), value);
-    case Type::Month:
-        return validateInputType(uncheckedDowncast<MonthInputType>(*this), value);
-    case Type::Number:
-        return validateInputType(uncheckedDowncast<NumberInputType>(*this), value);
-    case Type::Password:
-        return validateInputType(uncheckedDowncast<PasswordInputType>(*this), value);
-    case Type::Radio:
-        return validateInputType(uncheckedDowncast<RadioInputType>(*this), value);
-    case Type::Range:
-        return validateInputType(uncheckedDowncast<RangeInputType>(*this), value);
-    case Type::Reset:
-        return validateInputType(uncheckedDowncast<ResetInputType>(*this), value);
-    case Type::Search:
-        return validateInputType(uncheckedDowncast<SearchInputType>(*this), value);
-    case Type::Submit:
-        return validateInputType(uncheckedDowncast<SubmitInputType>(*this), value);
-    case Type::Telephone:
-        return validateInputType(uncheckedDowncast<TelephoneInputType>(*this), value);
-    case Type::Time:
-        return validateInputType(uncheckedDowncast<TimeInputType>(*this), value);
-    case Type::URL:
-        return validateInputType(uncheckedDowncast<URLInputType>(*this), value);
-    case Type::Week:
-        return validateInputType(uncheckedDowncast<WeekInputType>(*this), value);
-    case Type::Text:
-        return validateInputType(uncheckedDowncast<TextInputType>(*this), value);
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    ASSERT(canSetStringValue());
+    return !typeMismatchFor(value)
+        && !stepMismatch(value)
+        && !rangeUnderflow(value)
+        && !rangeOverflow(value)
+        && !patternMismatch(value)
+        && !valueMissing(value);
 }
 
 bool InputType::shouldSaveAndRestoreFormControlState() const
@@ -365,54 +298,13 @@ bool InputType::rangeOverflow(const String& value) const
 
 bool InputType::isInvalid(const String& value) const
 {
-    switch (m_type) {
-    case Type::Button:
-        return isInvalidInputType<ButtonInputType>(*this, value);
-    case Type::Checkbox:
-        return isInvalidInputType<CheckboxInputType>(*this, value);
-    case Type::Color:
-        return isInvalidInputType<ColorInputType>(*this, value);
-    case Type::Date:
-        return isInvalidInputType<DateInputType>(*this, value);
-    case Type::DateTimeLocal:
-        return isInvalidInputType<DateTimeLocalInputType>(*this, value);
-    case Type::Email:
-        return isInvalidInputType<EmailInputType>(*this, value);
-    case Type::File:
-        return isInvalidInputType<FileInputType>(*this, value);
-    case Type::Hidden:
-        return isInvalidInputType<HiddenInputType>(*this, value);
-    case Type::Image:
-        return isInvalidInputType<ImageInputType>(*this, value);
-    case Type::Month:
-        return isInvalidInputType<MonthInputType>(*this, value);
-    case Type::Number:
-        return isInvalidInputType<NumberInputType>(*this, value);
-    case Type::Password:
-        return isInvalidInputType<PasswordInputType>(*this, value);
-    case Type::Radio:
-        return isInvalidInputType<RadioInputType>(*this, value);
-    case Type::Range:
-        return isInvalidInputType<RangeInputType>(*this, value);
-    case Type::Reset:
-        return isInvalidInputType<ResetInputType>(*this, value);
-    case Type::Search:
-        return isInvalidInputType<SearchInputType>(*this, value);
-    case Type::Submit:
-        return isInvalidInputType<SubmitInputType>(*this, value);
-    case Type::Telephone:
-        return isInvalidInputType<TelephoneInputType>(*this, value);
-    case Type::Time:
-        return isInvalidInputType<TimeInputType>(*this, value);
-    case Type::URL:
-        return isInvalidInputType<URLInputType>(*this, value);
-    case Type::Week:
-        return isInvalidInputType<WeekInputType>(*this, value);
-    case Type::Text:
-        return isInvalidInputType<TextInputType>(*this, value);
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return typeMismatch()
+        || stepMismatch(value)
+        || rangeUnderflow(value)
+        || rangeOverflow(value)
+        || patternMismatch(value)
+        || valueMissing(value)
+        || hasBadInput();
 }
 
 Decimal InputType::defaultValueForStepUp() const

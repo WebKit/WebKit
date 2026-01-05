@@ -27,7 +27,6 @@ dom/NodeRareData.h
 domjit/DOMJITHelpers.h
 domjit/JSDocumentDOMJIT.cpp
 domjit/JSNodeDOMJIT.cpp
-html/InputType.cpp
 layout/layouttree/LayoutIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
 loader/cache/CachedResourceClientWalker.h
