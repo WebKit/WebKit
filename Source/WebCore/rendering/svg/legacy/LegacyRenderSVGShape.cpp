@@ -467,7 +467,10 @@ float LegacyRenderSVGShape::strokeWidth() const
 
 float LegacyRenderSVGShape::strokeWidthForMarkerUnits() const
 {
-    float strokeWidth = LegacyRenderSVGShape::strokeWidth();
+    float strokeWidth = this->strokeWidth();
+    if (!hasNonScalingStroke())
+        return strokeWidth;
+
     if (hasNonScalingStroke()) {
         auto nonScalingTransform = nonScalingStrokeTransform();
         if (!nonScalingTransform.isInvertible())
@@ -477,7 +480,10 @@ float LegacyRenderSVGShape::strokeWidthForMarkerUnits() const
         double yScale = nonScalingTransform.yScale();
         float scaleFactor = clampTo<float>(std::sqrt((xScale * xScale + yScale * yScale) / 2));
 
-        strokeWidth /= scaleFactor;
+        if (xScale == yScale) [[likely]]
+            return strokeWidth / xScale;
+
+        return strokeWidth / scaleFactor;
     }
     return strokeWidth;
 }
