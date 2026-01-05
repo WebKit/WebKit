@@ -157,7 +157,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
                 return 0;
             },
             [&](const Style::LineHeight::Fixed& fixed) {
-                return Style::evaluate<LayoutUnit>(fixed, Style::ZoomFactor { 1.0f, parentStyle.deviceScaleFactor() }).toInt();
+                return Style::evaluate<LayoutUnit>(fixed, Style::ZoomFactor { 1.0f }).toInt();
             },
             [&](const Style::LineHeight::Percentage& percentage) {
                 return Style::evaluate<LayoutUnit>(percentage, LayoutUnit { fontDescription.specifiedSize() }).toInt();
@@ -169,7 +169,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
 
         // This calculation matches the line-height computed size calculation in StyleBuilderCustom::applyValueLineHeight().
         int lineHeight = specifiedLineHeight * scaleChange;
-        if (auto fixedLineHeight = lineHeightLength.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f, parentStyle.deviceScaleFactor() }) == lineHeight)
+        if (auto fixedLineHeight = lineHeightLength.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) == lineHeight)
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);

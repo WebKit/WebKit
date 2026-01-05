@@ -33,13 +33,7 @@ struct ZoomNeeded { };
 struct ZoomFactor {
     float value;
 
-    // FIXME: Transitional member to preserve pixel-snapping behavior during evaluation.
-    // This allows values like LineWidth to apply floorToDevicePixel() at evaluation time.
-    // Should be removed once pixel-snapping is eliminated entirely.
-    // https://bugs.webkit.org/show_bug.cgi?id=300658
-    float deviceScaleFactor { 1.0f };
-
-    constexpr explicit ZoomFactor(float v, float dsf) : value(v), deviceScaleFactor(dsf) { }
+    constexpr explicit ZoomFactor(float v) : value(v)  { }
 };
 
 } // namespace Style

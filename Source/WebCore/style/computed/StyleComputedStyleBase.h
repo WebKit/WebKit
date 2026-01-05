@@ -812,6 +812,8 @@ public:
         PREFERRED_TYPE(PrintColorAdjust) unsigned char printColorAdjust : 1;
         PREFERRED_TYPE(InsideLink) unsigned char insideLink : 2;
 
+        unsigned char isZoomed : 1;
+
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif

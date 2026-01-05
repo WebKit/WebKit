@@ -104,7 +104,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
                     return { containingBlock.style().logicalHeight(), containingBlock.style().usedZoomForLength() };
                 }
                 ASSERT_NOT_REACHED();
-                return { CSS::Keyword::Auto { }, Style::ZoomFactor { 1.0f, layoutBox.style().deviceScaleFactor() } };
+                return { CSS::Keyword::Auto { }, Style::ZoomFactor { 1.0f } };
             }();
             containingBlockHeight = fixedValue(nonAnonymousContainingBlockLogicalHeight, nonAnonymousContainingBlockUsedZoom);
         }

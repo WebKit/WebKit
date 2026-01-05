@@ -307,7 +307,7 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             // We can't use computedLineHeightForFontUnits if the line height is fixed since
             // that will apply the usedZoomFactor. We probably should refactor it so that
             // does not happen and we don't have to special case this scenario.
-            value *= Style::evaluate<LayoutUnit>(*fixedLineHeight, Style::ZoomFactor { conversionData.zoom(), conversionData.style()->deviceScaleFactor() }).toFloat();
+            value *= Style::evaluate<LayoutUnit>(*fixedLineHeight, Style::ZoomFactor { conversionData.zoom() }).toFloat();
         } else
             value *= conversionData.computedLineHeightForFontUnits();
         break;

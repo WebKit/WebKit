@@ -167,7 +167,7 @@ private:
         TextBoxTrim textBoxTrim;
         WebCore::Style::TextBoxEdge textBoxEdge;
         WebCore::Style::LineFitEdge lineFitEdge;
-        WebCore::Style::ZoomFactor zoomFactor { 1.0f, 1.0f };
+        WebCore::Style::ZoomFactor zoomFactor { 1.0f };
         WebCore::Style::WebkitLineBoxContain lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };

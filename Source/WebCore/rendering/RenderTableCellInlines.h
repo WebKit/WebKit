@@ -59,7 +59,7 @@ inline std::pair<Style::PreferredSize, Style::ZoomFactor> RenderTableCell::style
     if (RenderTableCol* firstColumn = table()->colElement(col())) {
         // logicalWidthFromColumns will return a zoomed size so we return a zoom
         // factor of 1.0 to avoid double zooming.
-        return { logicalWidthFromColumns(firstColumn, styleWidth), Style::ZoomFactor { 1.0f, style.deviceScaleFactor() } };
+        return { logicalWidthFromColumns(firstColumn, styleWidth), Style::ZoomFactor { 1.0f } };
     }
     return { styleWidth, style.usedZoomForLength() };
 }

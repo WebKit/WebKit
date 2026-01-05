@@ -82,7 +82,7 @@ private:
     const StyleSelfAlignmentData m_inlineAxisAlignment;
     const StyleSelfAlignmentData m_blockAxisAlignment;
 
-    const Style::ZoomFactor m_usedZoom { 1.0f, 1.0f };
+    const Style::ZoomFactor m_usedZoom { 1.0f };
 
     GridAreaLines m_gridAreaLines;
 };

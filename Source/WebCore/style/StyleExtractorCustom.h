@@ -722,7 +722,7 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyLineHeight> {
             [&](const LineHeight::Calc& calc) {
                 // FIXME: We pass 1.0f here to get the unzoomed value but it really is not clear why we are even
                 // evaluating calc here. We should probably revisit this and figure out another way to do this.
-                return functor(Length<CSS::Nonnegative> { evaluate<float>(calc, 0.0f, Style::ZoomFactor { 1.0f, 1.0f }) });
+                return functor(Length<CSS::Nonnegative> { evaluate<float>(calc, 0.0f, Style::ZoomFactor { 1.0f }) });
             }
         );
     }
