@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/FloatPoint3D.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -43,7 +43,7 @@ enum class LightType : uint8_t {
 class Filter;
 class FilterImage;
 
-class LightSource : public RefCounted<LightSource> {
+class LightSource : public RefCountedAndCanMakeWeakPtr<LightSource> {
 public:
     struct ComputedLightingData {
         FloatPoint3D lightVector;

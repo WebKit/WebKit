@@ -22,10 +22,6 @@ layout/formattingContexts/inline/InlineItemsBuilder.h
 [ iOS ] page/ios/ContentChangeObserver.h
 platform/PODInterval.h
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
-platform/graphics/filters/software/FEConvolveMatrixSoftwareApplier.h
-platform/graphics/filters/software/FELightingSoftwareApplier.h
-platform/graphics/filters/software/FEMorphologySoftwareApplier.h
-platform/graphics/filters/software/FETurbulenceSoftwareApplier.h
 [ iOS ] platform/graphics/ios/DisplayRefreshMonitorIOS.mm
 [ iOS ] platform/ios/wak/WAKWindow.h
 rendering/PaintInfo.h

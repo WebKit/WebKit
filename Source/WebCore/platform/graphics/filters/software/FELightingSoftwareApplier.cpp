@@ -94,12 +94,12 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.z() * 255.0f)
     };
     
-    data.pixels->setRange({ pixelValue }, offset);
+    data.pixels.get()->setRange({ pixelValue }, offset);
 }
 
 void FELightingSoftwareApplier::setPixel(int offset, const LightingData& data, const LightSource::PaintingData& paintingData, int x, int y, float factorX, float factorY, IntSize normal2DVector)
 {
-    setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, data.pixels->item(offset + cAlphaChannelOffset));
+    setPixelInternal(offset, data, paintingData, x, y, factorX, factorY, normal2DVector, data.pixels.get()->item(offset + cAlphaChannelOffset));
 }
 
 void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
@@ -109,7 +109,7 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
     auto [r, g, b, a] = data.lightingColor.toResolvedColorComponentsInColorSpace(*data.operatingColorSpace);
     paintingData.initialLightingData.colorVector = FloatPoint3D(r, g, b);
 
-    data.lightSource->initPaintingData(Ref { *data.filter }, Ref { *data.result }, paintingData);
+    data.lightSource->initPaintingData(data.filter.get().releaseNonNull(), Ref { *data.result }, paintingData);
 
     // Top left.
     int offset = 0;
@@ -157,16 +157,17 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
     }
 
     int lastPixel = data.widthMultipliedByPixelSize * data.height;
+    Ref pixels = data.pixels.get().releaseNonNull();
     if (data.filterType == FilterEffect::Type::FEDiffuseLighting) {
         for (int i = cAlphaChannelOffset; i < lastPixel; i += cPixelSize)
-            data.pixels->set(i, cOpaqueAlpha);
+            pixels->set(i, cOpaqueAlpha);
     } else {
         for (int i = 0; i < lastPixel; i += cPixelSize) {
-            uint8_t a1 = data.pixels->item(i);
-            uint8_t a2 = data.pixels->item(i + 1);
-            uint8_t a3 = data.pixels->item(i + 2);
+            uint8_t a1 = pixels->item(i);
+            uint8_t a2 = pixels->item(i + 1);
+            uint8_t a3 = pixels->item(i + 2);
             // alpha set to set to max(a1, a2, a3)
-            data.pixels->set(i + 3, a1 >= a2 ? (a1 >= a3 ? a1 : a3) : (a2 >= a3 ? a2 : a3));
+            pixels->set(i + 3, a1 >= a2 ? (a1 >= a3 ? a1 : a3) : (a2 >= a3 ? a2 : a3));
         }
     }
 }

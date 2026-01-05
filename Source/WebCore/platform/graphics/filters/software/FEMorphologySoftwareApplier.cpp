@@ -68,8 +68,8 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
 {
     ASSERT(endY > startY);
 
-    const auto& srcPixelBuffer = *paintingData.srcPixelBuffer;
-    auto& dstPixelBuffer = *paintingData.dstPixelBuffer;
+    Ref srcPixelBuffer = paintingData.srcPixelBuffer.get().releaseNonNull();
+    Ref dstPixelBuffer = paintingData.dstPixelBuffer.get().releaseNonNull();
 
     const int radiusX = paintingData.radiusX;
     const int radiusY = paintingData.radiusY;
@@ -100,7 +100,7 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
             if (x > radiusX)
                 extrema.removeAt(0);
 
-            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width)));
+            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer->bytes().subspan(pixelArrayIndex(x, y, width)));
             destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
         }
     }

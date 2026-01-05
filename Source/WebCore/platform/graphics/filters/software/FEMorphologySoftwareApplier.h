@@ -28,6 +28,7 @@
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,8 +51,8 @@ private:
         MorphologyOperatorType type;
         int radiusX;
         int radiusY;
-        const PixelBuffer* srcPixelBuffer;
-        PixelBuffer* dstPixelBuffer;
+        ThreadSafeWeakPtr<const PixelBuffer> srcPixelBuffer;
+        ThreadSafeWeakPtr<PixelBuffer> dstPixelBuffer;
         int width;
         int height;
     };

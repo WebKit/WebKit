@@ -31,7 +31,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PixelBuffer.h>
 #include <WebCore/RenderingMode.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Vector.h>
 
 #if USE(CORE_IMAGE)
@@ -50,7 +50,7 @@ namespace WebCore {
 class Filter;
 class FloatRect;
 
-class FilterImage : public RefCounted<FilterImage> {
+class FilterImage : public RefCountedAndCanMakeWeakPtr<FilterImage> {
 public:
     static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
     static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);

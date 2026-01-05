@@ -31,6 +31,7 @@
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -78,7 +79,7 @@ private:
     struct ApplyParameters {
         IntRect filterRegion;
         FloatSize filterScale;
-        PixelBuffer* pixelBuffer;
+        ThreadSafeWeakPtr<PixelBuffer> pixelBuffer;
         PaintingData* paintingData;
         StitchData stitchData;
         int startY;

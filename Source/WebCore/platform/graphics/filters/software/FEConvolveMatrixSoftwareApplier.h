@@ -41,14 +41,14 @@ class FEConvolveMatrixSoftwareApplier final : public FilterEffectConcreteApplier
     using Base = FilterEffectConcreteApplier<FEConvolveMatrix>;
 
 public:
-    FEConvolveMatrixSoftwareApplier(const FEConvolveMatrix& effect);
+    explicit FEConvolveMatrixSoftwareApplier(const FEConvolveMatrix& effect);
 
 private:
     bool apply(const Filter&, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const final;
 
     struct PaintingData {
-        const PixelBuffer& sourcePixelBuffer;
-        PixelBuffer& destinationPixelBuffer;
+        ThreadSafeWeakRef<const PixelBuffer> sourcePixelBuffer;
+        ThreadSafeWeakRef<PixelBuffer> destinationPixelBuffer;
         int width;
         int height;
 

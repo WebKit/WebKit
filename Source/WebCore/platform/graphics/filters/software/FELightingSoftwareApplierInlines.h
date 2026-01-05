@@ -33,6 +33,7 @@ namespace WebCore {
 
 inline IntSize FELightingSoftwareApplier::LightingData::topLeftNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset += widthMultipliedByPixelSize;
@@ -46,6 +47,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::topLeftNormal(int offset
 
 inline IntSize FELightingSoftwareApplier::LightingData::topRowNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
@@ -61,6 +63,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::topRowNormal(int offset)
 
 inline IntSize FELightingSoftwareApplier::LightingData::topRightNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset += widthMultipliedByPixelSize;
@@ -74,6 +77,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::topRightNormal(int offse
 
 inline IntSize FELightingSoftwareApplier::LightingData::leftColumnNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
@@ -92,6 +96,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::interiorNormal(int offse
 {
     int rightAlphaOffset = offset + cPixelSize + cAlphaChannelOffset;
 
+    Ref pixels = this->pixels.get().releaseNonNull();
     int right = static_cast<int>(pixels->item(rightAlphaOffset));
     int topRight = static_cast<int>(pixels->item(rightAlphaOffset - widthMultipliedByPixelSize));
     int bottomRight = static_cast<int>(pixels->item(rightAlphaOffset + widthMultipliedByPixelSize));
@@ -120,6 +125,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::interiorNormal(int offse
 
 inline IntSize FELightingSoftwareApplier::LightingData::rightColumnNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
@@ -136,6 +142,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::rightColumnNormal(int of
 
 inline IntSize FELightingSoftwareApplier::LightingData::bottomLeftNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
@@ -149,6 +156,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::bottomLeftNormal(int off
 
 inline IntSize FELightingSoftwareApplier::LightingData::bottomRowNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     int right = static_cast<int>(pixels->item(offset + cPixelSize + cAlphaChannelOffset));
@@ -164,6 +172,7 @@ inline IntSize FELightingSoftwareApplier::LightingData::bottomRowNormal(int offs
 
 inline IntSize FELightingSoftwareApplier::LightingData::bottomRightNormal(int offset) const
 {
+    Ref pixels = this->pixels.get().releaseNonNull();
     int left = static_cast<int>(pixels->item(offset - cPixelSize + cAlphaChannelOffset));
     int center = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     offset -= widthMultipliedByPixelSize;
