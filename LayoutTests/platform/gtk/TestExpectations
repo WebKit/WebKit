@@ -128,7 +128,6 @@ webkit.org/b/303375 inspector/debugger/async-stack-trace-truncate.html [ Crash T
 # Crash on EWS bot.
 webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 
-webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////

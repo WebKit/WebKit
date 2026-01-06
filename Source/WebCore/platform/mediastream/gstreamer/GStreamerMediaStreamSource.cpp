@@ -522,13 +522,13 @@ public:
             return;
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
+        GRefPtr<GstSample> sample = data.getSample();
         if (m_track->enabled()) {
-            GRefPtr<GstSample> sample = data.getSample();
             pushSample(sample, "Pushing audio sample from enabled track"_s);
             return;
         }
 
-        pushSilentSample();
+        pushSilentSample(GST_BUFFER_PTS(gst_sample_get_buffer(sample.get())));
     }
 
     Lock* eosLocker() { return &m_eosLock; }
@@ -741,24 +741,24 @@ private:
         pushSample(sample, "Pushing black video frame"_s);
     }
 
-    void pushSilentSample()
+    void pushSilentSample(GstClockTime timestamp)
     {
-        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         if (!m_silentSampleCaps) {
+            DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
             GstAudioInfo info;
             gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, 44100, 1, nullptr);
             m_silentSampleCaps = adoptGRef(gst_audio_info_to_caps(&info));
+
+            m_silentBuffer = adoptGRef(gst_buffer_new_and_alloc(128 * GST_AUDIO_INFO_BPF(&info)));
+            {
+                GstMappedBuffer map(m_silentBuffer.get(), GST_MAP_WRITE);
+                webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
+            }
+            gst_buffer_add_audio_meta(m_silentBuffer.get(), &info, 128, nullptr);
         }
 
-        auto buffer = adoptGRef(gst_buffer_new_and_alloc(512));
-        GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = gst_element_get_current_running_time(m_parent);
-        GstAudioInfo info;
-        gst_audio_info_from_caps(&info, m_silentSampleCaps.get());
-        {
-            GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
-            webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
-        }
-        auto sample = adoptGRef(gst_sample_new(buffer.get(), m_silentSampleCaps.get(), nullptr, nullptr));
+        GST_BUFFER_DTS(m_silentBuffer.get()) = GST_BUFFER_PTS(m_silentBuffer.get()) = timestamp;
+        auto sample = adoptGRef(gst_sample_new(m_silentBuffer.get(), m_silentSampleCaps.get(), nullptr, nullptr));
         pushSample(sample, "Pushing audio silence from disabled track"_s);
     }
 
@@ -853,6 +853,7 @@ private:
     IntSize m_lastKnownSize;
     GRefPtr<GstCaps> m_blackFrameCaps;
     GRefPtr<GstCaps> m_silentSampleCaps;
+    GRefPtr<GstBuffer> m_silentBuffer;
     VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
     bool m_isEnded { false };
