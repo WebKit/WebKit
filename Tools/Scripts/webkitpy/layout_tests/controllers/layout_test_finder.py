@@ -436,7 +436,7 @@ class LayoutTestFinder(object):
                 reference_files=(
                     tuple(reference_files) if reference_files is not None else None
                 ),
-                is_http_test="http/test" in trimmed_path,
+                is_http_test="http/test" in trimmed_path or ("site-isolation/" in trimmed_path and "http/tests/" not in trimmed_path),
                 is_websocket_test=(
                     "websocket/" in trimmed_path
                     or "http/test" in trimmed_path

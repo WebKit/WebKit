@@ -140,6 +140,11 @@ static bool shouldEnableEnhancedSecurity(const std::string& pathOrURL)
     return pathContains(pathOrURL, "enhanced-security/");
 }
 
+static bool shouldEnableSiteIsolation(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "site-isolation/") && !pathContains(pathOrURL, "http/tests/");
+}
+
 static bool shouldUseBackForwardCache(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "navigation-api/")
@@ -175,6 +180,10 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolTestRunnerFeatures.insert({ "enhancedSecurityEnabled", true });
     if (shouldUseBackForwardCache(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "UsesBackForwardCache", true });
+    if (shouldEnableSiteIsolation(command.pathOrURL)) {
+        features.boolTestRunnerFeatures.insert({ "runInCrossOriginFrame", true });
+        features.boolWebPreferenceFeatures.insert({ "SiteIsolationEnabled", true });
+    }
 
     return features;
 }

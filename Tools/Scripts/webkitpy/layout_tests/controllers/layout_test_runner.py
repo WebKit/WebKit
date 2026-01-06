@@ -282,10 +282,14 @@ class LayoutTestRunner(object):
                 self._current_run_results.change_result_to_failure(existing_result, new_result, was_expected, now_expected)
 
     def _additional_dirs_for_http_server(self):
-        if not self._options.load_in_cross_origin_iframe:
-            return {}
+        additional_dirs = {}
 
-        return {"root": "."}
+        if self._options.load_in_cross_origin_iframe:
+            additional_dirs["root"] = "."
+        else:
+            additional_dirs["/root/site-isolation"] = self._port.layout_tests_dir() + "/site-isolation"
+
+        return additional_dirs
 
     def start_servers(self):
         if self._needs_http and not self._did_start_http_server and not self._port.is_http_server_running():

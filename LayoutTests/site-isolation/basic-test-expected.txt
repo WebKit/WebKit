@@ -1,0 +1,10 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test verifies that tests in the site-isolation/ directory automatically run in a cross-origin iframe.
+
+PASS: Test is running in cross-origin frame at 127.0.0.1:8000
+
+PASS: Test is running inside an iframe

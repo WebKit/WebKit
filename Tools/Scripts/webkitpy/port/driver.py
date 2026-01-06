@@ -353,6 +353,8 @@ class Driver(object):
     def is_http_test(self, driver_input):
         if driver_input.additional_header and "runInCrossOriginFrame=true" in driver_input.additional_header:
             return True
+        if "site-isolation/" in driver_input.test_name and "http/tests/" not in driver_input.test_name:
+            return True
         return driver_input.test_name.startswith(self.HTTP_DIR) and not driver_input.test_name.startswith(self.HTTP_LOCAL_DIR)
 
     def is_webkit_specific_web_platform_test(self, test_name):

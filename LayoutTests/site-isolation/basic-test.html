@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Site Isolation Test</title>
+</head>
+<body>
+    <p>This test verifies that tests in the site-isolation/ directory automatically run in a cross-origin iframe.</p>
+    <div id="output"></div>
+    <script>
+        testRunner.dumpAsText();
+
+        function log(message) {
+            const output = document.getElementById('output');
+            const p = document.createElement('p');
+            p.textContent = message;
+            output.appendChild(p);
+        }
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        const expectedHost = "127.0.0.1:8000";
+        const actualHost = location.host;
+
+        if (actualHost === expectedHost)
+            log("PASS: Test is running in cross-origin frame at " + expectedHost);
+        else
+            log("FAIL: Expected host " + expectedHost + " but got " + actualHost);
+
+        if (window.parent !== window)
+            log("PASS: Test is running inside an iframe");
+        else
+            log("FAIL: Test is NOT running inside an iframe");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    </script>
+</body>
+</html>
