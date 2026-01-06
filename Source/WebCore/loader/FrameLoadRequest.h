@@ -75,6 +75,9 @@ public:
     bool isContentRuleListRedirect() const { return m_isContentRuleListRedirect; }
     void setIsContentRuleListRedirect(bool isContentRuleListRedirect) { m_isContentRuleListRedirect = isContentRuleListRedirect; }
 
+    bool isCrossOriginContentRuleListRedirect() const { return m_isCrossOriginContentRuleListRedirect; }
+    void setIsCrossOriginContentRuleListRedirect(bool isCrossOriginContentRuleListRedirect) { m_isCrossOriginContentRuleListRedirect = isCrossOriginContentRuleListRedirect; }
+
     bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
     void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
 
@@ -102,6 +105,7 @@ private:
     bool m_isInitialFrameSrcLoad { false };
     bool m_isContentRuleListRedirect { false };
     bool m_isFromNavigationAPI { false };
+    bool m_isCrossOriginContentRuleListRedirect { false };
 };
 
 class FrameLoadRequest : public FrameLoadRequestBase {

@@ -1771,6 +1771,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     }
 
     SetForScope continuingLoadGuard(m_currentLoadContinuingState, request.shouldTreatAsContinuingLoad() != ShouldTreatAsContinuingLoad::No ? LoadContinuingState::ContinuingWithRequest : LoadContinuingState::NotContinuing);
+    SetForScope crossOriginContentRuleListCancellationGuard(m_needsCancellationForContentRuleListCrossOriginRedirect, request.isCrossOriginContentRuleListRedirect());
     load(loader.get(), request.protectedRequesterSecurityOrigin().ptr());
 }
 
@@ -2932,6 +2933,12 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
 
             if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No) {
                 auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgress()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
+
+                if (error.isCancellation() && m_needsCancellationForContentRuleListCrossOriginRedirect) {
+                    willInternallyHandleFailure = WillInternallyHandleFailure::Yes;
+                    m_needsCancellationForContentRuleListCrossOriginRedirect = false;
+                }
+
                 dispatchDidFailProvisionalLoad(*provisionalDocumentLoader, error, willInternallyHandleFailure);
             }
 
