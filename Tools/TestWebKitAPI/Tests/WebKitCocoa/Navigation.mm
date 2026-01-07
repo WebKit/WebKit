@@ -2636,13 +2636,14 @@ TEST(WKNavigation, HTTPSFirstWithHTTPRedirect)
     didFailNavigation = false;
     loadCount = 0;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+    // Encourage a process swap to ensure consistency of the test with and without Enhanced Security enabled
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(didFailNavigation);
-    EXPECT_EQ(loadCount, 23);
-    EXPECT_WK_STREQ(@"http://site2.example/secure3", [webView URL].absoluteString);
+    EXPECT_EQ(loadCount, 22);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, DISABLED_PreferredHTTPSPolicyAutomaticHTTPFallbackRedirectNo3SecondTimeout)
@@ -3698,13 +3699,14 @@ TEST(WKNavigation, PreferredHTTPSPolicyAutomaticHTTPFallbackWithHTTPRedirect)
     didFailNavigation = false;
     loadCount = 0;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+    // Encourage a process swap to ensure consistency of the test with and without Enhanced Security enabled
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(didFailNavigation);
-    EXPECT_EQ(loadCount, 23);
-    EXPECT_WK_STREQ(@"http://site2.example/secure3", [webView URL].absoluteString);
+    EXPECT_EQ(loadCount, 22);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
 }
 
 TEST(WKNavigation, PreferredHTTPSPolicyNoFallbackRedirectNoHTTPDowngradeRedirect)
