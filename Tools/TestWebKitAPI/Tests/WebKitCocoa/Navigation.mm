@@ -2532,7 +2532,10 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     finishedSuccessfully = false;
     didFailNavigation = false;
     loadCount = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+
+    // Use a different domain to the above to ensure a process swap happens, this ensures testing of an edge
+    // case in the HTTPS upgrade / same-site HTTP logic.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
     TestWebKitAPI::Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
@@ -2546,7 +2549,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     finishedSuccessfully = false;
     didFailNavigation = false;
     loadCount = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
 
     EXPECT_NULL([webView _safeBrowsingWarning]);
     while (![webView _safeBrowsingWarning])
@@ -2558,7 +2561,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(didFailNavigation);
-    EXPECT_EQ(loadCount, 23);
+    EXPECT_EQ(loadCount, 22);
 
     [webView evaluateJavaScript:@"location = \"http://site2.example/secure3\";" completionHandler:nil];
 
