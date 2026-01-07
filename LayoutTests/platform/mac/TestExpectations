@@ -2464,8 +2464,6 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Fail
 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/digital-credentials/user-activation.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Pass Failure ]
-imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 http/tests/inspector/network/xhr-response-body.html [ Pass Failure ]
 accessibility/checkbox-radio-element-rect.html [ Pass Failure ]
 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Failure ImageOnlyFailure ]
