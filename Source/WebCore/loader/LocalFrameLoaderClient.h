@@ -36,6 +36,7 @@
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/Platform.h>
@@ -246,7 +247,7 @@ public:
     virtual void didFinishLoad() = 0;
     virtual void prepareForDataSourceReplacement() = 0;
 
-    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) = 0;
+    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, std::optional<ResourceRequest>&& = std::nullopt) = 0;
     virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 

@@ -63,4 +63,5 @@ enum class WebCore::NavigationUpgradeToHTTPSBehavior : bool;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion;
     std::optional<WebCore::NavigationRequester> requester;
+    std::optional<WebCore::ResourceRequest> originalRequest;
 };
