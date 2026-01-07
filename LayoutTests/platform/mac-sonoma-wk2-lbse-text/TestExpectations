@@ -17,39 +17,6 @@
 #                                          (e.g. progressions in individual tests)
 
 # Filter issues
-imported/w3c/web-platform-tests/svg/import/masking-filter-01-f-manual.svg              [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-blend-01-b-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-composite-02-b-manual.svg           [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-composite-03-f-manual.svg           [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-composite-04-f-manual.svg           [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-composite-05-f-manual.svg           [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-conv-01-f-manual.svg                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-conv-02-f-manual.svg                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-conv-03-f-manual.svg                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-conv-04-f-manual.svg                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-conv-05-f-manual.svg                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-diffuse-01-f-manual.svg             [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-displace-02-f-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-example-01-b-manual.svg             [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-felem-01-b-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-felem-02-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-image-01-b-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-image-02-b-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-image-03-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-image-04-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-image-05-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-light-01-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-light-03-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-light-04-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-light-05-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-morph-01-f-manual.svg               [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-offset-02-b-manual.svg              [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-overview-01-b-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-overview-02-b-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-overview-03-b-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-specular-01-f-manual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/filters-turb-01-f-manual.svg                [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-example-01-b.svg                                               [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-felem-01-b.svg                                                 [ ImageOnlyFailure ]
 svg/W3C-SVG-1.1/filters-light-04-f.svg                                                 [ ImageOnlyFailure ]
@@ -164,7 +131,6 @@ svg/transforms/transformed-text-fill-pattern.html                           [ Im
 
 # Clipping problems
 css3/masking/reference-clip-path-change-repaint.html                                              [ Failure ]
-imported/w3c/web-platform-tests/svg/import/masking-path-07-b-manual.svg                           [ ImageOnlyFailure ]
 svg/batik/text/textProperties.svg                                                                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-precision-001.svg [ ImageOnlyFailure ]
 
@@ -182,8 +148,6 @@ imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001.s
 imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.svg [ ImageOnlyFailure ]
 
 # Marker problems
-imported/w3c/web-platform-tests/svg/import/imp-path-01-f-manual.svg  [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/marker-005.svg          [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/marker-007.svg          [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/marker-008.svg          [ ImageOnlyFailure ]
@@ -202,13 +166,10 @@ svg/transforms/svgsvgelement-transform.svg [ ImageOnlyFailure ]
 svg/custom/focus-ring.svg         [ Failure ]
 
 # Text rendering visually different
-imported/w3c/web-platform-tests/svg/import/fonts-desc-01-t-manual.svg                           [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-002.svg                      [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-201.svg                      [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg                        [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-002-visual.svg            [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/visualtests/text-inline-size-201-visual.svg            [ ImageOnlyFailure ]
 svg/hittest/text-multiple-dx-values.svg                                                         [ ImageOnlyFailure ]
 svg/hittest/text-with-multiple-tspans.svg                                                       [ ImageOnlyFailure ]
 svg/hittest/text-with-text-path.svg                                                             [ ImageOnlyFailure ]
@@ -226,7 +187,6 @@ svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
 svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
 # SMIL animation issues
-imported/w3c/web-platform-tests/svg/import/animate-elem-91-t-manual.svg [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-1.svg                             [ ImageOnlyFailure ]
 svg/stroke/animated-non-scaling-stroke.html                             [ ImageOnlyFailure ]
 
@@ -266,7 +226,6 @@ svg/outermost-svg-root.html [ Failure ]
 # 1) Text rendering flakines issue with SVG Fonts (also in legacy engine)
 svg/W3C-SVG-1.1/fonts-desc-02-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/fonts-elem-02-t.svg                                   [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/fonts-desc-05-t-manual.svg [ Pass ImageOnlyFailure ]
 
 # 2) Filter / feImage invalidation/repainting issue?
 svg/filters/feImage-target-reappend-to-document.svg [ Pass ImageOnlyFailure ]
@@ -276,8 +235,6 @@ svg/as-image/image-preserveAspectRatio-all.svg [ Pass ImageOnlyFailure ]
 
 # 4) Historical flakiness of SMIL animations, we don't pause them in these tests, that should
 # finally be fixed to avoid this falkniess, even if it means adapting the SVG testsuite manually.
-imported/w3c/web-platform-tests/svg/import/animate-elem-06-t-manual.svg [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-81-t-manual.svg [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-03-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-04-t.svg                                   [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/animate-elem-08-t.svg                                   [ Pass ImageOnlyFailure ]
@@ -287,14 +244,8 @@ svg/W3C-SVG-1.1/animate-elem-85-t.svg                                   [ Failur
 svg/W3C-SVG-1.1/animate-elem-07-t.svg                                   [ ImageOnlyFailure Pass ]
 svg/W3C-SVG-1.1/animate-elem-36-t.svg                                   [ ImageOnlyFailure Pass ]
 svg/W3C-SVG-1.1/animate-elem-30-t.svg                                   [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-10-t-manual.svg [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-03-t-manual.svg [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-04-t-manual.svg [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 
 # 5) Unknown flakiness.
-imported/w3c/web-platform-tests/svg/import/masking-path-04-b-manual.svg [ Pass ImageOnlyFailure ]
 svg/transforms/animated-path-inside-transformed-html.xhtml              [ Pass ImageOnlyFailure ]
 
 # 6) Filter flakiness.
@@ -453,4 +404,3 @@ svg/W3C-SVG-1.1/metadata-example-01-b.svg                     [ Pass ]
 # WPT tests that pass only in LBSE
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html                          [ Pass ]
-imported/w3c/web-platform-tests/svg/import/metadata-example-01-t-manual.svg                                       [ Pass ]
