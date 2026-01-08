@@ -109,6 +109,7 @@ private:
     };
 
     Vector<CodeRange> m_codeRanges;
+    HashSet<CallSiteIndex> m_callSiteIndicesWithPoppedDeepestInlineFrame;
     bool m_shouldBuildMapping;
 };
 
@@ -121,6 +122,8 @@ public:
     ~PCToCodeOriginMap();
 
     std::optional<CodeOrigin> NODELETE findPC(void* pc) const;
+    bool NODELETE hasPoppedDeepestInlineFrame(CallSiteIndex) const;
+    const HashSet<CallSiteIndex>& callSiteIndicesWithPoppedDeepestInlineFrame() const { return m_callSiteIndicesWithPoppedDeepestInlineFrame; }
 
     double NODELETE memorySize();
 
@@ -131,6 +134,7 @@ private:
     uint8_t* m_compressedCodeOrigins;
     uintptr_t m_pcRangeStart;
     uintptr_t m_pcRangeEnd;
+    HashSet<CallSiteIndex> m_callSiteIndicesWithPoppedDeepestInlineFrame;
 };
 
 } // namespace JSC

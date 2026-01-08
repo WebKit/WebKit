@@ -103,6 +103,7 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(VM& vm)
 
 PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& other)
     : m_codeRanges(WTF::move(other.m_codeRanges))
+    , m_callSiteIndicesWithPoppedDeepestInlineFrame(WTF::move(other.m_callSiteIndicesWithPoppedDeepestInlineFrame))
     , m_shouldBuildMapping(other.m_shouldBuildMapping)
 { }
 
@@ -129,10 +130,12 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, const B3::PCToOrigin
 {
     for (const B3::PCToOriginMap::OriginRange& originRange : b3PCToOriginMap.ranges()) {
         B3::Origin b3Origin = originRange.origin;
-        if (b3Origin) {
-            Wasm::OpcodeOrigin wasmOrigin { b3Origin };
+        if (b3Origin && b3Origin.hasPoppedDeepestInlineFrame())
+            m_callSiteIndicesWithPoppedDeepestInlineFrame.add(b3Origin.wasmOrigin()->m_callSiteIndex);
+        ASSERT(!b3Origin || !b3Origin.isPackedWasmOrigin());
+        if (auto o = b3Origin.maybeWasmOrigin()) {
             // We stash the location into a BytecodeIndex.
-            appendItem(originRange.label, CodeOrigin(BytecodeIndex(wasmOrigin.location())));
+            appendItem(originRange.label, CodeOrigin(BytecodeIndex(o->m_callSiteIndex.bits())));
         } else
             appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
     }
@@ -162,6 +165,8 @@ static constexpr int8_t sentinelBytecodeDelta = 0;
 PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuffer& linkBuffer)
 {
     RELEASE_ASSERT(builder.didBuildMapping());
+
+    m_callSiteIndicesWithPoppedDeepestInlineFrame = WTF::move(builder.m_callSiteIndicesWithPoppedDeepestInlineFrame);
 
     if (!builder.m_codeRanges.size()) {
         m_pcRangeStart = std::numeric_limits<uintptr_t>::max();
@@ -258,6 +263,11 @@ double PCToCodeOriginMap::memorySize()
     size += m_compressedPCBufferSize;
     size += m_compressedCodeOriginsSize;
     return size;
+}
+
+bool PCToCodeOriginMap::hasPoppedDeepestInlineFrame(CallSiteIndex csi) const
+{
+    return m_callSiteIndicesWithPoppedDeepestInlineFrame.contains(csi);
 }
 
 std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const

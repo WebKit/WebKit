@@ -41,11 +41,6 @@ OpcodeOrigin::OpcodeOrigin(B3::Origin origin)
     ASSERT(origin.isPackedWasmOrigin());
     packedData = origin.m_data.bits();
 }
-
-B3::Origin OpcodeOrigin::asB3Origin()
-{
-    return B3::Origin(packedData);
-}
 #endif
 
 ASCIILiteral OpcodeOrigin::opcodeString() const

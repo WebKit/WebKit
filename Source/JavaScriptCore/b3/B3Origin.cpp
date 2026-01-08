@@ -32,7 +32,7 @@ namespace JSC { namespace B3 {
 
 void Origin::dump(PrintStream& out) const
 {
-    out.print("Origin(", RawHex(m_data.bits()), ")");
+    out.print("Origin(", RawHex(m_data.bits()), hasPoppedDeepestInlineFrame() ? " popped" : "", ")");
 }
 
 } } // namespace JSC::B3

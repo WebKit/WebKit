@@ -40,6 +40,10 @@
 
 namespace JSC {
 
+namespace StackVisitorInternal {
+constexpr bool verbose = false;
+}
+
 StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm, bool skipFirstFrame)
 {
     CallFrame* topFrame = nullptr;
@@ -59,18 +63,24 @@ StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm, bool skipFirstFrame)
             }
         }
     }
+    dataLogLnIf(StackVisitorInternal::verbose, "StackVisitor()");
+
     readFrame(topFrame);
+    ASSERT(m_frame.m_callSiteFrameState == CallSiteFrameState::NormalFrame);
 
     // Find the frame the caller wants to start unwinding from.
     while (m_frame.callFrame() && m_frame.callFrame() != startFrame)
         gotoNextFrame();
+    dataLogLnIf(StackVisitorInternal::verbose, "StackVisitor() start");
 }
 
 void StackVisitor::gotoNextFrame()
 {
+    dataLogLnIf(StackVisitorInternal::verbose, "gotoNextFrame() start");
     m_frame.m_index++;
 #if ENABLE(DFG_JIT)
     if (m_frame.isInlinedDFGFrame()) {
+        dataLogLnIf(StackVisitorInternal::verbose, "gotoNextFrame() - isInlinedDFGFrame");
         InlineCallFrame* inlineCallFrame = m_frame.inlineCallFrame();
         CodeOrigin* callerCodeOrigin = inlineCallFrame->getCallerSkippingTailCalls();
         if (!callerCodeOrigin) {
@@ -85,8 +95,25 @@ void StackVisitor::gotoNextFrame()
         return;
     }
 #endif // ENABLE(DFG_JIT)
+    auto inlinedFrameState = m_frame.m_callSiteInlinedFrameState;
     m_frame.m_entryFrame = m_frame.m_callerEntryFrame;
     readFrame(m_frame.callerFrame());
+    while (inlinedFrameState == CallSiteInlinedFrameState::InlinedTailCall
+        || m_frame.m_callSiteFrameState == CallSiteFrameState::PoppedDeepestInlineFrame) [[unlikely]] {
+        dataLogLnIf(StackVisitorInternal::verbose, "gotoNextFrame() - inline tail wasm frame: ", m_frame.m_callSiteFrameState, " ", m_frame.m_callSiteInlinedFrameState, " ", m_frame.m_wasmFunctionIndexOrName, " previous inline frame state: ", inlinedFrameState);
+
+        RELEASE_ASSERT(m_frame.isNativeCalleeFrame());
+        // These cases are exclusive; Either the frame we just saw is an inlined tail call,
+        // or this frame (the caller) is an inlined function (into root) at its tail position (but not root tail position).
+        RELEASE_ASSERT(inlinedFrameState != CallSiteInlinedFrameState::InlinedTailCall
+            || m_frame.m_callSiteFrameState != CallSiteFrameState::PoppedDeepestInlineFrame);
+        // Skip the caller frame, since we would have overwritten its stack frame if inlining were disabled.
+        m_frame.m_entryFrame = m_frame.m_callerEntryFrame;
+        readFrame(m_frame.callerFrame());
+        RELEASE_ASSERT(m_frame.isNativeCalleeFrame());
+        inlinedFrameState = m_frame.m_callSiteInlinedFrameState;
+    }
+    dataLogLnIf(StackVisitorInternal::verbose, "gotoNextFrame() return");
 }
 
 void StackVisitor::unwindToMachineCodeBlockFrame()
@@ -112,6 +139,8 @@ inline CallFrame* StackVisitor::updatePreviousReturnPCIfNecessary(CallFrame* cal
 
 void StackVisitor::readFrame(CallFrame* callFrame)
 {
+    dataLogLnIf(StackVisitorInternal::verbose, "readFrame(", RawPointer(callFrame), ")");
+
     if (!callFrame) {
         m_frame.setToEnd();
         return;
@@ -197,6 +226,8 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
 {
     RELEASE_ASSERT(callFrame->callee().isNativeCallee());
     auto& callee = *callFrame->callee().asNativeCallee();
+    m_frame.m_callSiteInlinedFrameState = CallSiteInlinedFrameState::NormalFrame;
+    m_frame.m_callSiteFrameState = CallSiteFrameState::NormalFrame;
     switch (callee.category()) {
     case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
@@ -216,6 +247,7 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
 
         m_frame.m_wasmFunctionIndexOrName = wasmCallee.indexOrName();
         m_frame.m_wasmFunctionIndex = wasmCallee.index();
+        dataLogLnIf(StackVisitorInternal::verbose, "readInlinableNativeCalleeFrame(", RawPointer(callFrame), ") ", m_frame.m_wasmFunctionIndexOrName);
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         bool canInline = isAnyOMG(wasmCallee.compilationMode());
@@ -227,7 +259,8 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
 
         // Because PC is just after the call instruction, to query to the origin for the call instruction, we decrease it by 1.
         // While it can be pointing at the broken offset (e.g. all ARM64 instructions are 4-byte aligned), it is still fine since map is controlling pc with range.
-        auto callSiteIndexFromPC = omgCallee.tryGetCallSiteIndex(std::bit_cast<void*>(std::bit_cast<uintptr_t>(removeCodePtrTag<void*>(m_frame.m_returnPC)) - 1));
+        CallSiteFrameState frameState;
+        auto callSiteIndexFromPC = omgCallee.tryGetCallSiteIndex(std::bit_cast<void*>(std::bit_cast<uintptr_t>(removeCodePtrTag<void*>(m_frame.m_returnPC)) - 1), frameState);
         RELEASE_ASSERT(callSiteIndexFromPC);
         CallSiteIndex callSiteIndex = callSiteIndexFromPC.value();
         m_frame.m_wasmCallSiteIndexBits = callSiteIndex.bits();
@@ -241,8 +274,13 @@ void StackVisitor::readInlinableNativeCalleeFrame(CallFrame* callFrame)
         // haven't reached the last frame yet.
         m_frame.m_callerFrame = callFrame;
         m_frame.m_wasmDistanceFromDeepestInlineFrame = depth + 1;
+        m_frame.m_wasmFunctionIndex = codeOrigin->functionIndex();
+        m_frame.m_callSiteInlinedFrameState = codeOrigin->frameState();
+        m_frame.m_callSiteFrameState = frameState;
+
+        dataLogLnIf(StackVisitorInternal::verbose, "readInlinableNativeCalleeFrame(", RawPointer(callFrame), ") ", m_frame.m_wasmFunctionIndexOrName, " inlined: ", indexOrName, " [", depth, "] ", m_frame.m_callSiteFrameState, " ", m_frame.m_callSiteInlinedFrameState, " CSI: ", callSiteIndex.bits());
+
         m_frame.m_wasmFunctionIndexOrName = indexOrName;
-        m_frame.m_wasmFunctionIndex = codeOrigin->functionIndex;
 #else
         UNUSED_VARIABLE(depth);
 #endif

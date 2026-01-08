@@ -84,4 +84,27 @@ public:
     // but those probably shouldn't be hard to add if needed.
 };
 
+// This state for a specific callSiteIndex; This is used when we turn a tail call into a real call because the caller is inlined.
+// So this operates on the granularity of instructions.
+enum class CallSiteFrameState : uint8_t {
+    NormalFrame,
+    // If we make a tail call from an inlined frame, then we need to remove this frame before pushing the callee frame.
+    // root fn
+    //     ... normal code
+    //     ... perapring args to tail call
+    // *   --- commit to tail call, so now expection handlers in this frame are no longer active
+    // *   ... do call
+    //     inline-return
+    // back in root
+    // Sections with * must have frame state FrameWasPopped
+    PoppedDeepestInlineFrame,
+};
+
+// This is state for a WasmCodeOrigin, which wraps a whole inlined function.
+enum class CallSiteInlinedFrameState : uint8_t {
+    NormalFrame,
+    // If we inline a tail call, then we need to skip the calling inline frame.
+    InlinedTailCall,
+};
+
 } // namespace JSC
