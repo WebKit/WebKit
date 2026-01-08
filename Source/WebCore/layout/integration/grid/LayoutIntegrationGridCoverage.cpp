@@ -100,6 +100,86 @@ enum class GridAvoidanceReason : uint8_t {
     }
 #endif
 
+static std::optional<GridAvoidanceReason> hasValidGridTemplateColumnsList(const Style::GridTemplateList& gridTemplateColumns)
+{
+    auto& gridTemplateColumnsTrackList = gridTemplateColumns.list;
+    if (gridTemplateColumnsTrackList.isEmpty())
+        return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
+
+    for (auto& columnsTrackListEntry : gridTemplateColumnsTrackList) {
+        auto avoidanceReason = WTF::switchOn(columnsTrackListEntry,
+            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
+                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
+                // MaxTrackBreadth to the same value we only need to check one.
+                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
+
+                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
+                if (!gridTrackBreadthLength.isFixed())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
+                return std::nullopt;
+            },
+            [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
+                if (!names.isEmpty())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
+                return std::nullopt;
+            },
+            [&](const Style::GridTrackEntryRepeat&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
+            },
+            [&](const Style::GridTrackEntryAutoRepeat&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
+            },
+            [&](const Style::GridTrackEntrySubgrid&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
+            }
+        );
+        if (avoidanceReason)
+            return avoidanceReason;
+    }
+    return { };
+}
+
+static std::optional<GridAvoidanceReason> hasValidGridTemplateRowsList(const Style::GridTemplateList& gridTemplateRows)
+{
+    auto& gridTemplateRowsTrackList = gridTemplateRows.list;
+    if (gridTemplateRowsTrackList.isEmpty())
+        return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
+
+    for (auto& rowsTrackListEntry : gridTemplateRowsTrackList) {
+        auto avoidanceReason = WTF::switchOn(rowsTrackListEntry,
+            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
+                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
+                // MaxTrackBreadth to the same value we only need to check one.
+                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
+
+                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
+                if (!gridTrackBreadthLength.isFixed())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
+                return std::nullopt;
+            },
+            [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
+                if (!names.isEmpty())
+                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
+                return std::nullopt;
+            },
+            [&](const Style::GridTrackEntryRepeat&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
+            },
+            [&](const Style::GridTrackEntryAutoRepeat&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
+            },
+            [&](const Style::GridTrackEntrySubgrid&) {
+                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
+            }
+        );
+
+        if (avoidanceReason)
+            return avoidanceReason;
+    }
+    return { };
+}
 
 static std::optional<GridAvoidanceReason> hasValidColumnEnd(const Style::GridPositionExplicit&, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
 {
@@ -121,6 +201,26 @@ static std::optional<GridAvoidanceReason> hasValidColumnEnd(const Style::GridPos
     );
 }
 
+static std::optional<GridAvoidanceReason> hasValidColumnPlacement(const Style::GridPosition& columnStart, const Style::GridPosition& columnEnd, unsigned linesFromGridTemplateColumnsCount)
+{
+    return WTF::switchOn(columnStart,
+        [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        },
+        [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
+            if (!columnStart.namedGridLine().isEmpty() || columnStart.explicitPosition() < 0 || columnStart.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
+                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+            return hasValidColumnEnd(explicitPosition, columnEnd, linesFromGridTemplateColumnsCount);
+        },
+        [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        },
+        [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        }
+    );
+}
+
 static std::optional<GridAvoidanceReason> hasValidRowEnd(const Style::GridPositionExplicit&, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
 {
     return WTF::switchOn(rowEnd,
@@ -131,6 +231,26 @@ static std::optional<GridAvoidanceReason> hasValidRowEnd(const Style::GridPositi
             if (!rowEnd.namedGridLine().isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
                 return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
             return { };
+        },
+        [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        },
+        [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        }
+    );
+}
+
+static std::optional<GridAvoidanceReason> hasValidRowPlacement(const Style::GridPosition& rowStart, const Style::GridPosition& rowEnd, unsigned linesFromGridTemplateRowsCount)
+{
+    return WTF::switchOn(rowStart,
+        [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
+            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        },
+        [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
+            if (!rowStart.namedGridLine().isEmpty() || rowStart.explicitPosition() < 0 || rowStart.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
+                return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+            return hasValidRowEnd(explicitPosition, rowEnd, linesFromGridTemplateRowsCount);
         },
         [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
             return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
@@ -198,86 +318,15 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasGridTemplateAreas, reasons, reasonCollectionMode);
 
     auto& gridTemplateColumns = renderGridStyle->gridTemplateColumns();
-    auto& gridTemplateColumnsTrackList = gridTemplateColumns.list;
-    if (gridTemplateColumnsTrackList.isEmpty())
+    if (auto gridTemplateColumnsAvoidanceReason = hasValidGridTemplateColumnsList(gridTemplateColumns)) {
+        ASSERT(gridTemplateColumnsAvoidanceReason == GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasUnsupportedGridTemplateColumns, reasons, reasonCollectionMode);
-
-    for (auto& columnsTrackListEntry : gridTemplateColumnsTrackList) {
-
-        auto avoidanceReason = WTF::switchOn(columnsTrackListEntry,
-            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
-                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
-                // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-
-                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
-                if (!gridTrackBreadthLength.isFixed())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-                return std::nullopt;
-            },
-            [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
-                if (!names.isEmpty())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-                return std::nullopt;
-            },
-            [&](const Style::GridTrackEntryRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            },
-            [&](const Style::GridTrackEntryAutoRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            },
-            [&](const Style::GridTrackEntrySubgrid&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns);
-            }
-        );
-
-        if (avoidanceReason) {
-            reasons.add(*avoidanceReason);
-            if (reasonCollectionMode == ReasonCollectionMode::FirstOnly)
-                return reasons;
-        }
     }
 
     auto& gridTemplateRows = renderGridStyle->gridTemplateRows();
-    auto& gridTemplateRowsTrackList = gridTemplateRows.list;
-    if (gridTemplateRowsTrackList.isEmpty())
+    if (auto gridTemplateRowsAvoidanceReason = hasValidGridTemplateRowsList(gridTemplateRows)) {
+        ASSERT(gridTemplateRowsAvoidanceReason == GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasUnsupportedGridTemplateRows, reasons, reasonCollectionMode);
-
-    for (auto& rowsTrackListEntry : gridTemplateRowsTrackList) {
-        auto avoidanceReason = WTF::switchOn(rowsTrackListEntry,
-            [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
-                // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
-                // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-
-                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
-                if (!gridTrackBreadthLength.isFixed())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-                return std::nullopt;
-            },
-            [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
-                if (!names.isEmpty())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-                return std::nullopt;
-            },
-            [&](const Style::GridTrackEntryRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            },
-            [&](const Style::GridTrackEntryAutoRepeat&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            },
-            [&](const Style::GridTrackEntrySubgrid&) {
-                return std::make_optional(GridAvoidanceReason::GridHasUnsupportedGridTemplateRows);
-            }
-        );
-
-        if (avoidanceReason) {
-            reasons.add(*avoidanceReason);
-            if (reasonCollectionMode == ReasonCollectionMode::FirstOnly)
-                return reasons;
-        }
     }
 
     if (renderGridStyle->usedContain().contains(Style::ContainValue::Size))
@@ -337,49 +386,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasUnsupportedBlockAxisAlignment, reasons, reasonCollectionMode);
 
         auto linesFromGridTemplateColumnsCount = gridTemplateColumns.sizes.size() + 1;
-        auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
-        auto& columnStart = gridItemStyle->gridItemColumnStart();
-        auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-            },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
-                if (!columnStart.namedGridLine().isEmpty() || columnStart.explicitPosition() < 0 || columnStart.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
-                    return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-                return hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount);
-            },
-            [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-            },
-            [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-            }
-        );
-
-        if (columnPositioningAvoidanceReason) {
+        if (auto columnPositioningAvoidanceReason = hasValidColumnPlacement(gridItemStyle->gridItemColumnStart(), gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount)) {
             ASSERT(columnPositioningAvoidanceReason == GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement);
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasUnsupportedColumnPlacement, reasons, reasonCollectionMode);
         }
 
-        auto& rowStart = gridItemStyle->gridItemRowStart();
-        auto rowPositioningAvoidanceReason = WTF::switchOn(rowStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-            },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().isEmpty() || rowStart.explicitPosition() < 0 || rowStart.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
-                    return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-                return hasValidRowEnd(explicitPosition, gridItemStyle->gridItemRowEnd(), linesFromGridTemplateRowsCount);
-            },
-            [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-            },
-            [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-            }
-        );
+        auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
 
-        if (rowPositioningAvoidanceReason) {
+        if (auto rowPositioningAvoidanceReason = hasValidRowPlacement(gridItemStyle->gridItemRowStart(), gridItemStyle->gridItemRowEnd(), linesFromGridTemplateRowsCount)) {
             ASSERT(rowPositioningAvoidanceReason == GridAvoidanceReason::GridItemHasUnsupportedRowPlacement);
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasUnsupportedRowPlacement, reasons, reasonCollectionMode);
         }
