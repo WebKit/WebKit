@@ -142,10 +142,17 @@ static const Seconds PostAnimationDelay { 100_ms };
             naturalSize = parent->naturalSize();
 
         if (!naturalSize.isEmpty()) {
-            // The video content will be sized within the remote layer, preserving aspect
-            // ratio according to its naturalSize(), so use that natural size to determine
-            // the scaling factor.
-            auto naturalAspectRatio = naturalSize.aspectRatio();
+            // Check if videoLayerFrame dimensions are significantly different from naturalSize.
+            // This can happen during video source transitions where naturalSize updates immediately
+            // but videoLayerFrame is stale. Use bounds as source in this case.
+            float videoLayerAspectRatio = sourceVideoFrame.size().aspectRatio();
+            float naturalAspectRatio = naturalSize.aspectRatio();
+
+            // TODO: Should probably find a better way of doing this that isn't a magic number
+            constexpr float aspectRatioTolerance = 0.01f;
+
+            if (std::abs(videoLayerAspectRatio - naturalAspectRatio) > aspectRatioTolerance)
+                sourceVideoFrame = self.bounds;
 
             sourceVideoFrame = largestRectWithAspectRatioInsideRect(naturalAspectRatio, sourceVideoFrame);
             targetVideoFrame = largestRectWithAspectRatioInsideRect(naturalAspectRatio, targetVideoFrame);
