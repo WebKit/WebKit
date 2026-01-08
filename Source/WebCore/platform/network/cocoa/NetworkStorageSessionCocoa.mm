@@ -145,9 +145,8 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     }
 
     // Workaround until rdar://56248709 is fixed.
-    if (m_cookieStorageObserver && cookieStorage().get()) {
+    if (m_cookieStorageObserver && cookieStorage().get())
         cookieStorageObserver().registerInternalsForNotifications(true);
-    }
 
     completionHandler(hasCookieForDomain);
 }

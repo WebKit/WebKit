@@ -63,7 +63,7 @@ public:
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
-    RefPtr<FrameProcess> processForSite(const WebCore::Site&);
+    RefPtr<FrameProcess> processForSite(const WebCore::Site&, EnhancedSecurity);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     void removeFrameProcess(FrameProcess&);
@@ -90,7 +90,7 @@ private:
     HashSet<WebCore::Site> m_sharedProcessSites;
     WeakHashSet<WebPageProxy> m_pagesInSharedProcess;
 
-    HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
+    HashMap<std::pair<WebCore::Site, EnhancedSecurity>, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 };
