@@ -30,6 +30,7 @@
 #include <WebCore/FormData.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceLoadPriority.h>
 #include <optional>
@@ -40,8 +41,6 @@
 #include <wtf/WallTime.h>
 
 namespace WebCore {
-
-enum class IPAddressSpace : bool;
 
 enum class ResourceRequestCachePolicy : uint8_t {
     UseProtocolCachePolicy, // normal load, equivalent to fetch "default" cache mode.
