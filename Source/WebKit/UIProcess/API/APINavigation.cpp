@@ -212,7 +212,9 @@ WTF::String Navigation::loggingString() const
 
 void Navigation::setHasStorageForCurrentSite(const WTF::URL& url, bool hasStorageForCurrentSite)
 {
-    ASSERT_UNUSED(url, url == m_currentRequest.url());
+    if (url != m_currentRequest.url())
+        return;
+
     m_hasStorageForCurrentSite = hasStorageForCurrentSite;
 }
 
