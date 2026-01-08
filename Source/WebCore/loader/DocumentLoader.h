@@ -519,6 +519,9 @@ public:
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
     void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
 
+    bool isContinuingLoadAfterNavigationPolicyDecision() const { return m_isContinuingLoadAfterNavigationPolicyDecision; }
+    void setIsContinuingLoadAfterNavigationPolicyDecision(bool isContinuingLoadAfterNavigationPolicyDecision) { m_isContinuingLoadAfterNavigationPolicyDecision = isContinuingLoadAfterNavigationPolicyDecision; }
+
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
     void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
 
@@ -797,6 +800,7 @@ private:
     bool m_isClientRedirect { false };
     bool m_isLoadingMultipartContent { false };
     bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
+    bool m_isContinuingLoadAfterNavigationPolicyDecision { false };
     bool m_isInFinishedLoadingOfEmptyDocument { false };
     bool m_isInitialAboutBlank { false };
 
