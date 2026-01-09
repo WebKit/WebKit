@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-samples-out-of-order-erase-last-previous-frames</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        consoleWrite('First segment has normal, monotonically increasing samples with decode timestamp equal to presentation timestamp.');
+        //makeASample(presentationTime, decodeTime, duration, timeScale, trackID, flags, generation)
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample( 0,  0, 10, 10, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample(10, 10, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(20, 20, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(30, 30, 10, 10, 0, SAMPLE_FLAG.NONE, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Second, segment with overlap in decoding order but no overlap in presentation order shouldn't cause any deletion if decoding order is corrected to avoid conflicts.");
+        mediaSegment = concatenateSamples([
+            makeAInit(1, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(40, 9, 10, 10, 0, SAMPLE_FLAG.SYNC, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

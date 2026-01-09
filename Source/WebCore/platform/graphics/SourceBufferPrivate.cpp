@@ -1325,7 +1325,29 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             while (nextSyncSample != trackBuffer.samples().decodeOrder().end() && Ref { nextSyncSample->second }->presentationTime() <= sample->presentationTime())
                 nextSyncSample = trackBuffer.samples().decodeOrder().findSyncSampleAfterDecodeIterator(nextSyncSample);
 
-            INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrder->second.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())));
+
+            // Try to fix the out-of-ordering by placing the decoding timestamp of sample after the decoding timestamp
+            // of the last pre-existing sample, but only if that means that the new decoding timestamp won't be beyond
+            // the decoding timestamp of the next sample (estimated as sample decoding timestamp + sample duration
+            // - 2 * contiguousFrameTolerance).
+            auto lastSampleToErase = (nextSyncSample == trackBuffer.samples().decodeOrder().end())
+                ? trackBuffer.samples().decodeOrder().rbegin()++
+                : trackBuffer.samples().decodeOrder().reverseFindSampleWithDecodeKey(nextSyncSample->first)++;
+            if (lastSampleToErase != trackBuffer.samples().decodeOrder().rend()) {
+                const MediaTime epsilon = MediaTime(1, 1000000000);
+                auto safeDecodeTime = lastSampleToErase->second->decodeTime() + epsilon;
+
+                if (safeDecodeTime > sample->decodeTime()) {
+                    INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrder->second.get(), " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())),
+                    ", but fixed the ordering by changing sample DTS from ", sample->decodeTime(), " to ", safeDecodeTime);
+                    sample->setTimestamps(sample->presentationTime(), safeDecodeTime);
+                    break;
+                }
+            }
+
+            INFO_LOG(LOGIDENTIFIER, "Discovered out-of-order frames, from: ", nextSampleInDecodeOrder->second.get(),
+                " to: ", (nextSyncSample == trackBuffer.samples().decodeOrder().end() ? "[end]"_s : toString(nextSyncSample->second.get())),
+                "erasing them");
             erasedSamples.addRange(nextSampleInDecodeOrder, nextSyncSample);
         } while (false);
 
