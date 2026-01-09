@@ -587,6 +587,9 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (!ruleData.isEnabled()) [[unlikely]]
             continue;
 
+        if (!m_pseudoElementRequest && complexSelectorMatchesOnlyPseudoElement(*ruleData.selector()))
+            continue;
+
         if (!ruleData.canMatchPseudoElement() && m_pseudoElementRequest)
             continue;
 

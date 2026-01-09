@@ -983,6 +983,20 @@ bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector& complex
     return result;
 }
 
+bool complexSelectorMatchesOnlyPseudoElement(const CSSSelector& complexSelector)
+{
+    if (!complexSelector.matchesPseudoElement())
+        return false;
+
+    for (auto* selector = complexSelector.precedingInComplexSelector(); selector; selector = selector->precedingInComplexSelector()) {
+        // Pseudo-elements and pseudo-classes don't match elements, everything else does
+        if (!selector->matchesPseudoElement() && selector->match() != CSSSelector::Match::PseudoClass)
+            return false;
+    }
+
+    return true;
+}
+
 bool CSSSelector::simpleSelectorEqual(const CSSSelector& other) const
 {
     auto valuesEqual = [&] {

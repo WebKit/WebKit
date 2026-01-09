@@ -277,6 +277,8 @@ private:
 
 bool complexSelectorCanMatchPseudoElement(const CSSSelector&);
 bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector&);
+// Check if selector is pseudo-element-only (e.g., "::before" or "::before:hover")
+bool complexSelectorMatchesOnlyPseudoElement(const CSSSelector&);
 
 // In the AllowNonElementBackedPseudoElements mode `.foo::before` and `.foo` compare equal.
 enum class ComplexSelectorsEqualMode : bool { Full, IgnoreNonElementBackedPseudoElements };
