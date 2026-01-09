@@ -4354,7 +4354,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
                     ReRunWebKitTests(),
                 ]
             else:
-                if platform not in ('win'):
+                if platform not in ('win',):
                     steps_to_add += [
                         RevertAppliedChanges(),
                         CleanWorkingDirectory(),
@@ -4527,7 +4527,7 @@ class ReRunWebKitTests(RunWebKitTests):
 
             # The significant additional build time isn't worth it on Windows, we'd rather
             # the worker start on another job in the queue.
-            if platform not in ('win'):
+            if platform not in ('win',):
                 steps_to_add += [
                     ArchiveTestResults(),
                     UploadTestResults(identifier='rerun'),
