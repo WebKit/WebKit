@@ -186,6 +186,7 @@ inline namespace fundamentals_v3 {
 #include <wtf/Compiler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/Unexpected.h>
 #include <wtf/Variant.h>
 
@@ -239,7 +240,7 @@ __EXPECTED_INLINE_VARIABLE constexpr enum class value_tag_t { } value_tag { };
 __EXPECTED_INLINE_VARIABLE constexpr enum class error_tag_t { } error_tag { };
 
 template<class T, class E>
-struct base {
+struct SWIFT_COPYABLE_IF(T, E) base {
     typedef T value_type;
     typedef E error_type;
     typedef unexpected<E> unexpected_type;
@@ -273,7 +274,7 @@ struct voidbase {
 } // namespace __expected_detail
 
 template<class T, class E>
-class expected : private __expected_detail::base<T, E> {
+class SWIFT_COPYABLE_IF(T, E) expected : private __expected_detail::base<T, E> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(expected);
     typedef __expected_detail::base<T, E> base;
 
