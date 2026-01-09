@@ -1,0 +1,44 @@
+commands:
+
+  cargo: !Command
+    description: Run any cargo command
+    container: ubuntu
+    run: [cargo]
+
+  make: !Command
+    description: Build the library
+    container: ubuntu
+    run: [cargo, build]
+
+  test: !Command
+    description: Run the tests
+    container: ubuntu
+    environ:
+      RUST_BACKTRACE: 1
+    run: [cargo, test]
+
+  _bulk: !Command
+    description: Run `bulk` command (for version bookkeeping)
+    container: ubuntu
+    run: [bulk]
+
+containers:
+
+  ubuntu:
+    setup:
+    - !Ubuntu xenial
+    - !UbuntuUniverse
+    - !Install [ca-certificates, build-essential, vim]
+
+    - !TarInstall
+      url: "https://static.rust-lang.org/dist/rust-1.28.0-x86_64-unknown-linux-gnu.tar.gz"
+      script: "./install.sh --prefix=/usr \
+               --components=rustc,rust-std-x86_64-unknown-linux-gnu,cargo"
+    - &bulk !Tar
+      url: "https://github.com/tailhook/bulk/releases/download/v0.4.11/bulk-v0.4.11.tar.gz"
+      sha256: b718bb8448e726690c94d98d004bf7575f7a429106ec26ad3faf11e0fd9a7978
+      path: /
+
+    environ:
+      HOME: /work/target
+      USER: pc

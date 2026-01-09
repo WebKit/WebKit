@@ -11,9 +11,11 @@ from scratch, and restoring the needed files with Git. Example commands:
   cp -ar ../path/to/firefox/dom/media/webrtc/transport/mdns_service/* Source/ThirdParty/mdns-service-rs/
   git checkout -- \
       Source/ThirdParty/mdns-service-rs/README.WebKit \
+      Source/ThirdParty/mdns-service-rs/.cargo \
       Source/ThirdParty/mdns-service-rs/0001-mdns_service-Remove-gecko-profiler-dependency.patch
   cd Source/ThirdParty/mdns-service-rs
   cat 0001-mdns_service-Remove-gecko-profiler-dependency.patch | patch -p6
+  cargo vendor --locked
 
 Then check whether the updated sources require any changes to the CMake build system, and update the
 git commit identifier and tag in this file.
