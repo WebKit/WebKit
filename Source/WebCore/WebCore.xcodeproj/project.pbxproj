@@ -17458,6 +17458,8 @@
 		A871DFDF0A15376B00B12A68 /* RenderReplaced.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderReplaced.h; sourceTree = "<group>"; };
 		A871DFE00A15376B00B12A68 /* RenderWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderWidget.h; sourceTree = "<group>"; };
 		A871DFE10A15376B00B12A68 /* RenderWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderWidget.cpp; sourceTree = "<group>"; };
+		A873715F2E263331006211CB /* InternalObserverToArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalObserverToArray.h; sourceTree = "<group>"; };
+		A87371602E263331006211CB /* InternalObserverToArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InternalObserverToArray.cpp; sourceTree = "<group>"; };
 		A8748BDF12CBF2DC001FBA41 /* HashTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashTools.h; sourceTree = "<group>"; };
 		A8748D6612CC3763001FBA41 /* ImageOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageOrientation.h; sourceTree = "<group>"; };
 		A8805AF116C96AEA000E9D98 /* InputStreamPreprocessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputStreamPreprocessor.h; sourceTree = "<group>"; };
@@ -41378,6 +41380,8 @@
 				A88FE6802CCF6FF30070D898 /* InternalObserverSome.h */,
 				33839EF92C5CB39E00F1E4FA /* InternalObserverTake.cpp */,
 				33839EFA2C5CB3A600F1E4FA /* InternalObserverTake.h */,
+				A87371602E263331006211CB /* InternalObserverToArray.cpp */,
+				A873715F2E263331006211CB /* InternalObserverToArray.h */,
 				FFEFAB2D183BCC6F00514553 /* JSSubscriberCustom.cpp */,
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
 				85031B2E0A44EFC700F992E0 /* KeyboardEvent.h */,
