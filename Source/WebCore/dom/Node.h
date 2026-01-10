@@ -175,7 +175,7 @@ public:
     Node* nextSibling() const { return m_next.get(); }
     RefPtr<Node> protectedNextSibling() const { return m_next.get(); }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
-    WEBCORE_EXPORT RefPtr<NodeList> childNodes();
+    WEBCORE_EXPORT Ref<NodeList> childNodes();
     inline Node* firstChild() const;
     inline RefPtr<Node> protectedFirstChild() const;
     inline Node* lastChild() const;

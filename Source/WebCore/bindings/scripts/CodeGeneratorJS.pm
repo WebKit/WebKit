@@ -839,7 +839,17 @@ sub GenerateIndexedGetter
         # We can thus call item() right away and do a null check instead of first checking if `index < length` and then calling
         # item(). This avoids duplicates bounds check, which is especially useful when `length()` is virtual, like on NodeList.
         $itemGetterCondition = "auto item = thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression}); !!item";
-        $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "WTF::move(item)", "*thisObject->globalObject()");
+        # For non-nullable interface types, use releaseNonNull() to convert RefPtr to Ref, catching bugs where RefPtr is used incorrectly.
+        # For raw pointers (marked with [RawPointer]), dereference with *item to pass as reference.
+        my $itemValue;
+        if (!$indexedGetterOperation->type->isNullable && $indexedGetterOperation->extendedAttributes->{RawPointer}) {
+            $itemValue = "*item";
+        } elsif (!$indexedGetterOperation->type->isNullable && $codeGenerator->IsInterfaceType($indexedGetterOperation->type)) {
+            $itemValue = "item.releaseNonNull()";
+        } else {
+            $itemValue = "WTF::move(item)";
+        }
+        $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, $itemValue, "*thisObject->globalObject()");
     }
     return ($itemGetterCondition, $nativeToJSConversion, StringifyJSCAttributes(\@attributes));
 }

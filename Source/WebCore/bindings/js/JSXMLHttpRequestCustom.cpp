@@ -104,9 +104,11 @@ JSValue JSXMLHttpRequest::response(JSGlobalObject& lexicalGlobalObject) const
         value = toJSNewlyCreated<IDLInterface<Blob>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseBlob());
         break;
 
-    case XMLHttpRequest::ResponseType::Arraybuffer:
-        value = toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *globalObject(), wrapped().createResponseArrayBuffer());
+    case XMLHttpRequest::ResponseType::Arraybuffer: {
+        auto buffer = wrapped().createResponseArrayBuffer();
+        value = buffer ? toJS<IDLInterface<ArrayBuffer>>(lexicalGlobalObject, *globalObject(), buffer.releaseNonNull()) : jsNull();
         break;
+    }
     }
 
     wrapped().didCacheResponse();

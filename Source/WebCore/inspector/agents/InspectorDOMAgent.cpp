@@ -3226,14 +3226,13 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
 
     auto stats = Inspector::Protocol::DOM::MediaStats::create().release();
 
-    if (auto quality = mediaElement->getVideoPlaybackQuality()) {
-        auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
-            .setTotalVideoFrames(quality->totalVideoFrames())
-            .setDroppedVideoFrames(quality->droppedVideoFrames())
-            .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
-            .release();
-        stats->setQuality(WTF::move(jsonQuality));
-    }
+    auto quality = mediaElement->getVideoPlaybackQuality();
+    auto jsonQuality = Inspector::Protocol::DOM::VideoPlaybackQuality::create()
+        .setTotalVideoFrames(quality->totalVideoFrames())
+        .setDroppedVideoFrames(quality->droppedVideoFrames())
+        .setDisplayCompositedVideoFrames(quality->displayCompositedVideoFrames())
+        .release();
+    stats->setQuality(WTF::move(jsonQuality));
 
     auto sourceType = mediaElement->localizedSourceType();
     if (!sourceType.isEmpty())

@@ -34,8 +34,8 @@
 ] interface AudioTrackList : EventTarget {
     readonly attribute unsigned long length;
 
-    // FIXME: Remove 'item' from below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260763
-    [ImplementedAs=itemForBindings] getter AudioTrack item(unsigned long index);
+    // FIXME: Remove item() and nullability. See: https://bugs.webkit.org/show_bug.cgi?id=260763
+    [ImplementedAs=itemForBindings] getter AudioTrack? item(unsigned long index);
     AudioTrack? getTrackById([AtomString] DOMString id);
 
     attribute EventHandler onchange;

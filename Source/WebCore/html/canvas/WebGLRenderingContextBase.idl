@@ -520,12 +520,12 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined copyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
     undefined copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
-    WebGLBuffer createBuffer();
-    WebGLFramebuffer createFramebuffer();
-    WebGLProgram createProgram();
-    WebGLRenderbuffer createRenderbuffer();
-    WebGLShader createShader(GLenum type);
-    WebGLTexture createTexture();
+    WebGLBuffer? createBuffer();
+    WebGLFramebuffer? createFramebuffer();
+    WebGLProgram? createProgram();
+    WebGLRenderbuffer? createRenderbuffer();
+    WebGLShader? createShader(GLenum type);
+    WebGLTexture? createTexture();
 
     undefined cullFace(GLenum mode);
 
@@ -554,8 +554,8 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     undefined frontFace(GLenum mode);
     undefined generateMipmap(GLenum target);
     
-    WebGLActiveInfo getActiveAttrib(WebGLProgram program, GLuint index);
-    WebGLActiveInfo getActiveUniform(WebGLProgram program, GLuint index);
+    WebGLActiveInfo? getActiveAttrib(WebGLProgram program, GLuint index);
+    WebGLActiveInfo? getActiveUniform(WebGLProgram program, GLuint index);
 
     // FIXME: The spec says this should not take a nullable WebGLProgram.
     sequence<WebGLShader>? getAttachedShaders(WebGLProgram program);
@@ -580,7 +580,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
 
     DOMString? getShaderInfoLog(WebGLShader shader);
 
-    WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
+    WebGLShaderPrecisionFormat? getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
 
     DOMString? getShaderSource(WebGLShader shader);
 
@@ -588,7 +588,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
 
     [OverrideIDLType=IDLWebGLAny] any getUniform(WebGLProgram program, WebGLUniformLocation location);
 
-    WebGLUniformLocation getUniformLocation(WebGLProgram program, DOMString name);
+    WebGLUniformLocation? getUniformLocation(WebGLProgram program, DOMString name);
 
     [OverrideIDLType=IDLWebGLAny] any getVertexAttrib(GLuint index, GLenum pname);
 

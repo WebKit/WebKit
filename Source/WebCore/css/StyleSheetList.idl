@@ -32,5 +32,5 @@
     // Non-standard API.
     // FIXME: https://drafts.csswg.org/cssom/#the-stylesheetlist-interface does not
     // specify a named getter for StyleSheetList. We should investigate removing this.
-    getter CSSStyleSheet (DOMString name);
+    getter CSSStyleSheet? (DOMString name);
 };

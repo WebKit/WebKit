@@ -40,6 +40,6 @@ dictionary BufferedChangeEventInit : EventInit {
 ]
 interface BufferedChangeEvent : Event {
   constructor([AtomString] DOMString type, BufferedChangeEventInit eventInitDict);
-  [SameObject] readonly attribute TimeRanges addedRanges;
-  [SameObject] readonly attribute TimeRanges removedRanges;
+  [SameObject] readonly attribute TimeRanges? addedRanges;
+  [SameObject] readonly attribute TimeRanges? removedRanges;
 };

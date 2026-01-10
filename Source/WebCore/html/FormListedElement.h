@@ -46,7 +46,7 @@ class FormListedElement : public FormAssociatedElement, public CanMakeWeakPtr<Fo
 public:
     virtual ~FormListedElement();
 
-    ValidityState* validity();
+    ValidityState& validity();
 
     virtual bool isValidatedFormListedElement() const = 0;
     virtual bool isEnumeratable() const = 0;

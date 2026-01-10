@@ -116,7 +116,7 @@ DOMNode *kit(Node* value)
 - (DOMNodeList *)childNodes
 {
     JSMainThreadNullState state;
-    return kit(unwrap(*self).childNodes().get());
+    return kit(unwrap(*self).childNodes().ptr());
 }
 
 - (DOMNode *)firstChild

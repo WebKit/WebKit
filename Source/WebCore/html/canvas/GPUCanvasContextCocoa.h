@@ -49,12 +49,6 @@ class GPUDisplayBufferDisplayDelegate;
 class GPUCanvasContextCocoa final : public GPUCanvasContext {
     WTF_MAKE_TZONE_ALLOCATED(GPUCanvasContextCocoa);
 public:
-#if ENABLE(OFFSCREEN_CANVAS)
-    using CanvasType = Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
-#else
-    using CanvasType = Variant<RefPtr<HTMLCanvasElement>>;
-#endif
-
     static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&, GPU&, Document*);
 
     DestinationColorSpace colorSpace() const override;
@@ -73,7 +67,7 @@ public:
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
     std::optional<GPUCanvasConfiguration> getConfiguration() const override;
-    ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
+    ExceptionOr<Ref<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)

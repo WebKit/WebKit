@@ -45,7 +45,7 @@
     attribute EventHandler onenter;
     attribute EventHandler onexit;
 
-    // FIXME: Add 'unrestricted' to 'endTime' to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260765
+    // FIXME: This constructor and getCueAsHTML() are not standardized.
     [CallWith=CurrentDocument] constructor(double startTime, double endTime, DocumentFragment cueNode);
-    [EnabledBySetting=GenericCueAPIEnabled] DocumentFragment getCueAsHTML();
+    [EnabledBySetting=GenericCueAPIEnabled] DocumentFragment? getCueAsHTML();
 };

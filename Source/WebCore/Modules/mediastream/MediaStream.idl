@@ -44,7 +44,8 @@
     undefined addTrack(MediaStreamTrack track);
     undefined removeTrack(MediaStreamTrack track);
 
-    MediaStream clone();
+    // FIXME: This should never return null.
+    MediaStream? clone();
 
     readonly attribute boolean active;
 

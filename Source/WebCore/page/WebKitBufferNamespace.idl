@@ -26,5 +26,5 @@
 [
     LegacyNoInterfaceObject
 ] interface WebKitBufferNamespace {
-    [CallWith=World] getter WebKitBuffer ([AtomString] DOMString name);
+    [CallWith=World] getter WebKitBuffer? ([AtomString] DOMString name);
 };

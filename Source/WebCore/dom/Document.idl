@@ -89,7 +89,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     attribute boolean xmlStandalone;
 
     // Non standard: It has been superseeded by caretPositionFromPoint which we do not implement yet.
-    Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
+    Range? caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
     // Non standard: It has been dropped from Blink already.
     RenderingContext? getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);

@@ -42,16 +42,16 @@ NavigatorClipboard::NavigatorClipboard(Navigator& navigator)
 
 NavigatorClipboard::~NavigatorClipboard() = default;
 
-RefPtr<Clipboard> NavigatorClipboard::clipboard(Navigator& navigator)
+Ref<Clipboard> NavigatorClipboard::clipboard(Navigator& navigator)
 {
     return NavigatorClipboard::from(navigator)->clipboard();
 }
 
-RefPtr<Clipboard> NavigatorClipboard::clipboard()
+Ref<Clipboard> NavigatorClipboard::clipboard()
 {
     if (!m_clipboard)
         lazyInitialize(m_clipboard, Clipboard::create(m_navigator.get()));
-    return m_clipboard;
+    return *m_clipboard;
 }
 
 NavigatorClipboard* NavigatorClipboard::from(Navigator& navigator)

@@ -35,7 +35,8 @@
     Exposed=Window
 ] interface DataTransferItemList {
     readonly attribute long length;
-    getter DataTransferItem item(unsigned long index);
+    // FIXME: remove item() method and nullability.
+    getter DataTransferItem? item(unsigned long index);
 
     [CallWith=CurrentDocument] DataTransferItem? add(DOMString data, DOMString type);
     DataTransferItem? add(File file);

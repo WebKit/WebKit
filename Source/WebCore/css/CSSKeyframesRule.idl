@@ -37,7 +37,7 @@ typedef USVString CSSOMString;
     readonly attribute CSSRuleList cssRules;
     readonly attribute unsigned long length;
 
-    getter CSSKeyframeRule (unsigned long index);
+    [RawPointer] getter CSSKeyframeRule (unsigned long index);
     undefined appendRule(CSSOMString rule);
     undefined deleteRule(CSSOMString key);
     CSSKeyframeRule? findRule(CSSOMString key);

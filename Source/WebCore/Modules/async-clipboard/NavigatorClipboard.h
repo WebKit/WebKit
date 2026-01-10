@@ -41,8 +41,8 @@ public:
     explicit NavigatorClipboard(Navigator&);
     ~NavigatorClipboard();
 
-    static RefPtr<Clipboard> clipboard(Navigator&);
-    RefPtr<Clipboard> clipboard();
+    static Ref<Clipboard> clipboard(Navigator&);
+    Ref<Clipboard> clipboard();
 
 private:
     static NavigatorClipboard* from(Navigator&);

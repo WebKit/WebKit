@@ -32,7 +32,7 @@ typedef (DOMString or CSSKeywordValue) CSSKeywordish;
     Exposed=(Window,Worker,PaintWorklet/*,LayoutWorklet*/),
     JSGenerateToNativeObject,
 ] interface CSSOMColorValue : CSSStyleValue {
-    readonly attribute CSSKeywordValue colorSpace;
-    CSSOMColorValue to(CSSKeywordish colorSpace);
+    readonly attribute CSSKeywordValue? colorSpace;
+    CSSOMColorValue? to(CSSKeywordish colorSpace);
     [Exposed=Window] static (CSSOMColorValue or CSSStyleValue) parse(USVString cssText);
 };

@@ -37,7 +37,7 @@
     readonly attribute DOMString type;
 
     [CallWith=CurrentDocument] undefined getAsString(StringCallback? callback);
-    File getAsFile();
+    File? getAsFile();
 
     // https://wicg.github.io/entries-api/#html-data
     [CallWith=CurrentScriptExecutionContext, ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();

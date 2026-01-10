@@ -26,6 +26,6 @@
     readonly attribute DOMString type;
     readonly attribute DOMString suffixes;
     readonly attribute DOMString description;
-    readonly attribute DOMPlugin enabledPlugin;
+    // FIXME: This should be non-nullable.
+    readonly attribute DOMPlugin? enabledPlugin;
 };
-

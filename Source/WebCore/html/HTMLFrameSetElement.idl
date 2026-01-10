@@ -40,7 +40,7 @@
 
     // Non-standard named getter
     // FIXME: This is not in the standard, can we remove this?
-    getter WindowProxy (DOMString name);
+    getter WindowProxy? (DOMString name);
 };
 
 HTMLFrameSetElement includes WindowEventHandlers;

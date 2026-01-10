@@ -219,7 +219,13 @@ template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using NullableType = RefPtr<T>;
     static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
-    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
+
+    // Extract the underlying object from nullable smart pointers.
+    // Nullable converters call this after confirming non-null, then pass the reference
+    // to non-nullable converters. This ensures non-nullable converters never receive RefPtr.
+    static inline T& extractValueFromNullable(RefPtr<T>& value) { return *value; }
+    static inline const T& extractValueFromNullable(const RefPtr<T>& value) { return *value; }
+    static inline T& extractValueFromNullable(RefPtr<T>&& value) { return *value; }
 };
 
 template<typename T> struct IDLInterface : IDLWrapper<T> {
@@ -259,7 +265,7 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
     using NullableType = typename T::NullableType;
     static inline auto nullValue() -> decltype(T::nullValue()) { return T::nullValue(); }
     template<typename U> static inline bool isNullValue(U&& value) { return T::isNullValue(std::forward<U>(value)); }
-    template<typename U> static inline auto extractValueFromNullable(U&& value) -> decltype(T::extractValueFromNullable(std::forward<U>(value))) { return T::extractValueFromNullable(std::forward<U>(value)); }
+    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
 template<typename T> struct IDLSequence : IDLType<Vector<typename T::InnerParameterType>> {
@@ -327,6 +333,11 @@ template<typename T> struct IDLTypedArray : IDLBufferSourceBase<T> { };
 struct IDLBufferSource : IDLWrapper<BufferSource> {
     using ConversionResultType = BufferSource;
     using NullableConversionResultType = std::optional<BufferSource>;
+
+    // Extract the underlying value from std::optional.
+    static inline BufferSource& extractValueFromNullable(std::optional<BufferSource>& value) { return *value; }
+    static inline const BufferSource& extractValueFromNullable(const std::optional<BufferSource>& value) { return *value; }
+    static inline BufferSource&& extractValueFromNullable(std::optional<BufferSource>&& value) { return WTF::move(*value); }
 };
 
 
@@ -394,7 +405,7 @@ template<typename T> struct IDLOptional : IDLType<typename T::NullableType> {
     using NullableType = typename T::NullableType;
     static inline auto nullValue() -> decltype(T::nullValue()) { return T::nullValue(); }
     template<typename U> static inline bool isNullValue(U&& value) { return T::isNullValue(std::forward<U>(value)); }
-    template<typename U> static inline auto extractValueFromNullable(U&& value) -> decltype(T::extractValueFromNullable(std::forward<U>(value))) { return T::extractValueFromNullable(std::forward<U>(value)); }
+    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
 // Helper predicates
@@ -416,6 +427,12 @@ struct IsIDLSequence : public std::integral_constant<bool, WTF::IsTemplate<T, ID
 
 template<typename T>
 struct IsIDLFrozenArray : public std::integral_constant<bool, WTF::IsTemplate<T, IDLFrozenArray>::value> { };
+
+template<typename T>
+struct IsIDLUnion : public std::false_type { };
+
+template<typename... Ts>
+struct IsIDLUnion<IDLUnion<Ts...>> : public std::true_type { };
 
 template<typename T>
 struct IsIDLRecord : public std::integral_constant<bool, WTF::IsTemplate<T, IDLRecord>::value> { };

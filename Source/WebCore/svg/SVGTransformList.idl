@@ -40,5 +40,5 @@
     setter undefined (unsigned long index, SVGTransform newItem);
 
     [NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix);
-    SVGTransform consolidate();
+    SVGTransform? consolidate();
 };

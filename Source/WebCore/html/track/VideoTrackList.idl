@@ -34,7 +34,7 @@
 ] interface VideoTrackList : EventTarget {
     readonly attribute unsigned long length;
     // FIXME: Remove 'item' from below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260763
-    [ImplementedAs=itemForBindings] getter VideoTrack item(unsigned long index);
+    [ImplementedAs=itemForBindings] getter VideoTrack? item(unsigned long index);
     VideoTrack? getTrackById([AtomString] DOMString id);
     readonly attribute long selectedIndex;
 
@@ -42,4 +42,3 @@
     attribute EventHandler onaddtrack;
     attribute EventHandler onremovetrack;
 };
-

@@ -30,8 +30,7 @@
     Exposed=Window
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;
-    // FIXME: Remove 'item' from below to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260763
-    getter TextTrackCue item(unsigned long index);
+    // FIXME: Remove item() and make non-nullable. See: https://bugs.webkit.org/show_bug.cgi?id=260763
+    getter TextTrackCue? item(unsigned long index);
     TextTrackCue? getCueById(DOMString id);
 };
-

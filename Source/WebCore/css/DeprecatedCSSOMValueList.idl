@@ -29,6 +29,6 @@
     Exposed=Window
 ] interface DeprecatedCSSOMValueList : DeprecatedCSSOMValue {
     readonly attribute unsigned long length;
-    getter DeprecatedCSSOMValue item(unsigned long index);
+    getter DeprecatedCSSOMValue? item(unsigned long index);
 };
 

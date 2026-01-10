@@ -26,10 +26,12 @@
 #pragma once
 
 #include <JavaScriptCore/Error.h>
+#include <WebCore/IDLTypes.h>
 #include <WebCore/JSDOMConvertResult.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <concepts>
 #include <wtf/Compiler.h>
+#include <wtf/GetPtr.h>
 
 namespace WebCore {
 
@@ -163,21 +165,48 @@ struct JSConverterOverloader<IDL, false, false> {
 
 template<typename IDL, typename U> inline JSC::JSValue toJS(U&& value)
 {
+    // Assertion disabled - see comment in toJS(JSGlobalObject&, JSDOMGlobalObject&, U&&) overload
     return JSConverter<IDL>::convert(std::forward<U>(value));
 }
 
 template<typename IDL, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject& lexicalGlobalObject, U&& value)
 {
+    // Assertion disabled - see comment in toJS(JSGlobalObject&, JSDOMGlobalObject&, U&&) overload
     return JSConverterOverloader<IDL>::convert(lexicalGlobalObject, std::forward<U>(value));
 }
 
 template<typename IDL, typename U> inline JSC::JSValue toJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
 {
+    // Check for incorrect usage of nullable smart pointers with non-nullable IDL interface types.
+    // After the fix to IDLWrapper::extractValueFromNullable, nullable converters properly dereference
+    // RefPtr before passing to non-nullable converters. This assertion now reliably catches bugs where
+    // user code returns RefPtr for non-nullable IDL types.
+    //
+    // We still exclude l-value references because:
+    // - Generated binding code may return RefPtr& from property getters (may be legitimate or bugs)
+    // - Union converters extract const RefPtr& from variants and pass to this function
+    using BaseType = std::remove_cv_t<std::remove_reference_t<U>>;
+    constexpr bool isLValueRef = std::is_lvalue_reference_v<U>;
+    if constexpr (IsIDLInterface<IDL>::value && !isLValueRef) {
+        static_assert(!(WTF::IsSmartPtrV<BaseType> && WTF::IsSmartPtrNullableV<BaseType>),
+            "Non-nullable IDL interface types should not be converted from nullable smart pointers (RefPtr, WeakPtr). "
+            "Use Ref or WeakRef instead, or use IDLNullable<IDLInterface<T>> if the value can be null.");
+    }
+
     return JSConverterOverloader<IDL>::convert(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 
 template<typename IDL, typename U> inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
 {
+    // Same assertion logic as toJS - exclude l-value references from generated code.
+    using BaseType = std::remove_cv_t<std::remove_reference_t<U>>;
+    constexpr bool isLValueRef = std::is_lvalue_reference_v<U>;
+    if constexpr (IsIDLInterface<IDL>::value && !isLValueRef) {
+        static_assert(!(WTF::IsSmartPtrV<BaseType> && WTF::IsSmartPtrNullableV<BaseType>),
+            "Non-nullable IDL interface types should not be converted from nullable smart pointers (RefPtr, WeakPtr). "
+            "Use Ref or WeakRef instead, or use IDLNullable<IDLInterface<T>> if the value can be null.");
+    }
+
     return JSConverter<IDL>::convertNewlyCreated(lexicalGlobalObject, globalObject, std::forward<U>(value));
 }
 

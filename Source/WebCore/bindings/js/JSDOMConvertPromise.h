@@ -79,6 +79,11 @@ template<typename T> struct JSConverter<IDLPromise<T>> {
         return promise.guardedObject();
     }
 
+    static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, const DOMPromise& promise)
+    {
+        return promise.guardedObject();
+    }
+
     static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, const RefPtr<DOMPromise>& promise)
     {
         return promise->guardedObject();
@@ -98,6 +103,11 @@ template<typename T> struct JSConverter<IDLPromise<T>> {
 
 template<typename T> struct JSConverter<IDLPromiseIgnoringSuspension<T>> : public JSConverter<IDLPromise<T>> {
     static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, DOMPromise& promise)
+    {
+        return promise.guardedObject();
+    }
+
+    static JSC::JSValue convert(JSC::JSGlobalObject&, JSDOMGlobalObject&, const DOMPromise& promise)
     {
         return promise.guardedObject();
     }

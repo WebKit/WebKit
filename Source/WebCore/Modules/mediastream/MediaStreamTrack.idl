@@ -45,7 +45,8 @@ enum MediaStreamTrackState { "live", "ended" };
     readonly attribute MediaStreamTrackState readyState;
     attribute EventHandler onended;
 
-    MediaStreamTrack clone();
+    // FIXME: This should not return null.
+    MediaStreamTrack? clone();
     [ImplementedAs=stopTrack] undefined stop();
 
     MediaTrackCapabilities getCapabilities();

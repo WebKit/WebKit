@@ -41,7 +41,8 @@
     boolean checkValidity();
     boolean reportValidity();
 
-    readonly attribute NodeList labels;
+    // FIXME: labels should not be nullable.
+    readonly attribute NodeList? labels;
 
     [SameObject] readonly attribute CustomStateSet states;
 

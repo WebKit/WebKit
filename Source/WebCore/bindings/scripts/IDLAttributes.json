@@ -461,6 +461,10 @@
             "contextsAllowed": ["operation"],
             "notes": "Should only be used on indexed getters that have to throw an exception in some cases"
         },
+        "RawPointer": {
+            "contextsAllowed": ["operation"],
+            "notes": "Used on indexed getters that return raw pointers instead of RefPtr"
+        },
         "Reflect": {
             "contextsAllowed": ["attribute"],
             "values": ["*"],

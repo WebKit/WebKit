@@ -550,10 +550,11 @@ static bool hasPlayBackAudioSession(Document* document)
     RefPtr window = document ? document->window() : nullptr;
 
     RefPtr navigator = window ? window->optionalNavigator() : nullptr;
-    RefPtr audioSession = navigator ? NavigatorAudioSession::audioSession(*navigator) : nullptr;
+    if (!navigator)
+        return false;
 
-    auto audioSessionType = audioSession ? audioSession->type() : DOMAudioSessionType::Auto;
-    return audioSessionType == DOMAudioSessionType::Playback || audioSessionType == DOMAudioSessionType::PlayAndRecord;
+    Ref audioSession = NavigatorAudioSession::audioSession(*navigator);
+    return audioSession->type() == DOMAudioSessionType::Playback || audioSession->type() == DOMAudioSessionType::PlayAndRecord;
 #else
     UNUSED_PARAM(document);
     return false;

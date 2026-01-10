@@ -60,7 +60,7 @@ public:
     virtual ExceptionOr<void> configure(GPUCanvasConfiguration&&) = 0;
     virtual void unconfigure() = 0;
     virtual std::optional<GPUCanvasConfiguration> getConfiguration() const = 0;
-    virtual ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() = 0;
+    virtual ExceptionOr<Ref<GPUTexture>> getCurrentTexture() = 0;
 
 protected:
     GPUCanvasContext(CanvasBase&);

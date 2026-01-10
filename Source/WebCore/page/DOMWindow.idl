@@ -111,11 +111,11 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
     // Non-standard: For now we expose this to user worlds since Safari is using it, but we plan to remove it.
-    [EnabledForWorld=isUser] CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
+    [EnabledForWorld=isUser] CSSRuleList? getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
 
     // Non-standard: Blink has already dropped these (https://bugs.chromium.org/p/chromium/issues/detail?id=398352).
-    WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
-    WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint? webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint? webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
 
     // Internal operations, not exposed to the Web.
     [EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);

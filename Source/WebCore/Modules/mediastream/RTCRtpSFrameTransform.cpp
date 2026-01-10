@@ -262,17 +262,17 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
     return { };
 }
 
-ExceptionOr<RefPtr<ReadableStream>> RTCRtpSFrameTransform::readable()
+ExceptionOr<Ref<ReadableStream>> RTCRtpSFrameTransform::readable()
 {
     if (!m_readable) {
         auto result = createStreams();
         if (result.hasException())
             return result.releaseException();
     }
-    return m_readable.copyRef();
+    return m_readable.releaseNonNull();
 }
 
-ExceptionOr<RefPtr<WritableStream>> RTCRtpSFrameTransform::writable()
+ExceptionOr<Ref<WritableStream>> RTCRtpSFrameTransform::writable()
 {
     if (!m_writable) {
         auto result = createStreams();
@@ -281,7 +281,7 @@ ExceptionOr<RefPtr<WritableStream>> RTCRtpSFrameTransform::writable()
     }
 
     m_hasWritable = true;
-    return m_writable.copyRef();
+    return m_writable.releaseNonNull();
 }
 
 bool RTCRtpSFrameTransform::virtualHasPendingActivity() const

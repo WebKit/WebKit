@@ -31,7 +31,6 @@
     SkipVTableValidation,
     Exposed=Window
 ] interface CSSRuleList {
-    // FIXME: `getter` below should be nullable.
-    getter CSSRule item(unsigned long index);
+    getter CSSRule? item(unsigned long index);
     readonly attribute unsigned long length;
 };
