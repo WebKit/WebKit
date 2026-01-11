@@ -153,7 +153,7 @@ String stringByResolvingSymlinksInPath(StringView path)
 {
     char resolvedPath[PATH_MAX] = { 0 };
     realpath(path.utf8().data(), resolvedPath);
-    return String::fromUTF8(resolvedPath);
+    return FileSystem::stringFromFileSystemRepresentation(resolvedPath);
 }
 
 String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)

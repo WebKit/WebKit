@@ -476,9 +476,16 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
 
 RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const char8_t> characters)
 {
+    if (!characters.data())
+        return nullptr;
+
+    if (characters.empty())
+        return uncheckedDowncast<AtomStringImpl>(StringImpl::empty());
+
     HashedUTF8Characters buffer { characters, computeUTF16LengthWithHash(characters) };
     if (!buffer.length.hash)
         return nullptr;
+
     return addToStringTable<HashedUTF8Characters, HashedUTF8CharactersTranslator>(buffer);
 }
 

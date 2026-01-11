@@ -259,18 +259,18 @@ TEST(WTF, StringReplaceWithLiteral)
     testString = makeStringByReplacingAll(testString, '3', "NotFound"_s);
     EXPECT_STREQ("1224", testString.utf8().data());
 
-    // Cases for 16Bit source.
-    testString = String::fromUTF8("résumé");
+    // Cases for 16 bit source.
+    testString = u8"r\u00E9sumé"_span;
     EXPECT_FALSE(testString.is8Bit());
-    testString = makeStringByReplacingAll(testString, char16_t(0x00E9 /*U+00E9 is 'é'*/), "e"_s);
+    testString = makeStringByReplacingAll(testString, u'\u00E9', "e"_s);
     EXPECT_STREQ("resume", testString.utf8().data());
 
-    testString = String::fromUTF8("résumé");
+    testString = u8"r\u00E9sumé"_span;
     EXPECT_FALSE(testString.is8Bit());
-    testString = makeStringByReplacingAll(testString, char16_t(0x00E9 /*U+00E9 is 'é'*/), ""_s);
+    testString = makeStringByReplacingAll(testString, u'\u00E9', ""_s);
     EXPECT_STREQ("rsum", testString.utf8().data());
 
-    testString = String::fromUTF8("résumé");
+    testString = u8"r\u00E9sumé"_span;
     EXPECT_FALSE(testString.is8Bit());
     testString = makeStringByReplacingAll(testString, '3', "NotFound"_s);
     EXPECT_STREQ("résumé", testString.utf8().data());
@@ -386,39 +386,39 @@ TEST(WTF, StringUnicodeEqualUTF16Array)
 
 TEST(WTF, StringRightBasic)
 {
-    auto reference = String::fromUTF8("Cappuccino");
-    EXPECT_EQ(String::fromUTF8(""), reference.right(0));
-    EXPECT_EQ(String::fromUTF8("o"), reference.right(1));
-    EXPECT_EQ(String::fromUTF8("no"), reference.right(2));
-    EXPECT_EQ(String::fromUTF8("ino"), reference.right(3));
-    EXPECT_EQ(String::fromUTF8("cino"), reference.right(4));
-    EXPECT_EQ(String::fromUTF8("ccino"), reference.right(5));
-    EXPECT_EQ(String::fromUTF8("uccino"), reference.right(6));
-    EXPECT_EQ(String::fromUTF8("puccino"), reference.right(7));
-    EXPECT_EQ(String::fromUTF8("ppuccino"), reference.right(8));
-    EXPECT_EQ(String::fromUTF8("appuccino"), reference.right(9));
-    EXPECT_EQ(String::fromUTF8("Cappuccino"), reference.right(10));
+    String reference = "Cappuccino"_s;
+    EXPECT_EQ(""_s, reference.right(0));
+    EXPECT_EQ("o"_s, reference.right(1));
+    EXPECT_EQ("no"_s, reference.right(2));
+    EXPECT_EQ("ino"_s, reference.right(3));
+    EXPECT_EQ("cino"_s, reference.right(4));
+    EXPECT_EQ("ccino"_s, reference.right(5));
+    EXPECT_EQ("uccino"_s, reference.right(6));
+    EXPECT_EQ("puccino"_s, reference.right(7));
+    EXPECT_EQ("ppuccino"_s, reference.right(8));
+    EXPECT_EQ("appuccino"_s, reference.right(9));
+    EXPECT_EQ("Cappuccino"_s, reference.right(10));
 }
 
 TEST(WTF, StringLeftBasic)
 {
-    auto reference = String::fromUTF8("Cappuccino");
-    EXPECT_EQ(String::fromUTF8(""), reference.left(0));
-    EXPECT_EQ(String::fromUTF8("C"), reference.left(1));
-    EXPECT_EQ(String::fromUTF8("Ca"), reference.left(2));
-    EXPECT_EQ(String::fromUTF8("Cap"), reference.left(3));
-    EXPECT_EQ(String::fromUTF8("Capp"), reference.left(4));
-    EXPECT_EQ(String::fromUTF8("Cappu"), reference.left(5));
-    EXPECT_EQ(String::fromUTF8("Cappuc"), reference.left(6));
-    EXPECT_EQ(String::fromUTF8("Cappucc"), reference.left(7));
-    EXPECT_EQ(String::fromUTF8("Cappucci"), reference.left(8));
-    EXPECT_EQ(String::fromUTF8("Cappuccin"), reference.left(9));
-    EXPECT_EQ(String::fromUTF8("Cappuccino"), reference.left(10));
+    String reference = "Cappuccino"_s;
+    EXPECT_EQ(""_s, reference.left(0));
+    EXPECT_EQ("C"_s, reference.left(1));
+    EXPECT_EQ("Ca"_s, reference.left(2));
+    EXPECT_EQ("Cap"_s, reference.left(3));
+    EXPECT_EQ("Capp"_s, reference.left(4));
+    EXPECT_EQ("Cappu"_s, reference.left(5));
+    EXPECT_EQ("Cappuc"_s, reference.left(6));
+    EXPECT_EQ("Cappucc"_s, reference.left(7));
+    EXPECT_EQ("Cappucci"_s, reference.left(8));
+    EXPECT_EQ("Cappuccin"_s, reference.left(9));
+    EXPECT_EQ("Cappuccino"_s, reference.left(10));
 }
 
 TEST(WTF, StringReverseFindBasic)
 {
-    auto reference = String::fromUTF8("Cappuccino");
+    String reference = "Cappuccino"_s;
     EXPECT_EQ(reference.reverseFind('o'), 9U);
     EXPECT_EQ(reference.reverseFind('n'), 8U);
     EXPECT_EQ(reference.reverseFind('c'), 6U);

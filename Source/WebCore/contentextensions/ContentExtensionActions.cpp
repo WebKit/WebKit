@@ -32,6 +32,7 @@
 #include "ResourceRequest.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
@@ -418,12 +419,14 @@ auto RedirectAction::RegexSubstitutionAction::deserialize(std::span<const uint8_
 
 static JSRetainPtr<JSStringRef> makeJSString(ASCIILiteral literal)
 {
-    return adopt(JSStringCreateWithUTF8CString(literal));
+    // This is a safer cpp false positive (rdar://148521896).
+    SUPPRESS_UNCOUNTED_ARG return adopt(JSStringCreateWithUTF8CString(literal));
 }
 
 static JSRetainPtr<JSStringRef> makeJSString(const String& string)
 {
-    return adopt(JSStringCreateWithUTF8CString(string.utf8().data()));
+    // This is a safer cpp false positive (rdar://148521896).
+    SUPPRESS_UNCOUNTED_ARG return adopt(JSStringCreateWithUTF8CString(string.utf8().data()));
 }
 
 void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
@@ -439,25 +442,25 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
         return JSValueToObject(context, value, nullptr);
     };
     auto getProperty = [&] (JSValueRef value, ASCIILiteral name) {
-        return JSObjectGetProperty(context, toObject(value), makeJSString(name).get(), nullptr);
+        // This is a safer cpp false positive (rdar://148521896).
+        SUPPRESS_UNCOUNTED_ARG return JSObjectGetProperty(context, toObject(value), makeJSString(name).get(), nullptr);
     };
     auto getArrayValue = [&] (JSValueRef value, size_t index) {
         return JSObjectGetPropertyAtIndex(context, toObject(value), index, nullptr);
     };
     auto valueToWTFString = [&] (JSValueRef value) {
-        auto string = adopt(JSValueToStringCopy(context, value, nullptr));
-        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string.get());
-        Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(string.get(), buffer.mutableSpan().data(), buffer.size());
-        return String::fromUTF8(buffer.span().data());
+        // This is a safer cpp false positive (rdar://148521896).
+        SUPPRESS_UNCOUNTED_ARG return adopt(JSValueToStringCopy(context, value, nullptr))->string();
     };
 
     // Effectively execute this JavaScript:
     // const regexp = new RegExp(regexFilter);
     // const result = url.match(regexp);
-    JSValueRef regexFilterValue = JSValueMakeString(context, makeJSString(regexFilter).get());
+    // This is a safer cpp false positive (rdar://148521896).
+    SUPPRESS_UNCOUNTED_ARG JSValueRef regexFilterValue = JSValueMakeString(context, makeJSString(regexFilter).get());
     JSObjectRef regexp = JSObjectMakeRegExp(context, 1, &regexFilterValue, nullptr);
-    JSValueRef urlValue = JSValueMakeString(context, makeJSString(url.string()).get());
+    // This is a safer cpp false positive (rdar://148521896).
+    SUPPRESS_UNCOUNTED_ARG JSValueRef urlValue = JSValueMakeString(context, makeJSString(url.string()).get());
     JSObjectRef matchFunction = JSValueToObject(context, getProperty(urlValue, "match"_s), nullptr);
     JSValueRef result = JSObjectCallAsFunction(context, matchFunction, toObject(urlValue), 1, &regexp, nullptr);
     if (!JSValueIsArray(context, result))

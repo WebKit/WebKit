@@ -325,16 +325,16 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     frameState.originalURLString = String::fromUTF8(originalURLString);
     // frameState.referrer must not be an empty string since we never want to
     // send an empty Referer header. Bug #159606.
-    if (auto referrerString = String::fromUTF8(referrer); !referrerString.isEmpty())
+    if (AtomString referrerString = byteCast<char8_t>(unsafeSpan(referrer)); !referrerString.isEmpty())
         frameState.referrer = WTF::move(referrerString);
-    if (auto targetString = AtomString::fromUTF8(target); !targetString.isEmpty())
+    if (AtomString targetString = byteCast<char8_t>(unsafeSpan(target)); !targetString.isEmpty())
         frameState.target = WTF::move(targetString);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
         Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);
         const char* documentStateString;
         while (g_variant_iter_next(documentStateIter.get(), "&s", &documentStateString))
-            documentState.append(AtomString::fromUTF8(documentStateString));
+            documentState.append(AtomString { byteCast<char8_t>(unsafeSpan(documentStateString)) });
         frameState.setDocumentState(documentState);
     }
     if (stateObjectDataIter) {

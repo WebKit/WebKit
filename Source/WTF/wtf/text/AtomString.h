@@ -43,9 +43,12 @@ public:
     AtomString(StringImpl* baseString, unsigned start, unsigned length);
 
     // FIXME: AtomString doesn’t always have AtomStringImpl, so one of those two names needs to change.
-    AtomString(UniquedStringImpl* uid);
+    AtomString(UniquedStringImpl*);
 
     AtomString(ASCIILiteral);
+
+    // Construct a string with UTF-8 data, null string if it contains invalid UTF-8 sequences.
+    AtomString(std::span<const char8_t>);
 
     static AtomString lookUp(std::span<const char16_t> characters) { return AtomStringImpl::lookUp(characters); }
 
@@ -68,7 +71,7 @@ public:
     std::span<const char16_t> span16() const LIFETIME_BOUND { return m_string.span16(); }
     unsigned length() const { return m_string.length(); }
 
-    char16_t operator[](unsigned int i) const { return m_string[i]; }
+    char16_t operator[](unsigned i) const { return m_string[i]; }
 
     WTF_EXPORT_PRIVATE static AtomString number(int);
     WTF_EXPORT_PRIVATE static AtomString number(unsigned);
@@ -124,21 +127,13 @@ public:
         : AtomString(characters, characters ? wcslen(characters) : 0) { }
 #endif
 
-    // AtomString::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
-    static AtomString fromUTF8(std::span<const char>);
-    static AtomString fromUTF8(const char*);
-
 #ifndef NDEBUG
     void show() const;
 #endif
 
 private:
-    explicit AtomString(const char*);
-
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType> AtomString convertASCIICase() const;
-
-    WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(std::span<const char>);
 
     String m_string;
 };
@@ -171,6 +166,11 @@ inline AtomString::AtomString(std::span<const Latin1Character> string)
 }
 
 inline AtomString::AtomString(std::span<const char16_t> string)
+    : m_string(AtomStringImpl::add(string))
+{
+}
+
+inline AtomString::AtomString(std::span<const char8_t> string)
     : m_string(AtomStringImpl::add(string))
 {
 }
@@ -256,24 +256,6 @@ inline const AtomString& emptyAtom() { SUPPRESS_MEMORY_UNSAFE_CAST return *reint
 inline AtomString::AtomString(ASCIILiteral literal)
     : m_string(literal.length() ? AtomStringImpl::add(literal) : Ref { *emptyAtom().impl() })
 {
-}
-
-inline AtomString AtomString::fromUTF8(std::span<const char> characters)
-{
-    if (!characters.data())
-        return nullAtom();
-    if (characters.empty())
-        return emptyAtom();
-    return fromUTF8Internal(characters);
-}
-
-inline AtomString AtomString::fromUTF8(const char* characters)
-{
-    if (!characters)
-        return nullAtom();
-    if (!*characters)
-        return emptyAtom();
-    return fromUTF8Internal(unsafeSpan(characters));
 }
 
 inline AtomString String::toExistingAtomString() const

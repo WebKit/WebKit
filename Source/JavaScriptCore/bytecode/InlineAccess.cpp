@@ -149,13 +149,13 @@ void InlineAccess::dumpCacheSizesAndCrash()
 }
 
 
-ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, StructureStubInfo& stubInfo)
+ALWAYS_INLINE static bool linkCodeInline(ASCIILiteral name, CCallHelpers& jit, StructureStubInfo& stubInfo)
 {
     if (jit.m_assembler.buffer().codeSize() <= stubInfo.inlineCodeSize()) {
         bool needsBranchCompaction = true;
         LinkBuffer linkBuffer(jit, stubInfo.startLocation, stubInfo.inlineCodeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
-        FINALIZE_CODE(linkBuffer, NoPtrTag, ASCIILiteral::fromLiteralUnsafe(name), "InlineAccessType: '%s'", name);
+        FINALIZE_CODE(linkBuffer, NoPtrTag, name, "InlineAccessType: '%s'", name.characters());
         return true;
     }
 

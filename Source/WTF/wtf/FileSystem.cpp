@@ -71,7 +71,7 @@ static String fromStdFileSystemPath(const std::filesystem::path& path)
     // FIXME: This uses u8string so how can it be correct inside HAVE(MISSING_U8STRING)?
     return String::fromUTF8(unsafeSpan(path.u8string().c_str()));
 #else
-    return String::fromUTF8(span(path.u8string()));
+    return span(path.u8string());
 #endif
 }
 

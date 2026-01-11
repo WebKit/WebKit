@@ -108,27 +108,28 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
         JSRetainPtr propertyName = JSPropertyNameArrayGetNameAtIndex(propertyNames, i);
         if (!propertyName)
             continue;
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG JSValueRef item = JSObjectGetProperty(context, object, propertyName.get(), 0);
 
         // Chrome does not include null values in dictionaries for web extensions.
         if (nullPolicy == NullValuePolicy::NotAllowed && JSValueIsNull(context, item))
             continue;
 
-        auto *key = toString(propertyName.get()).createNSString().get();
+        // This is a safer cpp false positive (rdar://148521896).
+        SUPPRESS_UNCOUNTED_ARG auto key = propertyName->string().createNSString();
         auto *itemValue = toJSValue(context, item);
 
         if (valuePolicy == ValuePolicy::StopAtTopLevel) {
             if (itemValue)
-                result[key] = itemValue;
+                result[key.get()] = itemValue;
             continue;
         }
 
         if (isDictionary(context, itemValue.JSValueRef)) {
             if (auto *itemDictionary = toNSDictionary(context, item, nullPolicy))
-                result[key] = itemDictionary;
+                result[key.get()] = itemDictionary;
         } else if (id value = toNSObject(context, item))
-            result[key] = value;
+            result[key.get()] = value;
     }
 
     JSPropertyNameArrayRelease(propertyNames);

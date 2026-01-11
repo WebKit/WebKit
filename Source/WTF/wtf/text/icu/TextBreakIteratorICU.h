@@ -29,6 +29,30 @@
 
 namespace WTF {
 
+template<typename T, size_t size>
+auto dynamicEquivalent(std::span<T, size> span)
+{
+    return std::span<T> { span };
+}
+
+template<typename T>
+auto dynamicSpan(T& argument)
+{
+    return dynamicEquivalent(std::span { argument });
+}
+
+template<typename T, size_t size>
+auto immutableDynamicEquivalent(std::span<T, size> span)
+{
+    return std::span<const T> { span };
+}
+
+template<typename T>
+auto immutableDynamicSpan(T& argument)
+{
+    return immutableDynamicEquivalent(std::span { argument });
+}
+
 class TextBreakIteratorICU {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(TextBreakIteratorICU);
 public:
@@ -152,12 +176,10 @@ private:
         if (behavior == LineMode::Behavior::Default)
             return locale;
 
-        // The uloc functions model locales as char*, so we have to downconvert our AtomString.
-        auto utf8Locale = locale.string().utf8();
-        if (!utf8Locale.length())
-            return locale;
-        Vector<char> scratchBuffer(utf8Locale.length() + 11, 0);
-        memcpySpan(scratchBuffer.mutableSpan(), utf8Locale.span());
+        // The uloc functions take const char* for locales, and locale strings are all ASCII.
+        std::array<Latin1Character, ULOC_FULLNAME_CAPACITY> buffer;
+        StringView { locale }.getCharacters(dynamicSpan(buffer));
+        zeroSpan(dynamicSpan(buffer).subspan(locale.length()));
 
         const char* keywordValue = nullptr;
         switch (behavior) {
@@ -177,18 +199,9 @@ private:
         }
 
         UErrorCode status = U_ZERO_ERROR;
-        int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.mutableSpan().data(), scratchBuffer.size(), &status);
+        int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, byteCast<char>(buffer.data()), buffer.size(), &status);
         if (U_SUCCESS(status))
-            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
-        if (needsToGrowToProduceBuffer(status)) {
-            scratchBuffer.grow(lengthNeeded + 1);
-            zeroSpan(scratchBuffer.mutableSpan().subspan(utf8Locale.length()));
-            status = U_ZERO_ERROR;
-            int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.mutableSpan().data(), scratchBuffer.size(), &status);
-            if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
-                return locale;
-            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
-        }
+            return immutableDynamicSpan(buffer).subspan(0, lengthNeeded);
         return locale;
     }
 

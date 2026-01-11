@@ -27,14 +27,12 @@
 #import "BundlePath.h"
 
 #import <Foundation/Foundation.h>
-#import <string>
 
 @interface JSJavaScriptCoreFinder : NSObject
 @end
 
 @implementation JSJavaScriptCoreFinder
 @end
-
 
 namespace JSC {
 

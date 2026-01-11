@@ -76,7 +76,7 @@ namespace LLInt {
 // and others LLIntEntrypoints.
 
 template<PtrTag tag>
-static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, const char *thunkKind)
+static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, ASCIILiteral thunkKind)
 {
     JSInterfaceJIT jit;
 
@@ -91,17 +91,17 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, cons
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, thunkKind, "LLInt %s thunk", thunkKind.characters());
 }
 
 template<PtrTag tag>
-static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(OpcodeID opcodeID, const char *thunkKind)
+static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(OpcodeID opcodeID, ASCIILiteral thunkKind)
 {
     return generateThunkWithJumpTo<tag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcodeID), thunkKind);
 }
 
 template<PtrTag tag>
-static MacroAssemblerCodeRef<tag> generateThunkWithJumpToPrologue(OpcodeID opcodeID, const char *thunkKind)
+static MacroAssemblerCodeRef<tag> generateThunkWithJumpToPrologue(OpcodeID opcodeID, ASCIILiteral thunkKind)
 {
     JSInterfaceJIT jit;
 
@@ -118,21 +118,21 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpToPrologue(OpcodeID opcod
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s jump to prologue thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, thunkKind, "LLInt %s jump to prologue thunk", thunkKind.characters());
 }
 
 template<PtrTag tag>
-static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(LLIntCode target, const char *thunkKind)
+static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(LLIntCode target, ASCIILiteral thunkKind)
 {
     JSInterfaceJIT jit;
     assertIsTaggedWith<OperationPtrTag>(target);
     jit.farJump(CCallHelpers::TrustedImmPtr(target), OperationPtrTag);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s return point thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, thunkKind, "LLInt %s return point thunk", thunkKind.characters());
 }
 
 template<PtrTag tag>
-static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(OpcodeID opcodeID, const char *thunkKind)
+static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(OpcodeID opcodeID, ASCIILiteral thunkKind)
 {
     return generateThunkWithJumpToLLIntReturnPoint<tag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(opcodeID), thunkKind);
 }
@@ -292,7 +292,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> callToThrowThunk()
     static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(llint_throw_during_call_trampoline, "LLInt::callToThrow thunk"));
+        codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(llint_throw_during_call_trampoline, "LLInt::callToThrow thunk"_s));
     });
     return codeRef;
 }
@@ -302,7 +302,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleUncaughtExceptionThunk()
     static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(llint_handle_uncaught_exception, "handle_uncaught_exception"));
+        codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(llint_handle_uncaught_exception, "handle_uncaught_exception"_s));
     });
     return codeRef;
 }
@@ -314,7 +314,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
         static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch"));
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch"_s));
         });
         return codeRef;
     }
@@ -322,7 +322,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
         static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch16"));
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch16"_s));
         });
         return codeRef;
     }
@@ -330,7 +330,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize size)
         static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRef;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch32"));
+            codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(op_catch), "op_catch32"_s));
         });
         return codeRef;
     }
@@ -376,7 +376,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> fuzzerReturnEarlyFromLoopHintThunk()
     static LazyNeverDestroyed<MacroAssemblerCodeRef<JSEntryPtrTag>> codeRef;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        codeRef.construct(generateThunkWithJumpTo<JSEntryPtrTag>(fuzzer_return_early_from_loop_hint, "fuzzer_return_early_from_loop_hint"));
+        codeRef.construct(generateThunkWithJumpTo<JSEntryPtrTag>(fuzzer_return_early_from_loop_hint, "fuzzer_return_early_from_loop_hint"_s));
     });
     return codeRef;
 }
@@ -818,7 +818,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
         static std::once_flag onceKey; \
         std::call_once(onceKey, [&] { \
             if (Options::useJIT()) \
-                codeRef.construct(generateThunkWithJumpTo<JITThunkPtrTag>(target, #target)); \
+                codeRef.construct(generateThunkWithJumpTo<JITThunkPtrTag>(target, #target ""_s)); \
             else \
                 codeRef.construct(getCodeRef<JITThunkPtrTag>(target)); \
         }); \

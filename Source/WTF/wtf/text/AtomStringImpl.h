@@ -49,7 +49,7 @@ public:
     ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral);
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
-    static RefPtr<AtomStringImpl> add(std::span<const char8_t>);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(std::span<const char8_t>);
 
 #if USE(CF)
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(CFStringRef);

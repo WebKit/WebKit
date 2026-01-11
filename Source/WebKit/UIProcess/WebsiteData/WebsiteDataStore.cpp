@@ -2379,7 +2379,7 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDat
 #if PLATFORM(PLAYSTATION)
     return websiteDataDirectoryFileSystemRepresentation("indexeddb"_s, baseDataDirectory);
 #elif USE(GLIB)
-    return websiteDataDirectoryFileSystemRepresentation(String::fromUTF8("databases" G_DIR_SEPARATOR_S "indexeddb"), baseDataDirectory);
+    return websiteDataDirectoryFileSystemRepresentation("databases" G_DIR_SEPARATOR_S "indexeddb"_s, baseDataDirectory);
 #else
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s, baseDataDirectory);
 #endif

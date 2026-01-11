@@ -145,7 +145,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void LibraryPathDiagnosticsLogger::logExecutablePath(void)
 {
-    logString(std::initializer_list<String> { "Path"_s }, FileSystem::realPath(String::fromUTF8(_CFProcessPath())));
+    logString(std::initializer_list<String> { "Path"_s }, FileSystem::realPath(FileSystem::stringFromFileSystemRepresentation(_CFProcessPath())));
 }
 
 void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
@@ -154,7 +154,7 @@ void LibraryPathDiagnosticsLogger::logDYLDSharedCacheInfo(void)
     _dyld_get_shared_cache_uuid(uuid);
 
     auto sharedCacheInfo = JSON::Object::create();
-    sharedCacheInfo->setString("Path"_s, FileSystem::realPath(String::fromUTF8(dyld_shared_cache_file_path())));
+    sharedCacheInfo->setString("Path"_s, FileSystem::realPath(FileSystem::stringFromFileSystemRepresentation(dyld_shared_cache_file_path())));
     sharedCacheInfo->setString("UUID"_s, uuidToString(uuid));
 
     logObject(std::initializer_list<String> { "SharedCache"_s }, WTF::move(sharedCacheInfo));
@@ -200,7 +200,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     auto libraryObject = JSON::Object::create();
 
-    libraryObject->setString("Path"_s, FileSystem::realPath(String::fromUTF8(info.dli_fname)));
+    libraryObject->setString("Path"_s, FileSystem::realPath(FileSystem::stringFromFileSystemRepresentation(info.dli_fname)));
     libraryObject->setString("UUID"_s, uuidToString(uuid));
 
 #if HAVE(SHARED_REGION_SPI)

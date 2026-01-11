@@ -69,7 +69,7 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     if (!browserString)
         return;
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG auto namespaceObject = JSObjectGetProperty(context, globalObject, browserString.get(), nullptr);
     if (namespaceObject && JSValueIsObject(context, namespaceObject))
         return;
@@ -90,11 +90,11 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
 
     namespaceObject = toJS(context, WebExtensionAPINamespace::create(contentWorldType, *extension).ptr());
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, browserString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 
     if (JSRetainPtr chromeString = toJSString("chrome"_s)) {
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     }
 }
@@ -114,7 +114,7 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
     if (!browserString)
         return;
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG auto namespaceObject = JSObjectGetProperty(context, globalObject, browserString.get(), nullptr);
     if (namespaceObject && JSValueIsObject(context, namespaceObject))
         return;
@@ -123,10 +123,10 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 
     namespaceObject = toJS(context, WebExtensionAPINamespace::create(WebExtensionContentWorldType::Main, *extension).ptr());
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, browserString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     if (JSRetainPtr chromeString = toJSString("chrome"_s)) {
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     }
 }
@@ -140,14 +140,14 @@ void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame&
     if (!browserString)
         return;
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG auto namespaceObject = JSObjectGetProperty(context, globalObject, browserString.get(), nullptr);
     if (namespaceObject && JSValueIsObject(context, namespaceObject))
         return;
 
     namespaceObject = toJS(context, WebExtensionAPIWebPageNamespace::create(WebExtensionContentWorldType::WebPage).ptr());
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, browserString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 }
 

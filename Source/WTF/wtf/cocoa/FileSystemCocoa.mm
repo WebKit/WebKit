@@ -155,7 +155,7 @@ std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView su
     if (!fileHandle)
         return { nullString(), FileHandle() };
 
-    return { String::fromUTF8(temporaryFilePath.span().data()), WTF::move(fileHandle) };
+    return { byteCast<char8_t>(temporaryFilePath.span()), WTF::move(fileHandle) };
 }
 
 NSString *createTemporaryDirectory(NSString *directoryPrefix)

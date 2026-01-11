@@ -170,13 +170,13 @@ namespace JSC {
             ret();
         }
         
-        MacroAssemblerCodeRef<JITThunkPtrTag> finalize(CodePtr<JITThunkPtrTag> fallback, const char* thunkKind)
+        MacroAssemblerCodeRef<JITThunkPtrTag> finalize(CodePtr<JITThunkPtrTag> fallback, ASCIILiteral thunkKind)
         {
             m_failures.linkThunk(CodeLocationLabel<JITThunkPtrTag>(fallback), this);
             LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-            return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "Specialized thunk for %s", thunkKind);
+            return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, thunkKind, "Specialized thunk for %s", thunkKind.characters());
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument

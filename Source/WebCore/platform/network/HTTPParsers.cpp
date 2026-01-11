@@ -701,6 +701,11 @@ static inline bool isValidHeaderNameCharacter(CharacterType character)
     }
 }
 
+static bool isValid(std::span<const char8_t> codeUnits)
+{
+    return WTF::Unicode::checkUTF8(codeUnits).characters.size() == codeUnits.size();
+}
+
 size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, StringView& nameStr, String& valueStr, bool strict)
 {
     auto p = data;
@@ -777,8 +782,7 @@ size_t parseHTTPHeader(std::span<const uint8_t> data, String& failureReason, Str
         failureReason = makeString("CR doesn't follow LF after header value at "_s, trimInputSample(p));
         return 0;
     }
-    valueStr = String::fromUTF8(value.span());
-    if (valueStr.isNull()) {
+    if (!isValid(byteCast<char8_t>(value.span()))) {
         failureReason = "Invalid UTF-8 sequence in header value"_s;
         return 0;
     }

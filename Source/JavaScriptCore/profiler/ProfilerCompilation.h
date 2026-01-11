@@ -94,7 +94,7 @@ private:
     unsigned m_numInlinedPutByIds;
     unsigned m_numInlinedCalls;
     JettisonReason m_jettisonReason;
-    CString m_additionalJettisonReason;
+    String m_additionalJettisonReason;
     UID m_uid;
 };
 
