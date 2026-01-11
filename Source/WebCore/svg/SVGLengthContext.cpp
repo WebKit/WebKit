@@ -134,70 +134,46 @@ template<typename SizeType> float SVGLengthContext::valueForSizeType(const SizeT
             return 0;
         }
     );
-
 }
 
-template<typename SizeType> float SVGLengthContext::valueForSizeType(const SizeType& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::PreferredSize& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return WTF::switchOn(size,
-        [&](const typename SizeType::Fixed& fixed) -> float {
-            return Style::evaluate<float>(fixed, zoomNeeded);
-        },
-        [&](const typename SizeType::Percentage& percentage) -> float {
-            auto result = convertValueFromPercentageToUserUnits(percentage.value / 100, lengthMode);
-            if (result.hasException())
-                return 0;
-            return result.releaseReturnValue();
-        },
-        [&](const typename SizeType::Calc& calc) -> float {
-            auto viewportSize = this->viewportSize().value_or(FloatSize { });
-            return Style::evaluate<float>(calc, dimensionForLengthMode(lengthMode, viewportSize), zoomNeeded);
-        },
-        [&](const auto&) -> float {
-            return 0;
-        }
-    );
-
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::PreferredSize& size, Style::ZoomFactor usedZoom, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGCenterCoordinateComponent& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, usedZoom, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGCenterCoordinateComponent& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGCoordinateComponent& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGCoordinateComponent& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGRadius& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGRadius& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGRadiusComponent& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGRadiusComponent& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGStrokeDasharrayValue& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGStrokeDasharrayValue& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::SVGStrokeDashoffset& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::SVGStrokeDashoffset& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomFactor zoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
-}
-
-float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
-{
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, zoom, lengthMode);
 }
 
 float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit unit) const

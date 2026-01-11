@@ -89,7 +89,7 @@ template<> struct Blending<OffsetPosition> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition> {
-    auto operator()(const OffsetPosition&, FloatSize, ZoomNeeded) -> AcceleratedEffectOffsetPosition;
+    auto operator()(const OffsetPosition&, FloatSize, ZoomFactor) -> AcceleratedEffectOffsetPosition;
 };
 
 #endif

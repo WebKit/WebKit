@@ -408,7 +408,7 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
     for (auto& gridItem : placedGridItems) {
         auto& gridItemBoxGeometry = formattingContext.geometryForGridItem(gridItem.layoutBox());
 
-        auto columnsGap = GridLayoutUtils::computeGapValue(formattingContext.root().style().columnGap());
+        auto columnsGap = GridLayoutUtils::computeGapValue(formattingContext.root().style().columnGap(), formattingContext.root().style().usedZoomForLength());
         auto usedInlineSizeForGridItem = GridLayoutUtils::usedInlineSizeForGridItem(gridItem, gridItemBoxGeometry.horizontalBorderAndPadding(), usedTrackSizes.columnSizes, columnsGap);
         usedInlineSizes.append(usedInlineSizeForGridItem);
 

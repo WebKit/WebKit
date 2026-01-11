@@ -43,20 +43,20 @@ namespace Style {
 // translateZ() = translateZ( <length> )
 // https://drafts.csswg.org/css-transforms-2/#funcdef-translatez
 
-struct TranslateLengthPercentage : LengthWrapperBase<LengthPercentage<>> {
+struct TranslateLengthPercentage : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 
 class TranslateTransformFunction final : public TransformFunctionBase {
 public:
     using LengthPercentage = Style::TranslateLengthPercentage;
-    using Length = Style::Length<>;
+    using Length = Style::Length<CSS::AllUnzoomed>;
 
     static Ref<const TranslateTransformFunction> create(const LengthPercentage&, const LengthPercentage&, TransformFunctionBase::Type);
     static Ref<const TranslateTransformFunction> create(const LengthPercentage&, const LengthPercentage&, const Length&, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
-    Ref<TransformOperation> toPlatform(const FloatSize&) const override;
+    Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;
 
     TransformFunctionBase::Type primitiveType() const override { return isRepresentableIn2D() ? Type::Translate : Type::Translate3D; }
 
@@ -72,7 +72,7 @@ public:
     bool operator==(const TranslateTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void apply(TransformationMatrix&, const FloatSize& borderBoxSize, ZoomFactor) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 

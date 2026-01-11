@@ -180,7 +180,7 @@ inline TransformStyle3D RenderStyle::usedTransformStyle3D() const
 
 inline float RenderStyle::usedPerspective() const
 {
-    return perspective().usedPerspective();
+    return perspective().usedPerspective(usedZoomForLength());
 }
 
 inline Visibility RenderStyle::usedVisibility() const
@@ -758,7 +758,7 @@ inline bool RenderStyle::hasOutline() const
 
 inline bool RenderStyle::hasOutlineInVisualOverflow() const
 {
-    return hasOutline() && usedOutlineSize() > 0;
+    return hasOutline() && (usedOutlineWidth().unresolvedValue() + usedOutlineOffset().unresolvedValue()) > 0;
 }
 
 inline bool RenderStyle::hasOutOfFlowPosition() const

@@ -73,7 +73,7 @@ template<> struct Blending<BasicShape> {
 
 // MARK: - Path
 
-template<> struct PathComputation<BasicShape> { WebCore::Path operator()(const BasicShape&, const FloatRect&); };
+template<> struct PathComputation<BasicShape> { WebCore::Path operator()(const BasicShape&, const FloatRect&, ZoomFactor); };
 
 // MARK: - Winding
 

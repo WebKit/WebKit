@@ -46,6 +46,7 @@
 #include "StyleMatrixTransformFunction.h"
 #include "StylePerspectiveTransformFunction.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueCreation.h"
 #include "StylePrimitiveNumericTypes+Serialization.h"
 #include "StyleRotateTransformFunction.h"
@@ -57,29 +58,22 @@
 namespace WebCore {
 namespace Style {
 
-static TranslateTransformFunction::LengthPercentage resolveAsTranslateLengthPercentage(const CSSPrimitiveValue& primitiveValue, BuilderState& state)
+template<typename T>
+static T resolveForTranslate(const CSSPrimitiveValue& primitiveValue, BuilderState& state)
 {
-    // FIXME: This should use `toStyleFromCSSValue<TranslateTransformFunction::LengthPercentage>`, but doing so breaks transforms/hittest-translated-content-off-to-infinity-and-back.html, due to it clamping between minValueForCssLength/maxValueForCssLength.
+    // FIXME: This should use `toStyleFromCSSValue<TranslateTransformFunction::LengthPercentage/Length>`, but doing so breaks transforms/hittest-translated-content-off-to-infinity-and-back.html, due to it clamping between minValueForCssLength/maxValueForCssLength.
 
-    auto& conversionData = state.cssToLengthConversionData();
-    if (primitiveValue.isLength())
-        return TranslateTransformFunction::LengthPercentage::Fixed { static_cast<float>(primitiveValue.resolveAsLength<double>(conversionData)) };
-    if (primitiveValue.isPercentage())
-        return TranslateTransformFunction::LengthPercentage::Percentage { static_cast<float>(primitiveValue.resolveAsPercentage<double>(conversionData)) };
-    if (primitiveValue.isCalculated())
-        return TranslateTransformFunction::LengthPercentage::Calc { primitiveValue.protectedCssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
-
-    state.setCurrentPropertyInvalidAtComputedValueTime();
-    return 0_css_px;
-}
-
-static TranslateTransformFunction::Length resolveAsTranslateLength(const CSSPrimitiveValue& primitiveValue, BuilderState& state)
-{
-    // FIXME: This should use `toStyleFromCSSValue<TranslateTransformFunction::Length>`, but doing so breaks transforms/hittest-translated-content-off-to-infinity-and-back.html, due to it clamping between minValueForCssLength/maxValueForCssLength.
-
-    auto& conversionData = state.cssToLengthConversionData();
-    if (primitiveValue.isLength())
-        return TranslateTransformFunction::Length { static_cast<float>(primitiveValue.resolveAsLength<double>(conversionData)) };
+    if constexpr (std::same_as<T, TranslateTransformFunction::LengthPercentage>) {
+        if (primitiveValue.isLength())
+            return typename T::Fixed { static_cast<float>(primitiveValue.resolveAsLength<double>(CSSValueConversion<T>::selectConversionData(state))) };
+        if (primitiveValue.isPercentage())
+            return typename T::Percentage { static_cast<float>(primitiveValue.resolveAsPercentage<double>(CSSValueConversion<T>::selectConversionData(state))) };
+        if (primitiveValue.isCalculated())
+            return typename T::Calc { primitiveValue.protectedCssCalcValue()->createCalculationValue(CSSValueConversion<T>::selectConversionData(state), CSSCalcSymbolTable { }) };
+    } else if constexpr (std::same_as<T, TranslateTransformFunction::Length>) {
+        if (primitiveValue.isLength())
+            return T { static_cast<float>(primitiveValue.resolveAsLength<double>(CSSValueConversion<T>::selectConversionData(state))) };
+    }
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
     return 0_css_px;
@@ -96,14 +90,25 @@ static RefPtr<const TransformFunctionBase> createMatrixTransformFunction(const C
     if (!function)
         return { };
 
-    auto zoom = state.cssToLengthConversionData().zoom();
+    if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled()) {
+        auto zoom = conversionData.zoom();
+        return MatrixTransformFunction::create(
+            toStyleFromCSSValue<Number<>>(state, function->item(0)).value,
+            toStyleFromCSSValue<Number<>>(state, function->item(1)).value,
+            toStyleFromCSSValue<Number<>>(state, function->item(2)).value,
+            toStyleFromCSSValue<Number<>>(state, function->item(3)).value,
+            toStyleFromCSSValue<Number<>>(state, function->item(4)).value * zoom,
+            toStyleFromCSSValue<Number<>>(state, function->item(5)).value * zoom
+        );
+    }
+
     return MatrixTransformFunction::create(
         toStyleFromCSSValue<Number<>>(state, function->item(0)).value,
         toStyleFromCSSValue<Number<>>(state, function->item(1)).value,
         toStyleFromCSSValue<Number<>>(state, function->item(2)).value,
         toStyleFromCSSValue<Number<>>(state, function->item(3)).value,
-        toStyleFromCSSValue<Number<>>(state, function->item(4)).value * zoom,
-        toStyleFromCSSValue<Number<>>(state, function->item(5)).value * zoom
+        toStyleFromCSSValue<Number<>>(state, function->item(4)).value,
+        toStyleFromCSSValue<Number<>>(state, function->item(5)).value
     );
 }
 
@@ -134,7 +139,9 @@ static RefPtr<const TransformFunctionBase> createMatrix3dTransformFunction(const
         toStyleFromCSSValue<Number<>>(state, function->item(14)).value,
         toStyleFromCSSValue<Number<>>(state, function->item(15)).value
     );
-    matrix.zoom(state.cssToLengthConversionData().zoom());
+
+    if (auto conversionData = state.cssToLengthConversionData(); !conversionData.evaluationTimeZoomEnabled())
+        matrix.zoom(conversionData.zoom());
 
     return Matrix3DTransformFunction::create(WTF::move(matrix));
 }
@@ -368,8 +375,8 @@ static RefPtr<const TransformFunctionBase> createTranslateTransformFunction(cons
     if (!function)
         return { };
 
-    auto tx = resolveAsTranslateLengthPercentage(function->item(0), state);
-    auto ty = function->size() > 1 ? resolveAsTranslateLengthPercentage(function->item(1), state) : TranslateTransformFunction::LengthPercentage { 0_css_px };
+    auto tx = resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(0), state);
+    auto ty = function->size() > 1 ? resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(1), state) : TranslateTransformFunction::LengthPercentage { 0_css_px };
     auto tz = 0_css_px;
 
     return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::Translate);
@@ -384,9 +391,9 @@ static RefPtr<const TransformFunctionBase> createTranslate3dTransformFunction(co
     if (!function)
         return { };
 
-    auto tx = resolveAsTranslateLengthPercentage(function->item(0), state);
-    auto ty = resolveAsTranslateLengthPercentage(function->item(1), state);
-    auto tz = resolveAsTranslateLength(function->item(2), state);
+    auto tx = resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(0), state);
+    auto ty = resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(1), state);
+    auto tz = resolveForTranslate<TranslateTransformFunction::Length>(function->item(2), state);
 
     return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::Translate3D);
 }
@@ -400,7 +407,7 @@ static RefPtr<const TransformFunctionBase> createTranslateXTransformFunction(con
     if (!function)
         return { };
 
-    auto tx = resolveAsTranslateLengthPercentage(function->item(0), state);
+    auto tx = resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(0), state);
     auto ty = 0_css_px;
     auto tz = 0_css_px;
 
@@ -417,7 +424,7 @@ static RefPtr<const TransformFunctionBase> createTranslateYTransformFunction(con
         return { };
 
     auto tx = 0_css_px;
-    auto ty = resolveAsTranslateLengthPercentage(function->item(0), state);
+    auto ty = resolveForTranslate<TranslateTransformFunction::LengthPercentage>(function->item(0), state);
     auto tz = 0_css_px;
 
     return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::TranslateY);
@@ -434,7 +441,7 @@ static RefPtr<const TransformFunctionBase> createTranslateZTransformFunction(con
 
     auto tx = 0_css_px;
     auto ty = 0_css_px;
-    auto tz = resolveAsTranslateLength(function->item(0), state);
+    auto tz = resolveForTranslate<TranslateTransformFunction::Length>(function->item(0), state);
 
     return TranslateTransformFunction::create(WTF::move(tx), WTF::move(ty), WTF::move(tz), TransformFunctionType::TranslateZ);
 }
@@ -457,11 +464,11 @@ static RefPtr<const TransformFunctionBase> createPerspectiveTransformFunction(co
     }
 
     if (parameter.isLength())
-        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::Nonnegative>>(state, parameter));
+        return PerspectiveTransformFunction::create(toStyleFromCSSValue<Length<CSS::NonnegativeUnzoomed>>(state, parameter));
 
     // FIXME: Support for <number> parameters for `perspective` is a quirk that should go away when 3d transforms are finalized.
     return PerspectiveTransformFunction::create(
-        Length<CSS::Nonnegative> {
+        Length<CSS::NonnegativeUnzoomed> {
             static_cast<float>(toStyleFromCSSValue<Number<CSS::Nonnegative>>(state, parameter).value)
         }
     );
@@ -632,7 +639,7 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const R
     case TransformFunctionType::Matrix:
     case TransformFunctionType::Matrix3D: {
         TransformationMatrix transform;
-        function.apply(transform, { });
+        function.apply(transform, { }, ZoomFactor { 1 });
         return createCSSValue(pool, style, transform);
     }
     }
@@ -643,21 +650,40 @@ auto CSSValueCreation<TransformFunction>::operator()(CSSValuePool& pool, const R
 
 auto CSSValueCreation<TransformationMatrix>::operator()(CSSValuePool&, const RenderStyle& style, const TransformationMatrix& transform) -> Ref<CSSValue>
 {
-    auto zoom = style.usedZoom();
     if (transform.isAffine()) {
-        double values[] = { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
+        auto values = [&] -> std::array<double, 6> {
+            if (!style.evaluationTimeZoomEnabled()) {
+                auto zoom = style.usedZoom();
+                return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
+            }
+            return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
+        }();
+
         CSSValueListBuilder arguments;
         for (auto value : values)
             arguments.append(CSSPrimitiveValue::create(value));
         return CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments));
     }
 
-    double values[] = {
-        transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
-        transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
-        transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
-        transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44()
-    };
+    auto values = [&] -> std::array<double, 16> {
+        if (!style.evaluationTimeZoomEnabled()) {
+            auto zoom = style.usedZoom();
+            return {
+                transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
+                transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
+                transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
+                transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44(),
+            };
+        }
+
+        return {
+            transform.m11(), transform.m12(), transform.m13(), transform.m14(),
+            transform.m21(), transform.m22(), transform.m23(), transform.m24(),
+            transform.m31(), transform.m32(), transform.m33(), transform.m34(),
+            transform.m41(), transform.m42(), transform.m43(), transform.m44(),
+        };
+    }();
+
     CSSValueListBuilder arguments;
     for (auto value : values)
         arguments.append(CSSPrimitiveValue::create(value));
@@ -829,7 +855,7 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
     case TransformFunctionType::Matrix:
     case TransformFunctionType::Matrix3D: {
         TransformationMatrix transform;
-        function.apply(transform, { });
+        function.apply(transform, { }, ZoomFactor { 1 });
         serializationForCSS(builder, context, style, transform);
         return;
     }
@@ -840,21 +866,38 @@ void Serialize<TransformFunction>::operator()(StringBuilder& builder, const CSS:
 
 void Serialize<TransformationMatrix>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, const TransformationMatrix& transform)
 {
-    auto zoom = style.usedZoom();
     if (transform.isAffine()) {
-        std::array values { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
+        auto values = [&] -> std::array<double, 6> {
+            if (!style.evaluationTimeZoomEnabled()) {
+                auto zoom = style.usedZoom();
+                return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
+            }
+            return { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
+        }();
         builder.append(nameLiteral(CSSValueMatrix), '(', interleave(values, [&](auto& builder, auto& value) {
             CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { value });
         }, ", "_s), ')');
         return;
     }
 
-    std::array values {
-        transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
-        transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
-        transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
-        transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44()
-    };
+    auto values = [&] -> std::array<double, 16> {
+        if (!style.evaluationTimeZoomEnabled()) {
+            auto zoom = style.usedZoom();
+            return {
+                transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
+                transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
+                transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
+                transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44(),
+            };
+        }
+
+        return {
+            transform.m11(), transform.m12(), transform.m13(), transform.m14(),
+            transform.m21(), transform.m22(), transform.m23(), transform.m24(),
+            transform.m31(), transform.m32(), transform.m33(), transform.m34(),
+            transform.m41(), transform.m42(), transform.m43(), transform.m44(),
+        };
+    }();
     builder.append(nameLiteral(CSSValueMatrix3d), '(', interleave(values, [&](auto& builder, auto& value) {
         CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { value });
     }, ", "_s), ')');
@@ -869,9 +912,9 @@ auto Blending<TransformFunction>::blend(const TransformFunction& from, const Tra
 
 // MARK: - Platform
 
-auto ToPlatform<TransformFunction>::operator()(const TransformFunction& value, const FloatSize& size) -> Ref<TransformOperation>
+auto ToPlatform<TransformFunction>::operator()(const TransformFunction& value, const FloatSize& size, ZoomFactor zoom) -> Ref<TransformOperation>
 {
-    return value.value->toPlatform(size);
+    return value.value->toPlatform(size, zoom);
 }
 
 // MARK: - Logging

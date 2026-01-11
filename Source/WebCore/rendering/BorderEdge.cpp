@@ -52,7 +52,7 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
 {
     auto constructBorderEdge = [&]<CSSPropertyID borderColorProperty>(const RenderStyle& style, Style::LineWidth width, float inflation, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : Style::ColorPropertyResolver<Style::ColorPropertyTraits<PropertyNameConstant<borderColorProperty>>> { style }.visitedDependentColorApplyingColorFilter();
-        auto evaluatedWidth = Style::evaluate<float>(width, Style::ZoomNeeded { });
+        auto evaluatedWidth = Style::evaluate<float>(width, style.usedZoomForLength(), deviceScaleFactor);
         auto inflatedWidth = evaluatedWidth ? evaluatedWidth + inflation : evaluatedWidth;
         return BorderEdge(inflatedWidth, color, borderStyle, !setColorsToBlack && isTransparent, isPresent, deviceScaleFactor);
     };
@@ -69,7 +69,7 @@ BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderSt
 {
     auto color = style.visitedDependentOutlineColorApplyingColorFilter();
     auto isTransparent = color.isValid() && !color.isVisible();
-    auto size = Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { });
+    auto size = Style::evaluate<float>(style.usedOutlineWidth(), style.usedZoomForLength(), deviceScaleFactor);
     return {
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },

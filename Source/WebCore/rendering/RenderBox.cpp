@@ -938,8 +938,8 @@ int RenderBox::reflectionOffset() const
     if (!reflection)
         return 0;
     if (reflection->direction == ReflectionDirection::Left || reflection->direction == ReflectionDirection::Right)
-        return Style::evaluate<int>(reflection->offset, borderBoxRect().width(), Style::ZoomNeeded { });
-    return Style::evaluate<int>(reflection->offset, borderBoxRect().height(), Style::ZoomNeeded { });
+        return Style::evaluate<int>(reflection->offset, borderBoxRect().width(), style().usedZoomForLength());
+    return Style::evaluate<int>(reflection->offset, borderBoxRect().height(), style().usedZoomForLength());
 }
 
 LayoutRect RenderBox::reflectedRect(const LayoutRect& r) const
@@ -1294,10 +1294,10 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
         auto borderWidths = this->borderWidths();
         clipRect.contract(borderWidths);
         auto scrollMarginEdges = LayoutBoxExtent {
-            Style::evaluate<LayoutUnit>(context.scrollMargin->top(), clipRect.height(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->right(), clipRect.width(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->bottom(), clipRect.height(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(context.scrollMargin->left(), clipRect.width(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(context.scrollMargin->top(), clipRect.height(), Style::ZoomFactor { 1 }), // FIXME: Is this right?
+            Style::evaluate<LayoutUnit>(context.scrollMargin->right(), clipRect.width(), Style::ZoomFactor { 1 }),
+            Style::evaluate<LayoutUnit>(context.scrollMargin->bottom(), clipRect.height(), Style::ZoomFactor { 1 }),
+            Style::evaluate<LayoutUnit>(context.scrollMargin->left(), clipRect.width(), Style::ZoomFactor { 1 }),
         };
 
         clipRect.expand(scrollMarginEdges);
@@ -1505,19 +1505,9 @@ bool RenderBox::hasTrimmedMargin(std::optional<Style::MarginTrimSide> marginTrim
     return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
 }
 
-LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const
-{
-    auto width = LayoutUnit { logicalWidth.resolveZoom(Style::ZoomNeeded { }) };
-    auto bordersPlusPadding = borderAndPaddingLogicalWidth();
-    if (style().boxSizing() == BoxSizing::ContentBox)
-        return width + bordersPlusPadding;
-    return std::max(width, bordersPlusPadding);
-}
-
-
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const
 {
-    auto width = LayoutUnit { logicalWidth.resolveZoom(style().usedZoomForLength()) };
+    auto width = Style::evaluate<LayoutUnit>(logicalWidth, style().usedZoomForLength());
     auto bordersPlusPadding = borderAndPaddingLogicalWidth();
     if (style().boxSizing() == BoxSizing::ContentBox)
         return width + bordersPlusPadding;
@@ -1540,17 +1530,9 @@ LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height
     return std::max(height, bordersPlusPadding);
 }
 
-LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const
-{
-    auto width = LayoutUnit { logicalWidth.resolveZoom(Style::ZoomNeeded { }) };
-    if (style().boxSizing() == BoxSizing::ContentBox)
-        return std::max(0_lu, width);
-    return std::max(0_lu, width - borderAndPaddingLogicalWidth());
-}
-
 LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const
 {
-    auto width = LayoutUnit { logicalWidth.resolveZoom(style().usedZoomForLength()) };
+    auto width = Style::evaluate<LayoutUnit>(logicalWidth, style().usedZoomForLength());
     if (style().boxSizing() == BoxSizing::ContentBox)
         return std::max(0_lu, width);
     return std::max(0_lu, width - borderAndPaddingLogicalWidth());
@@ -1608,7 +1590,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
     return WTF::switchOn(style().clipPath(),
         [&](const Style::BasicShapePath& clipPath) {
             auto& shape = clipPath.shape();
-            auto path = Style::path(shape, referenceBoxRect(clipPath.referenceBox()));
+            auto path = Style::path(shape, referenceBoxRect(clipPath.referenceBox()), style().usedZoomForLength());
             return path.contains(hitTestLocationInLocalCoordinates, Style::windRule(shape));
         },
         [&](const Style::ReferencePath& clipPath) {
@@ -1837,7 +1819,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
         return true;
     }
 
-    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, layers.usedFirst(), paintOffset, backgroundRect);
+    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, layers.usedFirst(), style().usedZoomForLength(), paintOffset, backgroundRect);
     paintedExtent = geometry.destinationRect;
     return !geometry.hasNonLocalGeometry;
 }
@@ -2036,7 +2018,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     }
 
     if (allMaskImagesLoaded) {
-        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BleedAvoidance::None, compositeOp);
+        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), style().usedZoomForLength(), paintRect, BleedAvoidance::None, compositeOp);
         BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBorder(), compositeOp);
     }
     
@@ -2051,16 +2033,17 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
         LayoutRect borderImageRect = borderBoxRect();
         
         // Apply outsets to the border box.
-        borderImageRect.expand(style().maskBorderOutsets());
+        borderImageRect.expand(style().maskBorderOutsets(document().deviceScaleFactor()));
         return borderImageRect;
     }
-    
+
+    auto zoom = style().usedZoomForLength();
     LayoutRect result;
     LayoutRect borderBox = borderBoxRect();
     for (auto& maskLayer : style().maskLayers().usedValues()) {
         if (maskLayer.hasImage()) {
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
-            result.unite(BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, maskLayer, paintOffset, borderBox).destinationRect);
+            result.unite(BackgroundPainter::calculateFillLayerImageGeometry(*this, nullptr, maskLayer, zoom, paintOffset, borderBox).destinationRect);
         }
     }
     return result;
@@ -2094,9 +2077,9 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
             return;
 
         if (!didFullRepaint)
-            didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), true);
+            didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), style.usedZoomForLength(), true);
         if (!didFullRepaint)
-            didFullRepaint = repaintLayerRectsForImage(image, style.maskLayers(), false);
+            didFullRepaint = repaintLayerRectsForImage(image, style.maskLayers(), style.usedZoomForLength(), false);
     };
 
     repaintForBackgroundAndMask(style());
@@ -2132,7 +2115,7 @@ void RenderBox::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
 }
 
 template<typename Layers>
-bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& layers, bool drawingBackground)
+bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& layers, Style::ZoomFactor zoom, bool drawingBackground)
 {
     LayoutRect rendererRect;
     RenderBox* layerRenderer = nullptr;
@@ -2167,7 +2150,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
                 }
             }
             // FIXME: Figure out how to pass absolute position to calculateFillLayerImageGeometry (for pixel snapping)
-            auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*layerRenderer, nullptr, layer, LayoutPoint(), rendererRect);
+            auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*layerRenderer, nullptr, layer, zoom, LayoutPoint(), rendererRect);
             if (geometry.hasNonLocalGeometry) {
                 // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
                 // in order to get the right destRect, just repaint the entire renderer.
@@ -2292,8 +2275,10 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
             return clipRect;
         },
         [&](const Style::ClipRect& rect) {
+            auto zoom = style().usedZoomForLength();
+
             if (auto clipLeft = rect.value->left().tryLength()) {
-                auto c = LayoutUnit { clipLeft->resolveZoom(Style::ZoomNeeded { }) };
+                auto c = Style::evaluate<LayoutUnit>(*clipLeft, zoom);
                 clipRect.move(c, 0_lu);
                 clipRect.contract(c, 0_lu);
             }
@@ -2302,16 +2287,16 @@ LayoutRect RenderBox::clipRect(const LayoutPoint& location) const
             // from the left and top edges. Therefore it's better to avoid constraining to smaller widths and heights.
 
             if (auto clipRight = rect.value->right().tryLength())
-                clipRect.contract(width() - LayoutUnit { clipRight->resolveZoom(Style::ZoomNeeded { }) }, 0_lu);
+                clipRect.contract(width() - Style::evaluate<LayoutUnit>(*clipRight, zoom), 0_lu);
 
             if (auto clipTop = rect.value->top().tryLength()) {
-                auto c = LayoutUnit { clipTop->resolveZoom(Style::ZoomNeeded { }) };
+                auto c = Style::evaluate<LayoutUnit>(*clipTop, zoom);
                 clipRect.move(0_lu, c);
                 clipRect.contract(0_lu, c);
             }
 
             if (auto clipBottom = rect.value->bottom().tryLength())
-                clipRect.contract(0_lu, height() - LayoutUnit { clipBottom->resolveZoom(Style::ZoomNeeded { }) });
+                clipRect.contract(0_lu, height() - Style::evaluate<LayoutUnit>(*clipBottom, zoom));
 
             return clipRect;
         }
@@ -4453,7 +4438,7 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
 
     // Now compute border-image-outset overflow.
     if (style().hasBorderImageOutsets()) {
-        auto borderOutsets = style().borderImageOutsets();
+        auto borderOutsets = style().borderImageOutsets(document().deviceScaleFactor());
         convertOutsetsToOverflowCoordinates(borderOutsets, writingMode());
 
         overflowMinX = std::min(overflowMinX, borderBox.x() - borderOutsets.left());
@@ -4463,7 +4448,7 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
     }
 
     if (outlineStyleForRepaint().hasOutlineInVisualOverflow()) {
-        LayoutUnit outlineSize { outlineStyleForRepaint().usedOutlineSize() };
+        LayoutUnit outlineSize { outlineStyleForRepaint().usedOutlineSize(document().deviceScaleFactor()) };
         overflowMinX = std::min(overflowMinX, borderBox.x() - outlineSize);
         overflowMaxX = std::max(overflowMaxX, borderBox.maxX() + outlineSize);
         overflowMinY = std::min(overflowMinY, borderBox.y() - outlineSize);
@@ -5122,7 +5107,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
     }
 
     if (auto length = containIntrinsicWidth.tryLength())
-        return LayoutUnit { length->resolveZoom(Style::ZoomNeeded { }) };
+        return Style::evaluate<LayoutUnit>(*length, style().usedZoomForLength());
 
     ASSERT(containIntrinsicWidth.isAutoAndNone());
     return { };
@@ -5145,7 +5130,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     }
 
     if (auto length = containIntrinsicHeight.tryLength())
-        return LayoutUnit { length->resolveZoom(Style::ZoomNeeded { }) };
+        return Style::evaluate<LayoutUnit>(*length, style().usedZoomForLength());
 
     ASSERT(containIntrinsicHeight.isAutoAndNone());
     return { };

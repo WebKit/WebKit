@@ -42,24 +42,20 @@ auto CSSValueConversion<Perspective>::operator()(BuilderState& state, const CSSV
     if (primitiveValue->valueID() == CSSValueNone)
         return CSS::Keyword::None { };
 
-    auto& conversionData = state.cssToLengthConversionData();
+    if (primitiveValue->isLength())
+        return toStyleFromCSSValue<Perspective::Length>(state, *primitiveValue);
 
-    // NOTE: The isNumber() case below is only possible due to the `-webkit-perspective` legacy shorthand
+    // NOTE: The isNumber() case is only possible due to the `-webkit-perspective` legacy shorthand
     // which extends the grammar to `<'perspective'> | <number [0,inf]>`.
 
-    float perspective = -1;
-    if (primitiveValue->isLength())
-        perspective = primitiveValue->resolveAsLength<float>(conversionData);
-    else if (primitiveValue->isNumber())
-        perspective = primitiveValue->resolveAsNumber<float>(conversionData) * conversionData.zoom();
-    else
-        ASSERT_NOT_REACHED();
+    if (primitiveValue->isNumber()) {
+        if (!state.cssToLengthConversionData().evaluationTimeZoomEnabled())
+            return Perspective::Length { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value * state.cssToLengthConversionData().zoom() };
+        return Perspective::Length { toStyleFromCSSValue<Number<CSS::Nonnegative, float>>(state, *primitiveValue).value };
+    }
 
-    // FIXME: This should probably clamp to 0, like other numeric values would, rather than return CSS::Keyword::None.
-    if (perspective < 0)
-        return CSS::Keyword::None { };
-
-    return Style::Perspective::Length { perspective };
+    state.setCurrentPropertyInvalidAtComputedValueTime();
+    return CSS::Keyword::None { };
 }
 
 // MARK: - Blending

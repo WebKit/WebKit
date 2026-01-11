@@ -87,11 +87,11 @@ auto Blending<OffsetAnchor>::blend(const OffsetAnchor& a, const OffsetAnchor& b,
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-auto Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor>::operator()(const OffsetAnchor& value, FloatSize referenceBox, ZoomNeeded token) -> AcceleratedEffectOffsetAnchor
+auto Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor>::operator()(const OffsetAnchor& value, FloatSize referenceBox, ZoomFactor zoom) -> AcceleratedEffectOffsetAnchor
 {
     return WTF::switchOn(value,
         [&](const Position& position) -> AcceleratedEffectOffsetAnchor {
-            return { .value = evaluate<FloatPoint>(position, referenceBox, token) };
+            return { .value = evaluate<FloatPoint>(position, referenceBox, zoom) };
         },
         [](const CSS::Keyword::Auto&) -> AcceleratedEffectOffsetAnchor {
             return { .value = std::nullopt };

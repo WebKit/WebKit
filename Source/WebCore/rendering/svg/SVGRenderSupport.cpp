@@ -87,7 +87,7 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
         return FloatRect();
 
     FloatRect adjustedRect = rect;
-    adjustedRect.inflate(Style::evaluate<float>(renderer.style().usedOutlineWidth(), Style::ZoomNeeded { }));
+    adjustedRect.inflate(Style::evaluate<float>(renderer.style().usedOutlineWidth(), renderer.style().usedZoomForLength(), renderer.document().deviceScaleFactor()));
 
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);
@@ -457,7 +457,7 @@ inline bool isPointInCSSClippingArea(const RenderElement& renderer, const FloatP
             auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
             if (!referenceBox.contains(point))
                 return false;
-            return Style::path(clipPath.shape(), referenceBox).contains(point, Style::windRule(clipPath.shape()));
+            return Style::path(clipPath.shape(), referenceBox, renderer.style().usedZoomForLength()).contains(point, Style::windRule(clipPath.shape()));
         },
         [&](const Style::BoxPath& clipPath) {
             auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
@@ -480,7 +480,7 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
             auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
             referenceBox = localToParentTransform.mapRect(referenceBox);
 
-            auto path = Style::path(clipPath.shape(), referenceBox);
+            auto path = Style::path(clipPath.shape(), referenceBox, renderer.style().usedZoomForLength());
             path.transform(valueOrDefault(localToParentTransform.inverse()));
 
             context.clipPath(path, Style::windRule(clipPath.shape()));
@@ -520,8 +520,9 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
         return;
     }
 
+    auto zoom = style.usedZoomForLength();
     SVGLengthContext lengthContext(element.get());
-    context.setStrokeThickness(lengthContext.valueForLength(style.strokeWidth(), Style::ZoomNeeded { }));
+    context.setStrokeThickness(lengthContext.valueForLength(style.strokeWidth(), zoom));
     context.setLineCap(style.capStyle());
     context.setLineJoin(style.joinStyle());
     if (style.joinStyle() == LineJoin::Miter)
@@ -546,14 +547,14 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
         
         bool canSetLineDash = false;
         auto dashArray = DashArray::map(dashes, [&](auto& dash) -> DashArrayElement {
-            auto value = lengthContext.valueForLength(dash, Style::ZoomNeeded { }) * scaleFactor;
+            auto value = lengthContext.valueForLength(dash, zoom) * scaleFactor;
             if (value > 0)
                 canSetLineDash = true;
             return value;
         });
 
         if (canSetLineDash)
-            context.setLineDash(dashArray, lengthContext.valueForLength(style.strokeDashOffset(), Style::ZoomNeeded { }) * scaleFactor);
+            context.setLineDash(dashArray, lengthContext.valueForLength(style.strokeDashOffset(), zoom) * scaleFactor);
         else
             context.setStrokeStyle(StrokeStyle::SolidStroke);
     }

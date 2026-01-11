@@ -26,6 +26,7 @@
 
 #include <WebCore/StyleTransformList.h>
 #include <WebCore/StyleValueTypes.h>
+#include <WebCore/StyleZoomPrimitives.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ struct Transform : ListOrNone<TransformList> {
     template<TransformFunctionType operationType>
     bool hasTransformOfType() const;
 
-    void apply(TransformationMatrix&, const FloatSize&, unsigned start = 0) const;
+    void apply(TransformationMatrix&, const FloatSize&, ZoomFactor, unsigned start = 0) const;
 
     // Return true if any of the operation types are 3D operation types (even if the
     // values describe affine transforms)
@@ -75,9 +76,9 @@ bool Transform::hasTransformOfType() const
     return m_value.hasTransformOfType<operationType>();
 }
 
-inline void Transform::apply(TransformationMatrix& matrix, const FloatSize& size, unsigned start) const
+inline void Transform::apply(TransformationMatrix& matrix, const FloatSize& size, ZoomFactor zoom, unsigned start) const
 {
-    m_value.apply(matrix, size, start);
+    m_value.apply(matrix, size, zoom, start);
 }
 
 inline bool Transform::has3DOperation() const
@@ -120,7 +121,7 @@ template<> struct Blending<Transform> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Transform> { auto operator()(const Transform&, const FloatSize&) -> TransformOperations; };
+template<> struct ToPlatform<Transform> { auto operator()(const Transform&, const FloatSize&, ZoomFactor) -> TransformOperations; };
 
 } // namespace Style
 } // namespace WebCore

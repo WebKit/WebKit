@@ -3049,7 +3049,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
     auto& backgroundLayer = style.backgroundLayers().usedFirst();
     auto backgroundBox = LayoutRect { backgroundBoxForSimpleContainerPainting() };
     // FIXME: Absolute paint location is required here.
-    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*renderBox(), renderBox(), backgroundLayer, { }, backgroundBox);
+    auto geometry = BackgroundPainter::calculateFillLayerImageGeometry(*renderBox(), renderBox(), backgroundLayer, style.usedZoomForLength(), { }, backgroundBox);
 
     m_graphicsLayer->setContentsTileSize(geometry.tileSize);
     m_graphicsLayer->setContentsTilePhase(geometry.phase);
@@ -4436,24 +4436,25 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const GraphicsLayerAn
 
     for (auto& currentKeyframe : keyframes) {
         const RenderStyle* keyframeStyle = currentKeyframe.style();
-        double offset = currentKeyframe.offset();
 
         if (!keyframeStyle)
             continue;
 
+        double offset = currentKeyframe.offset();
         auto* tf = currentKeyframe.timingFunction();
+        auto zoom = keyframeStyle->usedZoomForLength();
 
         if (currentKeyframe.animatesProperty(CSSPropertyRotate))
-            rotateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->rotate(), referenceBoxRect.size()).get(), tf));
+            rotateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->rotate(), referenceBoxRect.size(), zoom).get(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyScale))
-            scaleVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->scale(), referenceBoxRect.size()).get(), tf));
+            scaleVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->scale(), referenceBoxRect.size(), zoom).get(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTranslate))
-            translateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->translate(), referenceBoxRect.size()).get(), tf));
+            translateVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->translate(), referenceBoxRect.size(), zoom).get(), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTransform))
-            transformVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->transform(), referenceBoxRect.size()), tf));
+            transformVector.insert(makeUnique<GraphicsLayerTransformAnimationValue>(offset, Style::toPlatform(keyframeStyle->transform(), referenceBoxRect.size(), zoom), tf));
 
         if (currentKeyframe.animatesProperty(CSSPropertyOpacity))
             opacityVector.insert(makeUnique<GraphicsLayerFloatAnimationValue>(offset, keyframeStyle->opacity().value.value, tf));
@@ -4773,7 +4774,7 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     TransformationMatrix matrix;
 
     auto applyTransformOperation = [&](const auto& operation) {
-        operation.apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
+        operation.apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size(), renderer().style().usedZoomForLength());
     };
 
     if (property == AnimatedProperty::Translate)

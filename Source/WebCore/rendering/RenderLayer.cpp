@@ -2282,7 +2282,7 @@ FloatPoint RenderLayer::perspectiveOrigin() const
 {
     if (!renderer().hasTransformRelatedProperty())
         return { };
-    return Style::evaluate<FloatPoint>(renderer().style().perspectiveOrigin(), renderer().transformReferenceBoxRect(renderer().style()).size(), Style::ZoomNeeded { });
+    return Style::evaluate<FloatPoint>(renderer().style().perspectiveOrigin(), renderer().transformReferenceBoxRect(renderer().style()).size(), renderer().style().usedZoomForLength());
 }
 
 static inline bool isContainerForPositioned(RenderLayer& layer, PositionType position, bool establishesTopLayer)
@@ -3494,7 +3494,7 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
         [&](const Style::BasicShapePath& clipPath) -> std::pair<Path, WindRule> {
             auto referenceBoxRect = referenceBoxRectForClipPath(clipPath.referenceBox(), offsetFromRoot, rootRelativeBoundsForNonBoxes);
             auto snappedReferenceBoxRect = snapRectToDevicePixelsIfNeeded(referenceBoxRect, renderer());
-            return { Style::path(clipPath.shape(), snappedReferenceBoxRect), Style::windRule(clipPath.shape()) };
+            return { Style::path(clipPath.shape(), snappedReferenceBoxRect, style.usedZoomForLength()), Style::windRule(clipPath.shape()) };
         },
         [&](const Style::BoxPath& clipPath) -> std::pair<Path, WindRule> {
             CheckedPtr box = dynamicDowncast<RenderBox>(renderer());

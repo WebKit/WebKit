@@ -34,10 +34,10 @@ bool isCenterPosition(const Position& position)
         return WTF::switchOn(component.offset,
             [](auto)            { return false; },
             [](Keyword::Center) { return true;  },
-            [](const LengthPercentage<>& value) {
+            [](const LengthPercentage<AllUnzoomed>& value) {
                 return WTF::switchOn(value,
-                    [](const LengthPercentage<>::Raw& raw) { return raw == 50_css_percentage; },
-                    [](const LengthPercentage<>::Calc&) { return false; }
+                    [](const LengthPercentage<AllUnzoomed>::Raw& raw) { return raw == 50_css_percentage; },
+                    [](const LengthPercentage<AllUnzoomed>::Calc&) { return false; }
                 );
             }
         );

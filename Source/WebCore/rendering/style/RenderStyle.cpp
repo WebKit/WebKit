@@ -233,7 +233,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
                 if (auto fixedHeight = height().tryFixed(); specifiedLineHeight().isFixed() && fixedHeight) {
                     if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
                         float specifiedSize = specifiedFontSize();
-                        if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
+                        if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomFactor { 1 }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
                             && fixedHeight->resolveZoom(usedZoomForLength()) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
                             return true;
                     }
@@ -313,7 +313,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
 
     return WTF::switchOn(strokeWidth(),
         [&](const Style::StrokeWidth::Fixed& fixedStrokeWidth) -> float {
-            return Style::evaluate<float>(fixedStrokeWidth, Style::ZoomNeeded { });
+            return Style::evaluate<float>(fixedStrokeWidth, usedZoomForLength());
         },
         [&](const Style::StrokeWidth::Percentage& percentageStrokeWidth) -> float {
             // According to the spec, https://drafts.fxtf.org/paint/#stroke-width, the percentage is relative to the scaled viewport size.
@@ -322,7 +322,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
         },
         [&](const Style::StrokeWidth::Calc& calcStrokeWidth) -> float {
             // FIXME: It is almost certainly wrong that calc and percentage are being handled differently - https://bugs.webkit.org/show_bug.cgi?id=296482
-            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), Style::ZoomNeeded { });
+            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), usedZoomForLength());
         }
     );
 }
@@ -469,11 +469,11 @@ Style::LineWidth RenderStyle::usedColumnRuleWidth() const
     return m_computedStyle.columnRuleWidth();
 }
 
-Style::Length<> RenderStyle::usedOutlineOffset() const
+Style::Length<CSS::AllUnzoomed> RenderStyle::usedOutlineOffset() const
 {
     auto& outline = m_computedStyle.outline();
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
-        return Style::Length<> { Style::evaluate<float>(outline.outlineOffset, Style::ZoomNeeded { }) + RenderTheme::platformFocusRingOffset(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { })) };
+        return Style::Length<CSS::AllUnzoomed> { outline.outlineOffset.unresolvedValue() + RenderTheme::platformFocusRingOffset(outline.outlineWidth.unresolvedValue()) };
     return outline.outlineOffset;
 }
 
@@ -483,58 +483,59 @@ Style::LineWidth RenderStyle::usedOutlineWidth() const
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::None)
         return 0_css_px;
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
-        return Style::LineWidth { std::max(Style::evaluate<float>(outline.outlineWidth, Style::ZoomNeeded { }), RenderTheme::platformFocusRingWidth()) };
+        return Style::LineWidth { std::max(outline.outlineWidth.unresolvedValue(), RenderTheme::platformFocusRingWidth()) };
     return outline.outlineWidth;
 }
 
-float RenderStyle::usedOutlineSize() const
+float RenderStyle::usedOutlineSize(float deviceScaleFactor) const
 {
-    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), Style::ZoomNeeded { }) + Style::evaluate<float>(usedOutlineOffset(), Style::ZoomNeeded { }));
+    auto zoom = usedZoomForLength();
+    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom));
 }
 
 // MARK: - Derived Values
 
 template<typename OutsetValue>
-static LayoutUnit computeOutset(const OutsetValue& outsetValue, LayoutUnit borderWidth)
+static LayoutUnit computeOutset(const OutsetValue& outsetValue, const Style::LineWidth& borderWidth, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
     return WTF::switchOn(outsetValue,
         [&](const typename OutsetValue::Number& number) {
-            return LayoutUnit(number.value * borderWidth);
+            return LayoutUnit(Style::evaluate<LayoutUnit>(borderWidth, zoom, deviceScaleFactor) * number.value);
         },
         [&](const typename OutsetValue::Length& length) {
-            return LayoutUnit(length.resolveZoom(Style::ZoomNeeded { }));
+            return Style::evaluate<LayoutUnit>(length, zoom);
         }
     );
 }
 
-LayoutBoxExtent RenderStyle::imageOutsets(const Style::BorderImage& image) const
+static LayoutBoxExtent computeOutsets(const auto& outsets, const auto& borderWidths, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
     return {
-        computeOutset(image.outset().values.top(), Style::evaluate<LayoutUnit>(usedBorderTopWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.right(), Style::evaluate<LayoutUnit>(usedBorderRightWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.bottom(), Style::evaluate<LayoutUnit>(usedBorderBottomWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.left(), Style::evaluate<LayoutUnit>(usedBorderLeftWidth(), Style::ZoomNeeded { })),
+        computeOutset(outsets.top(), borderWidths.top(), zoom, deviceScaleFactor),
+        computeOutset(outsets.right(), borderWidths.right(), zoom, deviceScaleFactor),
+        computeOutset(outsets.bottom(), borderWidths.bottom(), zoom, deviceScaleFactor),
+        computeOutset(outsets.left(), borderWidths.left(), zoom, deviceScaleFactor),
     };
 }
 
-LayoutBoxExtent RenderStyle::imageOutsets(const Style::MaskBorder& image) const
+LayoutBoxExtent RenderStyle::imageOutsets(const Style::BorderImage& image, float deviceScaleFactor) const
 {
-    return {
-        computeOutset(image.outset().values.top(), Style::evaluate<LayoutUnit>(usedBorderTopWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.right(), Style::evaluate<LayoutUnit>(usedBorderRightWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.bottom(), Style::evaluate<LayoutUnit>(usedBorderBottomWidth(), Style::ZoomNeeded { })),
-        computeOutset(image.outset().values.left(), Style::evaluate<LayoutUnit>(usedBorderLeftWidth(), Style::ZoomNeeded { })),
-    };
+    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
 }
 
-LayoutBoxExtent RenderStyle::borderImageOutsets() const
+LayoutBoxExtent RenderStyle::imageOutsets(const Style::MaskBorder& image, float deviceScaleFactor) const
 {
-    return imageOutsets(borderImage());
+    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
 }
 
-LayoutBoxExtent RenderStyle::maskBorderOutsets() const
+LayoutBoxExtent RenderStyle::borderImageOutsets(float deviceScaleFactor) const
 {
-    return imageOutsets(maskBorder());
+    return imageOutsets(borderImage(), deviceScaleFactor);
+}
+
+LayoutBoxExtent RenderStyle::maskBorderOutsets(float deviceScaleFactor) const
+{
+    return imageOutsets(maskBorder(), deviceScaleFactor);
 }
 
 // MARK: - Logical

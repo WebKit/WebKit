@@ -2119,11 +2119,14 @@ IntRect WebPage::absoluteInteractionBounds(const Node& node)
     }
 
     auto& style = renderer->style();
+    auto zoom = style.usedZoomForLength();
+    auto deviceScaleFactor = node.document().deviceScaleFactor();
+
     FloatRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
     // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
-    boundingBox.move(WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderRightWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.usedBorderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.move(WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor), WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), zoom, deviceScaleFactor));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor) - WebCore::Style::evaluate<float>(style.usedBorderRightWidth(), zoom, deviceScaleFactor));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.usedBorderBottomWidth(), zoom, deviceScaleFactor) - WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), zoom, deviceScaleFactor));
     return enclosingIntRect(boundingBox);
 }
 

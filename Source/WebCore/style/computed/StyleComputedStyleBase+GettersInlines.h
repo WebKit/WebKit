@@ -323,8 +323,9 @@ inline float ComputedStyleBase::usedZoom() const
 
 inline ZoomFactor ComputedStyleBase::usedZoomForLength() const
 {
-    static constexpr ZoomFactor unzoomed(1.0f);
-    if (!inheritedFlags().isZoomed)
+    static constexpr ZoomFactor unzoomed { 1 };
+
+    if (!inheritedFlags().isZoomed) [[likely]]
         return unzoomed;
 
     if (useSVGZoomRulesForLength())

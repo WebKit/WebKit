@@ -131,7 +131,7 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
     // macOS controls have never honored outline offset.
 #if PLATFORM(IOS_FAMILY)
     auto deviceScaleFactor = box.document().deviceScaleFactor();
-    auto outlineOffset = floorToDevicePixel(Style::evaluate<float>(box.style().usedOutlineOffset(), Style::ZoomNeeded { }), deviceScaleFactor);
+    auto outlineOffset = floorToDevicePixel(Style::evaluate<float>(box.style().usedOutlineOffset(), box.style().usedZoomForLength()), deviceScaleFactor);
 
     if (outlineOffset > 0) {
         const auto center = rect.center();
@@ -333,7 +333,7 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
     style.setMinHeight(Style::MinimumSize::Fixed { applePayButtonMinimumHeight });
 
     if (!style.hasExplicitlySetBorderRadius()) {
-        auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { static_cast<float>(PKApplePayButtonDefaultCornerRadius) };
+        auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { static_cast<float>(PKApplePayButtonDefaultCornerRadius) };
         style.setBorderRadius({ radius, radius });
     }
 }
@@ -2847,21 +2847,24 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
 
+    auto zoom = style->usedZoomForLength();
+
     auto glyphPaddingEnd = logicalRect.width();
-    auto usedZoom = style->usedZoomForLength();
     if (auto fixedPaddingEnd = style->paddingEnd().tryFixed())
-        glyphPaddingEnd = fixedPaddingEnd->resolveZoom(usedZoom);
+        glyphPaddingEnd = Style::evaluate<float>(*fixedPaddingEnd, zoom);
 
     // Add RenderMenuList inner start padding for symmetry.
     if (CheckedPtr menulist = dynamicDowncast<RenderMenuList>(box); menulist && menulist->innerRenderer()) {
         if (auto innerPaddingStart = menulist->innerRenderer()->style().paddingStart().tryFixed())
-            glyphPaddingEnd += innerPaddingStart->resolveZoom(usedZoom);
+            glyphPaddingEnd += Style::evaluate<float>(*innerPaddingStart, menulist->innerRenderer()->style().usedZoomForLength());
     }
 
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
+
     if (!style->writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - glyphPaddingEnd);
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + glyphPaddingEnd);
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -4162,7 +4165,7 @@ float RenderThemeCocoa::adjustedMaximumLogicalWidthForControl(const RenderStyle&
         if (auto paddingEdgeInlineStartFixed = paddingEdgeInlineStart.tryFixed()) {
             if (auto paddingEdgeInlineEndFixed = paddingEdgeInlineEnd.tryFixed()) {
                 auto usedZoom = style.usedZoomForLength();
-                maximumLogicalWidth += paddingEdgeInlineStartFixed->resolveZoom(usedZoom) - paddingEdgeInlineEndFixed->resolveZoom(usedZoom);
+                maximumLogicalWidth += Style::evaluate<float>(*paddingEdgeInlineStartFixed, usedZoom) - Style::evaluate<float>(*paddingEdgeInlineEndFixed, usedZoom);
             }
         }
     }

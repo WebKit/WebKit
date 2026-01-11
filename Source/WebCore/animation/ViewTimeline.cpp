@@ -367,6 +367,8 @@ void ViewTimeline::cacheCurrentTime()
             }
         }
 
+        auto zoom = sourceRenderer->style().usedZoomForLength();
+
         enum class PaddingEdge : bool { Start, End };
         auto scrollPadding = [&](PaddingEdge edge) {
             auto& style = sourceRenderer->style();
@@ -381,12 +383,12 @@ void ViewTimeline::cacheCurrentTime()
         if (m_insets.start().isAuto())
             insetStart = Style::evaluate<float>(scrollPadding(PaddingEdge::Start), scrollContainerSize, Style::ZoomNeeded { });
         else
-            insetStart = Style::evaluate<float>(m_insets.start(), scrollContainerSize, Style::ZoomNeeded { });
+            insetStart = Style::evaluate<float>(m_insets.start(), scrollContainerSize, zoom);
 
         if (m_insets.end().isAuto())
             insetEnd = Style::evaluate<float>(scrollPadding(PaddingEdge::End), scrollContainerSize, Style::ZoomNeeded { });
         else
-            insetEnd = Style::evaluate<float>(m_insets.end(), scrollContainerSize, Style::ZoomNeeded { });
+            insetEnd = Style::evaluate<float>(m_insets.end(), scrollContainerSize, zoom);
 
         StickinessAdjustmentData stickyData;
         if (auto stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer().get())) {
@@ -585,7 +587,7 @@ std::pair<double, double> ViewTimeline::offsetIntervalForAttachmentRange(const S
     auto offsetForSingleTimelineRange = [&](const auto& rangeToConvert) {
         auto [conversionRangeStart, conversionRangeEnd] = intervalForTimelineRangeName(data, rangeToConvert.name());
         auto conversionRange = conversionRangeEnd - conversionRangeStart;
-        auto convertedValue = Style::evaluate<float>(rangeToConvert.offset(), conversionRange, Style::ZoomNeeded { });
+        auto convertedValue = Style::evaluate<float>(rangeToConvert.offset(), conversionRange, Style::ZoomFactor { 1 }); // FIXME: Is this right?
         auto position = conversionRangeStart + convertedValue;
         return (position - data.rangeStart) / timelineRange;
     };
@@ -606,7 +608,7 @@ std::pair<WebAnimationTime, WebAnimationTime> ViewTimeline::intervalForAttachmen
 
     auto computeTime = [&](const auto& rangeToConvert) {
         auto mappedOffset = mapOffsetToTimelineRange(data, rangeToConvert.name(), [&](const float& subjectRange) {
-            return Style::evaluate<float>(rangeToConvert.offset(), subjectRange, Style::ZoomNeeded { });
+            return Style::evaluate<float>(rangeToConvert.offset(), subjectRange, Style::ZoomFactor { 1 }); // FIXME: Is this right?
         });
         return WebAnimationTime::fromPercentage(mappedOffset * 100);
     };

@@ -128,28 +128,42 @@ using AngleAllFloat = Angle<CSS::All, float>;
 
 // Standard Lengths
 using LengthAll = Length<CSS::All>;
+using LengthAllUnzoomed = Length<CSS::AllUnzoomed>;
 using LengthNonnegative = Length<CSS::Nonnegative>;
+using LengthNonnegativeUnzoomed = Length<CSS::NonnegativeUnzoomed>;
 
 // Standard LengthPercentages
 using LengthPercentageAll = LengthPercentage<CSS::All>;
+using LengthPercentageAllUnzoomed = LengthPercentage<CSS::AllUnzoomed>;
 using LengthPercentageNonnegative = LengthPercentage<CSS::Nonnegative>;
+using LengthPercentageNonnegativeUnzoomed = LengthPercentage<CSS::NonnegativeUnzoomed>;
 
 // Standard Percentages
 using PercentageAll = Percentage<CSS::All>;
+using PercentageAllUnzoomed = Percentage<CSS::AllUnzoomed>;
 using PercentageNonnegative = Percentage<CSS::Nonnegative>;
+using PercentageNonnegativeUnzoomed = Percentage<CSS::NonnegativeUnzoomed>;
 using PercentageAllFloat = Percentage<CSS::All, float>;
+using PercentageAllUnzoomedFloat = Percentage<CSS::AllUnzoomed, float>;
 using PercentageNonnegativeFloat = Percentage<CSS::Nonnegative, float>;
+using PercentageNonnegativeUnzoomedFloat = Percentage<CSS::NonnegativeUnzoomed, float>;
 using Percentage0To100 = LengthPercentage<CSS::Range{0,100}>;
 
 // Standard Points
 using LengthPercentageSpaceSeparatedPointAll = SpaceSeparatedPoint<LengthPercentageAll>;
+using LengthPercentageSpaceSeparatedPointAllUnzoomed = SpaceSeparatedPoint<LengthPercentageAllUnzoomed>;
 using LengthPercentageSpaceSeparatedPointNonnegative = SpaceSeparatedPoint<LengthPercentageNonnegative>;
+using LengthPercentageSpaceSeparatedPointNonnegativeUnzoomed = SpaceSeparatedPoint<LengthPercentageNonnegativeUnzoomed>;
 
 // Standard Sizes
 using LengthPercentageSpaceSeparatedSizeAll = SpaceSeparatedSize<LengthPercentageAll>;
+using LengthPercentageSpaceSeparatedSizeAllUnzoomed = SpaceSeparatedSize<LengthPercentageAllUnzoomed>;
 using LengthPercentageSpaceSeparatedSizeNonnegative = SpaceSeparatedSize<LengthPercentageNonnegative>;
+using LengthPercentageSpaceSeparatedSizeNonnegativeUnzoomed = SpaceSeparatedSize<LengthPercentageNonnegativeUnzoomed>;
 using LengthPercentageMinimallySerializingSpaceSeparatedSizeAll = MinimallySerializingSpaceSeparatedSize<LengthPercentageAll>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeAllUnzoomed = MinimallySerializingSpaceSeparatedSize<LengthPercentageAllUnzoomed>;
 using LengthPercentageMinimallySerializingSpaceSeparatedSizeNonnegative = MinimallySerializingSpaceSeparatedSize<LengthPercentageNonnegative>;
+using LengthPercentageMinimallySerializingSpaceSeparatedSizeNonnegativeUnzoomed = MinimallySerializingSpaceSeparatedSize<LengthPercentageNonnegativeUnzoomed>;
 
 // MARK: CSS -> Style
 

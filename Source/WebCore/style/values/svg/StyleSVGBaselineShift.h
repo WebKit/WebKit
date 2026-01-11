@@ -29,7 +29,7 @@
 namespace WebCore {
 namespace Style {
 
-struct SVGBaselineShiftLength : LengthWrapperBase<LengthPercentage<>> {
+struct SVGBaselineShiftLength : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 

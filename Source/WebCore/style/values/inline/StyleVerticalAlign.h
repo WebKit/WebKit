@@ -29,7 +29,7 @@
 namespace WebCore {
 namespace Style {
 
-struct VerticalAlignLength : LengthWrapperBase<LengthPercentage<>> {
+struct VerticalAlignLength : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 

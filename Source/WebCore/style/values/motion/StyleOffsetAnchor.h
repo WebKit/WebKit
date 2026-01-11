@@ -87,7 +87,7 @@ template<> struct Blending<OffsetAnchor> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetAnchor, AcceleratedEffectOffsetAnchor> {
-    auto operator()(const OffsetAnchor&, FloatSize, ZoomNeeded) -> AcceleratedEffectOffsetAnchor;
+    auto operator()(const OffsetAnchor&, FloatSize, ZoomFactor) -> AcceleratedEffectOffsetAnchor;
 };
 
 #endif

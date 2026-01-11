@@ -47,7 +47,7 @@ struct Rotate {
     bool isRepresentableIn2D() const { return !value || value->isRepresentableIn2D(); }
     bool is3DOperation() const { return value && value->is3DOperation(); }
 
-    void apply(TransformationMatrix&, const FloatSize&) const;
+    void apply(TransformationMatrix&, const FloatSize&, ZoomFactor) const;
 
     bool isNone() const { return !value; }
     bool isFunction() const { return !!value; }
@@ -119,7 +119,7 @@ template<> struct Blending<Rotate> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Rotate> { auto operator()(const Rotate&, const FloatSize&) -> RefPtr<TransformOperation>; };
+template<> struct ToPlatform<Rotate> { auto operator()(const Rotate&, const FloatSize&, ZoomFactor) -> RefPtr<TransformOperation>; };
 
 } // namespace Style
 } // namespace WebCore

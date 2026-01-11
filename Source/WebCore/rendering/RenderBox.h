@@ -319,10 +319,8 @@ public:
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
-    LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const;
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const;
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
-    LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const;
     LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const;
     LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth) const;
 
@@ -713,7 +711,7 @@ private:
     bool isScrollableOrRubberbandableBox() const override;
 
     // Returns true if we did a full repaint.
-    template<typename Layers> bool repaintLayerRectsForImage(WrappedImagePtr, const Layers&, bool drawingBackground);
+    template<typename Layers> bool repaintLayerRectsForImage(WrappedImagePtr, const Layers&, Style::ZoomFactor, bool drawingBackground);
 
     void computeOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues&) const;
 

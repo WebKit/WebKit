@@ -96,7 +96,7 @@ static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& rend
         Style::adjustRectForShadow(shadowRect, boxShadow, zoomFactor);
 
     auto outlineRect = rect;
-    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().usedOutlineSize() };
+    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().usedOutlineSize(renderer.document().deviceScaleFactor()) };
     if (outlineSize)
         outlineRect.inflate(outlineSize);
 

@@ -106,6 +106,8 @@ public:
     virtual LayoutRect borderBoundingBox() const = 0;
 
     // These return the CSS computed padding values.
+    // FIXME: Rename these. They don't return the `computed` padding values, but rather the `computed` padding evaluated against `containingBlockLogicalWidthForContent()`.
+    inline RectEdges<LayoutUnit> computedCSSPadding() const;
     inline LayoutUnit computedCSSPaddingTop() const;
     inline LayoutUnit computedCSSPaddingBottom() const;
     inline LayoutUnit computedCSSPaddingLeft() const;
@@ -167,6 +169,18 @@ public:
     inline LayoutUnit paddingLogicalRight() const;
     inline LayoutUnit paddingLogicalWidth() const;
     inline LayoutUnit paddingLogicalHeight() const;
+
+    // These return the CSS computed margin values.
+    // FIXME: Rename these. They don't return the `computed` margin values, but rather the `computed` margin evaluated against `containingBlockLogicalWidthForContent()`.
+    inline RectEdges<LayoutUnit> computedCSSMargin() const;
+    inline LayoutUnit computedCSSMarginTop() const;
+    inline LayoutUnit computedCSSMarginBottom() const;
+    inline LayoutUnit computedCSSMarginLeft() const;
+    inline LayoutUnit computedCSSMarginRight() const;
+    inline LayoutUnit computedCSSMarginBefore() const;
+    inline LayoutUnit computedCSSMarginAfter() const;
+    inline LayoutUnit computedCSSMarginStart() const;
+    inline LayoutUnit computedCSSMarginEnd() const;
 
     virtual LayoutUnit marginTop() const = 0;
     virtual LayoutUnit marginBottom() const = 0;
@@ -264,9 +278,6 @@ public:
     ContinuationChainNode* continuationChainNode() const;
 
 protected:
-    LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&) const;
-    LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, const Style::ZoomFactor&) const;
-
     virtual void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* /*wasFixed*/) const { ASSERT_NOT_REACHED(); }
     void collectAbsoluteQuadsForContinuation(Vector<FloatQuad>& quads, bool* wasFixed) const;
 
@@ -276,6 +287,8 @@ private:
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 
     RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
+
+    LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, Style::ZoomFactor) const;
 };
 
 } // namespace WebCore

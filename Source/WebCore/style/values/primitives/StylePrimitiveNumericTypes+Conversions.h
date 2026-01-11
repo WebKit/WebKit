@@ -69,6 +69,24 @@ template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthRaw<R, 
     }
 };
 
+template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthPercentageRaw<R, V>> {
+    CSSToLengthConversionData operator()(const BuilderState& state)
+    {
+        if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
+            return state.useSVGZoomRulesForLength()
+                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+                : state.cssToLengthConversionData();
+        } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
+            if (evaluationTimeZoomEnabled(state))
+                return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
+
+            return state.useSVGZoomRulesForLength()
+                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+                : state.cssToLengthConversionData();
+        }
+    }
+};
+
 template<typename T> CSSToLengthConversionData conversionData(const BuilderState& state)
 {
     return ConversionDataSpecializer<T>{}(state);

@@ -200,7 +200,7 @@ static CSS::Circle::RadialSize consumeCircleRadialSize(CSSParserTokenRange& rang
         return defaultValue();
     }
 
-    auto length = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+    auto length = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
     if (!length)
         return defaultValue();
 
@@ -252,7 +252,7 @@ static std::optional<CSS::Ellipse::RadialSize> consumeEllipseRadialSize(CSSParse
         return std::nullopt;
     }
 
-    auto length = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, state);
+    auto length = MetaConsumer<CSS::LengthPercentage<CSS::NonnegativeUnzoomed>>::consume(range, state);
     if (!length)
         return std::nullopt;
 
@@ -456,7 +456,7 @@ static std::optional<CSS::HLineCommand> consumeShapeHLineCommand(CSSParserTokenR
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::HLineCommand> {
-            auto offset = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+            auto offset = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
             if (!offset)
                 return { };
             return CSS::HLineCommand {
@@ -485,7 +485,7 @@ static std::optional<CSS::VLineCommand> consumeShapeVLineCommand(CSSParserTokenR
             };
         },
         [&](CSS::Keyword::By) -> std::optional<CSS::VLineCommand> {
-            auto offset = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+            auto offset = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
             if (!offset)
                 return { };
             return CSS::VLineCommand {
@@ -674,10 +674,10 @@ static std::optional<CSS::ArcCommand> consumeShapeArcCommand(CSSParserTokenRange
     if (!consumeIdent<CSSValueOf>(range))
         return { };
 
-    auto length1 = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+    auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
     if (!length1)
         return { };
-    auto length2 = MetaConsumer<CSS::LengthPercentage<>>::consume(range, state);
+    auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(range, state);
     if (!length2)
         length2 = length1; // Copy `length1` to `length2` if there is only one length consumed.
 
@@ -844,7 +844,7 @@ static std::optional<CSS::Rect::Edge> consumeBasicShapeRectEdge(CSSParserTokenRa
         return { };
     }
 
-    if (auto edge = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state))
+    if (auto edge = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state))
         return { WTF::move(*edge) };
 
     return { };
@@ -925,19 +925,19 @@ static std::optional<CSS::Inset::Insets> consumeBasicShapeInsetInsets(CSSParserT
 {
     // <insets> = <length-percentage>{1,4}
 
-    auto inset1 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset1 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset1)
         return { };
 
-    auto inset2 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset2 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset2)
         return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1));
 
-    auto inset3 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset3 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset3)
         return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1), WTF::move(*inset2));
 
-    auto inset4 = MetaConsumer<CSS::LengthPercentage<>>::consume(args, state);
+    auto inset4 = MetaConsumer<CSS::LengthPercentage<CSS::AllUnzoomed>>::consume(args, state);
     if (!inset4)
         return completeQuad<CSS::Inset::Insets>(WTF::move(*inset1), WTF::move(*inset2), WTF::move(*inset3));
 

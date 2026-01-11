@@ -589,32 +589,50 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderTopWidth(Style::LineWidth { Style::ComputedStyle::initialBorderTopWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderTopWidth(Style::LineWidth { Style::ComputedStyle::initialBorderTopWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setBorderTopWidth(Style::ComputedStyle::initialBorderTopWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderRightWidth(Style::LineWidth { Style::ComputedStyle::initialBorderRightWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderRightWidth(Style::LineWidth { Style::ComputedStyle::initialBorderRightWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setBorderRightWidth(Style::ComputedStyle::initialBorderRightWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderBottomWidth(Style::LineWidth { Style::ComputedStyle::initialBorderBottomWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderBottomWidth(Style::LineWidth { Style::ComputedStyle::initialBorderBottomWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setBorderBottomWidth(Style::ComputedStyle::initialBorderBottomWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderLeftWidth(Style::LineWidth { Style::ComputedStyle::initialBorderLeftWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderLeftWidth(Style::LineWidth { Style::ComputedStyle::initialBorderLeftWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setBorderLeftWidth(Style::ComputedStyle::initialBorderLeftWidth());
 }
 
 inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 {
-    builderState.style().setOutlineWidth(Style::LineWidth { Style::ComputedStyle::initialOutlineWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setOutlineWidth(Style::LineWidth { Style::ComputedStyle::initialOutlineWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setOutlineWidth(Style::ComputedStyle::initialOutlineWidth());
 }
 
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
-    builderState.style().setColumnRuleWidth(Style::LineWidth { Style::ComputedStyle::initialColumnRuleWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setColumnRuleWidth(Style::LineWidth { Style::ComputedStyle::initialColumnRuleWidth().value.unresolvedValue() * builderState.style().usedZoom() });
+    else
+        builderState.style().setColumnRuleWidth(Style::ComputedStyle::initialColumnRuleWidth());
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)

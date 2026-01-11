@@ -32,7 +32,7 @@ namespace WebCore {
 // https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverinit-rootmargin
 // https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverinit-scrollmargin
 
-struct IntersectionObserverMarginEdge : Style::LengthWrapperBase<Style::LengthPercentage<>> {
+struct IntersectionObserverMarginEdge : Style::LengthWrapperBase<Style::LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 

@@ -72,6 +72,16 @@ double Value::evaluate(double percentResolutionLength, const ZoomNeeded& zoomNee
     return std::clamp(result, m_range.min, m_range.max);
 }
 
+double Value::evaluate(double percentResolutionLength) const
+{
+    ASSERT(m_category != CSS::Category::Length && m_category != CSS::Category::LengthPercentage);
+
+    auto result = Calculation::evaluate(m_tree, percentResolutionLength);
+    if (std::isnan(result))
+        return 0;
+    return std::clamp(result, m_range.min, m_range.max);
+}
+
 Tree Value::copyTree() const
 {
     return Calculation::copy(m_tree);

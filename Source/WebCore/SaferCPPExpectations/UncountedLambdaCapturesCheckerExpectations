@@ -51,6 +51,7 @@ platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
+rendering/RenderBoxModelObjectInlines.h
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderFlexibleBox.cpp

@@ -648,7 +648,7 @@ bool RenderLayerModelObject::pointInSVGClippingArea(const FloatPoint& point) con
             auto referenceBox = clipPathReferenceBox(clipPath.referenceBox());
             if (!referenceBox.contains(point))
                 return false;
-            return Style::path(clipPath.shape(), referenceBox).contains(point, Style::windRule(clipPath.shape()));
+            return Style::path(clipPath.shape(), referenceBox, style().usedZoomForLength()).contains(point, Style::windRule(clipPath.shape()));
         },
         [&](const Style::BoxPath& clipPath) {
             auto referenceBox = clipPathReferenceBox(clipPath.referenceBox());

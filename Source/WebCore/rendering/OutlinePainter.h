@@ -56,7 +56,7 @@ private:
     static void collectFocusRingRectsForInlineChildren(const RenderBlockFlow&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
     static void collectFocusRingRectsForChildBox(const RenderBox&, Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject*);
 
-    static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const Style::BorderRadius&, float outlineOffset, WritingMode, float deviceScaleFactor);
+    static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const Style::BorderRadius&, float outlineOffset, WritingMode, Style::ZoomFactor, float deviceScaleFactor);
 
     void addPDFURLAnnotationForLink(const RenderElement&, const LayoutPoint& paintOffset) const;
 

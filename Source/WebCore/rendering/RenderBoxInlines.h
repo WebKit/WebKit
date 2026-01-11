@@ -169,12 +169,14 @@ inline LayoutRect RenderBox::flippedContentBoxRect() const
 
 inline LayoutRect RenderBox::marginBoxRect() const
 {
-    auto zoomFactor = style().usedZoomForLength();
-    auto left = resolveLengthPercentageUsingContainerLogicalWidth(style().marginLeft(), zoomFactor);
-    auto right = resolveLengthPercentageUsingContainerLogicalWidth(style().marginRight(), zoomFactor);
-    auto top = resolveLengthPercentageUsingContainerLogicalWidth(style().marginTop(), zoomFactor);
-    auto bottom = resolveLengthPercentageUsingContainerLogicalWidth(style().marginBottom(), zoomFactor);
-    return { -left, -top, size().width() + left + right, size().height() + top + bottom };
+    auto marginBox = computedCSSMargin();
+
+    return {
+        -marginBox.left(),
+        -marginBox.top(),
+        size().width() + marginBox.left() + marginBox.right(),
+        size().height() + marginBox.top() + marginBox.bottom(),
+    };
 }
 
 inline void RenderBox::setLogicalHeight(LayoutUnit size)

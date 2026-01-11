@@ -98,11 +98,11 @@ auto Blending<OffsetPosition>::blend(const OffsetPosition& a, const OffsetPositi
 
 #if ENABLE(THREADED_ANIMATIONS)
 
-auto Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition>::operator()(const OffsetPosition& value, FloatSize referenceBox, ZoomNeeded token) -> AcceleratedEffectOffsetPosition
+auto Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition>::operator()(const OffsetPosition& value, FloatSize referenceBox, ZoomFactor zoom) -> AcceleratedEffectOffsetPosition
 {
     return WTF::switchOn(value,
         [&](const Style::Position& position) -> AcceleratedEffectOffsetPosition {
-            return { .value = Style::evaluate<FloatPoint>(position, referenceBox, token) };
+            return { .value = Style::evaluate<FloatPoint>(position, referenceBox, zoom) };
         },
         [](const CSS::Keyword::Normal&) -> AcceleratedEffectOffsetPosition {
             return { .value = AcceleratedEffectOffsetPosition::Normal { } };

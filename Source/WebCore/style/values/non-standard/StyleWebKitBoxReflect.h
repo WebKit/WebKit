@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-struct WebkitBoxReflectionOffset : LengthWrapperBase<LengthPercentage<>> {
+struct WebkitBoxReflectionOffset : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 

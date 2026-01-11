@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace Style {
 
-struct BackgroundSizeLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto> {
+struct BackgroundSizeLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

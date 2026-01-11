@@ -253,7 +253,7 @@ Path SVGPathElement::path() const
     if (document().settings().cssDPropertyEnabled()) {
         if (CheckedPtr renderer = this->renderer()) {
             if (auto& pathFunction = renderer->style().d().tryPath())
-                return Style::path(pathFunction->parameters, FloatRect { });
+                return Style::path(pathFunction->parameters, FloatRect { }, renderer->style().usedZoomForLength());
             return { };
         }
     }

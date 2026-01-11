@@ -31,11 +31,11 @@ namespace Style {
 
 // <'perspective'> = none | <length [0,∞]>
 // https://drafts.csswg.org/css-transforms-2/#propdef-perspective
-struct Perspective : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyword::None> {
+struct Perspective : ValueOrKeyword<Length<CSS::NonnegativeUnzoomed, float>, CSS::Keyword::None> {
     using Base::Base;
     using Length = typename Base::Value;
 
-    float usedPerspective() const { return std::max(1.0f, tryValue().value_or(1.0f).resolveZoom(Style::ZoomNeeded { })); }
+    float usedPerspective(ZoomFactor zoom) const { return std::max(1.0f, tryValue().value_or(1.0f).resolveZoom(zoom)); }
 
     bool isNone() const { return isKeyword(); }
     bool isLength() const { return isValue(); }
