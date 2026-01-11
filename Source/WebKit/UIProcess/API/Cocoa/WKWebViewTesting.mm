@@ -86,6 +86,13 @@
 #import "RemoteProgressBasedTimeline.h"
 #endif
 
+#if __has_include(<libproc.h>)
+#define HAS_LIBPROC 1
+#import <libproc.h>
+#else
+#define HAS_LIBPROC 0
+#endif // __has_include(<libproc.h>)
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 @interface WKMediaSessionCoordinatorHelper : NSObject <_WKMediaSessionCoordinatorDelegate>
 - (id)initWithCoordinator:(WebCore::MediaSessionCoordinatorClient*)coordinator;
@@ -1141,7 +1148,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString *)_webContentProcessVariantForFrame:(_WKFrameHandle *)frameHandle
 {
-#if USE(APPLE_INTERNAL_SDK)
     if (!_page)
         return @"standard";
 
@@ -1164,6 +1170,27 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return @"standard";
 
     Ref connection = process->connection();
+
+#if HAS_LIBPROC
+    // This approach should work on macOS outside of Apple Internal builds.
+    if (auto pid = connection->remoteProcessID()) {
+        char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
+        int length = proc_pidpath(pid, path, sizeof(path));
+        if (length > 0) {
+            NSString *processPath = [NSString stringWithUTF8String:path];
+            if ([processPath.lastPathComponent hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"])
+                return @"security";
+
+            if ([processPath.lastPathComponent hasPrefix:@"com.apple.WebKit.WebContent.CaptivePortal"])
+                return @"lockdown";
+
+            if ([processPath.lastPathComponent hasPrefix:@"com.apple.WebKit.WebContent"])
+                return @"standard";
+        }
+    }
+#endif // HAS_LIBPROC
+
+#if USE(APPLE_INTERNAL_SDK)
 
 #if !PLATFORM(IOS_FAMILY)
     bool hasAllowJIT = hasEntitlement(connection->xpcConnection(), "com.apple.security.cs.allow-jit"_s);
