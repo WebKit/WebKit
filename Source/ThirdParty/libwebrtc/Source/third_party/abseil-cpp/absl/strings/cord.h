@@ -1610,11 +1610,15 @@ inline void Cord::ChunkIterator::AdvanceBytes(size_t n) {
   }
 }
 
-inline Cord::ChunkIterator Cord::chunk_begin() const {
+inline Cord::ChunkIterator Cord::chunk_begin() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   return ChunkIterator(this);
 }
 
-inline Cord::ChunkIterator Cord::chunk_end() const { return ChunkIterator(); }
+inline Cord::ChunkIterator Cord::chunk_end() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  return ChunkIterator();
+}
 
 inline Cord::ChunkIterator Cord::ChunkRange::begin() const {
   return cord_->chunk_begin();
@@ -1624,7 +1628,9 @@ inline Cord::ChunkIterator Cord::ChunkRange::end() const {
   return cord_->chunk_end();
 }
 
-inline Cord::ChunkRange Cord::Chunks() const { return ChunkRange(this); }
+inline Cord::ChunkRange Cord::Chunks() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  return ChunkRange(this);
+}
 
 inline Cord::CharIterator& Cord::CharIterator::operator++() {
   if (ABSL_PREDICT_TRUE(chunk_iterator_->size() > 1)) {
@@ -1674,11 +1680,14 @@ inline ptrdiff_t Cord::Distance(const CharIterator& first,
                                 last.chunk_iterator_.bytes_remaining_);
 }
 
-inline Cord::CharIterator Cord::char_begin() const {
+inline Cord::CharIterator Cord::char_begin() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   return CharIterator(this);
 }
 
-inline Cord::CharIterator Cord::char_end() const { return CharIterator(); }
+inline Cord::CharIterator Cord::char_end() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  return CharIterator();
+}
 
 inline Cord::CharIterator Cord::CharRange::begin() const {
   return cord_->char_begin();
@@ -1688,7 +1697,9 @@ inline Cord::CharIterator Cord::CharRange::end() const {
   return cord_->char_end();
 }
 
-inline Cord::CharRange Cord::Chars() const { return CharRange(this); }
+inline Cord::CharRange Cord::Chars() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  return CharRange(this);
+}
 
 inline void Cord::ForEachChunk(
     absl::FunctionRef<void(absl::string_view)> callback) const {

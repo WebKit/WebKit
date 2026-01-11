@@ -126,11 +126,13 @@ class BitstreamReader {
   mutable bool last_read_is_verified_ = true;
 };
 
-inline BitstreamReader::BitstreamReader(ArrayView<const uint8_t> bytes)
+inline BitstreamReader::BitstreamReader(
+    ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND)
     : bytes_(bytes.data()),
       remaining_bits_(checked_cast<int>(bytes.size() * 8)) {}
 
-inline BitstreamReader::BitstreamReader(absl::string_view bytes)
+inline BitstreamReader::BitstreamReader(
+    absl::string_view bytes ABSL_ATTRIBUTE_LIFETIME_BOUND)
     : bytes_(reinterpret_cast<const uint8_t*>(bytes.data())),
       remaining_bits_(checked_cast<int>(bytes.size() * 8)) {}
 

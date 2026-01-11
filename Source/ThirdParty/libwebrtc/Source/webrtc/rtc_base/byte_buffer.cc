@@ -25,7 +25,8 @@ ByteBufferWriter::ByteBufferWriter() : ByteBufferWriterT() {}
 ByteBufferWriter::ByteBufferWriter(const uint8_t* bytes, size_t len)
     : ByteBufferWriterT(bytes, len) {}
 
-ByteBufferReader::ByteBufferReader(ArrayView<const uint8_t> bytes) {
+ByteBufferReader::ByteBufferReader(
+    ArrayView<const uint8_t> bytes ABSL_ATTRIBUTE_LIFETIME_BOUND) {
   Construct(bytes.data(), bytes.size());
 }
 
