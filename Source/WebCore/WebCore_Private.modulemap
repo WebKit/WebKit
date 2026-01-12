@@ -13,8 +13,6 @@ framework module WebCore_Private [system] {
 
         requires cplusplus
 
-        explicit module * {
-            export *
-        }
+        export *
     }
 }
