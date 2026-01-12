@@ -78,7 +78,7 @@ public:
     void prepareCallOperation(VM& vm)
     {
         UNUSED_PARAM(vm);
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+#if ASSERT_ENABLED
         storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 #endif
     }

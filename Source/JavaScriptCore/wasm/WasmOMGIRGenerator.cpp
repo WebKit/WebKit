@@ -890,7 +890,7 @@ public:
 private:
     void emitPrepareWasmOperation(BasicBlock* block)
     {
-#if !USE(BUILTIN_FRAME_ADDRESS) || ASSERT_ENABLED
+#if ASSERT_ENABLED
         // Prepare wasm operation calls.
         block->appendNew<B3::MemoryValue>(m_proc, B3::Store, origin(), framePointer(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTemporaryCallFrame()));
 #else
