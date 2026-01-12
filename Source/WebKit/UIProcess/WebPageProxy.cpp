@@ -1394,7 +1394,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
     Ref processPool = m_configuration->processPool();
     RefPtr relatedPage = m_configuration->relatedPage();
 
-    if (RefPtr frameProcess = protectedBrowsingContextGroup()->processForSite(site)) {
+    if (RefPtr frameProcess = protectedBrowsingContextGroup()->processForSite(site, currentEnhancedSecurityState())) {
         ASSERT(protectedPreferences()->siteIsolationEnabled());
         m_legacyMainFrameProcess = frameProcess->process();
     } else if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess && hasSameGPUAndNetworkProcessPreferencesAs(*relatedPage)) {
@@ -16632,9 +16632,9 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-WebProcessProxy* WebPageProxy::processForSite(const Site& site)
+WebProcessProxy* WebPageProxy::processForSite(const Site& site, EnhancedSecurity enhancedSecurity)
 {
-    if (RefPtr process = protectedBrowsingContextGroup()->processForSite(site))
+    if (RefPtr process = protectedBrowsingContextGroup()->processForSite(site, enhancedSecurity))
         return &process->process();
 
     return nullptr;

@@ -559,9 +559,7 @@ static void runMultiHopThenBack(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 }
-
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(MultiHopThenBack)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultiHopThenBack)
 
 static void runMultiHopThenBackJavascript(bool useSiteIsolation)
 {
@@ -590,9 +588,7 @@ static void runMultiHopThenBackJavascript(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 }
-
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(MultiHopThenBackJavascript)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultiHopThenBackJavascript)
 
 static void runMultiHopThenBackToSecure(bool useSiteIsolation)
 {
@@ -851,8 +847,7 @@ static void runHttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite(bool use
         { "location-redirected-site"_s, ExpectedEnhancedSecurity::Disabled }
     });
 }
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(HttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite)
 
 static void runWindowOpenThenNavigateToMeaningfulSite(bool useSiteIsolation)
 {
