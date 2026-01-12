@@ -474,7 +474,7 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
     if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    float* cacheEntry = fonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    float* cacheEntry = fonts()->widthCache().add(text, letterSpacing(), std::numeric_limits<float>::quiet_NaN());
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 

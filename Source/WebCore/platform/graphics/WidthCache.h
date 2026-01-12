@@ -56,7 +56,7 @@ private:
         {
         }
 
-        ALWAYS_INLINE SmallStringKey(StringView string)
+        ALWAYS_INLINE SmallStringKey(StringView string, float letterSpacing)
         {
             unsigned length = string.length();
             ASSERT(length <= s_capacity);
@@ -64,7 +64,10 @@ private:
                 copySmallCharacters(std::span { m_characters }, string.span8());
             else
                 copySmallCharacters(std::span { m_characters }, string.span16());
-            m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters }.first(s_capacity)) | (length << 24);
+            unsigned hash = WYHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters });
+            hash ^= DefaultHash<float>::hash(letterSpacing) & 0x00ffffffU;
+            m_hashAndLength = hash | (length << 24);
+            m_letterSpacing = letterSpacing;
         }
 
         const char16_t* characters() const { return m_characters.data(); }
@@ -95,6 +98,7 @@ private:
 
         std::array<char16_t, s_capacity> m_characters { };
         unsigned m_hashAndLength { 0 };
+        float m_letterSpacing { 0 };
     };
 
     struct SmallStringKeyHashTraits : SimpleClassHashTraits<SmallStringKey> {
@@ -111,7 +115,7 @@ public:
     {
     }
 
-    float* add(StringView text, float entry)
+    float* add(StringView text, float letterSpacing, float entry)
     {
         unsigned length = text.length();
 
@@ -127,28 +131,28 @@ public:
             return nullptr;
         }
 
-        return addSlowCase(text, entry);
+        return addSlowCase(text, letterSpacing, entry);
     }
 
-    float* add(const TextRun& run, float entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing, GlyphOverflow* glyphOverflow)
+    float* add(const TextRun& run, float letterSpacing, float entry, bool hasKerningOrLigatures, bool hasWordSpacing, bool hasTextSpacing, GlyphOverflow* glyphOverflow)
     {
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
             return nullptr;
-        // Word spacing and letter spacing can change the width of a word.
-        if (hasWordSpacingOrLetterSpacing)
+        // Word spacing can change the width of a word.
+        if (hasWordSpacing)
             return nullptr;
         // Since this is just a width cache, we don't have enough information to satisfy glyph queries.
         if (glyphOverflow)
             return nullptr;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
-        if (run.allowTabs())
+        if (run.allowTabs() && run.text().contains(tabCharacter))
             return nullptr;
         // width calculation with text-spacing depends on context of adjacent characters.
         if (hasTextSpacing && invalidateCacheForTextSpacing(run))
             return nullptr;
 
-        return add(run.text(), entry);
+        return add(run.text(), letterSpacing, entry);
     }
 
     void clear()
@@ -159,7 +163,7 @@ public:
 
 private:
 
-    float* addSlowCase(StringView text, float entry)
+    float* addSlowCase(StringView text, float letterSpacing, float entry)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
@@ -175,7 +179,7 @@ private:
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else {
-            auto addResult = m_map.fastAdd(text, entry);
+            auto addResult = m_map.fastAdd({ text, letterSpacing }, entry);
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         }
