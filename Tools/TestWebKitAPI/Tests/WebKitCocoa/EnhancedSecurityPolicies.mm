@@ -108,6 +108,23 @@ using namespace TestWebKitAPI;
 
 @end
 
+static uint64_t observerCallbacks;
+static RetainPtr<WKHTTPCookieStore> globalCookieStore;
+
+@interface EnhancedSecurityCookieObserver : NSObject<WKHTTPCookieStoreObserver>
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;
+@end
+
+@implementation EnhancedSecurityCookieObserver
+
+- (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore
+{
+    ASSERT_EQ(cookieStore, globalCookieStore.get());
+    ++observerCallbacks;
+}
+
+@end
+
 static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, String message, BOOL enhancedSecurityEnabled)
 {
     NSArray *result = [uiDelegate waitForAlertWithEnhancedSecurity];
@@ -1092,5 +1109,26 @@ static void runHttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhance
 }
 
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhancedSecurity)
+
+TEST(EnhancedSecurityPolicies, NonPersistentDataStoreCookieNotification)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, {{{ "Set-Cookie"_s, "testkey=testvalue"_s }}, "<script>alert('insecure-site')</script>"_s }}
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, /* useSiteIsolation */ false, /* useNonPersistentStore */ true);
+
+    auto observer = adoptNS([EnhancedSecurityCookieObserver new]);
+    globalCookieStore = webView.get().configuration.websiteDataStore.httpCookieStore;
+    [globalCookieStore addObserver:observer.get()];
+
+    observerCallbacks = 0;
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-site"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    EXPECT_EQ(observerCallbacks, 1u);
+}
 
 #endif

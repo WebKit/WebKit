@@ -134,15 +134,21 @@ Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
+    bool hasCookieForDomain = false;
     
     for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
-            completionHandler(true);
-            return;
+            hasCookieForDomain = true;
+            break;
         }
     }
 
-    completionHandler(false);
+    // Workaround until rdar://56248709 is fixed.
+    if (m_cookieStorageObserver && cookieStorage().get())
+        checkedCookieStorageObserver()->registerInternalsForNotifications(true);
+
+    completionHandler(hasCookieForDomain);
 }
 
 void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
