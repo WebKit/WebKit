@@ -51,7 +51,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 {
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
-    if (site.isEmpty() || m_processMap.contains(site))
+    if (site.isEmpty() || m_processMap.contains(std::make_pair(site, enhancedSecurity)))
         return completionHandler(nullptr);
     if (!m_sharedProcessSites.contains(site)) {
         if (isMainFrame == IsMainFrame::Yes)
@@ -99,7 +99,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
             ASSERT(&m_sharedProcess->process() == &process);
             return *m_sharedProcess;
         }
-        if (RefPtr existingProcess = processForSite(site)) {
+        if (RefPtr existingProcess = processForSite(site, process.enhancedSecurity())) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
                 return existingProcess.releaseNonNull();
         }
@@ -108,11 +108,11 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
     return FrameProcess::create(process, *this, site, mainFrameSite, preferences, loadedWebArchive, browsingContextGroupUpdate);
 }
 
-RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
+RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site, EnhancedSecurity enhancedSecurity)
 {
     if (m_sharedProcessSites.contains(site))
         return m_sharedProcess.get();
-    RefPtr process = m_processMap.get(site);
+    RefPtr process = m_processMap.get(std::make_pair(site, enhancedSecurity));
     if (!process)
         return nullptr;
     if (process->process().state() == WebProcessProxy::State::Terminated)
@@ -176,10 +176,11 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProcess& process)
 {
     auto& site = *process.site();
-    if (m_processMap.get(site) == &process)
+    auto key = std::make_pair(site, process.process().enhancedSecurity());
+    if (m_processMap.get(key) == &process)
         return false;
-    ASSERT(!m_processMap.get(site) || m_processMap.get(site)->process().state() == WebProcessProxy::State::Terminated);
-    m_processMap.set(site, process);
+    ASSERT(!m_processMap.get(key) || m_processMap.get(key)->process().state() == WebProcessProxy::State::Terminated);
+    m_processMap.set(key, process);
     return true;
 }
 
@@ -190,8 +191,9 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
         m_sharedProcessSites.clear();
     } else {
         auto& site = *process.site();
-        ASSERT(site.isEmpty() || m_processMap.get(site) == &process || process.process().state() == WebProcessProxy::State::Terminated);
-        m_processMap.remove(site);
+        auto key = std::make_pair(site, process.process().enhancedSecurity());
+        ASSERT(site.isEmpty() || m_processMap.get(key) == &process || process.process().state() == WebProcessProxy::State::Terminated);
+        m_processMap.remove(key);
     }
     m_remotePages.removeIf([&] (auto& pair) {
         auto& set = pair.value;
@@ -213,7 +215,7 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
         return HashSet<Ref<RemotePageProxy>> { };
     }).iterator->value;
     m_processMap.removeIf([&] (auto& pair) {
-        auto& site = pair.key;
+        auto& site = pair.key.first;
         auto& process = pair.value;
         if (!process) {
             ASSERT_NOT_REACHED_WITH_MESSAGE("FrameProcess should remove itself in the destructor so we should never find a null WeakPtr");

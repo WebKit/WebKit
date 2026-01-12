@@ -3982,7 +3982,7 @@ TEST(SiteIsolation, MainFrameRedirectBetweenExistingProcesses)
     EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.length"] intValue], 1);
     auto pidBefore = [webView _webProcessIdentifier];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org/webkit_redirect"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit_redirect"]]];
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.length"] intValue], 0);
     EXPECT_EQ([webView _webProcessIdentifier], pidBefore);

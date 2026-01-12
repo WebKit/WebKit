@@ -2164,7 +2164,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same site as main frame"_s);
         }
         RefPtr<WebProcessProxy> process;
-        if (RefPtr frameProcess = browsingContextGroup.processForSite(site))
+        if (RefPtr frameProcess = browsingContextGroup.processForSite(site, enhancedSecurity))
             process = &frameProcess->process();
         if (process && process->websiteDataStore() == dataStore.ptr() && process->websiteDataStore() == &page.websiteDataStore() && !process->isInProcessCache() && process->lockdownMode() == lockdownMode && enhancedSecurityStatesAreConsistent(process->enhancedSecurity(), enhancedSecurity)) {
             dataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(*process, mainFrameSite.domain(), LoadedWebArchive::No, [completionHandler = WTF::move(completionHandler), process] () mutable {
