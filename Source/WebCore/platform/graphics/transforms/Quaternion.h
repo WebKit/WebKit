@@ -37,6 +37,8 @@ struct Quaternion {
         return x == other.x && y == other.y && z == other.z && w == other.w;
     }
 
+    static Quaternion fromRotate3d(double x, double y, double z, double angle);
+
     Quaternion slerp(const Quaternion& other, double progress);
     Quaternion accumulate(const Quaternion& other);
     Quaternion interpolate(const Quaternion& other, double progress, CompositeOperation);
