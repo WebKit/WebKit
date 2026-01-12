@@ -176,10 +176,11 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProcess& process)
 {
     auto& site = *process.site();
-    if (m_processMap.get(site) == &process)
+    auto key = std::make_pair(site, process.process().enhancedSecurity());
+    if (m_processMap.get(key) == &process)
         return false;
-    ASSERT(!m_processMap.get(site) || m_processMap.get(site)->process().state() == WebProcessProxy::State::Terminated);
-    m_processMap.set(site, process);
+    ASSERT(!m_processMap.get(key) || m_processMap.get(key)->process().state() == WebProcessProxy::State::Terminated);
+    m_processMap.set(key, process);
     return true;
 }
 

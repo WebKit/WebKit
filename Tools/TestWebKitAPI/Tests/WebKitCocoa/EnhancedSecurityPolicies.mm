@@ -365,6 +365,25 @@ static void runHttpOpeningHttpsTargetSelf(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpOpeningHttpsTargetSelf)
 
+static void runHttpsOpeningHttp(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>alert('opened-window'); alert(!!window.opener)</script>"_s } }
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>window.onload = function() { window.open('http://insecure.example.internal/'); }</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/", {
+        { "opened-window"_s, ExpectedEnhancedSecurity::Disabled },
+        { "false"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsOpeningHttp)
+
 static void runHttpOpeningHttpsNoOpener(bool useSiteIsolation)
 {
     HTTPServer plaintextServer({
