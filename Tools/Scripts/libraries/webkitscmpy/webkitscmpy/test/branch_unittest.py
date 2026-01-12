@@ -567,3 +567,118 @@ Created the local development branch 'eng/4'
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
+
+
+class TestExtractFromStructuredCommit(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def test_structured_commit_with_oops(self):
+        """Test extraction from structured commit with OOPS format"""
+        commit = Commit(
+            hash='abc123',
+            message='''check-webkit-style: fix false positive for LIFETIME_BOUND
+https://bugs.webkit.org/12345
+rdar://1234567
+
+Reviewed by NOBODY (OOPS!).
+
+The style checker incorrectly flagged functions with LIFETIME_BOUND
+attributes followed by opening braces on the next line.
+''',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertEqual('check-webkit-style: fix false positive for LIFETIME_BOUND', title)
+        self.assertIn('incorrectly flagged', description)
+        self.assertIn('LIFETIME_BOUND', description)
+
+    def test_structured_commit_title_only(self):
+        """Test extraction when title is the only non-URL line"""
+        commit = Commit(
+            hash='abc123',
+            message='''Fix the bug
+https://bugs.webkit.org/12345
+
+Reviewed by NOBODY (OOPS!).
+
+This fixes the issue.
+''',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertEqual('Fix the bug', title)
+        self.assertEqual('This fixes the issue.', description)
+
+    def test_unstructured_commit_returns_none(self):
+        """Test that unstructured commits return None"""
+        commit = Commit(
+            hash='abc123',
+            message='Simple commit message without OOPS format',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertIsNone(title)
+        self.assertIsNone(description)
+
+    def test_real_reviewer_returns_none(self):
+        """Test that commits with real reviewers are not auto-populated"""
+        commit = Commit(
+            hash='abc123',
+            message='''Fix bug
+https://bugs.webkit.org/12345
+
+Reviewed by John Smith.
+
+Description here.
+''',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertIsNone(title)
+        self.assertIsNone(description)
+
+    def test_empty_commit_returns_none(self):
+        """Test that empty commits return None"""
+        title, description = program.Branch.extract_from_structured_commit(None)
+        self.assertIsNone(title)
+        self.assertIsNone(description)
+
+    def test_commit_with_no_message_returns_none(self):
+        """Test that commits with no message return None"""
+        commit = Commit(hash='abc123', message=None)
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertIsNone(title)
+        self.assertIsNone(description)
+
+    def test_oops_in_title_line_skipped(self):
+        """Test that OOPS lines in title section are skipped"""
+        commit = Commit(
+            hash='abc123',
+            message='''Need the bug URL (OOPS!).
+Actual title here
+https://bugs.webkit.org/12345
+
+Reviewed by NOBODY (OOPS!).
+
+Description here.
+''',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertEqual('Actual title here', title)
+        self.assertEqual('Description here.', description)
+
+    def test_multiline_description(self):
+        """Test extraction with multi-line description"""
+        commit = Commit(
+            hash='abc123',
+            message='''Add new feature
+
+Reviewed by NOBODY (OOPS!).
+
+This is a multi-line description.
+It spans multiple paragraphs.
+
+And has blank lines too.
+''',
+        )
+        title, description = program.Branch.extract_from_structured_commit(commit)
+        self.assertEqual('Add new feature', title)
+        self.assertIn('multi-line description', description)
+        self.assertIn('multiple paragraphs', description)
+        self.assertIn('blank lines', description)

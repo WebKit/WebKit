@@ -159,17 +159,28 @@ class PullRequest(Command):
 
         # Then, see if we already have a commit associated with this branch we need to modify
         has_commit = repository.commit(include_log=False, include_identifier=False).branch == repository.branch and repository.branch != repository.default_branch
-        if not modified and has_commit:
-            log.info('Using committed changes...')
-            return 0
 
         bug_urls = getattr(args, '_bug_urls', None) or ''
         if isinstance(bug_urls, (list, tuple)):
             bug_urls = '\n'.join(bug_urls)
 
-        # Otherwise, we need to create a commit
-        will_amend = has_commit and args.technique == 'overwrite'
-        if not modified:
+        # Check if we need to amend the commit to add bug URLs
+        needs_bug_url_update = bug_urls and has_commit
+        if needs_bug_url_update:
+            # Check if commit already has the bug URLs
+            head_commit = repository.commit(include_log=True, include_identifier=False)
+            if head_commit and head_commit.message:
+                # If all bug URLs are already in the message, no update needed
+                if all(url in head_commit.message for url in bug_urls.split('\n') if url.strip()):
+                    needs_bug_url_update = False
+
+        if not modified and has_commit and not needs_bug_url_update:
+            log.info('Using committed changes...')
+            return 0
+
+        # Otherwise, we need to create/amend a commit
+        will_amend = has_commit and (args.technique == 'overwrite' or needs_bug_url_update)
+        if not modified and not needs_bug_url_update:
             sys.stderr.write('No modified files\n')
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
@@ -178,8 +189,15 @@ class PullRequest(Command):
             env['COMMIT_MESSAGE_TITLE'] = getattr(args, '_title')
         if bug_urls:
             env['COMMIT_MESSAGE_BUG'] = bug_urls
+
+        amend_args = []
+        if will_amend:
+            amend_args.append('--amend')
+            if needs_bug_url_update and not modified:
+                amend_args.append('--no-edit')
+
         if run(
-            [repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []),
+            [repository.executable(), 'commit', '--date=now'] + amend_args,
             cwd=repository.root_path,
             env=env,
         ).returncode:
@@ -268,6 +286,12 @@ class PullRequest(Command):
                 ], capture_output=True, cwd=repository.root_path).returncode:
                     if head.issues:
                         args.issue = head.issues[0].link
+                    else:
+                        # Fall back to structured commit extraction for OOPS format
+                        title, description = Branch.extract_from_structured_commit(head)
+                        if title and description:
+                            args.issue = title
+                            args._parsed_description = description
 
             if Branch.main(
                 args, repository,
@@ -783,7 +807,9 @@ class PullRequest(Command):
 
         if args.commit is None:
             args.commit = repository.config().get('webkitscmpy.auto-create-commit') == 'true'
-        if args.commit:
+        # Also call create_commit if we need to add bug URLs to the existing commit
+        needs_commit_update = bool(getattr(args, '_bug_urls', None))
+        if args.commit or needs_commit_update:
             result = cls.create_commit(args, repository, **kwargs)
             if result:
                 return result

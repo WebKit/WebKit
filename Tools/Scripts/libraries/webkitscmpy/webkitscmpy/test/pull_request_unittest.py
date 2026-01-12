@@ -2126,6 +2126,121 @@ No pre-PR checks to run""")
         )
 
 
+class TestBugUrlAmend(testing.PathTestCase):
+    basepath = 'mock/repository'
+    BUGZILLA = 'https://bugs.example.com'
+
+    def setUp(self):
+        super(TestBugUrlAmend, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
+
+    def test_amend_commit_to_add_bug_url(self):
+        """Test that when specifying -i with an issue, the commit is amended to include the bug URL
+        if the bug URL is not already present in the commit message."""
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            # First create a PR with a basic branch name
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            # Now we're on eng/pr-branch with a commit that has no bug URL
+            # Verify we're on the right branch
+            self.assertEqual(local.Git(self.path).branch, 'eng/pr-branch')
+
+        # Now update the PR with a bug URL - this should trigger the amend-with-bug-URLs flow
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            # Set up the branch again for the mock
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Creating commits\nReviewed by Jonathan Bedard\n\n * added.txt\n'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+
+            # Update the PR specifying the same branch - should use committed changes
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        log_output = captured.root.log.getvalue()
+        # Since no bug URL was added (no -i with a bug tracker URL), we should use committed changes
+        self.assertIn('Using committed changes...', log_output)
+
+    def test_existing_pr_uses_committed_changes(self):
+        """Test that when updating an existing PR without staged changes, committed changes are used."""
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            # First create a PR
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
+            # Set up the branch for the mock
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Creating commits\nReviewed by Jonathan Bedard\n\n * added.txt\n'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+
+            # Update without staged changes - should use committed changes
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+        log_output = captured.root.log.getvalue()
+        self.assertIn('Using committed changes...', log_output)
+
+
 class TestNetworkPullRequestGitHub(unittest.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
 

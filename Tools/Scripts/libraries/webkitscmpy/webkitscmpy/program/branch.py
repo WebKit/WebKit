@@ -29,6 +29,7 @@ from .commit import Commit
 from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import local, log, remote
+from webkitscmpy.commit_parser import CommitMessageParser
 
 
 class Branch(Command):
@@ -120,10 +121,54 @@ class Branch(Command):
         return None
 
     @classmethod
+    def extract_from_structured_commit(cls, commit):
+        """Extract title and description from structured commit using CommitMessageParser.
+
+        Returns (title, description) if commit has "Reviewed by NOBODY (OOPS!)." format,
+        otherwise returns (None, None).
+        """
+        if not commit or not commit.message:
+            return None, None
+
+        parser = CommitMessageParser()
+        parser.parse_message(commit.message)
+
+        # Only process structured commits with "NOBODY (OOPS!)"
+        if not parser.reviewed_by_lines:
+            return None, None
+        if not any('NOBODY (OOPS!)' in line for line in parser.reviewed_by_lines):
+            return None, None
+
+        # Extract title - first non-URL/OOPS line from title_lines
+        title = None
+        for line in parser.title_lines:
+            line = line.strip()
+            if line and not line.startswith('http') and not line.startswith('rdar://') and '(OOPS!)' not in line:
+                title = line
+                break
+
+        # Extract description from description_lines
+        description = '\n'.join(parser.description_lines).strip() if parser.description_lines else None
+
+        return title, description
+
+    @classmethod
     def main(cls, args, repository, why=None, redact=False, target_remote='fork', **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1
+
+        # Auto-populate from structured commit before prompting
+        if not args.issue:
+            try:
+                head_commit = repository.commit(include_log=True, include_identifier=False)
+                if head_commit:
+                    title, description = cls.extract_from_structured_commit(head_commit)
+                    if title and description:
+                        args.issue = title
+                        args._parsed_description = description
+            except Exception:
+                pass  # Fall through to normal prompting
 
         if not args.issue:
             if Tracker.instance() and getattr(args, 'update_issue', True):
@@ -148,7 +193,12 @@ class Branch(Command):
             if ' ' in args.issue:
                 if getattr(Tracker.instance(), 'credentials', None):
                     Tracker.instance().credentials(required=True, validate=True)
-                description = Terminal.input('Issue description: ')
+
+                # Use parsed description if available, otherwise prompt
+                if getattr(args, '_parsed_description', None):
+                    description = args._parsed_description
+                else:
+                    description = Terminal.input('Issue description: ')
 
                 # Asking for a radar here will prevent race conditions with the bug importer
                 needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])

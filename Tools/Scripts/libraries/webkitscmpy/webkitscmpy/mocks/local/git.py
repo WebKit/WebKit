@@ -602,6 +602,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
             ), mocks.Subprocess.Route(
+                self.executable, 'commit', '--date=now', '--amend', '--no-edit',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(amend=True, env=kwargs.get('env', dict())),
+            ), mocks.Subprocess.Route(
                 self.executable, 'commit', '-a', '-m', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(message=args[4], env=kwargs.get('env', dict())),
