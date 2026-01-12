@@ -290,7 +290,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
             }
 
             // Fall through to general case.
-        } else if (isPowerOfTwo<size_t>(divisor)) {
+        } else if (isPowerOfTwo(divisor)) {
             if constexpr (IsMod) {
                 if constexpr (isSigned) {
                     // This constructs an extra operand with log2(divisor) bits equal to the sign bit of the dividend. If the dividend

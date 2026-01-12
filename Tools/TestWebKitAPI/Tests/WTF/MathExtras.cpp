@@ -676,6 +676,28 @@ TEST(WTF, isIntegral)
     EXPECT_FALSE(WTF::isIntegral(std::numeric_limits<float>::quiet_NaN()));
 }
 
+TEST(WTF, isPowerOfTwo)
+{
+    for (int i = 1; i < 10000; ++i) {
+        if (!((i & (i - 1))))
+            EXPECT_TRUE(WTF::isPowerOfTwo(i));
+        else
+            EXPECT_FALSE(WTF::isPowerOfTwo(i));
+    }
+
+    for (size_t i = 1; i < 10000; ++i) {
+        if (!((i & (i - 1))))
+            EXPECT_TRUE(WTF::isPowerOfTwo(i));
+        else
+            EXPECT_FALSE(WTF::isPowerOfTwo(i));
+    }
+
+    for (int i = 0; -10000 < i; --i)
+        EXPECT_FALSE(WTF::isPowerOfTwo(i));
+
+    EXPECT_FALSE(WTF::isPowerOfTwo(std::numeric_limits<int64_t>::min()));
+}
+
 TEST(WTF, negate)
 {
     auto expected_int8_t = WTF::negate<int8_t>(0);

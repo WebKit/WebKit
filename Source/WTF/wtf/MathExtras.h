@@ -447,9 +447,10 @@ constexpr uint32_t roundUpToPowerOfTwo(auto v)
     return std::bit_ceil(v);
 }
 
-constexpr bool isPowerOfTwo(auto value)
+template<std::integral T>
+constexpr bool isPowerOfTwo(T value)
 {
-    return std::has_single_bit(value);
+    return value > 0 && std::has_single_bit(static_cast<std::make_unsigned_t<T>>(value));
 }
 
 constexpr unsigned maskForSize(unsigned size)
