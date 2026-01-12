@@ -32,6 +32,7 @@ namespace WebCore {
 class StyleRuleFunction;
 
 class CSSFunctionRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSFunctionRule);
 public:
     static Ref<CSSFunctionRule> create(StyleRuleFunction&, CSSStyleSheet* parent);
 

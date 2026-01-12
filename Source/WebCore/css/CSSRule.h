@@ -43,6 +43,7 @@ struct SerializationContext;
 }
 
 class CSSRule : public RefCountedAndCanMakeWeakPtr<CSSRule> {
+    WTF_MAKE_TZONE_ALLOCATED(CSSRule);
 public:
     virtual ~CSSRule() = default;
 

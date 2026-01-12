@@ -36,6 +36,7 @@ class StyleRuleWithNesting;
 class StyleRuleCSSStyleProperties;
 
 class CSSStyleRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStyleRule);
 public:
     static Ref<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSStyleRule(rule, sheet)); }
     static Ref<CSSStyleRule> create(StyleRuleWithNesting& rule, CSSStyleSheet* sheet) { return adoptRef(* new CSSStyleRule(rule, sheet)); };

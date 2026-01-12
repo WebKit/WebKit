@@ -37,6 +37,7 @@ namespace WebCore {
 class StyleRuleSupports;
 
 class CSSSupportsRule final : public CSSConditionRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSSupportsRule);
 public:
     static Ref<CSSSupportsRule> create(StyleRuleSupports&, CSSStyleSheet* parent);
 

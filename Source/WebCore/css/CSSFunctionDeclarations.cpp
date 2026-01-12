@@ -31,8 +31,11 @@
 #include "MutableStyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRuleFunction.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFunctionDeclarations);
 
 CSSFunctionDeclarations::CSSFunctionDeclarations(StyleRuleFunctionDeclarations& rule, CSSStyleSheet* parent)
     : CSSRule(parent)

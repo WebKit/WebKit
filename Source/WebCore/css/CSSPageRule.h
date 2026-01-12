@@ -30,6 +30,7 @@ class CSSStyleSheet;
 class StyleRulePage;
 
 class CSSPageRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPageRule);
 public:
     static Ref<CSSPageRule> create(StyleRulePage& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSPageRule(rule, sheet)); }
 

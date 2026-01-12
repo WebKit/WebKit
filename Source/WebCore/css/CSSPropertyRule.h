@@ -32,6 +32,7 @@ namespace WebCore {
 class StyleRuleProperty;
 
 class CSSPropertyRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSPropertyRule);
 public:
     static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();

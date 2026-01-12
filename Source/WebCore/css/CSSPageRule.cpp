@@ -32,8 +32,11 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include <wtf/text/MakeString.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSPageRule);
 
 CSSPageRule::CSSPageRule(StyleRulePage& pageRule, CSSStyleSheet* parent)
     : CSSRule(parent)

@@ -34,6 +34,7 @@ using MediaQueryList = Vector<MediaQuery>;
 }
 
 class CSSImportRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSImportRule);
 public:
     static Ref<CSSImportRule> create(StyleRuleImport& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSImportRule(rule, sheet)); }
 

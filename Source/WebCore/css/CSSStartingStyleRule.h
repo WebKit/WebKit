@@ -32,6 +32,7 @@ namespace WebCore {
 class StyleRuleStartingStyle;
 
 class CSSStartingStyleRule final : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSStartingStyleRule);
 public:
     static Ref<CSSStartingStyleRule> create(StyleRuleStartingStyle& rule, CSSStyleSheet* parent)
     {

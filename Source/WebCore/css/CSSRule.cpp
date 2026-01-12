@@ -28,8 +28,11 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "css/parser/CSSParserEnum.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSRule);
 
 struct SameSizeAsCSSRule : public RefCountedAndCanMakeWeakPtr<SameSizeAsCSSRule> {
     virtual ~SameSizeAsCSSRule();

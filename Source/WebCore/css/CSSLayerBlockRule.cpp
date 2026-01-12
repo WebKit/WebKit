@@ -34,8 +34,11 @@
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSLayerBlockRule);
 
 CSSLayerBlockRule::CSSLayerBlockRule(StyleRuleLayer& rule, CSSStyleSheet* parent)
     : CSSGroupingRule(rule, parent)

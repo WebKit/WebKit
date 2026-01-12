@@ -36,6 +36,7 @@ namespace WebCore {
 class StyleRuleLayer;
 
 class CSSLayerStatementRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSLayerStatementRule);
 public:
     static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
     virtual ~CSSLayerStatementRule();

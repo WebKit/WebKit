@@ -76,6 +76,7 @@ private:
 };
 
 class CSSKeyframeRule final : public CSSRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSKeyframeRule);
 public:
     virtual ~CSSKeyframeRule();
 

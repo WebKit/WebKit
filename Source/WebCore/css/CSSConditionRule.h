@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CSSConditionRule : public CSSGroupingRule {
+    WTF_MAKE_TZONE_ALLOCATED(CSSConditionRule);
 public:
     virtual String conditionText() const = 0;
 
