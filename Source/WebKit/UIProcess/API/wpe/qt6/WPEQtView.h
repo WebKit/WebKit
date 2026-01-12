@@ -105,6 +105,13 @@ protected:
 
     void touchEvent(QTouchEvent*) override;
 
+    void focusInEvent(QFocusEvent*) override;
+    void focusOutEvent(QFocusEvent*) override;
+
+    void inputMethodEvent(QInputMethodEvent*) override;
+
+    QVariant inputMethodQuery(Qt::InputMethodQuery) const;
+
 private Q_SLOTS:
     void configureWindow();
     void createWebView();
@@ -121,4 +128,5 @@ private:
 
     Q_DECLARE_PRIVATE(WPEQtView)
     QScopedPointer<WPEQtViewPrivate> d_ptr;
+    WPEInputMethodContext *m_im_context;
 };
