@@ -697,9 +697,9 @@ void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, URL&&, String&&,
     completionHandler();
 }
 
-Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData)
+Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData, std::optional<ResourceRequest>&& originalRequest)
 {
-    return DocumentLoader::create(WTF::move(request), WTF::move(substituteData));
+    return DocumentLoader::create(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
 }
 
 RefPtr<LocalFrame> EmptyFrameLoaderClient::createFrame(const AtomString&, HTMLFrameOwnerElement&)

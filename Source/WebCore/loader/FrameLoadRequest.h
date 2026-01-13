@@ -127,6 +127,10 @@ public:
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
     ResourceRequest takeResourceRequest() { return std::exchange(m_resourceRequest, { }); }
 
+    void setOriginalResourceRequest(ResourceRequest originalResourceRequest) { m_originalResourceRequest = originalResourceRequest; }
+    bool hasOriginalResourceRequest() { return !!m_originalResourceRequest; }
+    std::optional<ResourceRequest> takeOriginalResourceRequest() { return std::exchange(m_originalResourceRequest, { }); }
+
     const AtomString& frameName() const { return m_frameName; }
     void setFrameName(const AtomString& frameName) { m_frameName = frameName; }
 
@@ -177,6 +181,7 @@ private:
     AtomString m_frameName;
     SubstituteData m_substituteData;
     String m_clientRedirectSourceForHistory;
+    std::optional<ResourceRequest> m_originalResourceRequest;
 
     bool m_shouldCheckNewWindowPolicy { false };
     ShouldTreatAsContinuingLoad m_shouldTreatAsContinuingLoad { ShouldTreatAsContinuingLoad::No };

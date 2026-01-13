@@ -96,6 +96,7 @@ struct LoadParameters {
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion { 0 };
     std::optional<WebCore::NavigationRequester> requester;
+    std::optional<WebCore::ResourceRequest> originalRequest;
 };
 
 } // namespace WebKit
