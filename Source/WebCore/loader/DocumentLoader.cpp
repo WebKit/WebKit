@@ -181,12 +181,12 @@ DocumentLoader* DocumentLoader::fromScriptExecutionContextIdentifier(ScriptExecu
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 
-DocumentLoader::DocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData)
+DocumentLoader::DocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData, std::optional<ResourceRequest>&& originalRequest)
     : FrameDestructionObserver(nullptr)
     , m_cachedResourceLoader(CachedResourceLoader::create(this))
-    , m_originalRequest(request)
+    , m_originalRequest(originalRequest ? *originalRequest : request)
     , m_substituteData(WTF::move(substituteData))
-    , m_originalRequestCopy(request)
+    , m_originalRequestCopy(originalRequest ? *std::exchange(originalRequest, std::nullopt) : request)
     , m_request(WTF::move(request))
     , m_substituteResourceDeliveryTimer(*this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_originalSubstituteDataWasValid(substituteData.isValid())

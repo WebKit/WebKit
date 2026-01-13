@@ -37,7 +37,7 @@ public:
     { }
 
 private:
-    Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) override;
+    Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, std::optional<ResourceRequest>&& = std::nullopt) override;
 
     bool hasWebView() const final;
 

@@ -36,6 +36,7 @@
 
 #include "BlobRegistry.h"
 #include "Logging.h"
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

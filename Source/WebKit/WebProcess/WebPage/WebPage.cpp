@@ -2211,6 +2211,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         frameLoadRequest.setIsRequestFromClientOrUserInput();
     if (loadParameters.advancedPrivacyProtections)
         frameLoadRequest.setAdvancedPrivacyProtections(*loadParameters.advancedPrivacyProtections);
+    if (loadParameters.originalRequest)
+        frameLoadRequest.setOriginalResourceRequest(*loadParameters.originalRequest);
 
     if (loadParameters.effectiveSandboxFlags)
         localFrame->updateSandboxFlags(loadParameters.effectiveSandboxFlags, Frame::NotifyUIProcess::No);
@@ -8027,9 +8029,9 @@ void WebPage::setScrollbarOverlayStyle(std::optional<WebCore::ScrollbarOverlaySt
         localMainFrame->protectedView()->recalculateScrollbarOverlayStyle();
 }
 
-Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceRequest&& request, SubstituteData&& substituteData)
+Ref<DocumentLoader> WebPage::createDocumentLoader(LocalFrame& frame, ResourceRequest&& request, SubstituteData&& substituteData, std::optional<ResourceRequest>&& originalRequest)
 {
-    auto documentLoader = DocumentLoader::create(WTF::move(request), WTF::move(substituteData));
+    auto documentLoader = DocumentLoader::create(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
 
     documentLoader->setLastNavigationWasAppInitiated(m_lastNavigationWasAppInitiated);
 

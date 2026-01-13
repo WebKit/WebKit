@@ -2234,6 +2234,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.originatingFrame = navigation.lastNavigationAction() ? std::optional(navigation.lastNavigationAction()->originatingFrameInfoData) : std::nullopt;
     if (auto& action = navigation.lastNavigationAction())
         loadParameters.requester = action->requester;
+    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision)
+        loadParameters.originalRequest = navigation.originalRequest();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (protectedPreferences()->iFrameResourceMonitoringEnabled())

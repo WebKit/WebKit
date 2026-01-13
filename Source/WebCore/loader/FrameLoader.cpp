@@ -1751,7 +1751,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     if (!request.hasSubstituteData())
         request.setSubstituteData(defaultSubstituteDataForURL(request.resourceRequest().url()));
 
-    Ref loader = m_client->createDocumentLoader(request.takeResourceRequest(), request.takeSubstituteData());
+    Ref loader = m_client->createDocumentLoader(request.takeResourceRequest(), request.takeSubstituteData(), request.takeOriginalResourceRequest());
     loader->setIsContentRuleListRedirect(request.isContentRuleListRedirect());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);

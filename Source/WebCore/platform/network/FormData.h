@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <WebCore/BlobData.h>
 #include <optional>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>

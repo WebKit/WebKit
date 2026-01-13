@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
@@ -37,6 +38,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
+#import <WebKit/WKHistoryDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -52,6 +54,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 using namespace TestWebKitAPI;
 
@@ -121,6 +124,35 @@ static RetainPtr<WKHTTPCookieStore> globalCookieStore;
 {
     ASSERT_EQ(cookieStore, globalCookieStore.get());
     ++observerCallbacks;
+}
+
+@end
+
+@interface EnhancedSecurityHistoryDelegate : NSObject <WKHistoryDelegatePrivate> {
+    @public
+    RetainPtr<WKNavigationData> lastNavigationData;
+    RetainPtr<NSString> lastUpdatedTitle;
+    RetainPtr<NSURL> lastRedirectSource;
+    RetainPtr<NSURL> lastRedirectDestination;
+}
+@end
+
+@implementation EnhancedSecurityHistoryDelegate
+
+- (void)_webView:(WKWebView *)webView didNavigateWithNavigationData:(WKNavigationData *)navigationData
+{
+    lastNavigationData = navigationData;
+}
+
+- (void)_webView:(WKWebView *)webView didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL
+{
+    lastUpdatedTitle = title;
+}
+
+- (void)_webView:(WKWebView *)webView didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
+{
+    lastRedirectSource = sourceURL;
+    lastRedirectDestination = destinationURL;
 }
 
 @end
@@ -1191,6 +1223,54 @@ TEST(EnhancedSecurityPolicies, NonPersistentDataStoreCookieNotification)
     });
 
     EXPECT_EQ(observerCallbacks, 1u);
+}
+
+TEST(EnhancedSecurityPolicies, HistoryEventsUseCorrectOriginalRequest)
+{
+    TestWebKitAPI::HTTPServer plaintextServer({
+        { "http://example.internal/"_s, { "<head><title>Page Title</title></head><body><script>alert('first-page')</script></body>"_s } },
+        { "http://example.internal/server_redirect_source"_s, { 301, { { "Location"_s, "server_redirect_destination"_s } } } },
+        { "http://example.internal/server_redirect_destination"_s, { "<head><title>Target Page</title></head><body><script>alert('target-page')</script></body>"_s } }
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, /* useSiteIsolation */ false, /* useNonPersistentStore */ false);
+
+    RetainPtr historyDelegate = adoptNS([[EnhancedSecurityHistoryDelegate alloc] init]);
+    [webView _setHistoryDelegate:historyDelegate.get()];
+
+    auto mainURL = "http://example.internal/"_s;
+    RetainPtr url = adoptNS([[NSURL alloc] initWithString:mainURL.createNSString().get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
+
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView, request] {
+        [webView loadRequest:request.get()];
+    }, { { "first-page"_s, ExpectedEnhancedSecurity::Enabled } });
+
+    TestWebKitAPI::Util::waitFor([&] {
+        return historyDelegate->lastNavigationData && historyDelegate->lastUpdatedTitle;
+    });
+
+    EXPECT_NS_EQUAL([historyDelegate->lastNavigationData originalRequest], request.get());
+    EXPECT_NS_EQUAL([historyDelegate->lastNavigationData originalRequest].URL, url.get());
+    EXPECT_NS_EQUAL(historyDelegate->lastUpdatedTitle.get(), @"Page Title");
+
+    auto sourceURL = "http://example.internal/server_redirect_source"_s;
+    auto destinationURL = "http://example.internal/server_redirect_destination"_s;
+    url = adoptNS([[NSURL alloc] initWithString:sourceURL.createNSString().get()]);
+    request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
+
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView, request] {
+        [webView loadRequest:request.get()];
+    }, { { "target-page"_s, ExpectedEnhancedSecurity::Enabled } });
+
+    TestWebKitAPI::Util::spinRunLoop();
+
+    TestWebKitAPI::Util::waitFor([&] {
+        return historyDelegate->lastRedirectSource && historyDelegate->lastRedirectDestination;
+    });
+
+    EXPECT_WK_STREQ([historyDelegate->lastRedirectSource absoluteString], sourceURL);
+    EXPECT_WK_STREQ([historyDelegate->lastRedirectDestination absoluteString], destinationURL);
 }
 
 #endif

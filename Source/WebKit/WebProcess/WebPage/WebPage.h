@@ -56,6 +56,7 @@
 #include <WebCore/PointerID.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/ShareableBitmap.h>
@@ -212,7 +213,6 @@ class RegistrableDomain;
 class RemoteFrameGeometryTransformer;
 class RenderImage;
 class Report;
-class ResourceRequest;
 class ResourceResponse;
 class ScrollingCoordinator;
 class SelectionData;
@@ -1580,7 +1580,7 @@ public:
     std::optional<WebCore::ScrollbarOverlayStyle> scrollbarOverlayStyle() { return m_scrollbarOverlayStyle; }
     void setScrollbarOverlayStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
 
-    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&);
+    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::LocalFrame&, WebCore::ResourceRequest&&, WebCore::SubstituteData&&, std::optional<WebCore::ResourceRequest>&& = std::nullopt);
     void updateCachedDocumentLoader(WebCore::DocumentLoader&, WebCore::LocalFrame&);
 
     void getBytecodeProfile(CompletionHandler<void(const String&)>&&);
