@@ -38,6 +38,8 @@
 #import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -61,6 +63,11 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
 }
 
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration
+{
+    return [self initForExtension:extension extensionControllerConfiguration:configuration usesEnhancedSecurity:NO];
+}
+
+- (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity
 {
     if (!(self = [super init]))
         return nil;
@@ -86,7 +93,7 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
 
     _internalDelegate = [[TestWebExtensionsDelegate alloc] init];
 
-    auto *window = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller usesPrivateBrowsing:NO];
+    auto *window = [[TestWebExtensionWindow alloc] initWithExtensionController:_controller usesPrivateBrowsing:NO usesEnhancedSecurity:usesEnhancedSecurity];
     auto *windows = [NSMutableArray arrayWithObject:window];
 
     _internalDelegate.openWindows = ^NSArray<id<WKWebExtensionWindow>> *(WKWebExtensionContext *) {
@@ -444,6 +451,13 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
         preferences._developerExtrasEnabled = YES;
 
+        if (_window.usingEnhancedSecurity) {
+            for (_WKFeature *feature in [WKPreferences _features]) {
+                if ([feature.key isEqualToString:@"EnhancedSecurityHeuristicsEnabled"])
+                    [preferences _setEnabled:YES forFeature:feature];
+            }
+        }
+
         _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
         _webView.navigationDelegate = self;
 
@@ -716,6 +730,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 - (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing
 {
+    return [self initWithExtensionController:extensionController usesPrivateBrowsing:usesPrivateBrowsing usesEnhancedSecurity:NO];
+}
+
+- (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing usesEnhancedSecurity:(BOOL)usesEnhancedSecurity
+{
     if (!(self = [super init]))
         return nil;
 
@@ -724,6 +743,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     _windowState = WKWebExtensionWindowStateNormal;
     _windowType = WKWebExtensionWindowTypeNormal;
     _usingPrivateBrowsing = usesPrivateBrowsing;
+    _usingEnhancedSecurity = usesEnhancedSecurity;
     _screenFrame = CGRectMake(0, 0, 1920, 1080);
 
 #if PLATFORM(MAC)
@@ -980,15 +1000,15 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 namespace TestWebKitAPI {
 namespace Util {
 
-RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
+RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration, BOOL usesEnhancedSecurity)
 {
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    return adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:configuration]);
+    return adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:configuration usesEnhancedSecurity:usesEnhancedSecurity]);
 }
 
-RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
+RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration, BOOL usesEnhancedSecurity)
 {
-    auto manager = parseExtension(manifest, resources, configuration);
+    auto manager = parseExtension(manifest, resources, configuration, usesEnhancedSecurity);
     [manager load];
     return manager;
 }

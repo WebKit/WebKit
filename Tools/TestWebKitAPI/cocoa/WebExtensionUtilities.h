@@ -42,6 +42,7 @@
 
 - (instancetype)initForExtension:(WKWebExtension *)extension;
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration;
+- (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration usesEnhancedSecurity:(BOOL)usesEnhancedSecurity;
 
 @property (nonatomic, strong) WKWebExtension *extension;
 @property (nonatomic, strong) WKWebExtensionContext *context;
@@ -110,7 +111,8 @@
 
 @interface TestWebExtensionWindow : NSObject <WKWebExtensionWindow>
 
-- (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing;
+- (instancetype)initWithExtensionController:(WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing usesEnhancedSecurity:(BOOL)usesEnhancedSecurity NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
 @property (nonatomic, strong) TestWebExtensionTab *activeTab;
@@ -133,6 +135,7 @@
 @property (nonatomic) CGRect screenFrame;
 
 @property (nonatomic, readonly, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
+@property (nonatomic, readonly, getter=isUsingEnhancedSecurity) BOOL usingEnhancedSecurity;
 
 @property (nonatomic, copy) void (^didFocus)(void);
 @property (nonatomic, copy) void (^didClose)(void);
@@ -163,8 +166,8 @@ void performWithAppearance(Appearance, void (^block)(void));
 
 #endif
 
-RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);
-RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
+RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
 void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);
 
 } // namespace TestWebKitAPI::Util
