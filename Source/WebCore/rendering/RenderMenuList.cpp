@@ -30,6 +30,7 @@
 #include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "ColorBlending.h"
+#include "DocumentEventLoop.h"
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "ElementInlines.h"
@@ -405,7 +406,9 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
     if (&document() != document().frame()->document())
         return;
 
-    selectElement().optionSelectedByUser(selectElement().listToOptionIndex(listIndex), fireOnChange);
+    document().checkedEventLoop()->queueTask(TaskSource::UserInteraction, [element = Ref { selectElement() }, fireOnChange, listIndex] mutable {
+        element->optionSelectedByUser(element->listToOptionIndex(listIndex), fireOnChange);
+    });
 }
 
 void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
