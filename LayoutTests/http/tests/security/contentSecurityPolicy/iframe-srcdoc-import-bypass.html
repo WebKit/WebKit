@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test checks if iframes without an initial srcdoc attribute incorrectly bypass CSP when srcdoc is set later.");
+
+window.jsTestIsAsync = true;
+
+let resultsReceived = 0;
+let iframe1Loaded;
+let iframe2Loaded;
+
+function reportResult(iframeId, loaded) {
+    if (iframeId === "iframe1")
+        iframe1Loaded = loaded;
+    else
+        iframe2Loaded = loaded;
+    resultsReceived++;
+
+    if (resultsReceived === 2)
+        finishTest();
+}
+
+function finishTest() {
+    shouldBeFalse("iframe1Loaded");
+    shouldBeFalse("iframe2Loaded");
+    finishJSTest();
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "import-result")
+        reportResult(event.data.iframe, event.data.loaded);
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const iframe1 = document.getElementById("iframe1");
+    const iframe2 = document.getElementById("iframe2");
+    const srcdocContent = `
+        <script>
+        (async function() {
+            try {
+                await import('https://localhost:8443/security/contentSecurityPolicy/resources/module-pass.py');
+                window.parent.postMessage({type: 'import-result', iframe: '${iframe1.id}', loaded: true}, '*');
+            } catch (e) {
+                window.parent.postMessage({type: 'import-result', iframe: '${iframe1.id}', loaded: false}, '*');
+            }
+        })();
+        <\/script>
+    `;
+
+    iframe1.srcdoc = srcdocContent;
+    iframe2.srcdoc = srcdocContent.replaceAll(iframe1.id, iframe2.id);
+});
+</script>
+<iframe id="iframe1" sandbox="allow-scripts"></iframe>
+<iframe id="iframe2" sandbox="allow-scripts" srcdoc=""></iframe>
+</body>
+</html>
