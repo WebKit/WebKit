@@ -31,7 +31,7 @@ namespace Style {
 
 // <'r'> = <length-percentage [0,∞]>
 // https://svgwg.org/svg2-draft/geometry.html#R
-struct SVGRadius : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct SVGRadius : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 

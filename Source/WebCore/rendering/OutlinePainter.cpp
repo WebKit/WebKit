@@ -90,8 +90,9 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
-    auto outlineWidth = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineWidth(), Style::ZoomNeeded { });
-    auto outlineOffset = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineOffset(), Style::ZoomNeeded { });
+    auto zoom = styleToUse->usedZoomForLength();
+    auto outlineWidth = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineWidth(), zoom, deviceScaleFactor(renderer));
+    auto outlineOffset = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineOffset(), zoom);
 
     auto outerRect = paintRect;
     outerRect.inflate(outlineOffset + outlineWidth);
@@ -178,11 +179,12 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, con
     }
 
     auto styleToUse = CheckedRef { renderer.style() };
-
-    auto outlineOffset = Style::evaluate<float>(styleToUse->usedOutlineOffset(), Style::ZoomNeeded { });
-    auto outlineWidth = Style::evaluate<float>(styleToUse->usedOutlineWidth(), Style::ZoomNeeded { });
+    auto zoom = styleToUse->usedZoomForLength();
 
     auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
+
+    auto outlineOffset = Style::evaluate<float>(styleToUse->usedOutlineOffset(), zoom);
+    auto outlineWidth = Style::evaluate<float>(styleToUse->usedOutlineWidth(), zoom, deviceScaleFactor);
 
     Vector<FloatRect> pixelSnappedRects;
     for (size_t index = 0; index < lineRects.size(); ++index) {
@@ -192,7 +194,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, con
         rect.inflate(outlineOffset + outlineWidth / 2);
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto path = pathWithShrinkWrappedRects(pixelSnappedRects, styleToUse->border().radii, outlineOffset, styleToUse->writingMode(), deviceScaleFactor);
+    auto path = pathWithShrinkWrappedRects(pixelSnappedRects, styleToUse->border().radii, outlineOffset, styleToUse->writingMode(), styleToUse->usedZoomForLength(), deviceScaleFactor);
     if (path.isEmpty()) {
         // Disjoint line spanning inline boxes.
         for (auto rect : lineRects) {
@@ -237,17 +239,17 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 #endif
 }
 
-static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
-    context.drawFocusRing(path, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color);
+    context.drawFocusRing(path, Style::evaluate<float>(style.usedOutlineWidth(), zoom, deviceScaleFactor), color);
 }
 
-static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
+static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, 0, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color);
+    context.drawFocusRing(rects, 0, Style::evaluate<float>(style.usedOutlineWidth(), zoom, deviceScaleFactor), color);
 #else
-    context.drawFocusRing(rects, Style::evaluate<float>(style.usedOutlineOffset(), Style::ZoomNeeded { }), Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color);
+    context.drawFocusRing(rects, Style::evaluate<float>(style.usedOutlineOffset(), zoom), Style::evaluate<float>(style.usedOutlineWidth(), zoom, deviceScaleFactor), color);
 #endif
 }
 
@@ -258,7 +260,8 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     ASSERT(style->outlineStyle() == OutlineStyle::Auto);
 
     auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
-    auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), Style::ZoomNeeded { });
+    auto zoom = style->usedZoomForLength();
+    auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), zoom);
 
     Vector<FloatRect> pixelSnappedFocusRingRects;
     for (auto rect : focusRingRects) {
@@ -269,14 +272,14 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentOutlineColorApplyingColorFilter();
     if (useShrinkWrappedFocusRingForOutlineStyleAuto() && style->hasBorderRadius()) {
-        auto path = pathWithShrinkWrappedRects(pixelSnappedFocusRingRects, style->border().radii, outlineOffset, style->writingMode(), deviceScaleFactor);
+        auto path = pathWithShrinkWrappedRects(pixelSnappedFocusRingRects, style->border().radii, outlineOffset, style->writingMode(), zoom, deviceScaleFactor);
         if (path.isEmpty()) {
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        drawFocusRing(m_paintInfo.context(), path, style.get(), focusRingColor);
+        drawFocusRing(m_paintInfo.context(), path, style.get(), focusRingColor, zoom, deviceScaleFactor);
     } else
-        drawFocusRing(m_paintInfo.context(), pixelSnappedFocusRingRects, style.get(), focusRingColor);
+        drawFocusRing(m_paintInfo.context(), pixelSnappedFocusRingRects, style.get(), focusRingColor, zoom, deviceScaleFactor);
 }
 
 Vector<LayoutRect> OutlinePainter::collectFocusRingRects(const RenderElement& renderer, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
@@ -582,10 +585,10 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
     return FloatRect(topLeft.value(), bottomRight.value());
 }
 
-Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const Style::BorderRadius& radii, float outlineOffset, WritingMode writingMode, float deviceScaleFactor)
+Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const Style::BorderRadius& radii, float outlineOffset, WritingMode writingMode, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
-    auto roundedRect = [radii, outlineOffset, deviceScaleFactor](const FloatRect& rect) {
-        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate<FloatRoundedRect::Radii>(radii, rect.size(), Style::ZoomNeeded { }), outlineOffset);
+    auto roundedRect = [radii, outlineOffset, deviceScaleFactor, zoom](const FloatRect& rect) {
+        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate<FloatRoundedRect::Radii>(radii, rect.size(), zoom), outlineOffset);
         adjustedRadii.scale(calcBorderRadiiConstraintScaleFor(rect, adjustedRadii));
 
         LayoutRoundedRect roundedRect(
@@ -622,8 +625,8 @@ Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, 
     auto firstLineRect = isLeftToRight ? rects.at(0) : rects.at(rects.size() - 1);
     auto lastLineRect = isLeftToRight ? rects.at(rects.size() - 1) : rects.at(0);
     // Adjust radius so that it matches the box border.
-    auto firstLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, firstLineRect.size(), Style::ZoomNeeded { });
-    auto lastLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, lastLineRect.size(), Style::ZoomNeeded { });
+    auto firstLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, firstLineRect.size(), zoom);
+    auto lastLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, lastLineRect.size(), zoom);
     firstLineRadii.scale(calcBorderRadiiConstraintScaleFor(firstLineRect, firstLineRadii));
     lastLineRadii.scale(calcBorderRadiiConstraintScaleFor(lastLineRect, lastLineRadii));
 

@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace Style {
 
-struct MaskBorderWidthValueLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct MaskBorderWidthValueLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 

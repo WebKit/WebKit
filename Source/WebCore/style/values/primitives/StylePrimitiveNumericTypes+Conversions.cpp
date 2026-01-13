@@ -73,7 +73,7 @@ bool evaluationTimeZoomEnabled(const RenderStyle& style)
 
 bool evaluationTimeZoomEnabled(const BuilderState& state)
 {
-    return state.document().settings().evaluationTimeZoomEnabled();
+    return state.cssToLengthConversionData().evaluationTimeZoomEnabled();
 }
 
 } // namespace Style

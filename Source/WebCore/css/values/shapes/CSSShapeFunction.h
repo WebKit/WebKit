@@ -32,7 +32,7 @@ namespace WebCore {
 namespace CSS {
 
 // <coordinate-pair> = <length-percentage>{2}
-using CoordinatePair = SpaceSeparatedPoint<LengthPercentage<>>;
+using CoordinatePair = SpaceSeparatedPoint<LengthPercentage<AllUnzoomed>>;
 
 // <by-to> = by | to
 // https://drafts.csswg.org/css-shapes-2/#typedef-shape-by-to
@@ -156,7 +156,7 @@ struct HLineCommand {
     struct By {
         static constexpr auto affinity = Keyword::By { };
 
-        LengthPercentage<> offset;
+        LengthPercentage<AllUnzoomed> offset;
 
         bool operator==(const By&) const = default;
     };
@@ -187,7 +187,7 @@ struct VLineCommand {
     struct By {
         static constexpr auto affinity = Keyword::By { };
 
-        LengthPercentage<> offset;
+        LengthPercentage<AllUnzoomed> offset;
 
         bool operator==(const By&) const = default;
     };
@@ -310,7 +310,7 @@ struct ArcCommand {
     using By = ByCoordinatePair;
     Variant<To, By> toBy;
 
-    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<>>;
+    using SizeOfEllipse = MinimallySerializingSpaceSeparatedSize<LengthPercentage<AllUnzoomed>>;
     SizeOfEllipse size;
 
     ArcSweep arcSweep;

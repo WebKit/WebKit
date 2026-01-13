@@ -38,6 +38,7 @@ struct Tree;
 
 double evaluate(const Tree&, double percentResolutionLength, const ZoomFactor&);
 double evaluate(const Tree&, double percentResolutionLength, const ZoomNeeded&);
+double evaluate(const Tree&, double percentResolutionLength);
 
 } // namespace Calculation
 } // namespace Style

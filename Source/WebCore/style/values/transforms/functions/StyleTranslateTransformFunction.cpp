@@ -60,12 +60,12 @@ Ref<const TransformFunctionBase> TranslateTransformFunction::clone() const
     return adoptRef(*new TranslateTransformFunction(m_x, m_y, m_z, type()));
 }
 
-Ref<TransformOperation> TranslateTransformFunction::toPlatform(const FloatSize& borderBoxSize) const
+Ref<TransformOperation> TranslateTransformFunction::toPlatform(const FloatSize& borderBoxSize, ZoomFactor zoom) const
 {
     return TranslateTransformOperation::create(
-        evaluate<float>(m_x, borderBoxSize.width(), ZoomNeeded { }),
-        evaluate<float>(m_y, borderBoxSize.height(), ZoomNeeded { }),
-        evaluate<float>(m_z, ZoomNeeded { }),
+        evaluate<float>(m_x, borderBoxSize.width(), zoom),
+        evaluate<float>(m_y, borderBoxSize.height(), zoom),
+        evaluate<float>(m_z, zoom),
         Style::toPlatform(type())
     );
 }
@@ -87,12 +87,12 @@ bool TranslateTransformFunction::operator==(const TransformFunctionBase& other) 
     return m_x == otherTranslate.m_x && m_y == otherTranslate.m_y && m_z == otherTranslate.m_z;
 }
 
-void TranslateTransformFunction::apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const
+void TranslateTransformFunction::apply(TransformationMatrix& transform, const FloatSize& borderBoxSize, ZoomFactor zoom) const
 {
     transform.translate3d(
-        evaluate<float>(m_x, borderBoxSize.width(), ZoomNeeded { }),
-        evaluate<float>(m_y, borderBoxSize.height(), ZoomNeeded { }),
-        evaluate<float>(m_z, ZoomNeeded { })
+        evaluate<float>(m_x, borderBoxSize.width(), zoom),
+        evaluate<float>(m_y, borderBoxSize.height(), zoom),
+        evaluate<float>(m_z, zoom)
     );
 }
 

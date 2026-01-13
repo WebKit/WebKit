@@ -58,7 +58,7 @@ RefPtr<CSSValue> consumeClipRectFunction(CSSParserTokenRange& range, CSS::Proper
     auto consumeClipComponent = [&] -> RefPtr<CSSPrimitiveValue> {
         if (args.peek().id() == CSSValueAuto)
             return consumeIdent(args);
-        return CSSPrimitiveValueResolver<CSS::Length<>>::consumeAndResolve(args, state);
+        return CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(args, state);
     };
 
     // Support both rect(t, r, b, l) and rect(t r b l).

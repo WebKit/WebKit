@@ -222,7 +222,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
             return false;
 
         auto rectWithOutsets = rect;
-        rectWithOutsets.expand(style.imageOutsets(borderImage));
+        rectWithOutsets.expand(style.imageOutsets(borderImage, document().deviceScaleFactor()));
         return !rectWithOutsets.isEmpty();
     };
 
@@ -453,7 +453,7 @@ bool BorderPainter::paintNinePieceImageImpl(const LayoutRect& rect, const Render
     float deviceScaleFactor = document().deviceScaleFactor();
 
     LayoutRect rectWithOutsets = rect;
-    rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
+    rectWithOutsets.expand(style.imageOutsets(ninePieceImage, deviceScaleFactor));
     LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
     auto source = modelObject->calculateImageIntrinsicDimensions(image.get(), destination.size(), RenderBoxModelObject::ScaleByUsedZoom::No);

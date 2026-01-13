@@ -89,7 +89,7 @@ public:
     static TransformationMatrix computeTransform(const RenderStyle&, const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 
 private:
-    void applyMotionPathTransform(const TransformOperationData&);
+    void applyMotionPathTransform(const TransformOperationData&, ZoomFactor);
 
     TransformationMatrix& m_transform;
     const CheckedRef<const ComputedStyle> m_style;

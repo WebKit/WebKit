@@ -34,7 +34,7 @@ namespace Style {
 
 struct Circle {
     using Extent = CSS::Circle::Extent;
-    using Length = Style::LengthPercentage<CSS::Nonnegative>;
+    using Length = Style::LengthPercentage<CSS::NonnegativeUnzoomed>;
     using RadialSize = Variant<Length, Extent>;
 
     RadialSize radius;
@@ -54,11 +54,11 @@ template<size_t I> const auto& get(const Circle& value)
 
 DEFINE_TYPE_MAPPING(CSS::Circle, Circle)
 
-FloatPoint resolvePosition(const Circle& value, FloatSize boxSize);
-float resolveRadius(const Circle& value, FloatSize boxSize, FloatPoint center);
-WebCore::Path pathForCenterCoordinate(const Circle&, const FloatRect&, FloatPoint);
+FloatPoint resolvePosition(const Circle& value, FloatSize boxSize, ZoomFactor);
+float resolveRadius(const Circle& value, FloatSize boxSize, FloatPoint center, ZoomFactor);
+WebCore::Path pathForCenterCoordinate(const Circle&, const FloatRect&, FloatPoint, ZoomFactor);
 
-template<> struct PathComputation<Circle> { WebCore::Path operator()(const Circle&, const FloatRect&); };
+template<> struct PathComputation<Circle> { WebCore::Path operator()(const Circle&, const FloatRect&, ZoomFactor); };
 
 template<> struct Blending<Circle> {
     auto canBlend(const Circle&, const Circle&) -> bool;

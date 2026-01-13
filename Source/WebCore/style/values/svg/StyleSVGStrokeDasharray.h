@@ -30,7 +30,7 @@ namespace WebCore {
 namespace Style {
 
 // <dasharray-value> = [ <length-percentage [0,∞]> | <number [0,∞]>@(converted-to-px) ]
-struct SVGStrokeDasharrayValueLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct SVGStrokeDasharrayValueLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 struct SVGStrokeDasharrayValue {

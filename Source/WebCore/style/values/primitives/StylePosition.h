@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,10 @@
 namespace WebCore {
 namespace Style {
 
-struct PositionX : LengthWrapperBase<LengthPercentage<>> {
+struct PositionX : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
-struct PositionY : LengthWrapperBase<LengthPercentage<>> {
+struct PositionY : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 
@@ -134,7 +134,7 @@ template<> struct CSSValueConversion<PositionY> { auto operator()(BuilderState&,
 // MARK: - Evaluation
 
 template<> struct Evaluation<Position, FloatPoint> {
-    auto operator()(const Position&, FloatSize, ZoomNeeded) -> FloatPoint;
+    auto operator()(const Position&, FloatSize, ZoomFactor) -> FloatPoint;
 };
 
 } // namespace Style

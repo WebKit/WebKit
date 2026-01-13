@@ -63,7 +63,7 @@ auto CSSValueConversion<Clip>::operator()(BuilderState& state, const CSSValue& v
     auto convertEdge = [&](Ref<const CSSPrimitiveValue>&& primitiveValue) -> ClipEdge {
         if (isValueID(primitiveValue.get(), CSSValueAuto))
             return CSS::Keyword::Auto { };
-        return toStyleFromCSSValue<Length<>>(state, primitiveValue);
+        return toStyleFromCSSValue<ClipEdge::Length>(state, primitiveValue);
     };
 
     return ClipRect {

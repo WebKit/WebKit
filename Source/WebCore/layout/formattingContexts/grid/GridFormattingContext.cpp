@@ -118,8 +118,9 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
         // For now, we handle fixed gaps only (not percentages or calc).
         CheckedRef gridStyle = root().style();
 
-        auto columnGap = GridLayoutUtils::computeGapValue(gridStyle->columnGap());
-        auto rowGap = GridLayoutUtils::computeGapValue(gridStyle->rowGap());
+        auto zoom = gridStyle->usedZoomForLength();
+        auto columnGap = GridLayoutUtils::computeGapValue(gridStyle->columnGap(), zoom);
+        auto rowGap = GridLayoutUtils::computeGapValue(gridStyle->rowGap(), zoom);
 
         for (auto& gridItemRect : gridItemRects) {
             auto& lineNumbersForGridArea = gridItemRect.lineNumbersForGridArea;

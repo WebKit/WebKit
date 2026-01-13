@@ -127,7 +127,7 @@ static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox
 {
     LayoutRect clipRect(paintRect);
     auto& style = box.renderer().style();
-    LayoutBoxExtent outsets = style.imageOutsets(image);
+    LayoutBoxExtent outsets = style.imageOutsets(image, box.renderer().document().deviceScaleFactor());
     auto closedEdges = box.closedEdges();
     if (box.isHorizontal()) {
         clipRect.setY(paintRect.y() - outsets.top());
@@ -182,7 +182,7 @@ void InlineBoxPainter::paintMask()
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
 
-    paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
+    paintFillLayers(Color(), renderer().style().maskLayers(), renderer().style().usedZoomForLength(), paintRect, compositeOp);
 
     bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(&renderer(), renderer().style().usedZoom());
     if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer())) {
@@ -248,7 +248,7 @@ void InlineBoxPainter::paintDecorations()
     Style::ColorResolver colorResolver { style };
     color = colorResolver.colorApplyingColorFilter(color);
 
-    paintFillLayers(color, style.backgroundLayers(), paintRect, compositeOp);
+    paintFillLayers(color, style.backgroundLayers(), style.usedZoomForLength(), paintRect, compositeOp);
     paintBoxShadow(Style::ShadowStyle::Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
@@ -296,10 +296,10 @@ void InlineBoxPainter::paintDecorations()
     borderPainter.paintBorder(LayoutRect(stripX, stripY, stripWidth, stripHeight), style);
 }
 
-template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, const LayoutRect& rect, CompositeOperator op)
+template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, Style::ZoomFactor zoom, const LayoutRect& rect, CompositeOperator op)
 {
     for (auto& layer : fillLayers.usedValues() | std::views::reverse)
-        paintFillLayer(color, FillLayerToPaint<typename Layers::value_type> { .layer = layer, .isLast = &layer == &fillLayers.usedLast() }, rect, op);
+        paintFillLayer(color, FillLayerToPaint<typename Layers::value_type> { .layer = layer, .isLast = &layer == &fillLayers.usedLast(), .zoom = zoom }, rect, op);
 }
 
 template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Layer>& fillLayer, const LayoutRect& rect, CompositeOperator op)

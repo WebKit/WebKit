@@ -7096,7 +7096,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "outline"],
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::Length<>",
+                "computed-style-type": "Style::Length<CSS::AllUnzoomed>",
                 "skip-render-style-getter": true,
                 "parser-grammar": "<length>"
             },

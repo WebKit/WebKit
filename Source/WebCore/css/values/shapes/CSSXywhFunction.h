@@ -33,8 +33,8 @@ namespace CSS {
 // <xywh()> = xywh( <length-percentage>{2} <length-percentage [0,∞]>{2} [ round <'border-radius'> ]? )
 // https://drafts.csswg.org/css-shapes-1/#funcdef-basic-shape-xywh
 struct Xywh {
-    using Location = SpaceSeparatedPoint<LengthPercentage<>>;
-    using Size = SpaceSeparatedSize<LengthPercentage<Nonnegative>>;
+    using Location = SpaceSeparatedPoint<LengthPercentage<AllUnzoomed>>;
+    using Size = SpaceSeparatedSize<LengthPercentage<NonnegativeUnzoomed>>;
 
     Location location;
     Size size;

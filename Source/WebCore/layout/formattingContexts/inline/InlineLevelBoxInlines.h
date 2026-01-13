@@ -34,14 +34,14 @@
 namespace WebCore {
 namespace Layout {
 
-template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::VerticalAlign& verticalAlign, NOESCAPE PreferredLineHeightFunctor&& preferredLineHeightFunctor)
+template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::VerticalAlign& verticalAlign, NOESCAPE PreferredLineHeightFunctor&& preferredLineHeightFunctor, Style::ZoomFactor zoom)
 {
     return WTF::switchOn(verticalAlign,
         [](CSS::PrimitiveKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
             return keyword;
         },
         [&](const Style::VerticalAlign::Length& length) -> InlineLevelBox::VerticalAlignment {
-            return Style::evaluate<InlineLayoutUnit>(length, std::forward<PreferredLineHeightFunctor>(preferredLineHeightFunctor), Style::ZoomNeeded { });
+            return Style::evaluate<InlineLayoutUnit>(length, std::forward<PreferredLineHeightFunctor>(preferredLineHeightFunctor), zoom);
         }
     );
 }
@@ -53,7 +53,17 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textBoxTrim(), style.textBoxEdge(), style.lineFitEdge(), style.usedZoomForLength(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedSize()), toInlineBoxLevelVerticalAlign(style.verticalAlign(), [this] { return preferredLineHeight(); }) })
+    , m_style({
+        style.fontCascade().metricsOfPrimaryFont(),
+        style.lineHeight(),
+        style.textBoxTrim(),
+        style.textBoxEdge(),
+        style.lineFitEdge(),
+        style.usedZoomForLength(),
+        style.lineBoxContain(),
+        InlineLayoutUnit(style.fontCascade().fontDescription().computedSize()),
+        toInlineBoxLevelVerticalAlign(style.verticalAlign(), [this] { return preferredLineHeight(); }, style.usedZoomForLength())
+    })
 {
 }
 

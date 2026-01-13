@@ -37,7 +37,7 @@ namespace Style {
 
 // <single-view-timeline-inset-item> = [ [ auto | <length-percentage> ]{1,2} ]
 struct ViewTimelineInsetItem {
-    struct Length : LengthWrapperBase<LengthPercentage<>, CSS::Keyword::Auto> {
+    struct Length : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
         using Base::Base;
 
         bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

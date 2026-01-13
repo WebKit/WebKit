@@ -411,7 +411,7 @@ template<typename> struct Shadows;
 
 using Animations = CoordinatedValueList<Animation>;
 using BackgroundLayers = CoordinatedValueList<BackgroundLayer>;
-using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
+using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::NonnegativeUnzoomed>>;
 using BoxShadows = Shadows<BoxShadow>;
 using FlexGrow = Number<CSS::Nonnegative, float>;
 using FlexShrink = Number<CSS::Nonnegative, float>;
@@ -432,7 +432,7 @@ using TextShadows = Shadows<TextShadow>;
 using TransformOriginX = PositionX;
 using TransformOriginXY = Position;
 using TransformOriginY = PositionY;
-using TransformOriginZ = Length<>;
+using TransformOriginZ = Length<CSS::AllUnzoomed>;
 using Transitions = CoordinatedValueList<Transition>;
 using WebkitBorderSpacing = Length<CSS::NonnegativeUnzoomed>;
 using WebkitBoxFlex = Number<CSS::All, float>;

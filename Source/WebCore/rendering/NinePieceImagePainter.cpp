@@ -75,11 +75,11 @@ static bool isVerticalPiece(ImagePiece piece)
 }
 
 template<typename WidthValue>
-static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, const Style::ZoomFactor&)
+static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent, Style::ZoomFactor zoom)
 {
     return WTF::switchOn(length,
         [&](const typename WidthValue::LengthPercentage& value) {
-            return Style::evaluate<LayoutUnit>(value, extent, Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(value, extent, zoom);
         },
         [&](const typename WidthValue::Number& value) {
             return LayoutUnit { value.value * width };
@@ -91,7 +91,7 @@ static LayoutUnit computeSlice(const WidthValue& length, LayoutUnit width, Layou
 }
 
 template<typename WidthValues>
-static LayoutBoxExtent computeSlices(const LayoutSize& size, const WidthValues& widths, const FloatBoxExtent& borderWidths, const LayoutBoxExtent& slices, const Style::ZoomFactor& zoom)
+static LayoutBoxExtent computeSlices(const LayoutSize& size, const WidthValues& widths, const FloatBoxExtent& borderWidths, const LayoutBoxExtent& slices, Style::ZoomFactor zoom)
 {
     return {
         computeSlice(widths.values.top(),    LayoutUnit(borderWidths.top()),    slices.top(),    size.height(), zoom),
@@ -229,8 +229,9 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
     ASSERT(styleImage);
     ASSERT(styleImage->isLoaded(renderer));
 
+    auto zoom = style.usedZoomForLength();
     auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageScaleFactor());
-    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.usedBorderWidths().to<Style::LineWidthBox>(), Style::ZoomNeeded { }), sourceSlices, style.usedZoomForLength());
+    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(style.usedBorderWidths().to<Style::LineWidthBox>(), zoom, deviceScaleFactor), sourceSlices, zoom);
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 

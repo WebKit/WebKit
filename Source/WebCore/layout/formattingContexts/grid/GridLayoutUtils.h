@@ -29,13 +29,18 @@ namespace WebCore {
 
 class LayoutUnit;
 
+namespace Style {
+struct GapGutter;
+struct ZoomFactor;
+}
+
 namespace Layout {
 
 class PlacedGridItem;
 
 namespace GridLayoutUtils {
 
-LayoutUnit computeGapValue(const Style::GapGutter&);
+LayoutUnit computeGapValue(const Style::GapGutter&, Style::ZoomFactor);
 
 LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizes& usedColumnSizes,
     LayoutUnit columnsGap);

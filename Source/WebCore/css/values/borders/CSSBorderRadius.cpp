@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace CSS {
 
-static bool hasDefaultValueForAxis(const SpaceSeparatedArray<LengthPercentage<Nonnegative>, 4>& values)
+static bool hasDefaultValueForAxis(const SpaceSeparatedArray<LengthPercentage<NonnegativeUnzoomed>, 4>& values)
 {
     return values.value[3] == values.value[1]
         && values.value[2] == values.value[0]
@@ -44,11 +44,11 @@ bool hasDefaultValue(const BorderRadius& borderRadius)
     return hasDefaultValueForAxis(borderRadius.horizontal) && hasDefaultValueForAxis(borderRadius.vertical);
 }
 
-static std::pair<SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>, bool> gatherSerializableRadiiForAxis(const SpaceSeparatedArray<LengthPercentage<Nonnegative>, 4>& values)
+static std::pair<SpaceSeparatedVector<LengthPercentage<NonnegativeUnzoomed>, 4>, bool> gatherSerializableRadiiForAxis(const SpaceSeparatedArray<LengthPercentage<NonnegativeUnzoomed>, 4>& values)
 {
     bool isDefaultValue = false;
 
-    SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>::Container result;
+    SpaceSeparatedVector<LengthPercentage<NonnegativeUnzoomed>, 4>::Container result;
     result.append(values.value[0]);
 
     if (values.value[3] != values.value[1]) {

@@ -38,7 +38,7 @@ namespace Style {
 
 enum class SingleAnimationRangeType : bool { Start, End };
 
-struct SingleAnimationRangeLength : LengthWrapperBase<LengthPercentage<>> {
+struct SingleAnimationRangeLength : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 
     static SingleAnimationRangeLength defaultValue(SingleAnimationRangeType);

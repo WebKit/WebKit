@@ -51,7 +51,7 @@ static RefPtr<CSSNumericValue> toCSSNumericValue(const SingleAnimationRangeLengt
     // FIXME: This will fail for calc().
     return offset.isPercentOrCalculated()
         ? CSSNumericFactory::percent(offset.tryPercentage()->value)
-        : CSSNumericFactory::px(offset.tryFixed()->resolveZoom(Style::ZoomNeeded { }));
+        : CSSNumericFactory::px(offset.tryFixed()->unresolvedValue());
 }
 
 TimelineRangeValue SingleAnimationRangeStart::toTimelineRangeValue() const

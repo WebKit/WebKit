@@ -1768,7 +1768,7 @@ inline bool PropertyParserCustom::consumeTransformOriginShorthand(CSSParserToken
     if (auto position = consumeOneOrTwoComponentPositionUnresolved(range, state)) {
         range.consumeWhitespace();
         bool atEnd = range.atEnd();
-        auto resultZ = CSSPrimitiveValueResolver<Length<>>::consumeAndResolve(range, state);
+        auto resultZ = CSSPrimitiveValueResolver<Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
         if ((!resultZ && !atEnd) || !range.atEnd())
             return false;
 

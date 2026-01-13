@@ -32,7 +32,7 @@ namespace Style {
 // <'x'/'y'> = <length-percentage>
 // https://svgwg.org/svg2-draft/geometry.html#X
 // https://svgwg.org/svg2-draft/geometry.html#Y
-struct SVGCoordinateComponent : LengthWrapperBase<LengthPercentage<>> {
+struct SVGCoordinateComponent : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>> {
     using Base::Base;
 };
 

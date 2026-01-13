@@ -1137,9 +1137,17 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyPerspectiveOrigin> {
     {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
+            if (!state.style.evaluationTimeZoomEnabled()) {
+                auto perspectiveOriginX = Length<> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), ZoomFactor { 1 }) };
+                auto perspectiveOriginY = Length<> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), ZoomFactor { 1 }) };
 
-            auto perspectiveOriginX = Length<> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), ZoomNeeded { }) };
-            auto perspectiveOriginY = Length<> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), ZoomNeeded { }) };
+                return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
+            }
+
+            auto zoom = state.style.usedZoomForLength();
+
+            auto perspectiveOriginX = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom) / zoom.value };
+            auto perspectiveOriginY = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), zoom) / zoom.value };
 
             return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
         }
@@ -1223,9 +1231,19 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTransformOrigin> {
     {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
+            if (!state.style.evaluationTimeZoomEnabled()) {
+                auto transformOriginX = Length<> { evaluate<float>(state.style.transformOriginX(), box.width(), ZoomFactor { 1 }) };
+                auto transformOriginY = Length<> { evaluate<float>(state.style.transformOriginY(), box.height(), ZoomFactor { 1 }) };
 
-            auto transformOriginX = Length<> { evaluate<float>(state.style.transformOriginX(), box.width(), ZoomNeeded { }) };
-            auto transformOriginY = Length<> { evaluate<float>(state.style.transformOriginY(), box.height(), ZoomNeeded { }) };
+                if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
+                    return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
+                return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY });
+            }
+
+            auto zoom = state.style.usedZoomForLength();
+
+            auto transformOriginX = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.transformOriginX(), box.width(), zoom) / zoom.value };
+            auto transformOriginY = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.transformOriginY(), box.height(), zoom) / zoom.value };
 
             if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
                 return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
@@ -2159,8 +2177,12 @@ inline Ref<CSSValue> ExtractorCustom::extractTransform(ExtractorState& state)
     if (!state.style.hasTransform())
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
-    if (state.renderer)
-        return CSSTransformListValue::create(createCSSValue(state.pool, state.style, TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { })));
+    if (state.renderer) {
+        auto transform = TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { });
+        transform.unzoom(state.style.usedZoomForLength().value);
+
+        return CSSTransformListValue::create(createCSSValue(state.pool, state.style, transform));
+    }
 
     // https://w3c.github.io/csswg-drafts/css-transforms-1/#serialization-of-the-computed-value
     // If we don't have a renderer, then the value should be "none" if we're asking for the
@@ -2179,7 +2201,10 @@ inline void ExtractorCustom::extractTransformSerialization(ExtractorState& state
     }
 
     if (state.renderer) {
-        serializationForCSS(builder, context, state.style, TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { }));
+        auto transform = TransformResolver::computeTransform(state.style, TransformOperationData(state.renderer->transformReferenceBoxRect(state.style), state.renderer), { });
+        transform.unzoom(state.style.usedZoomForLength().value);
+
+        serializationForCSS(builder, context, state.style, transform);
         return;
     }
 

@@ -68,7 +68,7 @@ struct ClipPath {
 private:
     friend struct Blending<ClipPath>;
     friend CSSBoxType referenceBox(const ClipPath&);
-    friend std::optional<WebCore::Path> tryPath(const ClipPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const ClipPath&, const TransformOperationData&, ZoomFactor);
 
     static bool isValid(RefPtr<PathOperation> operation)
     {
@@ -78,12 +78,12 @@ private:
     RefPtr<PathOperation> operation;
 };
 
-inline std::optional<WebCore::Path> tryPath(const ClipPath& clipPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const ClipPath& clipPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     RefPtr operation = clipPath.operation;
     if (!operation)
         return { };
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
 template<typename T> bool ClipPath::holdsAlternative() const

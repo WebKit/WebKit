@@ -368,7 +368,7 @@ std::pair<WebAnimationTime, WebAnimationTime> ScrollTimeline::intervalForAttachm
     auto computedPercentageIfNecessary = [&](const auto& rangeOffset) {
         if (auto percentage = rangeOffset.tryPercentage())
             return percentage->value;
-        return Style::evaluate<float>(rangeOffset, maxScrollOffset, Style::ZoomNeeded { }) / maxScrollOffset * 100;
+        return Style::evaluate<float>(rangeOffset, maxScrollOffset, Style::ZoomFactor { 1 }) / maxScrollOffset * 100; // FIXME: Is this right?
     };
 
     return {

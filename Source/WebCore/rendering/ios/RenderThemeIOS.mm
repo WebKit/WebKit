@@ -233,7 +233,7 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element*) const
     style.setWidth(Style::PreferredSize::Fixed { size });
     style.setHeight(Style::PreferredSize::Fixed { size });
 
-    auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { std::trunc(size / 2.0f) };
+    auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { std::trunc(size / 2.0f) };
     style.setBorderRadius({ radius, radius });
 }
 
@@ -385,7 +385,7 @@ Style::PaddingBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& sty
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
-        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(),  Style::ZoomNeeded { }))) / style.usedZoom() };
+        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength()))) / style.usedZoom() };
 
         if (style.writingMode().isBidiRTL())
             return { 0_css_px, 0_css_px, 0_css_px, value };
@@ -419,15 +419,15 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
     auto minDimension = std::min(box.width(), box.height());
 
     if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && boxLogicalHeight >= largeButtonSize) {
-        auto largeButtonBorderRadius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { minDimension * largeButtonBorderRadiusRatio };
+        auto largeButtonBorderRadius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { minDimension * largeButtonBorderRadiusRatio };
         style.setBorderRadius({ largeButtonBorderRadius, largeButtonBorderRadius });
         return;
     }
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     auto borderRadius = Style::BorderRadiusValue {
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { minDimension / 2 },
-        Style::LengthPercentage<CSS::Nonnegative>::Dimension { boxLogicalHeight / 2 },
+        Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { minDimension / 2 },
+        Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { boxLogicalHeight / 2 },
     };
     if (!style.writingMode().isHorizontal())
         borderRadius = { borderRadius.height(), borderRadius.width() };
@@ -550,7 +550,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto& style = box.style();
+    CheckedRef style = box.style();
 
     Path glyphPath;
     FloatSize glyphSize;
@@ -606,15 +606,18 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
-    bool isHorizontalWritingMode = style.writingMode().isHorizontal();
+    bool isHorizontalWritingMode = style->writingMode().isHorizontal();
     auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
+
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = box.document().deviceScaleFactor();
 
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
-    if (!style.writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+    if (!style->writingMode().isInlineFlipped())
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -625,7 +628,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     glyphPath.transform(transform);
 
     if (isEnabled(box))
-        context.setFillColor(style.color());
+        context.setFillColor(style->color());
     else
         context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
 
@@ -648,7 +651,7 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
     RenderTheme::adjustSliderTrackStyle(style, element);
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
-    constexpr auto radius = Style::LengthPercentage<CSS::Nonnegative>::Dimension { defaultTrackRadius };
+    constexpr auto radius = Style::LengthPercentage<CSS::NonnegativeUnzoomed>::Dimension { defaultTrackRadius };
     style.setBorderRadius({ radius, radius });
 }
 

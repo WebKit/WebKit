@@ -613,7 +613,7 @@ LayoutRect RenderInline::clippedOverflowRect(const RenderLayerModelObject* repai
             repaintRect.move(renderInline->layer()->offsetForInFlowPosition());
     }
 
-    LayoutUnit outlineSize { style().usedOutlineSize() };
+    LayoutUnit outlineSize { style().usedOutlineSize(document().deviceScaleFactor()) };
     repaintRect.inflate(outlineSize);
 
     if (hitRepaintContainer || !containingBlock)

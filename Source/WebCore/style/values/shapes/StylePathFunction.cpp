@@ -136,7 +136,7 @@ void Serialize<Path>::operator()(StringBuilder& builder, const CSS::Serializatio
 
 // MARK: - Path
 
-WebCore::Path PathComputation<Path>::operator()(const Path& value, const FloatRect& boundingBox)
+WebCore::Path PathComputation<Path>::operator()(const Path& value, const FloatRect& boundingBox, ZoomFactor)
 {
     return cachedTransformedByteStreamPath(value.data.byteStream, value.zoom, boundingBox.location());
 }

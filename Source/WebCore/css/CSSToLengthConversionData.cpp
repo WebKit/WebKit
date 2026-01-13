@@ -146,7 +146,8 @@ CheckedPtr<Style::BuilderState> CSSToLengthConversionData::protectedStyleBuilder
 
 bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
 {
-    ASSERT(m_style);
+    if (!m_style)
+        return true;
     return CheckedPtr { m_style }->evaluationTimeZoomEnabled();
 }
 

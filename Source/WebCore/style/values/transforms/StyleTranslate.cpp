@@ -45,10 +45,10 @@ TransformFunctionSizeDependencies Translate::computeSizeDependencies() const
     return { };
 }
 
-void Translate::apply(TransformationMatrix& transform, const FloatSize& size) const
+void Translate::apply(TransformationMatrix& transform, const FloatSize& size, ZoomFactor zoom) const
 {
     if (RefPtr protectedValue = value)
-        protectedValue->apply(transform, size);
+        protectedValue->apply(transform, size, zoom);
 }
 
 // MARK: - Conversion
@@ -114,10 +114,10 @@ auto Blending<Translate>::blend(const Translate& from, const Translate& to, cons
 
 // MARK: - Platform
 
-auto ToPlatform<Translate>::operator()(const Translate& value, const FloatSize& size) -> RefPtr<TransformOperation>
+auto ToPlatform<Translate>::operator()(const Translate& value, const FloatSize& size, ZoomFactor zoom) -> RefPtr<TransformOperation>
 {
     if (RefPtr function = value.value)
-        return function->toPlatform(size);
+        return function->toPlatform(size, zoom);
     return nullptr;
 }
 

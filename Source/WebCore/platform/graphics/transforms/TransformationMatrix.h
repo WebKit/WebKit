@@ -312,6 +312,7 @@ public:
     //     new_mat * (scale3d(z, z, z) * x) == scale3d(z, z, z) * (mat * x)
     //
     TransformationMatrix& zoom(double zoomFactor);
+    TransformationMatrix& unzoom(double zoomFactor);
 
     WEBCORE_EXPORT bool isInvertible() const;
     WEBCORE_EXPORT std::optional<TransformationMatrix> inverse() const;

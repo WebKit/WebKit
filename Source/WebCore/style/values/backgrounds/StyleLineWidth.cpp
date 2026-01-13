@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ static auto handleKeywordValue(BuilderState& state, CSSValueID valueID) -> LineW
     return LineWidth::Length { floorToDevicePixel(keywordValue * state.style().usedZoom(), state.document().deviceScaleFactor()) };
 }
 
-static LineWidth::Length snapLengthAsBorderWidth(float length, float deviceScaleFactor)
+template<typename T> static T snapLengthAsBorderWidth(T length, float deviceScaleFactor)
 {
     // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
 
@@ -75,11 +75,11 @@ static LineWidth::Length snapLengthAsBorderWidth(float length, float deviceScale
     // NOTE: Handled by step 4 without explicitly checking here.
 
     // 3. If `length` is greater than zero, but less than 1 device pixel, round `length` up to 1 device pixel.
-    if (auto singleDevicePixelLength = 1.0f / deviceScaleFactor; length > 0.0f && length < singleDevicePixelLength)
-        return LineWidth::Length { singleDevicePixelLength };
+    if (auto singleDevicePixelLength = T { 1.0f / deviceScaleFactor }; length > T { 0 } && length < singleDevicePixelLength)
+        return singleDevicePixelLength;
 
     // 4. If `length` is greater than 1 device pixel, round it down to the nearest integer number of device pixels.
-    return LineWidth::Length { floorToDevicePixel(length, deviceScaleFactor) };
+    return T { floorToDevicePixel(length, deviceScaleFactor) };
 }
 
 auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSValue& value) -> LineWidth
@@ -88,19 +88,38 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
     if (!primitiveValue)
         return LineWidth::Length { 3.0f };
 
-    if (primitiveValue->isValueID())
-        return handleKeywordValue(state, primitiveValue->valueID());
+    if (!state.cssToLengthConversionData().evaluationTimeZoomEnabled()) {
+        if (primitiveValue->isValueID())
+            return handleKeywordValue(state, primitiveValue->valueID());
 
-    // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
+        // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
 
-    auto result = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData());
-    if (state.style().usedZoom() < 1.0f && result < 1.0f) {
-        auto originalLength = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
-        if (originalLength >= 1.0f)
-            return LineWidth::Length { 1.0f };
+        auto result = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData());
+        if (state.style().usedZoom() < 1.0f && result < 1.0f) {
+            auto originalLength = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
+            if (originalLength >= 1.0f)
+                return LineWidth::Length { 1.0f };
+        }
+
+        return LineWidth::Length { snapLengthAsBorderWidth(result, state.document().deviceScaleFactor()) };
     }
 
-    return snapLengthAsBorderWidth(result, state.document().deviceScaleFactor());
+    if (primitiveValue->isValueID()) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueThin:
+            return LineWidth { 1.0f };
+        case CSSValueMedium:
+            return LineWidth { 3.0f };
+        case CSSValueThick:
+            return LineWidth { 5.0f };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return LineWidth { 3.0f };
+        }
+    }
+
+    auto result = toStyleFromCSSValue<LineWidth::Length>(state, *primitiveValue);
+    return LineWidth::Length { snapLengthAsBorderWidth(result.unresolvedValue(), state.document().deviceScaleFactor()) };
 }
 
 // MARK: - Blending
@@ -109,29 +128,39 @@ auto Blending<LineWidth>::blend(const LineWidth& a, const LineWidth& b, const Re
 {
     auto blendedValue = Style::blend(a.value, b.value, aStyle, bStyle, context);
     if (RefPtr document = context.client.document())
-        return snapLengthAsBorderWidth(blendedValue.unresolvedValue(), document->deviceScaleFactor());
+        return LineWidth::Length { snapLengthAsBorderWidth(blendedValue.unresolvedValue(), document->deviceScaleFactor()) };
     return blendedValue;
 }
 
-// MARK: - Evaluate
+// MARK: - Evaluation
 
-auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> FloatBoxExtent
+auto Evaluation<LineWidth, float>::operator()(const LineWidth& value, ZoomFactor zoom, float deviceScaleFactor) -> float
+{
+    return snapLengthAsBorderWidth(evaluate<float>(value.value, zoom), deviceScaleFactor);
+}
+
+auto Evaluation<LineWidth, LayoutUnit>::operator()(const LineWidth& value, ZoomFactor zoom, float deviceScaleFactor) -> LayoutUnit
+{
+    return snapLengthAsBorderWidth(evaluate<LayoutUnit>(value.value, zoom), deviceScaleFactor);
+}
+
+auto Evaluation<LineWidthBox, FloatBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom, float deviceScaleFactor) -> FloatBoxExtent
 {
     return {
-        evaluate<float>(value.top(), zoom),
-        evaluate<float>(value.right(), zoom),
-        evaluate<float>(value.bottom(), zoom),
-        evaluate<float>(value.left(), zoom),
+        evaluate<float>(value.top(), zoom, deviceScaleFactor),
+        evaluate<float>(value.right(), zoom, deviceScaleFactor),
+        evaluate<float>(value.bottom(), zoom, deviceScaleFactor),
+        evaluate<float>(value.left(), zoom, deviceScaleFactor),
     };
 }
 
-auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomNeeded zoom) -> LayoutBoxExtent
+auto Evaluation<LineWidthBox, LayoutBoxExtent>::operator()(const LineWidthBox& value, ZoomFactor zoom, float deviceScaleFactor) -> LayoutBoxExtent
 {
     return {
-        evaluate<LayoutUnit>(value.top(), zoom),
-        evaluate<LayoutUnit>(value.right(), zoom),
-        evaluate<LayoutUnit>(value.bottom(), zoom),
-        evaluate<LayoutUnit>(value.left(), zoom),
+        evaluate<LayoutUnit>(value.top(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.right(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.bottom(), zoom, deviceScaleFactor),
+        evaluate<LayoutUnit>(value.left(), zoom, deviceScaleFactor),
     };
 }
 

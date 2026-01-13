@@ -743,7 +743,7 @@ public:
     inline Quirks& quirks(); // Defined in DocumentQuirks.h
     inline const Quirks& quirks() const; // Defined in DocumentQuirks.h
 
-    float deviceScaleFactor() const;
+    WEBCORE_EXPORT float deviceScaleFactor() const;
 
     WEBCORE_EXPORT bool useElevatedUserInterfaceLevel() const;
     WEBCORE_EXPORT bool useDarkAppearance(const RenderStyle*) const;

@@ -72,17 +72,17 @@ struct OffsetPath {
 private:
     friend struct Blending<OffsetPath>;
     friend struct ToPlatform<OffsetPath>;
-    friend std::optional<WebCore::Path> tryPath(const OffsetPath&, const TransformOperationData&);
+    friend std::optional<WebCore::Path> tryPath(const OffsetPath&, const TransformOperationData&, ZoomFactor);
 
     RefPtr<PathOperation> operation;
 };
 
-inline std::optional<WebCore::Path> tryPath(const OffsetPath& offsetPath, const TransformOperationData& data)
+inline std::optional<WebCore::Path> tryPath(const OffsetPath& offsetPath, const TransformOperationData& data, ZoomFactor zoom)
 {
     RefPtr operation = offsetPath.operation;
     if (!operation)
         return { };
-    return operation->getPath(data);
+    return operation->getPath(data, zoom);
 }
 
 template<typename T> bool OffsetPath::holdsAlternative() const

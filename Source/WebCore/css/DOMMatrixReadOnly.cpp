@@ -244,7 +244,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
 
     AbstractMatrix matrix;
     for (auto& function : *transform) {
-        function->apply(matrix.matrix, { 0, 0 });
+        function->apply(matrix.matrix, { 0, 0 }, Style::ZoomFactor { 1 });
         if (function->is3DOperation())
             matrix.is2D = false;
     }

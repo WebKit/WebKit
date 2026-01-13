@@ -53,14 +53,14 @@ Ref<const TransformFunctionBase> PerspectiveTransformFunction::clone() const
     return adoptRef(*new PerspectiveTransformFunction(m_p));
 }
 
-Ref<TransformOperation> PerspectiveTransformFunction::toPlatform(const FloatSize&) const
+Ref<TransformOperation> PerspectiveTransformFunction::toPlatform(const FloatSize&, ZoomFactor zoom) const
 {
     return WTF::switchOn(m_p,
         [](const CSS::Keyword::None&) -> Ref<TransformOperation> {
             return PerspectiveTransformOperation::create(std::nullopt);
         },
-        [](const Perspective::Length& value) -> Ref<TransformOperation> {
-            return PerspectiveTransformOperation::create(evaluate<float>(value, ZoomNeeded { }));
+        [&](const Perspective::Length& value) -> Ref<TransformOperation> {
+            return PerspectiveTransformOperation::create(evaluate<float>(value, zoom));
         }
     );
 }
@@ -73,10 +73,10 @@ bool PerspectiveTransformFunction::operator==(const TransformFunctionBase& other
     return m_p == otherPerspective.m_p;
 }
 
-void PerspectiveTransformFunction::apply(TransformationMatrix& transform, const FloatSize&) const
+void PerspectiveTransformFunction::apply(TransformationMatrix& transform, const FloatSize&, ZoomFactor zoom) const
 {
     if (auto value = m_p.tryValue())
-        transform.applyPerspective(std::max(1.0f, evaluate<float>(*value, ZoomNeeded { })));
+        transform.applyPerspective(std::max(1.0f, evaluate<float>(*value, zoom)));
 }
 
 std::optional<float> PerspectiveTransformFunction::unresolvedFloatValue() const

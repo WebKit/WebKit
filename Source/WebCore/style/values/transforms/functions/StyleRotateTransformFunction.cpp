@@ -59,7 +59,7 @@ Ref<const TransformFunctionBase> RotateTransformFunction::clone() const
     return adoptRef(*new RotateTransformFunction(m_x, m_y, m_z, m_angle, type()));
 }
 
-Ref<TransformOperation> RotateTransformFunction::toPlatform(const FloatSize&) const
+Ref<TransformOperation> RotateTransformFunction::toPlatform(const FloatSize&, ZoomFactor) const
 {
     return RotateTransformOperation::create(m_x.value, m_y.value, m_z.value, m_angle.value, Style::toPlatform(type()));
 }
@@ -73,7 +73,7 @@ bool RotateTransformFunction::operator==(const TransformFunctionBase& other) con
     return m_angle == otherRotate.m_angle && m_x == otherRotate.m_x && m_y == otherRotate.m_y && m_z == otherRotate.m_z;
 }
 
-void RotateTransformFunction::apply(TransformationMatrix& transform, const FloatSize&) const
+void RotateTransformFunction::apply(TransformationMatrix& transform, const FloatSize&, ZoomFactor) const
 {
     if (type() == TransformFunctionBase::Type::Rotate)
         transform.rotate(m_angle.value);

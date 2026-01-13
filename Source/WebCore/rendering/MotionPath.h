@@ -38,6 +38,10 @@ class ShapePathOperation;
 
 struct TransformOperationData;
 
+namespace Style {
+struct ZoomFactor;
+}
+
 struct MotionPathData {
     FloatRoundedRect containingBlockBoundingRect;
     FloatPoint offsetFromContainingBlock;
@@ -51,9 +55,9 @@ public:
 
     static void applyMotionPathTransform(TransformationMatrix&, const TransformOperationData&, FloatPoint transformOrigin, TransformBox, const Path&, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto);
 
-    static std::optional<Path> computePathForBox(const BoxPathOperation&, const TransformOperationData&);
-    static std::optional<Path> computePathForShape(const ShapePathOperation&, const TransformOperationData&);
-    static std::optional<Path> computePathForRay(const RayPathOperation&, const TransformOperationData&);
+    static std::optional<Path> computePathForBox(const BoxPathOperation&, const TransformOperationData&, Style::ZoomFactor);
+    static std::optional<Path> computePathForShape(const ShapePathOperation&, const TransformOperationData&, Style::ZoomFactor);
+    static std::optional<Path> computePathForRay(const RayPathOperation&, const TransformOperationData&, Style::ZoomFactor);
 };
 
 } // namespace WebCore
