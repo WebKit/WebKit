@@ -27,13 +27,16 @@
 #include "UserAgentStyle.h"
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
 class CSSStyleRule;
 class CSSStyleSheet;
+class Element;
 class ExtensionStyleSheets;
 
 namespace MQ {
@@ -73,6 +76,8 @@ public:
 
     const RuleFeatureSet& features() const;
     RuleSet* scopeBreakingHasPseudoClassInvalidationRuleSet() const { return m_scopeBreakingHasPseudoClassInvalidationRuleSet.get(); }
+
+    bool couldMutationAffectScopeBreakingHas(const Element& mutationParent) const;
 
     const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const;
@@ -124,6 +129,11 @@ private:
     Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
     mutable RefPtr<RuleSet> m_scopeBreakingHasPseudoClassInvalidationRuleSet;
+
+    mutable HashSet<AtomString> m_scopeBreakingHasOuterContextPatterns;
+    mutable bool m_hasScopeBreakingHasWithUniversalOuterContext { false };
+    mutable WeakHashMap<Element, bool, WeakPtrImplWithEventTargetData> m_scopeBreakingHasSubtreeCache;
+
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;

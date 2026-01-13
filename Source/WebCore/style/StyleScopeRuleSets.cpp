@@ -34,6 +34,7 @@
 #include "CSSViewTransitionRule.h"
 #include "DeclarationOrigin.h"
 #include "DocumentInlines.h"
+#include "Element.h"
 #include "ExtensionStyleSheets.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
@@ -45,11 +46,32 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <ranges>
 
 namespace WebCore {
 namespace Style {
+
+static bool extractOuterContextPatternsFromSelector(const CSSSelector& selector, HashSet<AtomString>& patterns)
+{
+    bool foundSpecificPattern = false;
+
+    for (const CSSSelector* current = &selector; current; current = current->precedingInComplexSelector()) {
+        if (current->match() == CSSSelector::Match::PseudoClass && current->pseudoClass() == CSSSelector::PseudoClass::Has)
+            continue;
+
+        if (current->match() == CSSSelector::Match::Class) {
+            patterns.add(current->value());
+            foundSpecificPattern = true;
+        } else if (current->match() == CSSSelector::Match::Tag && current->tagLowercaseLocalName() != starAtom()) {
+            patterns.add(current->tagLowercaseLocalName());
+            foundSpecificPattern = true;
+        }
+    }
+
+    return foundSpecificPattern;
+}
 
 ScopeRuleSets::ScopeRuleSets(Resolver& styleResolver)
     : m_authorStyle(RuleSet::create())
@@ -292,6 +314,15 @@ void ScopeRuleSets::collectFeatures() const
 
     m_scopeBreakingHasPseudoClassInvalidationRuleSet = makeRuleSet(m_features.scopeBreakingHasPseudoClassRules);
 
+    m_scopeBreakingHasOuterContextPatterns.clear();
+    m_hasScopeBreakingHasWithUniversalOuterContext = false;
+    m_scopeBreakingHasSubtreeCache.clear();
+
+    for (const auto& ruleAndSelector : m_features.scopeBreakingHasPseudoClassRules) {
+        if (!extractOuterContextPatternsFromSelector(ruleAndSelector.selector(), m_scopeBreakingHasOuterContextPatterns))
+            m_hasScopeBreakingHasWithUniversalOuterContext = true;
+    }
+
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();
     m_attributeInvalidationRuleSets.clear();
@@ -442,6 +473,45 @@ bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bo
     if (RefPtr userStyle = this->userStyle(); userStyle && predicate(*userStyle))
         return true;
 
+    return false;
+}
+
+bool ScopeRuleSets::couldMutationAffectScopeBreakingHas(const Element& mutationParent) const
+{
+    if (!m_scopeBreakingHasPseudoClassInvalidationRuleSet)
+        return false;
+
+    if (m_hasScopeBreakingHasWithUniversalOuterContext)
+        return true;
+
+    if (auto it = m_scopeBreakingHasSubtreeCache.find(mutationParent); it != m_scopeBreakingHasSubtreeCache.end())
+        return it->value;
+
+    auto hasMatchingPattern = [&](const Element& element) {
+        if (element.hasClass()) {
+            for (unsigned i = 0; i < element.classNames().size(); ++i) {
+                if (m_scopeBreakingHasOuterContextPatterns.contains(element.classNames()[i]))
+                    return true;
+            }
+        }
+        return m_scopeBreakingHasOuterContextPatterns.contains(element.localName());
+    };
+
+    for (RefPtr ancestor = mutationParent; ancestor.get(); ancestor = ancestor->parentElement()) {
+        if (hasMatchingPattern(*ancestor)) {
+            m_scopeBreakingHasSubtreeCache.add(mutationParent, true);
+            return true;
+        }
+    }
+
+    for (auto it = descendantsOfType<Element>(mutationParent).begin(); it; it.traverseNext()) {
+        if (hasMatchingPattern(*it)) {
+            m_scopeBreakingHasSubtreeCache.add(mutationParent, true);
+            return true;
+        }
+    }
+
+    m_scopeBreakingHasSubtreeCache.add(mutationParent, false);
     return false;
 }
 

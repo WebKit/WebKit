@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scope-Breaking :has() Child Change Invalidation Performance</title>
+    <style>
+        .outer-a:has(:is(.inner .active)) { background: #fff3cd; }
+        .outer-b:has(:is(.nested .selected)) { border-left: 4px solid #007bff; }
+        .outer-c:has(:is(.deep .expanded)) { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .outer-d:has(:is(.child .opened)) { font-weight: bold; }
+        .outer-e:has(:is(.descendant .highlighted)) { background: #f0f0f0; }
+
+        .container-a:has(:is(.deep .nested .chain)) { color: red; }
+        .container-b:has(:not(.excluded .pattern)) { color: blue; }
+        .container-c:has(:is(.multi, .selector) .descendant) { color: green; }
+        .container-d:has(:is(.another .complex .selector)) { color: purple; }
+        .container-e:has(:is(.final .pattern .here)) { color: orange; }
+    </style>
+</head>
+<body>
+<div id="test-container"></div>
+<script src="../resources/runner.js"></script>
+<script>
+    const container = document.getElementById('test-container');
+
+    const relatedContainers = [];
+    for (let i = 0; i < 10; i++) {
+        const div = document.createElement('div');
+        div.className = i % 5 === 0 ? 'outer-a' :
+                        i % 5 === 1 ? 'outer-b' :
+                        i % 5 === 2 ? 'outer-c' :
+                        i % 5 === 3 ? 'outer-d' : 'outer-e';
+        document.body.appendChild(div);
+        relatedContainers.push(div);
+    }
+
+    const unrelatedContainer = document.createElement('div');
+    unrelatedContainer.className = 'unrelated-mutation-target';
+    container.appendChild(unrelatedContainer);
+
+    PerfTestRunner.measureRunsPerSecond({
+        description: "DOM insertions and removals in unrelated subtree with scope-breaking :has() selectors",
+        run: function() {
+            for (let i = 0; i < 25; i++) {
+                const div = document.createElement('div');
+                div.className = 'test-element';
+                div.innerHTML = '<span>Content</span>';
+                unrelatedContainer.appendChild(div);
+            }
+
+            getComputedStyle(container).opacity;
+
+            for (let i = 0; i < 25; i++) {
+                const div = document.createElement('div');
+                div.className = 'test-element';
+                div.innerHTML = '<span>Content</span>';
+                unrelatedContainer.appendChild(div);
+                div.remove();
+            }
+
+            getComputedStyle(container).opacity;
+
+            unrelatedContainer.innerHTML = '';
+        }
+    });
+</script>
+</body>
+</html>
