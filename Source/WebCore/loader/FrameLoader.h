@@ -565,6 +565,8 @@ private:
     const Ref<DocumentPrefetcher> m_documentPrefetcher;
 
     Function<bool()> m_pendingDispatchNavigateEvent;
+
+    bool m_needsCancellationForContentRuleListCrossOriginRedirect { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for
