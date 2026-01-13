@@ -395,6 +395,82 @@ static void runHttpsToSameSiteHttpExplicitRedirect(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsToSameSiteHttpExplicitRedirect)
 
+static void runHttpsOnlyExplicitlyBypassedWithHttpRedirect(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://site.example/secure"_s, { { }, "hi: not secure"_s } },
+        { "http://site2.example/secure2"_s, { { }, "hi: not secure"_s } },
+        { "http://site2.example/secure3"_s, { { }, "hi: not secure"_s } },
+    }, HTTPServer::Protocol::Http);
+
+    HTTPServer secureServer({
+        { "/secure"_s, { 302, {{ "Location"_s, "http://site.example/secure"_s }}, "redirecting..."_s } },
+        { "/secure2"_s, { 302, {{ "Location"_s, "http://site2.example/secure3"_s }}, "redirecting..."_s } },
+        { "/secure3"_s, { 302, {{ "Location"_s, "http://site2.example/secure2"_s }}, "redirecting..."_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    __block int errorCode { 0 };
+    __block bool finishedSuccessfully { false };
+    __block int loadCount { 0 };
+
+    RetainPtr<TestNavigationDelegate> delegate = adoptNS([webView navigationDelegate]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        ++loadCount;
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_NULL(error);
+        if (error)
+            errorCode = error.code;
+    };
+
+    [webView configuration].defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly | _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
+
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 2);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
+
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+
+    // Now use a different domain to the above to ensure a process swap happens,
+    // this ensures testing of an edge case in the HTTPS upgrade / same-site HTTP logic.
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsOnlyExplicitlyBypassedWithHttpRedirect)
+
 // MARK: - Window Tests
 
 static void runHttpOpeningHttpsWindow(bool useSiteIsolation)
