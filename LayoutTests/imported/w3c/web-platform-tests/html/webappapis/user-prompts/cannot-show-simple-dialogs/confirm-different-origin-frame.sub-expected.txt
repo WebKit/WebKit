@@ -1,6 +1,5 @@
+CONFIRM: Confirm Dialog
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN confirm-different-origin-frame
+FAIL confirm-different-origin-frame Error: assert_equals: expected "pass" but got "fail"
 

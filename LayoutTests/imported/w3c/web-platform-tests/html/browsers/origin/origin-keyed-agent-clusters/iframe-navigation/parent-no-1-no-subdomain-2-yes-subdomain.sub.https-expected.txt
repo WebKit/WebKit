@@ -1,0 +1,9 @@
+
+PASS Before: parent to child: setting document.domain must give sync access
+FAIL before parent: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL before child: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS Navigation
+PASS After: parent to child: setting document.domain must give sync access
+FAIL after parent: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL after child: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

@@ -1,6 +1,4 @@
+Body needed for test_driver.click()
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Feature policy "clipboard-read" can be enabled in same-origin iframe using allow="clipboard-read" attribute Test timed out
+PASS Feature policy "clipboard-read" can be enabled in same-origin iframe using allow="clipboard-read" attribute
 

@@ -1,6 +1,5 @@
+PROMPT: Prompt Dialog, default text:
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN prompt-different-origin-frame
+FAIL prompt-different-origin-frame Error: assert_equals: expected "pass" but got "fail"
 

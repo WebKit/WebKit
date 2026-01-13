@@ -1,8 +1,6 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 FAIL Default "picture-in-picture" feature policy [*] allows the top-level document. assert_true: expected true got false
 FAIL Default "picture-in-picture" feature policy [*] allows same-origin iframes. assert_true: picture-in-picture expected true got false
-TIMEOUT Default "picture-in-picture" feature policy [*] allows cross-origin iframes. Test timed out
+FAIL Default "picture-in-picture" feature policy [*] allows cross-origin iframes. assert_true: picture-in-picture expected true got false
 

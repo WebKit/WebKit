@@ -1,0 +1,23 @@
+
+FAIL Before navigation: parent to child1: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Before navigation: parent to child1: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+PASS Navigation
+PASS Inserting a second iframe
+FAIL After navigation: parent to child2: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL After navigation: parent to child2: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+PASS Going back in history (navigating back the first iframe)
+FAIL After back: parent to child1: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL After back: parent to child1: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL After back: parent to child2: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL After back: parent to child2: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+PASS child1 to child2: setting document.domain must give sync access
+PASS child2 to child1: setting document.domain must give sync access
+

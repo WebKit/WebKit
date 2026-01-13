@@ -1,4 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Importing a same-origin top-level script with the origin-when-cross-origin policy.
+PASS Importing a remote-origin top-level script with the origin-when-cross-origin policy.
+FAIL Importing a same-origin descendant script from a same-origin top-level script with the origin-when-cross-origin policy. assert_equals: Full referrer should be sent for same-origin descendant scriptimported by same-origin top-level script. expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=same_same" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-origin-when-cross-origin.sub.html"
+PASS Importing a remote-origin descendant script from a same-origin top-level script with the origin-when-cross-origin policy.
+FAIL Importing a remote-origin descendant script from a remote-origin top-level script with the origin-when-cross-origin policy. assert_equals: Full referrer should be sent for the remote-origin descendant script imported from a remote-origin top-level script. expected "http://www1.web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=remote_remote" but got "http://web-platform.test:8800/"
+FAIL Importing a same-origin descendant script from a remote-origin top-level script with the origin-when-cross-origin policy. assert_equals: Referrer should be stripped to the origin for the same-origin descendant script imported by remote-origin top-level script. expected "http://www1.web-platform.test:8800/" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-origin-when-cross-origin.sub.html"
 

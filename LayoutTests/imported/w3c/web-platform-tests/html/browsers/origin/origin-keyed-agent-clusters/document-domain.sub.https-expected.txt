@@ -1,0 +1,6 @@
+
+
+FAIL Setting document.domain must not change same-originness Blocked a frame with origin "https://web-platform.test:9443" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS The registrable domain suffix check must happen before the bail-out
+FAIL Having an origin-keyed subdomain child try to set document.domain must not change the document.domain value it sees assert_equals: expected "www1.web-platform.test" but got "web-platform.test"
+

@@ -1,0 +1,3 @@
+
+FAIL Removing the iframe does not change originAgentCluster assert_equals: before expected (boolean) true but got (undefined) undefined
+

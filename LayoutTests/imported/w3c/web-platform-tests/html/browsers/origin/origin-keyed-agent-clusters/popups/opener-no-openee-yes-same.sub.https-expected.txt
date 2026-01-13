@@ -1,0 +1,6 @@
+
+PASS message event must occur
+PASS setting document.domain must give sync access
+FAIL opener: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL openee: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

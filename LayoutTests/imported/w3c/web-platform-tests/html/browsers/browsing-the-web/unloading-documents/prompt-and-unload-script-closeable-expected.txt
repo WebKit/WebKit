@@ -1,0 +1,6 @@
+main frame - has 1 onunload handler(s)
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT beforeunload and unload events fire after window.close() in script-closeable browsing context Test timed out
+

@@ -1,0 +1,9 @@
+
+FAIL Restoring window.name on cross-origin history traversal Blocked a frame with origin "http://web-platform.test:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+
+Step 1 about:blank
+Step 2 http://web-platform.test:8800/html/browsers/browsing-the-web/history-traversal/browsing_context_name-1.html
+Step 3 http://web-platform.test:8800/html/browsers/browsing-the-web/history-traversal/browsing_context_name-1.html
+Step 4 http://web-platform.test:8800/html/browsers/browsing-the-web/history-traversal/browsing_context_name-3.html
+Step 5 http://web-platform.test:8800/html/browsers/browsing-the-web/history-traversal/browsing_context_name-3.html
+

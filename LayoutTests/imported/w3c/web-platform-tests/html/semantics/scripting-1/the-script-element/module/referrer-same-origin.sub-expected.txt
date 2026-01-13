@@ -1,4 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Importing a same-origin top-level script with the same-origin policy.
+PASS Importing a remote-origin top-level script with the same-origin policy.
+FAIL Importing a same-origin descendant script from a same-origin top-level script with the same-origin policy. assert_equals: Referrer should be sent for the same-origin descendant script. expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=same_same" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html"
+PASS Importing a remote-origin descendant script from a same-origin top-level script with the same-origin policy.
+FAIL Importing a remote-origin descendant script from a remote-origin top-level script with the same-origin policy. assert_equals: Referrer should be sent for the remote-origin descendant script when it is imported from a top-level script in the same remote-origin. expected "http://www1.web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=remote_remote" but got ""
+FAIL Importing a same-origin descendant script from a remote-origin top-level script with the same-origin policy. assert_equals: Referrer should not be sent for the same-origin descendant script when it is imported from a top-level remote-origin script. expected "" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html"
 

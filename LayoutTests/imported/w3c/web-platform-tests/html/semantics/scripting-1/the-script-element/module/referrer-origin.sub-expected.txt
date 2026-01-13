@@ -1,4 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Importing a same-origin top-level script with the origin policy.
+PASS Importing a remote-origin top-level script with the origin policy.
+PASS Importing a same-origin descendant script from a same-origin top-level script with the origin policy.
+PASS Importing a remote-origin descendant script from a same-origin top-level script with the origin policy.
+FAIL Importing a remote-origin descendant script from a remote-origin top-level script with the origin policy. assert_equals: Referrer should be sent for the remote-origin descendant script. expected "http://www1.web-platform.test:8800/" but got "http://web-platform.test:8800/"
+FAIL Importing a same-origin descendant script from a remote-origin top-level script with the origin policy. assert_equals: Referrer should be sent for the same-origin descendant script. expected "http://www1.web-platform.test:8800/" but got "http://web-platform.test:8800/"
 

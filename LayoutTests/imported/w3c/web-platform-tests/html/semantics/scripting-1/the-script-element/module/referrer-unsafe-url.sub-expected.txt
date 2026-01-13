@@ -1,4 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Importing a same-origin top-level script with the unsafe-url policy.
+PASS Importing a remote-origin top-level script with the unsafe-url policy.
+FAIL Importing a same-origin descendant script from a same-origin top-level script with the unsafe-url policy. assert_equals: Referrer should be sent for the same-origin descendant script. expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=same_same" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html"
+FAIL Importing a remote-origin descendant script from a same-origin top-level script with the unsafe-url policy. assert_equals: Referrer should be sent for the remote-origin descendant script. expected "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-remote-origin-referrer-checker.sub.js?name=same_remote" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html"
+FAIL Importing a remote-origin descendant script from a remote-origin top-level script with the unsafe-url policy. assert_equals: Referrer should be sent for the remote-origin descendant script. expected "http://www1.web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-referrer-checker.sub.js?name=remote_remote" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html"
+FAIL Importing a same-origin descendant script from a remote-origin top-level script with the unsafe-url policy. assert_equals: Referrer should be sent for the same-origin descendant script. expected "http://www1.web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/resources/import-same-origin-referrer-checker-from-remote-origin.sub.js?name=remote_same" but got "http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html"
 

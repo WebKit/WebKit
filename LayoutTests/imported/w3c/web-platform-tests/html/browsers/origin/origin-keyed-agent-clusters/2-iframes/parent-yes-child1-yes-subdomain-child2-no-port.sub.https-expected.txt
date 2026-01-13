@@ -1,0 +1,17 @@
+
+FAIL Parent to child1: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Parent to child1: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL Parent to child2: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Parent to child2: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL child1 to child2: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL child1 to child2: setting document.domain must not give sync access assert_equals: expected "SecurityError" but got "accessed document successfully"
+FAIL child2 to child1: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL child2 to child1: setting document.domain must not give sync access assert_equals: expected "SecurityError" but got "accessed document successfully"
+FAIL parent: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL child1: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL child2: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

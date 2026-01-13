@@ -1,8 +1,6 @@
 
 
-Harness Error (TIMEOUT), message = null
-
 FAIL Default "trust-token-redemption" feature policy ["self"] allows the top-level document. assert_unreached: Reached unreachable code
 FAIL Default "trust-token-redemption" feature policy ["self"] allows same-origin iframes. assert_equals: Trust token redemption expected 4 but got 2
-TIMEOUT Default "trust-token-redemption" feature policy ["self"] disallows cross-origin iframes. Test timed out
+FAIL Default "trust-token-redemption" feature policy ["self"] disallows cross-origin iframes. assert_equals: Trust token redemption expected 0 but got 2
 

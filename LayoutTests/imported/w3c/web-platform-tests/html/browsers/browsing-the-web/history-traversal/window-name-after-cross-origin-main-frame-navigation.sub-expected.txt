@@ -1,0 +1,4 @@
+open popup
+
+FAIL window.name should equal "" after a cross-origin main frame navigation assert_true: expected true got false
+

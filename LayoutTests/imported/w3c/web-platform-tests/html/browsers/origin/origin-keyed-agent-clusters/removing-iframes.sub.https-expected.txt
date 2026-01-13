@@ -1,0 +1,21 @@
+
+FAIL Before: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Before: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL parent: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL child1: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS Remove the iframe and insert new ones
+FAIL Parent to child2: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Parent to child2: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL Parent to child3: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL Parent to child3: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+PASS child2 to child3: setting document.domain must give sync access
+PASS child3 to child2: setting document.domain must give sync access
+FAIL child2: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL child3: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

@@ -1,4 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
+PASS Importing a same-origin top-level script with the no-referrer policy.
+PASS Importing a remote-origin top-level script with the no-referrer policy.
+PASS Importing a same-origin descendant script from a same-origin top-level script with the no-referrer policy.
+PASS Importing a remote-origin descendant script from a same-origin top-level script with the no-referrer policy.
+PASS Importing a remote-origin descendant script from a remote-origin top-level script with the no-referrer policy.
+PASS Importing a same-origin descendant script from a remote-origin top-level script with the no-referrer policy.
 

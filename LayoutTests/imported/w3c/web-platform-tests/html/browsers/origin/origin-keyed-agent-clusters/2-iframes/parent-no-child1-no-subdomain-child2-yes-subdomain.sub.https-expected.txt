@@ -1,0 +1,9 @@
+
+PASS Parent to child1: setting document.domain must give sync access
+PASS Parent to child2: setting document.domain must give sync access
+PASS child1 to child2: setting document.domain must give sync access
+PASS child2 to child1: setting document.domain must give sync access
+FAIL parent: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL child1: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL child2: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

@@ -1,0 +1,23 @@
+
+PASS "": frame insertion
+PASS "": setting document.domain must give sync access
+FAIL "": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS "?0": frame insertion
+PASS "?0": setting document.domain must give sync access
+FAIL "?0": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS "true": frame insertion
+PASS "true": setting document.domain must give sync access
+FAIL "true": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS ""?1"": frame insertion
+PASS ""?1"": setting document.domain must give sync access
+FAIL ""?1"": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS "1": frame insertion
+PASS "1": setting document.domain must give sync access
+FAIL "1": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS "?2": frame insertion
+PASS "?2": setting document.domain must give sync access
+FAIL "?2": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+PASS "(?1)": frame insertion
+PASS "(?1)": setting document.domain must give sync access
+FAIL "(?1)": originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

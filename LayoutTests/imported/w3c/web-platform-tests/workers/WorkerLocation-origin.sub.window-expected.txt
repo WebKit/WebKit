@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT workerLocation.origin must use ASCII code points Test timed out
+PASS workerLocation.origin must use ASCII code points
 

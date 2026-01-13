@@ -1,0 +1,5 @@
+
+FAIL Navigating from the initial about:blank must not replace window.location assert_equals: expected object "about:blank" but got object "http://web-platform.test:8800/common/blank.html"
+PASS Discarding the browsing context must not change window.location
+PASS document.open() must not replace window.location
+

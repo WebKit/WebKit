@@ -1,5 +1,7 @@
-#PID UNRESPONSIVE - WebKitTestRunner (pid 80906)
-FAIL: Timed out waiting for notifyDone to be called
+2d.pattern.transform.infinity
+Actual output:
+Expected output:
 
-#EOF
-#EOF
+
+PASS Canvas test: 2d.pattern.transform.infinity
+
