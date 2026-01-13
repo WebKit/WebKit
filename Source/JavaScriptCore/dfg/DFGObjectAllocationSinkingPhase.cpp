@@ -2147,7 +2147,7 @@ escapeChildren:
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
-                phiNode->mergeFlags(NodeResultJS);
+                phiNode->mergeFlags(identifier->op() == NewButterflyWithSize ? NodeResultStorage : NodeResultJS);
                 return phiNode;
             });
 

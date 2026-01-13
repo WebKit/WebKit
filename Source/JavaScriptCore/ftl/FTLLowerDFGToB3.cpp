@@ -461,6 +461,9 @@ private:
                 case NodeResultJS:
                     type = Int64;
                     break;
+                case NodeResultStorage:
+                    type = Int64;
+                    break;
                 default:
                     DFG_CRASH(m_graph, node, "Bad Phi node result type");
                     break;
@@ -2016,8 +2019,17 @@ private:
             ASSERT(phi->result() == NodeResultJS);
             break;
         case UntypedUse:
-            upsilonValue = lowJSValue(m_node->child1());
-            ASSERT(phi->result() == NodeResultJS);
+            switch (phi->result()) {
+            case NodeResultJS:
+                upsilonValue = lowJSValue(m_node->child1());
+                break;
+            case NodeResultStorage:
+                upsilonValue = lowStorage(m_node->child1());
+                break;
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad result type for UntypedUse");
+                break;
+            }
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
@@ -2048,6 +2060,9 @@ private:
             break;
         case NodeResultJS:
             setJSValue(phi);
+            break;
+        case NodeResultStorage:
+            setStorage(phi);
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad result type");
