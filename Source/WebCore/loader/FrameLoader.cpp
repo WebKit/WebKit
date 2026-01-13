@@ -1755,6 +1755,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     loader->setIsContentRuleListRedirect(request.isContentRuleListRedirect());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
+    loader->setIsContinuingLoadAfterNavigationPolicyDecision(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision);
     if (crossSiteRequester)
         loader->setCrossSiteRequester(WTF::move(*crossSiteRequester));
 
