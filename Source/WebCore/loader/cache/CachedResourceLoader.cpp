@@ -772,7 +772,7 @@ static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL,
         && !frame.loader().isHTTPFallbackInProgressOrUpgradeDisabled();
 }
 
-bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
+bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL, const URL& lastRedirectURL)
 {
     ASSERT(m_documentLoader);
     if (!m_documentLoader)
@@ -787,7 +787,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
     if (frame) {
         RefPtr page = frame->page();
         bool isHTTPSByDefaultEnabled = page ? page->settings().httpsByDefault() : false;
-        if (shouldPerformHTTPSUpgrade(preRedirectURL, request.url(), *frame, type, isHTTPSByDefaultEnabled, m_documentLoader->advancedPrivacyProtections(), m_documentLoader->httpsByDefaultMode())) {
+        if (shouldPerformHTTPSUpgrade(lastRedirectURL, request.url(), *frame, type, isHTTPSByDefaultEnabled, m_documentLoader->advancedPrivacyProtections(), m_documentLoader->httpsByDefaultMode())) {
             auto portsForUpgradingInsecureScheme = page ? std::optional { page->portsForUpgradingInsecureSchemeForTesting() } : std::nullopt;
             auto upgradePort = (portsForUpgradingInsecureScheme && request.url().port() == portsForUpgradingInsecureScheme->first) ? std::optional { portsForUpgradingInsecureScheme->second } : std::nullopt;
             request.upgradeInsecureRequestIfNeeded(ShouldUpgradeLocalhostAndIPAddress::No, upgradePort);
