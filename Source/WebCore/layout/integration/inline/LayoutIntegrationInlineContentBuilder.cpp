@@ -144,7 +144,7 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
 
     for (size_t lineIndex = startIndex; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
-        auto lineScrollableOverflowRect = line.contentOverflow();
+        auto lineScrollableOverflowRect = line.scrollableOverflow();
         auto adjustOverflowLogicalWidthWithBlockFlowQuirk = [&] {
             auto scrollableOverflowLogicalWidth = isHorizontalWritingMode ? lineScrollableOverflowRect.width() : lineScrollableOverflowRect.height();
             if (!isLeftToRightInlineDirection && line.contentLogicalWidth() > scrollableOverflowLogicalWidth) {

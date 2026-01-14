@@ -61,7 +61,6 @@ public:
     const FloatRect& lineBoxRect() const { return m_lineBoxRect; }
     const FloatRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
-    const FloatRect& contentOverflow() const { return m_contentOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
     FloatRect visibleRectIgnoringBlockDirection() const;
@@ -125,8 +124,6 @@ private:
     FloatRect m_lineBoxRect;
     FloatRect m_lineBoxLogicalRect;
     FloatRect m_scrollableOverflow;
-    // FIXME: Merge this with scrollable overflow (see InlineContentBuilder::updateLineOverflow).
-    FloatRect m_contentOverflow;
     // FIXME: This should be transitioned to spec aligned overflow value.
     FloatRect m_inkOverflow;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
@@ -150,10 +147,10 @@ private:
     std::optional<Ellipsis> m_ellipsis { };
 };
 
-inline Line::Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
+inline Line::Line(bool hasInflowBox, bool hasContentfulBox, bool hasBlockLevelBox, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
-    , m_contentOverflow(contentOverflow)
+    , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingLogicalTopAndBottom(enclosingLogicalTopAndBottom)
     , m_alignmentBaseline(alignmentBaseline)
     , m_contentLogicalLeft(contentLogicalLeft)
@@ -178,7 +175,6 @@ inline void Line::moveInBlockDirection(float offset)
 
     m_lineBoxRect.move(physicalOffset);
     m_scrollableOverflow.move(physicalOffset);
-    m_contentOverflow.move(physicalOffset);
     m_inkOverflow.move(physicalOffset);
     if (m_ellipsis)
         m_ellipsis->visualRect.move(physicalOffset);
@@ -197,7 +193,6 @@ inline void Line::shrinkInBlockDirection(float delta)
 
     m_lineBoxRect.contract(physicalDelta);
     m_scrollableOverflow.contract(physicalDelta);
-    m_contentOverflow.contract(physicalDelta);
     m_inkOverflow.contract(physicalDelta);
     if (m_ellipsis)
         m_ellipsis->visualRect.contract(physicalDelta);
@@ -224,7 +219,6 @@ inline void Line::setLineBoxRectForSVGText(const FloatRect& rect)
 {
     m_lineBoxRect = rect;
     m_scrollableOverflow = rect;
-    m_contentOverflow = rect;
     m_inkOverflow = rect;
     m_lineBoxLogicalRect = m_isHorizontal ? rect : rect.transposedRect();
     m_enclosingLogicalTopAndBottom.top = m_lineBoxLogicalRect.y();
