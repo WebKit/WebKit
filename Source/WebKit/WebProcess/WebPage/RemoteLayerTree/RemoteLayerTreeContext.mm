@@ -211,10 +211,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
     m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
     m_backingStoreCollection->prepareBackingStoresForDisplay(transaction);
-
-    bool paintedAnyBackingStore = m_backingStoreCollection->paintReachableBackingStoreContents();
-    if (paintedAnyBackingStore)
-        m_nextRenderingUpdateRequiresSynchronousImageDecoding = false;
+    m_backingStoreCollection->paintReachableBackingStoreContents();
 
     m_currentTransaction = nullptr;
 

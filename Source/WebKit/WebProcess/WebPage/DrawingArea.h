@@ -190,8 +190,6 @@ public:
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
     virtual void adoptDisplayRefreshMonitorsFromDrawingArea(DrawingArea&) { }
 
-    virtual void setNextRenderingUpdateRequiresSynchronousImageDecoding() { }
-
     void removeMessageReceiverIfNeeded();
     
     WebCore::TiledBacking* mainFrameTiledBacking() const;

@@ -5496,11 +5496,6 @@ void LocalFrameView::invalidateControlTints()
     traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingControlTints);
 }
 
-void LocalFrameView::invalidateImagesWithAsyncDecodes()
-{
-    traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes);
-}
-
 void LocalFrameView::updateAccessibilityObjectRegions()
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

@@ -142,8 +142,6 @@ private:
 
     void adoptLayersFromDrawingArea(DrawingArea&) final;
 
-    void setNextRenderingUpdateRequiresSynchronousImageDecoding() final;
-
     void scheduleRenderingUpdateTimerFired();
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {

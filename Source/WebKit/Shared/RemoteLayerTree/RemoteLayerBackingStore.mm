@@ -421,8 +421,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     paintBehavior.add(GraphicsLayerPaintBehavior::TonemapHDRToDisplayHeadroom);
     context.clearMaxEDRHeadrooms();
 #endif
-    if (auto* context = m_layer->context(); context && context->nextRenderingUpdateRequiresSynchronousImageDecoding())
-        paintBehavior.add(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     Ref layer = m_layer.get();

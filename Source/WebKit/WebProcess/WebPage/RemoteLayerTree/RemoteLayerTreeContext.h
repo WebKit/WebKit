@@ -94,9 +94,6 @@ public:
     void willStartAnimationOnLayer(PlatformCALayerRemote&);
 
     RemoteLayerBackingStoreCollection& backingStoreCollection() { return m_backingStoreCollection; }
-    
-    void setNextRenderingUpdateRequiresSynchronousImageDecoding() { m_nextRenderingUpdateRequiresSynchronousImageDecoding = true; }
-    bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
 
     void adoptLayersFromContext(RemoteLayerTreeContext&);
 
@@ -141,7 +138,6 @@ private:
 
     CheckedPtr<RemoteLayerTreeTransaction> m_currentTransaction;
 
-    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };
 };
 

@@ -5132,8 +5132,6 @@ void WebPage::releaseMemory(Critical)
 
 void WebPage::willDestroyDecodedDataForAllImages()
 {
-    if (RefPtr drawingArea = m_drawingArea)
-        drawingArea->setNextRenderingUpdateRequiresSynchronousImageDecoding();
 }
 
 unsigned WebPage::remoteImagesCountForTesting() const
