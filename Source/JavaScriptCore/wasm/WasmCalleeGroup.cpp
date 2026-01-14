@@ -329,7 +329,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
     // threads and not wasm ones. So the OMGOSREntryCallee could die between the time we collect the callsites and when
     // we actually repatch its callsites.
     // FIXME: These inline capacities were picked semi-randomly. We should figure out if there's a better number.
-    Vector<RefPtr<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
+    Vector<Ref<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
     Vector<Callsite, 16> callsites;
 
     auto functionSpaceIndex = toSpaceIndex(functionIndex);
@@ -372,7 +372,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (auto iter = m_osrEntryCallees.find(callerIndex); iter != m_osrEntryCallees.end()) {
             if (RefPtr callee = iter->value.get()) {
                 collectCallsites(callee.get());
-                keepAliveOSREntryCallees.append(WTF::move(callee));
+                keepAliveOSREntryCallees.append(callee.releaseNonNull());
             } else
                 m_osrEntryCallees.remove(iter);
         }
