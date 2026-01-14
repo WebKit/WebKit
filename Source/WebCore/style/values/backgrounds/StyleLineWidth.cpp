@@ -91,15 +91,6 @@ auto CSSValueConversion<LineWidth>::operator()(BuilderState& state, const CSSVal
     if (primitiveValue->isValueID())
         return handleKeywordValue(state, primitiveValue->valueID());
 
-    // Any original result that was >= 1 should not be allowed to fall below 1. This keeps border lines from vanishing.
-
-    auto result = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData());
-    if (state.style().usedZoom() < 1.0f && result < 1.0f) {
-        auto originalLength = primitiveValue->resolveAsLength<float>(state.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
-        if (originalLength >= 1.0f)
-            return LineWidth::Length { 1.0f };
-    }
-
     return snapLengthAsBorderWidth(result, state.document().deviceScaleFactor());
 }
 
