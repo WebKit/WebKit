@@ -186,6 +186,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable);
+        Gigacage::vmZeroAndPurge(fastMemory, initialBytes);
         switch (sharingMode) {
         case MemorySharingMode::Default: {
             return Memory::create(adoptRef(*new BufferMemoryHandle(fastMemory, initialBytes, BufferMemoryHandle::fastMappedBytes(), initial, maximum, MemorySharingMode::Default, MemoryMode::Signaling)), WTF::move(growSuccessCallback));
@@ -235,6 +236,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(slowMemory + initialBytes, maximumBytes - initialBytes, readable, writable);
+        Gigacage::vmZeroAndPurge(slowMemory, initialBytes);
 
         auto handle = adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, maximumBytes, initial, maximum, MemorySharingMode::Shared, MemoryMode::BoundsChecking));
         auto span = handle->mutableSpan();
@@ -379,6 +381,7 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);
+        Gigacage::vmZeroAndPurge(startAddress, extraBytes);
         m_handle->updateSize(desiredSize);
         return success();
     }

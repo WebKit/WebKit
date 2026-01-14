@@ -49,6 +49,41 @@ void* tryRealloc(Kind, void* pointer, size_t size)
     return FastMalloc::tryRealloc(pointer, size);
 }
 
+void* tryAllocateVirtualPages(Kind, size_t requestedSize)
+{
+    size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
+    RELEASE_ASSERT(size >= requestedSize);
+    void* result = OSAllocator::tryReserveAndCommit(size);
+    return result;
+}
+
+void vmZeroAndPurge(void* p, size_t size)
+{
+    if (!p) [[unlikely]]
+        return;
+
+    if (!size) [[unlikely]]
+        return;
+
+#if OS(WINDOWS)
+    // Guarantees the memory is zeroed. This will also cause
+    // page faults on accesses to this range following this
+    DWORD result = DiscardVirtualMemory(p, size);
+    RELEASE_BASSERT(result == ERROR_SUCCESS);
+#elif OS(DARWIN)
+#error bmalloc needs to be enabled. System malloc can be used via environment variable.
+#else
+#ifndef MAP_NORESERVE
+#define MAP_NORESERVE 0
+#endif
+    int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | MAP_NORESERVE;
+    // MAP_ANON guarantees the memory is zeroed. This will also cause
+    // page faults on accesses to this range following this call.
+    void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, flags, -1, 0);
+    RELEASE_BASSERT(result == p);
+#endif
+}
+
 void* tryAllocateZeroedVirtualPages(Kind, size_t requestedSize)
 {
     size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
@@ -128,12 +163,25 @@ void free(Kind kind, void* p)
     WTF::compilerFence();
 }
 
+void* tryAllocateVirtualPages(Kind kind, size_t size)
+{
+    void* result = bmalloc::api::tryLargeMemalignVirtual(WTF::pageSize(), size, bmalloc::CompactAllocationMode::Compact, bmalloc::heapKind(kind));
+    BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
+    WTF::compilerFence();
+    return result;
+}
+
 void* tryAllocateZeroedVirtualPages(Kind kind, size_t size)
 {
     void* result = bmalloc::api::tryLargeZeroedMemalignVirtual(WTF::pageSize(), size, bmalloc::CompactAllocationMode::Compact, bmalloc::heapKind(kind));
     BPROFILE_TRY_ALLOCATION(GIGACAGE, kind, result, size);
     WTF::compilerFence();
     return result;
+}
+
+void vmZeroAndPurge(void* result, size_t size)
+{
+    bmalloc::api::vmZeroAndPurge(result, size);
 }
 
 void freeVirtualPages(Kind kind, void* basePtr, size_t size)
