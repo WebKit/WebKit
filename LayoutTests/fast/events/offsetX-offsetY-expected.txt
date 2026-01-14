@@ -14,7 +14,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 In RTL overflow
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-PASS: event hit abs-box at offset (32, 37)
+PASS: event hit abs-box at offset (17, 22)
 PASS: event hit rel-box at offset (22, 24)
 PASS: event hit fixed-box at offset (10, 10)
 PASS: event hit with-bordertopextra at offset (4, 4)

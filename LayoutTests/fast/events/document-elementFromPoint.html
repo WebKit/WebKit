@@ -76,8 +76,8 @@ th { height: 30px; }
     top: 220px;
     left: 500px;
     border: 1px solid black;
-    -webkit-column-count: 3;
-    -webkit-column-fill: auto;
+    column-count: 3;
+    column-fill: auto;
     column-count: 3;
     column-fill: auto;
 }
@@ -93,7 +93,7 @@ th { height: 30px; }
     top: 470px;
     height: 120px;
     width: 200px;
-    -webkit-transform: translate(100px, 50px) rotate(20deg);
+    transform: translate(100px, 50px) rotate(20deg);
 }
 
 #overflow {
@@ -267,15 +267,15 @@ window.addEventListener('load', function() {
         overflowContent.scrollTop = 60;
         setTimeout(function() {
             // Dispatch events.
-            dispatchEvent(109, 57, 'absolute', 29, 32);
-            dispatchEvent(161, 13, 'relative', 31, 28);
-            dispatchEvent(40, 297, 'table-content', 15, 18);
-            dispatchEvent(122, 407, 'transformed', 18, 15);
+            dispatchEvent(109, 57, 'absolute', 19, 22);
+            dispatchEvent(161, 13, 'relative', 21, 18);
+            dispatchEvent(40, 297, 'table-content', 5, 8);
+            dispatchEvent(122, 407, 'transformed', 8, 5);
             dispatchEvent(573, 480, 'inside-overflow', 2, 9);
             dispatchEvent(707, 174, 'in-columns', hasSubpixelSupport ? 87 : 88, 13);
-            dispatchEvent(241, 67, 'fixed', 41, 17);
-            dispatchEvent(244, 102, 'fixed', 44, 52);
-            dispatchEvent(388, 88, 'fixed', 188, 38);
+            dispatchEvent(241, 67, 'fixed', 31, 7);
+            dispatchEvent(244, 102, 'fixed', 34, 42);
+            dispatchEvent(388, 88, 'fixed', 178, 28);
 
             // End asynchronous test.
             if (window.testRunner)

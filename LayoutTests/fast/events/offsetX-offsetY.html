@@ -35,10 +35,11 @@
 
       var offsetX = 32;
       var offsetY = 37;
+      var borderSize = 15;
       var positions = sumPositions(document.getElementById('abs-box'));
       var clientX = positions.offsetLeft - positions.scrollLeft + offsetX;
       var clientY = positions.offsetTop - positions.scrollTop + offsetY;
-      dispatchEvent(clientX, clientY, 'abs-box', offsetX, offsetY);
+      dispatchEvent(clientX, clientY, 'abs-box', offsetX-borderSize, offsetY-borderSize);
 
       offsetX = 22;
       offsetY = 24;

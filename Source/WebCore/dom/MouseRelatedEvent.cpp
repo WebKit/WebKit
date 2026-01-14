@@ -28,6 +28,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
 #include "RenderObject.h"
@@ -205,9 +206,13 @@ void MouseRelatedEvent::computeRelativePosition()
     // Must have an updated render tree for this math to work correctly.
     targetNode->protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-    // Adjust offsetLocation to be relative to the target's position.
+    // Adjust offsetLocation to be relative to the target's padding box.
     if (CheckedPtr renderer = targetNode->renderer()) {
         m_offsetLocation = renderer->absoluteToLocal(absoluteLocation(), UseTransforms);
+
+        if (CheckedPtr boxModel = dynamicDowncast<RenderBoxModelObject>(renderer.get()))
+            m_offsetLocation.move(-boxModel->borderLeft(), -boxModel->borderTop());
+
         float scaleFactor = 1 / documentToAbsoluteScaleFactor();
         if (scaleFactor != 1.0f)
             m_offsetLocation.scale(scaleFactor);
