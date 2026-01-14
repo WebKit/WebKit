@@ -43,8 +43,6 @@ public:
     static Ref<CSSAnimation> create(const Styleable&, Style::Animation&&, const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     ~CSSAnimation() = default;
 
-    bool isCSSAnimation() const override { return true; }
-
     const String& animationName() const { return m_animationName.name; }
     const Style::ScopedName& scopedAnimationName() const { return m_animationName; }
 
@@ -61,6 +59,8 @@ public:
 
 private:
     CSSAnimation(const Styleable&, Style::ScopedName&&, Style::Animation&&);
+
+    bool isCSSAnimation() const final { return true; }
 
     void syncPropertiesWithBackingAnimation() final;
     AnimationPlayState backingAnimationPlayState() const final;

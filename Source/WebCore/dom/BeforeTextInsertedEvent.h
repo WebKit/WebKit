@@ -44,7 +44,7 @@ public:
 
 private:
     explicit BeforeTextInsertedEvent(const String&);
-    bool isBeforeTextInsertedEvent() const override { return true; }
+    bool isBeforeTextInsertedEvent() const final { return true; }
 
     String m_text;
 };

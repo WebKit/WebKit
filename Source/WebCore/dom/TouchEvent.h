@@ -69,13 +69,13 @@ public:
     void setTargetTouches(RefPtr<TouchList>&& targetTouches) { m_targetTouches = targetTouches; }
     void setChangedTouches(RefPtr<TouchList>&& changedTouches) { m_changedTouches = changedTouches; }
 
-    bool isTouchEvent() const override;
-
 private:
     TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches, TouchList* changedTouches, const AtomString& type,
         RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
     TouchEvent(const AtomString&, const Init&, IsTrusted);
+
+    bool isTouchEvent() const final { return true; }
 
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;

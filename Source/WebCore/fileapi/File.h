@@ -75,8 +75,6 @@ public:
 
     static Ref<File> createWithRelativePath(ScriptExecutionContext*, const String& path, const String& relativePath);
 
-    bool isFile() const override { return true; }
-
     const String& path() const { return m_path; }
     const String& relativePath() const { return m_relativePath; }
     void setRelativePath(const String& relativePath) { m_relativePath = relativePath; }
@@ -94,14 +92,15 @@ public:
     bool isDirectory() const;
 
 private:
-    WEBCORE_EXPORT explicit File(ScriptExecutionContext*, const String& path);
+    WEBCORE_EXPORT File(ScriptExecutionContext*, const String& path);
     File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name);
     File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
     File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>&);
     File(ScriptExecutionContext*, const Blob&, const String& name);
     File(ScriptExecutionContext*, const File&, const String& name);
-
     File(DeserializationContructor, ScriptExecutionContext*, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified);
+
+    bool isFile() const final { return true; }
 
     static void computeNameAndContentType(const String& path, const String& nameOverride, String& effectiveName, String& effectiveContentType);
 #if ENABLE(FILE_REPLACEMENT)

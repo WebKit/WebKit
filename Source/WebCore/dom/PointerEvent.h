@@ -133,8 +133,6 @@ public:
 
     void receivedTarget() final;
 
-    bool isPointerEvent() const final { return true; }
-
     // https://w3c.github.io/pointerevents/#attributes-and-default-actions
     // Many user agents expose non-standard attributes fromElement and toElement in MouseEvents to
     // support legacy content. In those user agents, the values of those (inherited) attributes in
@@ -154,6 +152,7 @@ protected:
     PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable, IsComposed);
 
 private:
+    bool isPointerEvent() const final { return true; }
     static bool typeIsEnterOrLeave(const AtomString& type);
     static unsigned short buttonsForType(const AtomString& type)
     {

@@ -44,6 +44,8 @@ public:
 private:
     SpeechSynthesisErrorEvent(const AtomString& type, const SpeechSynthesisErrorEventInit&);
 
+    bool isSpeechSynthesisErrorEvent() const final { return true; }
+
     SpeechSynthesisErrorCode m_error;
 };
 

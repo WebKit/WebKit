@@ -63,7 +63,7 @@ private:
     CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&, const String&);
     CompositionEvent(const AtomString& type, const Init&);
 
-    bool isCompositionEvent() const override;
+    bool isCompositionEvent() const final;
 
     String m_data;
 };

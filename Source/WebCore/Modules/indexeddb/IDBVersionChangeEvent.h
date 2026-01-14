@@ -55,14 +55,14 @@ public:
 
     std::optional<IDBResourceIdentifier> requestIdentifier() const { return m_requestIdentifier; }
 
-    bool isVersionChangeEvent() const final { return true; }
-
     uint64_t oldVersion() const { return m_oldVersion; }
     std::optional<uint64_t> newVersion() const { return m_newVersion; }
 
 private:
     IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType);
     IDBVersionChangeEvent(const AtomString&, const Init&, IsTrusted);
+
+    bool isVersionChangeEvent() const final { return true; }
 
     std::optional<IDBResourceIdentifier> m_requestIdentifier;
     uint64_t m_oldVersion;

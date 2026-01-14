@@ -61,11 +61,6 @@ TouchEvent::TouchEvent(const AtomString& type, const Init& initializer, IsTruste
 
 TouchEvent::~TouchEvent() = default;
 
-bool TouchEvent::isTouchEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(TOUCH_EVENTS)

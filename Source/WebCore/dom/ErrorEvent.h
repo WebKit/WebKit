@@ -83,7 +83,7 @@ private:
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
     ErrorEvent(const AtomString&, const Init&, IsTrusted);
 
-    bool isErrorEvent() const override;
+    bool isErrorEvent() const final;
 
     String m_message;
     String m_fileName;

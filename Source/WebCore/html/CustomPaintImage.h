@@ -42,10 +42,11 @@ public:
     }
 
     virtual ~CustomPaintImage();
-    bool isCustomPaintImage() const override { return true; }
 
 private:
     CustomPaintImage(PaintDefinition&, const FloatSize&, const RenderElement&, const Vector<String>& arguments);
+
+    bool isCustomPaintImage() const final { return true; }
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 

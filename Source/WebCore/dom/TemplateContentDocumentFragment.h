@@ -48,7 +48,7 @@ public:
 private:
     TemplateContentDocumentFragment(Document&, const HTMLTemplateElement&);
 
-    bool isTemplateContent() const override { return true; }
+    bool isTemplateContent() const final { return true; }
 
     WeakPtr<const HTMLTemplateElement, WeakPtrImplWithEventTargetData> m_host;
 };
