@@ -26,18 +26,10 @@
 
 
 (define (enhanced-security)
-    (require-any
-        (require-all
-            (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-            (require-not (require-entitlement "com.apple.private.verified-jit"))
-            (require-not (require-entitlement "com.apple.security.cs.single-jit"))))
-        (require-entitlement "com.apple.private.webkit.enhanced-security")
-    )
+    (equal? (param "WEBCONTENT_IS_ENHANCED_SECURITY") "YES"))
 
 (define (lockdown-mode)
-    (require-all
-        (require-not (require-entitlement "com.apple.security.cs.allow-jit"))
-        (require-not (enhanced-security))))
+    (equal? (param "WEBCONTENT_IS_LOCKDOWN_MODE") "YES"))
 
 #define FALSE #f
 
@@ -51,9 +43,9 @@
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)
-(with-filter (lockdown-mode)
+(when (lockdown-mode)
     (deny dynamic-code-generation))
-(with-filter (enhanced-security)
+(when (enhanced-security)
     (deny dynamic-code-generation))
 
 (with-filter (mac-policy-name "Sandbox")
@@ -1117,16 +1109,15 @@
 
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-(with-filter
-    (require-all
-        (require-not (lockdown-mode))
+(when (not (lockdown-mode))
+    (with-filter
         (require-any
             (require-not (state-flag "UnifiedPDFEnabled"))
-            (require-not (state-flag "BlockIOKitInWebContentSandbox"))))
-    (allow mach-lookup
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (global-name "com.apple.CARenderServer"))))
+            (require-not (state-flag "BlockIOKitInWebContentSandbox")))
+        (allow mach-lookup
+            (require-all
+                (extension "com.apple.webkit.extension.mach")
+                (global-name "com.apple.CARenderServer")))))
 #else
 (allow mach-lookup (global-name "com.apple.CARenderServer"))
 #endif
@@ -1627,8 +1618,9 @@
 #endif
 (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
     (allow syscall-unix (syscall-unix-downlevels)))
-(with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-    (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+(when (not (lockdown-mode))
+    (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+        (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode))))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)
@@ -1643,11 +1635,11 @@
 
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
 (allow syscall-unix (syscall-unix-downlevels))
-(with-filter (require-not (lockdown-mode))
+(when (not (lockdown-mode))
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
 #endif
 
-(with-filter (require-not (lockdown-mode))
+(when (not (lockdown-mode))
     (allow syscall-unix (syscall-unix-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (allow syscall-unix (syscall-unix-apple-silicon)))
@@ -1666,7 +1658,7 @@
     (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
 
-(with-filter (lockdown-mode)
+(when (lockdown-mode)
     (deny syscall-unix (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
@@ -1793,10 +1785,10 @@
 
 (when (defined? 'syscall-mig)
     (deny syscall-mig)
-    (with-filter (require-not (lockdown-mode))
+    (when (not (lockdown-mode))
         (allow-mach-exceptions syscall-mig)
         (allow syscall-mig (kernel-mig-routines-blocked-in-lockdown-mode)))
-    (with-filter (lockdown-mode)
+    (when (lockdown-mode)
         (deny syscall-mig (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
     (allow syscall-mig (kernel-mig-routines-in-use))
 #if HAVE(MACH_RANGE_CREATE)
@@ -1810,24 +1802,25 @@
         (allow syscall-mig (kernel-mig-routines-iokit-service)))
     (with-filter (state-flag "BlockIOKitInWebContentSandbox")
         (deny syscall-mig (with no-report) (kernel-mig-routines-iokit-service)))
-    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-        (allow syscall-mig (kernel-mig-routines-downlevels-blocked-in-lockdown-mode))))
+    (when (not (lockdown-mode))
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow syscall-mig (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))))
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
     (allow mach-kernel-endpoint
         (apply-message-filter
             (deny mach-message-send)
-            (with-filter (require-not (lockdown-mode))
+            (when (not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-blocked-in-lockdown-mode)))
-            (with-filter (lockdown-mode)
+            (when (lockdown-mode)
                 (deny mach-message-send (with telemetry) (kernel-mig-routines-blocked-in-lockdown-mode)))
-            (with-filter (require-not (lockdown-mode))
+            (when (not (lockdown-mode))
                 (allow-mach-exceptions mach-message-send))
 
             (allow mach-message-send (kernel-mig-routines-in-use))
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
             (allow mach-message-send (kernel-mig-routines-downlevels))
-            (with-filter (require-not (lockdown-mode))
+            (when (not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
 #endif
 #if HAVE(SANDBOX_STATE_FLAGS)
@@ -1842,8 +1835,9 @@
             (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
                 (allow mach-message-send (kernel-mig-routines-downlevels))
                 (allow mach-message-send (kernel-mig-routines-iokit)))
-            (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-                (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
+            (when (not (lockdown-mode))
+                (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+                    (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode))))
 #else
             (allow mach-message-send (kernel-mig-routines-iokit))
             (allow mach-message-send (kernel-mig-routines-iokit-service))
@@ -1910,17 +1904,18 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
     (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
         (allow syscall-mach (syscall-mach-downlevels)))
-    (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
-        (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
+    (when (not (lockdown-mode))
+        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+            (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode))))
 #endif
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
     (allow syscall-mach (syscall-mach-downlevels))
-    (with-filter (require-not (lockdown-mode))
+    (when (not (lockdown-mode))
         (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
 #endif
-    (with-filter (require-not (lockdown-mode))
+    (when (not (lockdown-mode))
         (allow syscall-mach (syscall-mach-blocked-in-lockdown-mode)))
-    (with-filter (lockdown-mode)
+    (when (lockdown-mode)
         (deny syscall-mach (with telemetry) (syscall-mach-blocked-in-lockdown-mode)))
     (when (defined? 'MSC_mach_msg2_trap)
         (allow syscall-mach (machtrap-number MSC_mach_msg2_trap))))

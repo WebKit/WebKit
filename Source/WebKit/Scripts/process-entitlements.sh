@@ -82,7 +82,6 @@ function mac_process_webcontent_enhancedsecurity_entitlements()
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitWebContentSandbox bool YES
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
@@ -443,7 +442,6 @@ function maccatalyst_process_webcontent_enhancedsecurity_entitlements()
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
-        plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
         plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
     fi
 

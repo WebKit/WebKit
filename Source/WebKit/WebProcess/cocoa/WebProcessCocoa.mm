@@ -1031,6 +1031,11 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     registerVorbisDecoderIfNeeded();
 #endif
 
+    if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s)
+        sandboxParameters.addParameter("WEBCONTENT_IS_LOCKDOWN_MODE"_s, "YES"_span);
+    else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s)
+        sandboxParameters.addParameter("WEBCONTENT_IS_ENHANCED_SECURITY"_s, "YES"_span);
+
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"_s));

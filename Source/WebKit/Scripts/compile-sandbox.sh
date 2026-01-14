@@ -40,7 +40,7 @@ if [[ $SDK_NAME =~ "mac" ]]; then
         # Use the IMPORT_DIR of the build host.
         # That's acceptable for syntax check purposes, but will prevent adoption of
         # new rules in imports, e.g. when the build host runs an older macOS version.
-        xcrun --sdk $SDK_NAME sbutil compile -D IMPORT_DIR=/System/Library/Sandbox/Profiles -D ENABLE_SANDBOX_MESSAGE_FILTER=YES -D WEBKIT2_FRAMEWORK_DIR=dir -D HOME_DIR=dir -D HOME_LIBRARY_PREFERENCES_DIR=dir -D DARWIN_USER_CACHE_DIR=dir -D DARWIN_USER_TEMP_DIR=dir $SANDBOX_PATH > /dev/null;
+        xcrun --sdk $SDK_NAME sbutil compile -D IMPORT_DIR=/System/Library/Sandbox/Profiles -D ENABLE_SANDBOX_MESSAGE_FILTER=YES -D WEBKIT2_FRAMEWORK_DIR=dir -D HOME_DIR=dir -D HOME_LIBRARY_PREFERENCES_DIR=dir -D DARWIN_USER_CACHE_DIR=dir -D DARWIN_USER_TEMP_DIR=dir -D WEBCONTENT_IS_LOCKDOWN_MODE=NO -D WEBCONTENT_IS_ENHANCED_SECURITY=NO $SANDBOX_PATH > /dev/null;
         if [[ $? != 0 ]]; then
             exit 1;
         fi
