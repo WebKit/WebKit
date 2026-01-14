@@ -85,4 +85,15 @@ constexpr static inline double makeTime(double hour, double min, double sec, dou
 #endif
     return (((hour * msPerHour) + min * msPerMinute) + sec * msPerSecond) + ms;
 }
+
+// https://tc39.es/ecma262/#sec-makefullyear
+constexpr static inline double makeFullYear(double year)
+{
+    if (std::isnan(year))
+        return PNaN;
+    double truncated = std::trunc(year);
+    if (0 <= truncated && truncated <= 99)
+        return 1900 + truncated;
+    return truncated;
+}
 } // namespace JSC
