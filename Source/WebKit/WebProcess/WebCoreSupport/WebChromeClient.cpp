@@ -1279,16 +1279,6 @@ void WebChromeClient::triggerRenderingUpdate()
         drawingArea->triggerRenderingUpdate();
 }
 
-bool WebChromeClient::scheduleRenderingUpdate()
-{
-    RefPtr page = m_page.get();
-    if (!page)
-        return false;
-    if (RefPtr drawingArea = page->drawingArea())
-        return drawingArea->scheduleRenderingUpdate();
-    return false;
-}
-
 void WebChromeClient::renderingUpdateFramesPerSecondChanged()
 {
     RefPtr page = m_page.get();
