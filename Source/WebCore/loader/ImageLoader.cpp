@@ -412,7 +412,7 @@ void ImageLoader::updateFromElementIgnoringPreviousErrorToSameValue()
     notifyFinished(*protectedImage(), NetworkLoadMetrics { });
 }
 
-static inline void resolvePromises(Vector<RefPtr<DeferredPromise>>& promises)
+static inline void resolvePromises(Vector<Ref<DeferredPromise>>& promises)
 {
     ASSERT(!promises.isEmpty());
     auto promisesToBeResolved = std::exchange(promises, { });
@@ -420,7 +420,7 @@ static inline void resolvePromises(Vector<RefPtr<DeferredPromise>>& promises)
         promise->resolve();
 }
 
-static inline void rejectPromises(Vector<RefPtr<DeferredPromise>>& promises, ASCIILiteral message)
+static inline void rejectPromises(Vector<Ref<DeferredPromise>>& promises, ASCIILiteral message)
 {
     ASSERT(!promises.isEmpty());
     auto promisesToBeRejected = std::exchange(promises, { });
