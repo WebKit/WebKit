@@ -99,7 +99,7 @@ public:
         case NeitherDoubleNorHeapBigIntNorStringUse:
         case NeitherDoubleNorHeapBigIntUse:
             return;
-            
+
         case KnownInt32Use:
             if (m_state.forNode(edge).m_type & ~SpecInt32Only)
                 m_result = false;
@@ -109,7 +109,8 @@ public:
             if (m_state.forNode(edge).m_type & ~SpecBoolean)
                 m_result = false;
             return;
-            
+
+        case KnownStorageUse:
         case KnownCellUse:
             if (m_state.forNode(edge).m_type & ~SpecCell)
                 m_result = false;

@@ -12484,6 +12484,7 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case MiscUse:
         speculateMisc(edge);
         break;
+    case KnownStorageUse:
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;

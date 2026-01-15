@@ -461,6 +461,9 @@ private:
                 case NodeResultJS:
                     type = Int64;
                     break;
+                case NodeResultStorage:
+                    type = pointerType();
+                    break;
                 default:
                     DFG_CRASH(m_graph, node, "Bad Phi node result type");
                     break;
@@ -2019,6 +2022,10 @@ private:
             upsilonValue = lowJSValue(m_node->child1());
             ASSERT(phi->result() == NodeResultJS);
             break;
+        case KnownStorageUse:
+            upsilonValue = lowStorage(m_node->child1());
+            ASSERT(phi->result() == NodeResultStorage);
+            break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
@@ -2033,7 +2040,7 @@ private:
         LValue phi = m_phis.get(m_node);
         m_out.m_block->append(phi);
 
-        switch (m_node->flags() & NodeResultMask) {
+        switch (m_node->result()) {
         case NodeResultDouble:
             setDouble(phi);
             break;
@@ -2048,6 +2055,9 @@ private:
             break;
         case NodeResultJS:
             setJSValue(phi);
+            break;
+        case NodeResultStorage:
+            setStorage(phi);
             break;
         default:
             DFG_CRASH(m_graph, m_node, "Bad result type");
@@ -23043,11 +23053,18 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue lowStorage(Edge edge)
     {
+        // FIXME: We should use KnownStorageUse everywhere and not just for Upsilons.
+        OperandSpeculationMode speculation = AutomaticOperandSpeculation;
+        if (m_node->op() == DFG::Upsilon) {
+            DFG_ASSERT(m_graph, m_node, edge.useKind() == KnownStorageUse);
+            speculation = ManualOperandSpeculation;
+        }
+
         LoweredNodeValue value = m_storageValues.get(edge.node());
         if (isValid(value))
             return value.value();
 
-        LValue result = lowCell(edge);
+        LValue result = lowCell(edge, speculation);
         setStorage(edge.node(), result);
         return result;
     }
@@ -23428,6 +23445,7 @@ IGNORE_CLANG_WARNINGS_END
         case Int52RepUse:
         case KnownCellUse:
         case KnownBooleanUse:
+        case KnownStorageUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
         case Int32Use:

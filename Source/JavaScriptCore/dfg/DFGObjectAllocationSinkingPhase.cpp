@@ -2126,6 +2126,9 @@ escapeChildren:
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
+
+                // It shouldn't be possible to get a butterfly here since it should also be a sink candidate.
+                ASSERT(location.kind() != ArrayButterflyPLoc);
                 if (location.kind() == ArrayIndexedPropertyPLoc && hasDouble(allocation.indexingType())) {
                     ASSERT(allocation.kind() == Allocation::Kind::Array);
                     phiNode->mergeFlags(NodeResultDouble);
@@ -2147,7 +2150,7 @@ escapeChildren:
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
-                phiNode->mergeFlags(NodeResultJS);
+                phiNode->mergeFlags(identifier->result());
                 return phiNode;
             });
 

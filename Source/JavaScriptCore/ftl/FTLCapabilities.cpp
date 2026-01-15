@@ -567,6 +567,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case KnownBooleanUse:
                 case CellUse:
                 case KnownCellUse:
+                case KnownStorageUse:
                 case CellOrOtherUse:
                 case ObjectUse:
                 case ArrayUse:
