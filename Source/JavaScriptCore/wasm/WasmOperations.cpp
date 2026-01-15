@@ -580,6 +580,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                             OPERATION_RETURN(scope);
                         }
                     }
+                    // Validation only: value not modified so write back not needed.
                 } else {
                     // operationConvertToAnyref
                     JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
@@ -588,8 +589,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                         throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         OPERATION_RETURN(scope);
                     }
+                    *access.operator()<uint64_t>(registerSpace, 0) = std::bit_cast<uint64_t>(value);
                 }
-                // do nothing, the register is already there
             } else
                 RELEASE_ASSERT_NOT_REACHED();
         }
