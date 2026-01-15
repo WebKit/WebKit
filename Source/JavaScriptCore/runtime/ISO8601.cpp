@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ISO8601.h"
 
+#include "DateConstructor.h"
 #include "FractionToDouble.h"
 #include "IntlObject.h"
 #include "ParseInt.h"
@@ -616,7 +617,7 @@ static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, Char
 }
 
 template<typename CharacterType>
-static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<TimeZoneAnnotation> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
@@ -638,7 +639,11 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
     switch (static_cast<char16_t>(*buffer)) {
     case '+':
     case '-': {
+        StringParsingBuffer<CharacterType> bufferCopy = buffer;
+        int32_t lengthRemaining = buffer.lengthRemaining();
         auto offset = parseUTCOffset(buffer, false);
+        auto numOffsetChars = lengthRemaining - buffer.lengthRemaining();
+        Vector<Latin1Character> asString(bufferCopy.consume(numOffsetChars).subspan(0, numOffsetChars));
         if (!offset)
             return std::nullopt;
         if (buffer.atEnd())
@@ -646,7 +651,7 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return offset.value();
+        return TimeZoneAnnotation { asString, offset.value() };
     }
     case 'E': {
         // "Etc/GMT+20" and "]" => length is 11.
@@ -665,8 +670,8 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
                         if (isASCIIDigit(secondHourCharacter)) {
                             hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
                             if (hour < 24 && buffer[10] == ']') {
-                                buffer.advanceBy(11);
-                                return nsPerHour * hour * factor;
+                                Vector<Latin1Character> asString = buffer.consume(11);
+                                return TimeZoneAnnotation { asString, nsPerHour * hour * factor };
                             }
                         }
                     }
@@ -750,14 +755,18 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
         if (!isValidComponent(currentNameComponentStartIndex, nameLength))
             return std::nullopt;
 
-        Vector<Latin1Character> result(buffer.consume(nameLength));
+        Vector<Latin1Character> result;
+        for (uint32_t i = 0; i < nameLength; i++) {
+            result.append(*buffer);
+            buffer.advance();
+        }
 
         if (buffer.atEnd())
             return std::nullopt;
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return result;
+        return TimeZoneAnnotation { result, std::nullopt };
     }
     }
 }
@@ -774,39 +783,58 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case 'Z': {
         buffer.advance();
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            return TimeZoneRecord { true, std::nullopt, WTF::move(timeZone.value()) };
+            return TimeZoneRecord { true, std::nullopt, timeZoneAnnotation };
         }
-        return TimeZoneRecord { true, std::nullopt, { } };
+        return TimeZoneRecord { true, std::nullopt, std::nullopt };
     }
     // TimeZoneUTCOffsetSign
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer);
+        // Accept sub-minute precision in offset
+        StringParsingBuffer<CharacterType> bufferCopy = buffer;
+        int32_t lengthRemaining = buffer.lengthRemaining();
+        auto offset = parseUTCOffset(buffer, true);
+        auto numOffsetChars = lengthRemaining - buffer.lengthRemaining();
+        Vector<Latin1Character> chars;
+        for (uint32_t i = 0; i < numOffsetChars; i++) {
+            chars.append(*bufferCopy);
+            bufferCopy.advance();
+        }
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTF::move(timeZone.value()) };
+            return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, timeZoneAnnotation };
         }
-        return TimeZoneRecord { false, offset.value(), { } };
+        return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, std::nullopt };
     }
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     case '[': {
-        auto timeZone = parseTimeZoneAnnotation(buffer);
-        if (!timeZone)
+        auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+        if (!timeZoneAnnotation) [[unlikely]]
             return std::nullopt;
-        return TimeZoneRecord { false, std::nullopt, WTF::move(timeZone.value()) };
+        return TimeZoneRecord { false, std::nullopt, timeZoneAnnotation };
     }
     default:
         return std::nullopt;
     }
+}
+
+std::optional<TimeZoneRecord> parseTimeZone(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
+        auto result = parseTimeZone(buffer);
+        if (!buffer.atEnd()) [[unlikely]]
+            return std::nullopt;
+        return result;
+    });
 }
 
 template<typename CharacterType>
@@ -903,7 +931,11 @@ static std::optional<RFC9557Annotation> parseOneRFC9557Annotation(StringParsingB
     if (!isValidComponent(currentNameComponentStartIndex, nameLength))
         return std::nullopt;
 
-    Vector<Latin1Character, maxCalendarLength> result(buffer.consume(nameLength));
+    Vector<Latin1Character, maxCalendarLength> result;
+    for (uint32_t i = 0; i < nameLength; i++) {
+        result.append(*buffer);
+        buffer.advance();
+    }
 
     if (buffer.atEnd())
         return std::nullopt;
@@ -949,6 +981,20 @@ parseCalendar(StringParsingBuffer<CharacterType>& buffer)
             return std::nullopt;
     }
     return result;
+}
+
+std::optional<CalendarID> parseCalendar(StringView string)
+{
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarID> {
+        auto result = parseCalendar(buffer);
+        if (!buffer.atEnd()) [[unlikely]]
+            return std::nullopt;
+        if (result && result->size() > 1) [[unlikely]]
+            return std::nullopt;
+        if (result)
+            return result.value()[0];
+        return std::nullopt;
+    });
 }
 
 template<typename CharacterType>
@@ -1374,7 +1420,13 @@ std::optional<ExactTime> parseInstant(StringView string)
 
         PlainTime plainTime = plainTimeOptional.value_or(PlainTime());
 
-        int64_t offset = timeZoneOptional->m_z ? 0 : *timeZoneOptional->m_offset;
+        int64_t offset = 0;
+        if (!timeZoneOptional->m_z) {
+            if (timeZoneOptional->m_offset)
+                offset = timeZoneOptional->m_offset->m_offset;
+            else
+                return std::nullopt;
+        }
         return { ExactTime::fromISOPartsAndOffset(plainDate.year(), plainDate.month(), plainDate.day(), plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), plainTime.nanosecond(), offset) };
     });
 }
@@ -1447,22 +1499,14 @@ uint8_t daysInMonth(uint8_t month)
     return daysInMonths[isLeapYear][month - 1];
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
-String formatTimeZoneOffsetString(int64_t offset)
+// https://tc39.es/proposal-temporal/#sec-temporal-formatfractionalseconds
+static String formatFractionalSeconds(int64_t subSecondNanoseconds, TemporalFractionalSecondDigits precision)
 {
-    bool negative = false;
-    if (offset < 0) {
-        negative = true;
-        offset = -offset; // This is OK since offset range is much narrower than [INT64_MIN, INT64_MAX] range.
-    }
-    int64_t nanoseconds = offset % nsPerSecond;
-    int64_t seconds = (offset / nsPerSecond) % 60;
-    int64_t minutes = (offset / nsPerMinute) % 60;
-    int64_t hours = offset / nsPerHour;
-
-    if (nanoseconds) {
+    if (precision == TemporalFractionalSecondDigits::Auto) {
+        if (!subSecondNanoseconds)
+            return ""_s;
         // Since nsPerSecond is 1000000000, stringified nanoseconds takes at most 9 characters (999999999).
-        auto fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(nanoseconds);
+        WTF::Vector<Latin1Character, 9> fraction = numberToStringUnsigned<Vector<Latin1Character, 9>>(subSecondNanoseconds);
         unsigned paddingLength = 9 - fraction.size();
         unsigned index = fraction.size();
         std::optional<unsigned> validLength;
@@ -1476,11 +1520,47 @@ String formatTimeZoneOffsetString(int64_t offset)
             fraction.shrink(validLength.value());
         else
             fraction.clear();
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', paddingLength, emptyString()), fraction);
+        return makeString('.', pad('0', paddingLength, emptyString()), fraction);
     }
-    if (seconds)
-        return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes));
+    if (precision == TemporalFractionalSecondDigits::Zero)
+        return ""_s;
+    StringBuilder fractionString;
+    fractionString.append("."_s);
+    fractionString.append(pad('0', 9, subSecondNanoseconds));
+    fractionString.shrink(static_cast<unsigned>(precision) + 1);
+    return fractionString.toString();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formattimestring
+static String formatTimeString(char sign, int64_t hour, int64_t minute, int64_t second, int64_t subSecondNanoseconds,
+    std::optional<TemporalFractionalSecondDigits> precision, std::optional<bool> isSeparated)
+{
+    auto separator = isSeparated && !(isSeparated.value()) ? ""_s : ":"_s;
+    auto hh = pad('0', 2, hour);
+    auto mm = pad('0', 2, minute);
+    if (!precision)
+        return makeString(sign, hh, separator, mm);
+    auto ss = pad('0', 2, second);
+    auto subSecondsPart = formatFractionalSeconds(subSecondNanoseconds, precision.value());
+    return makeString(sign, hh, separator, mm, separator, ss, subSecondsPart);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatutcoffsetnanoseconds
+String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
+{
+    auto sign = offsetNanoseconds >= 0 ? '+' : '-';
+    int64_t absoluteNanoseconds = std::abs(offsetNanoseconds);
+    Int128 divisor = 3600 * 1000000000ll;
+    auto hour = absoluteNanoseconds / divisor;
+    divisor = 60 * 1000000000ll;
+    auto minute = (absoluteNanoseconds / divisor) % 60;
+    divisor = 1000000000ll;
+    auto second = (absoluteNanoseconds / divisor) % 60;
+    auto subSecondNanoseconds = absoluteNanoseconds % (static_cast<int64_t>(divisor));
+    std::optional<TemporalFractionalSecondDigits> precision = std::nullopt;
+    if (!(!second && !subSecondNanoseconds))
+        precision = TemporalFractionalSecondDigits::Auto;
+    return formatTimeString(sign, static_cast<int64_t>(hour), static_cast<int64_t>(minute), static_cast<int64_t>(second), static_cast<int64_t>(subSecondNanoseconds), precision, std::nullopt);
 }
 
 String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned> precision)
@@ -1607,7 +1687,7 @@ ExactTime ExactTime::fromISOPartsAndOffset(int32_t year, uint8_t month, uint8_t 
     ASSERT(microsecond <= 999);
     ASSERT(nanosecond <= 999);
 
-    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(year, month - 1, day));
+    Int128 dateDays = ISO8601::dateToDaysFrom1970(year, month - 1, day);
     Int128 utcNanoseconds = dateDays * nsPerDay + hour * nsPerHour + minute * nsPerMinute + second * nsPerSecond + millisecond * nsPerMillisecond + microsecond * nsPerMicrosecond + nanosecond;
     return ExactTime { utcNanoseconds - offset };
 }
@@ -1805,11 +1885,11 @@ ExactTime ExactTime::round(JSGlobalObject* globalObject, unsigned increment,
 
     Int128 maximum = 0;
     switch (unit) {
-    case TemporalUnit::Hour: maximum = static_cast<Int128>(WTF::hoursPerDay); break;
-    case TemporalUnit::Minute: maximum = static_cast<Int128>(minutesPerHour * WTF::hoursPerDay); break;
-    case TemporalUnit::Second: maximum = static_cast<Int128>(secondsPerMinute * minutesPerHour * WTF::hoursPerDay); break;
-    case TemporalUnit::Millisecond: maximum = static_cast<Int128>(msPerDay); break;
-    case TemporalUnit::Microsecond: maximum = static_cast<Int128>(msPerDay * 1000); break;
+    case TemporalUnit::Hour: maximum = hoursPerDay; break;
+    case TemporalUnit::Minute: maximum = minutesPerHour * hoursPerDay; break;
+    case TemporalUnit::Second: maximum = secondsPerMinute * minutesPerHour * hoursPerDay; break;
+    case TemporalUnit::Millisecond: maximum = msPerDay; break;
+    case TemporalUnit::Microsecond: maximum = msPerDay * 1000; break;
     case TemporalUnit::Nanosecond: maximum = nsPerDay; break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -1919,6 +1999,26 @@ bool isValidISODate(double year, double month, double day)
     if (day < 1 || day > daysInMonth1)
         return false;
     return true;
+}
+
+// https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
+Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
+{
+    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
+    return 0;
+}
+
+// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
+Int128 getUTCEpochNanoseconds(PlainDateTime isoDateTime)
+{
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
+    Int128 date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    Int128 time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
+    Int128 ms = makeDate(date, time);
+    return (ms * 1000000
+        + (static_cast<Int128>(isoTime.microsecond())) * 1000
+        + (static_cast<Int128>(isoTime.nanosecond())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record

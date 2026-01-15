@@ -379,4 +379,15 @@ TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTF::move(plainDate), WTF::move(plainTime)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
+// The way this is currently called, only `nanosecond` needs to be an Int128; everything
+// else can be an int32_t. But for consistency, everything is an Int128.
+ISO8601::PlainDateTime TemporalPlainDateTime::balanceISODateTime(JSGlobalObject* globalObject, Int128 year, Int128 month, Int128 day, Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
+{
+    auto balancedTime = TemporalPlainTime::balanceTime(hour, minute, second, millisecond, microsecond, nanosecond);
+    auto balancedDate = TemporalCalendar::balanceISODate(globalObject, static_cast<double>(year), static_cast<double>(month), static_cast<double>(day) + balancedTime.days());
+    return ISO8601::PlainDateTime(WTF::move(balancedDate),
+        ISO8601::PlainTime(static_cast<unsigned>(balancedTime.hours()), static_cast<unsigned>(balancedTime.minutes()), static_cast<unsigned>(balancedTime.seconds()), static_cast<unsigned>(balancedTime.milliseconds()), static_cast<unsigned>(balancedTime.microseconds()), static_cast<unsigned>(balancedTime.nanoseconds())));
+}
+
 } // namespace JSC

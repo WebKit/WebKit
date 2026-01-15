@@ -67,6 +67,7 @@ public:
 
     TemporalPlainDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
     TemporalPlainDateTime* round(JSGlobalObject*, JSValue options);
+    static ISO8601::PlainDateTime balanceISODateTime(JSGlobalObject*, Int128, Int128, Int128, Int128, Int128, Int128, Int128, Int128, Int128);
 
     String monthCode() const;
     uint8_t dayOfWeek() const;

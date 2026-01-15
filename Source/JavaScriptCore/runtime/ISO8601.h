@@ -311,7 +311,17 @@ private:
 };
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
-using TimeZone = Variant<TimeZoneID, int64_t>;
+class PlainDateTime {
+public:
+    constexpr PlainDate date() const { return m_date; }
+    constexpr PlainTime time() const { return m_time; }
+
+    constexpr PlainDateTime(PlainDate date, PlainTime time) : m_date(date), m_time(time) { }
+    constexpr PlainDateTime() = default;
+private:
+    PlainDate m_date;
+    PlainTime m_time;
+};
 
 class PlainYearMonth final {
     WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
@@ -371,12 +381,75 @@ private:
 };
 static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
-// Record { [[Z]], [[OffsetString]], [[Name]] }
+class TimeZone {
+    WTF_MAKE_TZONE_ALLOCATED(TimeZone);
+public:
+    bool operator==(const TimeZone& other) const
+    {
+        if (isUTC() && other.isUTC())
+            return true;
+        return m_timezone == other.m_timezone;
+    }
+    bool isUTC() const
+    {
+        return (std::holds_alternative<TimeZoneID>(m_timezone) && std::get<TimeZoneID>(m_timezone) == utcTimeZoneID())
+            || (std::holds_alternative<int64_t>(m_timezone) && !std::get<int64_t>(m_timezone));
+    }
+    bool isOffset() const
+    {
+        return std::holds_alternative<int64_t>(m_timezone);
+    }
+    int64_t offsetNanoseconds() const
+    {
+        RELEASE_ASSERT(isOffset());
+        return std::get<int64_t>(m_timezone);
+    }
+    int64_t offsetMinutes() const
+    {
+        RELEASE_ASSERT(isOffset());
+        return std::get<int64_t>(m_timezone) / static_cast<int64_t>(ExactTime::nsPerMinute);
+    }
+    TimeZoneID asID() const
+    {
+        RELEASE_ASSERT(!isOffset());
+        return std::get<TimeZoneID>(m_timezone);
+    }
+    static TimeZone utc() { return named(utcTimeZoneID()); }
+    static TimeZone offset(int64_t offset) { return TimeZone(offset); }
+    static TimeZone named(TimeZoneID id) { return TimeZone(id); }
+    TimeZone()
+        : m_timezone(utcTimeZoneID()) { }
+private:
+    TimeZone(TimeZoneID id)
+        : m_timezone(id) { }
+    TimeZone(int64_t offset)
+        : m_timezone(offset) { }
+    Variant<TimeZoneID, int64_t> m_timezone;
+};
+
+struct TimeZoneOffset {
+    // Offset in nanoseconds.
+    // Stored as a pair of the original string (so that offset strings
+    // with subsecond precision can be distinguished) and the offset
+    // as an int64_t.
+    Vector<Latin1Character> m_offsetString;
+    int64_t m_offset;
+};
+
+struct TimeZoneAnnotation {
+    Vector<Latin1Character> m_annotation;
+    // If `m_annotation` can be parsed as a numeric offset, then m_offset is non-nullopt.
+    std::optional<int64_t> m_offset;
+};
+
+// https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
+// Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
 struct TimeZoneRecord {
     bool m_z { false };
-    std::optional<int64_t> m_offset;
-    Variant<Vector<Latin1Character>, int64_t> m_nameOrOffset;
+    // Offset as part of ISO string, if present
+    std::optional<TimeZoneOffset> m_offset;
+    // Bracketed annotation, if present
+    std::optional<TimeZoneAnnotation> m_annotation;
 };
 
 static constexpr unsigned minCalendarLength = 3;
@@ -392,6 +465,7 @@ struct RFC9557Annotation {
 
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
+std::optional<TimeZoneRecord> parseTimeZone(StringView);
 std::optional<Duration> parseDuration(StringView);
 std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision = true);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
@@ -401,13 +475,15 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(St
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarTime(StringView);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView, TemporalDateFormat);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarID>>> parseCalendarDateTime(StringView, TemporalDateFormat);
+std::optional<CalendarID> parseCalendar(StringView);
 uint8_t dayOfWeek(PlainDate);
 uint16_t dayOfYear(PlainDate);
 uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
-String formatTimeZoneOffsetString(int64_t);
+String formatTimeString(int64_t, int64_t, int64_t, int64_t, std::optional<TemporalFractionalSecondDigits>, std::optional<bool>);
+String formatUTCOffsetNanoseconds(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
@@ -425,6 +501,93 @@ std::optional<ParsedMonthCode> parseMonthCode(StringView);
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 
 Int128 roundTimeDuration(JSGlobalObject*, Int128, unsigned, TemporalUnit, RoundingMode);
+Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128);
+Int128 getUTCEpochNanoseconds(PlainDateTime);
+
+static constexpr Int128 hoursPerDay = 24;
+static constexpr Int128 minutesPerHour = 60;
+static constexpr Int128 secondsPerMinute = 60;
+static constexpr Int128 msPerSecond = 1000;
+static constexpr Int128 msPerMonth = 2592000000;
+static constexpr Int128 secondsPerHour = secondsPerMinute * minutesPerHour;
+static constexpr Int128 secondsPerDay = secondsPerHour * hoursPerDay;
+static constexpr Int128 msPerMinute = msPerSecond * secondsPerMinute;
+static constexpr Int128 msPerHour = msPerSecond * secondsPerHour;
+static constexpr Int128 msPerDay = msPerSecond * secondsPerDay;
+
+// Not constexpr, for platforms that don't have hardware Int128
+static Int128 floorDiv(Int128 divisor, Int128 dividend)
+{
+    Int128 quotient = divisor / dividend;
+    if (((divisor % dividend) < 0) && quotient <= 0)
+        quotient--;
+    return quotient;
+}
+
+inline Int128 daysFrom1970ToYear(int year)
+{
+    // The Gregorian Calendar rules for leap years:
+    // Every fourth year is a leap year. 2004, 2008, and 2012 are leap years.
+    // However, every hundredth year is not a leap year. 1900 and 2100 are not leap years.
+    // Every four hundred years, there's a leap year after all. 2000 and 2400 are leap years.
+
+    // These can't be constexpr because Int128 might not be hardware-supported
+    static Int128 leapDaysBefore1971By4Rule = floorDiv(1970, 4);
+    static Int128 excludedLeapDaysBefore1971By100Rule = floorDiv(1970, 100);
+    static Int128 leapDaysBefore1971By400Rule = floorDiv(1970, 400);
+
+    const Int128 yearMinusOne = static_cast<Int128>(year) - 1;
+    const Int128 yearsToAddBy4Rule = floorDiv(yearMinusOne, 4) - leapDaysBefore1971By4Rule;
+    const Int128 yearsToExcludeBy100Rule = floorDiv(yearMinusOne, 100) - excludedLeapDaysBefore1971By100Rule;
+    const Int128 yearsToAddBy400Rule = floorDiv(yearMinusOne, 400) - leapDaysBefore1971By400Rule;
+
+    return 365 * (year - 1970) + yearsToAddBy4Rule - yearsToExcludeBy100Rule + yearsToAddBy400Rule;
+}
+
+// Returns the number of days from 1970-01-01 to the specified date.
+inline Int128 dateToDaysFrom1970(int year, int month, int day)
+{
+    year += month / 12;
+
+    month %= 12;
+    if (month < 0) {
+        month += 12;
+        --year;
+    }
+
+    Int128 yearday = daysFrom1970ToYear(year);
+    ASSERT((year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0));
+    return yearday + dayInYear(year, month, day);
+}
+
+inline Int128 msToDays(Int128 ms)
+{
+    return floorDiv(ms, msPerDay);
+}
+
+// https://tc39.es/ecma262/#sec-makeday
+// Not constexpr, for platforms that don't have hardware Int128
+static inline Int128 makeDay(Int128 year, Int128 month, Int128 date)
+{
+    Int128 additionalYears = month / 12;
+    Int128 ym = year + additionalYears;
+    Int128 mm = month - additionalYears * 12;
+    int32_t yearInt32 = static_cast<int32_t>(ym);
+    int32_t monthInt32 = static_cast<int32_t>(mm);
+    Int128 days = dateToDaysFrom1970(yearInt32, monthInt32, 1);
+    return days + date - 1;
+}
+
+// https://tc39.es/ecma262/#sec-makedate
+constexpr static inline Int128 makeDate(Int128 day, Int128 time)
+{
+    return (day * msPerDay) + time;
+}
+
+constexpr static inline Int128 makeTime(Int128 hour, Int128 min, Int128 sec, Int128 ms)
+{
+    return (((hour * msPerHour) + min * msPerMinute) + sec * msPerSecond) + ms;
+}
 
 } // namespace ISO8601
 

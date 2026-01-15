@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,52 +26,43 @@
 #pragma once
 
 #include "ISO8601.h"
-#include "IntlObject.h"
-#include "JSObject.h"
+#include "LazyProperty.h"
+#include "TemporalCalendar.h"
 
 namespace JSC {
 
-class TemporalTimeZone final : public JSNonFinalObject {
+class TemporalZonedDateTime final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
+    using ExactTime = ISO8601::ExactTime;
+    using TimeZone = ISO8601::TimeZone;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.temporalTimeZoneSpace<mode>();
+        return vm.temporalZonedDateTimeSpace<mode>();
     }
 
-    using TimeZone = ISO8601::TimeZone;
-
-    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
-    static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
-    static TemporalTimeZone* createFromTimeZone(VM&, Structure*, TimeZone);
+    static TemporalZonedDateTime* create(VM&, Structure*, ExactTime&&, TimeZone&&);
+    static TemporalZonedDateTime* tryCreateIfValid(JSGlobalObject*, Structure*, ExactTime&&, TimeZone&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
+    TemporalCalendar* calendar() { return m_calendar.get(this); }
+
+    ExactTime exactTime() const { return m_exactTime.get(); }
     TimeZone timeZone() const { return m_timeZone; }
 
-    static TemporalTimeZone* from(JSGlobalObject*, JSValue);
-
-    static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone, Int128);
-    static ISO8601::PlainDateTime getISODateTimeFor(JSGlobalObject*, ISO8601::TimeZone, ISO8601::ExactTime);
-    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
-    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
-        const Vector<Latin1Character>&);
-    static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
-    static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView);
+    DECLARE_VISIT_CHILDREN;
 
 private:
-    TemporalTimeZone(VM&, Structure*, TimeZone);
+    TemporalZonedDateTime(VM&, Structure*, ExactTime&&, TimeZone&&);
+    void finishCreation(VM&);
 
-    // TimeZoneID or UTC offset.
+    Packed<ExactTime> m_exactTime;
     TimeZone m_timeZone;
+    LazyProperty<TemporalZonedDateTime, TemporalCalendar> m_calendar;
 };
-
-static inline bool isUTCTimeZoneString(StringView str)
-{
-    return (equalLettersIgnoringASCIICase(str, "utc"_s));
-}
 
 } // namespace JSC
