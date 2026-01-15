@@ -6,6 +6,14 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (40,20) size 380x260
   RenderSVGTransformableContainer {g} at (40,20) size 380x260
+    RenderSVGResourceRadialGradient {radialGradient} at (-40,-20) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFF00]
+      RenderSVGGradientStop {stop} [offset=0.50] [color=#008000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+    RenderSVGResourceRadialGradient {radialGradient} at (-40,-20) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFF00]
+      RenderSVGGradientStop {stop} [offset=0.50] [color=#770000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
 layer at (240,80) size 180x120
   RenderSVGTransformableContainer {g} at (200,60) size 180x120
 layer at (240,80) size 180x120

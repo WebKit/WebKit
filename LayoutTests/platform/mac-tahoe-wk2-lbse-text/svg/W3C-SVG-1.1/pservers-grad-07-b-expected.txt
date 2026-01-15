@@ -6,6 +6,9 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (10,10) size 430x166
   RenderSVGTransformableContainer {g} at (10,10) size 430x165.09
+    RenderSVGResourceLinearGradient {linearGradient} at (-10,-10) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
 layer at (10,10) size 430x60
   RenderSVGRect {rect} at (0,0) size 430x60 [fill={[type=SOLID] [color=#00000000]}] [x=10.00] [y=10.00] [width=430.00] [height=60.00]
 layer at (10,68.27) size 322x27

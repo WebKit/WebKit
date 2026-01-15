@@ -6,6 +6,9 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,22.39) size 447x145
   RenderSVGTransformableContainer {g} at (20,22.39) size 446.30x144.61
+    RenderSVGResourceLinearGradient {linearGradient} at (-20,-22.39) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
 layer at (20,22.39) size 446x56
   RenderSVGText {text} at (0,0) size 447x57 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 447x57

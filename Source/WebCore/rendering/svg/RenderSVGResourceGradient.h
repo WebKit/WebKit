@@ -53,6 +53,8 @@ protected:
     GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&) const;
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
 
+    bool requiresLayer() const final { return false; }
+
     RefPtr<Gradient> m_gradient;
 };
 

@@ -6,6 +6,12 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 400x50
   RenderSVGHiddenContainer {defs} at (0,0) size 400x50
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
 layer at (0,0) size 20x20
   RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
 layer at (0,0) size 10x10

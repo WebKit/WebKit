@@ -4,6 +4,14 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=0.50] [color=#008000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=0.50] [color=#008000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
 layer at (0,0) size 400x300
   RenderSVGRect {rect} at (0,0) size 400x300 [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=400.00] [height=300.00]
 layer at (0,0) size 400x300

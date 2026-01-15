@@ -6,6 +6,24 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 479x359
   RenderSVGTransformableContainer {g} at (0,0) size 479x359
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+    RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
 layer at (30,16) size 386x18
   RenderSVGText {text} at (30,16) size 386x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 386x18

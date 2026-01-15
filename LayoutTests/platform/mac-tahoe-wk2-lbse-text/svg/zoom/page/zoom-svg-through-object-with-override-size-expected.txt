@@ -14,6 +14,18 @@ layer at (0,0) size 800x376
           RenderSVGTransformableContainer {g} at (0,0) size 107x127
         layer at (0,0) size 108x127 backgroundClip at (0,0) size 347x347 clip at (0,0) size 347x347
           RenderSVGTransformableContainer {g} at (0,0) size 107x127
+            RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+              RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+              RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
+            RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+              RenderSVGGradientStop {stop} [offset=0.00] [color=#FFA700]
+              RenderSVGGradientStop {stop} [offset=0.69] [color=#FFFF00]
+            RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+              RenderSVGGradientStop {stop} [offset=0.00] [color=#FFA700]
+              RenderSVGGradientStop {stop} [offset=0.69] [color=#FFFF00]
+            RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+              RenderSVGGradientStop {stop} [offset=0.00] [color=#FFA700]
+              RenderSVGGradientStop {stop} [offset=0.69] [color=#FFFF00]
         layer at (15,0) size 84x123 backgroundClip at (0,0) size 347x347 clip at (0,0) size 347x347
           RenderSVGPath {path} at (15,0) size 82x122 [fill={[type=SOLID] [color=#00000000] [fill rule=EVEN-ODD]}] [clip rule=EVEN-ODD] [data="M 96.658 84.788 C 95.021 91.534 86.719 105.601 82.313 111.808 C 77.91 118.033 78.448 123.634 70.292 121.456 C 62.17 119.261 59.876 119.671 51.492 120.161 C 43.139 120.651 44.957 119.917 39.717 122.257 C 34.524 124.616 17.052 93.712 15.627 87.966 C 14.252 82.218 13.58 82.903 17.199 76.683 C 20.817 70.476 21.325 64.334 26.124 56.801 C 30.906 49.235 36.424 45.402 36.031 39.622 C 34.477 18.183 33.233 7.474 42.748 2.51 C 51.819 -2.188 59.384 0.612 62.383 2.217 C 63.678 2.922 66.298 4.248 68.264 6.604 C 70.21 8.915 71.98 12.403 72.963 16.825 C 75.01 25.668 72.127 22.736 74.438 32.872 C 76.714 42.994 81.349 47.956 86.999 55.947 C 92.647 63.958 98.543 77.157 96.658 84.788 Z"]
         layer at (38,18) size 27x17

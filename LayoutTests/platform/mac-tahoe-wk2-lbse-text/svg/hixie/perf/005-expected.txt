@@ -4,6 +4,11 @@ layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
 layer at (0,0) size 400x400
   RenderSVGViewportContainer at (0,0) size 400x400
+    RenderSVGResourceLinearGradient {linearGradient} at (0,0) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+      RenderSVGGradientStop {stop} [offset=0.10] [color=#FF6600]
+      RenderSVGGradientStop {stop} [offset=0.90] [color=#FFFF66]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
 layer at (10,10.50) size 49x5
   RenderSVGText {text} at (10,10) size 50x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x6

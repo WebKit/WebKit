@@ -6,6 +6,20 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x210
   RenderSVGTransformableContainer {g} at (20,20) size 440x210
+    RenderSVGResourceLinearGradient {linearGradient} at (-20,-20) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#EE82EE]
+      RenderSVGGradientStop {stop} [offset=0.20] [color=#0000FF00]
+      RenderSVGGradientStop {stop} [offset=0.40] [color=#00FF0080]
+      RenderSVGGradientStop {stop} [offset=0.60] [color=#FFFF0033]
+      RenderSVGGradientStop {stop} [offset=0.80] [color=#FFA500CC]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+    RenderSVGResourceRadialGradient {radialGradient} at (-20,-20) size 0x0
+      RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+      RenderSVGGradientStop {stop} [offset=0.20] [color=#FFFF0000]
+      RenderSVGGradientStop {stop} [offset=0.40] [color=#FF000080]
+      RenderSVGGradientStop {stop} [offset=0.60] [color=#0000FF33]
+      RenderSVGGradientStop {stop} [offset=0.80] [color=#FFFFFFCC]
+      RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
 layer at (70,25.67) size 320x67
   RenderSVGText {text} at (50,5) size 321x68 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 321x68
