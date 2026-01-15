@@ -54,9 +54,11 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     if (!deviceInfo.vrFeatures.contains(SessionFeature::WebGPU))
         deviceInfo.vrFeatures.append(SessionFeature::WebGPU);
 #if ENABLE(WEBXR_LAYERS)
-    if (!deviceInfo.vrFeatures.contains(SessionFeature::Layers))
+    // Empty feature arrays signals that the feature is unsupported. Don't add support for layers if a list is empty.
+    // FIXME: Move these to the per-platform setup that populates vrFeatures & arFeatures. (https://bugs.webkit.org/show_bug.cgi?id=305458)
+    if (!deviceInfo.vrFeatures.isEmpty() && !deviceInfo.vrFeatures.contains(SessionFeature::Layers))
         deviceInfo.vrFeatures.append(SessionFeature::Layers);
-    if (!deviceInfo.arFeatures.contains(SessionFeature::Layers))
+    if (!deviceInfo.arFeatures.isEmpty() && !deviceInfo.arFeatures.contains(SessionFeature::Layers))
         deviceInfo.arFeatures.append(SessionFeature::Layers);
 #endif
     if (!deviceInfo.vrFeatures.isEmpty())
