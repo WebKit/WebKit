@@ -2308,7 +2308,7 @@ bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effec
         return false;
 
     auto target = Ref { effect }->targetStyleable();
-    return target && Ref { target->element }->localName() == "ea-network-nav"_s;
+    return target && Ref { target->element.get() }->localName() == "ea-network-nav"_s;
 }
 
 bool Quirks::shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk() const

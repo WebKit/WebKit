@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class Element;
 class KeyframeEffectStack;
 class RenderElement;
 class RenderStyle;
@@ -47,7 +46,7 @@ enum class IsInDisplayNoneTree : bool;
 }
 
 struct Styleable {
-    Element& element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> element;
     std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier;
 
     Styleable(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
@@ -62,11 +61,11 @@ struct Styleable {
 
     bool operator==(const Styleable& other) const
     {
-        return (&element == &other.element && pseudoElementIdentifier == other.pseudoElementIdentifier);
+        return (element.ptr() == other.element.ptr() && pseudoElementIdentifier == other.pseudoElementIdentifier);
     }
 
     RenderElement* renderer() const;
-    Ref<Element> protectedElement() const { return element; }
+    Ref<Element> protectedElement() const { return element.get(); }
 
     std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
 
@@ -86,89 +85,89 @@ struct Styleable {
 
     KeyframeEffectStack* keyframeEffectStack() const
     {
-        return element.keyframeEffectStack(pseudoElementIdentifier);
+        return protectedElement()->keyframeEffectStack(pseudoElementIdentifier);
     }
 
     KeyframeEffectStack& ensureKeyframeEffectStack() const
     {
-        return element.ensureKeyframeEffectStack(pseudoElementIdentifier);
+        return protectedElement()->ensureKeyframeEffectStack(pseudoElementIdentifier);
     }
 
     bool hasKeyframeEffects() const
     {
-        return element.hasKeyframeEffects(pseudoElementIdentifier);
+        return protectedElement()->hasKeyframeEffects(pseudoElementIdentifier);
     }
 
     OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&) const;
 
     const AnimationCollection* animations() const
     {
-        return element.animations(pseudoElementIdentifier);
+        return protectedElement()->animations(pseudoElementIdentifier);
     }
 
     bool hasCompletedTransitionForProperty(const AnimatableCSSProperty& property) const
     {
-        return element.hasCompletedTransitionForProperty(pseudoElementIdentifier, property);
+        return protectedElement()->hasCompletedTransitionForProperty(pseudoElementIdentifier, property);
     }
 
     bool hasRunningTransitionForProperty(const AnimatableCSSProperty& property) const
     {
-        return element.hasRunningTransitionForProperty(pseudoElementIdentifier, property);
+        return protectedElement()->hasRunningTransitionForProperty(pseudoElementIdentifier, property);
     }
 
     bool hasRunningTransitions() const
     {
-        return element.hasRunningTransitions(pseudoElementIdentifier);
+        return protectedElement()->hasRunningTransitions(pseudoElementIdentifier);
     }
 
     AnimationCollection& ensureAnimations() const
     {
-        return element.ensureAnimations(pseudoElementIdentifier);
+        return protectedElement()->ensureAnimations(pseudoElementIdentifier);
     }
 
     AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty() const
     {
-        return element.ensureCompletedTransitionsByProperty(pseudoElementIdentifier);
+        return protectedElement()->ensureCompletedTransitionsByProperty(pseudoElementIdentifier);
     }
 
     AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty() const
     {
-        return element.ensureRunningTransitionsByProperty(pseudoElementIdentifier);
+        return protectedElement()->ensureRunningTransitionsByProperty(pseudoElementIdentifier);
     }
 
     CSSAnimationCollection& animationsCreatedByMarkup() const
     {
-        return element.animationsCreatedByMarkup(pseudoElementIdentifier);
+        return protectedElement()->animationsCreatedByMarkup(pseudoElementIdentifier);
     }
 
     void setAnimationsCreatedByMarkup(CSSAnimationCollection&& collection) const
     {
-        element.setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTF::move(collection));
+        protectedElement()->setAnimationsCreatedByMarkup(pseudoElementIdentifier, WTF::move(collection));
     }
 
     const RenderStyle* lastStyleChangeEventStyle() const
     {
-        return element.lastStyleChangeEventStyle(pseudoElementIdentifier);
+        return protectedElement()->lastStyleChangeEventStyle(pseudoElementIdentifier);
     }
 
     void setLastStyleChangeEventStyle(std::unique_ptr<const RenderStyle>&& style) const
     {
-        element.setLastStyleChangeEventStyle(pseudoElementIdentifier, WTF::move(style));
+        protectedElement()->setLastStyleChangeEventStyle(pseudoElementIdentifier, WTF::move(style));
     }
 
     bool hasPropertiesOverridenAfterAnimation() const
     {
-        return element.hasPropertiesOverridenAfterAnimation(pseudoElementIdentifier);
+        return protectedElement()->hasPropertiesOverridenAfterAnimation(pseudoElementIdentifier);
     }
 
     void setHasPropertiesOverridenAfterAnimation(bool value) const
     {
-        element.setHasPropertiesOverridenAfterAnimation(pseudoElementIdentifier, value);
+        protectedElement()->setHasPropertiesOverridenAfterAnimation(pseudoElementIdentifier, value);
     }
 
     void keyframesRuleDidChange() const
     {
-        element.keyframesRuleDidChange(pseudoElementIdentifier);
+        protectedElement()->keyframesRuleDidChange(pseudoElementIdentifier);
     }
 
     void queryContainerDidChange() const;
@@ -202,14 +201,14 @@ public:
 
     WeakStyleable& operator=(const Styleable& styleable)
     {
-        m_element = styleable.element;
+        m_element = styleable.element.ptr();
         m_pseudoElementIdentifier = styleable.pseudoElementIdentifier;
         return *this;
     }
 
     WeakStyleable(const Styleable& styleable)
     {
-        m_element = styleable.element;
+        m_element = styleable.element.ptr();
         m_pseudoElementIdentifier = styleable.pseudoElementIdentifier;
     }
 

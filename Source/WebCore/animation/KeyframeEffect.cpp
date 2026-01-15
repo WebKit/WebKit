@@ -126,7 +126,7 @@ static inline void invalidateElement(const std::optional<const Styleable>& style
     if (!styleable)
         return;
 
-    Ref element = styleable->element;
+    Ref element = styleable->element.get();
     if (!element->document().inStyleRecalc())
         element->invalidateStyleForAnimation();
 }
@@ -1098,7 +1098,7 @@ ExceptionOr<void> KeyframeEffect::setKeyframes(JSGlobalObject& lexicalGlobalObje
 
         // Need a full style invalidation since the new keyframes may interact differently with the base style.
         if (auto target = targetStyleable())
-            target->element.invalidateStyleInternal();
+            target->element->invalidateStyleInternal();
     }
 
     return processKeyframesResult;
@@ -1569,7 +1569,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     auto& previousTargetStyleable = targetStyleable();
     RefPtr<Element> protector;
     if (previousTargetStyleable)
-        protector = previousTargetStyleable->element;
+        protector = previousTargetStyleable->element.get();
     m_target = WTF::move(newTarget);
     didChangeTargetStyleable(previousTargetStyleable);
 }

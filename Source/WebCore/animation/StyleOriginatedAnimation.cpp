@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StyleOriginatedAnimation);
 
 StyleOriginatedAnimation::StyleOriginatedAnimation(const Styleable& styleable)
-    : WebAnimation(styleable.element.document())
+    : WebAnimation(styleable.element->document())
     , m_owningElement(styleable.element)
     , m_owningPseudoElementIdentifier(styleable.pseudoElementIdentifier)
 {

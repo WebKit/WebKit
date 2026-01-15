@@ -556,7 +556,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             if (rendererIsFragmented(renderer))
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer, Ref { styleable->element }, document()->styleScope(), isCrossDocument()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, Ref { styleable->element.get() }, document()->styleScope(), isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -581,7 +581,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
 
         auto styleable = Styleable::fromRenderer(renderer);
         ASSERT(styleable);
-        Ref element = styleable->element;
+        Ref element = styleable->element.get();
         capture.classList = effectiveViewTransitionClassList(renderer, element, document()->styleScope());
 
         auto transitionName = effectiveViewTransitionName(renderer, element, document()->styleScope(), isCrossDocument());
@@ -631,7 +631,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
             if (rendererIsFragmented(renderer))
                 return { };
 
-            Ref element = styleable->element;
+            Ref element = styleable->element.get();
             if (auto name = effectiveViewTransitionName(renderer, element, document()->styleScope(), isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
@@ -903,7 +903,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 {
     std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
     ASSERT(styleable);
-    Style::Extractor styleExtractor { &styleable->element, false, styleable->pseudoElementIdentifier };
+    Style::Extractor styleExtractor { styleable->element.ptr(), false, styleable->pseudoElementIdentifier };
 
     static constexpr auto transitionProperties = std::to_array<CSSPropertyID>({
         CSSPropertyWritingMode,
@@ -1060,7 +1060,7 @@ RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedE
     auto styleable = Styleable::fromRenderer(renderer);
     if (!styleable)
         return nullptr;
-    auto capturedName = Ref { styleable->element }->viewTransitionCapturedName(styleable->pseudoElementIdentifier);
+    auto capturedName = Ref { styleable->element.get() }->viewTransitionCapturedName(styleable->pseudoElementIdentifier);
     if (capturedName.isNull())
         return nullptr;
 

@@ -166,7 +166,7 @@ ExceptionOr<ViewTimeline::SpecifiedViewTimelineInsets> ViewTimeline::validateSpe
 const Element* ViewTimeline::subject() const
 {
     if (auto subject = m_subject.styleable())
-        return &subject->element;
+        return subject->element.ptr();
     return nullptr;
 }
 
@@ -188,18 +188,18 @@ void ViewTimeline::setSubject(const Styleable& styleable)
     auto previousSubject = m_subject.element();
     m_subject = styleable;
 
-    if (previousSubject && &previousSubject->document() == &styleable.element.document())
+    if (previousSubject && &previousSubject->document() == &styleable.element->document())
         return;
 
     removeTimelineFromDocument(previousSubject.get());
 
-    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    styleable.element->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 AnimationTimelinesController* ViewTimeline::controller() const
 {
     if (auto subject = m_subject.styleable())
-        return &subject->element.document().ensureTimelinesController();
+        return &subject->element->document().ensureTimelinesController();
     return nullptr;
 }
 
@@ -308,7 +308,7 @@ void ViewTimeline::cacheCurrentTime()
             return { };
 
         CheckedPtr sourceRenderer = sourceScrollerRenderer();
-        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), subject->element.document());
+        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), subject->element->document());
         if (!sourceScrollableArea)
             return { };
 
@@ -339,7 +339,7 @@ void ViewTimeline::cacheCurrentTime()
         auto subjectSize = scrollDirection.isVertical ? subjectBounds.height() : subjectBounds.width();
 
         if (m_specifiedInsets) {
-            RefPtr subjectElement { &subject->element };
+            RefPtr subjectElement { subject->element.ptr() };
 
             auto computedInset = [&](const CSSPrimitiveValue& specifiedInset) {
                 return Style::deprecatedToStyleFromCSSValue<Style::ViewTimelineInsetItem::Length>(subjectElement, specifiedInset).value_or(Style::ViewTimelineInsetItem::Length { CSS::Keyword::Auto { } });
@@ -435,7 +435,7 @@ Style::SingleAnimationRange ViewTimeline::defaultRange() const
 RefPtr<Element> ViewTimeline::bindingsSource() const
 {
     if (auto subject = m_subject.styleable())
-        subject->element.protectedDocument()->updateStyleIfNeeded();
+        subject->element->protectedDocument()->updateStyleIfNeeded();
     return ScrollTimeline::bindingsSource();
 }
 
