@@ -95,6 +95,7 @@ private:
     void collectMatchingRules(DeclarationOrigin);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
+    void collectMatchingRulesForListSlow(const RuleSet::RuleDataVector&, const MatchRequest&);
     bool isFirstMatchModeAndHasMatchedAnyRules() const;
     struct ScopingRootWithDistance {
         RefPtr<const ContainerNode> scopingRoot;
@@ -137,5 +138,12 @@ private:
     Relations m_styleRelations;
     EnumSet<PseudoElementType> m_matchedPseudoElements;
 };
+
+ALWAYS_INLINE void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)
+{
+    if (!rules || rules->isEmpty())
+        return;
+    collectMatchingRulesForListSlow(*rules, matchRequest);
+}
 
 }

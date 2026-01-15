@@ -578,12 +578,9 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     return selectorMatches;
 }
 
-void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)
+void ElementRuleCollector::collectMatchingRulesForListSlow(const RuleSet::RuleDataVector& rules, const MatchRequest& matchRequest)
 {
-    if (!rules)
-        return;
-
-    for (auto& ruleData : *rules) {
+    for (auto& ruleData : rules) {
         if (!ruleData.isEnabled()) [[unlikely]]
             continue;
 
