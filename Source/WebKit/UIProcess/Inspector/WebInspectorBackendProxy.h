@@ -29,6 +29,7 @@
 #include "WebInspectorUIProxy.h"
 #include <WebCore/InspectorBackendClient.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ class WebInspectorBackendProxy
 : public RefCounted<WebInspectorBackendProxy>
 , public IPC::MessageReceiver {
 public:
-    explicit WebInspectorBackendProxy(Ref<WebInspectorUIProxy> proxy)
+    explicit WebInspectorBackendProxy(WebInspectorUIProxy& proxy)
     : m_proxy(proxy) { }
 
     // RefCounted
@@ -63,7 +64,9 @@ public:
     void attachAvailabilityChanged(bool);
 
 private:
-    const Ref<WebInspectorUIProxy> m_proxy;
+    Ref<WebInspectorUIProxy> protectedProxy() const { return m_proxy.get(); }
+
+    const WeakRef<WebInspectorUIProxy> m_proxy;
 };
 
 } // namespace WebKit

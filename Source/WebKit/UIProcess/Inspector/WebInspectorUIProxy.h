@@ -225,7 +225,7 @@ public:
     void evaluateInFrontendForTesting(const String&);
 
 private:
-    const RefPtr<WebInspectorBackendProxy> m_backend;
+    const Ref<WebInspectorBackendProxy> m_backend;
 
     void createFrontendPage();
     void closeFrontendPageAndWindow();

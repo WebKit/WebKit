@@ -73,7 +73,7 @@ const unsigned WebInspectorUIProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
-    : m_backend(adoptRef(new WebInspectorBackendProxy(*this)))
+    : m_backend(adoptRef(*new WebInspectorBackendProxy(*this)))
     , m_inspectedPage(inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
     , m_inspectedPageIdentifier(inspectedPage.identifier())
@@ -81,7 +81,7 @@ WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     , m_closeFrontendAfterInactivityTimer(RunLoop::mainSingleton(), "WebInspectorUIProxy::CloseFrontendAfterInactivityTimer"_s, this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *m_backend);
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), m_backend.get());
 }
 
 WebInspectorUIProxy::~WebInspectorUIProxy()
@@ -252,7 +252,7 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
     m_inspectedPage = inspectedPage;
     m_inspectedPageIdentifier = inspectedPage.identifier();
 
-    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *m_backend);
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorBackendProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), m_backend.get());
 
     if (RefPtr inspectorPage = m_inspectorPage.get())
         inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateConnection(), m_inspectorPage->webPageIDInMainFrameProcess());
