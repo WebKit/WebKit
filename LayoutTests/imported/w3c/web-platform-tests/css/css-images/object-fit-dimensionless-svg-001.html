@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Test: object-fit on img with dimensionless SVG (no width/height/viewBox)</title>
+  <link rel="help" href="https://drafts.csswg.org/css-images-3/#the-object-fit">
+  <link rel="help" href="https://drafts.csswg.org/css-images-3/#default-sizing">
+  <link rel="match" href="object-fit-dimensionless-svg-001-ref.html">
+  <meta name="assert" content="Dimensionless SVGs (no width/height/viewBox) should fill the content box without object-fit offset, preventing content from being clipped out">
+  <style>
+    img {
+      width: 300px;
+      height: 300px;
+      border: 5px solid purple;
+    }
+  </style>
+</head>
+<body>
+  <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img style="object-fit: contain" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img style="object-fit: cover" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img style="object-fit: none" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+
+  <img style="object-fit: scale-down" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='green'/></svg>">
+</body>
+</html>

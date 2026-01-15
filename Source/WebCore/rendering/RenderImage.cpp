@@ -362,7 +362,10 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
-    IntSize containerSize(replacedContentRect().size());
+    IntSize containerSize = isDimensionlessSVG()
+        ? flooredIntSize(contentBoxRect().size())
+        : flooredIntSize(replacedContentRect().size());
+
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
         if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
@@ -453,6 +456,20 @@ bool RenderImage::isShowingMissingOrImageError() const
 bool RenderImage::isShowingAltText() const
 {
     return isShowingMissingOrImageError() && !m_altText.isEmpty();
+}
+
+bool RenderImage::isDimensionlessSVG() const
+{
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return false;
+    auto* svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
+    if (!svgImage)
+        return false;
+    RefPtr rootElement = svgImage->rootElement();
+    if (!rootElement)
+        return false;
+    return !rootElement->hasIntrinsicDimensions();
 }
 
 bool RenderImage::shouldDisplayBrokenImageIcon() const
@@ -647,8 +664,18 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     LayoutRect contentBoxRect = this->contentBoxRect();
     contentBoxRect.moveBy(paintOffset);
-    LayoutRect replacedContentRect = this->replacedContentRect();
-    replacedContentRect.moveBy(paintOffset);
+
+    // For SVGs without intrinsic dimensions (no width/height/viewBox), use
+    // contentBoxRect for painting. Images without intrinsic dimensions
+    // fill the object area, so object-fit should have no effect.
+    LayoutRect replacedContentRect;
+    if (isDimensionlessSVG())
+        replacedContentRect = contentBoxRect;
+    else {
+        replacedContentRect = this->replacedContentRect();
+        replacedContentRect.moveBy(paintOffset);
+    }
+
     bool clip = !contentBoxRect.contains(replacedContentRect);
     GraphicsContextStateSaver stateSaver(context, clip);
     if (clip)

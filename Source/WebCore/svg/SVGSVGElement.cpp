@@ -655,6 +655,13 @@ float SVGSVGElement::intrinsicHeight() const
     return height().value(lengthContext);
 }
 
+bool SVGSVGElement::hasIntrinsicDimensions() const
+{
+    if (hasIntrinsicWidth() && hasIntrinsicHeight())
+        return true;
+    return !currentViewBoxRect().isEmpty();
+}
+
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
     if (!m_useCurrentView || !m_viewSpec) {

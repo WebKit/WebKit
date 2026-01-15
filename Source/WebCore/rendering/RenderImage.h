@@ -136,6 +136,8 @@ private:
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 
+    bool isDimensionlessSVG() const;
+
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ShouldComputePreferred::ComputeActual) const override;
