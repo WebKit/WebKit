@@ -587,6 +587,20 @@ void ElementRuleCollector::collectMatchingRulesForListSlow(const RuleSet::RuleDa
         if (!ruleData.canMatchPseudoElement() && m_pseudoElementRequest)
             continue;
 
+        // Skip pure pseudo-element rules (like ::marker, ::backdrop) when not matching pseudo-elements.
+        // We still need to track the pseudo-element's existence for the element, but we can skip the
+        // expensive matching logic since they won't match the element itself anyway.
+        if (ruleData.subjectIsPurePseudoElement() && !m_pseudoElementRequest) {
+            auto& selector = ruleData.selector();
+            if (selector.match() == CSSSelector::Match::PseudoElement) {
+                if (auto pseudoElementType = CSSSelector::stylePseudoElementTypeFor(selector.pseudoElement())) {
+                    if (allPublicPseudoElementTypes.contains(*pseudoElementType))
+                        m_matchedPseudoElements.add(*pseudoElementType);
+                }
+            }
+            continue;
+        }
+
         if (m_selectorMatchingState && m_selectorMatchingState->selectorFilter.fastRejectSelector(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 

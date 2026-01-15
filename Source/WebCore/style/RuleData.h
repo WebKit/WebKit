@@ -62,6 +62,7 @@ public:
     unsigned selectorListIndex() const { return m_selectorListIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
+    bool subjectIsPurePseudoElement() const { return m_subjectIsPurePseudoElement; }
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     unsigned linkMatchType() const { return m_linkMatchType; }
     void setLinkMatchType(unsigned value) { m_linkMatchType = value; }
@@ -80,6 +81,7 @@ private:
     unsigned m_selectorListIndex : 16;
     unsigned m_matchBasedOnRuleHash : 3;
     unsigned m_canMatchPseudoElement : 1;
+    unsigned m_subjectIsPurePseudoElement : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyAllowlist : 2;
     unsigned m_isStartingStyle : 1;

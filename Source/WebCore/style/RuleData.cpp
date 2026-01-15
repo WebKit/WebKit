@@ -113,11 +113,71 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
     return PropertyAllowlist::None;
 }
 
+// Returns true if the subject compound consists only of pseudo-elements
+// with no element-matching constraints (tag, class, id, attribute).
+// Example: "::marker" returns true, "div::before" returns false.
+static inline bool computeSubjectIsPurePseudoElement(const CSSSelector& selector)
+{
+    // Must start with a pseudo-element.
+    if (selector.match() != CSSSelector::Match::PseudoElement)
+        return false;
+
+    // UserAgentPart pseudo-elements (like ::-webkit-slider-thumb), ::part(), ::slotted(),
+    // and ::cue() match actual elements, not virtual pseudo-elements. They need to go through
+    // normal matching.
+    // ::before and ::after also need normal matching because their existence tracking via
+    // hasPseudoStyle() is critical for correct dynamic style updates (e.g., when stylesheets
+    // are enabled/disabled). The skip path can cause timing issues where pseudo-element types
+    // are added after setHasPseudoStyles() has already been called.
+    auto pseudoElement = selector.pseudoElement();
+    if (pseudoElement == CSSSelector::PseudoElement::UserAgentPart
+        || pseudoElement == CSSSelector::PseudoElement::UserAgentPartLegacyAlias
+        || pseudoElement == CSSSelector::PseudoElement::WebKitUnknown
+        || pseudoElement == CSSSelector::PseudoElement::Part
+        || pseudoElement == CSSSelector::PseudoElement::Slotted
+        || pseudoElement == CSSSelector::PseudoElement::Before
+        || pseudoElement == CSSSelector::PseudoElement::After
+#if ENABLE(VIDEO)
+        || pseudoElement == CSSSelector::PseudoElement::Cue
+#endif
+        ) {
+        return false;
+    }
+
+    // Walk the subject compound checking for element-matching selectors.
+    for (auto* currentSelector = &selector; currentSelector; currentSelector = currentSelector->precedingInComplexSelector()) {
+        switch (currentSelector->match()) {
+        case CSSSelector::Match::Tag:
+            // Universal (*) is OK, specific tag is not.
+            if (currentSelector->tagQName().localName() != starAtom())
+                return false;
+            break;
+        case CSSSelector::Match::Id:
+        case CSSSelector::Match::Class:
+            return false;
+        default:
+            break;
+        }
+
+        // Continue past pseudo-elements.
+        if (currentSelector->match() == CSSSelector::Match::PseudoElement)
+            continue;
+
+        // If there's a combinator, we've exited the subject compound and there are more
+        // selectors that need to be matched (ancestors, siblings, etc.). We can't skip matching.
+        if (currentSelector->relation() != CSSSelector::Relation::Subselector)
+            return false;
+    }
+
+    return true;
+}
+
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
     : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
     , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(selector())))
     , m_canMatchPseudoElement(complexSelectorCanMatchPseudoElement(selector()))
+    , m_subjectIsPurePseudoElement(computeSubjectIsPurePseudoElement(selector()))
     , m_propertyAllowlist(enumToUnderlyingType(determinePropertyAllowlist(selector())))
     , m_isStartingStyle(enumToUnderlyingType(isStartingStyle))
     , m_isEnabled(true)
