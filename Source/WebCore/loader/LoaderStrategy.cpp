@@ -40,7 +40,7 @@ void LoaderStrategy::setResourceLoadSchedulingMode(Page&, LoadSchedulingMode)
 {
 }
 
-void LoaderStrategy::prioritizeResourceLoads(const Vector<RefPtr<SubresourceLoader>>&)
+void LoaderStrategy::prioritizeResourceLoads(const Vector<Ref<SubresourceLoader>>&)
 {
 }
 

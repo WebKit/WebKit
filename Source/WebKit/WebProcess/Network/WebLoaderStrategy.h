@@ -146,7 +146,7 @@ private:
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
     void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
-    void prioritizeResourceLoads(const Vector<RefPtr<WebCore::SubresourceLoader>>&) final;
+    void prioritizeResourceLoads(const Vector<Ref<WebCore::SubresourceLoader>>&) final;
 
     Vector<WebCore::ResourceLoaderIdentifier> ongoingLoads() const final
     {
