@@ -26,12 +26,13 @@ function assertThrowsIllegalArgument(fun, ...args) {
 
 // Exercise all available pathways for instantiation with compileOptions introduced by the proposal
 async function testInstantiation() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "concat" (func $concatBuiltin (param externref externref) (result externref)))
-        (export "foo" (func $concatBuiltin))
-    )`;
-    const buffer = await watToWasm(wat);
+    /*
+        (module
+            (import "wasm:js-string" "concat" (func $concatBuiltin (param externref externref) (result (ref extern))))
+            (export "foo" (func $concatBuiltin))
+        )
+    */
+    const buffer = await Uint8Array.fromBase64("AGFzbQEAAAABCAFgAm9vAWRvAhkBDndhc206anMtc3RyaW5nBmNvbmNhdAAABwcBA2ZvbwAAABcEbmFtZQEQAQANY29uY2F0QnVpbHRpbg==");
 
     // bytes -> module -> instance
     const module1 = new WebAssembly.Module(buffer, { builtins: ['js-string'] });
@@ -50,13 +51,14 @@ async function testInstantiation() {
 }
 
 async function testInstantiationWithEmptyCompileOptions() {
-    const wat = `
-    (module
-        (func (export "foo") (result i32)
-            i32.const 42
+    /*
+        (module
+            (func (export "foo") (result i32)
+                i32.const 42
+            )
         )
-    )`;
-    const buffer = await watToWasm(wat);
+    */
+    const buffer = Uint8Array.fromBase64("AGFzbQEAAAABBQFgAAF/AwIBAAcHAQNmb28AAAoGAQQAQSoL");
 
     // bytes -> module -> instance
     const module1 = new WebAssembly.Module(buffer, { });
@@ -77,8 +79,8 @@ async function testInstantiationWithEmptyCompileOptions() {
 // Two convenience wat -> instance functions
 // which instantiate with js-builtins enabled.
 
-async function instantiate(wat) {
-    const buffer = await watToWasm(wat);
+async function instantiate(base64) {
+    const buffer = Uint8Array.fromBase64(base64);
     const result = await WebAssembly.instantiate(buffer, {}, {
         builtins: ['js-string'],
         importedStringConstants: "const"
@@ -97,16 +99,17 @@ async function gc_instantiate(wat) {
 }
 
 async function testCast() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "cast" (func $builtin (param externref) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg externref) (result externref)
-            local.get $arg
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "cast" (func $builtin (param externref) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg externref) (result (ref extern))
+                local.get $arg
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBwFgAW8BZG8CFwEOd2FzbTpqcy1zdHJpbmcEY2FzdAAAAwIBAAcUAghleHBvcnRlZAAABXJlbGF5AAEKCAEGACAAEAALABsEbmFtZQEKAQAHYnVpbHRpbgIIAQEBAANhcmc=");
 
     function check(fun) {
         assert.eq("foobar", fun("foobar"));
@@ -126,16 +129,17 @@ async function testCast() {
 }
 
 async function testTest() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "test" (func $builtin (param externref) (result i32)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg externref) (result i32)
-            local.get $arg
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "test" (func $builtin (param externref) (result i32)))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg externref) (result i32)
+                local.get $arg
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBgFgAW8BfwIXAQ53YXNtOmpzLXN0cmluZwR0ZXN0AAADAgEABxQCCGV4cG9ydGVkAAAFcmVsYXkAAQoIAQYAIAAQAAsAGwRuYW1lAQoBAAdidWlsdGluAggBAQEAA2FyZw==");
 
     function check(fun) {
         assert.eq(1, fun("foobar"));
@@ -157,9 +161,9 @@ async function testFromCharCodeArray() {
     const wat = `
     (module
         (type $arrayMutI16 (array (mut i16)))
-        (import "wasm:js-string" "fromCharCodeArray" (func $builtin (param (ref null $arrayMutI16) i32 i32) (result externref)))
+        (import "wasm:js-string" "fromCharCodeArray" (func $builtin (param (ref null $arrayMutI16) i32 i32) (result (ref extern))))
         (export "exported" (func $builtin))
-        (func (export "relay") (param $array (ref null $arrayMutI16)) (param $start i32) (param $end i32) (result externref)
+        (func (export "relay") (param $array (ref null $arrayMutI16)) (param $start i32) (param $end i32) (result (ref extern))
             local.get $array
             local.get $start
             local.get $end
@@ -226,9 +230,9 @@ async function testIntoCharCodeArray() {
     (module
         (type $arrayMutI16 (array (mut i16)))
         (import "wasm:js-string" "intoCharCodeArray" (func $builtinInto (param externref (ref null $arrayMutI16) i32) (result i32)))
-        (import "wasm:js-string" "fromCharCodeArray" (func $builtinFrom (param (ref null $arrayMutI16) i32 i32) (result externref)))
+        (import "wasm:js-string" "fromCharCodeArray" (func $builtinFrom (param (ref null $arrayMutI16) i32 i32) (result (ref extern))))
         (export "exported" (func $builtinInto))
-        (func (export "from") (param $array (ref null $arrayMutI16)) (param $start i32) (param $end i32) (result externref)
+        (func (export "from") (param $array (ref null $arrayMutI16)) (param $start i32) (param $end i32) (result (ref extern))
             local.get $array
             local.get $start
             local.get $end
@@ -318,16 +322,17 @@ async function testIntoCharCodeArray() {
 }
 
 async function testFromCharCode() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "fromCharCode" (func $builtin (param i32) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg i32) (result externref)
-            local.get $arg
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "fromCharCode" (func $builtin (param i32) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg i32) (result (ref extern))
+                local.get $arg
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBwFgAX8BZG8CHwEOd2FzbTpqcy1zdHJpbmcMZnJvbUNoYXJDb2RlAAADAgEABxQCCGV4cG9ydGVkAAAFcmVsYXkAAQoIAQYAIAAQAAsAGwRuYW1lAQoBAAdidWlsdGluAggBAQEAA2FyZw==");
 
     function check(fun) {
         assert.eq("a", fun(97));
@@ -341,16 +346,17 @@ async function testFromCharCode() {
 }
 
 async function testFromCodePoint() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "fromCodePoint" (func $builtin (param i32) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg i32) (result externref)
-            local.get $arg
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "fromCodePoint" (func $builtin (param i32) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg i32) (result (ref extern))
+                local.get $arg
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBwFgAX8BZG8CIAEOd2FzbTpqcy1zdHJpbmcNZnJvbUNvZGVQb2ludAAAAwIBAAcUAghleHBvcnRlZAAABXJlbGF5AAEKCAEGACAAEAALABsEbmFtZQEKAQAHYnVpbHRpbgIIAQEBAANhcmc=");
 
     function check(fun) {
         assert.eq("a", fun(97));
@@ -366,23 +372,24 @@ async function testFromCodePoint() {
 }
 
 async function testCharCodeAt() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "charCodeAt" (func $builtin (param externref i32) (result i32)))
-        (import "wasm:js-string" "concat" (func $concat (param externref externref) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg externref) (param $len i32) (result i32)
-            local.get $arg
-            local.get $len
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "charCodeAt" (func $builtin (param externref i32) (result i32)))
+            (import "wasm:js-string" "concat" (func $concat (param externref externref) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg externref) (param $len i32) (result i32)
+                local.get $arg
+                local.get $len
+                call $builtin
+            )
+            (func (export "concat") (param $left externref) (param $right externref) (result (ref extern))
+                local.get $left
+                local.get $right
+                call $concat
+            )
         )
-        (func (export "concat") (param $left externref) (param $right externref) (result externref)
-            local.get $left
-            local.get $right
-            call $concat
-        )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABDgJgAm9/AX9gAm9vAWRvAjUCDndhc206anMtc3RyaW5nCmNoYXJDb2RlQXQAAA53YXNtOmpzLXN0cmluZwZjb25jYXQAAQMDAgABBx0DCGV4cG9ydGVkAAAFcmVsYXkAAgZjb25jYXQAAwoTAggAIAAgARAACwgAIAAgARABCwA3BG5hbWUBEgIAB2J1aWx0aW4BBmNvbmNhdAIcAgICAANhcmcBA2xlbgMCAARsZWZ0AQVyaWdodA==");
     const concat = instance.exports.concat;
 
     const string = "ab😀c";
@@ -415,23 +422,24 @@ async function testCharCodeAt() {
 }
 
 async function testCodePointAt() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "codePointAt" (func $builtin (param externref i32) (result i32)))
-        (import "wasm:js-string" "concat" (func $concat (param externref externref) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg externref) (param $len i32) (result i32)
-            local.get $arg
-            local.get $len
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "codePointAt" (func $builtin (param externref i32) (result i32)))
+            (import "wasm:js-string" "concat" (func $concat (param externref externref) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg externref) (param $len i32) (result i32)
+                local.get $arg
+                local.get $len
+                call $builtin
+            )
+            (func (export "concat") (param $left externref) (param $right externref) (result (ref extern))
+                local.get $left
+                local.get $right
+                call $concat
+            )
         )
-        (func (export "concat") (param $left externref) (param $right externref) (result externref)
-            local.get $left
-            local.get $right
-            call $concat
-        )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABDgJgAm9/AX9gAm9vAWRvAjYCDndhc206anMtc3RyaW5nC2NvZGVQb2ludEF0AAAOd2FzbTpqcy1zdHJpbmcGY29uY2F0AAEDAwIAAQcdAwhleHBvcnRlZAAABXJlbGF5AAIGY29uY2F0AAMKEwIIACAAIAEQAAsIACAAIAEQAQsANwRuYW1lARICAAdidWlsdGluAQZjb25jYXQCHAICAgADYXJnAQNsZW4DAgAEbGVmdAEFcmlnaHQ=");
     const concat = instance.exports.concat;
 
     const string = 'a😀bΩ';
@@ -463,17 +471,18 @@ async function testCodePointAt() {
 }
 
 async function testConcat() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "concat" (func $builtin (param externref externref) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $left externref) (param $right externref) (result externref)
-            local.get $left
-            local.get $right
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "concat" (func $builtin (param externref externref) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $left externref) (param $right externref) (result (ref extern))
+                local.get $left
+                local.get $right
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABCAFgAm9vAWRvAhkBDndhc206anMtc3RyaW5nBmNvbmNhdAAAAwIBAAcUAghleHBvcnRlZAAABXJlbGF5AAEKCgEIACAAIAEQAAsAIwRuYW1lAQoBAAdidWlsdGluAhABAQIABGxlZnQBBXJpZ2h0");
 
     function check(fun) {
         assert.eq("foobar", fun("foo", "bar"));
@@ -497,16 +506,17 @@ async function testConcat() {
 }
 
 async function testLength() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "length" (func $builtin (param externref) (result i32)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $arg externref) (result i32)
-            local.get $arg
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "length" (func $builtin (param externref) (result i32)))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $arg externref) (result i32)
+                local.get $arg
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBgFgAW8BfwIZAQ53YXNtOmpzLXN0cmluZwZsZW5ndGgAAAMCAQAHFAIIZXhwb3J0ZWQAAAVyZWxheQABCggBBgAgABAACwAbBG5hbWUBCgEAB2J1aWx0aW4CCAEBAQADYXJn");
 
     function check(fun) {
         assert.eq(6, fun("foobar"));
@@ -525,24 +535,25 @@ async function testLength() {
 }
 
 async function testSubstring() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "substring" (func $builtin (param externref i32 i32) (result externref)))
-        (import "wasm:js-string" "concat" (func $concat (param externref externref) (result externref)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $string externref) (param $start i32) (param $end i32) (result externref)
-            local.get $string
-            local.get $start
-            local.get $end
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "substring" (func $builtin (param externref i32 i32) (result (ref extern))))
+            (import "wasm:js-string" "concat" (func $concat (param externref externref) (result (ref extern))))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $string externref) (param $start i32) (param $end i32) (result (ref extern))
+                local.get $string
+                local.get $start
+                local.get $end
+                call $builtin
+            )
+            (func (export "concat") (param $left externref) (param $right externref) (result (ref extern))
+                local.get $left
+                local.get $right
+                call $concat
+            )
         )
-        (func (export "concat") (param $left externref) (param $right externref) (result externref)
-            local.get $left
-            local.get $right
-            call $concat
-        )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABEAJgA29/fwFkb2ACb28BZG8CNAIOd2FzbTpqcy1zdHJpbmcJc3Vic3RyaW5nAAAOd2FzbTpqcy1zdHJpbmcGY29uY2F0AAEDAwIAAQcdAwhleHBvcnRlZAAABXJlbGF5AAIGY29uY2F0AAMKFQIKACAAIAEgAhAACwgAIAAgARABCwBBBG5hbWUBEgIAB2J1aWx0aW4BBmNvbmNhdAImAgIDAAZzdHJpbmcBBXN0YXJ0AgNlbmQDAgAEbGVmdAEFcmlnaHQ=");
     const concat = instance.exports.concat;
 
     const string = "Hello, world";
@@ -586,17 +597,18 @@ async function testSubstring() {
 }
 
 async function testEquals() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "equals" (func $builtin (param externref externref) (result i32)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $left externref) (param $right externref) (result i32)
-            local.get $left
-            local.get $right
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "equals" (func $builtin (param externref externref) (result i32)))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $left externref) (param $right externref) (result i32)
+                local.get $left
+                local.get $right
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBwFgAm9vAX8CGQEOd2FzbTpqcy1zdHJpbmcGZXF1YWxzAAADAgEABxQCCGV4cG9ydGVkAAAFcmVsYXkAAQoKAQgAIAAgARAACwAjBG5hbWUBCgEAB2J1aWx0aW4CEAEBAgAEbGVmdAEFcmlnaHQ=");
 
     function check(fun) {
         assert.eq(1, fun("foo", "foo"));
@@ -623,17 +635,18 @@ async function testEquals() {
 }
 
 async function testCompare() {
-    const wat = `
-    (module
-        (import "wasm:js-string" "compare" (func $builtin (param externref externref) (result i32)))
-        (export "exported" (func $builtin))
-        (func (export "relay") (param $left externref) (param $right externref) (result i32)
-            local.get $left
-            local.get $right
-            call $builtin
+    /*
+        (module
+            (import "wasm:js-string" "compare" (func $builtin (param externref externref) (result i32)))
+            (export "exported" (func $builtin))
+            (func (export "relay") (param $left externref) (param $right externref) (result i32)
+                local.get $left
+                local.get $right
+                call $builtin
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBwFgAm9vAX8CGgEOd2FzbTpqcy1zdHJpbmcHY29tcGFyZQAAAwIBAAcUAghleHBvcnRlZAAABXJlbGF5AAEKCgEIACAAIAEQAAsAIwRuYW1lAQoBAAdidWlsdGluAhABAQIABGxlZnQBBXJpZ2h0");
 
     function check(fun) {
         assert.eq(1, fun("foo", "bar"));
@@ -656,31 +669,32 @@ async function testCompare() {
 }
 
 async function testImportedStringConstants() {
-    const wat = `
-    (module
-        (import "const" "this is constant 1" (global $const1 externref))
-        (import "const" "this is constant 2" (global $const2 externref))
-        (export "exportedConst2" (global $const2))
-        (func (export "returnConst1") (result externref)
-            global.get $const1
+    /*
+        (module
+            (import "const" "this is constant 1" (global $const1 (ref extern)))
+            (import "const" "this is constant 2" (global $const2 (ref extern)))
+            (export "exportedConst2" (global $const2))
+            (func (export "returnConst1") (result (ref extern))
+                global.get $const1
+            )
         )
-    )`;
-    const instance = await instantiate(wat);
+    */
+    const instance = await instantiate("AGFzbQEAAAABBgFgAAFkbwI7AgVjb25zdBJ0aGlzIGlzIGNvbnN0YW50IDEDZG8ABWNvbnN0EnRoaXMgaXMgY29uc3RhbnQgMgNkbwADAgEAByECDmV4cG9ydGVkQ29uc3QyAwEMcmV0dXJuQ29uc3QxAAAKBgEEACMACwAYBG5hbWUHEQIABmNvbnN0MQEGY29uc3Qy");
 
     assert.eq("this is constant 1", instance.exports.returnConst1());
     assert.eq("this is constant 2", instance.exports.exportedConst2.value);
 }
 
 async function testImportInElem() {
-    const wat = `
-    (module
-        (type (func (param externref) (result i32)))
-        (import "wasm:js-string" "length" (func (type 0)))
-        (table 16 32 funcref)
-        (elem (i32.const 0) func 0)
-    )
-    `;
-    const instance = await instantiate(wat);
+    /*
+        (module
+            (type (func (param externref) (result i32)))
+            (import "wasm:js-string" "length" (func (type 0)))
+            (table 16 32 funcref)
+            (elem (i32.const 0) func 0)
+        )
+    */
+    const instance = await instantiate("AGFzbQEAAAABBgFgAW8BfwIZAQ53YXNtOmpzLXN0cmluZwZsZW5ndGgAAAQFAXABECAJBwEAQQALAQA=");
 }
 
 await assert.asyncTest(testInstantiation());

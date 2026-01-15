@@ -43,6 +43,9 @@ struct WebAssemblyBuiltinTypeExpectation {
     // Create an instance that expects the `externref` wasm type.
     static std::unique_ptr<WebAssemblyBuiltinTypeExpectation> externref();
 
+    // Create an instance that expects the `(ref extern)` wasm type.
+    static std::unique_ptr<WebAssemblyBuiltinTypeExpectation> refExtern();
+
     // Create an instance that expects the `ref null (array mut i16)` wasm type.
     static std::unique_ptr<WebAssemblyBuiltinTypeExpectation> refNullArrayMutI16();
 
@@ -71,6 +74,12 @@ public:
     bool isValid(const Wasm::Type& type) const { return Wasm::isExternref(type); }
 };
 
+class WebAssemblyBuiltinRefExternTypeExpectation : public WebAssemblyBuiltinTypeExpectation {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAssemblyBuiltinRefExternTypeExpectation);
+public:
+    bool isValid(const Wasm::Type& type) const { return Wasm::isExternref(type) && !type.isNullable(); }
+};
+
 class WebAssemblyArrayMutI16TypeExpectation : public WebAssemblyBuiltinTypeExpectation {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebAssemblyArrayMutI16TypeExpectation);
 public:
@@ -85,6 +94,11 @@ inline std::unique_ptr<WebAssemblyBuiltinTypeExpectation> WebAssemblyBuiltinType
 inline std::unique_ptr<WebAssemblyBuiltinTypeExpectation> WebAssemblyBuiltinTypeExpectation::externref()
 {
     return WTF::makeUnique<WebAssemblyBuiltinExternrefTypeExpectation>();
+}
+
+inline std::unique_ptr<WebAssemblyBuiltinTypeExpectation> WebAssemblyBuiltinTypeExpectation::refExtern()
+{
+    return WTF::makeUnique<WebAssemblyBuiltinRefExternTypeExpectation>();
 }
 
 inline std::unique_ptr<WebAssemblyBuiltinTypeExpectation> WebAssemblyBuiltinTypeExpectation::refNullArrayMutI16()
@@ -239,6 +253,11 @@ private:
 
 #define EXPECTATIONS(...) Vector<std::unique_ptr<WebAssemblyBuiltinTypeExpectation>>::from(__VA_ARGS__)
 
+#define BUILTIN_SIG_RE_R \
+    WebAssemblyBuiltinSignature( \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::refExtern()), \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref()))
+
 #define BUILTIN_SIG_R_R \
     WebAssemblyBuiltinSignature( \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref()), \
@@ -249,10 +268,20 @@ private:
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::i32()), \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref()))
 
+#define BUILTIN_SIG_RE_I \
+    WebAssemblyBuiltinSignature( \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::refExtern()), \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::i32()))
+
 #define BUILTIN_SIG_R_I \
     WebAssemblyBuiltinSignature( \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref()), \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::i32()))
+
+#define BUILTIN_SIG_RE_RR \
+    WebAssemblyBuiltinSignature( \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::refExtern()), \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref(), WebAssemblyBuiltinTypeExpectation::externref()))
 
 #define BUILTIN_SIG_R_RR \
     WebAssemblyBuiltinSignature( \
@@ -268,6 +297,11 @@ private:
     WebAssemblyBuiltinSignature( \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::i32()), \
         EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref(), WebAssemblyBuiltinTypeExpectation::i32()))
+
+#define BUILTIN_SIG_RE_RII \
+    WebAssemblyBuiltinSignature( \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::refExtern()), \
+        EXPECTATIONS(WebAssemblyBuiltinTypeExpectation::externref(), WebAssemblyBuiltinTypeExpectation::i32(), WebAssemblyBuiltinTypeExpectation::i32()))
 
 #define BUILTIN_SIG_R_RII \
     WebAssemblyBuiltinSignature( \
@@ -287,17 +321,17 @@ private:
 // Enumerates builtins of the `js-string` set.
 // For ease of tracking, builtins are listed in the order they appear in the spec.
 #define FOR_EACH_WASM_JS_STRING_BUILTIN(m) \
-    m(jsstring, cast, BUILTIN_SIG_R_R) \
+    m(jsstring, cast, BUILTIN_SIG_RE_R) \
     m(jsstring, test, BUILTIN_SIG_I_R) \
     m(jsstring, fromCharCodeArray, BUILTIN_SIG_R_AII) \
     m(jsstring, intoCharCodeArray, BUILTIN_SIG_I_RAI) \
-    m(jsstring, fromCharCode, BUILTIN_SIG_R_I) \
-    m(jsstring, fromCodePoint, BUILTIN_SIG_R_I) \
+    m(jsstring, fromCharCode, BUILTIN_SIG_RE_I) \
+    m(jsstring, fromCodePoint, BUILTIN_SIG_RE_I) \
     m(jsstring, charCodeAt, BUILTIN_SIG_I_RI) \
     m(jsstring, codePointAt, BUILTIN_SIG_I_RI) \
     m(jsstring, length, BUILTIN_SIG_I_R) \
-    m(jsstring, concat, BUILTIN_SIG_R_RR) \
-    m(jsstring, substring, BUILTIN_SIG_R_RII) \
+    m(jsstring, concat, BUILTIN_SIG_RE_RR) \
+    m(jsstring, substring, BUILTIN_SIG_RE_RII) \
     m(jsstring, equals, BUILTIN_SIG_I_RR) \
     m(jsstring, compare, BUILTIN_SIG_I_RR)
 
