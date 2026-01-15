@@ -1099,7 +1099,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     if (apiMethodTracker)
         apiMethodTracker->info.clear();
 
-    Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController.get());
+    Ref event = NavigateEvent::create(eventNames().navigateEvent, WTF::move(init), abortController.get());
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
@@ -1114,7 +1114,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
 
     if (event->defaultPrevented()) {
         // FIXME: If navigationType is "traverse", then consume history-action user activation.
-        if (!event->signal()->aborted())
+        if (!event->signal().aborted())
             abortOngoingNavigation(event);
         return DispatchResult::Aborted;
     }

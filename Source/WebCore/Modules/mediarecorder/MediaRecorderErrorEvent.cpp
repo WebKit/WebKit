@@ -42,7 +42,7 @@ Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& t
 
 Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    auto domError = init.error.releaseNonNull();
+    Ref domError = init.error.releaseNonNull();
     return adoptRef(*new MediaRecorderErrorEvent(type, WTF::move(init), WTF::move(domError), isTrusted));
 }
 

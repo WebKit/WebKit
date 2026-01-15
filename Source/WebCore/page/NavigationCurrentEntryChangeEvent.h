@@ -40,16 +40,16 @@ public:
         RefPtr<NavigationHistoryEntry> from;
     };
 
-    static Ref<NavigationCurrentEntryChangeEvent> create(const AtomString& type, const Init&);
+    static Ref<NavigationCurrentEntryChangeEvent> create(const AtomString& type, Init&&);
 
     std::optional<NavigationNavigationType> navigationType() const { return m_navigationType; };
-    RefPtr<NavigationHistoryEntry> from() const { return m_from; };
+    NavigationHistoryEntry& from() const { return m_from; };
 
 private:
-    NavigationCurrentEntryChangeEvent(const AtomString& type, const Init&);
+    NavigationCurrentEntryChangeEvent(const AtomString& type, Init&&);
 
     std::optional<NavigationNavigationType> m_navigationType;
-    RefPtr<NavigationHistoryEntry> m_from;
+    const Ref<NavigationHistoryEntry> m_from;
 };
 
 } // namespace WebCore

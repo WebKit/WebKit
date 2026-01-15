@@ -53,7 +53,7 @@ public:
     void deref() const final { AudioNode::deref(); }
 
 private:
-    MediaStreamAudioSourceNode(BaseAudioContext&, MediaStream&, Ref<WebAudioSourceProvider>&&);
+    MediaStreamAudioSourceNode(BaseAudioContext&, Ref<MediaStream>&&, Ref<WebAudioSourceProvider>&&);
 
     // AudioNode
     void process(size_t framesToProcess) final;

@@ -47,17 +47,17 @@ public:
     using Init = NotificationEventInit;
 
     static Ref<NotificationEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<NotificationEvent> create(const AtomString&, Notification*, const String& action, IsTrusted = IsTrusted::No);
+    static Ref<NotificationEvent> create(const AtomString&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
-    Notification* notification() { return m_notification.get(); }
+    Notification& notification() { return m_notification; }
     const String& action() { return m_action; }
 
 private:
-    NotificationEvent(const AtomString&, NotificationEventInit&&, Notification*, const String& action, IsTrusted = IsTrusted::No);
+    NotificationEvent(const AtomString&, NotificationEventInit&&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
     bool isNotificationEvent() const final { return true; }
 
-    RefPtr<Notification> m_notification;
+    const Ref<Notification> m_notification;
     String m_action;
 };
 

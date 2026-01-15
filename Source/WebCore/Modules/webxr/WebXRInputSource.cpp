@@ -134,7 +134,7 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
         init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
         init.inputSource = RefPtr { this };
 
-        return XRInputSourceEvent::create(name, init);
+        return XRInputSourceEvent::create(name, WTF::move(init));
     };
 
     if (!m_connected) {

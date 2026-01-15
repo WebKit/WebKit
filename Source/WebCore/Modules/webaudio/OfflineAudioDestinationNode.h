@@ -67,7 +67,7 @@ private:
     unsigned m_numberOfChannels;
 
     // This AudioNode renders into this AudioBuffer.
-    RefPtr<AudioBuffer> m_renderTarget;
+    const RefPtr<AudioBuffer> m_renderTarget;
     
     // Temporary AudioBus for each render quantum.
     const Ref<AudioBus> m_renderBus;

@@ -408,7 +408,7 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
     serviceWorkerGlobalScope->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [serviceWorkerGlobalScope, data = WTF::move(data), eventType, callback = WTF::move(callback)]() mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireNotificationEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread()->identifier().toUInt64());
 
-        auto notification = Notification::create(serviceWorkerGlobalScope.get(), WTF::move(data));
+        Ref notification = Notification::create(serviceWorkerGlobalScope.get(), WTF::move(data));
         AtomString eventName;
         switch (eventType) {
         case NotificationEventType::Click:
@@ -421,7 +421,7 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
             break;
         }
 
-        auto notificationEvent = NotificationEvent::create(eventName, notification.ptr(), emptyString(), ExtendableEvent::IsTrusted::Yes);
+        Ref notificationEvent = NotificationEvent::create(eventName, WTF::move(notification), emptyString(), ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(notificationEvent);
 
         notificationEvent->whenAllExtendLifetimePromisesAreSettled([serviceWorkerGlobalScope, callback = WTF::move(callback)](auto&& extendLifetimePromises) mutable {

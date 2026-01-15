@@ -65,7 +65,7 @@ public:
     VoidCallback& redoHandler() const { return m_redoHandler.get(); }
 
 private:
-    UndoItem(Init&& init)
+    explicit UndoItem(Init&& init)
         : m_label(WTF::move(init.label))
         , m_undoHandler(init.undo.releaseNonNull())
         , m_redoHandler(init.redo.releaseNonNull())

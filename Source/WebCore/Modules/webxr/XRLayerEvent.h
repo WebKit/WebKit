@@ -44,19 +44,19 @@ public:
         RefPtr<WebXRLayer> layer;
     };
 
-    static Ref<XRLayerEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<XRLayerEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     virtual ~XRLayerEvent();
 
     const WebXRLayer& layer() const;
 
 protected:
-    XRLayerEvent(const AtomString&, const Init&, IsTrusted);
+    XRLayerEvent(const AtomString&, Init&&, IsTrusted);
 
     // Event.
     EventInterfaceType eventInterfaceType() const;
 
 private:
-    RefPtr<WebXRLayer> m_layer;
+    const Ref<WebXRLayer> m_layer;
 };
 
 } // namespace WebCore

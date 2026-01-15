@@ -52,13 +52,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
 ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::create(BaseAudioContext& context, MediaElementAudioSourceOptions&& options)
 {
-    RefPtr mediaElement = WTF::move(options.mediaElement);
-    RELEASE_ASSERT(mediaElement);
-
-    if (!mediaElement || mediaElement->audioSourceNode())
+    Ref mediaElement = options.mediaElement.releaseNonNull();
+    if (mediaElement->audioSourceNode())
         return Exception { ExceptionCode::InvalidStateError, "Media element is already associated with an audio source node"_s };
 
-    auto node = adoptRef(*new MediaElementAudioSourceNode(context, *mediaElement));
+    Ref node = adoptRef(*new MediaElementAudioSourceNode(context, mediaElement.get()));
 
     mediaElement->setAudioSourceNode(node.ptr());
 

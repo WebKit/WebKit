@@ -45,11 +45,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, EventIsTrusted isTrusted, AbortController* abortController)
+NavigateEvent::NavigateEvent(const AtomString& type, NavigateEvent::Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
     : Event(EventInterfaceType::NavigateEvent, type, init, isTrusted)
     , m_navigationType(init.navigationType)
-    , m_destination(init.destination)
-    , m_signal(init.signal)
+    , m_destination(init.destination.releaseNonNull())
+    , m_signal(init.signal.releaseNonNull())
     , m_formData(init.formData)
     , m_downloadRequest(init.downloadRequest)
     , m_sourceElement(init.sourceElement)
@@ -63,15 +63,15 @@ NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& 
     m_info.setWeakly(init.info);
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init, AbortController* abortController)
 {
-    return adoptRef(*new NavigateEvent(type, init, EventIsTrusted::Yes, abortController));
+    return adoptRef(*new NavigateEvent(type, WTF::move(init), EventIsTrusted::Yes, abortController));
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init)
 {
     // FIXME: AbortController is required but JS bindings need to create it with one.
-    return adoptRef(*new NavigateEvent(type, init, EventIsTrusted::No, nullptr));
+    return adoptRef(*new NavigateEvent(type, WTF::move(init), EventIsTrusted::No, nullptr));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-perform-shared-checks

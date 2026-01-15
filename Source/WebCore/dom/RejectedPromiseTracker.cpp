@@ -169,7 +169,7 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
         initializer.promise = domPromise;
         initializer.reason = promise.result();
 
-        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, initializer);
+        Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, WTF::move(initializer));
         RefPtr target = m_context->errorEventTarget();
         target->dispatchEvent(event);
 
@@ -197,7 +197,7 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
     initializer.promise = rejectedPromise.ptr();
     initializer.reason = promise.result();
 
-    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, initializer);
+    Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, WTF::move(initializer));
     RefPtr target = m_context->errorEventTarget();
     target->dispatchEvent(event);
 }

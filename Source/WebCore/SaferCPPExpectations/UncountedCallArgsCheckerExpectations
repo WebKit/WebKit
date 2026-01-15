@@ -50,7 +50,6 @@ Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/DynamicsCompressorNode.cpp
 Modules/webaudio/MediaElementAudioSourceNode.cpp
 Modules/webaudio/MediaStreamAudioDestinationNode.cpp
-Modules/webaudio/MediaStreamAudioSourceNode.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webaudio/OscillatorNode.cpp
 Modules/webaudio/PannerNode.cpp

@@ -54,7 +54,6 @@ public:
         return adoptRef(*new InputEvent(type, initializer));
     }
 
-    bool isInputEvent() const override { return true; }
     const String& inputType() const { return m_inputType; }
     const String& data() const { return m_data; }
     RefPtr<DataTransfer> dataTransfer() const;
@@ -65,6 +64,8 @@ private:
     InputEvent(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&&,
         const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
     InputEvent(const AtomString& eventType, const Init&);
+
+    bool isInputEvent() const final { return true; }
 
     String m_inputType;
     String m_data;
