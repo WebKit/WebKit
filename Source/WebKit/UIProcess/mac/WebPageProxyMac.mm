@@ -1080,12 +1080,18 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 {
     Ref preferences = m_preferences;
     if (preferences->needsSiteSpecificQuirks()) {
-        if (policies.customUserAgent().isEmpty() && customUserAgent().isEmpty()) {
+        if (policies.customUserAgent().isEmpty()) {
             // FIXME (263619): This is done here for adding a UA override to tiktok. Should be in a common location.
             // needsCustomUserAgentOverride() is currently very generic on purpose.
             // In the future we want to pass more parameters for targeting specific domains.
-            if (auto customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent))
+            // Domain-specific quirks should take precedence over page-level defaults
+            if (auto customUserAgentForQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, m_userAgent))
                 policies.setCustomUserAgent(WTF::move(*customUserAgentForQuirk));
+            const auto& customUserAgentAsSiteSpecificQuirks = policies.customUserAgentAsSiteSpecificQuirks();
+            if (!customUserAgentAsSiteSpecificQuirks.isEmpty()) {
+                if (auto correctedCustomUserAgentAsSiteSpecificQuirk = Quirks::needsCustomUserAgentOverride(request.url(), m_applicationNameForUserAgent, customUserAgentAsSiteSpecificQuirks))
+                    policies.setCustomUserAgentAsSiteSpecificQuirks(WTF::move(*correctedCustomUserAgentAsSiteSpecificQuirk));
+            }
         }
     }
 

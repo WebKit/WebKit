@@ -1691,7 +1691,7 @@ bool Quirks::needsIPhoneUserAgent(const URL& url)
     return false;
 }
 
-std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const String& applicationNameForUserAgent)
+std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const String& applicationNameForUserAgent, const String& currentUserAgent)
 {
     auto hostDomain = RegistrableDomain(url);
     auto firefoxUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0"_s;
@@ -1713,10 +1713,13 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
 
 #if PLATFORM(COCOA)
     // FIXME(rdar://148759791): Remove this once TikTok removes the outdated error message.
-    if (hostDomain.string() == "tiktok.com"_s)
-        return makeStringByReplacingAll(standardUserAgentWithApplicationName(applicationNameForUserAgent), "like Gecko"_s, "like Gecko, like Chrome/136."_s);
+    if (hostDomain.string() == "tiktok.com"_s) {
+        auto baseUA = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
+        return makeStringByReplacingAll(baseUA, "like Gecko"_s, "like Gecko, like Chrome/136."_s);
+    }
 #else
     UNUSED_PARAM(applicationNameForUserAgent);
+    UNUSED_PARAM(currentUserAgent);
 #endif
     return { };
 }
