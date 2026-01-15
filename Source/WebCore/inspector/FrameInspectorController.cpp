@@ -129,9 +129,9 @@ void FrameInspectorController::connectFrontend(Inspector::FrontendChannel& front
     InspectorInstrumentation::frontendCreated();
 
     if (connectedFirstFrontend) {
-        m_agents.didCreateFrontendAndBackend();
-        m_injectedScriptManager->addClient();
         InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+        m_injectedScriptManager->addClient();
+        m_agents.didCreateFrontendAndBackend();
     }
 }
 
@@ -142,9 +142,9 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
 
     bool disconnectedLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectedLastFrontend) {
-        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
-        m_injectedScriptManager->removeClient();
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+        m_injectedScriptManager->removeClient();
+        InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     }
 }
 
