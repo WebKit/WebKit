@@ -2251,7 +2251,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 
     bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
 
-    HashSet<RefPtr<Element>> selectedElementsSet;
+    HashSet<Ref<Element>> selectedElementsSet;
     for (Ref node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         if (RefPtr element = dynamicDowncast<Element>(WTF::move(node)))
             selectedElementsSet.add(element.releaseNonNull());
@@ -2261,7 +2261,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
     // FIXME: What about the start of the range? The asymmetry here does not make sense. Seems likely this logic is not quite right in other respects, too.
     if (RefPtr lastNode = nodeAfter(range.end)) {
         for (auto& ancestor : lineageOfType<Element>(*lastNode))
-            selectedElementsSet.remove(&ancestor);
+            selectedElementsSet.remove(ancestor);
     }
 
     for (Ref node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {

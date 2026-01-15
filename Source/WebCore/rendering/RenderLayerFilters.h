@@ -86,7 +86,7 @@ private:
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
 
     InlineWeakPtr<RenderLayer> m_layer;
-    Vector<RefPtr<Element>> m_internalSVGReferences;
+    Vector<Ref<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 
     LayoutRect m_dirtySourceRect;

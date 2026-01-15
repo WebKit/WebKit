@@ -120,7 +120,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const Style::Filter& filte
             if (!renderer)
                 continue;
             renderer->addClientRenderLayer(*layer);
-            m_internalSVGReferences.append(WTF::move(filterElement));
+            m_internalSVGReferences.append(filterElement.releaseNonNull());
         }
     }
 }

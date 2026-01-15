@@ -79,7 +79,7 @@ TextAutoSizingKey::TextAutoSizingKey(const RenderStyle& style, unsigned hash)
 void TextAutoSizingValue::addTextNode(Text& node, float size)
 {
     node.renderer()->setCandidateComputedTextSize(size);
-    m_autoSizedNodes.add(&node);
+    m_autoSizedNodes.add(node);
 }
 
 auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
@@ -90,7 +90,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     for (auto& textNode : m_autoSizedNodes) {
         auto* renderer = textNode->renderer();
         if (!renderer || !renderer->style().textSizeAdjust().isAuto() || !renderer->candidateComputedTextSize())
-            nodesForRemoval.append(textNode.get());
+            nodesForRemoval.append(textNode.ptr());
     }
 
     for (auto& node : nodesForRemoval)
@@ -128,7 +128,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             scaleChange = averageSize / specifiedSize;
         }
 
-        LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.get(), firstPass, averageSize, scaleChange);
+        LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.ptr(), firstPass, averageSize, scaleChange);
 
         auto* parentRenderer = renderer.parent();
 
