@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Iframe must repaint when child layer is promoted</title>
+<style>
+iframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    const iframe = document.getElementById('testFrame').contentDocument;
+    const target = iframe.getElementById('target');
+
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    // Trigger layer promotion
+    target.classList.add('promoted');
+
+    requestAnimationFrame(() => setTimeout(() => {
+        if (window.internals) {
+            const layerTree = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            internals.stopTrackingRepaints();
+
+            // Assert that a viewport-sized repaint occurred (the iframe covers the viewport)
+            const viewportRepaintCount = (layerTree.match(/\(rect 0\.00 0\.00 800\.00 600\.00\)/g) || []).length;
+
+            if (viewportRepaintCount >= 1)
+                document.getElementById('result').textContent = 'PASS. The viewport repaint occurred';
+            else
+                document.getElementById('result').textContent = 'FAIL: no viewport repaint occurred';
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0));
+}
+
+window.addEventListener('load', () => {
+    requestAnimationFrame(() => setTimeout(runTest, 0));
+});
+</script>
+</head>
+<body>
+<iframe id="testFrame" srcdoc="
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { background: rgba(0 0 0 / 50%); }
+#target.promoted { will-change: transform; }
+</style>
+</head>
+<body>
+<p id='target'>When a compositing layer is created inside an iframe, the iframe element in the outer document must repaint to clear its old content. Without this repaint, the old iframe background persists in the outer document layers while the new iframe layers also paint it, causing transparent backgrounds to appear darker when composited together.</p>
+</body>
+</html>
+"></iframe>
+<pre id="result"></pre>
+</body>
+</html>
