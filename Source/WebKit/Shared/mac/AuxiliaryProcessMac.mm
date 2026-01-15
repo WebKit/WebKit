@@ -78,7 +78,7 @@ SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #define USE_CACHE_COMPILED_SANDBOX 1
 #else
 #define USE_CACHE_COMPILED_SANDBOX 0
