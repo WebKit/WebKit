@@ -5124,6 +5124,117 @@ public:
         compare32(cond, memoryTempRegister, dataTempRegister, dest);
     }
 
+    // ARM64 compare instructions that only set flags (for use with ccmp chains)
+    // These emit cmp/fcmp instructions that set NZCV flags without storing result
+    void compareOnFlags32(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmp<32>(left, right);
+    }
+
+    void compareOnFlags32(RegisterID left, TrustedImm32 right)
+    {
+        auto immediate = right.m_value;
+        if (auto tuple = tryExtractShiftedImm(immediate)) {
+            auto [u12, shift, inverted] = tuple.value();
+            if (!inverted)
+                m_assembler.cmp<32>(left, u12, shift);
+            else
+                m_assembler.cmn<32>(left, u12, shift);
+        } else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<32>(left, dataTempRegister);
+        }
+    }
+
+    void compareOnFlags64(RegisterID left, RegisterID right)
+    {
+        m_assembler.cmp<64>(left, right);
+    }
+
+    void compareOnFlags64(RegisterID left, TrustedImm32 right)
+    {
+        auto immediate = right.m_value;
+        if (auto tuple = tryExtractShiftedImm(immediate)) {
+            auto [u12, shift, inverted] = tuple.value();
+            if (!inverted)
+                m_assembler.cmp<64>(left, u12, shift);
+            else
+                m_assembler.cmn<64>(left, u12, shift);
+        } else {
+            moveToCachedReg(TrustedImm64(static_cast<int64_t>(right.m_value)), dataMemoryTempRegister());
+            m_assembler.cmp<64>(left, dataTempRegister);
+        }
+    }
+
+    void compareOnFlagsFloat(FPRegisterID left, FPRegisterID right)
+    {
+        m_assembler.fcmp<32>(left, right);
+    }
+
+    void compareOnFlagsDouble(FPRegisterID left, FPRegisterID right)
+    {
+        m_assembler.fcmp<64>(left, right);
+    }
+
+    // ARM64 conditional compare (ccmp) instructions
+    // These conditionally update flags based on a condition
+    void compareConditionallyOnFlags32(RegisterID left, RegisterID right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        m_assembler.ccmp<32>(left, right, nzcv.m_value, ARM64Condition(cond));
+    }
+
+    void compareConditionallyOnFlags32(RegisterID left, TrustedImm32 right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        // ccmp supports 5-bit immediates (0-31), ccmn supports negative immediates (-31 to -1)
+        if (-31 <= right.m_value && right.m_value <= 31) {
+            if (right.m_value < 0)
+                m_assembler.ccmn<32>(left, UInt5(-right.m_value), nzcv.m_value, ARM64Condition(cond));
+            else
+                m_assembler.ccmp<32>(left, UInt5(right.m_value), nzcv.m_value, ARM64Condition(cond));
+            return;
+        }
+
+        moveToCachedReg(right, dataMemoryTempRegister());
+        compareConditionallyOnFlags32(left, dataTempRegister, nzcv, cond);
+    }
+
+    void compareConditionallyOnFlags64(RegisterID left, RegisterID right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        m_assembler.ccmp<64>(left, right, nzcv.m_value, ARM64Condition(cond));
+    }
+
+    void compareConditionallyOnFlags64(RegisterID left, TrustedImm32 right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        // ccmp supports 5-bit immediates (0-31), ccmn supports negative immediates (-31 to -1)
+        if (-31 <= right.m_value && right.m_value <= 31) {
+            if (right.m_value < 0)
+                m_assembler.ccmn<64>(left, UInt5(-right.m_value), nzcv.m_value, ARM64Condition(cond));
+            else
+                m_assembler.ccmp<64>(left, UInt5(right.m_value), nzcv.m_value, ARM64Condition(cond));
+            return;
+        }
+        moveToCachedReg(TrustedImm64(static_cast<int64_t>(right.m_value)), dataMemoryTempRegister());
+        compareConditionallyOnFlags64(left, dataTempRegister, nzcv, cond);
+    }
+
+    void compareConditionallyOnFlagsFloat(FPRegisterID left, FPRegisterID right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        m_assembler.fccmp<32>(left, right, nzcv.m_value, ARM64Condition(cond));
+    }
+
+    void compareConditionallyOnFlagsDouble(FPRegisterID left, FPRegisterID right, TrustedImm32 nzcv, RelationalCondition cond)
+    {
+        m_assembler.fccmp<64>(left, right, nzcv.m_value, ARM64Condition(cond));
+    }
+
+    // Branch on already-set condition flags (for use after ccmp)
+    // This emits a conditional branch without any comparison instruction.
+    // The flags must have been set by a previous instruction (e.g., ccmp).
+    Jump branchOnFlags(RelationalCondition cond)
+    {
+        return Jump(makeBranch(cond));
+    }
+
     void test32(ResultCondition cond, RegisterID src, RegisterID mask, RegisterID dest)
     {
         m_assembler.tst<32>(src, mask);

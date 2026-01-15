@@ -416,6 +416,7 @@ void optimizeBlockOrder(Code& code)
         // certainly won't cause any correctness issues.
         
         switch (branch.kind.opcode) {
+        case BranchOnFlags:
         case Branch8:
         case Branch32:
         case Branch64:
@@ -441,7 +442,7 @@ void optimizeBlockOrder(Code& code)
                 branch.args[0] = branch.args[0].inverted();
             }
             break;
-            
+
         default:
             break;
         }

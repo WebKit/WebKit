@@ -1407,4 +1407,33 @@ void testMemoryFillConstant();
 
 void testLoadImmutable();
 
+// ARM64 conditional compare (ccmp) tests
+void testCCmpAnd32(int32_t, int32_t, int32_t, int32_t);
+void testCCmpAnd64(int64_t, int64_t, int64_t, int64_t);
+void testCCmpOr32(int32_t, int32_t, int32_t, int32_t);
+void testCCmpOr64(int64_t, int64_t, int64_t, int64_t);
+// 3-comparison chain tests
+void testCCmpAndAnd32(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+void testCCmpOrOr32(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+void testCCmpAndOr32(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+// Tests for ccmn (negative immediates) and large immediates
+void testCCmnAnd32WithNegativeImm(int32_t, int32_t);
+void testCCmnAnd64WithNegativeImm(int64_t, int64_t);
+void testCCmpWithLargePositiveImm(int32_t, int32_t);
+void testCCmpWithLargeNegativeImm(int32_t, int32_t);
+// Tests for ccmp optimizations
+void testCCmpSmartOperandOrdering32(int32_t, int32_t);
+void testCCmpSmartOperandOrdering64(int64_t, int64_t);
+void testCCmpOperandCommutation32(int32_t, int32_t);
+void testCCmpOperandCommutation64(int64_t, int64_t);
+void testCCmpCombinedOptimizations(int32_t, int32_t);
+void testCCmpZeroRegisterOptimization32(int32_t, int32_t);
+void testCCmpZeroRegisterOptimization64(int64_t, int64_t);
+void testCCmpMixedAndOr32(int32_t, int32_t, int32_t);
+void testCCmpMixedOrAnd32(int32_t, int32_t, int32_t);
+void testCCmpNegatedAnd32(int32_t, int32_t);
+void testCCmpNegatedOr32(int32_t, int32_t);
+void testCCmpMixedWidth32And64(int32_t, int64_t, int32_t);
+void testCCmpMixedWidth64And32(int64_t, int32_t);
+
 #endif // ENABLE(B3_JIT)

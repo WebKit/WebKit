@@ -1557,6 +1557,45 @@ arm64: CompareDoubleWithZero U:G:32, U:F:64, ZD:G:32
 arm64: CompareFloatWithZero U:G:32, U:F:32, ZD:G:32
     DoubleCond, Tmp, Tmp
 
+# Compare instructions that only set flags (for use with ccmp chains)
+# These perform comparison and set NZCV flags without storing result to register
+# IMPORTANT: /effects prevents Air from reordering or inserting flag-clobbering instructions.
+
+arm64: CompareOnFlags32 U:G:32, U:G:32 /effects
+    Tmp, Tmp
+    Tmp, Imm
+
+arm64: CompareOnFlags64 U:G:64, U:G:64 /effects
+    Tmp, Tmp
+    Tmp, Imm
+
+arm64: CompareOnFlagsFloat U:F:32, U:F:32 /effects
+    Tmp, Tmp
+
+arm64: CompareOnFlagsDouble U:F:64, U:F:64 /effects
+    Tmp, Tmp
+
+# Conditional compare instructions (ARM64 ccmp/fccmp).
+# These instructions conditionally update the NZCV flags based on a condition.
+# Operands: LHS, RHS, NZCV default flags (4-bit immediate), condition code
+# If the condition is true, performs the comparison and sets flags normally.
+# If the condition is false, sets flags to the NZCV default value.
+# /effects prevents Air from reordering or inserting flag-clobbering instructions.
+
+arm64: CompareConditionallyOnFlags32 U:G:32, U:G:32, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+    Tmp, Imm, Imm, RelCond
+
+arm64: CompareConditionallyOnFlags64 U:G:64, U:G:64, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+    Tmp, Imm, Imm, RelCond
+
+arm64: CompareConditionallyOnFlagsFloat U:F:32, U:F:32, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+
+arm64: CompareConditionallyOnFlagsDouble U:F:64, U:F:64, U:G:8, U:G:8 /effects
+    Tmp, Tmp, Imm, RelCond
+
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 
@@ -1622,6 +1661,11 @@ arm64: BranchDoubleWithZero U:G:32, U:F:64 /branch
 
 arm64: BranchFloatWithZero U:G:32, U:F:32 /branch
     DoubleCond, Tmp
+
+# Branch on already-set condition flags (for use after ccmp)
+# /effects ensures this stays adjacent to the preceding ccmp instruction
+arm64: BranchOnFlags U:G:32 /branch /effects
+    RelCond
 
 BranchAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
     ResCond, Tmp, Tmp, Tmp

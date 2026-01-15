@@ -1851,6 +1851,815 @@ void testLoadImmutable()
     CHECK_EQ(invoke<uint64_t>(*code, memory.mutableSpan().data(), memory.mutableSpan().data() + 1), 84U);
 }
 
+// ARM64 conditional compare (ccmp) tests
+// These tests verify that BitAnd/BitOr of comparisons are optimized using ccmp instruction
+
+void testCCmpAnd32(int32_t a, int32_t b, int32_t c, int32_t d)
+{
+    // Test: (a == b) && (c == d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b && c == d) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d), expected);
+}
+
+void testCCmpAnd64(int64_t a, int64_t b, int64_t c, int64_t d)
+{
+    // Test: (a == b) && (c == d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t, int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b && c == d) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d), expected);
+}
+
+void testCCmpOr32(int32_t a, int32_t b, int32_t c, int32_t d)
+{
+    // Test: (a == b) || (c == d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b || c == d) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d), expected);
+}
+
+void testCCmpOr64(int64_t a, int64_t b, int64_t c, int64_t d)
+{
+    // Test: (a == b) || (c == d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t, int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b || c == d) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d), expected);
+}
+
+// 3-comparison chain tests (nested patterns)
+void testCCmpAndAnd32(int32_t a, int32_t b, int32_t c, int32_t d, int32_t e, int32_t f)
+{
+    // Test: ((a == b) && (c == d)) && (e == f)
+    // This should emit: cmp a,b; ccmp c,d; ccmp e,f; branch
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* and1 = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+    Value* cmp3 = root->appendNew<Value>(proc, Equal, Origin(), arguments[4], arguments[5]);
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), and1, cmp3);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b && c == d && e == f) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d, e, f), expected);
+}
+
+void testCCmpOrOr32(int32_t a, int32_t b, int32_t c, int32_t d, int32_t e, int32_t f)
+{
+    // Test: ((a == b) || (c == d)) || (e == f)
+    // This should emit: cmp a,b; ccmp c,d; ccmp e,f; branch
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* or1 = root->appendNew<Value>(proc, BitOr, Origin(), cmp1, cmp2);
+    Value* cmp3 = root->appendNew<Value>(proc, Equal, Origin(), arguments[4], arguments[5]);
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), or1, cmp3);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == b || c == d || e == f) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d, e, f), expected);
+}
+
+void testCCmpAndOr32(int32_t a, int32_t b, int32_t c, int32_t d, int32_t e, int32_t f)
+{
+    // Test: ((a == b) && (c == d)) || (e == f)
+    // Mixed pattern: AND then OR
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* and1 = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+    Value* cmp3 = root->appendNew<Value>(proc, Equal, Origin(), arguments[4], arguments[5]);
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), and1, cmp3);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = ((a == b && c == d) || e == f) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c, d, e, f), expected);
+}
+
+// Tests for ccmn (conditional compare with negative immediates)
+void testCCmnAnd32WithNegativeImm(int32_t a, int32_t b)
+{
+    // Test: (a > 10) && (b == -5)
+    // The second comparison should use ccmn with immediate 5
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 10));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), -5));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a > 10 && b == -5) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmnAnd64WithNegativeImm(int64_t a, int64_t b)
+{
+    // Test: (a > 10) && (b == -31)
+    // The second comparison should use ccmn with immediate 31
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[0], root->appendNew<Const64Value>(proc, Origin(), 10));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const64Value>(proc, Origin(), -31));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a > 10 && b == -31) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpWithLargePositiveImm(int32_t a, int32_t b)
+{
+    // Test: (a > 10) && (b == 100)
+    // The second comparison should use a register (100 > 31)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 10));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), 100));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a > 10 && b == 100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpWithLargeNegativeImm(int32_t a, int32_t b)
+{
+    // Test: (a > 10) && (b == -100)
+    // The second comparison should use a register (-100 < -31)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 10));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), -100));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a > 10 && b == -100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Tests for ccmp optimization: smart operand ordering
+// This test ensures that when the first comparison has a small immediate (5)
+// and the second has a large immediate (1000), we swap them so that the
+// large immediate goes into cmp (which has wider immediate range) and the
+// small immediate goes into ccmp.
+void testCCmpSmartOperandOrdering32(int32_t a, int32_t b)
+{
+    // Test: (a == 5) && (b == 1000)
+    // Should be optimized to: cmp b, 1000; ccmp a, 5, ...
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 5));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), 1000));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == 5 && b == 1000) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpSmartOperandOrdering64(int64_t a, int64_t b)
+{
+    // Test: (a == 10) && (b == 5000)
+    // Should be optimized to: cmp b, 5000; ccmp a, 10, ...
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], root->appendNew<Const64Value>(proc, Origin(), 10));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const64Value>(proc, Origin(), 5000));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == 10 && b == 5000) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Tests for ccmp optimization: operand commutation within ccmp
+// This test ensures that if the left operand of a comparison is a small immediate,
+// we swap the operands to put the immediate on the right where it can be encoded.
+void testCCmpOperandCommutation32(int32_t a, int32_t b)
+{
+    // Test: (15 == a) && (b > 100)
+    // The first comparison should commute to (a == 15)
+    // and optimize to: cmp a, 15; ccmp b, 100, ...
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), root->appendNew<Const32Value>(proc, Origin(), 15), arguments[0]);
+    Value* cmp2 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), 100));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (15 == a && b > 100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpOperandCommutation64(int64_t a, int64_t b)
+{
+    // Test: (a < 50) && (20 == b)
+    // The second comparison should commute in the ccmp to (b == 20)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, LessThan, Origin(), arguments[0], root->appendNew<Const64Value>(proc, Origin(), 50));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), root->appendNew<Const64Value>(proc, Origin(), 20), arguments[1]);
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a < 50 && 20 == b) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Combined test: both smart ordering and operand commutation
+void testCCmpCombinedOptimizations(int32_t a, int32_t b)
+{
+    // Test: (10 == a) && (b == 2000)
+    // First comparison has commutable immediate on left
+    // Second comparison has large immediate
+    // Should optimize to: cmp b, 2000; ccmp a, 10, ...
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), root->appendNew<Const32Value>(proc, Origin(), 10), arguments[0]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), 2000));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (10 == a && b == 2000) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Test for zero register optimization
+void testCCmpZeroRegisterOptimization32(int32_t a, int32_t b)
+{
+    // Test: (a == 0) && (b > 5)
+    // The first comparison should use the zero register for 0
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 0));
+    Value* cmp2 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[1], root->appendNew<Const32Value>(proc, Origin(), 5));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == 0 && b > 5) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpZeroRegisterOptimization64(int64_t a, int64_t b)
+{
+    // Test: (0 == a) && (b < 100)
+    // The first comparison should use the zero register, and also test commutation
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), root->appendNew<Const64Value>(proc, Origin(), 0), arguments[0]);
+    Value* cmp2 = root->appendNew<Value>(proc, LessThan, Origin(), arguments[1], root->appendNew<Const64Value>(proc, Origin(), 100));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (0 == a && b < 100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Mixed AND/OR tests - these now work with tree-based processing
+void testCCmpMixedAndOr32(int32_t a, int32_t b, int32_t c)
+{
+    // Test: (a == b && b == c) || (a > 100)
+    // Left child is AND (logic op), right child is comparison
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(), arguments[0], arguments[1]);
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], arguments[2]);
+    Value* andVal = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+    Value* cmp3 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 100));
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), andVal, cmp3);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = ((a == b && b == c) || a > 100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c), expected);
+}
+
+void testCCmpMixedOrAnd32(int32_t a, int32_t b, int32_t c)
+{
+    // Test: (a < 0) || (b == c && c > 50)
+    // Left child is comparison, right child is AND (logic op)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, LessThan, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), 0));
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(), arguments[1], arguments[2]);
+    Value* cmp3 = root->appendNew<Value>(proc, GreaterThan, Origin(), arguments[2], root->appendNew<Const32Value>(proc, Origin(), 50));
+    Value* andVal = root->appendNew<Value>(proc, BitAnd, Origin(), cmp2, cmp3);
+    Value* condition = root->appendNew<Value>(proc, BitOr, Origin(), cmp1, andVal);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a < 0 || (b == c && c > 50)) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c), expected);
+}
+
+void testCCmpNegatedAnd32(int32_t a, int32_t b)
+{
+    // Test: !(a > 10 && b == 20)
+    // This becomes: (a > 10 && b == 20) == 0
+    // Should be optimized with ccmp and final condition negation
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+    Value* greaterThan10 = root->appendNew<Value>(
+        proc, GreaterThan, Origin(),
+        root->appendNew<Value>(proc, Trunc, Origin(), arg1),
+        root->appendNew<Const32Value>(proc, Origin(), 10));
+
+    Value* equal20 = root->appendNew<Value>(
+        proc, Equal, Origin(),
+        root->appendNew<Value>(proc, Trunc, Origin(), arg2),
+        root->appendNew<Const32Value>(proc, Origin(), 20));
+
+    Value* andResult = root->appendNew<Value>(
+        proc, BitAnd, Origin(),
+        greaterThan10,
+        equal20);
+
+    // Negation: andResult == 0
+    Value* negated = root->appendNew<Value>(
+        proc, Equal, Origin(),
+        andResult,
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        negated,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = !(a > 10 && b == 20) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+void testCCmpNegatedOr32(int32_t a, int32_t b)
+{
+    // Test: !(a < 5 || b >= 100)
+    // This becomes: (a < 5 || b >= 100) == 0
+    // Should be optimized with ccmp and final condition negation
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+    Value* lessThan5 = root->appendNew<Value>(
+        proc, LessThan, Origin(),
+        root->appendNew<Value>(proc, Trunc, Origin(), arg1),
+        root->appendNew<Const32Value>(proc, Origin(), 5));
+
+    Value* greaterOrEqual100 = root->appendNew<Value>(
+        proc, GreaterEqual, Origin(),
+        root->appendNew<Value>(proc, Trunc, Origin(), arg2),
+        root->appendNew<Const32Value>(proc, Origin(), 100));
+
+    Value* orResult = root->appendNew<Value>(
+        proc, BitOr, Origin(),
+        lessThan5,
+        greaterOrEqual100);
+
+    // Negation: orResult == 0
+    Value* negated = root->appendNew<Value>(
+        proc, Equal, Origin(),
+        orResult,
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        negated,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = !(a < 5 || b >= 100) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
+// Test for mixed-width compare chains (32-bit and 64-bit comparisons in same chain)
+// This tests the per-ccmp width handling fix
+void testCCmpMixedWidth32And64(int32_t a, int64_t b, int32_t c)
+{
+    // Test: (a == 5) && (b == 1000) && (c == 10)
+    // First is 32-bit, second is 64-bit, third is 32-bit
+    // Each ccmp must use its own width for the opcode
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int64_t, int32_t>(proc, root);
+
+    // arguments[0] is Int32, arguments[1] is Int64, arguments[2] is Int32
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(),
+        arguments[0],
+        root->appendNew<Const32Value>(proc, Origin(), 5));
+
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(),
+        arguments[1],
+        root->appendNew<Const64Value>(proc, Origin(), 1000));
+
+    Value* and1 = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    Value* cmp3 = root->appendNew<Value>(proc, Equal, Origin(),
+        arguments[2],
+        root->appendNew<Const32Value>(proc, Origin(), 10));
+
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), and1, cmp3);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == 5 && b == 1000 && c == 10) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b, c), expected);
+}
+
+void testCCmpMixedWidth64And32(int64_t a, int32_t b)
+{
+    // Test: (a == 5000) && (b == 10)
+    // First is 64-bit, second is 32-bit
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int32_t>(proc, root);
+
+    Value* cmp1 = root->appendNew<Value>(proc, Equal, Origin(),
+        arguments[0],
+        root->appendNew<Const64Value>(proc, Origin(), 5000));
+
+    Value* cmp2 = root->appendNew<Value>(proc, Equal, Origin(),
+        arguments[1],
+        root->appendNew<Const32Value>(proc, Origin(), 10));
+
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), cmp1, cmp2);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int32_t expected = (a == 5000 && b == 10) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
+}
+
 #endif // ENABLE(B3_JIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
