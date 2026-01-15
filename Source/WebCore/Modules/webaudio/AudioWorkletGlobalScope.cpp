@@ -138,7 +138,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
 
 RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const String& name, TransferredMessagePort port, Ref<SerializedScriptValue>&& options)
 {
-    auto constructor = m_processorConstructorMap.get(name);
+    RefPtr constructor = m_processorConstructorMap.get(name);
     ASSERT(constructor);
     if (!constructor)
         return nullptr;

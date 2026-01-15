@@ -156,7 +156,6 @@ private:
     unsigned m_renderingParamFanOutCount { 0 };
 
     HashSet<Ref<AudioParam>> m_params;
-    typedef HashSet<RefPtr<AudioParam>>::iterator ParamsIterator;
 };
 
 } // namespace WebCore

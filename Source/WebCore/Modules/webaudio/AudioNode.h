@@ -299,6 +299,12 @@ template<typename T> struct AudioNodeConnectionRefDerefTraits {
         return ptr;
     }
 
+    static ALWAYS_INLINE T& ref(T& ref)
+    {
+        ref.incrementConnectionCount();
+        return ref;
+    }
+
     static ALWAYS_INLINE void derefIfNotNull(T* ptr)
     {
         if (ptr) [[likely]]
@@ -308,6 +314,9 @@ template<typename T> struct AudioNodeConnectionRefDerefTraits {
 
 template<typename T>
 using AudioConnectionRefPtr = RefPtr<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
+
+template<typename T>
+using AudioConnectionRef = Ref<T, RawPtrTraits<T>, AudioNodeConnectionRefDerefTraits<T>>;
 
 String convertEnumerationToString(AudioNode::NodeType);
 

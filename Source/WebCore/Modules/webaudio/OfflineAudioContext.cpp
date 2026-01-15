@@ -97,7 +97,7 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
     if (!target)
         return;
 
-    Vector<AudioConnectionRefPtr<AudioNode>, 1> remainingNodes;
+    Vector<AudioConnectionRef<AudioNode>, 1> remainingNodes;
     for (auto& node : referencedSourceNodes())
         remainingNodes.append(node.copyRef());
 
@@ -110,7 +110,7 @@ void OfflineAudioContext::increaseNoiseMultiplierIfNeeded()
                 continue;
 
             output->forEachInputNode([&](auto& inputNode) {
-                remainingNodes.append(&inputNode);
+                remainingNodes.append(inputNode);
             });
         }
     }
@@ -184,7 +184,7 @@ void OfflineAudioContext::suspendRendering(double suspendTime, Ref<DeferredPromi
     }
 
     Locker locker { graphLock() };
-    auto addResult = m_suspendRequests.add(frame, promise.ptr());
+    auto addResult = m_suspendRequests.add(frame, promise);
     if (!addResult.isNewEntry) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "There is already a pending suspend request at this frame"_s });
         return;

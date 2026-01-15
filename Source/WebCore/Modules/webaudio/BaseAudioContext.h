@@ -267,7 +267,7 @@ protected:
 
 protected:
     // Only accessed when the graph lock is held.
-    const Vector<AudioConnectionRefPtr<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
+    const Vector<AudioConnectionRef<AudioNode>>& referencedSourceNodes() const { return m_referencedSourceNodes; }
 
 private:
     void scheduleNodeDeletion();
@@ -311,7 +311,7 @@ private:
     const Ref<AudioWorklet> m_worklet;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
-    Vector<AudioConnectionRefPtr<AudioNode>> m_referencedSourceNodes;
+    Vector<AudioConnectionRef<AudioNode>> m_referencedSourceNodes;
 
     // Accumulate nodes which need to be deleted here.
     // This is copied to m_nodesToDelete at the end of a render cycle in handlePostRenderTasks(), where we're assured of a stable graph

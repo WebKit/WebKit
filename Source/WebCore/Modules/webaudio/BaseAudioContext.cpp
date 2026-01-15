@@ -972,7 +972,7 @@ void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
 
     ASSERT(!m_referencedSourceNodes.contains(&node));
     // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
-    m_referencedSourceNodes.append(&node);
+    m_referencedSourceNodes.append(node);
 }
 
 void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
