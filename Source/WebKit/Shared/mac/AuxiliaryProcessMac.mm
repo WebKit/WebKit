@@ -57,6 +57,7 @@
 #import <wtf/WTFProcess.h>
 #import <wtf/WallTime.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/spi/darwin/DataVaultSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
@@ -209,7 +210,6 @@ static std::optional<Vector<uint8_t>> fileContents(const String& path)
     return contents;
 }
 
-#if USE(APPLE_INTERNAL_SDK)
 // These strings must match the last segment of the "com.apple.rootless.storage.<this part must match>" entry in each
 // process's restricted entitlements file (ex. Configurations/Networking-OSX-restricted.entitlements).
 constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
@@ -227,7 +227,6 @@ constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
 #endif
     }
 }
-#endif // USE(APPLE_INTERNAL_SDK)
 
 static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
 {
@@ -271,6 +270,7 @@ static String sandboxDataVaultParentDirectory()
 static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const String& parentDirectory)
 {
     StringBuilder directory;
+    directory.append("/.nofollow"_s);
     directory.append(parentDirectory);
     switch (processType) {
     case WTF::AuxiliaryProcessType::WebContent:
@@ -445,13 +445,11 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
 
 static bool tryApplyCachedSandbox(const SandboxInfo& info)
 {
-#if USE(APPLE_INTERNAL_SDK)
     CString directoryPath = FileSystem::fileSystemRepresentation(info.directoryPath);
     if (directoryPath.isNull())
         return false;
     if (rootless_check_datavault_flag(directoryPath.data(), processStorageClass(info.processType)))
         return false;
-#endif
 
     auto contents = fileContents(info.filePath);
     if (!contents || contents->isEmpty())
