@@ -115,11 +115,14 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
     , m_swapChain(m_id)
     , m_isVisible(webPage.activityState().contains(ActivityState::IsVisible))
     , m_useExplicitSync(useExplicitSync())
-    , m_isOpaque(!webPage.backgroundColor().has_value() || webPage.backgroundColor()->isOpaque())
 {
+    {
+        Locker locker(m_backgroundColorLock);
+        m_backgroundColor = webPage.backgroundColor().value_or(Color::white);
+    }
 #if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
-        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
+        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), isOpaque());
 #endif
 #if USE(WPE_RENDERER)
     if (m_swapChain.type() == SwapChain::Type::WPEBackend)
@@ -898,7 +901,7 @@ void AcceleratedSurface::preferredBufferFormatsDidChange()
     if (m_swapChain.type() != SwapChain::Type::EGLImage)
         return;
 
-    m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
+    m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), isOpaque());
 }
 #endif
 
@@ -919,21 +922,26 @@ void AcceleratedSurface::visibilityDidChange(bool isVisible)
     }
 }
 
-bool AcceleratedSurface::backgroundColorDidChange()
+bool AcceleratedSurface::isOpaque()
 {
-    const auto& color = m_webPage->backgroundColor();
-    auto isOpaque = !color.has_value() || color->isOpaque();
-    if (m_isOpaque == isOpaque)
-        return false;
+    Locker locker(m_backgroundColorLock);
+    return m_backgroundColor.isOpaque();
+}
 
-    m_isOpaque = isOpaque;
+void AcceleratedSurface::backgroundColorDidChange()
+{
+    bool wasOpaque = isOpaque();
+    {
+        Locker locker(m_backgroundColorLock);
+        m_backgroundColor = m_webPage->backgroundColor().value_or(Color::white);
+    }
+    if (isOpaque() == wasOpaque)
+        return;
 
 #if (PLATFORM(GTK) || ENABLE(WPE_PLATFORM)) && (USE(GBM) || OS(ANDROID))
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
-        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
+        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), isOpaque());
 #endif
-
-    return true;
 }
 
 void AcceleratedSurface::releaseUnusedBuffersTimerFired()
@@ -1007,10 +1015,13 @@ void AcceleratedSurface::willRenderFrame(const IntSize& size)
     if (sizeDidChange)
         glViewport(0, 0, size.width(), size.height());
 
-    if (!m_isOpaque) {
+    if (isOpaque()) {
+        Locker locker(m_backgroundColorLock);
+        auto [r, g, b, a] = m_backgroundColor.toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::SRGB);
+        glClearColor(r, g, b, 0);
+    } else
         glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void AcceleratedSurface::didRenderFrame()

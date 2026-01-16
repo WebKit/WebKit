@@ -28,6 +28,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "MessageReceiver.h"
+#include <WebCore/Color.h>
 #include <WebCore/Damage.h>
 #include <WebCore/IntSize.h>
 #include <wtf/RunLoop.h>
@@ -129,7 +130,7 @@ public:
 #endif
 
     void visibilityDidChange(bool);
-    bool backgroundColorDidChange();
+    void backgroundColorDidChange();
 
 private:
     AcceleratedSurface(WebPage&, Function<void()>&& frameCompleteHandler);
@@ -142,6 +143,8 @@ private:
 #endif
     void frameDone();
     void releaseUnusedBuffersTimerFired();
+
+    bool isOpaque();
 
     class RenderTarget {
         WTF_MAKE_TZONE_ALLOCATED(RenderTarget);
@@ -381,7 +384,8 @@ private:
     RenderTarget* m_target { nullptr };
     bool m_isVisible { false };
     bool m_useExplicitSync { false };
-    std::atomic<bool> m_isOpaque { true };
+    Lock m_backgroundColorLock;
+    WebCore::Color m_backgroundColor WTF_GUARDED_BY_LOCK(m_backgroundColorLock);
     std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
 #if ENABLE(DAMAGE_TRACKING)
     std::optional<WebCore::Damage> m_frameDamage;
