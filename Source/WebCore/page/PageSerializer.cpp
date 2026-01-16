@@ -115,7 +115,7 @@ private:
 };
 
 PageSerializer::SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Ref<Node>>* nodes)
-    : MarkupAccumulator(nodes, ResolveURLs::Yes, MarkupAccumulator::serializationSyntax(document))
+    : MarkupAccumulator(nodes, ResolveURLs::YesExcludingURLsForPrivacy, MarkupAccumulator::serializationSyntax(document))
     , m_serializer(serializer)
     , m_document(document)
 {
