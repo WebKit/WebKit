@@ -1708,7 +1708,7 @@ HashMap<AnchorPositionedKey, size_t> AnchorPositionEvaluator::recordLastSuccessf
         ASSERT(styleable);
 
         if (auto usedPositionOptionIndex = positionTryBox.style().usedPositionOptionIndex())
-            lastSuccessfulPositionOptionMap.add({ styleable->element, styleable->pseudoElementIdentifier }, *usedPositionOptionIndex);
+            lastSuccessfulPositionOptionMap.add({ styleable->element.ptr(), styleable->pseudoElementIdentifier }, *usedPositionOptionIndex);
     }
 
     return lastSuccessfulPositionOptionMap;

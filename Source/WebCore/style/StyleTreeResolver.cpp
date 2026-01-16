@@ -173,7 +173,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     if (resolutionType == ResolutionType::AnimationOnly && styleable.lastStyleChangeEventStyle() && !styleable.hasPropertiesOverridenAfterAnimation())
         return { RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) };
 
-    Ref element = styleable.element;
+    Ref element = styleable.element.get();
 
     if (auto optionStyle = tryChoosePositionOption(styleable, resolutionContext))
         return WTF::move(*optionStyle);
@@ -756,7 +756,7 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudoElement(const ElementUpd
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolvedStyle, const Styleable& styleable, OptionSet<Change> parentChanges, const ResolutionContext& resolutionContext, IsInDisplayNoneTree isInDisplayNoneTree)
 {
-    Ref element = styleable.element;
+    Ref element = styleable.element.get();
     Ref document = element->document();
     auto* currentStyle = element->renderOrDisplayContentsStyle(styleable.pseudoElementIdentifier);
 
@@ -866,7 +866,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
-        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
         return { WTF::move(animatedStyle), animationImpact };
@@ -986,7 +986,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
         m_document.get(),
         &parentStyle,
         resolutionContext.documentElementStyle,
-        &styleable.element,
+        styleable.element.ptr(),
         &m_treeResolutionState,
         WTF::move(positionTryFallback)
     };
@@ -1003,7 +1003,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
     if (newStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
     adjuster.adjust(*newStyle);
 
     return newStyle;
@@ -1011,7 +1011,7 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveAgainInDifferentContext(const 
 
 const RenderStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleable, const ResolutionContext& resolutionContext) const
 {
-    if (RefPtr parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+    if (RefPtr parentElement = !styleable.pseudoElementIdentifier ? parent().element : styleable.element.ptr()) {
         if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle({ }))
             return *afterChangeStyle;
     }
@@ -1774,7 +1774,7 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
     }
 
     // We can't test for overflow before the box has been positioned.
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ styleable.element.ptr(), styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Positioned)
         return ResolvedStyle { options.currentOption() };
 
@@ -1824,7 +1824,7 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
                 return true;
         }
         if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsValid)) {
-            auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
+            auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ styleable.element.ptr(), styleable.pseudoElementIdentifier });
             if (anchorPositionedState) {
                 for (auto& anchorElement : anchorPositionedState->anchorElements.values()) {
                     if (!anchorElement)
@@ -1864,7 +1864,7 @@ void TreeResolver::saveBeforeResolutionStyleForInterleaving(const Element& eleme
 
 bool TreeResolver::hasUnresolvedAnchorPosition(const Styleable& styleable) const
 {
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ styleable.element.ptr(), styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage < AnchorPositionResolutionStage::Resolved)
         return true;
 
@@ -1873,7 +1873,7 @@ bool TreeResolver::hasUnresolvedAnchorPosition(const Styleable& styleable) const
 
 bool TreeResolver::hasResolvedAnchorPosition(const Styleable& styleable) const
 {
-    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ &styleable.element, styleable.pseudoElementIdentifier });
+    auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get({ styleable.element.ptr(), styleable.pseudoElementIdentifier });
     if (anchorPositionedState && anchorPositionedState->stage >= AnchorPositionResolutionStage::Resolved)
         return true;
 
@@ -1882,7 +1882,7 @@ bool TreeResolver::hasResolvedAnchorPosition(const Styleable& styleable) const
 
 bool TreeResolver::isTryingPositionOption(const Styleable& styleable) const
 {
-    if (auto it = m_positionOptions.find({ styleable.element, styleable.pseudoElementIdentifier }); it != m_positionOptions.end())
+    if (auto it = m_positionOptions.find({ styleable.element.ptr(), styleable.pseudoElementIdentifier }); it != m_positionOptions.end())
         return !it->value.chosen;
 
     return false;

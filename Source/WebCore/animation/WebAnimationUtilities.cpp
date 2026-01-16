@@ -109,8 +109,8 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
         }
     };
 
-    Ref aReferenceElement = a.element;
-    Ref bReferenceElement = b.element;
+    Ref aReferenceElement = a.element.get();
+    Ref bReferenceElement = b.element.get();
 
     if (aReferenceElement.ptr() == bReferenceElement.ptr()) {
         if (isNamedViewTransitionPseudoElement(a.pseudoElementIdentifier) && isNamedViewTransitionPseudoElement(b.pseudoElementIdentifier) && a.pseudoElementIdentifier->nameArgument != b.pseudoElementIdentifier->nameArgument) {

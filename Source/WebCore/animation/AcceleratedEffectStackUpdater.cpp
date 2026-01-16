@@ -76,7 +76,7 @@ void AcceleratedEffectStackUpdater::update()
 
 void AcceleratedEffectStackUpdater::scheduleUpdateForTarget(const Styleable& target)
 {
-    m_targetsPendingUpdate.add({ &target.element, target.pseudoElementIdentifier });
+    m_targetsPendingUpdate.add({ target.element.ptr(), target.pseudoElementIdentifier });
 }
 
 } // namespace WebCore

@@ -1932,7 +1932,7 @@ bool WebAnimation::isSkippedContentAnimation() const
         return false;
     if (auto animation = dynamicDowncast<StyleOriginatedAnimation>(this)) {
         if (auto element = animation->owningElement())
-            return element->element.renderer() && element->element.renderer()->isSkippedContent();
+            return element->element->renderer() && element->element->renderer()->isSkippedContent();
     }
     return false;
 }

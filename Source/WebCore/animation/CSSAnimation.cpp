@@ -194,7 +194,7 @@ void CSSAnimation::syncStyleOriginatedTimeline()
     suspendEffectInvalidation();
 
     ASSERT(owningElement());
-    Ref document = owningElement()->element.document();
+    Ref document = owningElement()->element->document();
 
     WTF::switchOn(m_backingStyleAnimation.timeline(),
         [&](const CSS::Keyword::Auto&) {

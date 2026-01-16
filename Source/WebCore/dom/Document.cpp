@@ -11080,7 +11080,7 @@ void Document::keyframesRuleDidChange(const String& name)
             continue;
 
         auto owningElement = cssAnimation->owningElement();
-        if (!owningElement || !owningElement->element.isConnected() || &owningElement->element.document() != this)
+        if (!owningElement || !owningElement->element->isConnected() || &owningElement->element->document() != this)
             continue;
 
         cssAnimation->keyframesRuleDidChange();
