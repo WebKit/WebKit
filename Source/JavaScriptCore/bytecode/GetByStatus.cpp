@@ -526,6 +526,17 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
                     size_t i = 0;
                     size_t totalSize = conditionSet.size();
                     for (auto& condition : conditionSet) {
+                        auto* object = condition.object();
+                        if (!object)
+                            return std::nullopt;
+
+                        auto* currentStructure = object->structure();
+                        if (currentStructure->typeInfo().overridesGetOwnPropertySlot())
+                            return std::nullopt;
+
+                        if (!currentStructure->propertyAccessesAreCacheable())
+                            return std::nullopt;
+
                         if ((i + 1) == totalSize) {
                             // The last condition
                             if (condition.kind() != PropertyCondition::Presence)
@@ -541,6 +552,9 @@ GetByStatus GetByStatus::computeFor(JSGlobalObject* globalObject, const Structur
 
                             return result;
                         }
+
+                        if (currentStructure->hasPolyProto())
+                            return std::nullopt;
 
                         if (condition.kind() != PropertyCondition::Absence)
                             return std::nullopt;
