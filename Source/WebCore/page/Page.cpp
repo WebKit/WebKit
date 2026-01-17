@@ -740,11 +740,7 @@ Ref<DOMRectList> Page::nonFastScrollableRectsForTesting()
             rects.appendVector(synchronousEventRegion.value.rects());
     }
 
-    Vector<FloatQuad> quads(rects.size());
-    for (size_t i = 0; i < rects.size(); ++i)
-        quads[i] = FloatRect(rects[i]);
-
-    return DOMRectList::create(quads);
+    return DOMRectList::create(rects.map([](auto& rect) { return FloatQuad { FloatRect { rect } }; }));
 }
 
 Ref<DOMRectList> Page::touchEventRectsForEventForTesting(EventTrackingRegions::EventType eventType)
@@ -764,11 +760,7 @@ Ref<DOMRectList> Page::touchEventRectsForEventForTesting(EventTrackingRegions::E
         rects.appendVector(region.rects());
     }
 
-    Vector<FloatQuad> quads(rects.size());
-    for (size_t i = 0; i < rects.size(); ++i)
-        quads[i] = FloatRect(rects[i]);
-
-    return DOMRectList::create(quads);
+    return DOMRectList::create(rects.map([](auto& rect) { return FloatQuad { FloatRect { rect } }; }));
 }
 
 Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
@@ -785,11 +777,7 @@ Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
     if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
         rects.appendVector(scrollingCoordinator->absoluteEventTrackingRegions().asynchronousDispatchRegion.rects());
 
-    Vector<FloatQuad> quads(rects.size());
-    for (size_t i = 0; i < rects.size(); ++i)
-        quads[i] = FloatRect(rects[i]);
-
-    return DOMRectList::create(quads);
+    return DOMRectList::create(rects.map([](auto& rect) { return FloatQuad { FloatRect { rect } }; }));
 }
 
 void Page::setConsoleMessageListenerForTesting(RefPtr<StringCallback>&& listener)

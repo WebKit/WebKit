@@ -24,7 +24,6 @@
 
 #include "UndoOrRedo.h"
 #include "WebEditCommandProxy.h"
-#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
@@ -52,16 +51,10 @@ bool DefaultUndoController::canUndoRedo(UndoOrRedo undoOrRedo)
 
 void DefaultUndoController::executeUndoRedo(UndoOrRedo undoOrRedo)
 {
-    RefPtr<WebEditCommandProxy> command;
-    if (undoOrRedo == UndoOrRedo::Undo) {
-        command = m_undoStack.last();
-        m_undoStack.removeLast();
-        command->unapply();
-    } else {
-        command = m_redoStack.last();
-        m_redoStack.removeLast();
-        command->reapply();
-    }
+    if (undoOrRedo == UndoOrRedo::Undo)
+        m_undoStack.takeLast()->unapply();
+    else
+        m_redoStack.takeLast()->reapply();
 }
 
 } // namespace WebKit

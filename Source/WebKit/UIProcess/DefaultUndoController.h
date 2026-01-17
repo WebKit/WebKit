@@ -36,7 +36,7 @@ public:
     void executeUndoRedo(UndoOrRedo);
 
 private:
-    typedef Vector<RefPtr<WebEditCommandProxy> > CommandVector;
+    using CommandVector = Vector<Ref<WebEditCommandProxy>>;
     CommandVector m_undoStack;
     CommandVector m_redoStack;
 };

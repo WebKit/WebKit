@@ -228,7 +228,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(const WTF::UUID& 
 
 void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* globalNotificationIDs)
 {
-    Vector<RefPtr<WebNotification>> closedNotifications;
+    Vector<Ref<WebNotification>> closedNotifications;
 
     size_t size = globalNotificationIDs->size();
     for (size_t i = 0; i < size; ++i) {
@@ -270,7 +270,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         }
 
         m_globalNotificationMap.remove(notification->identifier());
-        closedNotifications.append(WTF::move(notification));
+        closedNotifications.append(notification.releaseNonNull());
     }
 
     for (auto& notification : closedNotifications) {

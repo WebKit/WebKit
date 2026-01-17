@@ -110,10 +110,7 @@ void FEColorMatrix::calculateHueRotateComponents(std::span<float, 9> components,
 
 Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
 {
-    Vector<float> normalizedValues(values.size());
-    for (size_t i = 0; i < values.size(); ++i)
-        normalizedValues[i] = normalizedFloat(values[i]);
-    return normalizedValues;
+    return values.map([](float value) { return normalizedFloat(value); });
 }
 
 bool FEColorMatrix::resultIsAlphaImage(std::span<const Ref<FilterImage>>) const
