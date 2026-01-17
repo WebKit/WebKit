@@ -622,55 +622,26 @@ NS_ASSUME_NONNULL_END
 
 #endif // HAVE(AVKIT_CONTENT_SOURCE)
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#if !__has_include(<AVKit/AVLegibleMediaOptionsMenuController.h>)
-
-typedef NS_ENUM(NSInteger, AVLegibleMediaOptionsMenuType) {
-    AVLegibleMediaOptionsMenuTypeDefault,
-    AVLegibleMediaOptionsMenuTypeCaptionAppearance
-} API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
-
-typedef NS_ENUM(NSInteger, AVLegibleMediaOptionEnablementState) {
-    AVLegibleMediaOptionEnablementStateOff,
-    AVLegibleMediaOptionEnablementStateOn
-} API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
-
-NS_ASSUME_NONNULL_BEGIN
-
-@protocol AVLegibleMediaOptionsMenuControllerDelegate;
-
-API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos)
-@interface AVLegibleMediaOptionsMenuController : NSObject
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithPlayer:(nullable AVPlayer *)player NS_DESIGNATED_INITIALIZER;
-
-#if TARGET_OS_OSX && !TARGET_OS_MACCATALYST
-- (nullable NSMenu *)buildMenuOfType:(AVLegibleMediaOptionsMenuType)type;
+// CLEANUP(rdar://164667890)
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
+#if __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#import <AVKit/AVLegibleMediaOptionsMenuController_Private.h>
 #else
-- (nullable UIMenu *)buildMenuOfType:(AVLegibleMediaOptionsMenuType)type;
+// SDK does not have -menuWithContents:. Redeclare:
+#import <AVKit/AVLegibleMediaOptionsMenuController.h>
+typedef NS_OPTIONS(NSInteger, AVLegibleMediaOptionsMenuContents) {
+    AVLegibleMediaOptionsMenuContentsLegible = 1 << 0,
+    AVLegibleMediaOptionsMenuContentsCaptionAppearance = 1 << 1,
+    AVLegibleMediaOptionsMenuContentsAll = (AVLegibleMediaOptionsMenuContentsLegible | AVLegibleMediaOptionsMenuContentsCaptionAppearance)
+} API_AVAILABLE(ios(26.4), macos(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
+
+@interface AVLegibleMediaOptionsMenuController (MenuWithContents)
+#if TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+- (nullable NSMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
+#else
+- (nullable UIMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
 #endif
-
-- (void)updatePlayer:(nullable AVPlayer *)player;
-
-@property (nonatomic, weak) id<AVLegibleMediaOptionsMenuControllerDelegate> delegate;
-@property (nonatomic, readonly) AVLegibleMediaOptionEnablementState currentEnablementState;
-
 @end
 
-API_AVAILABLE(ios(26.4), macos(26.4), macCatalyst(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos)
-@protocol AVLegibleMediaOptionsMenuControllerDelegate <NSObject>
-@optional
-
-- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didUpdateEnablementState:(AVLegibleMediaOptionEnablementState)enablementState;
-- (void)legibleMenuController:(AVLegibleMediaOptionsMenuController *)menuController didRequestCaptionPreviewForProfileID:(NSString *)profileID;
-- (void)legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:(AVLegibleMediaOptionsMenuController *)menuController;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif
-
-#endif // USE(APPLE_INTERNAL_SDK)
+#endif // __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#endif // HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK)

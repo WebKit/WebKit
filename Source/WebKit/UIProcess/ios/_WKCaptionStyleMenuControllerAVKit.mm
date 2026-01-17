@@ -51,6 +51,12 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
 using namespace WebCore;
 using namespace WTF;
 
+// CLEANUP(rdar://164667890)
+@interface AVLegibleMediaOptionsMenuController (WebKitSPI)
+- (nullable UIMenu *)buildMenuOfType:(NSInteger)type;
+- (nullable UIMenu *)menuWithContents:(NSInteger)contents;
+@end
+
 @interface _WKCaptionStyleMenuControllerAVKit () <AVLegibleMediaOptionsMenuControllerDelegate> {
     RetainPtr<AVLegibleMediaOptionsMenuController> _menuController;
 }
@@ -75,7 +81,12 @@ using namespace WTF;
 
 - (void)rebuildMenu
 {
-    self.menu = [_menuController buildMenuOfType:AVLegibleMediaOptionsMenuTypeCaptionAppearance];
+    if ([_menuController respondsToSelector:@selector(menuWithContents:)])
+        self.menu = [_menuController menuWithContents:AVLegibleMediaOptionsMenuContentsCaptionAppearance];
+    else
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        self.menu = [_menuController buildMenuOfType:AVLegibleMediaOptionsMenuTypeCaptionAppearance];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #pragma mark - AVLegibleMediaOptionsMenuControllerDelegate

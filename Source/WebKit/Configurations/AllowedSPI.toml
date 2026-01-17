@@ -263,6 +263,7 @@ classes = [
 ]
 selectors = [
     { name = "buildMenuOfType:", class = "AVLegibleMediaOptionsMenuController" },
+    { name = "menuWithContents:", class = "AVLegibleMediaOptionsMenuController" },
 ]
 requires = ["HAVE_AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER"]
 
