@@ -128,6 +128,17 @@ struct VisiblePositionIndexRange {
 struct AXTreeData {
     String liveTree;
     String isolatedTree;
+    // Captures warnings about the tree state that could result in poor user-facing
+    // behavior. These are gathered while capturing the structural tree data stored
+    // in the other member variables.
+    Vector<String> warnings;
+
+    void dumpToStderr() const
+    {
+        for (const String& warning : warnings)
+            SAFE_FPRINTF(stderr, "%s\n", warning.utf8());
+        SAFE_FPRINTF(stderr, "==AX Trees==\n%s\n%s\n", liveTree.utf8(), isolatedTree.utf8());
+    }
 };
 
 // When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
@@ -136,6 +147,7 @@ struct AXDebugInfo {
     bool isAccessibilityThreadInitialized;
     String liveTree;
     String isolatedTree;
+    Vector<String> warnings;
     uint64_t remoteTokenHash;
     uint64_t webProcessLocalTokenHash;
 };
@@ -631,7 +643,7 @@ public:
 
     Document* document() const { return m_document.get(); }
     RefPtr<Document> protectedDocument() const;
-    constexpr const std::optional<FrameIdentifier>& frameID() const { return m_frameID; }
+    FrameIdentifier frameID() const { return m_frameID; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     inline void objectBecameIgnored(const AccessibilityObject&);
@@ -869,7 +881,7 @@ private:
     Ref<AccessibilityNodeObject> createFromNode(Node&);
 
     const WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    const std::optional<FrameIdentifier> m_frameID; // constant for object's lifetime.
+    const FrameIdentifier m_frameID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, Ref<AccessibilityObject>> m_objects;
 

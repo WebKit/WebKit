@@ -268,10 +268,7 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
 {
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 #ifndef NDEBUG
-    if (m_frameID)
-        AXLOG(makeString("frameID "_s, m_frameID->loggingString()));
-    else
-        AXLOG("No frameID.");
+    AXLOG(makeString("frameID "_s, m_frameID.loggingString()));
 #endif
     ASSERT(isMainThread());
 
@@ -323,11 +320,9 @@ AXObjectCache::~AXObjectCache()
     m_selectedTextRangeTimer.stop();
     m_updateTreeSnapshotTimer.stop();
 
-    if (m_frameID) {
-        if (auto tree = AXIsolatedTree::treeForFrameID(*m_frameID))
-            tree->setPageActivityState({ });
-        AXIsolatedTree::removeTreeForFrameID(*m_frameID);
-    }
+    if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID))
+        tree->setPageActivityState({ });
+    AXIsolatedTree::removeTreeForFrameID(m_frameID);
 #endif
 
     AXTreeStore::remove(m_id);
@@ -871,16 +866,13 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     ASSERT(isMainThread());
 
-    if (!m_frameID)
-        return nullptr;
-
     RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
     if (tree) {
         if (tree->treeID() == treeID())
             return tree;
 
         // The tree belongs to a different document (navigation occurred). Remove the old tree and create a new one.
-        AXIsolatedTree::removeTreeForFrameID(*m_frameID);
+        AXIsolatedTree::removeTreeForFrameID(m_frameID);
         tree = nullptr;
     }
 
@@ -909,10 +901,8 @@ void AXObjectCache::buildIsolatedTree()
 {
     m_buildIsolatedTreeTimer.stop();
 
-    if (!m_frameID)
-        return;
+    RefPtr tree = AXIsolatedTree::create(*this);
 
-    auto tree = AXIsolatedTree::create(*this);
     if (RefPtr webArea = rootWebArea()) {
         postPlatformNotification(*webArea, AXNotification::LoadComplete);
         postPlatformNotification(*webArea, AXNotification::FocusedUIElementChanged);
@@ -1237,13 +1227,11 @@ void AXObjectCache::updateLoadingProgress(double newProgressValue)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     ASSERT_WITH_MESSAGE(newProgressValue >= 0 && newProgressValue <= 1, "unexpected loading progress value: %f", newProgressValue);
-    if (m_frameID) {
-        // Sometimes the isolated tree hasn't been created by the time we get loading progress updates,
-        // so cache this value in the AXObjectCache too so we can give it to the tree upon creation.
-        m_loadingProgress = newProgressValue;
-        if (auto tree = AXIsolatedTree::treeForFrameID(*m_frameID))
-            tree->updateLoadingProgress(newProgressValue);
-    }
+    // Sometimes the isolated tree hasn't been created by the time we get loading progress updates,
+    // so cache this value in the AXObjectCache too so we can give it to the tree upon creation.
+    m_loadingProgress = newProgressValue;
+    if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID))
+        tree->updateLoadingProgress(newProgressValue);
 #else
     UNUSED_PARAM(newProgressValue);
 #endif
@@ -1897,8 +1885,6 @@ void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Documen
 
 void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState> newState)
 {
-    ASSERT(m_frameID);
-
     m_pageActivityState = newState;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (auto tree = AXIsolatedTree::treeForFrameID(m_frameID))
@@ -2047,7 +2033,7 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (!m_frameID || !isIsolatedTreeEnabled())
+    if (!isIsolatedTreeEnabled())
         return;
 
     if (RefPtr axScrollbar = get(const_cast<Scrollbar*>(&scrollbar)))
@@ -5062,12 +5048,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
 {
     AXTRACE(makeString("AXObjectCache::updateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
-    if (!m_frameID) {
-        AXLOG("No frameID.");
-        return;
-    }
-
-    auto tree = AXIsolatedTree::treeForFrameID(*m_frameID);
+    RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
     if (!tree) {
         AXLOG("No isolated tree for m_frameID");
         return;
@@ -5328,9 +5309,6 @@ void AXObjectCache::startUpdateTreeSnapshotTimer()
 
 void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
 {
-    if (!m_frameID)
-        return;
-
     if (std::optional axID = getAXID(const_cast<RenderObject&>(renderer))) {
         bool cachedNewRect = m_geometryManager->cacheRectIfNeeded(*axID, WTF::move(paintRect));
 
@@ -5351,8 +5329,6 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
 
 void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
 {
-    if (!m_frameID)
-        return;
     if (std::optional axID = m_widgetIdMapping.getOptional(const_cast<Widget&>(widget)))
         std::ignore = m_geometryManager->cacheRectIfNeeded(*axID, WTF::move(paintRect));
 }
@@ -5360,9 +5336,6 @@ void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
 void AXObjectCache::onPaint(const RenderText& renderText, size_t lineIndex)
 {
     ASSERT(isMainThread());
-
-    if (!m_frameID)
-        return;
 
     auto ensureResult = m_mostRecentlyPaintedText.ensure(renderText, [&] {
         return LineRange(lineIndex, lineIndex);
@@ -5520,17 +5493,36 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isIsolatedTreeEnabled()) {
+        // Verify the frame-loader client (typically the web page) actually has an isolated tree set.
+        if (!m_document)
+            data.warnings.append("Couldn't verify the frame-loader client had an isolated tree because the cache has no m_document."_s);
+        else if (!m_document->frame())
+            data.warnings.append("Couldn't verify the frame-loader client had an isolated tree because the cache's document had no frame."_s);
+        else if (!m_document->frame()->loader().client().isolatedTree())
+            data.warnings.append("The frame-loader client (typically the webpage object) had no isolated tree set!"_s);
+
         stream << "\nAXIsolatedTree:\n";
+
         RefPtr tree = getOrCreateIsolatedTree();
         if (RefPtr root = tree ? tree->rootNode() : nullptr) {
             OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role };
             if (additionalOptions)
                 options |= additionalOptions.value();
             streamSubtree(stream, root.releaseNonNull(), options);
+        } else if (tree) {
+            stream << "Isolated tree present, but there was no root!";
+
+            // There's no root — maybe there's a pending ID that can't be hydrated into an actual root object?
+            if (std::optional pendingRootID = tree->pendingRootNodeID())
+                stream << "Has pending root ID " << *pendingRootID << ". Object exists for that ID in the isolated tree: " << tree->unsafeHasObjectForID(*pendingRootID);
+            else
+                stream << "No pending root ID.";
         } else
             stream << "No isolated tree!";
+
         data.isolatedTree = stream.release();
-    }
+    } else
+        data.isolatedTree = "Isolated tree mode was off."_s;
 #endif
 
     return data;

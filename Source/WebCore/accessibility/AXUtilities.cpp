@@ -187,10 +187,8 @@ bool isRowGroup(Node* node)
 
 void dumpAccessibilityTreeToStderr(Document& document)
 {
-    if (CheckedPtr cache = document.existingAXObjectCache()) {
-        AXTreeData data = cache->treeData();
-        SAFE_FPRINTF(stderr, "==AX Trees==\n%s\n%s\n", data.liveTree.utf8(), data.isolatedTree.utf8());
-    }
+    if (CheckedPtr cache = document.existingAXObjectCache())
+        cache->treeData().dumpToStderr();
 }
 
 String roleToString(AccessibilityRole role)

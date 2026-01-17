@@ -29,6 +29,8 @@
 #import "APIInjectedBundlePageResourceLoadClient.h"
 #import "WebFrame.h"
 
+#import <WebCore/AXIsolatedTree.h>
+
 namespace WebKit {
 
 WebCore::IntPoint WebLocalFrameLoaderClient::accessibilityRemoteFrameOffset()
@@ -52,6 +54,12 @@ void WebLocalFrameLoaderClient::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& t
     ASSERT(isMainRunLoop());
     if (RefPtr webPage = m_frame->page())
         webPage->setIsolatedTree(WTF::move(tree));
+}
+
+RefPtr<AXIsolatedTree> WebLocalFrameLoaderClient::isolatedTree() const
+{
+    RefPtr webPage = m_frame->page();
+    return webPage ? webPage->isolatedTree() : nullptr;
 }
 #endif
 

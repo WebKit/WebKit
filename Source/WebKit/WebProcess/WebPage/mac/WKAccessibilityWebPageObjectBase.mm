@@ -218,6 +218,11 @@ namespace ax = WebCore::Accessibility;
     m_isolatedTree = tree.get();
 }
 
+- (RefPtr<WebCore::AXIsolatedTree>)isolatedTree
+{
+    return m_isolatedTree.get();
+}
+
 - (void)setWindow:(id)window
 {
     ASSERT(isMainRunLoop());

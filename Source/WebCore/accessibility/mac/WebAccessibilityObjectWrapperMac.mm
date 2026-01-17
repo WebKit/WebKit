@@ -2530,7 +2530,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return;
 
         AXTreeData data = cache->treeData({ { AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::RendererOrNode } }); // Can specify AXStreamOptions here if needed (e.g., TextRuns)
-        SAFE_FPRINTF(stderr, "==AX Trees==\n%s\n%s\n", data.liveTree.utf8(), data.isolatedTree.utf8());
+
+        data.dumpToStderr();
     });
 }
 

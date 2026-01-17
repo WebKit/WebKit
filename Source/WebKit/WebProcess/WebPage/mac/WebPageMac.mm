@@ -517,6 +517,11 @@ void WebPage::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
 {
     [m_mockAccessibilityElement setIsolatedTree:WTF::move(tree)];
 }
+
+RefPtr<AXIsolatedTree> WebPage::isolatedTree() const
+{
+    return [m_mockAccessibilityElement isolatedTree];
+}
 #endif
 
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)

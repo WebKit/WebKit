@@ -96,7 +96,6 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::createEmpty"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache.frameID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
@@ -158,7 +157,6 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::create"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache.frameID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
     if (RefPtr existingTree = isolatedTreeForID(tree->treeID()))
@@ -245,7 +243,7 @@ void AXIsolatedTree::storeTree(AXObjectCache& cache, const Ref<AXIsolatedTree>& 
     AXTreeStore::set(tree->treeID(), tree.ptr());
     tree->m_replacingTree = nullptr;
     Locker locker { s_storeLock };
-    treeFrameCache().set(*cache.frameID(), tree.copyRef());
+    treeFrameCache().set(cache.frameID(), tree.copyRef());
 }
 
 double AXIsolatedTree::loadingProgress()
@@ -1200,6 +1198,27 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
     AXLOG("focused node:");
     AXLOG(objectForID(focusedNodeID()));
     return objectForID(focusedNodeID());
+}
+
+bool AXIsolatedTree::unsafeHasObjectForID(AXID axID) const
+{
+    // "Unsafe" because we don't assert you're on the right thread (the accessibility thread).
+    // This intended for debugging purposes only, and will crash on non-Apple internal builds.
+    // Some tree-dump style methods operate on the main-thread, thus this method existing.
+    //
+    // If you have a local build of WebKit on a non-Apple internal build wish to debug using
+    // this method, change the assert at your own risk.
+    //
+    // This should never be called from a non-debugging context, without exception.
+    RELEASE_ASSERT(!isMainThread() || AXObjectCache::isAppleInternalInstall());
+
+    return m_readerThreadNodeMap.contains(axID);
+}
+
+std::optional<AXID> AXIsolatedTree::pendingRootNodeID()
+{
+    Locker locker { m_changeLogLock };
+    return m_pendingRootNodeID;
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::rootWebArea()

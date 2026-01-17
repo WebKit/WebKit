@@ -285,6 +285,7 @@ public:
     virtual IntPoint accessibilityRemoteFrameOffset() = 0;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) = 0;
+    virtual RefPtr<WebCore::AXIsolatedTree> isolatedTree() const = 0;
 #endif
     virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
     virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
