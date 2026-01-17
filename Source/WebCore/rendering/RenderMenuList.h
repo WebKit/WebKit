@@ -28,18 +28,12 @@
 #include "PopupMenuClient.h"
 #include "RenderFlexibleBox.h"
 
-#if PLATFORM(COCOA)
-#define POPUP_MENU_PULLS_DOWN 0
-#else
-#define POPUP_MENU_PULLS_DOWN 1
-#endif
-
 namespace WebCore {
 
 class HTMLSelectElement;
 class RenderText;
 
-class RenderMenuList final : public RenderFlexibleBox, private PopupMenuClient {
+class RenderMenuList final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderMenuList);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
@@ -49,17 +43,18 @@ public:
     HTMLSelectElement& selectElement() const;
 
     // CheckedPtr interface.
-    uint32_t checkedPtrCount() const final { return RenderFlexibleBox::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderFlexibleBox::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { RenderFlexibleBox::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { RenderFlexibleBox::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    uint32_t checkedPtrCount() const { return RenderFlexibleBox::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return RenderFlexibleBox::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { RenderFlexibleBox::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { RenderFlexibleBox::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
 #if !PLATFORM(IOS_FAMILY)
     bool popupIsVisible() const { return m_popupIsVisible; }
 #endif
     void showPopup();
     void hidePopup();
+    void popupDidHide();
 
     void setOptionsChanged(bool changed) { m_needsOptionsWidthUpdate = changed; }
 
@@ -75,6 +70,16 @@ public:
     void setInnerRenderer(RenderBlock&);
 
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
+
+    void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
+
+    PopupMenuStyle::Size popupMenuSize(const RenderStyle&);
+
+    LayoutUnit clientPaddingLeft() const;
+    LayoutUnit clientPaddingRight() const;
+
+    HostWindow* hostWindow() const;
+    void setTextFromOption(int optionIndex);
 
 private:
     void willBeDestroyed() override;
@@ -96,45 +101,12 @@ private:
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
 
-    // PopupMenuClient methods
-    void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
-    void selectionChanged(unsigned, bool) override { }
-    void selectionCleared() override { }
-    String itemText(unsigned listIndex) const override;
-    String itemLabel(unsigned listIndex) const override;
-    String itemIcon(unsigned listIndex) const override;
-    String itemToolTip(unsigned listIndex) const override;
-    String itemAccessibilityText(unsigned listIndex) const override;
-    bool itemIsEnabled(unsigned listIndex) const override;
-    PopupMenuStyle itemStyle(unsigned listIndex) const override;
-    PopupMenuStyle menuStyle() const override;
-    int clientInsetLeft() const override;
-    int clientInsetRight() const override;
-    LayoutUnit clientPaddingLeft() const override;
-    LayoutUnit clientPaddingRight() const override;
-    int listSize() const override;
-    int selectedIndex() const override;
-    void popupDidHide() override;
-    bool itemIsSeparator(unsigned listIndex) const override;
-    bool itemIsLabel(unsigned listIndex) const override;
-    bool itemIsSelected(unsigned listIndex) const override;
-    bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN; }
-    void setTextFromItem(unsigned listIndex) override;
-    void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) override;
-    bool multiple() const override;
-    FontSelector* fontSelector() const override;
-    HostWindow* hostWindow() const override;
-    Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) override;
-
     bool hasLineIfEmpty() const override { return true; }
 
     std::optional<LayoutUnit> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
 
-    void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
-
     void adjustInnerStyle();
     void setText(const String&);
-    void setTextFromOption(int optionIndex);
     void updateOptionsWidth();
 
     void didUpdateActiveOption(int optionIndex);

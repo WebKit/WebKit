@@ -32,7 +32,9 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
+#include "CSSFontSelector.h"
 #include "DOMFormData.h"
+#include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
 #include "ElementChildIteratorInlines.h"
@@ -58,6 +60,8 @@
 #include "NodeRareData.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderScrollbar.h"
+#include "RenderText.h"
 #include "RenderTheme.h"
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -201,18 +205,6 @@ bool HTMLSelectElement::valueMissing() const
 
     // If a non-placeholer label option is selected (firstSelectionIndex > 0), it's not value-missing.
     return firstSelectionIndex < 0 || (!firstSelectionIndex && hasPlaceholderLabelOption());
-}
-
-void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
-{
-    if (!multiple())
-        optionSelectedByUser(listToOptionIndex(listIndex), fireOnChangeNow, false);
-    else {
-        updateSelectedState(listIndex, allowMultiplySelections, shift);
-        updateValidity();
-        if (fireOnChangeNow)
-            listBoxOnChange();
-    }
 }
 
 bool HTMLSelectElement::usesMenuList() const
@@ -1771,6 +1763,234 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
 #endif
 
     return { };
+}
+
+// PopupMenuClient methods
+void HTMLSelectElement::valueChanged(unsigned listIndex, bool fireOnChange)
+{
+    // Check to ensure a page navigation has not occurred while
+    // the popup was up.
+    RefPtr frame = document().frame();
+    if (!frame || &document() != frame->document())
+        return;
+
+    optionSelectedByUser(listToOptionIndex(listIndex), fireOnChange);
+}
+
+String HTMLSelectElement::itemText(unsigned listIndex) const
+{
+    auto& listItems = this->listItems();
+    if (listIndex >= listItems.size())
+        return String();
+
+    String itemString;
+    if (RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(listItems[listIndex].get()))
+        itemString = optGroupElement->groupLabelText();
+    if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(listItems[listIndex].get()))
+        itemString = optionElement->textIndentedToRespectGroupLabel();
+
+    if (CheckedPtr renderer = this->renderer())
+        return applyTextTransform(renderer->checkedStyle().get(), itemString);
+    return itemString;
+}
+
+String HTMLSelectElement::itemLabel(unsigned) const
+{
+    return String();
+}
+
+String HTMLSelectElement::itemIcon(unsigned) const
+{
+    return String();
+}
+
+String HTMLSelectElement::itemToolTip(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    if (listIndex >= listItems.size())
+        return String();
+
+    RefPtr element = listItems[listIndex].get();
+    return element ? element->title() : String();
+}
+
+String HTMLSelectElement::itemAccessibilityText(unsigned listIndex) const
+{
+    // Allow the accessible name be changed if necessary.
+    const auto& listItems = this->listItems();
+    if (listIndex >= listItems.size())
+        return String();
+    RefPtr element = listItems[listIndex].get();
+    return element->attributeWithoutSynchronization(aria_labelAttr);
+}
+
+bool HTMLSelectElement::itemIsEnabled(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    if (listIndex >= listItems.size())
+        return false;
+
+    RefPtr element = listItems[listIndex].get();
+    if (!is<HTMLOptionElement>(*element))
+        return false;
+
+    if (RefPtr parentElement = element->parentElement()) {
+        if (is<HTMLOptGroupElement>(*parentElement) && parentElement->isDisabledFormControl())
+            return false;
+    }
+
+    return !element->isDisabledFormControl();
+}
+
+PopupMenuStyle HTMLSelectElement::itemStyle(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    if (!listItems.size())
+        return menuStyle();
+    if (listIndex >= listItems.size())
+        listIndex = 0;
+    RefPtr element = listItems[listIndex].get();
+
+    Color itemBackgroundColor;
+    bool itemHasCustomBackgroundColor = false;
+    if (CheckedPtr renderer = this->renderer())
+        downcast<RenderMenuList>(*renderer).getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
+
+    CheckedPtr style = element->computedStyleForEditability();
+    if (!style)
+        return menuStyle();
+
+    return PopupMenuStyle(
+        style->visitedDependentColorApplyingColorFilter(),
+        itemBackgroundColor,
+        style->fontCascade(),
+        element->getAttribute(langAttr),
+        style->visibility() == Visibility::Visible,
+        style->display() == DisplayType::None,
+        true,
+        style->writingMode().bidiDirection(),
+        isOverride(style->unicodeBidi()),
+        itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor
+    );
+}
+
+PopupMenuStyle HTMLSelectElement::menuStyle() const
+{
+    auto defaultStyle = RenderStyle::create();
+    CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+    CheckedRef outerStyle = renderer ? renderer->style() : defaultStyle;
+    CheckedRef<const RenderStyle> innerStyle = (renderer && renderer->innerRenderer()) ? renderer->innerRenderer()->style() : outerStyle.get();
+    return PopupMenuStyle(
+        innerStyle->visitedDependentColorApplyingColorFilter(),
+        innerStyle->visitedDependentBackgroundColorApplyingColorFilter(),
+        innerStyle->fontCascade(),
+        nullString(),
+        innerStyle->usedVisibility() == Visibility::Visible,
+        innerStyle->display() == DisplayType::None,
+        outerStyle->hasUsedAppearance() && outerStyle->usedAppearance() == StyleAppearance::Menulist,
+        outerStyle->writingMode().bidiDirection(),
+        isOverride(outerStyle->unicodeBidi()),
+        PopupMenuStyle::DefaultBackgroundColor,
+        PopupMenuStyle::SelectPopup,
+        renderer ? renderer->popupMenuSize(innerStyle) : PopupMenuStyle::Size::Normal
+    );
+}
+
+int HTMLSelectElement::clientInsetLeft() const
+{
+    return 0;
+}
+
+int HTMLSelectElement::clientInsetRight() const
+{
+    return 0;
+}
+
+LayoutUnit HTMLSelectElement::clientPaddingLeft() const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+    return renderer ? renderer->clientPaddingLeft() : 0_lu;
+}
+
+LayoutUnit HTMLSelectElement::clientPaddingRight() const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+    return renderer ? renderer->clientPaddingRight() : 0_lu;
+}
+
+int HTMLSelectElement::listSize() const
+{
+    return listItems().size();
+}
+
+int HTMLSelectElement::popupSelectedIndex() const
+{
+    return optionToListIndex(selectedIndex());
+}
+
+void HTMLSelectElement::popupDidHide()
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer()))
+        renderer->popupDidHide();
+}
+
+bool HTMLSelectElement::itemIsSeparator(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    return listIndex < listItems.size() && listItems[listIndex]->hasTagName(hrTag);
+}
+
+bool HTMLSelectElement::itemIsLabel(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    return listIndex < listItems.size() && is<HTMLOptGroupElement>(*listItems[listIndex]);
+}
+
+bool HTMLSelectElement::itemIsSelected(unsigned listIndex) const
+{
+    const auto& listItems = this->listItems();
+    if (listIndex >= listItems.size())
+        return false;
+    RefPtr option = dynamicDowncast<HTMLOptionElement>(listItems[listIndex].get());
+    return option && option->selected();
+}
+
+void HTMLSelectElement::setTextFromItem(unsigned listIndex)
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer()))
+        renderer->setTextFromOption(listToOptionIndex(listIndex));
+}
+
+void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
+{
+    if (!popupMultiple())
+        optionSelectedByUser(listToOptionIndex(listIndex), fireOnChangeNow, false);
+    else {
+        updateSelectedState(listIndex, allowMultiplySelections, shift);
+        updateValidity();
+        if (fireOnChangeNow)
+            listBoxOnChange();
+    }
+}
+
+FontSelector* HTMLSelectElement::fontSelector() const
+{
+    return &protectedDocument()->fontSelector();
+}
+
+HostWindow* HTMLSelectElement::hostWindow() const
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer()))
+        return renderer->hostWindow();
+    return nullptr;
+}
+
+Ref<Scrollbar> HTMLSelectElement::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
+{
+    CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+    if (renderer && renderer->style().usesLegacyScrollbarStyle())
+        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, this);
+    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
 }
 
 } // namespace

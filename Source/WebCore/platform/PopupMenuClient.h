@@ -26,6 +26,7 @@
 #include <WebCore/PopupMenuStyle.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class HostWindow;
 class Scrollbar;
 class ScrollableArea;
 
-class PopupMenuClient : public AbstractCanMakeCheckedPtr {
+class PopupMenuClient : public AbstractCanMakeCheckedPtr  {
 public:
     virtual ~PopupMenuClient() = default;
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
@@ -56,7 +57,7 @@ public:
     virtual LayoutUnit clientPaddingLeft() const = 0;
     virtual LayoutUnit clientPaddingRight() const = 0;
     virtual int listSize() const = 0;
-    virtual int selectedIndex() const = 0;
+    virtual int popupSelectedIndex() const = 0;
     virtual void popupDidHide() = 0;
     virtual bool itemIsSeparator(unsigned listIndex) const = 0;
     virtual bool itemIsLabel(unsigned listIndex) const = 0;
@@ -65,7 +66,7 @@ public:
     virtual void setTextFromItem(unsigned listIndex) = 0;
 
     virtual void listBoxSelectItem(int /*listIndex*/, bool /*allowMultiplySelections*/, bool /*shift*/, bool /*fireOnChangeNow*/ = true) { ASSERT_NOT_REACHED(); }
-    virtual bool multiple() const
+    virtual bool popupMultiple() const
     {
         ASSERT_NOT_REACHED();
         return false;

@@ -77,7 +77,7 @@ private:
     LayoutUnit clientPaddingLeft() const override;
     LayoutUnit clientPaddingRight() const override;
     int listSize() const override;
-    int selectedIndex() const override;
+    int popupSelectedIndex() const override;
     void popupDidHide() override;
     bool itemIsSeparator(unsigned listIndex) const override;
     bool itemIsLabel(unsigned listIndex) const override;

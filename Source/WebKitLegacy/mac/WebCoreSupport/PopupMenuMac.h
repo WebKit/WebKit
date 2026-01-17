@@ -21,13 +21,10 @@
 #define PopupMenuMac_h
 
 #include <WebCore/PopupMenu.h>
+#include <WebCore/PopupMenuClient.h>
 #include <wtf/RetainPtr.h>
 
 @class NSPopUpButtonCell;
-
-namespace WebCore {
-class PopupMenuClient;
-}
 
 class PopupMenuMac : public WebCore::PopupMenu {
 public:
@@ -42,8 +39,9 @@ public:
 private:
     void clear();
     void populate();
+    CheckedPtr<WebCore::PopupMenuClient> checkedClient() const { return m_client; }
 
-    WebCore::PopupMenuClient* m_client;
+    CheckedPtr<WebCore::PopupMenuClient> m_client;
     RetainPtr<NSPopUpButtonCell> m_popup;
 };
 

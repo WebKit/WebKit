@@ -346,7 +346,7 @@ int RenderSearchField::listSize() const
     return m_recentSearches.size() + 3;
 }
 
-int RenderSearchField::selectedIndex() const
+int RenderSearchField::popupSelectedIndex() const
 {
     return -1;
 }

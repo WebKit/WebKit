@@ -57,31 +57,31 @@ void PopupMenuMac::clear()
 
 void PopupMenuMac::populate()
 {
+    ASSERT(m_client);
     if (m_popup)
         clear();
     else {
-        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:!m_client->shouldPopOver()]);
+        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:!checkedClient()->shouldPopOver()]);
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
     }
     
     // For pullDown menus the first item is hidden.
-    if (!m_client->shouldPopOver())
+    if (m_client && !checkedClient()->shouldPopOver())
         [m_popup addItemWithTitle:@""];
 
-    TextDirection menuTextDirection = m_client->menuStyle().textDirection();
+    TextDirection menuTextDirection = checkedClient()->menuStyle().textDirection();
     [m_popup setUserInterfaceLayoutDirection:menuTextDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
-    ASSERT(m_client);
-    int size = m_client->listSize();
+    int size = checkedClient()->listSize();
 
     for (int i = 0; i < size; i++) {
-        if (m_client->itemIsSeparator(i)) {
+        if (checkedClient()->itemIsSeparator(i)) {
             [[m_popup menu] addItem:[NSMenuItem separatorItem]];
             continue;
         }
 
-        PopupMenuStyle style = m_client->itemStyle(i);
+        PopupMenuStyle style = checkedClient()->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
         if (style.font() != FontCascade()) {
             RetainPtr<CTFontRef> font = style.font().primaryFont()->ctFont();
@@ -106,7 +106,7 @@ void PopupMenuMac::populate()
 
         // FIXME: Add support for styling the foreground and background colors.
         // FIXME: Find a way to customize text color when an item is highlighted.
-        RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:m_client->itemText(i).createNSString().get() attributes:attributes.get()]);
+        RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:checkedClient()->itemText(i).createNSString().get() attributes:attributes.get()]);
 
         [m_popup addItemWithTitle:@""];
         NSMenuItem *menuItem = [m_popup lastItem];
@@ -114,13 +114,13 @@ void PopupMenuMac::populate()
         // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
         // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
         [menuItem setTitle:[[string string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-        [menuItem setEnabled:m_client->itemIsEnabled(i)];
-        [menuItem setToolTip:m_client->itemToolTip(i).createNSString().get()];
+        [menuItem setEnabled:checkedClient()->itemIsEnabled(i)];
+        [menuItem setToolTip:checkedClient()->itemToolTip(i).createNSString().get()];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // Allow the accessible text of the item to be overridden if necessary.
         if (AXObjectCache::accessibilityEnabled()) {
-            RetainPtr accessibilityOverride = m_client->itemAccessibilityText(i).createNSString();
+            RetainPtr accessibilityOverride = checkedClient()->itemAccessibilityText(i).createNSString();
             if ([accessibilityOverride length])
                 [menuItem accessibilitySetOverrideValue:accessibilityOverride.get() forAttribute:NSAccessibilityDescriptionAttribute];
         }
@@ -134,18 +134,18 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
     int numItems = [m_popup numberOfItems];
     if (numItems <= 0) {
         if (m_client)
-            m_client->popupDidHide();
+            checkedClient()->popupDidHide();
         return;
     }
     ASSERT(numItems > selectedIndex);
 
     // Workaround for crazy bug where a selectedIndex of -1 for a menu with only 1 item will cause a blank menu.
-    if (selectedIndex == -1 && numItems == 2 && !m_client->shouldPopOver() && ![[m_popup itemAtIndex:1] isEnabled])
+    if (selectedIndex == -1 && numItems == 2 && !checkedClient()->shouldPopOver() && ![[m_popup itemAtIndex:1] isEnabled])
         selectedIndex = 0;
 
     NSView* view = frameView.documentView();
 
-    TextDirection textDirection = m_client->menuStyle().textDirection();
+    TextDirection textDirection = checkedClient()->menuStyle().textDirection();
 
     [m_popup attachPopUpWithFrame:r inView:view];
     [m_popup selectItemAtIndex:selectedIndex];
@@ -155,13 +155,13 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
     [menu setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSPoint location;
-    CTFontRef font = m_client->menuStyle().font().primaryFont()->ctFont();
+    CTFontRef font = checkedClient()->menuStyle().font().primaryFont()->ctFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -13;
     const int popUnderHorizontalAdjust = 6;
     const int popUnderVerticalAdjust = 6;
-    if (m_client->shouldPopOver()) {
+    if (checkedClient()->shouldPopOver()) {
         NSRect titleFrame = [m_popup titleRectForBounds:r];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = r;
@@ -200,7 +200,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
     }
 
     NSControlSize controlSize;
-    switch (m_client->menuStyle().menuSize()) {
+    switch (checkedClient()->menuStyle().menuSize()) {
     case PopupMenuStyle::Size::Normal:
         controlSize = NSControlSizeRegular;
         break;
@@ -215,7 +215,7 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
         break;
     }
 
-    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, (__bridge NSFont *)font, controlSize, !m_client->menuStyle().hasDefaultAppearance());
+    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), selectedIndex, (__bridge NSFont *)font, controlSize, !checkedClient()->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];
@@ -224,14 +224,14 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView& frameView, int selecte
         return;
 
     int newIndex = [m_popup indexOfSelectedItem];
-    m_client->popupDidHide();
+    checkedClient()->popupDidHide();
 
     // Adjust newIndex for hidden first item.
-    if (!m_client->shouldPopOver())
+    if (!checkedClient()->shouldPopOver())
         newIndex--;
 
     if (selectedIndex != newIndex && newIndex >= 0)
-        m_client->valueChanged(newIndex);
+        checkedClient()->valueChanged(newIndex);
 
     // Give the frame a chance to fix up its event state, since the popup eats all the
     // events during tracking.
@@ -242,7 +242,7 @@ void PopupMenuMac::hide()
 {
     [[m_popup menu] cancelTracking];
     if (m_client)
-        m_client->popupDidHide();
+        checkedClient()->popupDidHide();
 }
 
 void PopupMenuMac::updateFromElement()
@@ -251,5 +251,5 @@ void PopupMenuMac::updateFromElement()
 
 void PopupMenuMac::disconnectClient()
 {
-    m_client = 0;
+    m_client = nullptr;
 }

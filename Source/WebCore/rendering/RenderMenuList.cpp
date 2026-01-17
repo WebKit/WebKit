@@ -119,6 +119,17 @@ void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)
     adjustInnerStyle();
 }
 
+PopupMenuStyle::Size RenderMenuList::popupMenuSize(const RenderStyle& style)
+{
+    auto bounds = absoluteBoundingBoxRectIgnoringTransforms();
+    return theme().popupMenuSize(style, bounds);
+}
+
+HostWindow* RenderMenuList::hostWindow() const
+{
+    return RenderFlexibleBox::hostWindow();
+}
+
 void RenderMenuList::adjustInnerStyle()
 {
     auto& innerStyle = m_innerBlock->mutableStyle();
@@ -152,7 +163,7 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setTextAlign(writingMode().isBidiLTR() ? Style::TextAlign::Left : Style::TextAlign::Right);
         TextDirection direction;
         UnicodeBidi unicodeBidi;
-        if (multiple() && selectedOptionCount(*this) != 1) {
+        if (selectElement().multiple() && selectedOptionCount(*this) != 1) {
             direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? TextDirection::RTL : TextDirection::LTR;
             unicodeBidi = UnicodeBidi::Normal;
         } else if (m_optionStyle) {
@@ -273,7 +284,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (multiple()) {
+    if (selectElement().popupMultiple()) {
         size_t count = selectedOptionCount(*this);
         if (count != 1)
             text = htmlSelectMultipleItems(count);
@@ -378,7 +389,7 @@ void RenderMenuList::showPopup()
 
     ASSERT(m_innerBlock);
     if (!m_popup)
-        m_popup = document().page()->chrome().createPopupMenu(*this);
+        m_popup = document().page()->chrome().createPopupMenu(selectElement());
     m_popupIsVisible = true;
 
     // Compute the top left taking transforms into account, but use
@@ -396,26 +407,6 @@ void RenderMenuList::hidePopup()
     if (m_popup)
         m_popup->hide();
 #endif
-}
-
-void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
-{
-    // Check to ensure a page navigation has not occurred while
-    // the popup was up.
-    if (&document() != document().frame()->document())
-        return;
-
-    selectElement().optionSelectedByUser(selectElement().listToOptionIndex(listIndex), fireOnChange);
-}
-
-void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
-{
-    selectElement().listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
-}
-
-bool RenderMenuList::multiple() const
-{
-    return selectElement().multiple();
 }
 
 void RenderMenuList::didSetSelectedIndex(int listIndex)
@@ -441,100 +432,6 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
         return;
 
     axCache->onSelectedOptionChanged(*this, optionIndex);
-}
-
-String RenderMenuList::itemText(unsigned listIndex) const
-{
-    auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size())
-        return String();
-
-    String itemString;
-    auto& element = *listItems[listIndex];
-    if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(element))
-        itemString = optGroup->groupLabelText();
-    else if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
-        itemString = option->textIndentedToRespectGroupLabel();
-
-    return applyTextTransform(style(), itemString);
-}
-
-String RenderMenuList::itemLabel(unsigned) const
-{
-    return String();
-}
-
-String RenderMenuList::itemIcon(unsigned) const
-{
-    return String();
-}
-
-String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
-{
-    // Allow the accessible name be changed if necessary.
-    const auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size())
-        return String();
-    return listItems[listIndex]->attributeWithoutSynchronization(aria_labelAttr);
-}
-    
-String RenderMenuList::itemToolTip(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size())
-        return String();
-    return listItems[listIndex]->title();
-}
-
-bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size())
-        return false;
-    HTMLElement* element = listItems[listIndex].get();
-    if (!is<HTMLOptionElement>(*element))
-        return false;
-
-    bool groupEnabled = true;
-    if (Element* parentElement = element->parentElement()) {
-        if (is<HTMLOptGroupElement>(*parentElement))
-            groupEnabled = !parentElement->isDisabledFormControl();
-    }
-    if (!groupEnabled)
-        return false;
-
-    return !element->isDisabledFormControl();
-}
-
-PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    if (!listItems.size())
-        return menuStyle();
-    if (listIndex >= listItems.size())
-        listIndex = 0;
-    HTMLElement* element = listItems[listIndex].get();
-
-    Color itemBackgroundColor;
-    bool itemHasCustomBackgroundColor;
-    getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
-
-    auto* style = element->computedStyleForEditability();
-    if (!style)
-        return menuStyle();
-
-    return PopupMenuStyle(
-        style->visitedDependentColorApplyingColorFilter(),
-        itemBackgroundColor,
-        style->fontCascade(),
-        element->getAttribute(langAttr),
-        style->visibility() == Visibility::Visible,
-        style->display() == DisplayType::None,
-        true,
-        style->writingMode().bidiDirection(),
-        isOverride(style->unicodeBidi()),
-        itemHasCustomBackgroundColor ? PopupMenuStyle::CustomBackgroundColor : PopupMenuStyle::DefaultBackgroundColor
-    );
 }
 
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
@@ -569,49 +466,6 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     itemBackgroundColor = blendSourceOver(Color::white, backgroundColor);
 }
 
-PopupMenuStyle RenderMenuList::menuStyle() const
-{
-    auto& styleToUse = m_innerBlock ? m_innerBlock->style() : style();
-    auto absBounds = absoluteBoundingBoxRectIgnoringTransforms();
-    return PopupMenuStyle(
-        styleToUse.visitedDependentColorApplyingColorFilter(),
-        styleToUse.visitedDependentBackgroundColorApplyingColorFilter(),
-        styleToUse.fontCascade(),
-        nullString(),
-        styleToUse.usedVisibility() == Visibility::Visible,
-        styleToUse.display() == DisplayType::None,
-        style().hasUsedAppearance() && style().usedAppearance() == StyleAppearance::Menulist,
-        style().writingMode().bidiDirection(),
-        isOverride(style().unicodeBidi()),
-        PopupMenuStyle::DefaultBackgroundColor,
-        PopupMenuStyle::SelectPopup,
-        theme().popupMenuSize(styleToUse, absBounds)
-    );
-}
-
-HostWindow* RenderMenuList::hostWindow() const
-{
-    return RenderFlexibleBox::hostWindow();
-}
-
-Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
-{
-    bool usesLegacyScrollbarStyle = style().usesLegacyScrollbarStyle();
-    if (usesLegacyScrollbarStyle)
-        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
-    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
-}
-
-int RenderMenuList::clientInsetLeft() const
-{
-    return 0;
-}
-
-int RenderMenuList::clientInsetRight() const
-{
-    return 0;
-}
-
 const int endOfLinePadding = 2;
 
 LayoutUnit RenderMenuList::clientPaddingLeft() const
@@ -636,53 +490,12 @@ LayoutUnit RenderMenuList::clientPaddingRight() const
     return paddingRight() + m_innerBlock->paddingRight();
 }
 
-int RenderMenuList::listSize() const
-{
-    return selectElement().listItems().size();
-}
-
-int RenderMenuList::selectedIndex() const
-{
-    return selectElement().optionToListIndex(selectElement().selectedIndex());
-}
-
 void RenderMenuList::popupDidHide()
 {
 #if !PLATFORM(IOS_FAMILY)
     // PopupMenuMac::show in WebKitLegacy can call this callback even when popup had already been dismissed.
     m_popupIsVisible = false;
 #endif
-}
-
-bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    return listIndex < listItems.size() && listItems[listIndex]->hasTagName(hrTag);
-}
-
-bool RenderMenuList::itemIsLabel(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    return listIndex < listItems.size() && is<HTMLOptGroupElement>(*listItems[listIndex]);
-}
-
-bool RenderMenuList::itemIsSelected(unsigned listIndex) const
-{
-    const auto& listItems = selectElement().listItems();
-    if (listIndex >= listItems.size())
-        return false;
-    auto* option = dynamicDowncast<HTMLOptionElement>(listItems[listIndex].get());
-    return option && option->selected();
-}
-
-void RenderMenuList::setTextFromItem(unsigned listIndex)
-{
-    setTextFromOption(selectElement().listToOptionIndex(listIndex));
-}
-
-FontSelector* RenderMenuList::fontSelector() const
-{
-    return &document().fontSelector();
 }
 
 #if PLATFORM(IOS_FAMILY)
