@@ -85,9 +85,9 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
     return MatchBasedOnRuleHash::None;
 }
 
-static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* selector)
+static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& selector)
 {
-    for (const CSSSelector* component = selector; component; component = component->precedingInComplexSelector()) {
+    for (const CSSSelector* component = &selector; component; component = component->precedingInComplexSelector()) {
 #if ENABLE(VIDEO)
         // Property allow-list for `::cue`:
         if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::UserAgentPart && component->value() == UserAgentParts::cue())
@@ -102,9 +102,9 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
         if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::Marker)
             return propertyAllowlistForPseudoElement(PseudoElementType::Marker);
 
-        if (const auto* selectorList = selector->selectorList()) {
+        if (const auto* selectorList = selector.selectorList()) {
             for (auto& subSelector : *selectorList) {
-                auto allowlistType = determinePropertyAllowlist(&subSelector);
+                auto allowlistType = determinePropertyAllowlist(subSelector);
                 if (allowlistType != PropertyAllowlist::None)
                     return allowlistType;
             }
@@ -116,13 +116,13 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<UsedRuleType> usedRuleTypes)
     : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
-    , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(*selector())))
-    , m_canMatchPseudoElement(complexSelectorCanMatchPseudoElement(*selector()))
+    , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(selector())))
+    , m_canMatchPseudoElement(complexSelectorCanMatchPseudoElement(selector()))
     , m_propertyAllowlist(enumToUnderlyingType(determinePropertyAllowlist(selector())))
     , m_usedRuleTypes(usedRuleTypes.toRaw())
     , m_isEnabled(true)
     , m_position(position)
-    , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
+    , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(selector()))
 {
     ASSERT(m_position == position);
     ASSERT(this->selectorIndex() == selectorIndex);

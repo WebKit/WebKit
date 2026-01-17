@@ -162,13 +162,13 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     const auto& scopeRules = scopeRulesFor(ruleData);
 
     auto computeLinkMatchType = [&] {
-        ASSERT(ruleData.selector());
+        auto& selector = ruleData.selector();
         // General case: no @scope rule or current rule selector is not :scope.
-        if (scopeRules.isEmpty() || !ruleData.selector()->hasScope())
-            return SelectorChecker::determineLinkMatchType(*ruleData.selector());
+        if (scopeRules.isEmpty() || !selector.hasScope())
+            return SelectorChecker::determineLinkMatchType(selector);
         // When current rule is :scope, we need to take into account the @scope selectors to determine the link match type.
         Ref scopeRule = scopeRules.last();
-        return SelectorChecker::determineLinkMatchType(*ruleData.selector(), scopeRule.ptr());
+        return SelectorChecker::determineLinkMatchType(selector, scopeRule.ptr());
     };
     ruleData.setLinkMatchType(computeLinkMatchType());
 
@@ -192,7 +192,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 #if ENABLE(VIDEO)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
-    const CSSSelector* selector = ruleData.selector();
+    const CSSSelector* selector = &ruleData.selector();
     do {
         switch (selector->match()) {
         case CSSSelector::Match::Id:
@@ -297,7 +297,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     } while (selector);
 
     if (!m_hasHostPseudoClassRulesMatchingInShadowTree)
-        m_hasHostPseudoClassRulesMatchingInShadowTree = isHostSelectorMatchingInShadowTree(*ruleData.selector());
+        m_hasHostPseudoClassRulesMatchingInShadowTree = isHostSelectorMatchingInShadowTree(ruleData.selector());
 
 #if ENABLE(VIDEO)
     if (cuePseudoElementSelector) {
@@ -617,7 +617,7 @@ String RuleSet::selectorsForDebugging() const
     ts << "RuleSet size " << ruleCount();
     ts.nextLine();
     traverseRuleDatas([&](auto& ruleData) {
-        ts << ruleData.selector()->selectorText();
+        ts << ruleData.selector().selectorText();
         ts.nextLine();
     });
     return ts.release();

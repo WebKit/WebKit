@@ -52,7 +52,7 @@ public:
 
     const StyleRule& styleRule() const { return *m_styleRuleWithSelectorIndex.pointer(); }
 
-    const CSSSelector* selector() const
+    const CSSSelector& selector() const
     { 
         return styleRule().selectorList().selectorAt(selectorIndex());
     }

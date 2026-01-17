@@ -401,8 +401,8 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         const auto& selectorList = styleRule->selectorList();
         if (selectorList.size() != 1)
             return true;
-        auto selector = selectorList.selectorAt(0);
-        auto selectorText = selector->selectorText();
+        auto& selector = selectorList.selectorAt(0);
+        auto selectorText = selector.selectorText();
         
         bool isCue = selectorText == "::cue"_s || selectorText.startsWith("::cue("_s);
         if (!isCue)

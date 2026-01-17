@@ -52,19 +52,8 @@ public:
 
     bool isEmpty() const { return m_selectorArray.isEmpty(); }
     const CSSSelector& first() const LIFETIME_BOUND { return m_selectorArray[0]; }
-    const CSSSelector* selectorAt(size_t index) const LIFETIME_BOUND
-    {
-        return &m_selectorArray[index];
-    }
-
-    size_t indexOfNextSelectorAfter(size_t index) const
-    {
-        const_iterator current = selectorAt(index);
-        ++current;
-        if (current == end())
-            return notFound;
-        return &*current - m_selectorArray.begin();
-    }
+    const CSSSelector& selectorAt(size_t index) const LIFETIME_BOUND { return m_selectorArray[index]; }
+    size_t indexOfSelector(const CSSSelector& selector) const { return m_selectorArray.offsetFromStart(&selector); }
 
     struct const_iterator {
         friend class CSSSelectorList;

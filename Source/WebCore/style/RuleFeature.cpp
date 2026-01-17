@@ -129,7 +129,7 @@ RuleAndSelector::RuleAndSelector(const RuleData& ruleData)
 
 const CSSSelector& RuleAndSelector::selector() const
 {
-    return *styleRule->selectorList().selectorAt(selectorIndex);
+    return styleRule->selectorList().selectorAt(selectorIndex);
 }
 
 RuleFeature::RuleFeature(const RuleData& ruleData, MatchElement matchElement, IsNegation isNegation)
@@ -444,9 +444,10 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
 {
     SelectorFeatures selectorFeatures;
 
-    bool firstSeen = collectionContext.selectorDeduplicationSet.add({ *ruleData.selector() }).isNewEntry;
+    auto& selector = ruleData.selector();
+    bool firstSeen = collectionContext.selectorDeduplicationSet.add({ selector }).isNewEntry;
     if (firstSeen)
-        recursivelyCollectFeaturesFromSelector(selectorFeatures, *ruleData.selector());
+        recursivelyCollectFeaturesFromSelector(selectorFeatures, selector);
 
     if (ruleData.canMatchPseudoElement())
         collectPseudoElementFeatures(ruleData);
@@ -560,7 +561,7 @@ void RuleFeatureSet::collectPseudoElementFeatures(const RuleData& ruleData)
 {
     ASSERT(ruleData.canMatchPseudoElement());
 
-    auto& selector = *ruleData.selector();
+    auto& selector = ruleData.selector();
     for (auto* simpleSelector = &selector; simpleSelector; simpleSelector = simpleSelector->precedingInCompound()) {
         if (simpleSelector->match() != CSSSelector::Match::PseudoElement)
             continue;

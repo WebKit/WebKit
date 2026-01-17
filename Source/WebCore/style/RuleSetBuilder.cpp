@@ -324,11 +324,10 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
     // It should not happen here.
     ASSERT(!selectorList.isEmpty());
     unsigned selectorListIndex = 0;
-    for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
-        RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount(), m_usedRuleTypes);
+    for (auto& selector : selectorList) {
+        RuleData ruleData(rule, selectorList.indexOfSelector(selector), selectorListIndex++, m_ruleSet->ruleCount(), m_usedRuleTypes);
         m_mediaQueryCollector.addRuleIfNeeded(ruleData);
         m_ruleSet->addRule(WTF::move(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier, &m_featureCollectionContext);
-        ++selectorListIndex;
     }
 }
 

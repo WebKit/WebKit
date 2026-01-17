@@ -207,6 +207,13 @@ public:
     size_t reverseFind(const auto&) const;
     size_t reverseFindIf(NOESCAPE const Invocable<bool(const T&)> auto&) const;
 
+    size_t offsetFromStart(const T* value) const
+    {
+        ASSERT(value >= std::to_address(begin()));
+        ASSERT(value < std::to_address(end()));
+        return value - std::to_address(begin());
+    }
+
     void swap(Self& other)
     {
         using std::swap;
