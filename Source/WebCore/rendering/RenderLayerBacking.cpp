@@ -4510,6 +4510,8 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     ASSERT(target);
 
     bool hasInterpolatingEffect = false;
+    bool hasEffectAffectingFilter = false;
+    bool hasEffectAffectingBackdropFilter = false;
     auto borderBoxRect = snappedIntRect(m_owningLayer.rendererBorderBoxRect());
 
     auto baseValues = [&]() -> AcceleratedEffectValues {
@@ -4540,6 +4542,10 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
                     continue;
                 if (!hasInterpolatingEffect && effect->isRunningAccelerated())
                     hasInterpolatingEffect = true;
+                if (!hasEffectAffectingFilter && acceleratedEffect->animatedProperties().contains(AcceleratedEffectProperty::Filter))
+                    hasEffectAffectingFilter = true;
+                if (!hasEffectAffectingBackdropFilter && acceleratedEffect->animatedProperties().contains(AcceleratedEffectProperty::BackdropFilter))
+                    hasEffectAffectingBackdropFilter = true;
                 effectTimelines.add(Ref { *acceleratedEffect->timeline() });
                 weakAcceleratedEffects.add(acceleratedEffect.ptr());
                 acceleratedEffects.append(WTF::move(acceleratedEffect));
@@ -4554,8 +4560,24 @@ void RenderLayerBacking::updateAcceleratedEffectsAndBaseValues(HashSet<Ref<Accel
     // effects to the general timelines list.
     if (hasInterpolatingEffect)
         timelines.addAll(effectTimelines);
-    else
+    else {
         acceleratedEffects.clear();
+        baseValues = { };
+    }
+
+    // If a filter property was disallowed, it's because it cannot be represented remotely,
+    // so we must ensure we reset it in the base values so that we don't attempt to encode
+    // an unsupported filter operation.
+    if (!hasEffectAffectingFilter || disallowedAcceleratedProperties.contains(AcceleratedEffectProperty::Filter)) {
+        for (auto& effect : acceleratedEffects)
+            effect->clearProperty(AcceleratedEffectProperty::Filter);
+        baseValues.filter = { };
+    }
+    if (!hasEffectAffectingBackdropFilter || disallowedAcceleratedProperties.contains(AcceleratedEffectProperty::BackdropFilter)) {
+        for (auto& effect : acceleratedEffects)
+            effect->clearProperty(AcceleratedEffectProperty::BackdropFilter);
+        baseValues.backdropFilter = { };
+    }
 
     m_graphicsLayer->setAcceleratedEffectsAndBaseValues(WTF::move(acceleratedEffects), WTF::move(baseValues));
 

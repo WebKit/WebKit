@@ -85,6 +85,8 @@ public:
     WEBCORE_EXPORT void apply(AcceleratedEffectValues&, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
     WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
+    void clearProperty(AcceleratedEffectProperty);
+
     // Encoding and decoding support
     const AnimationEffectTiming& timing() const { return m_timing; }
     const RefPtr<AcceleratedTimeline>& timeline() const { return m_timeline; }

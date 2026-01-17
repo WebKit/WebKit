@@ -66,6 +66,14 @@ AcceleratedEffect::Keyframe::Keyframe(double offset, AcceleratedEffectValues&& v
 void AcceleratedEffect::Keyframe::clearProperty(AcceleratedEffectProperty property)
 {
     m_animatedProperties.remove({ property });
+
+    // If a filter property is removed, it's because it cannot be represented remotely,
+    // so we must ensure we reset it in the base values so that we don't attempt to encode
+    // an unsupported filter operation.
+    if (property == AcceleratedEffectProperty::Filter)
+        m_values.filter = { };
+    if (property == AcceleratedEffectProperty::BackdropFilter)
+        m_values.backdropFilter = { };
 }
 
 bool AcceleratedEffect::Keyframe::animatesProperty(KeyframeInterpolation::Property property) const
@@ -502,9 +510,13 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         // We need to make sure that the longest filter, if it contains a drop-shadow() operation,
         // has it as its final operation since it will be applied by a separate CALayer property
         // from the other filter operations and it will be applied to the layer as the last filer.
+        // However, drop-shadow() operations with a style color are never supported, see
+        // PlatformCAFilters::setFiltersOnLayer().
         ASSERT(longestFilterList);
         for (auto& operation : *longestFilterList) {
-            if ((operation->type() == FilterOperation::Type::DropShadow || operation->type() == FilterOperation::Type::DropShadowWithStyleColor) && operation != longestFilterList->last())
+            if (operation->type() == FilterOperation::Type::DropShadowWithStyleColor)
+                return false;
+            if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterList->last())
                 return false;
         }
 
@@ -515,10 +527,8 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         if (isValidProperty(property))
             return;
         disallowedProperties.add({ property });
-        m_animatedProperties.remove({ property });
         m_disallowedProperties.add({ property });
-        for (auto& keyframe : m_keyframes)
-            keyframe.clearProperty(property);
+        clearProperty(property);
     };
 
     if (m_animatedProperties.contains(AcceleratedEffectProperty::Filter))
@@ -567,6 +577,14 @@ bool AcceleratedEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Pr
         ASSERT_NOT_REACHED();
         return false;
     });
+}
+
+void AcceleratedEffect::clearProperty(AcceleratedEffectProperty property)
+{
+    m_animatedProperties.remove({ property });
+
+    for (auto& keyframe : m_keyframes)
+        keyframe.clearProperty(property);
 }
 
 } // namespace WebCore
