@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -31,9 +31,22 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Does very basic simplification of uses of values that were branched on by a dominating branch.
-
-void foldPathConstants(Procedure&);
+// Sparse Conditional Constant Propagation (SCCP) for B3.
+//
+// This pass performs flow-sensitive constant propagation using the Wegman-Zadeck
+// algorithm adapted for B3's SSA form. It subsumes the functionality of
+// foldPathConstants while also handling:
+//
+// - Global constant propagation through phi nodes
+// - Arithmetic constant folding
+// - Dead code elimination via unreachable edge detection
+// - Path-sensitive constant knowledge from branches/switches
+//
+// Future extensions will add Wasm RTT type propagation for optimizing
+// ref_cast and br_on_cast operations.
+//
+// Returns true if any changes were made to the procedure.
+bool sparseConditionalConstantPropagation(Procedure&);
 
 } } // namespace JSC::B3
 

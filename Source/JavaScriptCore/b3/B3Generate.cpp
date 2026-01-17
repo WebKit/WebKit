@@ -35,7 +35,6 @@
 #include "B3EliminateCommonSubexpressions.h"
 #include "B3EliminateDeadCode.h"
 #include "B3FixSSA.h"
-#include "B3FoldPathConstants.h"
 #include "B3HoistLoopInvariantValues.h"
 #include "B3InferSwitches.h"
 #include "B3LegalizeMemoryOffsets.h"
@@ -48,6 +47,7 @@
 #include "B3Procedure.h"
 #include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceStrength.h"
+#include "B3SparseConditionalConstantPropagation.h"
 #include "B3Validate.h"
 #include "CompilerTimingScope.h"
 
@@ -95,7 +95,9 @@ void generateToAir(Procedure& procedure)
         if (Options::useB3TailDup())
             duplicateTails(procedure);
         fixSSA(procedure);
-        foldPathConstants(procedure);
+        // SCCP now subsumes foldPathConstants functionality
+        if (Options::useB3SparseConditionalConstantPropagation())
+            sparseConditionalConstantPropagation(procedure);
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     } else if (procedure.optLevel() >= 1) {
