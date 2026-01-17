@@ -123,12 +123,11 @@ AudioVideoRendererAVFObjC::~AudioVideoRendererAVFObjC()
     cancelSeekingPromiseIfNeeded();
     cancelTimeReachedAction();
     cancelTimeObserver();
+    cancelPerformTaskAtTimeObserverIfNeeded();
     if (m_timeJumpedObserver)
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
     if (m_videoFrameMetadataGatheringObserver)
         [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
-    if (m_performTaskObserver)
-        [m_synchronizer removeTimeObserver:m_performTaskObserver.get()];
 
     destroyVideoTrack();
     destroyAudioRenderers();
@@ -528,8 +527,7 @@ void AudioVideoRendererAVFObjC::cancelTimeReachedAction()
 
 void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Function<void(const MediaTime&)>&& task)
 {
-    if (m_performTaskObserver)
-        [m_synchronizer removeTimeObserver:m_performTaskObserver.get()];
+    cancelPerformTaskAtTimeObserverIfNeeded();
 
     RetainPtr<NSArray> times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
 
@@ -546,6 +544,8 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
         ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now: ", now);
 
         task(now);
+
+        protectedThis->cancelPerformTaskAtTimeObserverIfNeeded();
     }).get()];
 }
 
@@ -573,6 +573,12 @@ void AudioVideoRendererAVFObjC::cancelTimeObserver()
 {
     if (RetainPtr observer = std::exchange(m_timeChangedObserver, { }))
         [m_synchronizer removeTimeObserver:observer.get()];
+}
+
+void AudioVideoRendererAVFObjC::cancelPerformTaskAtTimeObserverIfNeeded()
+{
+    if (RetainPtr taskObserver = std::exchange(m_performTaskObserver, { }))
+        [m_synchronizer removeTimeObserver:taskObserver.get()];
 }
 
 void AudioVideoRendererAVFObjC::prepareToSeek()

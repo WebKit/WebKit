@@ -223,6 +223,7 @@ private:
     void notifyRequiresFlushToResume();
 
     void cancelSeekingPromiseIfNeeded();
+    void cancelPerformTaskAtTimeObserverIfNeeded();
 
     RefPtr<VideoMediaSampleRenderer> protectedVideoRenderer() const;
     bool canUseDecompressionSession() const;
