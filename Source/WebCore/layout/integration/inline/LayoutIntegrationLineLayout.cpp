@@ -777,13 +777,17 @@ bool LineLayout::hasEllipsisInBlockDirectionOnLastFormattedLine() const
     if (!m_inlineContent)
         return false;
 
-    for (auto& line : m_inlineContent->displayContent().lines | std::views::reverse) {
+    auto& displayContent = m_inlineContent->displayContent();
+    for (size_t lineIndex = displayContent.lines.size(); lineIndex--;) {
+        auto& line = displayContent.lines[lineIndex];
         if (!line.hasContentfulInFlowBox()) {
             // Out-of-flow content could initiate a line with no inline content.
             continue;
         }
-        auto lastFormattedLineEllipsis = line.ellipsis();
-        return lastFormattedLineEllipsis && lastFormattedLineEllipsis->type == InlineDisplay::Line::Ellipsis::Type::Block;
+        if (!line.hasEllipsis())
+            return false;
+        auto lastFormattedLineEllipsis = displayContent.lineEllipsis(lineIndex);
+        return lastFormattedLineEllipsis->type == InlineDisplay::Line::Ellipsis::Type::Block;
     }
     return false;
 }
@@ -1241,6 +1245,24 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
     InlineContentPainter { paintInfo, paintOffset, layerRenderer, *m_inlineContent, flow() }.paint();
 }
 
+static FloatRect visibleLineRectIncludingEllipsis(const InlineDisplay::Content& displayContent, size_t lineIndex)
+{
+    auto& line = displayContent.lines[lineIndex];
+    if (line.isFullyTruncatedInBlockDirection())
+        return { };
+    if (!line.hasEllipsis() || line.hasContentAfterEllipsisBox())
+        return line.inkOverflow();
+
+    auto ellipsis = displayContent.lineEllipsis(lineIndex);
+    auto rect = line.lineBoxRect();
+    if (line.isLeftToRightInlineDirection()) {
+        auto visibleLineBoxRight = std::min(rect.maxX(), ellipsis->visualRect.maxX());
+        return { rect.location(), FloatPoint { visibleLineBoxRight, rect.maxY() } };
+    }
+    auto visibleLineBoxLeft = std::max(rect.x(), ellipsis->visualRect.x());
+    return { FloatPoint { visibleLineBoxLeft, rect.y() }, FloatPoint { rect.maxX(), rect.maxY() } };
+};
+
 bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction, const RenderInline* layerRenderer)
 {
     if (!m_inlineContent)
@@ -1308,8 +1330,8 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
         }
 
-        auto& currentLine = m_inlineContent->displayContent().lines[box.lineIndex()];
-        auto boxRect = flippedRectForWritingMode(flow(), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, currentLine.visibleRectIgnoringBlockDirection()));
+        auto lineRect = visibleLineRectIncludingEllipsis(m_inlineContent->displayContent(), box.lineIndex());
+        auto boxRect = flippedRectForWritingMode(flow(), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, lineRect));
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))
@@ -1336,8 +1358,9 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
         return;
     bool isHorizontalWritingMode = flow().writingMode().isHorizontal();
 
-    for (auto& line : m_inlineContent->displayContent().lines)
-        line.moveInBlockDirection(blockShift);
+    auto& displayContent = m_inlineContent->displayContent();
+    for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex)
+        displayContent.moveLineInBlockDirection(lineIndex, blockShift);
 
     auto deltaX = isHorizontalWritingMode ? 0_lu : blockShift;
     auto deltaY = isHorizontalWritingMode ? blockShift : 0_lu;

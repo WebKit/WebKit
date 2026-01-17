@@ -58,8 +58,8 @@ public:
     float scrollableOverflowBottom() const { return line().scrollableOverflow().maxY(); }
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
-    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return line().ellipsis()->visualRect; }
-    TextRun ellipsisText() const { return TextRun { line().ellipsis()->text.string() }; }
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return lineEllipsis().visualRect; }
+    TextRun ellipsisText() const { return TextRun { lineEllipsis().text.string() }; }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
@@ -142,6 +142,7 @@ private:
 
     const InlineDisplay::Lines& lines() const { return m_inlineContent->displayContent().lines; }
     const InlineDisplay::Line& line() const { return lines()[m_lineIndex]; }
+    InlineDisplay::Line::Ellipsis lineEllipsis() const { return *m_inlineContent->displayContent().lineEllipsis(m_lineIndex); }
 
     WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };

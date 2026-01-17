@@ -44,8 +44,18 @@ struct Content {
     void insert(Content&& newContent, size_t lineIndex, size_t boxIndex);
     void remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes);
 
+    std::optional<Line::Ellipsis> lineEllipsis(size_t) const;
+    void setLineEllipsis(size_t line, Line::Ellipsis&&);
+
+    void moveLineInBlockDirection(size_t, float offset);
+    void shrinkLineInBlockDirection(size_t, float delta);
+
     Lines lines;
     Boxes boxes;
+
+private:
+    using LineEllipses = Vector<std::optional<Line::Ellipsis>>;
+    std::unique_ptr<LineEllipses> lineEllipses;
 };
 
 }

@@ -445,10 +445,14 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         }
         auto isLegacyLineClamp = lineClamp && lineClamp->isLegacy;
         auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed, lineBox.hasContent());
-        InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, isLegacyLineClamp);
-        auto lineHasLegacyLineClamp = isLegacyLineClamp && displayLine.hasEllipsis() && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
-        if (lineHasLegacyLineClamp)
-            inlineLayoutState.setLegacyClampedLineIndex(lineBox.lineIndex());
+        auto ellipsis = InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, isLegacyLineClamp);
+        if (ellipsis) {
+            displayContent.setLineEllipsis(lineBox.lineIndex(), WTF::move(*ellipsis));
+            displayLine.setHasEllipsis();
+            auto lineHasLegacyLineClamp = isLegacyLineClamp && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
+            if (lineHasLegacyLineClamp)
+                inlineLayoutState.setLegacyClampedLineIndex(lineBox.lineIndex());
+        }
     };
     addTrailingEllipsisIfApplicable();
 
