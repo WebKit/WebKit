@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<body>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    filter: drop-shadow(rgba(255, 255, 255, 0) 0px 0px 0px);
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const target = createDiv(t);
+    target.id = "target";
+
+    const animation = target.animate({ filter: "drop-shadow(currentcolor 0px 0px 7px)" }, 1000);
+    
+    await animationAcceleration(animation);
+
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 0);
+}, "Animations cannot be threaded with a drop-shadow() filter using currentcolor.");
+
+</script>
+</body>

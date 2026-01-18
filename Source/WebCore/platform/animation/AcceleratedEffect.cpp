@@ -514,6 +514,10 @@ void AcceleratedEffect::validateFilters(const AcceleratedEffectValues& baseValue
         // PlatformCAFilters::setFiltersOnLayer().
         ASSERT(longestFilterList);
         for (auto& operation : *longestFilterList) {
+            // If we encounter a DropShadowFilterOperationWithStyleColor it means that it failed to be
+            // converted to a DropShadowFilterOperation during AcceleratedEffectValues creation due to
+            // the use of a complex color that could not be resolved outside of the style system within
+            // the remote layer tree.
             if (operation->type() == FilterOperation::Type::DropShadowWithStyleColor)
                 return false;
             if (operation->type() == FilterOperation::Type::DropShadow && operation != longestFilterList->last())

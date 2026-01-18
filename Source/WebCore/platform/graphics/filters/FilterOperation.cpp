@@ -35,6 +35,7 @@
 #include "FEGaussianBlur.h"
 #include "FilterEffect.h"
 #include "ImageBuffer.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -408,11 +409,31 @@ bool DropShadowFilterOperation::operator==(const FilterOperation& operation) con
     return nonColorEqual(other) && m_color == other.m_color;
 }
 
-RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation*, const BlendingContext&, bool)
+RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
-    // Only DropShadowFilterOperationWithStyleColor gets blended.
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    // This should only be called in the context of remote layer tree animations. In other situations,
+    // such as within the Web process, only DropShadowFilterOperationWithStyleColor should get blended.
+    ASSERT(!isInAuxiliaryProcess());
+
+    // We should only ever be blending with null or similar operations.
+    ASSERT(!from || from->isSameType(*this));
+
+    if (blendToPassthrough) {
+        return DropShadowFilterOperation::create(
+            WebCore::blend(m_location, IntPoint(), context),
+            WebCore::blend(m_stdDeviation, 0, context),
+            WebCore::blend(m_color, Color::transparentBlack, context));
+    }
+
+    const DropShadowFilterOperation* fromOperation = downcast<DropShadowFilterOperation>(from);
+    IntPoint fromLocation = fromOperation ? fromOperation->location() : IntPoint();
+    int fromStdDeviation = fromOperation ? fromOperation->stdDeviation() : 0;
+    Color fromColor = fromOperation ? fromOperation->color() : Color::transparentBlack;
+
+    return DropShadowFilterOperation::create(
+        WebCore::blend(fromLocation, m_location, context),
+        std::max(WebCore::blend(fromStdDeviation, m_stdDeviation, context), 0),
+        WebCore::blend(fromColor, m_color, context));
 }
 
 void DropShadowFilterOperation::dump(TextStream& ts) const

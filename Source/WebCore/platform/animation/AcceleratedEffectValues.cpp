@@ -133,8 +133,8 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         }
     }
 
-    filter = Style::toPlatform(style.filter());
-    backdropFilter = Style::toPlatform(style.backdropFilter());
+    filter = Style::toPlatform(style.filter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
+    backdropFilter = Style::toPlatform(style.backdropFilter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
 }
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const

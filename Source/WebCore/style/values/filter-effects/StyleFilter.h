@@ -80,6 +80,8 @@ struct Filter : ListOrNone<FilterValueList> {
     bool isReferenceFilter() const;
 
     IntOutsets outsets() const;
+
+    enum class PlatformConversionAllowsCurrentColor : bool { No, Yes };
 };
 
 template<FilterOperation::Type type> bool Filter::hasFilterOfType() const
@@ -112,7 +114,7 @@ template<> struct Blending<Filter> {
 // MARK: - Platform
 
 template<> struct ToPlatform<FilterValue> { auto operator()(const FilterValue&) -> Ref<FilterOperation>; };
-template<> struct ToPlatform<Filter> { auto operator()(const Filter&) -> FilterOperations; };
+template<> struct ToPlatform<Filter> { auto operator()(const Filter&, const RenderStyle&, Filter::PlatformConversionAllowsCurrentColor allowCurrentColor = Filter::PlatformConversionAllowsCurrentColor::Yes) -> FilterOperations; };
 
 // MARK: - Logging
 

@@ -241,10 +241,15 @@ auto ToPlatform<FilterValue>::operator()(const FilterValue& value) -> Ref<Filter
     return value.value;
 }
 
-auto ToPlatform<Filter>::operator()(const Filter& value) -> FilterOperations
+auto ToPlatform<Filter>::operator()(const Filter& value, const RenderStyle& style, Filter::PlatformConversionAllowsCurrentColor allowCurrentColor) -> FilterOperations
 {
-    return FilterOperations { WTF::map(value, [](auto& filterValue) {
-        return toPlatform(filterValue);
+    return FilterOperations { WTF::map(value, [&](auto& filterValue) -> Ref<FilterOperation> {
+        Ref operation = toPlatform(filterValue);
+        if (auto dropShadow = dynamicDowncast<Style::DropShadowFilterOperationWithStyleColor>(operation)) {
+            if (allowCurrentColor == Filter::PlatformConversionAllowsCurrentColor::Yes || !dropShadow->styleColor().isCurrentColor())
+                return dropShadow->createEquivalentWithResolvedColor(style);
+        }
+        return operation;
     }) };
 }
 
