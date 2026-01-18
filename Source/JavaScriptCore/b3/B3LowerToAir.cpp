@@ -2268,7 +2268,6 @@ private:
     CompareChainNode* findCompareChain(Value* value, SegmentedVector<CompareChainNode>& nodes, Vector<CompareChainNode*, 16>& logicalNodes, Vector<Value*, 16> usedValues)
     {
         dataLogLnIf(B3LowerToAirInternal::verbose, "    findCompareChain: nodes.size()=", nodes.size(), ", value=", pointerDump(value));
-        usedValues.append(value);
         if (!value)
             return nullptr;
 
@@ -2296,6 +2295,7 @@ private:
                 if (negatedChain) {
                     dataLogLnIf(B3LowerToAirInternal::verbose, "    findCompareChain: applying negation to chain");
                     negatedChain->markRequiresNegation();
+                    usedValues.append(value);
                     return negatedChain;
                 }
             }
@@ -2305,6 +2305,7 @@ private:
             node->value = value;
             node->relCond = relationalConditionForOpcode(opcode);
             dataLogLnIf(B3LowerToAirInternal::verbose, "    findCompareChain: created comparison node");
+            usedValues.append(value);
             return node;
         }
 
@@ -2328,6 +2329,7 @@ private:
                 if (negatedChain) {
                     dataLogLnIf(B3LowerToAirInternal::verbose, "    findCompareChain: applying negation to chain");
                     negatedChain->markRequiresNegation();
+                    usedValues.append(value);
                     return negatedChain;
                 }
             }
@@ -2382,6 +2384,7 @@ private:
             }
 
             logicalNodes.append(node);
+            usedValues.append(value);
             dataLogLnIf(B3LowerToAirInternal::verbose, "    findCompareChain: created logic op node (", (opcode == BitAnd ? "AND" : "OR"), ")");
             return node;
         }
