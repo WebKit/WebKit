@@ -358,10 +358,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         output.offsetRotate = blend(from.offsetRotate, to.offsetRotate, blendingContext);
         break;
     case AcceleratedEffectProperty::Filter:
-        output.filter = to.filter.blend(from.filter, blendingContext);
+        output.filter = from.filter.blend(to.filter, blendingContext);
         break;
     case AcceleratedEffectProperty::BackdropFilter:
-        output.backdropFilter = to.backdropFilter.blend(from.backdropFilter, blendingContext);
+        output.backdropFilter = from.backdropFilter.blend(to.backdropFilter, blendingContext);
         break;
     case AcceleratedEffectProperty::Invalid:
         ASSERT_NOT_REACHED();
