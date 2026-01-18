@@ -420,8 +420,8 @@ bool ScrollTimeline::computeCanBeAccelerated() const
 
 void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
 {
-    if (auto source = m_source.styleable()) {
-        if (RefPtr page = source->element.protectedDocument()->page()) {
+    if (RefPtr source = this->source()) {
+        if (RefPtr page = source->protectedDocument()->page()) {
             if (auto* acceleratedTimelinesUpdater = page->acceleratedTimelinesUpdater())
                 acceleratedTimelinesUpdater->scrollTimelineDidChange(*this);
         }
