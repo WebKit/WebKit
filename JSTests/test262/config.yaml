@@ -7,7 +7,6 @@ flags:
   ShadowRealm: useShadowRealm
   Math.sumPrecise: useMathSumPreciseMethod
   json-parse-with-source: useJSONSourceTextAccess
-  iterator-sequencing: useIteratorSequencing
   explicit-resource-management: useExplicitResourceManagement
   upsert: useMapGetOrInsert
 skip:
