@@ -94,6 +94,7 @@ void IOSurfacePool::willAddSurface(IOSurface& surface, bool inUse)
 {
     CachedSurfaceDetails& details = m_surfaceDetails.add(&surface, CachedSurfaceDetails()).iterator->value;
     details.resetLastUseTime();
+    details.inCurrentlyUsedSurfaceCache = inUse;
 
     size_t surfaceBytes = surface.totalBytes();
 
@@ -293,6 +294,8 @@ void IOSurfacePool::collectInUseSurfaces()
             newInUseSurfaces.append(WTF::move(*surfaceIter));
             continue;
         }
+        if (auto it = m_surfaceDetails.find(surface); it != m_surfaceDetails.end())
+            it->value.inCurrentlyUsedSurfaceCache = false;
 
         m_inUseBytesCached -= surface->totalBytes();
         insertSurfaceIntoPool(WTF::move(*surfaceIter));
@@ -309,6 +312,11 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
     for (auto& surfaceAndDetails : m_surfaceDetails) {
         if (surfaceAndDetails.value.hasMarkedPurgeable)
             continue;
+
+        if (surfaceAndDetails.value.inCurrentlyUsedSurfaceCache) {
+            markedAllSurfaces = false;
+            continue;
+        }
 
         if (markTime - surfaceAndDetails.value.lastUseTime < surfaceAgeBeforeMarkingPurgeable) {
             markedAllSurfaces = false;

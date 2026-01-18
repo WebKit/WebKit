@@ -76,6 +76,7 @@ private:
 
         MonotonicTime lastUseTime;
         bool hasMarkedPurgeable;
+        bool inCurrentlyUsedSurfaceCache;
     };
 
     using CachedSurfaceQueue = Deque<std::unique_ptr<IOSurface>>;
