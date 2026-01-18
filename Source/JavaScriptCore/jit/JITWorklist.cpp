@@ -241,7 +241,7 @@ auto JITWorklist::completeAllReadyPlansForVM(VM& vm, JITCompilationKey requested
 
     DeferGC deferGC(vm);
 
-    Vector<Ref<JITPlan>, 8> myReadyPlans;
+    Vector<RefPtr<JITPlan>, 8> myReadyPlans;
     State resultingState = removeAllReadyPlansForVM(vm, myReadyPlans, requestedKey);
     for (auto& plan : myReadyPlans) {
         dataLogLnIf(Options::verboseCompilationQueue(), *this, ": Completing ", plan->key());
@@ -317,7 +317,7 @@ void JITWorklist::cancelAllPlansForVM(VM& vm)
 
     waitUntilAllPlansForVMAreReady(vm);
 
-    Vector<Ref<JITPlan>, 8> myReadyPlans;
+    Vector<RefPtr<JITPlan>, 8> myReadyPlans;
     removeAllReadyPlansForVM(vm, myReadyPlans, { });
     for (auto& plan : myReadyPlans) {
         ASSERT(plan->stage() == JITPlanStage::Ready);
@@ -407,13 +407,13 @@ void JITWorklist::dump(const AbstractLocker& locker, PrintStream& out) const
         ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
 }
 
-JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<Ref<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
+JITWorklist::State JITWorklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<JITPlan>, 8>& myReadyPlans, JITCompilationKey requestedKey)
 {
     DeferGC deferGC(vm);
     Locker locker { *m_lock };
 
     bool isCompiled = false;
-    m_readyPlans.removeAllMatching([&](Ref<JITPlan> plan) {
+    m_readyPlans.removeAllMatching([&](RefPtr<JITPlan> plan) {
         if (plan->vm() != &vm)
             return false;
         if (plan->stage() != JITPlanStage::Ready)
@@ -469,7 +469,7 @@ void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
     for (unsigned i = 0; i < m_readyPlans.size(); ++i) {
         if (m_readyPlans[i]->stage() != JITPlanStage::Canceled)
             continue;
-        m_readyPlans[i--] = WTF::move(m_readyPlans.last());
+        m_readyPlans[i--] = m_readyPlans.last();
         m_readyPlans.removeLast();
     }
     if (didCancelPlans)
