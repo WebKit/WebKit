@@ -533,14 +533,6 @@ void DebugServer::trackInstance(JSWebAssemblyInstance* instance)
     }
 }
 
-void DebugServer::untrackInstance(JSWebAssemblyInstance* instance)
-{
-    if (!m_moduleManager)
-        return;
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Untracking WebAssembly instance: ", RawPointer(instance));
-    m_moduleManager->unregisterInstance(instance);
-}
-
 void DebugServer::trackModule(Module& module)
 {
     if (!m_moduleManager)

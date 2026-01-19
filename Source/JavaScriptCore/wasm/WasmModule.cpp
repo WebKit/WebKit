@@ -140,6 +140,22 @@ void Module::copyInitialCalleeGroupToAllMemoryModes(MemoryMode initialMode)
 }
 
 
+Ref<Wasm::InstanceAnchor> Module::createAnchor(JSWebAssemblyInstance* instance)
+{
+    // Create the anchor but do NOT add to m_anchors yet.
+    // This allows Memory::registerInstance() to access the anchor without
+    // exposing the incomplete instance to concurrent threads.
+    return Wasm::InstanceAnchor::create(*this, instance);
+}
+
+void Module::publishAnchor(Wasm::InstanceAnchor& anchor)
+{
+    // Expose the anchor to concurrent threads by adding to m_anchors.
+    // This should only be called after the instance is fully initialized.
+    WTF::storeStoreFence();
+    m_anchors.add(anchor);
+}
+
 Ref<Wasm::InstanceAnchor> Module::registerAnchor(JSWebAssemblyInstance* instance)
 {
     auto anchor = Wasm::InstanceAnchor::create(*this, instance);

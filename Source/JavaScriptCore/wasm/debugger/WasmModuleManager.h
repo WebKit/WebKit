@@ -27,11 +27,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmInstanceAnchor.h"
 #include "WasmModule.h"
 #include "WasmVirtualAddress.h"
-#include "WeakGCMap.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,15 +60,18 @@ public:
     Module* module(uint32_t moduleId) const;
 
     uint32_t registerInstance(JSWebAssemblyInstance*);
-    uint32_t unregisterInstance(JSWebAssemblyInstance*);
-    JSWebAssemblyInstance* jsInstance(uint32_t instanceId) const;
+    JSWebAssemblyInstance* jsInstance(uint32_t instanceId);
     uint32_t nextInstanceId() const;
 
     String generateLibrariesXML() const;
 
 private:
     using IdToModule = UncheckedKeyHashMap<uint32_t, Module*, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using IdToInstance = UncheckedKeyHashMap<uint32_t, JSWebAssemblyInstance*, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using IdToInstance = UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<Wasm::InstanceAnchor>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+
+    // Amortized cleanup mechanism (matches ThreadSafeWeakHashSet behavior).
+    void amortizedCleanupIfNeeded() WTF_REQUIRES_LOCK(m_lock);
+    void cleanupHappened() WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
     IdToModule m_moduleIdToModule WTF_GUARDED_BY_LOCK(m_lock);
@@ -75,6 +79,8 @@ private:
 
     uint32_t m_nextModuleId WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     uint32_t m_nextInstanceId WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
 };
 
 } // namespace Wasm

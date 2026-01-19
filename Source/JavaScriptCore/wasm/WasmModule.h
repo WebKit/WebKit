@@ -89,6 +89,8 @@ public:
 
     IPIntCallees& ipintCallees() const { return m_ipintCallees.get(); }
 
+    Ref<Wasm::InstanceAnchor> createAnchor(JSWebAssemblyInstance*);
+    void publishAnchor(Wasm::InstanceAnchor&);
     Ref<Wasm::InstanceAnchor> registerAnchor(JSWebAssemblyInstance*);
 
     std::unique_ptr<MergedProfile> createMergedProfile(const IPIntCallee&);

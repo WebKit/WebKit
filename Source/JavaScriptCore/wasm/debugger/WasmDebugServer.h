@@ -111,7 +111,6 @@ public:
 #endif
 
     void trackInstance(JSWebAssemblyInstance*);
-    void untrackInstance(JSWebAssemblyInstance*);
     void trackModule(Module&);
     void untrackModule(Module&);
 

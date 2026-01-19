@@ -155,12 +155,6 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
     }
 
     m_vm->traps().registerMirror(m_stackMirror);
-
-    // Now, JSWebAssemblyInstance is fully initialized. Expose it to the concurrent compiler.
-    m_anchor = m_module->registerAnchor(this);
-
-    if (Options::enableWasmDebugger()) [[unlikely]]
-        Wasm::DebugServer::singleton().trackInstance(this);
 }
 
 JSWebAssemblyInstance::~JSWebAssemblyInstance()
@@ -181,9 +175,6 @@ JSWebAssemblyInstance::~JSWebAssemblyInstance()
         m_anchor->tearDown();
         m_anchor = nullptr;
     }
-
-    if (Options::enableWasmDebugger()) [[unlikely]]
-        Wasm::DebugServer::singleton().untrackInstance(this);
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)
@@ -335,6 +326,11 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     jsInstance->finishCreation(vm);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
+    // Create the anchor (but don't publish it yet) so that Memory::registerInstance()
+    // can access it during memory setup without exposing the incomplete instance to
+    // concurrent threads.
+    jsInstance->m_anchor = jsInstance->m_module->createAnchor(jsInstance);
+
     if (creationMode == CreationMode::FromJS) {
         // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
         if (moduleInformation.imports.size() && !importObject)
@@ -384,7 +380,15 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
         jsInstance->setDummyMemory(vm, jsMemory);
         RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
-    
+
+    // Now that the instance is fully initialized, publish the anchor to expose it to
+    // concurrent threads (concurrent compiler, etc.).
+    jsInstance->m_module->publishAnchor(*jsInstance->m_anchor);
+
+    // Register with debugger after instance and anchor are fully initialized.
+    if (Options::enableWasmDebugger()) [[unlikely]]
+        Wasm::DebugServer::singleton().trackInstance(jsInstance);
+
     return jsInstance;
 }
 
