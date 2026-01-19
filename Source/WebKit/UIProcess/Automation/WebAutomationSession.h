@@ -162,7 +162,7 @@ public:
     WebProcessPool* NODELETE processPool() const;
     void setProcessPool(WebProcessPool*);
 
-    void navigationOccurredForFrame(const WebFrameProxy&);
+    void navigationOccurredForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void documentLoadedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void loadCompletedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void inspectorFrontendLoaded(const WebPageProxy&);
@@ -318,15 +318,21 @@ public:
     Expected<PageAndFrameHandle, AutomationCommandError> extractBrowsingContextHandles(const String&);
 
 private:
+    struct PendingNavigationCallback {
+        std::optional<WebCore::NavigationIdentifier> expectedNavigationID;
+        Inspector::CommandCallback<void> callback;
+    };
+
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);
 
     std::optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
 
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
+    void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, std::optional<WebCore::NavigationIdentifier>, Inspector::CommandCallback<void>&&);
     void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
-    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>>&);
-    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>>&);
+    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, PendingNavigationCallback>&);
+    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, PendingNavigationCallback>&);
     void loadTimerFired();
 
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
@@ -402,10 +408,10 @@ private:
     HashMap<WebCore::FrameIdentifier, String> m_webFrameHandleMap;
     HashMap<String, WebCore::FrameIdentifier> m_handleWebFrameMap;
 
-    HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
-    HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebPageProxyIdentifier, PendingNavigationCallback> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebPageProxyIdentifier, PendingNavigationCallback> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebCore::FrameIdentifier, PendingNavigationCallback> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebCore::FrameIdentifier, PendingNavigationCallback> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingInspectorCallbacksPerPage;
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingKeyboardEventsFlushedCallbacksPerPage;

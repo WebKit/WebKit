@@ -630,6 +630,11 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
 
 void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Inspector::CommandCallback<void>&& callback)
 {
+    waitForNavigationToCompleteOnPage(page, loadStrategy, timeout, std::nullopt, WTF::move(callback));
+}
+
+void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, std::optional<WebCore::NavigationIdentifier> expectedNavigationID, Inspector::CommandCallback<void>&& callback)
+{
     ASSERT(!m_loadTimer.isActive());
     Ref pageLoadState = page.pageLoadState();
 
@@ -641,10 +646,10 @@ void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page,
     m_loadTimer.startOneShot(timeout);
     switch (loadStrategy) {
     case Inspector::Protocol::Automation::PageLoadStrategy::Normal:
-        m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.set(page.identifier(), WTF::move(callback));
+        m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.set(page.identifier(), PendingNavigationCallback { expectedNavigationID, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::Eager:
-        m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.set(page.identifier(), WTF::move(callback));
+        m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.set(page.identifier(), PendingNavigationCallback { expectedNavigationID, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::None:
         ASSERT_NOT_REACHED();
@@ -662,21 +667,22 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
     m_loadTimer.startOneShot(timeout);
     switch (loadStrategy) {
     case Inspector::Protocol::Automation::PageLoadStrategy::Normal:
-        m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.set(frame.frameID(), WTF::move(callback));
+        m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.set(frame.frameID(), PendingNavigationCallback { std::nullopt, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::Eager:
-        m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.set(frame.frameID(), WTF::move(callback));
+        m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.set(frame.frameID(), PendingNavigationCallback { std::nullopt, WTF::move(callback) });
         break;
     case Inspector::Protocol::Automation::PageLoadStrategy::None:
         ASSERT_NOT_REACHED();
     }
 }
 
-void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>>& map)
+void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, PendingNavigationCallback>& map)
 {
     for (auto id : copyToVector(map.keys())) {
         RefPtr page = WebProcessProxy::webPage(id);
-        auto callback = map.take(id);
+        auto pendingCallback = map.take(id);
+        auto callback = WTF::move(pendingCallback.callback);
         if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
             callback({ });
         else
@@ -691,12 +697,13 @@ static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, Frame
     return nullptr;
 }
 
-void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<FrameIdentifier, Inspector::CommandCallback<void>>& map)
+void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<FrameIdentifier, PendingNavigationCallback>& map)
 {
     Ref processPool = *m_processPool;
     for (auto id : copyToVector(map.keys())) {
         RefPtr page = findPageForFrameID(processPool, id);
-        auto callback = map.take(id);
+        auto pendingCallback = map.take(id);
+        auto callback = WTF::move(pendingCallback.callback);
         if (page && m_client->isShowingJavaScriptDialogOnPage(*this, *page))
             callback({ });
         else
@@ -881,8 +888,12 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->loadRequest(URL { url });
-    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
+    RefPtr navigation = page->loadRequest(ResourceRequest { URL { url } });
+    std::optional<WebCore::NavigationIdentifier> navigationID;
+    if (navigation)
+        navigationID = navigation->navigationID();
+
+    waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, navigationID, WTF::move(callback));
 }
 
 void WebAutomationSession::goBackInBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&& optionalPageLoadStrategy, std::optional<double>&& optionalPageLoadTimeout, CommandCallback<void>&& callback)
@@ -959,7 +970,14 @@ void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Auto
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTF::move(callback));
 }
 
-void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame)
+static bool navigationIDMatchesPendingCallback(std::optional<WebCore::NavigationIdentifier> pendingNavigationID, std::optional<WebCore::NavigationIdentifier> navigationID)
+{
+    if (!pendingNavigationID)
+        return true;
+    return navigationID && *pendingNavigationID == *navigationID;
+}
+
+void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
     if (frame.isMainFrame()) {
         // New page loaded, clear frame handles previously cached for frame's page.
@@ -975,15 +993,25 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
             return handlesToRemove.contains(iter.key);
         });
 
-        if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->identifier())) {
-            m_loadTimer.stop();
-            callback({ });
+        auto pageIdentifier = frame.page()->identifier();
+        if (auto iterator = m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.find(pageIdentifier); iterator != m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.end()) {
+            if (navigationIDMatchesPendingCallback(iterator->value.expectedNavigationID, navigationID)) {
+                auto pendingCallback = m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(pageIdentifier);
+                auto callback = WTF::move(pendingCallback.callback);
+                m_loadTimer.stop();
+                callback({ });
+            }
         }
         m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*protect(frame.page())));
     } else {
-        if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
-            m_loadTimer.stop();
-            callback({ });
+        auto frameIdentifier = frame.frameID();
+        if (auto iterator = m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.find(frameIdentifier); iterator != m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.end()) {
+            if (navigationIDMatchesPendingCallback(iterator->value.expectedNavigationID, navigationID)) {
+                auto pendingCallback = m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frameIdentifier);
+                auto callback = WTF::move(pendingCallback.callback);
+                m_loadTimer.stop();
+                callback({ });
+            }
         }
     }
 }
@@ -1006,18 +1034,28 @@ void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, st
 #endif
 
     if (frame.isMainFrame()) {
-        if (auto callback = m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->identifier())) {
-            m_loadTimer.stop();
-            callback({ });
+        auto pageIdentifier = frame.page()->identifier();
+        if (auto iterator = m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.find(pageIdentifier); iterator != m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.end()) {
+            if (navigationIDMatchesPendingCallback(iterator->value.expectedNavigationID, navigationID)) {
+                auto pendingCallback = m_pendingEagerNavigationInBrowsingContextCallbacksPerPage.take(pageIdentifier);
+                auto callback = WTF::move(pendingCallback.callback);
+                m_loadTimer.stop();
+                callback({ });
+            }
         }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         resetMouseState();
 #endif
     } else {
-        if (auto callback = m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
-            m_loadTimer.stop();
-            callback({ });
+        auto frameIdentifier = frame.frameID();
+        if (auto iterator = m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.find(frameIdentifier); iterator != m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.end()) {
+            if (navigationIDMatchesPendingCallback(iterator->value.expectedNavigationID, navigationID)) {
+                auto pendingCallback = m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frameIdentifier);
+                auto callback = WTF::move(pendingCallback.callback);
+                m_loadTimer.stop();
+                callback({ });
+            }
         }
     }
 }

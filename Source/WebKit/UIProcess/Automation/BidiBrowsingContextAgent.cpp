@@ -70,11 +70,19 @@ void BidiBrowsingContextAgent::activate(const BrowsingContext& browsingContext, 
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
 
-    // FIXME: detect non-top level browsing contexts, returning `invalid argument`.
-    session->switchToBrowsingContext(browsingContext, emptyString(), [callback = WTF::move(callback)](CommandResult<void>&& result) {
+    auto browsingContextHandles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(browsingContextHandles);
+
+    auto [topLevelHandle, frameHandle] = browsingContextHandles.value();
+    if (!frameHandle.isEmpty())
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
+
+    RefPtr webPageProxy = session->webPageProxyForHandle(topLevelHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
+
+    session->switchToBrowsingContext(topLevelHandle, emptyString(), [callback = WTF::move(callback)](CommandResult<void>&& result) {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
