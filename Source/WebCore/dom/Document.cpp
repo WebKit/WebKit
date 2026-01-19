@@ -6443,7 +6443,7 @@ void Document::flushAutofocusCandidates()
             continue;
         }
 
-        if (RefPtr parser = scriptableDocumentParser(); parser && parser->hasScriptsWaitingForStylesheets())
+        if (RefPtr parser = scriptableDocumentParser(); parser && parser->isWaitingForStylesheets())
             break;
         m_autofocusCandidates.removeFirst();
 

@@ -172,7 +172,7 @@ inline bool HTMLDocumentParser::inPumpSession() const
 
 inline bool HTMLDocumentParser::shouldDelayEnd() const
 {
-    return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript();
+    return inPumpSession() || isWaitingForScriptsOrStylesheets() || isScheduledForResume() || isExecutingScript();
 }
 
 void HTMLDocumentParser::didBeginYieldingParser()
@@ -199,7 +199,7 @@ bool HTMLDocumentParser::processingData() const
 
 void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 {
-    if (isStopped() || isWaitingForScripts())
+    if (isStopped() || isWaitingForScriptsOrStylesheets())
         return;
 
     // Once a resume is scheduled, HTMLParserScheduler controls when we next pump.
@@ -276,6 +276,12 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
 {
     RefPtr parserScheduler = m_parserScheduler;
     do {
+        if (shouldWaitForBodyStylesheets()) [[unlikely]] {
+//            WTFLogAlways("pumpTokenizerLoop shouldWaitForBodyStylesheets");
+            m_isWaitingForBodyStylesheets = true;
+            return false;
+        }
+
         if (isWaitingForScripts()) [[unlikely]] {
             if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->protectedScriptToProcess().get(), session))
                 return true;
@@ -339,7 +345,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         Ref { *m_parserScheduler }->scheduleForResume();
 
     RefPtr document = this->document();
-    if (isWaitingForScripts() && !isDetached()) {
+    if (isWaitingForScriptsOrStylesheets() && !isDetached()) {
         ASSERT(m_tokenizer.isInDataState());
         if (!m_preloadScanner) {
             m_preloadScanner = makeUnique<HTMLPreloadScanner>(m_options, document->url(), document->deviceScaleFactor());
@@ -397,7 +403,7 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
     m_input.insertAtCurrentInsertionPoint(WTF::move(source));
     pumpTokenizerIfPossible(SynchronousMode::ForceSynchronous);
 
-    if (isWaitingForScripts() && !isDetached()) {
+    if (isWaitingForScriptsOrStylesheets() && !isDetached()) {
         RefPtr document = this->document();
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
@@ -432,13 +438,13 @@ void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMod
     String source { WTF::move(inputSource) };
 
     if (m_preloadScanner) {
-        if (m_input.current().isEmpty() && !isWaitingForScripts()) {
+        if (m_input.current().isEmpty() && !isWaitingForScriptsOrStylesheets()) {
             // We have parsed until the end of the current input and so are now moving ahead of the preload scanner.
             // Clear the scanner so we know to scan starting from the current input point if we block again.
             m_preloadScanner = nullptr;
         } else {
             m_preloadScanner->appendToEnd(source);
-            if (isWaitingForScripts())
+            if (isWaitingForScriptsOrStylesheets())
                 m_preloadScanner->scan(*m_preloader, *protectedDocument());
         }
     }
@@ -552,10 +558,27 @@ bool HTMLDocumentParser::isWaitingForScripts() const
     return treeBuilderHasBlockingScript || scriptRunnerHasBlockingScript;
 }
 
+bool HTMLDocumentParser::isWaitingForScriptsOrStylesheets() const
+{
+    if (isParsingFragment())
+        return false;
+    if (m_isWaitingForBodyStylesheets)
+        return true;
+    return isWaitingForScripts();
+}
+
+bool HTMLDocumentParser::shouldWaitForBodyStylesheets() const
+{
+    if (isParsingFragment())
+        return false;
+    RefPtr document = this->document();
+    return document->body() && !document->haveStylesheetsLoaded();
+}
+
 void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 {
     ASSERT(!isExecutingScript());
-    ASSERT(!isWaitingForScripts());
+    ASSERT(!isWaitingForScriptsOrStylesheets());
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
@@ -629,12 +652,15 @@ void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
     }
 
     m_scriptRunner->executeScriptsWaitingForLoad(pendingScript);
-    if (!isWaitingForScripts())
+    if (!isWaitingForScriptsOrStylesheets())
         resumeParsingAfterScriptExecution();
 }
 
-bool HTMLDocumentParser::hasScriptsWaitingForStylesheets() const
+bool HTMLDocumentParser::isWaitingForStylesheets() const
 {
+    if (m_isWaitingForBodyStylesheets)
+        return true;
+
     return m_scriptRunner && m_scriptRunner->hasScriptsWaitingForStylesheets();
 }
 
@@ -646,14 +672,17 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
     // Ignore calls unless we have a script blocking the parser waiting on a
     // stylesheet load.  Otherwise we are currently parsing and this
     // is a re-entrant call from encountering a </ style> tag.
-    if (!m_scriptRunner->hasScriptsWaitingForStylesheets())
-        return;
+
+//    WTFLogAlways("executeScriptsWaitingForStylesheets");
+    m_isWaitingForBodyStylesheets = false;
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
-    m_scriptRunner->executeScriptsWaitingForStylesheets();
-    if (!isWaitingForScripts())
+    if (m_scriptRunner->hasScriptsWaitingForStylesheets())
+        m_scriptRunner->executeScriptsWaitingForStylesheets();
+
+    if (!isWaitingForScriptsOrStylesheets())
         resumeParsingAfterScriptExecution();
 }
 

@@ -988,7 +988,7 @@ void FrameLoader::checkCompleted()
         return;
 
     RefPtr scriptableParser = document->scriptableDocumentParser();
-    if (scriptableParser && scriptableParser->hasScriptsWaitingForStylesheets())
+    if (scriptableParser && scriptableParser->isWaitingForStylesheets())
         return;
 
     // Any frame that hasn't completed yet?

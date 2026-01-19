@@ -95,8 +95,10 @@ private:
     void prepareToStopParsing() final;
     void stopParsing() final;
     bool isWaitingForScripts() const;
+    bool isWaitingForScriptsOrStylesheets() const;
+    bool shouldWaitForBodyStylesheets() const;
     bool isExecutingScript() const final;
-    bool hasScriptsWaitingForStylesheets() const final;
+    bool isWaitingForStylesheets() const final;
     void executeScriptsWaitingForStylesheets() final;
     void suspendScheduledTasks() final;
     void resumeScheduledTasks() final;
@@ -155,6 +157,7 @@ private:
     bool m_endWasDelayed { false };
     unsigned m_pumpSessionNestingLevel { 0 };
     bool m_shouldEmitTracePoints { false };
+    bool m_isWaitingForBodyStylesheets { false };
 };
 
 inline HTMLTokenizer& HTMLDocumentParser::tokenizer()

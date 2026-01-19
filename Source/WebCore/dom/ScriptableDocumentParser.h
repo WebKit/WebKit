@@ -40,7 +40,7 @@ public:
 
     virtual TextPosition textPosition() const = 0;
 
-    virtual bool hasScriptsWaitingForStylesheets() const { return false; }
+    virtual bool isWaitingForStylesheets() const { return false; }
 
     void executeScriptsWaitingForStylesheetsSoon();
 
