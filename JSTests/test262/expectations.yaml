@@ -370,9 +370,6 @@ test/built-ins/Temporal/getOwnPropertyNames.js:
 test/built-ins/TypedArray/prototype/set/array-arg-value-conversion-resizes-array-buffer.js:
   default: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
   strict mode: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
-test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-offset.js:
-  default: 'Test262Error: Actual [20, 30, 40, 60] and expected [20, 20, 20, 60] should have the same contents.  (Testing with Float64Array.)'
-  strict mode: 'Test262Error: Actual [20, 30, 40, 60] and expected [20, 20, 20, 60] should have the same contents.  (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
@@ -764,9 +761,6 @@ test/staging/sm/TypedArray/iterator-next-with-detached.js:
 test/staging/sm/TypedArray/set-with-receiver.js:
   default: 'Test262Error: Expected SameValue(«47», «0») to be true'
   strict mode: 'Test262Error: Expected SameValue(«47», «0») to be true'
-test/staging/sm/TypedArray/slice-memcpy.js:
-  default: 'Test262Error: Actual [1, 2, 1, 2, 3, 4] and expected [1, 2, 1, 2, 1, 2] should have the same contents. '
-  strict mode: 'Test262Error: Actual [1, 2, 1, 2, 3, 4] and expected [1, 2, 1, 2, 1, 2] should have the same contents. '
 test/staging/sm/class/defaultConstructorDerivedSpread.js:
   default: 'Error: unexpected call'
   strict mode: 'Error: unexpected call'
