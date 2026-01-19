@@ -318,6 +318,14 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
         }
         unignoredChildren.append(*descendant);
 
+        constexpr size_t maxChildrenFailsafe = 100000;
+        if (unignoredChildren.size() >= maxChildrenFailsafe) [[unlikely]] {
+            // This should never happen in a well-formed accessibility tree, so we must
+            // be looping infinitely.
+            ASSERT_NOT_REACHED();
+            return unignoredChildren;
+        }
+
         while (descendant && descendant != this) {
             if (!parent) {
                 parent = descendant->parentObject();
