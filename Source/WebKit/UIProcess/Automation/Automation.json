@@ -71,6 +71,7 @@
                 "JavaScriptTimeout",
                 "WindowNotFound",
                 "FrameNotFound",
+                "NoSuchHistoryEntry",
                 "NodeNotFound",
                 "InvalidNodeIdentifier",
                 "InvalidElementState",
