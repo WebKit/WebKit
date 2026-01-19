@@ -1060,11 +1060,11 @@ public:
         Vector<uint8_t> serializedKey;
         Vector<URLKeepingBlobAlive> dummyBlobHandles;
         Vector<Ref<MessagePort>> dummyMessagePorts;
-        Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
+        Vector<Ref<JSC::ArrayBuffer>> dummyArrayBuffers;
 #if ENABLE(WEB_CODECS)
-        Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> dummyVideoChunks;
+        Vector<Ref<WebCodecsEncodedVideoChunkStorage>> dummyVideoChunks;
         Vector<RefPtr<WebCodecsVideoFrame>> dummyVideoFrames;
-        Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> dummyAudioChunks;
+        Vector<Ref<WebCodecsEncodedAudioChunkStorage>> dummyAudioChunks;
         Vector<RefPtr<WebCodecsAudioData>> dummyAudioData;
 #endif
 #if ENABLE(WEB_RTC)
@@ -1080,7 +1080,7 @@ public:
 #endif
         ArrayBufferContentsArray dummySharedBuffers;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-        Vector<RefPtr<OffscreenCanvas>> dummyInMemoryOffscreenCanvases;
+        Vector<Ref<OffscreenCanvas>> dummyInMemoryOffscreenCanvases;
 #endif
         Vector<Ref<MessagePort>> dummyInMemoryMessagePorts;
         CloneSerializer rawKeySerializer(nullptr, dummyMessagePorts, dummyArrayBuffers, { },
@@ -1113,10 +1113,10 @@ public:
         return serializedKey;
     }
 
-    static SerializationReturnCode serialize(JSGlobalObject* lexicalGlobalObject, JSValue value, Vector<Ref<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
+    static SerializationReturnCode serialize(JSGlobalObject* lexicalGlobalObject, JSValue value, Vector<Ref<MessagePort>>& messagePorts, Vector<Ref<JSC::ArrayBuffer>>& arrayBuffers, const Vector<Ref<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-            const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
-            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
+            const Vector<Ref<OffscreenCanvas>>& offscreenCanvases,
+            Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
             Vector<Ref<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
@@ -1128,9 +1128,9 @@ public:
             const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
 #endif
 #if ENABLE(WEB_CODECS)
-            Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+            Vector<Ref<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
             Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
-            Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
+            Vector<Ref<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -1210,10 +1210,10 @@ public:
 private:
     using ObjectPoolMap = HashMap<JSObject*, uint32_t>;
 
-    CloneSerializer(JSGlobalObject* lexicalGlobalObject, Vector<Ref<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
+    CloneSerializer(JSGlobalObject* lexicalGlobalObject, Vector<Ref<MessagePort>>& messagePorts, Vector<Ref<JSC::ArrayBuffer>>& arrayBuffers, const Vector<Ref<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-            const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases,
-            Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases,
+            const Vector<Ref<OffscreenCanvas>>& offscreenCanvases,
+            Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases,
 #endif
             Vector<Ref<MessagePort>>& inMemoryMessagePorts,
 #if ENABLE(WEB_RTC)
@@ -1225,9 +1225,9 @@ private:
             const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
 #endif
 #if ENABLE(WEB_CODECS)
-            Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
+            Vector<Ref<WebCodecsEncodedVideoChunkStorage>>& serializedVideoChunks,
             Vector<RefPtr<WebCodecsVideoFrame>>& serializedVideoFrames,
-            Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
+            Vector<Ref<WebCodecsEncodedAudioChunkStorage>>& serializedAudioChunks,
             Vector<RefPtr<WebCodecsAudioData>>& serializedAudioData,
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -1733,7 +1733,7 @@ private:
         } else if (m_context == SerializationContext::CloneAcrossWorlds) {
             write(InMemoryOffscreenCanvasTag);
             write(static_cast<uint32_t>(m_inMemoryOffscreenCanvases.size()));
-            m_inMemoryOffscreenCanvases.append(&jsCast<JSOffscreenCanvas*>(obj)->wrapped());
+            m_inMemoryOffscreenCanvases.append(jsCast<JSOffscreenCanvas*>(obj)->protectedWrapped());
             return;
         }
 
@@ -1788,7 +1788,7 @@ private:
         auto index = m_serializedVideoChunks.find(&videoChunk->storage());
         if (index == notFound) {
             index = m_serializedVideoChunks.size();
-            m_serializedVideoChunks.append(&videoChunk->storage());
+            m_serializedVideoChunks.append(videoChunk->storage());
         }
 
         write(WebCodecsEncodedVideoChunkTag);
@@ -1818,7 +1818,7 @@ private:
         auto index = m_serializedAudioChunks.find(&audioChunk->storage());
         if (index == notFound) {
             index = m_serializedAudioChunks.size();
-            m_serializedAudioChunks.append(&audioChunk->storage());
+            m_serializedAudioChunks.append(audioChunk->storage());
         }
 
         write(WebCodecsEncodedAudioChunkTag);
@@ -2116,8 +2116,8 @@ private:
                 if (m_context != SerializationContext::WorkerPostMessage && m_context != SerializationContext::WindowPostMessage)
                     return false;
 
-                uint32_t index = m_wasmModules.size(); 
-                m_wasmModules.append(&module->module());
+                uint32_t index = m_wasmModules.size();
+                m_wasmModules.append(Ref { module->module() });
                 write(WasmModuleTag);
                 write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
                 write(index);
@@ -2731,7 +2731,7 @@ private:
     SerializationContext m_context;
     ArrayBufferContentsArray& m_sharedBuffers;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
+    Vector<Ref<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
 #endif
     Vector<Ref<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
@@ -2739,9 +2739,9 @@ private:
     WasmMemoryHandleArray& m_wasmMemoryHandles;
 #endif
 #if ENABLE(WEB_CODECS)
-    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>& m_serializedVideoChunks;
+    Vector<Ref<WebCodecsEncodedVideoChunkStorage>>& m_serializedVideoChunks;
     Vector<RefPtr<WebCodecsVideoFrame>>& m_serializedVideoFrames;
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>& m_serializedAudioChunks;
+    Vector<Ref<WebCodecsEncodedAudioChunkStorage>>& m_serializedAudioChunks;
     Vector<RefPtr<WebCodecsAudioData>>& m_serializedAudioData;
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -3045,13 +3045,13 @@ public:
     static DeserializationResult deserialize(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
-        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
+        , const Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
         , const Vector<Ref<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
@@ -3062,9 +3062,9 @@ public:
         , WasmMemoryHandleArray* wasmMemoryHandles
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
         , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -3185,13 +3185,13 @@ private:
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps, const Vector<uint8_t>& buffer
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases = { }
-        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases = { }
+        , const Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases = { }
 #endif
         , const Vector<Ref<MessagePort>>& inMemoryMessagePorts = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames = { }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles = { }
@@ -3201,9 +3201,9 @@ private:
         , WasmMemoryHandleArray* wasmMemoryHandles = nullptr
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
         , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames = { }
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -3269,13 +3269,13 @@ private:
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
-        , const Vector<RefPtr<OffscreenCanvas>>& inMemoryOffscreenCanvases
+        , const Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases
 #endif
         , const Vector<Ref<MessagePort>>& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
@@ -3285,9 +3285,9 @@ private:
         , WasmMemoryHandleArray* wasmMemoryHandles
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks = { }
         , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames = { }
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks = { }
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -3412,13 +3412,13 @@ private:
 #endif
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> takeDetachedRTCDataChannels() { return std::exchange(m_detachedRTCDataChannels, { }); }
-    Vector<RefPtr<RTCRtpTransformableFrame>> takeSerializedRTCEncodedAudioFrames() { return std::exchange(m_serializedRTCEncodedAudioFrames, { }); }
-    Vector<RefPtr<RTCRtpTransformableFrame>> takeSerializedRTCEncodedVideoFrames() { return std::exchange(m_serializedRTCEncodedVideoFrames, { }); }
+    Vector<Ref<RTCRtpTransformableFrame>> takeSerializedRTCEncodedAudioFrames() { return std::exchange(m_serializedRTCEncodedAudioFrames, { }); }
+    Vector<Ref<RTCRtpTransformableFrame>> takeSerializedRTCEncodedVideoFrames() { return std::exchange(m_serializedRTCEncodedVideoFrames, { }); }
 #endif
 #if ENABLE(WEB_CODECS)
-    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> takeSerializedVideoChunks() { return std::exchange(m_serializedVideoChunks, { }); }
+    Vector<Ref<WebCodecsEncodedVideoChunkStorage>> takeSerializedVideoChunks() { return std::exchange(m_serializedVideoChunks, { }); }
     Vector<WebCodecsVideoFrameData> takeSerializedVideoFrames() { return std::exchange(m_serializedVideoFrames, { }); }
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> takeSerializedAudioChunks() { return std::exchange(m_serializedAudioChunks, { }); }
+    Vector<Ref<WebCodecsEncodedAudioChunkStorage>> takeSerializedAudioChunks() { return std::exchange(m_serializedAudioChunks, { }); }
     Vector<WebCodecsAudioInternalData> takeSerializedAudioData() { return std::exchange(m_serializedAudioData, { }); }
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -4673,7 +4673,7 @@ private:
         }
 
         if (!m_rtcEncodedAudioFrames[index])
-            m_rtcEncodedAudioFrames[index] = RTCEncodedAudioFrame::create(m_serializedRTCEncodedAudioFrames.at(index).releaseNonNull());
+            m_rtcEncodedAudioFrames[index] = RTCEncodedAudioFrame::create(WTF::move(m_serializedRTCEncodedAudioFrames.at(index)));
 
         return getJSValue(m_rtcEncodedAudioFrames[index].get());
     }
@@ -4689,7 +4689,7 @@ private:
         }
 
         if (!m_rtcEncodedVideoFrames[index])
-            m_rtcEncodedVideoFrames[index] = RTCEncodedVideoFrame::create(m_serializedRTCEncodedVideoFrames.at(index).releaseNonNull());
+            m_rtcEncodedVideoFrames[index] = RTCEncodedVideoFrame::create(WTF::move(m_serializedRTCEncodedVideoFrames.at(index)));
 
         return getJSValue(m_rtcEncodedVideoFrames[index].get());
     }
@@ -4707,7 +4707,7 @@ private:
         }
 
         if (!m_videoChunks[index])
-            m_videoChunks[index] = WebCodecsEncodedVideoChunk::create(m_serializedVideoChunks.at(index).releaseNonNull());
+            m_videoChunks[index] = WebCodecsEncodedVideoChunk::create(WTF::move(m_serializedVideoChunks.at(index)));
 
         return getJSValue(m_videoChunks[index].get());
     }
@@ -4737,7 +4737,7 @@ private:
         }
 
         if (!m_audioChunks[index])
-            m_audioChunks[index] = WebCodecsEncodedAudioChunk::create(m_serializedAudioChunks.at(index).releaseNonNull());
+            m_audioChunks[index] = WebCodecsEncodedAudioChunk::create(WTF::move(m_serializedAudioChunks.at(index)));
 
         return getJSValue(m_audioChunks[index].get());
     }
@@ -5249,7 +5249,7 @@ private:
                 fail();
                 return JSValue();
             }
-            return JSC::JSWebAssemblyModule::create(m_lexicalGlobalObject->vm(), m_globalObject->webAssemblyModuleStructure(), Ref { *m_wasmModules->at(index) });
+            return JSC::JSWebAssemblyModule::create(m_lexicalGlobalObject->vm(), m_globalObject->webAssemblyModuleStructure(), m_wasmModules->at(index).copyRef());
         }
         case WasmMemoryTag: {
             if (m_majorVersion >= 12) {
@@ -5487,15 +5487,15 @@ private:
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> m_detachedOffscreenCanvases;
     Vector<RefPtr<OffscreenCanvas>> m_offscreenCanvases;
-    const Vector<RefPtr<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
+    const Vector<Ref<OffscreenCanvas>>& m_inMemoryOffscreenCanvases;
 #endif
     const Vector<Ref<MessagePort>>& m_inMemoryMessagePorts;
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> m_detachedRTCDataChannels;
     Vector<RefPtr<RTCDataChannel>> m_rtcDataChannels;
-    Vector<RefPtr<RTCRtpTransformableFrame>> m_serializedRTCEncodedAudioFrames;
+    Vector<Ref<RTCRtpTransformableFrame>> m_serializedRTCEncodedAudioFrames;
     Vector<RefPtr<RTCEncodedAudioFrame>> m_rtcEncodedAudioFrames;
-    Vector<RefPtr<RTCRtpTransformableFrame>> m_serializedRTCEncodedVideoFrames;
+    Vector<Ref<RTCRtpTransformableFrame>> m_serializedRTCEncodedVideoFrames;
     Vector<RefPtr<RTCEncodedVideoFrame>> m_rtcEncodedVideoFrames;
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
@@ -5507,11 +5507,11 @@ private:
     WasmMemoryHandleArray* const m_wasmMemoryHandles;
 #endif
 #if ENABLE(WEB_CODECS)
-    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
+    Vector<Ref<WebCodecsEncodedVideoChunkStorage>> m_serializedVideoChunks;
     Vector<RefPtr<WebCodecsEncodedVideoChunk>> m_videoChunks;
     Vector<WebCodecsVideoFrameData> m_serializedVideoFrames;
     Vector<RefPtr<WebCodecsVideoFrame>> m_videoFrames;
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> m_serializedAudioChunks;
+    Vector<Ref<WebCodecsEncodedAudioChunkStorage>> m_serializedAudioChunks;
     Vector<RefPtr<WebCodecsEncodedAudioChunk>> m_audioChunks;
     Vector<WebCodecsAudioInternalData> m_serializedAudioData;
     Vector<RefPtr<WebCodecsAudioData>> m_audioData;
@@ -5834,12 +5834,12 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
     Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases;
-    Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases;
+    Vector<Ref<OffscreenCanvas>> inMemoryOffscreenCanvases;
 #endif
 #if ENABLE(WEB_RTC)
     Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;
-    Vector<RefPtr<RTCRtpTransformableFrame>> serializedRTCEncodedAudioFrames;
-    Vector<RefPtr<RTCRtpTransformableFrame>> serializedRTCEncodedVideoFrames;
+    Vector<Ref<RTCRtpTransformableFrame>> serializedRTCEncodedAudioFrames;
+    Vector<Ref<RTCRtpTransformableFrame>> serializedRTCEncodedVideoFrames;
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles;
@@ -5849,9 +5849,9 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
     WasmMemoryHandleArray* wasmMemoryHandles = nullptr;
 #endif
 #if ENABLE(WEB_CODECS)
-    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+    Vector<Ref<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
     Vector<WebCodecsVideoFrameData> serializedVideoFrames;
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+    Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
     Vector<WebCodecsAudioInternalData> serializedAudioData;
 #endif
 
@@ -5937,16 +5937,16 @@ SerializedScriptValue::~SerializedScriptValue() = default;
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::unique_ptr<ArrayBufferContentsArray>&& arrayBufferContentsArray
 #if ENABLE(WEB_RTC)
     , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
-    , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
-    , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
+    , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
+    , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
 #endif
 #if ENABLE(WEB_CODECS)
-    , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+    , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
     , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
-    , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
+    , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
     , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -5983,13 +5983,13 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
-        , Vector<RefPtr<OffscreenCanvas>>&& inMemoryOffscreenCanvases
+        , Vector<Ref<OffscreenCanvas>>&& inMemoryOffscreenCanvases
 #endif
         , Vector<Ref<MessagePort>>&& inMemoryMessagePorts
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
+        , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedVideoFrames
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& detachedMediaSourceHandles
@@ -5999,9 +5999,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
         , std::unique_ptr<WasmMemoryHandleArray> wasmMemoryHandlesArray
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& serializedVideoChunks
         , Vector<WebCodecsVideoFrameData>&& serializedVideoFrames
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& serializedAudioChunks
         , Vector<WebCodecsAudioInternalData>&& serializedAudioData
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -6085,16 +6085,12 @@ size_t SerializedScriptValue::computeMemoryCost() const
     }
 #endif
 #if ENABLE(WEB_CODECS)
-    for (auto& chunk : m_internals.serializedVideoChunks) {
-        if (chunk)
-            cost += chunk->memoryCost();
-    }
+    for (auto& chunk : m_internals.serializedVideoChunks)
+        cost += chunk->memoryCost();
     for (auto& frame : m_internals.serializedVideoFrames)
         cost += frame.memoryCost();
-    for (auto& chunk : m_internals.serializedAudioChunks) {
-        if (chunk)
-            cost += chunk->memoryCost();
-    }
+    for (auto& chunk : m_internals.serializedAudioChunks)
+        cost += chunk->memoryCost();
     for (auto& data : m_internals.serializedAudioData)
         cost += data.memoryCost();
 #endif
@@ -6105,20 +6101,20 @@ size_t SerializedScriptValue::computeMemoryCost() const
     return cost;
 }
 
-static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffers(VM& vm, const Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers)
+static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffers(VM& vm, const Vector<Ref<JSC::ArrayBuffer>>& arrayBuffers)
 {
     if (arrayBuffers.isEmpty())
         return nullptr;
 
     auto contents = makeUnique<ArrayBufferContentsArray>(arrayBuffers.size());
 
-    HashSet<RefPtr<JSC::ArrayBuffer>> visited;
+    HashSet<Ref<JSC::ArrayBuffer>> visited;
     for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {
-        if (visited.contains(arrayBuffers[arrayBufferIndex].get()))
+        if (visited.contains(arrayBuffers[arrayBufferIndex].ptr()))
             continue;
         visited.add(arrayBuffers[arrayBufferIndex].get());
 
-        bool result = Ref { *arrayBuffers[arrayBufferIndex] }->transferTo(vm, contents->at(arrayBufferIndex));
+        bool result = Ref { arrayBuffers[arrayBufferIndex] }->transferTo(vm, contents->at(arrayBufferIndex));
         if (!result)
             return Exception { ExceptionCode::TypeError };
     }
@@ -6175,9 +6171,9 @@ static Exception exceptionForSerializationFailure(SerializationReturnCode code)
     return Exception { ExceptionCode::TypeError };
 }
 
-static bool containsDuplicates(const Vector<RefPtr<ImageBitmap>>& imageBitmaps)
+static bool containsDuplicates(const Vector<Ref<ImageBitmap>>& imageBitmaps)
 {
-    HashSet<RefPtr<ImageBitmap>> visited;
+    HashSet<Ref<ImageBitmap>> visited;
     for (auto& imageBitmap : imageBitmaps) {
         if (!visited.add(imageBitmap.get()))
             return true;
@@ -6186,9 +6182,9 @@ static bool containsDuplicates(const Vector<RefPtr<ImageBitmap>>& imageBitmaps)
 }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-static bool canOffscreenCanvasesDetach(const Vector<RefPtr<OffscreenCanvas>>& offscreenCanvases)
+static bool canOffscreenCanvasesDetach(const Vector<Ref<OffscreenCanvas>>& offscreenCanvases)
 {
-    HashSet<RefPtr<OffscreenCanvas>> visited;
+    HashSet<Ref<OffscreenCanvas>> visited;
     for (auto& offscreenCanvas : offscreenCanvases) {
         if (!offscreenCanvas->canDetach())
             return false;
@@ -6203,12 +6199,12 @@ static bool canOffscreenCanvasesDetach(const Vector<RefPtr<OffscreenCanvas>>& of
 #if ENABLE(WEB_RTC)
 static bool canDetachRTCDataChannels(const Vector<Ref<RTCDataChannel>>& channels)
 {
-    HashSet<RefPtr<RTCDataChannel>> visited;
+    HashSet<Ref<RTCDataChannel>> visited;
     for (auto& channel : channels) {
         if (!channel->canDetach())
             return false;
         // Check the return value of add, we should not encounter duplicates.
-        if (!visited.add(channel.ptr()))
+        if (!visited.add(channel.get()))
             return false;
     }
     return true;
@@ -6218,9 +6214,9 @@ static bool canDetachRTCDataChannels(const Vector<Ref<RTCDataChannel>>& channels
 #if ENABLE(MEDIA_STREAM)
 static bool canDetachMediaStreamTracks(const Vector<Ref<MediaStreamTrack>>& tracks)
 {
-    HashSet<RefPtr<MediaStreamTrack>> visited;
+    HashSet<Ref<MediaStreamTrack>> visited;
     for (auto& track : tracks) {
-        if (!visited.add(track.ptr()))
+        if (!visited.add(track.get()))
             return false;
     }
     return true;
@@ -6230,12 +6226,12 @@ static bool canDetachMediaStreamTracks(const Vector<Ref<MediaStreamTrack>>& trac
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
 static bool canDetachMediaSourceHandles(const Vector<Ref<MediaSourceHandle>>& handles)
 {
-    HashSet<RefPtr<MediaSourceHandle>> visited;
+    HashSet<Ref<MediaSourceHandle>> visited;
     for (auto& handle : handles) {
         if (!handle->canDetach())
             return false;
         // Check the return value of add, we should not encounter duplicates.
-        if (!visited.add(handle.ptr()))
+        if (!visited.add(handle.get()))
             return false;
     }
     return true;
@@ -6261,10 +6257,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Vector<RefPtr<JSC::ArrayBuffer>> arrayBuffers;
-    Vector<RefPtr<ImageBitmap>> imageBitmaps;
+    Vector<Ref<JSC::ArrayBuffer>> arrayBuffers;
+    Vector<Ref<ImageBitmap>> imageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    Vector<RefPtr<OffscreenCanvas>> offscreenCanvases;
+    Vector<Ref<OffscreenCanvas>> offscreenCanvases;
 #endif
 #if ENABLE(WEB_RTC)
     Vector<Ref<RTCDataChannel>> dataChannels;
@@ -6293,7 +6289,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
                 throwVMTypeError(&lexicalGlobalObject, scope, errorMessageForTransfer(arrayBuffer.get()));
                 return Exception { ExceptionCode::ExistingExceptionError };
             }
-            arrayBuffers.append(WTF::move(arrayBuffer));
+            arrayBuffers.append(arrayBuffer.releaseNonNull());
             continue;
         }
         if (RefPtr port = JSMessagePort::toWrapped(vm, transferable.get())) {
@@ -6309,13 +6305,13 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
             if (!imageBitmap->originClean())
                 return Exception { ExceptionCode::DataCloneError };
 
-            imageBitmaps.append(WTF::move(imageBitmap));
+            imageBitmaps.append(imageBitmap.releaseNonNull());
             continue;
         }
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         if (RefPtr offscreenCanvas = JSOffscreenCanvas::toWrapped(vm, transferable.get())) {
-            offscreenCanvases.append(WTF::move(offscreenCanvas));
+            offscreenCanvases.append(offscreenCanvas.releaseNonNull());
             continue;
         }
 #endif
@@ -6385,7 +6381,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<uint8_t> buffer;
     Vector<URLKeepingBlobAlive> blobHandles;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
-    Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases;
+    Vector<Ref<OffscreenCanvas>> inMemoryOffscreenCanvases;
 #endif
     Vector<Ref<MessagePort>> inMemoryMessagePorts;
 #if ENABLE(WEBASSEMBLY)
@@ -6398,9 +6394,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<RefPtr<RTCEncodedVideoFrame>> serializedRTCEncodedVideoFrames;
 #endif
 #if ENABLE(WEB_CODECS)
-    Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+    Vector<Ref<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
     Vector<RefPtr<WebCodecsVideoFrame>> serializedVideoFrames;
-    Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+    Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
     Vector<RefPtr<WebCodecsAudioData>> serializedAudioData;
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -6467,10 +6463,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;
     for (auto& channel : dataChannels)
         detachedRTCDataChannels.append(channel->detach());
-    auto serializedRTCEncodedAudioFrameStorages = map(serializedRTCEncodedAudioFrames, [](auto& frame) -> RefPtr<RTCRtpTransformableFrame> {
+    auto serializedRTCEncodedAudioFrameStorages = map(serializedRTCEncodedAudioFrames, [](auto& frame) -> Ref<RTCRtpTransformableFrame> {
         return frame->serialize();
     });
-    auto serializedRTCEncodedVideoFrameStorages = map(serializedRTCEncodedVideoFrames, [](auto& frame) -> RefPtr<RTCRtpTransformableFrame> {
+    auto serializedRTCEncodedVideoFrameStorages = map(serializedRTCEncodedVideoFrames, [](auto& frame) -> Ref<RTCRtpTransformableFrame> {
         return frame->serialize();
     });
 #endif

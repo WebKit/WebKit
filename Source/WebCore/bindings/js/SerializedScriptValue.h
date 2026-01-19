@@ -91,7 +91,7 @@ enum class SerializationForStorage : bool { No, Yes };
 
 using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 #if ENABLE(WEBASSEMBLY)
-using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
+using WasmModuleArray = Vector<Ref<JSC::Wasm::Module>>;
 using WasmMemoryHandleArray = Vector<RefPtr<JSC::SharedArrayBufferContents>>;
 #endif
 
@@ -156,16 +156,16 @@ private:
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>&& = nullptr
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& = { }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -176,13 +176,13 @@ private:
     SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&&
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
-        , Vector<RefPtr<OffscreenCanvas>>&& = { }
+        , Vector<Ref<OffscreenCanvas>>&& = { }
 #endif
         , Vector<Ref<MessagePort>>&& = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& = { }
-        , Vector<RefPtr<RTCRtpTransformableFrame>>&& = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& = { }
+        , Vector<Ref<RTCRtpTransformableFrame>>&& = { }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
@@ -192,9 +192,9 @@ private:
         , std::unique_ptr<WasmMemoryHandleArray> = nullptr
 #endif
 #if ENABLE(WEB_CODECS)
-        , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
+        , Vector<Ref<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
-        , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
+        , Vector<Ref<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
 #if ENABLE(MEDIA_STREAM)
@@ -211,14 +211,14 @@ private:
         Vector<std::unique_ptr<DetachedRTCDataChannel>> detachedRTCDataChannels;
 #endif
 #if ENABLE(WEB_CODECS)
-        Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
-        Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+        Vector<Ref<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+        Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
 #endif
 #if ENABLE(WEB_RTC)
-        Vector<RefPtr<RTCRtpTransformableFrame>> serializedRTCEncodedAudioFrames { };
-        Vector<RefPtr<RTCRtpTransformableFrame>> serializedRTCEncodedVideoFrames { };
+        Vector<Ref<RTCRtpTransformableFrame>> serializedRTCEncodedAudioFrames { };
+        Vector<Ref<RTCRtpTransformableFrame>> serializedRTCEncodedVideoFrames { };
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles { };
@@ -230,7 +230,7 @@ private:
         Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
-        Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases { };
+        Vector<Ref<OffscreenCanvas>> inMemoryOffscreenCanvases { };
 #endif
         Vector<Ref<MessagePort>> inMemoryMessagePorts { };
 #if ENABLE(WEBASSEMBLY)
