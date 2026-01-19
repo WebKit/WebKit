@@ -1353,6 +1353,9 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin, ShellMixin):
     def __init__(self, **kwargs):
         kwargs['timeout'] = 90 * 60
         super().__init__(**kwargs)
+        self.failuresCount = 0
+        self.timeoutCount = 0
+        self.newPassesCount = 0
 
     @defer.inlineCallbacks
     def run(self):
@@ -1370,9 +1373,6 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin, ShellMixin):
 
         logText = self.log_observer.getStdout()
 
-        self.failuresCount = 0
-        self.timeoutCount = 0
-        self.newPassesCount = 0
         foundFailures = re.findall(r"Unexpected failures \((\d+)\)", logText, re.MULTILINE)
         if foundFailures:
             self.failuresCount = int(foundFailures[0])
