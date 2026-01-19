@@ -57,7 +57,7 @@ public:
     void getTree(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&) override;
     void handleUserPrompt(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalShouldAccept, const String& userText, Inspector::CommandCallback<void>&&) override;
     void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
-    void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&& optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
+    void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, const String& wait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
     void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, int delta, Inspector::CommandCallback<void>&&) override;
 
 private:

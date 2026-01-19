@@ -2680,22 +2680,6 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/frame.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/reload/invalid.py": {
-        "subtests": {
-            "test_params_context_invalid_value[]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
-            },
-            "test_params_context_invalid_value[somestring]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
-            },
-            "test_params_wait_invalid_value[]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
-            },
-            "test_params_wait_invalid_value[somestring]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288332"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/reload.py": {
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/reload/wait.py": {

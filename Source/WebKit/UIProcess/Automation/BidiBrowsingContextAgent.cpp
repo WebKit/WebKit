@@ -319,15 +319,29 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
     });
 }
 
-void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
+void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, const String& wait, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+
+    auto pageAndFrameHandles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
+    auto& [pageHandle, frameHandle] = pageAndFrameHandles.value();
+
+    std::optional<ReadinessState> readinessState;
+    if (!wait.isNull()) {
+        readinessState = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<ReadinessState>(wait);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!readinessState, InvalidParameter);
+    }
+
+    UNUSED_PARAM(frameHandle);
+
     // FIXME: implement `ignoreCache` option.
 
-    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(optionalReadinessState.value_or(defaultReadinessState));
-    session->reloadBrowsingContext(browsingContext, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [session = WTF::move(session), browsingContext, callback = WTF::move(callback)](CommandResult<void>&& result) {
+    auto pageLoadStrategy = pageLoadStrategyFromReadinessState(readinessState.value_or(defaultReadinessState));
+    session->reloadBrowsingContext(pageHandle, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [session = WTF::move(session), pageHandle = String(pageHandle), callback = WTF::move(callback)](CommandResult<void>&& result) {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
@@ -335,7 +349,7 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-        RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+        RefPtr webPageProxy = session->webPageProxyForHandle(pageHandle);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
 
         // FIXME: keep track of navigation IDs that we hand out.
