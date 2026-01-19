@@ -198,7 +198,7 @@ WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
     if (m_loaderProxy) {
-        m_loaderProxy->postTaskToLoader([this] (ScriptExecutionContext& context) {
+        m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }] (ScriptExecutionContext& context) {
             ASSERT(isMainThread());
             ASSERT_UNUSED(context, context.isDocument());
 
@@ -220,7 +220,7 @@ void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
     if (!m_loaderProxy)
         return;
 
-    m_loaderProxy->postTaskToLoader([this](auto&) {
+    m_loaderProxy->postTaskToLoader([this, protectedThis = Ref { *this }](auto&) {
         if (RefPtr mainThreadLoader = m_mainThreadLoader) {
             mainThreadLoader->computeIsDone();
             return;

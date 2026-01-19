@@ -27,7 +27,6 @@ html/FormAssociatedCustomElement.cpp
 inspector/InspectorOverlay.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 loader/NetscapePlugInStreamLoader.cpp
-loader/WorkerThreadableLoader.cpp
 page/IntelligenceTextEffectsSupport.cpp
 page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
