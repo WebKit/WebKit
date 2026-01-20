@@ -2530,6 +2530,15 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
         storageManager->resume();
 }
 
+#if PLATFORM(MAC)
+void NetworkProcess::systemDidWake()
+{
+    forEachNetworkSession([](auto& session) {
+        session.privateClickMeasurement().checkAttributionTimer();
+    });
+}
+#endif
+
 void NetworkProcess::prefetchDNS(const String& hostname)
 {
     WebCore::prefetchDNS(hostname);

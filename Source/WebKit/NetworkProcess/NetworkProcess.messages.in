@@ -75,6 +75,10 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     FlushCookies(PAL::SessionID sessionID) -> ()
 
+#if PLATFORM(MAC)
+    systemDidWake()
+#endif
+
 #if !PLATFORM(COCOA)
     AllowSpecificHTTPSCertificateForHost(PAL::SessionID sessionID, WebCore::CertificateInfo certificate, String host)
 #endif

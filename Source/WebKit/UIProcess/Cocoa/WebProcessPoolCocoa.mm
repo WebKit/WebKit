@@ -1368,6 +1368,10 @@ void WebProcessPool::systemWillSleep()
 void WebProcessPool::systemDidWake()
 {
     sendToAllProcesses(Messages::WebProcess::SystemDidWake());
+#if PLATFORM(MAC)
+    for (auto& networkProcess : NetworkProcessProxy::allNetworkProcesses())
+        networkProcess->send(Messages::NetworkProcess::systemDidWake(), 0);
+#endif
 }
 #endif // PLATFORM(MAC)
 

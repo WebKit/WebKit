@@ -50,6 +50,7 @@ public:
 
     void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) final;
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
+    void checkAttributionTimer() final;
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(RegistrableDomain&&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
