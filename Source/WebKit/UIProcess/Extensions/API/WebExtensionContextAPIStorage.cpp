@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,12 @@
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
+
+static WorkQueue& extensionStorageQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("com.apple.WebKit.WebExtensionContextAPIStorage"_s);
+    return queue.get().get();
+}
 
 bool WebExtensionContext::isStorageMessageAllowed(IPC::Decoder& message)
 {
@@ -211,57 +217,63 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
     if (!oldKeysAndValues.size() && !newKeysAndValues.size())
         return;
 
-    Ref changedData = JSON::Object::create();
+    // Dispatch this work to a background thread to avoid hangs on the main thread. See https://webkit.org/b/305347.
+    Ref queue = extensionStorageQueue();
+    queue->dispatch([this, protectedThis = Ref { *this }, oldKeysAndValues = crossThreadCopy(WTF::move(oldKeysAndValues)), newKeysAndValues = crossThreadCopy(WTF::move(newKeysAndValues)), dataType]() mutable {
+        Ref changedData = JSON::Object::create();
 
-    // Process new or changed keys
-    for (auto& entry : newKeysAndValues) {
-        const auto& key = entry.key;
-        const auto& value = entry.value;
+        // Process new or changed keys
+        for (auto& entry : newKeysAndValues) {
+            const auto& key = entry.key;
+            const auto& value = entry.value;
 
-        String oldValue = oldKeysAndValues.get(key);
+            String oldValue = oldKeysAndValues.get(key);
 
-        if (oldValue.isEmpty() || oldValue != value) {
-            RefPtr parsedNewValue = JSON::Value::parseJSON(value);
-            RefPtr parsedOldValue = JSON::Value::parseJSON(oldValue);
-            Ref data = JSON::Object::create();
-            if (parsedOldValue)
-                data->setValue(oldValueKey, *parsedOldValue);
-            if (parsedNewValue)
-                data->setValue(newValueKey, *parsedNewValue);
-            changedData->setObject(key, data);
+            if (oldValue.isEmpty() || oldValue != value) {
+                RefPtr parsedNewValue = JSON::Value::parseJSON(value);
+                RefPtr parsedOldValue = JSON::Value::parseJSON(oldValue);
+                Ref data = JSON::Object::create();
+                if (parsedOldValue)
+                    data->setValue(oldValueKey, *parsedOldValue);
+                if (parsedNewValue)
+                    data->setValue(newValueKey, *parsedNewValue);
+                changedData->setObject(key, data);
+            }
         }
-    }
 
-    // Process removed keys.
-    for (auto& entry : oldKeysAndValues) {
-        const auto& key = entry.key;
-        const auto& value = entry.value;
+        // Process removed keys.
+        for (auto& entry : oldKeysAndValues) {
+            const auto& key = entry.key;
+            const auto& value = entry.value;
 
-        if (!newKeysAndValues.contains(key)) {
-            RefPtr parsedNewValue = JSON::Value::parseJSON(value);
-            Ref data = JSON::Object::create();
-            if (parsedNewValue)
-                data->setValue(oldValueKey, *parsedNewValue);
-            changedData->setObject(key, data);
+            if (!newKeysAndValues.contains(key)) {
+                RefPtr parsedNewValue = JSON::Value::parseJSON(value);
+                Ref data = JSON::Object::create();
+                if (parsedNewValue)
+                    data->setValue(oldValueKey, *parsedNewValue);
+                changedData->setObject(key, data);
+            }
         }
-    }
 
-    if (!changedData->size())
-        return;
+        if (!changedData->size())
+            return;
 
-    constexpr auto type = WebExtensionEventListenerType::StorageOnChanged;
+        constexpr auto type = WebExtensionEventListenerType::StorageOnChanged;
 
-    Vector<String> serializedJSONStrings;
-    serializeToMultipleJSONStrings(changedData, [&](String&& jsonChunk) {
-        serializedJSONStrings.append(WTF::move(jsonChunk));
-    });
+        Vector<String> serializedJSONStrings;
+        serializeToMultipleJSONStrings(changedData, [&](String&& jsonChunk) {
+            serializedJSONStrings.append(WTF::move(jsonChunk));
+        });
 
-    // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
-    // content scripts are allowed to listen to storage.onChanged events.
-    sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
+        WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, serializedJSONStrings = crossThreadCopy(WTF::move(serializedJSONStrings)), dataType]() mutable {
+            // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
+            // content scripts are allowed to listen to storage.onChanged events.
+            sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
 
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::Main));
+            wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
+                sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::Main));
+            });
+        });
     });
 }
 
