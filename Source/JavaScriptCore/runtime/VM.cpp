@@ -987,9 +987,15 @@ bool VM::hasExceptionsAfterHandlingTraps()
     return exception();
 }
 
+void VM::setHasTerminationRequest()
+{
+    m_hasTerminationRequest = true;
+    requestEntryScopeService(ConcurrentEntryScopeService::ResetTerminationRequest);
+}
+
 void VM::setException(Exception* exception)
 {
-    ASSERT(!exception || !isTerminationException(exception) || hasTerminationRequest());
+    ASSERT(!isTerminationException(exception) || hasTerminationRequest());
     m_exception = exception;
     m_lastException = exception;
     if (exception)

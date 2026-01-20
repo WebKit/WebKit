@@ -491,11 +491,10 @@ bool VMTraps::handleTraps(VMTraps::BitField mask)
             ASSERT(vm.watchdog());
             if (!vm.watchdog()->isActive() || !vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())) [[likely]]
                 continue;
-            vm.setHasTerminationRequest();
             [[fallthrough]];
 
         case NeedTermination:
-            ASSERT(vm.hasTerminationRequest());
+            vm.setHasTerminationRequest();
             scope.release();
             if (!isDeferringTermination())
                 vm.throwTerminationException();
