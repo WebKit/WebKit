@@ -34,11 +34,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusEvent);
 
-bool FocusEvent::isFocusEvent() const
-{
-    return true;
-}
-
 FocusEvent::FocusEvent()
     : UIEvent(EventInterfaceType::FocusEvent)
 {

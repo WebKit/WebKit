@@ -37,10 +37,6 @@ class AnimationEventBase : public Event {
 public:
     virtual ~AnimationEventBase();
 
-    virtual bool isAnimationPlaybackEvent() const { return false; }
-    virtual bool isCSSAnimationEvent() const { return false; }
-    virtual bool isCSSTransitionEvent() const { return false; }
-
     WebAnimation* animation() const { return m_animation.get(); }
     std::optional<Seconds> scheduledTime() const { return m_scheduledTime; }
 
@@ -49,14 +45,8 @@ protected:
     AnimationEventBase(enum EventInterfaceType, const AtomString&, const EventInit&, IsTrusted);
 
 private:
-    RefPtr<WebAnimation> m_animation;
+    const RefPtr<WebAnimation> m_animation;
     Markable<Seconds> m_scheduledTime;
 };
 
-}
-
-#define SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::AnimationEventBase& value) { return value.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
-
+} // namespace WebCore

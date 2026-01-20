@@ -242,11 +242,6 @@ int KeyboardEvent::charCode() const
     return m_underlyingPlatformEvent->text().characterStartingAt(0);
 }
 
-bool KeyboardEvent::isKeyboardEvent() const
-{
-    return true;
-}
-
 unsigned KeyboardEvent::which() const
 {
     // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.

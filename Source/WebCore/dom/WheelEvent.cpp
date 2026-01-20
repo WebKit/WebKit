@@ -89,9 +89,4 @@ Ref<WheelEvent> WheelEvent::create(const AtomString& type, const Init& initializ
     return adoptRef(*new WheelEvent(type, initializer));
 }
 
-bool WheelEvent::isWheelEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

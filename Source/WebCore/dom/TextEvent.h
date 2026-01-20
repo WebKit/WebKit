@@ -75,8 +75,6 @@ namespace WebCore {
         TextEvent(RefPtr<WindowProxy>&&, const String& data, RefPtr<DocumentFragment>&&, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
         TextEvent(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
-        bool isTextEvent() const final;
-
         TextEventInputType m_inputType;
         String m_data;
 

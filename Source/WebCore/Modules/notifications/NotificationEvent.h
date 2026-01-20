@@ -55,16 +55,12 @@ public:
 private:
     NotificationEvent(const AtomString&, NotificationEventInit&&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
 
-    bool isNotificationEvent() const final { return true; }
-
     const Ref<Notification> m_notification;
     String m_action;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NotificationEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isNotificationEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(NotificationEvent)
 
 #endif // ENABLE(NOTIFICATION_EVENT)

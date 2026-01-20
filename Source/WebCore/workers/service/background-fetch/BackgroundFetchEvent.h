@@ -51,6 +51,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BackgroundFetchEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isBackgroundFetchEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT_POLYMORPHIC(BackgroundFetchEvent)

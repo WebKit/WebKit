@@ -50,8 +50,6 @@ private:
     ToggleEvent(const AtomString&, const Init&, Event::IsCancelable);
     ToggleEvent(const AtomString&, const Init&);
 
-    bool isToggleEvent() const final { return true; }
-
     String m_oldState;
     String m_newState;
 };

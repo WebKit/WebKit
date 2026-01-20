@@ -62,8 +62,6 @@ public:
 private:
     PushEvent(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
 
-    bool isPushEvent() const final { return true; }
-
     RefPtr<PushMessageData> m_data;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
@@ -79,6 +77,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PushEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isPushEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(PushEvent)

@@ -126,9 +126,4 @@ void TextEvent::initTextEvent(const AtomString& type, bool canBubble, bool cance
     m_dictationAlternatives = { };
 }
 
-bool TextEvent::isTextEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

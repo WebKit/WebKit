@@ -21,6 +21,8 @@
 #include "config.h"
 #include "UIEventWithKeyState.h"
 
+#include "KeyboardEvent.h"
+#include "MouseEvent.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -78,7 +80,7 @@ void UIEventWithKeyState::setModifierKeys(bool ctrlKey, bool altKey, bool shiftK
 RefPtr<UIEventWithKeyState> findEventWithKeyState(Event* event)
 {
     for (RefPtr e = event; e; e = e->underlyingEvent()) {
-        if (e->isKeyboardEvent() || e->isMouseEvent())
+        if (is<KeyboardEvent>(*e) || is<MouseEvent>(*e))
             return downcast<UIEventWithKeyState>(WTF::move(e));
     }
     return nullptr;

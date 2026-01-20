@@ -54,9 +54,7 @@ private:
     CommandEvent();
     CommandEvent(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
-    bool isCommandEvent() const final;
-
-    RefPtr<Element> m_source;
+    const RefPtr<Element> m_source;
     String m_command;
 };
 

@@ -58,11 +58,6 @@ Ref<CommandEvent> CommandEvent::createForBindings()
     return adoptRef(*new CommandEvent);
 }
 
-bool CommandEvent::isCommandEvent() const
-{
-    return true;
-}
-
 RefPtr<Element> CommandEvent::source() const
 {
     if (!m_source)
@@ -70,12 +65,12 @@ RefPtr<Element> CommandEvent::source() const
 
     if (RefPtr target = dynamicDowncast<Node>(currentTarget())) {
         Ref treeScope = target->treeScope();
-        Ref node = treeScope->retargetToScope(*m_source.get());
+        Ref node = treeScope->retargetToScope(*m_source);
         return &downcast<Element>(node).get();
     }
 
     Ref treeScope = m_source->treeScope().documentScope();
-    Ref node = treeScope->retargetToScope(*m_source.get());
+    Ref node = treeScope->retargetToScope(*m_source);
     return &downcast<Element>(node).get();
 }
 

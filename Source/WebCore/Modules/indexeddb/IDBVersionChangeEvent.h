@@ -62,8 +62,6 @@ private:
     IDBVersionChangeEvent(std::optional<IDBResourceIdentifier> requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType);
     IDBVersionChangeEvent(const AtomString&, const Init&, IsTrusted);
 
-    bool isVersionChangeEvent() const final { return true; }
-
     std::optional<IDBResourceIdentifier> m_requestIdentifier;
     uint64_t m_oldVersion;
     std::optional<uint64_t> m_newVersion;
@@ -71,6 +69,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IDBVersionChangeEvent)
-    static bool isType(const WebCore::Event& event) { return event.isVersionChangeEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EVENT(IDBVersionChangeEvent)

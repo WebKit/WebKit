@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLElement;
 
-class SubmitEvent : public Event {
+class SubmitEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(SubmitEvent);
 public:
     struct Init : EventInit {
@@ -49,9 +49,7 @@ private:
     SubmitEvent(const AtomString& type, Init&&);
     explicit SubmitEvent(RefPtr<HTMLElement>&& submitter);
 
-    bool isSubmitEvent() const final;
-
-    RefPtr<HTMLElement> m_submitter;
+    const RefPtr<HTMLElement> m_submitter;
 };
 
 } // namespace WebCore

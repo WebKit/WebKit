@@ -44,12 +44,8 @@ public:
 
 private:
     BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);
-
-    bool isBackgroundFetchUpdateUIEvent() const final { return true; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::BackgroundFetchUpdateUIEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isBackgroundFetchUpdateUIEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(BackgroundFetchUpdateUIEvent)

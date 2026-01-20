@@ -83,14 +83,12 @@ private:
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error);
     ErrorEvent(const AtomString&, const Init&, IsTrusted);
 
-    bool isErrorEvent() const final;
-
     String m_message;
     String m_fileName;
     unsigned m_lineNumber;
     unsigned m_columnNumber;
     JSValueInWrappedObject m_error;
-    RefPtr<SerializedScriptValue> m_serializedError;
+    const RefPtr<SerializedScriptValue> m_serializedError;
     bool m_triedToSerialize { false };
 };
 

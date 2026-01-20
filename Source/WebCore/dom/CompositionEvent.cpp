@@ -62,9 +62,4 @@ void CompositionEvent::initCompositionEvent(const AtomString& type, bool canBubb
     m_data = data;
 }
 
-bool CompositionEvent::isCompositionEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

@@ -47,8 +47,6 @@ public:
 
     virtual ~AnimationPlaybackEvent();
 
-    bool isAnimationPlaybackEvent() const final { return true; }
-
     std::optional<WebAnimationTime> timelineTime() const { return m_timelineTime; }
     std::optional<WebAnimationTime> currentTime() const { return m_currentTime; }
 
@@ -60,6 +58,6 @@ private:
     std::optional<WebAnimationTime> m_currentTime;
 };
 
-}
+} // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(AnimationPlaybackEvent, isAnimationPlaybackEvent())
+SPECIALIZE_TYPE_TRAITS_EVENT(AnimationPlaybackEvent)

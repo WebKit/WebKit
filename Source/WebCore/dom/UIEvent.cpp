@@ -71,11 +71,6 @@ void UIEvent::initUIEvent(const AtomString& typeArg, bool canBubbleArg, bool can
     m_detail = detailArg;
 }
 
-bool UIEvent::isUIEvent() const
-{
-    return true;
-}
-
 int UIEvent::layerX()
 {
     return 0;

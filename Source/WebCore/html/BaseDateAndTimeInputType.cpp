@@ -331,7 +331,7 @@ void BaseDateAndTimeInputType::handleDOMActivateEvent(Event& event)
     if (!element()->renderer() || !protectedElement()->isMutable() || !UserGestureIndicator::processingUserGesture())
         return;
 
-    m_pickerWasActivatedByKeyboard = event.isKeyboardEvent();
+    m_pickerWasActivatedByKeyboard = is<KeyboardEvent>(event);
 
     if (m_dateTimeChooser)
         return;

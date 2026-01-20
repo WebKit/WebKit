@@ -47,9 +47,7 @@ public:
 private:
     enum ForBindingsFlag { ForBindings };
     BeforeUnloadEvent();
-    BeforeUnloadEvent(ForBindingsFlag);
-
-    bool isBeforeUnloadEvent() const final;
+    explicit BeforeUnloadEvent(ForBindingsFlag);
 
     String m_returnValue;
 };

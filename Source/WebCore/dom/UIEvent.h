@@ -78,7 +78,7 @@ protected:
     UIEvent(enum EventInterfaceType, const AtomString&, const UIEventInit&, IsTrusted = IsTrusted::No);
 
 private:
-    bool isUIEvent() const final;
+    bool isUIEvent() const final { return true; }
 
     RefPtr<WindowProxy> m_view;
     int m_detail;
@@ -87,4 +87,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_EVENT(UIEvent)
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(UIEvent)

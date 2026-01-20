@@ -94,7 +94,6 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBub
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, eventType, canBubble, isCancelable, isComposed, timestamp, WTF::move(view), detail, { screenX, screenY }, { clientX, clientY }, 0, 0, modifiers, button, buttons, syntheticClickType, relatedTarget));
 }
 
-
 Ref<MouseEvent> MouseEvent::createForBindings()
 {
     return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent));
@@ -174,11 +173,6 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
     initCoordinates({ clientX, clientY });
 
     setIsSimulated(false);
-}
-
-bool MouseEvent::isMouseEvent() const
-{
-    return true;
 }
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)

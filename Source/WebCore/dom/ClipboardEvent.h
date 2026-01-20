@@ -54,9 +54,7 @@ private:
     ClipboardEvent(const AtomString& type, Ref<DataTransfer>&&);
     ClipboardEvent(const AtomString& type, const Init&);
 
-    bool isClipboardEvent() const final;
-
-    RefPtr<DataTransfer> m_clipboardData;
+    const RefPtr<DataTransfer> m_clipboardData;
 };
 
 } // namespace WebCore

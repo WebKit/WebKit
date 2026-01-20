@@ -56,7 +56,7 @@ public:
 
     const String& inputType() const { return m_inputType; }
     const String& data() const { return m_data; }
-    RefPtr<DataTransfer> dataTransfer() const;
+    DataTransfer* dataTransfer() const;
     const Vector<Ref<StaticRange>>& getTargetRanges() { return m_targetRanges; }
     bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 
@@ -65,11 +65,9 @@ private:
         const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
     InputEvent(const AtomString& eventType, const Init&);
 
-    bool isInputEvent() const final { return true; }
-
     String m_inputType;
     String m_data;
-    RefPtr<DataTransfer> m_dataTransfer;
+    const RefPtr<DataTransfer> m_dataTransfer;
     Vector<Ref<StaticRange>> m_targetRanges;
     bool m_isInputMethodComposing;
 };

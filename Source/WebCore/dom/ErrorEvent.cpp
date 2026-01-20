@@ -91,15 +91,11 @@ JSValue ErrorEvent::error(JSGlobalObject& globalObject)
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(JSGlobalObject& exec)
 {
     if (!m_serializedError && !m_triedToSerialize) {
-        m_serializedError = SerializedScriptValue::create(exec, m_error.getValue(), SerializationForStorage::No, SerializationErrorMode::NonThrowing);
+        if (RefPtr error = SerializedScriptValue::create(exec, m_error.getValue(), SerializationForStorage::No, SerializationErrorMode::NonThrowing))
+            lazyInitialize(m_serializedError, error.releaseNonNull());
         m_triedToSerialize = true;
     }
     return m_serializedError;
-}
-
-bool ErrorEvent::isErrorEvent() const
-{
-    return true;
 }
 
 } // namespace WebCore

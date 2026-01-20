@@ -110,29 +110,9 @@ public:
     void setLegacyReturnValue(bool);
 
     virtual bool isBeforeTextInsertedEvent() const { return false; }
-    virtual bool isBeforeUnloadEvent() const { return false; }
-    virtual bool isClipboardEvent() const { return false; }
-    virtual bool isCommandEvent() const { return false; }
-    virtual bool isCompositionEvent() const { return false; }
-    virtual bool isDragEvent() const { return false; }
-    virtual bool isErrorEvent() const { return false; }
-    virtual bool isFocusEvent() const { return false; }
-    virtual bool isGestureEvent() const { return false; }
-    virtual bool isInputEvent() const { return false; }
-    virtual bool isKeyboardEvent() const { return false; }
     virtual bool isMouseEvent() const { return false; }
-    virtual bool isPaymentMethodChangeEvent() const { return false; }
-    virtual bool isPointerEvent() const { return false; }
-    virtual bool isSpeechSynthesisErrorEvent() const { return false; }
-    virtual bool isSubmitEvent() const { return false; }
-    virtual bool isTextEvent() const { return false; }
-    virtual bool isToggleEvent() const { return false; }
-    virtual bool isTouchEvent() const { return false; }
     virtual bool isUIEvent() const { return false; }
     virtual bool isUIEventWithKeyState() const { return false; }
-    virtual bool isVersionChangeEvent() const { return false; }
-    virtual bool isWheelEvent() const { return false; }
-    virtual bool isXMLHttpRequestProgressEvent() const { return false; }
 
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
@@ -254,6 +234,11 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Event&);
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_EVENT(ToValueTypeName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::Event& event) { return event.interfaceType() == WebCore::EventInterfaceType::ToValueTypeName; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(ToValueTypeName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
     static bool isType(const WebCore::Event& event) { return event.is##ToValueTypeName(); } \
 SPECIALIZE_TYPE_TRAITS_END()

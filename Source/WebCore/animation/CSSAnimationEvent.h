@@ -50,8 +50,6 @@ public:
 
     virtual ~CSSAnimationEvent();
 
-    bool isCSSAnimationEvent() const final { return true; }
-
     const String& animationName() const { return m_animationName; }
 
 private:
@@ -63,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(CSSAnimationEvent, isCSSAnimationEvent())
+SPECIALIZE_TYPE_TRAITS_EVENT(CSSAnimationEvent)

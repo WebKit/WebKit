@@ -40,9 +40,4 @@ BeforeUnloadEvent::BeforeUnloadEvent(ForBindingsFlag)
 {
 }
 
-bool BeforeUnloadEvent::isBeforeUnloadEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore

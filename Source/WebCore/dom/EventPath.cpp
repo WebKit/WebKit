@@ -27,6 +27,7 @@
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"
+#include "FocusEvent.h"
 #include "HTMLSlotElement.h"
 #include "LocalDOMWindow.h"
 #include "MouseEvent.h"
@@ -88,7 +89,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 void EventPath::buildPath(Node& originalTarget, Event& event)
 {
     EventContext::Type contextType = [&]() {
-        if (is<MouseEvent>(event) || event.isFocusEvent())
+        if (is<MouseEvent>(event) || is<FocusEvent>(event))
             return EventContext::Type::MouseOrFocus;
 #if ENABLE(TOUCH_EVENTS)
         if (is<TouchEvent>(event))

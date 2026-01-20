@@ -47,14 +47,10 @@ public:
 private:
     ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted);
 
-    bool isExtendableCookieChangeEvent() const final { return true; }
-
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtendableCookieChangeEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isExtendableCookieChangeEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(ExtendableCookieChangeEvent)

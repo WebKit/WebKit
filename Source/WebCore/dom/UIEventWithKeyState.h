@@ -84,4 +84,4 @@ RefPtr<UIEventWithKeyState> findEventWithKeyState(Event*);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_EVENT(UIEventWithKeyState)
+SPECIALIZE_TYPE_TRAITS_EVENT_POLYMORPHIC(UIEventWithKeyState)

@@ -87,7 +87,6 @@ public:
     int keyCodeForKeyDown() const; // key code for the keydown that matches the keypress
     WEBCORE_EXPORT int charCode() const; // character code for keypress, 0 for keydown and keyup
 
-    bool isKeyboardEvent() const final;
     unsigned which() const final;
 
     bool isComposing() const { return m_isComposing; }

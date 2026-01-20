@@ -80,8 +80,6 @@ private:
     ExtendableMessageEvent(const AtomString&, const Init&, IsTrusted);
     ExtendableMessageEvent(const AtomString&, Ref<SecurityOrigin>&&, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<Ref<MessagePort>>&&);
 
-    bool isExtendableMessageEvent() const final { return true; }
-
     JSValueInWrappedObject m_data;
     const Variant<String, Ref<SecurityOrigin>> m_origin;
     String m_lastEventId;
@@ -92,6 +90,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ExtendableMessageEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isExtendableMessageEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(ExtendableMessageEvent)

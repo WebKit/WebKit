@@ -51,12 +51,8 @@ public:
 
 private:
     WEBCORE_EXPORT InstallEvent(const AtomString&, ExtendableEventInit&&, IsTrusted);
-
-    bool isInstallEvent() const final { return true; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InstallEvent)
-    static bool isType(const WebCore::ExtendableEvent& event) { return event.isInstallEvent(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_EXTENDABLEEVENT(InstallEvent)

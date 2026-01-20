@@ -75,8 +75,6 @@ private:
         RefPtr<WindowProxy>&&, const DoublePoint& globalLocation, OptionSet<Modifier>);
     TouchEvent(const AtomString&, const Init&, IsTrusted);
 
-    bool isTouchEvent() const final { return true; }
-
     RefPtr<TouchList> m_touches;
     RefPtr<TouchList> m_targetTouches;
     RefPtr<TouchList> m_changedTouches;

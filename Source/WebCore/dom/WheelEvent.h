@@ -77,8 +77,6 @@ private:
     WheelEvent(const AtomString&, const Init&);
     WheelEvent(const PlatformWheelEvent&, RefPtr<WindowProxy>&&, IsCancelable);
 
-    bool isWheelEvent() const final;
-
     IntPoint m_wheelDelta;
     double m_deltaX { 0 };
     double m_deltaY { 0 };

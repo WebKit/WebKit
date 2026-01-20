@@ -65,8 +65,6 @@ private:
     FocusEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomString& type, const Init&);
 
-    bool isFocusEvent() const final;
-
     void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTF::move(relatedTarget); }
 
     RefPtr<EventTarget> m_relatedTarget;

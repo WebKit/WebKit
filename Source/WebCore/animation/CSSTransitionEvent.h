@@ -51,8 +51,6 @@ public:
 
     virtual ~CSSTransitionEvent();
 
-    bool isCSSTransitionEvent() const final { return true; }
-
     const String& propertyName() const { return m_propertyName; }
 
 private:
@@ -64,4 +62,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EVENT_BASE(CSSTransitionEvent, isCSSTransitionEvent())
+SPECIALIZE_TYPE_TRAITS_EVENT(CSSTransitionEvent)

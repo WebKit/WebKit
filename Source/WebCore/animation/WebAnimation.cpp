@@ -30,8 +30,10 @@
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "ContainerNodeInlines.h"
+#include "CSSAnimationEvent.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
+#include "CSSTransitionEvent.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "CSSValuePool.h"
@@ -917,7 +919,7 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
         timeline->enqueueAnimationEvent(WTF::move(event));
     } else {
         // Otherwise, queue a task to dispatch event at animation. The task source for this task is the DOM manipulation task source.
-        if (event->isCSSAnimationEvent() || event->isCSSTransitionEvent()) {
+        if (is<CSSAnimationEvent>(event) || is<CSSTransitionEvent>(event)) {
             if (RefPtr element = dynamicDowncast<Element>(event->target())) {
                 element->queueTaskToDispatchEvent(TaskSource::DOMManipulation, WTF::move(event));
                 return;

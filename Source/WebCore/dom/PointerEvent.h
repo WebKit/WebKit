@@ -152,7 +152,6 @@ protected:
     PointerEvent(const AtomString& type, MouseButton, const MouseEvent&, PointerID, const String& pointerType, CanBubble, IsCancelable, IsComposed);
 
 private:
-    bool isPointerEvent() const final { return true; }
     static bool typeIsEnterOrLeave(const AtomString& type);
     static unsigned short buttonsForType(const AtomString& type)
     {
@@ -226,4 +225,5 @@ inline bool PointerEvent::typeRequiresResolvedButton(const AtomString& type)
 
 } // namespace WebCore
 
+// Technically a polymorphic Event class because of SimulatedPointerEvent, but that uses the same type.
 SPECIALIZE_TYPE_TRAITS_EVENT(PointerEvent)

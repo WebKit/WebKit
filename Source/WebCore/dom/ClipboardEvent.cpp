@@ -44,9 +44,4 @@ ClipboardEvent::ClipboardEvent(const AtomString& type, const Init& init)
 
 ClipboardEvent::~ClipboardEvent() = default;
 
-bool ClipboardEvent::isClipboardEvent() const
-{
-    return true;
-}
-
 } // namespace WebCore
