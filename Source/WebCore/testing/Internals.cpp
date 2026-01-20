@@ -1209,7 +1209,7 @@ void Internals::setImageAnimationEnabled(bool enabled)
             return;
 
         // We need to set this here to mimic the behavior of the AX preference changing
-        Image::setSystemAllowsAnimationControls(!enabled);
+        Image::setSystemAllowsAnimationControls(enabled);
         page->setImageAnimationEnabled(enabled);
     }
 }

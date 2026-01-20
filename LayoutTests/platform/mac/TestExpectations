@@ -2523,8 +2523,7 @@ webkit.org/b/302364 http/tests/site-isolation/window-open-with-name-cross-site.h
 
 webkit.org/b/301013 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Pass Failure ]
 
-# webkit.org/b/301655 Internals animation toggle causes the Image global preference to change, unpausing animations in tests
-fast/images/page-wide-animation-toggle.html [ Pass Timeout ]
-fast/images/individual-animation-toggle.html [ Pass Timeout ]
+fast/images/page-wide-animation-toggle.html [ Pass ]
+fast/images/individual-animation-toggle.html [ Pass ]
 
 webkit.org/b/304523 inspector/unit-tests/iterableweakset.html [ Pass Failure ]
