@@ -479,8 +479,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 #endif
 @property (nonatomic, setter=_setAllowsParentToBeginHorizontally:) BOOL _allowsParentToBeginHorizontally;
 @property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
-@property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
-@property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;
 #if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
 @property (nonatomic, nullable, setter=_setVerticalScrollIndicatorColor:) UIColor *_verticalScrollIndicatorColor;
 @property (nonatomic, nullable, setter=_setHorizontalScrollIndicatorColor:) UIColor *_horizontalScrollIndicatorColor;
@@ -1075,6 +1073,18 @@ extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserIn
 - (instancetype)initWithBundleIdentifier:(NSString *)bundleIdentifier;
 @property (nonatomic, copy) id badgeValue;
 @end
+
+#if HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
+
+typedef NS_ENUM(NSInteger, _UIScrollViewDecelerationTrackingBehavior) {
+    _UIScrollViewDecelerationTrackingBehaviorAdaptive  = 2
+};
+
+@interface UIScrollView (Staging_55353291)
+@property (nonatomic, setter=_setDecelerationTrackingBehavior:, getter=_decelerationTrackingBehavior) _UIScrollViewDecelerationTrackingBehavior _decelerationTrackingBehavior;
+@end
+
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
