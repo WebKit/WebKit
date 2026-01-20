@@ -755,7 +755,7 @@ std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDir
 
     std::optional<SimpleRange> closestStringRange;
     for (auto& searchString : searchStrings) {
-        if (auto foundStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
+        if (std::optional foundStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
             bool foundStringIsCloser;
             if (!closestStringRange)
                 foundStringIsCloser = true;
@@ -764,6 +764,7 @@ std::optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDir
                     ? is_gt(treeOrder<ComposedTree>(foundStringRange->end, closestStringRange->end))
                     : is_lt(treeOrder<ComposedTree>(foundStringRange->start, closestStringRange->start));
             }
+
             if (foundStringIsCloser)
                 closestStringRange = *foundStringRange;
         }
@@ -993,18 +994,68 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(Si
     return { { startBoundary, endBoundary } };
 }
 
-std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection direction) const
+std::optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& searchStrings, const SimpleRange& startRange, AccessibilitySearchTextDirection direction) const
 {
-    std::optional<SimpleRange> found;
-    if (direction == AccessibilitySearchTextDirection::Forward)
-        found = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Next, searchStrings);
-    else if (direction == AccessibilitySearchTextDirection::Backward)
-        found = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Previous, searchStrings);
-    else if (direction == AccessibilitySearchTextDirection::Closest) {
-        auto foundAfter = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Next, searchStrings);
-        auto foundBefore = rangeOfStringClosestToRangeInDirection(start, AccessibilitySearchDirection::Previous, searchStrings);
-        found = rangeClosestToRange(start, WTF::move(foundAfter), WTF::move(foundBefore));
+    auto findRange = [this, &searchStrings, &direction] (const SimpleRange& referenceRange) -> std::optional<SimpleRange> {
+        switch (direction) {
+        case AccessibilitySearchTextDirection::Forward:
+            return rangeOfStringClosestToRangeInDirection(referenceRange, AccessibilitySearchDirection::Next, searchStrings);
+        case AccessibilitySearchTextDirection::Backward:
+            return rangeOfStringClosestToRangeInDirection(referenceRange, AccessibilitySearchDirection::Previous, searchStrings);
+        case AccessibilitySearchTextDirection::Closest: {
+            std::optional foundAfter = rangeOfStringClosestToRangeInDirection(referenceRange, AccessibilitySearchDirection::Next, searchStrings);
+            std::optional foundBefore = rangeOfStringClosestToRangeInDirection(referenceRange, AccessibilitySearchDirection::Previous, searchStrings);
+            return rangeClosestToRange(referenceRange, WTF::move(foundAfter), WTF::move(foundBefore));
+        }
+        case AccessibilitySearchTextDirection::All: {
+            // This function should never be called with the All variant, as we don't handle it properly at this time.
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        }
+
+        return std::nullopt;
+    };
+
+    std::optional found = findRange(startRange);
+    while (found && *found == startRange) {
+        // We must make progress in some direction (forward or backward) — callers do not expect the returned
+        // range to be the same as the range given as a parameter, and could infinitely loop if this happens.
+        // Loop until we have moved to a new range.
+
+        // To achieve this, we slide the range to the next or previous node (depending on the direction).
+        SimpleRange movedStartRange = startRange;
+        if (direction == AccessibilitySearchTextDirection::Forward) {
+            Ref currentNode = startRange.start.container.get();
+            if (RefPtr nextNode = NodeTraversal::next(currentNode.get()))
+                movedStartRange = { { *nextNode, 0 }, startRange.end };
+            else
+                break;
+        } else if (direction == AccessibilitySearchTextDirection::Backward) {
+            Ref currentNode = startRange.end.container.get();
+            if (RefPtr previousNode = NodeTraversal::previous(currentNode.get())) {
+                unsigned length = previousNode->isCharacterDataNode() ? previousNode->length() : previousNode->countChildNodes();
+                movedStartRange = { startRange.start, { *previousNode, length } };
+            } else
+                break;
+        } else {
+            // For other directions, try advancing forward first, then backward if that fails.
+            Ref startNode = startRange.start.container.get();
+            if (RefPtr nextNode = NodeTraversal::next(startNode.get()))
+                movedStartRange = { { *nextNode, 0 }, startRange.end };
+            else {
+                Ref endNode = startRange.end.container.get();
+                if (RefPtr<Node> previousNode = NodeTraversal::previous(endNode.get())) {
+                    unsigned length = previousNode->isCharacterDataNode() ? previousNode->length() : previousNode->countChildNodes();
+                    movedStartRange = { startRange.start, { *previousNode, length } };
+                } else
+                    break;
+            }
+        }
+
+        found = findRange(movedStartRange);
     }
+
     if (found) {
         // If the search started within a text control, ensure that the result is inside that element.
         if (element() && element()->isTextField()) {
@@ -1045,7 +1096,7 @@ Vector<SimpleRange> AccessibilityObject::findTextRanges(const AccessibilitySearc
         break;
     case AccessibilitySearchTextDirection::All:
         auto appendFoundRanges = [&](AccessibilitySearchTextDirection direction) {
-            for (auto foundRange = range; (foundRange = findTextRange(criteria.searchStrings, *foundRange, direction)); )
+            for (std::optional foundRange = range; (foundRange = findTextRange(criteria.searchStrings, *foundRange, direction)); )
                 result.append(*foundRange);
         };
         appendFoundRanges(AccessibilitySearchTextDirection::Forward);

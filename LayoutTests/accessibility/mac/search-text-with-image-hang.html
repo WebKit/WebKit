@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#logo {
+    display: inline-block;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiByeD0iMyIgZmlsbD0iIzAwN2FmZiIvPgo8L3N2Zz4=") no-repeat center / contain;
+    -webkit-user-select: none;
+    user-select: none
+}
+</style>
+</head>
+<body>
+
+<div id="logo">WebKit</div>
+WebKit
+ 
+<script>
+var output = "This test ensures we don't hang when using the text-search API.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    var markerRange = webArea.searchTextWithCriteria("WebKit", "AXSearchTextStartFromBegin", "AXSearchTextDirectionAll");
+    output += expect("webArea.stringForTextMarkerRange(markerRange[0])", "'WebKit'");
+    output += "PASS: Did not hang.";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

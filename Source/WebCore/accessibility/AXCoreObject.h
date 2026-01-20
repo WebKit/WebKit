@@ -215,6 +215,51 @@ struct AccessibilitySearchTextCriteria {
         : start(AccessibilitySearchTextStartFrom::Selection)
         , direction(AccessibilitySearchTextDirection::Forward)
     { }
+
+    String debugDescription() const
+    {
+        String startFrom;
+        switch (start) {
+        case AccessibilitySearchTextStartFrom::Begin:
+            startFrom = "begin"_s;
+            break;
+        case AccessibilitySearchTextStartFrom::Selection:
+            startFrom = "selection"_s;
+            break;
+        case AccessibilitySearchTextStartFrom::End:
+            startFrom = "end"_s;
+            break;
+        }
+
+        String directionString;
+        switch (direction) {
+        case AccessibilitySearchTextDirection::Forward:
+            directionString = "forward"_s;
+            break;
+        case AccessibilitySearchTextDirection::Backward:
+            directionString = "backward"_s;
+            break;
+        case AccessibilitySearchTextDirection::Closest:
+            directionString = "closest"_s;
+            break;
+        case AccessibilitySearchTextDirection::All:
+            directionString = "all"_s;
+            break;
+        }
+
+        StringBuilder allSearchStrings;
+        for (unsigned i = 0; i < searchStrings.size(); i++) {
+            allSearchStrings.append(searchStrings[i]);
+            if (i != searchStrings.size() - 1)
+                allSearchStrings.append(", "_s);
+        }
+
+        return makeString(
+            "starting from "_s, startFrom, ", "_s,
+            "with direction "_s, directionString, ", "_s,
+            "seeking strings: {"_s, allSearchStrings.toString(), "}"_s
+        );
+    }
 };
 
 struct AccessibilityText {

@@ -45,6 +45,8 @@ accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
 # Fails because we don't emit a tab between table cells.
 accessibility/mac/attributed-string-for-table.html [ Failure ]
 
+accessibility/mac/search-text-with-image-hang.html [ Failure ]
+
 # Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
 accessibility/content-editable-as-textarea.html [ Failure ]
 accessibility/mac/attributed-string-for-text-marker-range-using-webarea.html [ Failure ]
