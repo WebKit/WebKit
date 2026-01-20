@@ -500,13 +500,15 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
     inlineFormattingContext.layoutState().setNestedListMarkerOffsets(m_boxGeometryUpdater.takeNestedListMarkerOffsets());
 
     auto layoutResult = inlineFormattingContext.layout(inlineContentConstraints(), m_lineDamage.get());
-    auto repaintRect = LayoutRect { constructContent(inlineFormattingContext.layoutState(), WTF::move(layoutResult)) };
+
+    auto didDiscardContent = layoutResult && layoutResult->didDiscardContent;
+    auto repaintRect = constructContent(inlineFormattingContext.layoutState(), WTF::move(layoutResult));
 
     m_lineDamage = { };
 
     auto adjustments = adjustContentForPagination(parentBlockLayoutState, isPartialLayout);
 
-    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), layoutResult.didDiscardContent);
+    updateRenderTreePositions(adjustments, inlineFormattingContext.layoutState(), didDiscardContent);
 
     if (m_lineDamage) {
         // Pagination may require another layout pass.
@@ -522,10 +524,10 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         return LayoutRect { };
     }
 
-    return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
+    return isPartialLayout ? std::optional { LayoutRect { repaintRect } } : std::nullopt;
 }
 
-FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, Layout::InlineLayoutResult&& layoutResult)
+FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, std::unique_ptr<Layout::InlineLayoutResult>&& layoutResult)
 {
     auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), ensureInlineContent(), m_lineDamage.get());
 

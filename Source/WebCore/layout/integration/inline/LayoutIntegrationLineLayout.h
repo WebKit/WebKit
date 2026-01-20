@@ -150,7 +150,7 @@ public:
 
 private:
     void preparePlacedFloats();
-    FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
+    FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);
     Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
     void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
 

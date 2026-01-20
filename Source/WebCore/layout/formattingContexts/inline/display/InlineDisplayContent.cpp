@@ -33,6 +33,7 @@ void Content::clear()
 {
     lines.clear();
     boxes.clear();
+    lineEllipses = { };
 }
 
 void Content::set(Content&& newContent)

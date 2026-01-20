@@ -50,6 +50,8 @@ struct InlineLayoutResult {
     };
     Range range { Range::Full };
     bool didDiscardContent { false };
+
+    WTF_MAKE_TZONE_ALLOCATED(InlineLayoutResult);
 };
 
 // This class implements the layout logic for inline formatting context.
@@ -59,7 +61,8 @@ class InlineFormattingContext {
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
-    InlineLayoutResult layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
+    // Nullptr signals that there was no actual inline content to lay out and no lines were generated.
+    std::unique_ptr<InlineLayoutResult> layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
 
     std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(InlineDamage* = nullptr);
     LayoutUnit minimumContentSize(InlineDamage* = nullptr);
@@ -82,7 +85,7 @@ public:
     const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
 private:
-    InlineLayoutResult lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
+    UniqueRef<InlineLayoutResult> lineLayout(AbstractLineBuilder&, const InlineItemList&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&);
 
     void collectContentIfNeeded();

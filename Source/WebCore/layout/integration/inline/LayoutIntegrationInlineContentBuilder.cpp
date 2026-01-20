@@ -97,22 +97,26 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow)
 {
 }
 
-FloatRect InlineContentBuilder::build(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage* lineDamage) const
+FloatRect InlineContentBuilder::build(std::unique_ptr<Layout::InlineLayoutResult>&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage* lineDamage) const
 {
     inlineContent.releaseCaches();
     auto damageRect = FloatRect { };
 
-    if (layoutResult.range == Layout::InlineLayoutResult::Range::Full) {
+    if (!layoutResult || layoutResult->range == Layout::InlineLayoutResult::Range::Full) {
         for (auto& line : inlineContent.displayContent().lines)
             damageRect.unite(line.inkOverflow());
 
-        inlineContent.displayContent().set(WTF::move(layoutResult.displayContent));
+        if (layoutResult)
+            inlineContent.displayContent().set(WTF::move(layoutResult->displayContent));
+        else
+            inlineContent.displayContent().clear();
+
         adjustDisplayLines(inlineContent, 0);
 
         for (auto& line : inlineContent.displayContent().lines)
             damageRect.unite(line.inkOverflow());
     } else
-        damageRect = handlePartialDisplayContentUpdate(WTF::move(layoutResult), inlineContent, lineDamage);
+        damageRect = handlePartialDisplayContentUpdate(WTF::move(*layoutResult), inlineContent, lineDamage);
 
     computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(inlineContent.displayContent().boxes);
     return damageRect;
