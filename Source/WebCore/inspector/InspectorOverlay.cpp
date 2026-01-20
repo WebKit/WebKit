@@ -1425,10 +1425,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, Style::GridTrackSizingD
     if (!cssValue) {
         auto styleRules = element->styleResolver().styleRulesForElement(element);
         styleRules.reverse();
-        for (auto styleRule : styleRules) {
-            ASSERT(styleRule);
-            if (!styleRule)
-                continue;
+        for (auto& styleRule : styleRules) {
             cssValue = styleRule->properties().getPropertyCSSValue(directionCSSPropertyID);
             if (cssValue)
                 break;

@@ -131,7 +131,7 @@ Ref<MatchResult> ElementRuleCollector::releaseMatchResult()
     return WTF::move(m_result);
 }
 
-const Vector<RefPtr<const StyleRule>>& ElementRuleCollector::matchedRuleList() const
+const Vector<Ref<const StyleRule>>& ElementRuleCollector::matchedRuleList() const
 {
     ASSERT(m_mode == SelectorChecker::Mode::CollectingRules);
     return m_matchedRuleList;
@@ -288,7 +288,7 @@ void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOri
             break;
 
         if (m_mode == SelectorChecker::Mode::CollectingRules) {
-            m_matchedRuleList.append(&matchedRule.ruleData->styleRule());
+            m_matchedRuleList.append(matchedRule.ruleData->styleRule());
             continue;
         }
 

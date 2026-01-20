@@ -68,7 +68,7 @@ public:
     const MatchResult& matchResult() const;
     Ref<MatchResult> releaseMatchResult();
 
-    const Vector<RefPtr<const StyleRule>>& matchedRuleList() const;
+    const Vector<Ref<const StyleRule>>& matchedRuleList() const;
 
     void clearMatchedRules();
 
@@ -133,7 +133,7 @@ private:
     size_t m_matchedRuleTransferIndex { 0 };
 
     // Output.
-    Vector<RefPtr<const StyleRule>> m_matchedRuleList;
+    Vector<Ref<const StyleRule>> m_matchedRuleList;
     Ref<MatchResult> m_result;
     Relations m_styleRelations;
     EnumSet<PseudoElementType> m_matchedPseudoElements;

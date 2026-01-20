@@ -86,7 +86,7 @@ public:
 
     const Vector<Ref<CSSStyleSheet>>& activeStyleSheets() const { return m_activeStyleSheets; }
 
-    const Vector<RefPtr<StyleSheet>>& styleSheetsForStyleSheetList();
+    const Vector<Ref<StyleSheet>>& styleSheetsForStyleSheetList();
     const Vector<Ref<CSSStyleSheet>> activeStyleSheetsForInspector();
 
     void addStyleSheetCandidateNode(Node&, bool createdByParser);
@@ -201,8 +201,8 @@ private:
     WEBCORE_EXPORT void flushPendingDescendantUpdates();
 
     struct ActiveStyleSheetCollection {
-        Vector<RefPtr<StyleSheet>> activeStyleSheets;
-        Vector<RefPtr<StyleSheet>> styleSheetsForStyleSheetList;
+        Vector<Ref<StyleSheet>> activeStyleSheets;
+        Vector<Ref<StyleSheet>> styleSheetsForStyleSheetList;
     };
 
     ActiveStyleSheetCollection collectActiveStyleSheets();
@@ -243,7 +243,7 @@ private:
 
     RefPtr<Resolver> m_resolver;
 
-    Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
+    Vector<Ref<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<Ref<CSSStyleSheet>> m_activeStyleSheets;
 
     mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;

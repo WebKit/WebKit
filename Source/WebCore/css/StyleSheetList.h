@@ -56,11 +56,11 @@ public:
 private:
     StyleSheetList(Document&);
     StyleSheetList(ShadowRoot&);
-    const Vector<RefPtr<StyleSheet>>& styleSheets() const;
+    const Vector<Ref<StyleSheet>>& styleSheets() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData> m_shadowRoot;
-    Vector<RefPtr<StyleSheet>> m_detachedStyleSheets;
+    Vector<Ref<StyleSheet>> m_detachedStyleSheets;
 };
 
 } // namespace WebCore

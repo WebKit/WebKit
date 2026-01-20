@@ -45,7 +45,7 @@ StyleSheetList::StyleSheetList(ShadowRoot& shadowRoot)
 
 StyleSheetList::~StyleSheetList() = default;
 
-inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
+inline const Vector<Ref<StyleSheet>>& StyleSheetList::styleSheets() const
 {
     if (RefPtr document = m_document.get())
         return document->styleScope().styleSheetsForStyleSheetList();
@@ -82,8 +82,8 @@ unsigned StyleSheetList::length() const
 
 StyleSheet* StyleSheetList::item(unsigned index)
 {
-    const Vector<RefPtr<StyleSheet>>& sheets = styleSheets();
-    return index < sheets.size() ? sheets[index].get() : 0;
+    const Vector<Ref<StyleSheet>>& sheets = styleSheets();
+    return index < sheets.size() ? sheets[index].ptr() : nullptr;
 }
 
 CSSStyleSheet* StyleSheetList::namedItem(const AtomString& name) const
