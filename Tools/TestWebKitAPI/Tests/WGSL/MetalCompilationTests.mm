@@ -363,6 +363,7 @@ TEST_F(WGSLMetalCompilationTests, FuzzerTests)
     testCompilation(file("fuzz-130082002.wgsl"_s));
     testCompilation(file("fuzz-130088292.wgsl"_s));
     testCompilation(file("fuzz-130092499.wgsl"_s));
+    testCompilation(file("fuzz-166715941.wgsl"_s));
 }
 
 TEST_F(WGSLMetalCompilationTests, GlobalConstantVector)

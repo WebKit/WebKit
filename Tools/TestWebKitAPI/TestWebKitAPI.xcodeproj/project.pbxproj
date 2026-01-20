@@ -672,6 +672,7 @@
 		946422142BC83114001B42B3 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9464220C2BC8306D001B42B3 /* SerializedScriptValue.cpp */; };
 		9528E5FD279A0341008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9528E5FC279A0338008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm */; };
 		95C52729275F35E100DA7E40 /* FontShadowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C52728275F35E100DA7E40 /* FontShadowTests.cpp */; };
+		973A04062F1688BE00166A77 /* fuzz-166715941.wgsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 973A03FE2F1688B000166A77 /* fuzz-166715941.wgsl */; };
 		97A826852DF8B677004EA039 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
 		97A826862DF8B677004EA039 /* JavaScriptCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97B250AD2E26F36F0056806C /* switch.wgsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 97FB431F2E1D633600C63F41 /* switch.wgsl */; };
@@ -1784,6 +1785,7 @@
 				97FB434C2E1D637C00C63F41 /* fuzz-130088292.wgsl in CopyFiles */,
 				97FB434D2E1D637C00C63F41 /* fuzz-130092499.wgsl in CopyFiles */,
 				97FB434E2E1D637C00C63F41 /* fuzz-133788509.wgsl in CopyFiles */,
+				973A04062F1688BE00166A77 /* fuzz-166715941.wgsl in CopyFiles */,
 				97FB43502E1D637C00C63F41 /* global-constant-vector.wgsl in CopyFiles */,
 				97FB43512E1D637C00C63F41 /* global-ordering.wgsl in CopyFiles */,
 				97FB43522E1D637C00C63F41 /* global-same-binding.wgsl in CopyFiles */,
@@ -3613,6 +3615,7 @@
 		95C52728275F35E100DA7E40 /* FontShadowTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontShadowTests.cpp; sourceTree = "<group>"; };
 		96E05A012DF7B66F00285827 /* WKWebExtensionAPIBookmarks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIBookmarks.mm; sourceTree = "<group>"; };
 		9739F73F2E5C548E002E7C61 /* ExponentialRampAtTimeTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExponentialRampAtTimeTest.cpp; sourceTree = "<group>"; };
+		973A03FE2F1688B000166A77 /* fuzz-166715941.wgsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "fuzz-166715941.wgsl"; sourceTree = "<group>"; };
 		97DAA8CD2DF1F325004B3040 /* MetalCompilationTests.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MetalCompilationTests.mm; sourceTree = "<group>"; };
 		97DAA8CF2DF70B91004B3040 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		97FB42D52E1D633600C63F41 /* access-expression.wgsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "access-expression.wgsl"; sourceTree = "<group>"; };
@@ -5672,6 +5675,7 @@
 				97FB42F42E1D633600C63F41 /* fuzz-130092499.wgsl */,
 				97FB42F52E1D633600C63F41 /* fuzz-133788509.wgsl */,
 				97FB42F62E1D633600C63F41 /* fuzz-136222279.wgsl */,
+				973A03FE2F1688B000166A77 /* fuzz-166715941.wgsl */,
 				97FB42F72E1D633600C63F41 /* global-constant-vector.wgsl */,
 				97FB42F82E1D633600C63F41 /* global-ordering.wgsl */,
 				97FB42F92E1D633600C63F41 /* global-same-binding.wgsl */,
