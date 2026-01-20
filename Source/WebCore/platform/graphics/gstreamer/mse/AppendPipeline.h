@@ -76,6 +76,7 @@ private:
             , streamType(streamType)
             , caps(caps)
             , presentationSize(presentationSize)
+            , hasExtendedFirstSample(false)
         { }
 
         TrackID trackId;
@@ -83,6 +84,7 @@ private:
         GRefPtr<GstCaps> caps;
         GRefPtr<GstCaps> finalCaps;
         FloatSize presentationSize;
+        bool hasExtendedFirstSample;
 
         // Needed by some formats. To simplify the code, parser/encoder can be a GstIdentity when not needed.
         GRefPtr<GstElement> parser;
@@ -121,7 +123,7 @@ private:
     static std::tuple<GRefPtr<GstCaps>, StreamType, FloatSize> parseDemuxerSrcPadCaps(GstCaps*);
     Ref<WebCore::TrackPrivateBase> makeWebKitTrack(Track& appendPipelineTrack, int trackIndex, TrackID);
     void appsinkCapsChanged(Track&);
-    void appsinkNewSample(const Track&, GRefPtr<GstSample>&&);
+    void appsinkNewSample(Track&, GRefPtr<GstSample>&&);
     void handleEndOfAppend();
     void didReceiveInitializationSegment();
 

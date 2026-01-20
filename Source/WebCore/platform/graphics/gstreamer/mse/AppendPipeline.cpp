@@ -482,7 +482,7 @@ void AppendPipeline::handleEndOfAppend()
     sourceBufferPrivate().didReceiveAllPendingSamples();
 }
 
-void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& sample)
+void AppendPipeline::appsinkNewSample(Track& track, GRefPtr<GstSample>&& sample)
 {
     ASSERT(isMainThread());
 
@@ -525,9 +525,11 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
     // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
     if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime()
         && mediaSample->presentationTime() <= MediaTime(1, 10)
-        && mediaSample->isSync()) {
+        && mediaSample->isSync()
+        && !track.hasExtendedFirstSample) {
         GST_DEBUG_OBJECT(pipeline(), "Extending first sample to make it start at PTS=0");
         mediaSample->extendToTheBeginning();
+        track.hasExtendedFirstSample = true;
     }
 
     if (track.streamType == StreamType::Text) {
@@ -741,6 +743,10 @@ void AppendPipeline::resetParserState()
     // All processing related to the previous append has been aborted and the pipeline is idle.
     // We can listen again to new requests coming from the streaming thread.
     m_taskQueue.finishAborting();
+
+    // Reset the flag for extending the first sample, as we're starting fresh with new data.
+    for (std::unique_ptr<Track>& track : m_tracks)
+        track->hasExtendedFirstSample = false;
 
 #if (!(LOG_DISABLED || defined(GST_DISABLE_GST_DEBUG)))
     {
