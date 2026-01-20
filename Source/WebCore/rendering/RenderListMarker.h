@@ -86,6 +86,7 @@ private:
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(Style::Difference, const RenderStyle& newStyle) final;
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) final;
+    Node* nodeForHitTest() const final;
     void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
     std::pair<float, float> layoutBoundForTextContent(String) const;
 

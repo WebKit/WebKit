@@ -13,6 +13,11 @@ TEST CASE: ::before & ::after
 Cursor info for ::before: type=WestResize hotSpot=0,0
 Cursor info for ::after: type=EastResize hotSpot=0,0
 
+TEST CASE: ::marker && ::before & ::after
+Cursor info for ::marker: type=Wait hotSpot=0,0
+Cursor info for ::before: type=WestResize hotSpot=0,0
+Cursor info for ::after: type=EastResize hotSpot=0,0
+
 TEST CASE: ::backdrop
 Cursor info for ::backdrop: type=Help hotSpot=0,0
 

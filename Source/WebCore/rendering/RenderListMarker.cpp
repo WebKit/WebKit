@@ -458,6 +458,11 @@ const RenderListItem* RenderListMarker::listItem() const
     return m_listItem.get();
 }
 
+Node* RenderListMarker::nodeForHitTest() const
+{
+    return m_listItem ? m_listItem->element() : nullptr;
+}
+
 FloatRect RenderListMarker::relativeMarkerRect()
 {
     if (isImage())
