@@ -1,0 +1,24 @@
+
+RUN(source = new MediaSource())
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+RUN(video.play())
+EVENT(playing)
+EVENT(waiting)
+EXPECTED (video.currentTime >= '2') OK
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3)))
+EVENT(update)
+RUN(source.endOfStream())
+EVENT(ended)
+EXPECTED (video.currentTime >= '4') OK
+END OF TEST
+

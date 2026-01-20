@@ -286,7 +286,7 @@ enum class AsynchronousPipelineDumping : bool { No, Yes };
 void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { }, AsynchronousPipelineDumping = AsynchronousPipelineDumping::No);
 void disconnectSimpleBusMessageCallback(GstElement*);
 
-enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
+enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX, LibAv };
 
 bool isGStreamerPluginAvailable(ASCIILiteral name);
 bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);

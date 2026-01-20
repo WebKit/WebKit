@@ -371,6 +371,8 @@ protected:
     mutable MediaTime m_cachedPosition;
     mutable bool m_isCachedPositionValid { false };
     mutable MediaTime m_cachedDuration;
+    // Libav workaround: Used to avoid sending too many still frame events to unstall the libav video decoder.
+    mutable MediaTime m_lastStalledPosition { MediaTime::invalidTime() };
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
     bool m_didDownloadFinish { false };

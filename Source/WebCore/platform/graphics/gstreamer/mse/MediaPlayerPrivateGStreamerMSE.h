@@ -99,6 +99,7 @@ public:
 #ifndef GST_DISABLE_GST_DEBUG
     void setShouldDisableSleep(bool) final;
 #endif
+    bool hasFutureTime(const MediaTime&) const;
 
     // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
     // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
