@@ -9,7 +9,7 @@ layer at (8,8) size 788x504
       RenderView at (0,0) size 784x500
     layer at (0,0) size 784x500
       RenderBlock {HTML} at (0,0) size 784x500
-        RenderBody {BODY} at (0,0) size 784x500 [bgcolor=#808080]
+        RenderBody {BODY} at (0,0) size 784x500 [bgcolor=#FFFFFF]
     layer at (0,0) size 784x500
       RenderEmbeddedObject {EMBED} at (0,0) size 784x500
     layer at (0,0) size 784x500
