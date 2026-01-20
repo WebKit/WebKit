@@ -1035,6 +1035,14 @@ requires = [
     "USE_APPLE_INTERNAL_SDK"
 ]
 
+[[legacy]]
+symbols = [
+    "nw_settings_get_unified_http_enabled_webkit",
+]
+requires = [
+    "HAVE_NWSETTINGS_UNIFIED_HTTP_WEBKIT"
+]
+
 # The public iOS build uses CGGeometry methods instead of internal only
 # NSGeometry methods. Clean up in rdar://6669434.
 [[legacy]]
