@@ -28,22 +28,22 @@ class ProvokingVertexHelper : angle::NonCopyable
     ProvokingVertexHelper(ContextMtl *context);
     angle::Result preconditionIndexBuffer(ContextMtl *context,
                                           mtl::BufferRef indexBuffer,
-                                          size_t indexCount,
+                                          GLsizei count,
                                           size_t indexOffset,
                                           bool primitiveRestartEnabled,
                                           gl::PrimitiveMode primitiveMode,
                                           gl::DrawElementsType elementsType,
-                                          size_t &outIndexCount,
+                                          uint32_t &outIndexCount,
                                           size_t &outIndexOffset,
                                           gl::PrimitiveMode &outPrimitiveMode,
                                           mtl::BufferRef &outNewBuffer);
 
     angle::Result generateIndexBuffer(ContextMtl *context,
-                                      size_t first,
-                                      size_t indexCount,
+                                      GLsizei first,
+                                      GLsizei count,
                                       gl::PrimitiveMode primitiveMode,
                                       gl::DrawElementsType elementsType,
-                                      size_t &outIndexCount,
+                                      uint32_t &outIndexCount,
                                       size_t &outIndexOffset,
                                       gl::PrimitiveMode &outPrimitiveMode,
                                       mtl::BufferRef &outNewBuffer);

@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// ProvkingVertexTest:
+// ProvokingVertexTest:
 //   Tests on the conformance of the provoking vertex, which applies to flat
 //   shading and compatibility with D3D. See the section on 'flatshading'
 //   in the ES 3 specs.
@@ -305,6 +305,135 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
         unsigned int provokingVertexIndex = triIndex + 2;
 
         EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
+    }
+}
+
+// Test drawing a simple triangle strip with flat shading, and different valued vertices.
+// Variant that draws a large array.
+TEST_P(ProvokingVertexTest, FlatTriStripLarge)
+{
+    GLint vertexData[]     = {1, 2, 3, 4, 5, 6};
+    GLfloat positionData[] = {-1.0f, -1.0f, -1.0f, 1.0f,  0.0f, -1.0f,
+                              0.0f,  1.0f,  1.0f,  -1.0f, 1.0f, 1.0f};
+
+    constexpr GLint kIndexCount = 0x55555558;
+    GLBuffer vertexDataBuffer;
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vertexDataBuffer);
+        constexpr GLsizeiptr kBufferSize = static_cast<GLsizeiptr>(kIndexCount) * sizeof(GLint);
+        constexpr GLintptr offset = static_cast<GLintptr>(kIndexCount - 6) * sizeof(GLint);
+        glBufferData(GL_ARRAY_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+        ASSERT_GL_NO_ERROR();
+        glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(vertexData), vertexData);
+        ASSERT_GL_NO_ERROR();
+        glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, 0);
+    }
+
+    GLBuffer buffer;
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        constexpr GLsizeiptr kBufferSize = static_cast<GLsizeiptr>(kIndexCount) * 2 * sizeof(GLfloat);
+        constexpr GLintptr offset = static_cast<GLintptr>(kIndexCount - 6) * 2 * sizeof(GLfloat);
+        glBufferData(GL_ARRAY_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+        ASSERT_GL_NO_ERROR();
+        glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(positionData), positionData);
+        ASSERT_GL_NO_ERROR();
+        GLint positionLocation = glGetAttribLocation(mProgram, "position");
+        glEnableVertexAttribArray(positionLocation);
+        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    }
+
+    glUseProgram(mProgram);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, kIndexCount);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight() * 4, 0);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA_INTEGER, GL_INT,
+                 &pixelBuffer[0]);
+
+    ASSERT_GL_NO_ERROR();
+
+    for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
+    {
+        GLfloat sumX = positionData[triIndex * 2 + 0] + positionData[triIndex * 2 + 2] +
+                       positionData[triIndex * 2 + 4];
+        GLfloat sumY = positionData[triIndex * 2 + 1] + positionData[triIndex * 2 + 3] +
+                       positionData[triIndex * 2 + 5];
+
+        float centerX = sumX / 3.0f * 0.5f + 0.5f;
+        float centerY = sumY / 3.0f * 0.5f + 0.5f;
+        unsigned int pixelX =
+            static_cast<unsigned int>(centerX * static_cast<GLfloat>(getWindowWidth()));
+        unsigned int pixelY =
+            static_cast<unsigned int>(centerY * static_cast<GLfloat>(getWindowHeight()));
+        unsigned int pixelIndex = pixelY * getWindowWidth() + pixelX;
+
+        unsigned int provokingVertexIndex = triIndex + 2;
+
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
+    }
+}
+
+TEST_P(ProvokingVertexTest, FlatTriStripDrawElementsLargeIndexBuffer)
+{
+    glUseProgram(mProgram);
+
+    GLushort indices[] = {0, 1, 2, 3, 4, 5};
+    GLint vertexData[] = {1, 2, 3, 4, 5, 6};
+    GLfloat positionData[] = {-1.0f, -1.0f, -1.0f, 1.0f,  0.0f, -1.0f,
+                              0.0f,  1.0f,  1.0f,  -1.0f, 1.0f, 1.0f};
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(mIntAttribLocation);
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, nullptr);
+
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    constexpr GLint kIndexCount = 0x55555558;
+    constexpr GLintptr offset = static_cast<GLintptr>(kIndexCount - 6) * sizeof(GLushort);
+    constexpr GLsizeiptr kBufferSize = static_cast<GLsizeiptr>(kIndexCount) * sizeof(GLushort);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kBufferSize, nullptr, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, sizeof(indices), indices);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElements(GL_TRIANGLE_STRIP, kIndexCount, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight() * 4, 0);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA_INTEGER, GL_INT,
+                 &pixelBuffer[0]);
+
+    ASSERT_GL_NO_ERROR();
+
+    for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
+    {
+        GLfloat sumX = positionData[triIndex * 2 + 0] + positionData[triIndex * 2 + 2] +
+                       positionData[triIndex * 2 + 4];
+        GLfloat sumY = positionData[triIndex * 2 + 1] + positionData[triIndex * 2 + 3] +
+                       positionData[triIndex * 2 + 5];
+
+        float centerX = sumX / 3.0f * 0.5f + 0.5f;
+        float centerY = sumY / 3.0f * 0.5f + 0.5f;
+        unsigned int pixelX =
+            static_cast<unsigned int>(centerX * static_cast<GLfloat>(getWindowWidth()));
+        unsigned int pixelY =
+            static_cast<unsigned int>(centerY * static_cast<GLfloat>(getWindowHeight()));
+        unsigned int pixelIndex = pixelY * getWindowWidth() + pixelX;
+
+        unsigned int provokingVertexIndex = triIndex + 2;
+
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]) << triIndex;
     }
 }
 
