@@ -117,9 +117,8 @@ private:
     void moveInBlockDirection(float offset);
     void shrinkInBlockDirection(float delta);
 
-    // FIXME: Move these to a side structure.
-    size_t m_firstBoxIndex { 0 };
-    size_t m_boxCount { 0 };
+    uint32_t m_firstBoxIndex { 0 };
+    uint32_t m_boxCount { 0 };
 
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
     FloatRect m_lineBoxRect;
@@ -136,7 +135,7 @@ private:
     float m_contentLogicalLeft { 0.f };
     float m_contentLogicalLeftIgnoringInlineDirection { 0.f };
     float m_contentLogicalWidth { 0.f };
-    FontBaseline m_baselineType { FontBaseline::Alphabetic };
+    FontBaseline m_baselineType : 2 { FontBaseline::Alphabetic };
     bool m_isLeftToRightDirection : 1 { true };
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };
