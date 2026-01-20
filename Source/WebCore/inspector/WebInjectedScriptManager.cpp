@@ -68,8 +68,10 @@ void WebInjectedScriptManager::removeClient()
 {
     ASSERT(m_clientCount > 0);
     --m_clientCount;
-    if (!m_clientCount)
-        disconnect();
+    if (!m_clientCount) {
+        // FIXME <https://webkit.org/b/305415>: Figure out why the commandLineAPIHost may still be used after the last client disconnects, and call disconnect here instead.
+        discardInjectedScripts();
+    }
 }
 
 void WebInjectedScriptManager::connect()
