@@ -2442,6 +2442,83 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='webdriver-tests')
         return self.run_step()
 
+    def test_success_flaky(self):
+        self.setup_step(ReRunWebDriverTests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='All tests run as expected\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='webdriver-tests')
+
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_post_flaky_state(_):
+            step = self.get_nth_step(0)
+            self.assertFalse(
+                any(isinstance(s, RunWebDriverTestsWithoutChange) for s in step.steps_to_add),
+                f"ReRunWebDriverTests should not be in scheduled steps: {step.steps_to_add}"
+            )
+
+        return d
+
+    def test_failure_triggers_run_wihtout_change(self):
+        self.setup_step(ReRunWebDriverTests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='Unexpected failures (1)\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 failure')
+
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_triggered_clean_run(_):
+            step = self.get_nth_step(0)
+            self.assertTrue(
+                any(isinstance(s, RevertAppliedChanges) for s in step.steps_to_add),
+                f"RevertAppliedChanges not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, CompileWebKitWithoutChange) for s in step.steps_to_add),
+                f"CompileWebKitWithoutChange not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, RunWebDriverTestsWithoutChange) for s in step.steps_to_add),
+                f"RunWebDriverTestsWithoutChange not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, AnalyzeWebDriverTestsResults) for s in step.steps_to_add),
+                f"AnalyzeWebDriverTestsResults not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, InstallWpeDependencies) for s in step.steps_to_add),
+                f"InstallWpeDependencies not found for WPE: {step.steps_to_add}"
+            )
+        return d
+
     def test_one_failure(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'gtk')
@@ -2462,10 +2539,15 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
         d = self.run_step()
 
         @d.addCallback
-        def verify_no_build_summary(_):
+        def verify_post_failure_state(_):
             step = self.get_nth_step(0)
             summary = step.getResultSummary()
             self.assertIn('build', summary)
+
+            self.assertTrue(
+                any(isinstance(s, ReRunWebDriverTests) for s in step.steps_to_add),
+                f"ReRunWebDriverTests not found in scheduled steps: {step.steps_to_add}"
+            )
 
         return d
 

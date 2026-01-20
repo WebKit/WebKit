@@ -6035,6 +6035,7 @@ class RunWebDriverTests(shell.Test, ShellMixin):
     jsonFileName = "webdriver_tests.json"
     command = ["python3", "Tools/Scripts/run-webdriver-tests", "--verbose", f"--json-output={jsonFileName}", WithProperties("--%(configuration)s")]
     logfiles = {"json": jsonFileName}
+    suffix = 'first_run'
 
     def __init__(self, **kwargs):
         kwargs['timeout'] = 90 * 60
@@ -6042,6 +6043,7 @@ class RunWebDriverTests(shell.Test, ShellMixin):
         self.failuresCount = 0
         self.timeoutCount = 0
         self.newPassesCount = 0
+        self.steps_to_add = []
 
     @defer.inlineCallbacks
     def run(self):
@@ -6070,7 +6072,7 @@ class RunWebDriverTests(shell.Test, ShellMixin):
         if foundNewPasses:
             self.newPassesCount = int(foundNewPasses[0])
 
-        steps_to_add = [
+        self.steps_to_add.extend([
             GenerateS3URL(
                 f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
                 additions=f'{self.build.number}',
@@ -6081,17 +6083,22 @@ class RunWebDriverTests(shell.Test, ShellMixin):
                 links={self.name: 'Full logs'},
                 content_type='text/plain',
             )
-        ]
-        self.build.addStepsAfterCurrentStep(steps_to_add)
+        ])
 
         if rc != 0:
-            defer.returnValue(FAILURE)
+            retVal = FAILURE
+            self.doOnFailure()
         elif self.failuresCount:
-            defer.returnValue(FAILURE)
+            retVal = FAILURE
+            self.doOnFailure()
         elif self.newPassesCount:
-            defer.returnValue(WARNINGS)
+            retVal = WARNINGS
         else:
-            defer.returnValue(SUCCESS)
+            retVal = SUCCESS
+
+        self.build.addStepsAfterCurrentStep(self.steps_to_add)
+
+        defer.returnValue(retVal)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -6123,6 +6130,47 @@ class RunWebDriverTests(shell.Test, ShellMixin):
 
                 return result
         return super().getResultSummary()
+
+    def doOnFailure(self):
+        self.steps_to_add.extend([
+            ValidateChange(verifyBugClosed=False, addURLs=False),
+            KillOldProcesses(),
+            ReRunWebDriverTests(),
+        ])
+
+
+class ReRunWebDriverTests(RunWebDriverTests):
+    name = 're-run-webdriver-tests'
+    suffix = 'second_run'
+
+    def doOnFailure(self):
+        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        platform = self.getProperty('platform')
+        if platform == 'wpe':
+            self.steps_to_add.append(InstallWpeDependencies())
+        elif platform == 'gtk':
+            self.steps_to_add.append(InstallGtkDependencies())
+        self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.steps_to_add.append(KillOldProcesses())
+        self.steps_to_add.append(RunWebDriverTestsWithoutChange())
+        self.steps_to_add.append(AnalyzeWebDriverTestsResults())
+
+class RunWebDriverTestsWithoutChange(RunWebDriverTests):
+    name = 'run-webdriver-tests-without-change'
+
+    def doOnFailure(self):
+        pass
+
+    def analyze_failures(self):
+        pass
+
+
+class AnalyzeWebDriverTestsResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'analyze-webdriver-tests-results'
+    description = ['analyze-webdriver-test-results']
+    descriptionDone = ['analyze-webdriver-tests-results']
+
 
 
 
