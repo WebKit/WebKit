@@ -1,0 +1,20 @@
+<style>
+:last-child { display: grid; }
+</style>
+<script>
+window.testRunner?.dumpAsText();
+
+let n0 = document.documentElement;
+let n1 = document.createElement('ruby');
+n0.appendChild(n1);
+let n3 = document.createElement('rtc');
+n1.append(n3);
+let n8 = document.createElement('ruby');
+n1.append(n8);
+let n14 = document.createElement('span');
+n3.after(n14);
+let n16 = document.createElement('rt');
+n1.append(n16);
+n0.offsetLeft;
+n14.after("This test passes if it doesn't crash.");
+</script>
