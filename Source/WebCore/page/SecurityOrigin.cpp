@@ -52,6 +52,7 @@
 namespace WebCore {
 
 constexpr unsigned maximumURLSize = 0x04000000;
+constexpr unsigned maximumFragmentIdentifierSize = 2u * 1024u * 1024u;
 
 bool SecurityOrigin::shouldIgnoreHost(const URL& url)
 {
@@ -365,12 +366,16 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
 bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patterns) const
 {
     ASSERT(!isInNetworkProcess());
+
+    if (url.string().length() > maximumURLSize)
+        return false;
+
+    if (url.fragmentIdentifier().length() > maximumFragmentIdentifierSize)
+        return false;
+
     if (m_universalAccess)
         return true;
 
-    if (url.pathEnd() > maximumURLSize)
-        return false;
-    
 #if !PLATFORM(IOS_FAMILY) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (m_data.protocol() == "file"_s && url.protocolIsFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
