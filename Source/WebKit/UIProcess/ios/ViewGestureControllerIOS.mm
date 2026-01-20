@@ -88,13 +88,6 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 
 - (void)invalidate
 {
-    if (_gestureRecognizerView) {
-        if (RetainPtr backRecognizer = [_backTransitionController gestureRecognizer])
-            [_gestureRecognizerView removeGestureRecognizer:backRecognizer.get()];
-        if (RetainPtr forwardRecognizer = [_forwardTransitionController gestureRecognizer])
-            [_gestureRecognizerView removeGestureRecognizer:forwardRecognizer.get()];
-    }
-
     _gestureController = nullptr;
 }
 
@@ -181,11 +174,6 @@ void ViewGestureController::platformTeardown()
     [m_swipeTransitionContext _setTransitionIsInFlight:NO];
     [m_swipeTransitionContext _setInteractor:nil];
     [m_swipeTransitionContext _setAnimator:nil];
-    [m_swipeInteractiveTransitionDelegate invalidate];
-}
-
-void ViewGestureController::platformDisconnectFromProcess()
-{
     [m_swipeInteractiveTransitionDelegate invalidate];
 }
 

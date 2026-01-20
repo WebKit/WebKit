@@ -79,10 +79,6 @@ void ViewGestureController::platformTeardown()
     cancelSwipe();
 }
 
-void ViewGestureController::platformDisconnectFromProcess()
-{
-}
-
 bool ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe(PlatformGtkScrollData*)
 {
     return true;
