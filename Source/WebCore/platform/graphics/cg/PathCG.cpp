@@ -245,7 +245,7 @@ static inline void addToCGPath(CGMutablePathRef path, const PathContinuousRounde
 #else
     // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
     // FIXME: Determine if PreferNative is the optimal strategy here.
-    addToCGPath(path, PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+    addToCGPath(path, PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, CornerRadii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
 #endif
 }
 

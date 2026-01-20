@@ -140,7 +140,7 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             auto topRightRadius = physicalSizeToLogical(Style::evaluate<FloatSize>(horizontalWritingMode ? inset->radii.topRight() : isBlockLeftToRight ? inset->radii.bottomLeft() : inset->radii.bottomRight(), boxSize, Style::ZoomNeeded { }), writingMode);
             auto bottomLeftRadius = physicalSizeToLogical(Style::evaluate<FloatSize>(horizontalWritingMode ? inset->radii.bottomLeft() : isBlockLeftToRight ? inset->radii.topRight() : inset->radii.topLeft(), boxSize, Style::ZoomNeeded { }), writingMode);
             auto bottomRightRadius = physicalSizeToLogical(Style::evaluate<FloatSize>(horizontalWritingMode ? inset->radii.bottomRight() : isBlockLeftToRight ? inset->radii.bottomRight() : inset->radii.bottomLeft(), boxSize, Style::ZoomNeeded { }), writingMode);
-            auto cornerRadii = FloatRoundedRect::Radii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+            auto cornerRadii = CornerRadii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
             if (shouldFlipStartAndEndPoints(writingMode))
                 cornerRadii = { cornerRadii.topRight(), cornerRadii.topLeft(), cornerRadii.bottomRight(), cornerRadii.bottomLeft() };
 

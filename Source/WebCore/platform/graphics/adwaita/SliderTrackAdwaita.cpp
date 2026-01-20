@@ -76,7 +76,7 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     path.clear();
 
     FloatRect rangeRect = fieldRect;
-    FloatRoundedRect::Radii corners;
+    CornerRadii corners;
     if (isHorizontal) {
         float offset = rangeRect.width() * sliderTrackPart->thumbPosition();
         if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode)) {

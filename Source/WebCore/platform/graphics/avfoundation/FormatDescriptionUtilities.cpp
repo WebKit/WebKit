@@ -31,6 +31,7 @@
 #include "FourCC.h"
 #include "HEVCUtilities.h"
 #include "ImmersiveVideoMetadata.h"
+#include "Logging.h"
 #include "PlatformVideoColorSpace.h"
 #include "SharedBuffer.h"
 #include <wtf/cf/TypeCastsCF.h>

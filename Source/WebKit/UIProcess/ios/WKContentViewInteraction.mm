@@ -2606,7 +2606,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
         [_tapHighlightView setQuads:WTF::move(inflatedHighlightQuads) boundaryRect:_page->exposedContentRect()];
     }
 
-    [_tapHighlightView setCornerRadii:WebCore::FloatRoundedRect::Radii {
+    [_tapHighlightView setCornerRadii:WebCore::CornerRadii {
         tapHighlightBorderRadius(_tapHighlightInformation.topLeftRadius, selfScale),
         tapHighlightBorderRadius(_tapHighlightInformation.topRightRadius, selfScale),
         tapHighlightBorderRadius(_tapHighlightInformation.bottomLeftRadius, selfScale),

@@ -35,7 +35,7 @@
 @implementation WKTapHighlightView {
     RetainPtr<UIColor> _color;
     float _minimumCornerRadius;
-    WebCore::FloatRoundedRect::Radii _cornerRadii;
+    WebCore::CornerRadii _cornerRadii;
     Vector<WebCore::FloatRect> _innerFrames;
     Vector<WebCore::FloatQuad> _innerQuads;
 }
@@ -63,7 +63,7 @@
     _minimumCornerRadius = radius;
 }
 
-- (void)setCornerRadii:(WebCore::FloatRoundedRect::Radii&&)radii
+- (void)setCornerRadii:(WebCore::CornerRadii&&)radii
 {
     _cornerRadii = WTF::move(radii);
 }

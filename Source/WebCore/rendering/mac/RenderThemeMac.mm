@@ -1850,7 +1850,7 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
 
     Style::ColorResolver colorResolver { attachment.style() };
     auto backgroundColor = colorResolver.colorApplyingColorFilter(attachmentIconBackgroundColor);
-    context.fillRoundedRect(FloatRoundedRect(backgroundRect, FloatRoundedRect::Radii(attachmentIconBackgroundRadius)), backgroundColor);
+    context.fillRoundedRect(FloatRoundedRect(backgroundRect, CornerRadii(attachmentIconBackgroundRadius)), backgroundColor);
 
     if (paintBorder) {
         FloatRect borderRect = layout.iconBackgroundRect;
@@ -1939,7 +1939,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
     FloatRect backgroundRect = borderRect;
     backgroundRect.inflate(-attachmentProgressBarBorderWidth / 2);
 
-    FloatRoundedRect backgroundRoundedRect(backgroundRect, FloatRoundedRect::Radii(backgroundRect.height() / 2));
+    FloatRoundedRect backgroundRoundedRect(backgroundRect, CornerRadii(backgroundRect.height() / 2));
     context.fillRoundedRect(backgroundRoundedRect, attachmentProgressBarBackgroundColor);
 
     {

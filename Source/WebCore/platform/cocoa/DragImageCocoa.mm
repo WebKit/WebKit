@@ -299,7 +299,7 @@ DragImageData createDragImageForLink(Element& element, URL& url, const String& t
 
     GraphicsContextCG context([NSGraphicsContext currentContext].CGContext);
 
-    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, FloatRoundedRect::Radii(linkImageCornerRadius)), colorFromCocoaColor([NSColor controlBackgroundColor]));
+    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, CornerRadii(linkImageCornerRadius)), colorFromCocoaColor([NSColor controlBackgroundColor]));
 
     for (const auto& label : layout.labels) {
         GraphicsContextStateSaver saver(context);

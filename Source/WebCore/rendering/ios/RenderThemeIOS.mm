@@ -700,7 +700,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderElement& box, const PaintInfo&
     auto cornerWidth = trackClip.width() < defaultTrackThickness ? trackClip.width() / 2.0f : defaultTrackRadius;
     auto cornerHeight = trackClip.height() < defaultTrackThickness ? trackClip.height() / 2.0f : defaultTrackRadius;
 
-    FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
+    CornerRadii cornerRadii(cornerWidth, cornerHeight);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
 
     FloatRoundedRect outerBorder(innerBorder);
@@ -782,7 +782,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderElement& renderer, const Paint
     constexpr auto barCornerRadiusInlineSize = 2.5f;
     constexpr auto barCornerRadiusBlockSize = 1.5f;
 
-    FloatRoundedRect::Radii barCornerRadii(
+    CornerRadii barCornerRadii(
         isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
         isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
     );
@@ -1538,7 +1538,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderElement& box, const PaintInfo& pa
     constexpr auto checkboxHeight = 16.0f;
     constexpr auto checkboxCornerRadius = 5.0f;
 
-    FloatRoundedRect checkboxRect(rect, FloatRoundedRect::Radii(checkboxCornerRadius * rect.height() / checkboxHeight));
+    FloatRoundedRect checkboxRect(rect, CornerRadii(checkboxCornerRadius * rect.height() / checkboxHeight));
 
     auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
@@ -1630,7 +1630,7 @@ bool RenderThemeIOS::paintRadio(const RenderElement& box, const PaintInfo& paint
 
     auto backgroundColor = checkboxRadioBackgroundColor(box.style(), controlStates, styleColorOptions);
 
-    FloatRoundedRect radioRect { rect, FloatRoundedRect::Radii(rect.width() / 2, rect.height() / 2) };
+    FloatRoundedRect radioRect { rect, CornerRadii(rect.width() / 2, rect.height() / 2) };
 
     if (controlStates.contains(ControlStyle::State::Checked)) {
         context.setFillColor(backgroundColor);
@@ -1695,7 +1695,7 @@ bool RenderThemeIOS::paintMeter(const RenderElement& renderer, const PaintInfo& 
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
-    FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
+    FloatRoundedRect roundedFillRect(rect, CornerRadii(cornerRadius));
     context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
     roundedFillRect.inflateWithRadii(-nativeControlBorderInlineSize);
@@ -1805,7 +1805,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderElement& box, const PaintInfo&
     constexpr int tickCornerRadius = 1;
 
     FloatRect tickRect;
-    FloatRoundedRect::Radii tickCornerRadii(tickCornerRadius);
+    CornerRadii tickCornerRadii(tickCornerRadius);
 
     bool isHorizontal = box.style().usedAppearance() == StyleAppearance::SliderHorizontal;
     if (isHorizontal) {

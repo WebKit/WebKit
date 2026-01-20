@@ -85,7 +85,7 @@ auto CSSValueConversion<BorderRadiusValue>::operator()(BuilderState& state, cons
 
 // MARK: - Evaluation
 
-auto Evaluation<BorderRadius, FloatRoundedRect::Radii>::operator()(const BorderRadius& value, FloatSize referenceSize, ZoomNeeded token) -> FloatRoundedRect::Radii
+auto Evaluation<BorderRadius, CornerRadii>::operator()(const BorderRadius& value, FloatSize referenceSize, ZoomNeeded token) -> CornerRadii
 {
     return {
         evaluate<FloatSize>(value.topLeft(), referenceSize, token),

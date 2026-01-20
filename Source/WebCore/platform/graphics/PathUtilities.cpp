@@ -106,7 +106,7 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, f
     return unionPath;
 }
 
-Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const FloatRoundedRect::Radii& radii)
+Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const CornerRadii& radii)
 {
     if (radii.isUniformCornerRadius())
         return pathWithShrinkWrappedRects(rects, radii.topLeft().width());

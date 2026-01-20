@@ -224,7 +224,7 @@ void PathSkia::add(PathContinuousRoundedRect continuousRoundedRect)
 {
     // Continuous rounded rects are unavailable. Paint a normal rounded rect instead.
     // FIXME: Determine if PreferNative is the optimal strategy here.
-    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, FloatRoundedRect::Radii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
+    add(PathRoundedRect { FloatRoundedRect { continuousRoundedRect.rect, CornerRadii { continuousRoundedRect.cornerWidth, continuousRoundedRect.cornerHeight } }, PathRoundedRect::Strategy::PreferNative });
 }
 
 void PathSkia::add(PathCloseSubpath)

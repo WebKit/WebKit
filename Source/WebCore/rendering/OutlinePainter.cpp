@@ -535,7 +535,7 @@ static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(CornerType 
     return std::make_pair(cp1, cp2);
 }
 
-static FloatRoundedRect::Radii adjustedRadiiForHuggingCurve(const FloatRoundedRect::Radii& inputRadii, float outlineOffset)
+static CornerRadii adjustedRadiiForHuggingCurve(const CornerRadii& inputRadii, float outlineOffset)
 {
     // This adjusts the radius so that it follows the border curve even when offset is present.
     auto adjustedRadius = [outlineOffset](const FloatSize& radius) {
@@ -585,7 +585,7 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
 Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, const Style::BorderRadius& radii, float outlineOffset, WritingMode writingMode, float deviceScaleFactor)
 {
     auto roundedRect = [radii, outlineOffset, deviceScaleFactor](const FloatRect& rect) {
-        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate<FloatRoundedRect::Radii>(radii, rect.size(), Style::ZoomNeeded { }), outlineOffset);
+        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate<CornerRadii>(radii, rect.size(), Style::ZoomNeeded { }), outlineOffset);
         adjustedRadii.scale(calcBorderRadiiConstraintScaleFor(rect, adjustedRadii));
 
         LayoutRoundedRect roundedRect(
@@ -622,8 +622,8 @@ Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, 
     auto firstLineRect = isLeftToRight ? rects.at(0) : rects.at(rects.size() - 1);
     auto lastLineRect = isLeftToRight ? rects.at(rects.size() - 1) : rects.at(0);
     // Adjust radius so that it matches the box border.
-    auto firstLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, firstLineRect.size(), Style::ZoomNeeded { });
-    auto lastLineRadii = Style::evaluate<FloatRoundedRect::Radii>(radii, lastLineRect.size(), Style::ZoomNeeded { });
+    auto firstLineRadii = Style::evaluate<CornerRadii>(radii, firstLineRect.size(), Style::ZoomNeeded { });
+    auto lastLineRadii = Style::evaluate<CornerRadii>(radii, lastLineRect.size(), Style::ZoomNeeded { });
     firstLineRadii.scale(calcBorderRadiiConstraintScaleFor(firstLineRect, firstLineRadii));
     lastLineRadii.scale(calcBorderRadiiConstraintScaleFor(lastLineRect, lastLineRadii));
 

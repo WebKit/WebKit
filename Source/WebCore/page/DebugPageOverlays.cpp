@@ -449,7 +449,7 @@ static void drawCheckbox(const String& text, GraphicsContext& context, const Fon
     context.drawText(font, textRun, box.location() + FloatSize { checkboxRect.width() + textHorizontalPadding, lineHeight });
 
     Path checkboxPath;
-    checkboxPath.addRoundedRect(FloatRoundedRect { checkboxRect, FloatRoundedRect::Radii { 3 } });
+    checkboxPath.addRoundedRect(FloatRoundedRect { checkboxRect, CornerRadii { 3 } });
 
     if (state) {
         context.setFillColor(Color::darkGray);
@@ -500,7 +500,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     {
         GraphicsContextStateSaver stateSaver(context);
         context.setDropShadow({ { }, 5, Color(Color::black).colorWithAlpha(0.5), ShadowRadiusMode::Default });
-        context.fillRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { 6 } }, Color(Color::white).colorWithAlpha(0.85));
+        context.fillRoundedRect(FloatRoundedRect { rect, CornerRadii { 6 } }, Color(Color::white).colorWithAlpha(0.85));
     }
 
     FontCascadeDescription fontDescription;

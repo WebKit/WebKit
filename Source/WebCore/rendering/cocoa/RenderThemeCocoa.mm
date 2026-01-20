@@ -1165,7 +1165,7 @@ static RoundedShape roundedShape(const FloatRect& rect, const float cornerRadius
         return { { }, rect, cornerRadius, CornerType::Noncontinuous };
 
     Path path;
-    path.addRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { cornerRadius, cornerRadius } });
+    path.addRoundedRect(FloatRoundedRect { rect, CornerRadii { cornerRadius, cornerRadius } });
     return { WTF::move(path), rect, cornerRadius, CornerType::Noncontinuous };
 }
 
@@ -1635,7 +1635,7 @@ bool RenderThemeCocoa::paintColorWellForVectorBasedControls(const RenderElement&
     const auto isEnabled = states.contains(ControlStyle::State::Enabled);
 
     const auto radius = std::min(rect.width(), rect.height()) / 2.f;
-    const FloatRoundedRect boundingRoundedRect(rect, FloatRoundedRect::Radii(radius));
+    const FloatRoundedRect boundingRoundedRect(rect, CornerRadii(radius));
 
     auto backgroundColor = systemColor(CSSValueAppleSystemQuinaryLabel, box.styleColorOptions());
 
@@ -1693,7 +1693,7 @@ bool RenderThemeCocoa::paintColorWellSwatchForVectorBasedControls(const RenderEl
     }
 
     const auto radius = std::min(rect.width(), rect.height()) / 2.f;
-    const FloatRoundedRect boundingRoundedRect(rect, FloatRoundedRect::Radii(radius));
+    const FloatRoundedRect boundingRoundedRect(rect, CornerRadii(radius));
 
     Path path;
     path.addRoundedRect(boundingRoundedRect);
@@ -2107,7 +2107,7 @@ bool RenderThemeCocoa::paintInnerSpinButtonForVectorBasedControls(const RenderEl
 
     const auto centerDividerRect = FloatRect { paintRect.center().x() - centerDividerWidth / 2.f, paintRect.center().y() - centerDividerHeight / 2.f, centerDividerWidth, centerDividerHeight };
 
-    FloatRoundedRect roundedDividerRect(centerDividerRect, FloatRoundedRect::Radii(centerDividerRect.height() / 2.f));
+    FloatRoundedRect roundedDividerRect(centerDividerRect, CornerRadii(centerDividerRect.height() / 2.f));
 
 #if PLATFORM(MAC)
     if (userPrefersContrast)
@@ -2900,7 +2900,7 @@ bool RenderThemeCocoa::paintMeterForVectorBasedControls(const RenderElement& ren
     GraphicsContextStateSaver stateSaver(context);
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
-    FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
+    FloatRoundedRect roundedFillRect(rect, CornerRadii(cornerRadius));
 
     auto styleColorOptions = renderer.styleColorOptions();
     auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
@@ -3136,7 +3136,7 @@ bool RenderThemeCocoa::paintProgressBarForVectorBasedControls(const RenderElemen
     constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
     constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 
-    FloatRoundedRect::Radii barCornerRadii(
+    CornerRadii barCornerRadii(
         isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
         isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
     );
@@ -3386,7 +3386,7 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
 
     auto cornerRadius = std::min(trackClip.width(), trackClip.height()) / 2.f;
 
-    FloatRoundedRect::Radii cornerRadii(cornerRadius, cornerRadius);
+    CornerRadii cornerRadii(cornerRadius, cornerRadius);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
     FloatRoundedRect outerBorder(trackClip, cornerRadii);
 
@@ -3460,7 +3460,7 @@ bool RenderThemeCocoa::paintSliderTrackForVectorBasedControls(const RenderElemen
     }
 
     const auto fillCornerRadius = isThumbVisible ? 0.f : std::min(trackClip.width(), trackClip.height()) / 2.f;
-    const auto fillCornerRadii = FloatRoundedRect::Radii { fillCornerRadius, fillCornerRadius };
+    const auto fillCornerRadii = CornerRadii { fillCornerRadius, fillCornerRadius };
 
     FloatRoundedRect fillRect(trackClip, fillCornerRadii);
     context.fillRoundedRect(fillRect, fillColor);
@@ -3923,7 +3923,7 @@ bool RenderThemeCocoa::paintPlatformResizerForVectorBasedControls(const RenderLa
     paintRect.setLocation(resizerCornerRect.maxXMaxYCorner() - paintRect.size());
 
     const auto barThickness = length * 0.075f;
-    const auto barRadii = FloatRoundedRect::Radii { barThickness / 2.f, barThickness / 2.f };
+    const auto barRadii = CornerRadii { barThickness / 2.f, barThickness / 2.f };
 
     const auto wideBarWidth = length * 0.75f;
     const auto wideBarX = paintRect.x() + (paintRect.width() - wideBarWidth) / 2.f;

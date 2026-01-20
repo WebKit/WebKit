@@ -971,6 +971,7 @@
 		29AE213521ABA48A00869283 /* AXIsolatedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AE213321ABA48A00869283 /* AXIsolatedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */; };
 		29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A09D75F2F1747B900A9FFBB /* CornerRadii.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A09D75D2F17433200A9FFBB /* CornerRadii.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A4107A426CB66F8003BF797 /* CSSKeywordValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4107A326CB66EE003BF797 /* CSSKeywordValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A538A2526F0103300965FC8 /* CSSMatrixComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A538A1826E3693000965FC8 /* CSSMatrixComponent.h */; };
 		2A538A2626F0103600965FC8 /* CSSMatrixComponentOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A538A1326E3693000965FC8 /* CSSMatrixComponentOptions.h */; };
@@ -9820,6 +9821,8 @@
 		29F83ECF27D6C72A00E1F0FD /* SpeechSynthesisErrorEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SpeechSynthesisErrorEventInit.idl; sourceTree = "<group>"; };
 		29F83ED027D6C88500E1F0FD /* SpeechSynthesisErrorEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisErrorEventInit.h; sourceTree = "<group>"; };
 		29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUndoInsertionMarkupMac.h; sourceTree = "<group>"; };
+		2A09D75D2F17433200A9FFBB /* CornerRadii.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CornerRadii.h; sourceTree = "<group>"; };
+		2A09D75E2F17438900A9FFBB /* CornerRadii.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CornerRadii.cpp; sourceTree = "<group>"; };
 		2A4107A026CB66ED003BF797 /* CSSKeywordValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSKeywordValue.cpp; sourceTree = "<group>"; };
 		2A4107A226CB66ED003BF797 /* CSSKeywordValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSKeywordValue.idl; sourceTree = "<group>"; };
 		2A4107A326CB66EE003BF797 /* CSSKeywordValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSKeywordValue.h; sourceTree = "<group>"; };
@@ -30203,8 +30206,6 @@
 				F40DAAEE25D9F3BF0011B4FA /* PagePasteboardContext.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
-				0FCA8CA32E455D1600A53EEE /* PaintTimingData.cpp */,
-				0FCA8CA22E455D1600A53EEE /* PaintTimingData.h */,
 				0FCA8CA52E455ECA00A53EEE /* PaintTimingMixin.idl */,
 				46893B8327E8D716002CC13D /* PartitionedSecurityOrigin.h */,
 				4822FD202E2A8032004CAFF9 /* Performance+EventCounts.idl */,
@@ -35526,6 +35527,8 @@
 				CDAD1A5827AFBF3900699285 /* ContentTypeUtilities.cpp */,
 				CDAD1A5727AFBF3900699285 /* ContentTypeUtilities.h */,
 				72E5768A281B292600A75432 /* CopyImageOptions.h */,
+				2A09D75E2F17438900A9FFBB /* CornerRadii.cpp */,
+				2A09D75D2F17433200A9FFBB /* CornerRadii.h */,
 				2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */,
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
@@ -43116,6 +43119,7 @@
 				4C7133A6299A5E8C007A4042 /* CoreTextCompositionEngine.h in Headers */,
 				463926302E7CE92200BAAF1F /* CoreVideoExtras.h in Headers */,
 				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
+				2A09D75F2F1747B900A9FFBB /* CornerRadii.h in Headers */,
 				46C3C1FE28CBCB9400C3DA78 /* CORPViolationReportBody.h in Headers */,
 				94925CE92B320BCC001C62B8 /* CorrectionIndicator.h in Headers */,
 				862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */,
@@ -46105,7 +46109,6 @@
 				0885067F11DA045B00182B98 /* PaintInfo.h in Headers */,
 				0885068011DA045B00182B98 /* PaintPhase.h in Headers */,
 				4B1E13EB217937B30042CF98 /* PaintRenderingContext2D.h in Headers */,
-				0FCA8CA42E455D2000A53EEE /* PaintTimingData.h in Headers */,
 				4B6B5CC02164386400603817 /* PaintWorkletGlobalScope.h in Headers */,
 				FD3160A312B026F700C1A359 /* Panner.h in Headers */,
 				FD31601A12B0267600C1A359 /* PannerNode.h in Headers */,

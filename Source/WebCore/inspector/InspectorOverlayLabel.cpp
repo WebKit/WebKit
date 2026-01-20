@@ -350,7 +350,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
                 textPosition.y() + yOffset - lineHeight + lineDescent,
                 computedContentRun.computedWidth + (labelContentDecorationBorderedLeadingAndTrailingPadding * 2),
                 lineHeight,
-            }, FloatRoundedRect::Radii(2));
+            }, CornerRadii(2));
 
             Path backgroundPath;
             backgroundPath.addRoundedRect(backgroundRect);

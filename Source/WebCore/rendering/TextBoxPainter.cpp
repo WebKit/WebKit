@@ -621,7 +621,7 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);
         backgroundRect.move(0.5, 0.5);
-        context.fillRoundedRect(FloatRoundedRect { backgroundRect, FloatRoundedRect::Radii { 2 } }, color);
+        context.fillRoundedRect(FloatRoundedRect { backgroundRect, CornerRadii { 2 } }, color);
         return;
     }
 
@@ -933,9 +933,9 @@ void TextBoxPainter::paintForegroundDecorations(TextDecorationPainter& decoratio
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Counterclockwise));
 }
 
-static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline& underline, unsigned markedTextStartOffset, unsigned markedTextEndOffset)
+static CornerRadii radiiForUnderline(const CompositionUnderline& underline, unsigned markedTextStartOffset, unsigned markedTextEndOffset)
 {
-    auto radii = FloatRoundedRect::Radii { 0 };
+    auto radii = CornerRadii { 0 };
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
     if (!redesignedTextCursorEnabled())
@@ -965,7 +965,7 @@ enum class TrimSide : bool {
     Right,
 };
 
-static FloatRoundedRect::Radii trimRadii(const FloatRoundedRect::Radii& radii, TrimSide trimSide)
+static CornerRadii trimRadii(const CornerRadii& radii, TrimSide trimSide)
 {
     switch (trimSide) {
     case TrimSide::Left:
@@ -1007,7 +1007,7 @@ static OptionSet<TextBoxFragmentLocationWithinLayoutBox> textBoxFragmentLocation
 }
 #endif
 
-void TextBoxPainter::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii, bool hasLiveConversion) const
+void TextBoxPainter::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const CornerRadii& radii, bool hasLiveConversion) const
 {
 #if HAVE(REDESIGNED_TEXT_CURSOR)
     if (!redesignedTextCursorEnabled())
@@ -1159,7 +1159,7 @@ float TextBoxPainter::textPosition()
     return m_logicalRect.x() - makeIterator()->lineBox()->contentLogicalLeft();
 }
 
-void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii, bool hasLiveConversion)
+void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline, const CornerRadii& radii, bool hasLiveConversion)
 {
     float start = 0; // start of line to draw, relative to tx
     float width = m_logicalRect.width(); // how much line to draw
