@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 namespace WTF {
 
 // `IsIncreasing` is a utility to check that a series of numbers are increasing.
