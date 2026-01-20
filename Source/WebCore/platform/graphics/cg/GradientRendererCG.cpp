@@ -68,6 +68,12 @@ GradientRendererCG::Strategy GradientRendererCG::pickStrategy(ColorInterpolation
             if (anyComponentIsNone(stops))
                 return makeShading(colorInterpolationMethod, stops);
 
+            // CoreGraphics' kCGGradientInterpolatesPremultiplied flag doesn't work correctly for unpremultiplied alpha.
+            // Use the Shading strategy which does manual interpolation and correctly handles unpremultiplied alpha.
+            // See https://bugs.webkit.org/show_bug.cgi?id=305452
+            if (colorInterpolationMethod.alphaPremultiplication == AlphaPremultiplication::Unpremultiplied)
+                return makeShading(colorInterpolationMethod, stops);
+
             return makeGradient(colorInterpolationMethod, stops, destinationColorSpace);
         },
         [&] (const auto&) -> Strategy {
@@ -122,10 +128,18 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         return options;
     };
 
+    auto gradientInterpolatesUnpremultipliedOptionsDictionary = [] () -> CFDictionaryRef {
+        static CFTypeRef keys[] = { kCGGradientInterpolatesPremultiplied };
+        static CFTypeRef values[] = { kCFBooleanFalse };
+        static CFDictionaryRef options = CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+        return options;
+    };
+
    auto gradientOptionsDictionary = [&] (auto colorInterpolationMethod) -> CFDictionaryRef {
         switch (colorInterpolationMethod.alphaPremultiplication) {
         case AlphaPremultiplication::Unpremultiplied:
-            return nullptr;
+            return gradientInterpolatesUnpremultipliedOptionsDictionary();
         case AlphaPremultiplication::Premultiplied:
             return gradientInterpolatesPremultipliedOptionsDictionary();
         }
