@@ -30,7 +30,8 @@ let fonts = document.fonts;
     debug("Deleting style");
     document.getElementById("head").removeChild(document.getElementById("style"));
 
-    await UIHelper.renderingUpdate();
+    for (let i = 0; i < 5; i++)
+        await UIHelper.renderingUpdate();
 
     shouldBeEqualToString("fonts.status", "loaded");
     finishJSTest();

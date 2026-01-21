@@ -2447,5 +2447,3 @@ webkit.org/b/305675 fast/animation/request-animation-frame-throttle-subframe-zer
 webkit.org/b/305947 compositing/visibility/frameset-visibility-hidden.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/305958 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Pass Failure ]
-
-webkit.org/b/305959 fast/text/FontFaceSet-status-after-style-update.html [ Pass Failure ]
