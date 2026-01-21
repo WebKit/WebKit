@@ -93,6 +93,17 @@ public:
             return m_ownerThread;
         return std::nullopt;
     }
+
+    // Returns the owner thread's UID without creating temporary RefPtr objects.
+    // This avoids ref counting operations that can cause lock contention
+    // with thread suspension. Returns std::nullopt if there is no owner thread.
+    std::optional<uint64_t> ownerThreadUID() const
+    {
+        if (!m_hasOwnerThread)
+            return std::nullopt;
+        return m_ownerThread->uid();
+    }
+
     bool currentThreadIsHoldingLock() { return m_hasOwnerThread && m_ownerThread.get() == &Thread::currentSingleton(); }
 
     void willDestroyVM(VM*);

@@ -876,9 +876,9 @@ void ExecutionHandler::sendErrorReply(ProtocolError error) { m_debugServer.sendE
 
 uint64_t ExecutionHandler::threadId(const VM& vm)
 {
-    auto ownerThread = vm.ownerThread();
-    RELEASE_ASSERT(ownerThread && *ownerThread);
-    return (*ownerThread)->uid();
+    auto uid = vm.ownerThreadUID();
+    RELEASE_ASSERT(uid.has_value());
+    return *uid;
 }
 
 DebugState* ExecutionHandler::debuggeeState() const { return m_debuggee->debugState(); }

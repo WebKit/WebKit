@@ -1085,6 +1085,7 @@ public:
     void logEvent(CodeBlock*, const char* summary, const Func& func);
 
     std::optional<RefPtr<Thread>> ownerThread() const { return m_apiLock->ownerThread(); }
+    std::optional<uint64_t> ownerThreadUID() const { return m_apiLock->ownerThreadUID(); }
 
     ALWAYS_INLINE VMTraps& traps() { return m_threadContext.traps(); }
     ALWAYS_INLINE const VMTraps& traps() const { return m_threadContext.traps(); }
