@@ -37,11 +37,6 @@ class JSGlobalObject;
     JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(v) \
     v(throwTypeErrorFunction, nullptr) \
     v(importModule, nullptr) \
-    v(mapStorage, nullptr) \
-    v(mapIterationNext, nullptr) \
-    v(mapIterationEntry, nullptr) \
-    v(mapIterationEntryKey, nullptr) \
-    v(mapIterationEntryValue, nullptr) \
     v(mapIteratorNext, nullptr) \
     v(mapIteratorKey, nullptr) \
     v(mapIteratorValue, nullptr) \

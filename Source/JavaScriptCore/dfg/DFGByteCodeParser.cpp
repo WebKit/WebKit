@@ -3816,8 +3816,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case JSSetIterationNextIntrinsic:
-        case JSMapIterationNextIntrinsic: {
+        case JSSetIterationNextIntrinsic: {
             ASSERT(argumentCountIncludingThis == 3);
 
             insertChecks();
@@ -3829,8 +3828,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case JSSetIterationEntryIntrinsic:
-        case JSMapIterationEntryIntrinsic: {
+        case JSSetIterationEntryIntrinsic: {
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
@@ -3841,24 +3839,13 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case JSSetIterationEntryKeyIntrinsic:
-        case JSMapIterationEntryKeyIntrinsic: {
+        case JSSetIterationEntryKeyIntrinsic: {
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();
             Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             BucketOwnerType type = intrinsic == JSSetIterationEntryKeyIntrinsic ? BucketOwnerType::Set : BucketOwnerType::Map;
             Node* result = addToGraph(MapIterationEntryKey, OpInfo(type), OpInfo(prediction), Edge(storage));
-            setResult(result);
-            return CallOptimizationResult::Inlined;
-        }
-
-        case JSMapIterationEntryValueIntrinsic: {
-            ASSERT(argumentCountIncludingThis == 2);
-
-            insertChecks();
-            Node* storage = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            Node* result = addToGraph(MapIterationEntryValue, OpInfo(BucketOwnerType::Map), OpInfo(prediction), Edge(storage));
             setResult(result);
             return CallOptimizationResult::Inlined;
         }
@@ -3897,8 +3884,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case JSSetStorageIntrinsic:
-        case JSMapStorageIntrinsic: {
+        case JSSetStorageIntrinsic: {
             ASSERT(argumentCountIncludingThis == 2);
 
             insertChecks();

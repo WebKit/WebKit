@@ -58,7 +58,6 @@ $(PROJECT_DIR)/builtins/JSIteratorHelperPrototype.js
 $(PROJECT_DIR)/builtins/JSIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapConstructor.js
 $(PROJECT_DIR)/builtins/MapIteratorPrototype.js
-$(PROJECT_DIR)/builtins/MapPrototype.js
 $(PROJECT_DIR)/builtins/ModuleLoader.js
 $(PROJECT_DIR)/builtins/ObjectConstructor.js
 $(PROJECT_DIR)/builtins/PromiseConstructor.js
