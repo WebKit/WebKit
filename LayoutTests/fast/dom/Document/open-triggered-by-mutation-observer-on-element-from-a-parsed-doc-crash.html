@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body>
+  <script>
+    window.testRunner?.dumpAsText();
+    const element = (new DOMParser()).parseFromString("<!DOCTYPE html><p>foo</p>","text/html").documentElement;
+    (new MutationObserver(_ => document.open())).observe(element, {attributes: true});
+    element.setAttribute("class", "bar");
+    document.body.innerHTML = "PASS if no crash.";
+  </script>
+</body>
