@@ -601,15 +601,20 @@ private:
             case MultiGetByOffset:
             case GetByOffset: {
                 candidate->setResult(NodeResultDouble);
+                candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from the using edge
                 resultNode = candidate;
                 break;
             }
 
             case MultiGetByVal: {
-                if constexpr (useKind == Int52RepUse)
+                if constexpr (useKind == Int52RepUse) {
                     candidate->setResult(NodeResultInt52);
-                if constexpr (useKind == Int32Use)
+                    candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from using edge
+                }
+                if constexpr (useKind == Int32Use) {
                     candidate->setResult(NodeResultInt32);
+                    candidate->mergeFlags(NodeMustGenerate); // Absorbs speculation check from using edge
+                }
                 resultNode = candidate;
                 break;
             }
