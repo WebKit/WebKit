@@ -28,8 +28,11 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <wtf/ObjCRuntimeExtras.h>
 
 @interface WKPreferencesMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -279,4 +282,37 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     }];
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"WebXR Disabled", result.get());
+}
+
+static IMP originalObjectForKeyIMP = nil;
+
+static id swizzledObjectForKeyToReturnString(id self, SEL _cmd, NSString *key)
+{
+    // Intercept the specific preference key and return wrong type.
+    // The key format is: identifier + ".WebKit2" + keyName.
+    if ([key isEqualToString:@"TestGroupIdentifier.WebKit2InspectorAttachedHeight"])
+        return @"10";
+    return wtfCallIMP<id>(originalObjectForKeyIMP, self, _cmd, key);
+}
+
+TEST(WKPreferences, UInt32TypeMismatchDoesNotCrash)
+{
+    // Swizzle [NSUserDefaults objectForKey:] to inject the type mismatch.
+    Method method = class_getInstanceMethod([NSUserDefaults class], @selector(objectForKey:));
+    originalObjectForKeyIMP = method_setImplementation(method, (IMP)swizzledObjectForKeyToReturnString);
+
+    // Create a configuration with a group identifier.
+    // This triggers creation of a WebPageGroup with the identifier, which creates
+    // WebPreferences with that identifier. platformInitializeStore() then iterates
+    // through FOR_EACH_PERSISTENT_WEBKIT_PREFERENCE and calls
+    // platformGetUInt32UserValueForKey() for UInt32 preferences.
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setGroupIdentifier:@"TestGroupIdentifier"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    EXPECT_NOT_NULL(webView);
+
+    // Restore original implementation.
+    method_setImplementation(method, originalObjectForKeyIMP);
 }
