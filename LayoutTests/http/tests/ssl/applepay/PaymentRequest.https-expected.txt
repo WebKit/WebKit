@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: 'invalidNetwork' is not a valid payment network.
+CONSOLE MESSAGE: 'invalidNetwork' is not a valid payment network.
 Test basic creation of a PaymentRequest object with an Apple Pay payment method.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -59,10 +61,10 @@ SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetwork
 PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: At least one supported network must be provided..
 
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork'];
-PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: At least one supported network must be provided..
 
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork', 'visa'];
-PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) did not throw exception.
 
 
 Testing ApplePayRequest.merchantCapabilities

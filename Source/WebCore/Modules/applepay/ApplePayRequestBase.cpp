@@ -28,8 +28,11 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "Document.h"
 #include "PaymentCoordinator.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -44,18 +47,14 @@ static bool requiresSupportedNetworks(unsigned version, const ApplePayRequestBas
 #endif
 }
 
-static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
+static Vector<String> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(supportedNetworks.size());
-    for (auto& supportedNetwork : supportedNetworks) {
-        auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(document, version, supportedNetwork);
+    return WTF::compactMap(supportedNetworks, [document = Ref { document }, paymentCoordinator = Ref { paymentCoordinator }, version](const auto& supportedNetwork) {
+        auto validatedNetwork = paymentCoordinator->validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
-            return Exception { ExceptionCode::TypeError, makeString("\""_s, supportedNetwork, "\" is not a valid payment network."_s) };
-        result.append(*validatedNetwork);
-    }
-
-    return WTF::move(result);
+            document->addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, makeString("'"_s, supportedNetwork, "' is not a valid payment network."_s));
+        return validatedNetwork;
+    });
 }
 
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, const ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
@@ -72,13 +71,10 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
         return merchantCapabilities.releaseException();
     result.setMerchantCapabilities(merchantCapabilities.releaseReturnValue());
 
-    if (requiresSupportedNetworks(version, request) && request.supportedNetworks.isEmpty())
-        return Exception { ExceptionCode::TypeError, "At least one supported network must be provided."_s };
-
     auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
-    if (supportedNetworks.hasException())
-        return supportedNetworks.releaseException();
-    result.setSupportedNetworks(supportedNetworks.releaseReturnValue());
+    if (requiresSupportedNetworks(version, request) && supportedNetworks.isEmpty())
+        return Exception { ExceptionCode::TypeError, "At least one supported network must be provided."_s };
+    result.setSupportedNetworks(WTF::move(supportedNetworks));
 
     if (request.requiredBillingContactFields) {
         auto requiredBillingContactFields = convertAndValidate(version, *request.requiredBillingContactFields);

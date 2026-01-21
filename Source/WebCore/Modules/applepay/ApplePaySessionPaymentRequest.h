@@ -89,7 +89,7 @@ public:
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
 
     const Vector<String>& supportedNetworks() const { return m_supportedNetworks; }
-    void setSupportedNetworks(const Vector<String>& supportedNetworks) { m_supportedNetworks = supportedNetworks; }
+    void setSupportedNetworks(Vector<String>&& supportedNetworks) { m_supportedNetworks = WTF::move(supportedNetworks); }
 
     struct MerchantCapabilities {
         bool supports3DS { false };

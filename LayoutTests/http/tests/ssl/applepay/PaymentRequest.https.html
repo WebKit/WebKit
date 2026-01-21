@@ -41,6 +41,15 @@ function logAndShouldThrow(setup, test) {
     });
 }
 
+function logAndShouldNotThrow(setup, test) {
+    return activateThen(() => {
+        debug("SETUP: " + setup)
+        eval(setup);
+        shouldNotThrow(test);
+        debug("");
+    });
+}
+
 function logAndShouldReject(setup, test) {
     return activateThen(() => {
         debug("SETUP: " + setup)
@@ -81,7 +90,7 @@ async function go() {
     await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = 7;", "new PaymentRequest([paymentMethod], validPaymentDetails())")
     await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = [];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
     await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
-    await logAndShouldThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork', 'visa'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
+    await logAndShouldNotThrow("paymentMethod = validPaymentMethod(); paymentMethod.data.supportedNetworks = ['invalidNetwork', 'visa'];", "new PaymentRequest([paymentMethod], validPaymentDetails())")
     debug("")
 
     debug("Testing ApplePayRequest.merchantCapabilities")

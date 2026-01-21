@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: 'invalidNetwork' is not a valid payment network.
+CONSOLE MESSAGE: 'invalidNetwork' is not a valid payment network.
+CONSOLE MESSAGE: 'carteBancaire' is not a valid payment network.
 Test basic creation of an ApplePaySession object.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -77,13 +80,13 @@ SETUP: request = validRequest(); request.supportedNetworks = [];
 PASS new ApplePaySession(2, request) threw exception TypeError: At least one supported network must be provided..
 
 SETUP: request = validRequest(); request.supportedNetworks = ['invalidNetwork'];
-PASS new ApplePaySession(2, request) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one supported network must be provided..
 
 SETUP: request = validRequest(); request.supportedNetworks = ['invalidNetwork', 'visa'];
-PASS new ApplePaySession(2, request) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.supportedNetworks = ['carteBancaire'];
-PASS new ApplePaySession(2, request) threw exception TypeError: "carteBancaire" is not a valid payment network..
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one supported network must be provided..
 
 SETUP: request = validRequest(); request.supportedNetworks = ['visa', 'visa'];
 PASS new ApplePaySession(2, request) did not throw exception.
