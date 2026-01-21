@@ -1633,7 +1633,13 @@ String PDFPluginBase::annotationStyle() const
 
 Color PDFPluginBase::pluginBackgroundColor()
 {
-    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr { [CocoaColor whiteColor].CGColor }.get());
+    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr {
+#if HAVE(LIQUID_GLASS)
+        [CocoaColor whiteColor].CGColor
+#else
+        [CocoaColor grayColor].CGColor
+#endif
+    }.get());
     return color.get();
 }
 
