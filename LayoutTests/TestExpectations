@@ -8168,6 +8168,7 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/border.html [ ImageOnlyFai
 
 # RenderTreeNeedsLayoutChecker hits.
 webkit.org/b/304002 [ Debug ] fast/inline/missing-content-on-autofill-with-out-of-flow-input-descendant.html [ Skip ]
+webkit.org/b/305468 [ Debug ] fast/dynamic/input-crash-after-style-change.html [ Skip ]
 
 # Digital Credentials API tests failing due to lack of implementation
 webkit.org/b/303807 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html [ Skip ]
