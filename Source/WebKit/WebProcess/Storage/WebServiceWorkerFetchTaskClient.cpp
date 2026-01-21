@@ -258,10 +258,13 @@ void WebServiceWorkerFetchTaskClient::didNotHandleInternal()
 
 void WebServiceWorkerFetchTaskClient::doCancel()
 {
-    Locker lock(m_connectionLock);
-
     ASSERT(!isMainRunLoop());
-    m_connection = nullptr;
+
+    {
+        Locker lock(m_connectionLock);
+        m_connection = nullptr;
+    }
+
     if (m_cancelledCallback)
         m_cancelledCallback();
 }
