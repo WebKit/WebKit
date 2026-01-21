@@ -457,6 +457,19 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                 ASSERT(allocatedMinLogicalWidth < cellMinLogicalWidth || WTF::areEssentiallyEqual(allocatedMinLogicalWidth, cellMinLogicalWidth));
                 ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
                 cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
+            } else if (!allColsAreFixed && fixedWidth <= 0 && totalPercent >= 100 && haveAuto) {
+                // Mixed columns where one has width >= 100% and others are auto
+                for (unsigned pos = effCol; pos < lastCol; ++pos) {
+                    auto percentageLogicalWidth = m_layoutStruct[pos].logicalWidth.tryPercentage();
+                    if (percentageLogicalWidth && percentageLogicalWidth->value >= 100) {
+                        // This column should absorb the colspan width requirement
+                        float colMinLogicalWidth = cellMinLogicalWidth;
+                        m_layoutStruct[pos].effectiveMinLogicalWidth = std::max(m_layoutStruct[pos].effectiveMinLogicalWidth, colMinLogicalWidth);
+                        // Don't distribute across other columns
+                        cellMinLogicalWidth = 0;
+                        break;
+                    }
+                }
             } else if (!allColsAreFixed && fixedWidth <= 0 && totalPercent > 0 && haveAuto) {
                 // By this point, the earlier code has converted auto columns to effectiveLogicalWidth percentages,
                 // so we can use the same percentage-based distribution as the allColsArePercent case.
