@@ -1499,8 +1499,6 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 
-webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
-
 # Enable Sonoma only test added in rdar://110488738.
 [ Sonoma+ ] accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Pass ]
 
