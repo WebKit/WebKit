@@ -7,23 +7,23 @@ layer at (0,0) size 785x4757
         RenderText {#text} at (0,0) size 360x18
           text run at (0,0) width 360: "This tests font choices and metrics for monospace fonts."
       RenderBlock {P} at (0,34) size 769x210
-        RenderInline {FONT} at (0,0) size 759x209
-          RenderText {#text} at (0,0) size 58x20
+        RenderInline {FONT} at (0,0) size 759x210
+          RenderText {#text} at (0,0) size 58x21
             text run at (0,0) width 58: "Monaco"
-          RenderBR {BR} at (57,0) size 1x20
-          RenderText {#text} at (0,21) size 759x62
+          RenderBR {BR} at (57,0) size 1x21
+          RenderText {#text} at (0,21) size 759x63
             text run at (0,21) width 759: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G"
             text run at (0,42) width 759: "H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o"
             text run at (0,63) width 279: "p q r s t u v w x y z { | } >"
-          RenderBR {BR} at (278,63) size 1x20
-          RenderInline {B} at (0,84) size 754x62
-            RenderText {#text} at (0,84) size 754x62
+          RenderBR {BR} at (278,63) size 1x21
+          RenderInline {B} at (0,84) size 754x63
+            RenderText {#text} at (0,84) size 754x63
               text run at (0,84) width 754: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E"
               text run at (0,105) width 754: "F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _ ` a b c d e f g h i j k"
               text run at (0,126) width 372: "l m n o p q r s t u v w x y z { | } >"
-          RenderBR {BR} at (371,126) size 1x20
-          RenderInline {I} at (0,147) size 759x62
-            RenderText {#text} at (0,147) size 759x62
+          RenderBR {BR} at (371,126) size 1x21
+          RenderInline {I} at (0,147) size 759x63
+            RenderText {#text} at (0,147) size 759x63
               text run at (0,147) width 759: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G"
               text run at (0,168) width 759: "H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o"
               text run at (0,189) width 279: "p q r s t u v w x y z { | } >"

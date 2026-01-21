@@ -4,22 +4,22 @@ layer at (0,0) size 785x1493
   RenderBlock {HTML} at (0,0) size 785x1493
     RenderBody {BODY} at (8,16) size 769x1429 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 168x17
+        RenderText {#text} at (0,0) size 168x18
           text run at (0,0) width 168: "This page is part of the "
-        RenderInline {A} at (167,0) size 73x17 [color=#0000EE]
-          RenderText {#text} at (167,0) size 73x17
+        RenderInline {A} at (167,0) size 73x18 [color=#0000EE]
+          RenderText {#text} at (167,0) size 73x18
             text run at (167,0) width 73: "CSS3.info"
-        RenderText {#text} at (239,0) size 5x17
+        RenderText {#text} at (239,0) size 5x18
           text run at (239,0) width 5: " "
-        RenderInline {A} at (243,0) size 133x17 [color=#0000EE]
-          RenderText {#text} at (243,0) size 133x17
+        RenderInline {A} at (243,0) size 133x18 [color=#0000EE]
+          RenderText {#text} at (243,0) size 133x18
             text run at (243,0) width 133: "CSS selectors test"
-        RenderText {#text} at (375,0) size 136x17
+        RenderText {#text} at (375,0) size 136x18
           text run at (375,0) width 136: ". See more info on "
-        RenderInline {A} at (510,0) size 111x17 [color=#0000EE]
-          RenderText {#text} at (510,0) size 111x17
+        RenderInline {A} at (510,0) size 111x18 [color=#0000EE]
+          RenderText {#text} at (510,0) size 111x18
             text run at (510,0) width 111: "CSS3 selectors"
-        RenderText {#text} at (620,0) size 6x17
+        RenderText {#text} at (620,0) size 6x18
           text run at (620,0) width 6: "."
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
       RenderBlock {OL} at (0,34) size 769x1395
@@ -28,15 +28,15 @@ layer at (0,0) size 785x1493
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x76 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "1"
-            RenderText {#text} at (6,8) size 274x62
-              text run at (6,8) width 141: "div:only-of-type {"
-              text run at (146,8) width 1: " "
+            RenderText {#text} at (6,9) size 274x61
+              text run at (6,9) width 141: "div:only-of-type {"
+              text run at (146,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
               text run at (6,54) width 274: "<div>Does this element match?</div>"
           RenderBlock {P} at (16,145) size 584x36
-            RenderText {#text} at (0,0) size 555x35
+            RenderText {#text} at (0,0) size 555x36
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 139: "element of this type"
         RenderListItem {LI} at (40,261) size 616x228 [bgcolor=#AAAAAA]
@@ -45,9 +45,9 @@ layer at (0,0) size 785x1493
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x91 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "2"
-            RenderText {#text} at (6,8) size 274x77
-              text run at (6,8) width 141: "div:only-of-type {"
-              text run at (146,8) width 1: " "
+            RenderText {#text} at (6,9) size 274x76
+              text run at (6,9) width 141: "div:only-of-type {"
+              text run at (146,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
@@ -55,7 +55,7 @@ layer at (0,0) size 785x1493
               text run at (279,54) width 1: " "
               text run at (6,69) width 196: "<blockquote></blockquote>"
           RenderBlock {P} at (16,160) size 584x36
-            RenderText {#text} at (0,0) size 555x35
+            RenderText {#text} at (0,0) size 555x36
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 139: "element of this type"
         RenderListItem {LI} at (40,537) size 616x258 [bgcolor=#AAAAAA]
@@ -65,9 +65,9 @@ layer at (0,0) size 785x1493
               RenderBlock {DIV} at (0,0) size 584x0
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "3"
-            RenderText {#text} at (6,8) size 274x107
-              text run at (6,8) width 141: "div:only-of-type {"
-              text run at (146,8) width 1: " "
+            RenderText {#text} at (6,9) size 274x106
+              text run at (6,9) width 141: "div:only-of-type {"
+              text run at (146,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
@@ -79,7 +79,7 @@ layer at (0,0) size 785x1493
               text run at (115,84) width 1: " "
               text run at (6,99) width 102: "</blockquote>"
           RenderBlock {P} at (16,190) size 584x36
-            RenderText {#text} at (0,0) size 555x35
+            RenderText {#text} at (0,0) size 555x36
               text run at (0,0) width 555: "The CSS selector should match the marked div element, because it is the only"
               text run at (0,18) width 233: "element of this type in this scope"
         RenderListItem {LI} at (40,843) size 616x228 [bgcolor=#AAAAAA]
@@ -88,9 +88,9 @@ layer at (0,0) size 785x1493
             RenderBlock {DIV} at (0,24) size 584x0
           RenderBlock {PRE} at (16,53) size 584x91 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "4"
-            RenderText {#text} at (6,8) size 274x77
-              text run at (6,8) width 141: "div:only-of-type {"
-              text run at (146,8) width 1: " "
+            RenderText {#text} at (6,9) size 274x76
+              text run at (6,9) width 141: "div:only-of-type {"
+              text run at (146,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
@@ -98,7 +98,7 @@ layer at (0,0) size 785x1493
               text run at (279,54) width 1: " "
               text run at (6,69) width 87: "<div></div>"
           RenderBlock {P} at (16,160) size 584x36
-            RenderText {#text} at (0,0) size 574x35
+            RenderText {#text} at (0,0) size 574x36
               text run at (0,0) width 574: "The CSS selector should not match the marked div element, because it is not the"
               text run at (0,18) width 173: "only element of this type"
         RenderListItem {LI} at (40,1119) size 616x276 [bgcolor=#AAAAAA]
@@ -107,9 +107,9 @@ layer at (0,0) size 785x1493
             RenderBlock {DIV} at (0,24) size 584x0
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
             RenderListMarker at (-38,6) size 18x18: "5"
-            RenderText {#text} at (6,8) size 469x107
-              text run at (6,8) width 141: "div:only-of-type {"
-              text run at (146,8) width 1: " "
+            RenderText {#text} at (6,9) size 469x106
+              text run at (6,9) width 141: "div:only-of-type {"
+              text run at (146,9) width 1: " "
               text run at (6,24) width 9: "}"
               text run at (14,24) width 1: " "
               text run at (6,39) width 1: " "
@@ -120,7 +120,7 @@ layer at (0,0) size 785x1493
               text run at (380,84) width 1: " "
               text run at (6,99) width 469: "ib.parentElement.appendChild(document.createElement(\"div\"));"
           RenderBlock {P} at (16,190) size 584x54
-            RenderText {#text} at (0,0) size 572x53
+            RenderText {#text} at (0,0) size 572x54
               text run at (0,0) width 523: "The CSS selector should not match the original div element, because it is "
               text run at (522,0) width 50: "not the"
               text run at (0,18) width 518: "only of its type anymore after another child with the same type is append "

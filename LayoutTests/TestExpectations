@@ -5811,6 +5811,10 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
 
+# subpixel inline layout
+# This old test case fails with Firefox and Chrome.
+imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-008.html  [ ImageOnlyFailure ]
+ 
 # CSS will-change failures
 webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-webkit-perspective-1.html [ ImageOnlyFailure ]

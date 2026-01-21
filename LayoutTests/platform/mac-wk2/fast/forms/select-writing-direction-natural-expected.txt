@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 text run at (8,2) width 12: "(A"
                 text run at (19,2) width 8 RTL: "\x{5D0}"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,21) size 784x21
+        RenderBlock {DIV} at (0,20) size 784x22
           RenderMenuList {SELECT} at (492,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
             RenderBlock (anonymous) at (1,1) size 68x19
               RenderText at (8,2) size 15x13
@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
                 text run at (8,2) width 12: "(A"
                 text run at (19,2) width 8 RTL: "\x{5D0}"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,94) size 784x42
+      RenderBlock {DIV} at (0,93) size 784x42
         RenderBlock {DIV} at (0,0) size 784x21
           RenderMenuList {SELECT} at (222,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
             RenderBlock (anonymous) at (1,1) size 68x19
@@ -105,7 +105,7 @@ layer at (0,0) size 800x600
                 text run at (48,2) width 8: "A"
                 text run at (55,2) width 5 RTL: "("
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,21) size 784x21
+        RenderBlock {DIV} at (0,20) size 784x22
           RenderMenuList {SELECT} at (714,0) size 70x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
             RenderBlock (anonymous) at (1,1) size 68x19
               RenderText at (45,2) size 15x13

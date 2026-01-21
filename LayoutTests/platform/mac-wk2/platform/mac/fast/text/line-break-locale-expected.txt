@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 246x18
           text run at (0,0) width 246: "This tests that line breaking obeys the "
-        RenderInline {TT} at (245,2) size 110x15
-          RenderText {#text} at (245,2) size 110x15
+        RenderInline {TT} at (245,2) size 110x16
+          RenderText {#text} at (245,2) size 110x16
             text run at (245,2) width 110: "-webkit-locale"
         RenderText {#text} at (354,0) size 63x18
           text run at (354,0) width 63: " property."

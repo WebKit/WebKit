@@ -8,17 +8,17 @@ layer at (0,0) size 800x600
           text run at (0,0) width 420: "This tests smart paste of a fragment that ends in a select element. "
           text run at (419,0) width 342: "There should be no spaces added because the paste is"
           text run at (0,18) width 219: "performed in an empty paragraph."
-      RenderBlock {DIV} at (0,52) size 784x19
+      RenderBlock {DIV} at (0,52) size 784x20
         RenderText {#text} at (0,0) size 22x18
           text run at (0,0) width 22: "foo"
-        RenderMenuList {SELECT} at (21,1) size 39x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (21,1) size 39x19 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 38x18
             RenderText at (8,2) size 6x13
               text run at (8,2) width 6: "1"
-      RenderBlock {DIV} at (0,71) size 784x19
+      RenderBlock {DIV} at (0,71) size 784x20
         RenderText {#text} at (0,0) size 22x18
           text run at (0,0) width 22: "foo"
-        RenderMenuList {SELECT} at (21,1) size 39x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (21,1) size 39x19 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 38x18
             RenderText at (8,2) size 6x13
               text run at (8,2) width 6: "1"

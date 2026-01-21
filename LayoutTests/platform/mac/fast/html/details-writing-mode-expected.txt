@@ -38,12 +38,12 @@ layer at (0,0) size 785x1478
                 text run at (6,6) width 17: "ltr"
             RenderTableCell {TD} at (107,98) size 125x124 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
-                    RenderListMarker at (0,0) size 17x18: "\x{25B6}"
-                    RenderText {#text} at (16,0) size 61x18
-                      text run at (16,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
+                    RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+                    RenderText {#text} at (16,1) size 61x19
+                      text run at (16,1) width 61: "summary"
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (0,0) size 17x18: "\x{25BC}"
                     RenderText {#text} at (16,0) size 60x18
@@ -51,12 +51,12 @@ layer at (0,0) size 785x1478
                   RenderBlock {SLOT} at (0,18) size 120x0
             RenderTableCell {TD} at (233,98) size 125x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
                     RenderListMarker at (0,0) size 17x18: "\x{25B6}"
                     RenderText {#text} at (16,0) size 61x18
                       text run at (16,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (0,0) size 17x18: "\x{25B2}"
                     RenderText {#text} at (16,0) size 60x18
@@ -69,12 +69,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,0) size 18x17: "\x{25BC}"
                     RenderText {#text} at (0,16) size 18x60
                       text run at (0,16) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,0) size 18x17: "\x{25B6}"
                     RenderText {#text} at (0,16) size 18x61
                       text run at (0,16) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,98) size 125x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -125,12 +125,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,103) size 18x17: "\x{25B2}"
                     RenderText {#text} at (0,44) size 18x60
                       text run at (0,44) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,103) size 18x17: "\x{25B6}"
                     RenderText {#text} at (0,43) size 18x61
                       text run at (0,43) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,224) size 125x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -181,12 +181,12 @@ layer at (0,0) size 785x1478
                 text run at (6,6) width 17: "ltr"
             RenderTableCell {TD} at (107,98) size 125x124 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
-                    RenderListMarker at (0,0) size 17x18: "\x{25B6}"
-                    RenderText {#text} at (16,0) size 61x18
-                      text run at (16,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
+                    RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+                    RenderText {#text} at (16,1) size 61x19
+                      text run at (16,1) width 61: "summary"
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (0,0) size 17x18: "\x{25BC}"
                     RenderText {#text} at (16,0) size 60x18
@@ -194,12 +194,12 @@ layer at (0,0) size 785x1478
                   RenderBlock {SLOT} at (0,18) size 120x0
             RenderTableCell {TD} at (233,98) size 125x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
                     RenderListMarker at (0,0) size 17x18: "\x{25B6}"
                     RenderText {#text} at (16,0) size 61x18
                       text run at (16,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (0,0) size 17x18: "\x{25B2}"
                     RenderText {#text} at (16,0) size 60x18
@@ -212,12 +212,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,0) size 18x17: "\x{25BC}"
                     RenderText {#text} at (0,16) size 18x60
                       text run at (0,16) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,0) size 18x17: "\x{25B6}"
                     RenderText {#text} at (0,16) size 18x61
                       text run at (0,16) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,98) size 125x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -268,12 +268,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,59) size 18x17: "\x{25B2}"
                     RenderText {#text} at (0,0) size 18x60
                       text run at (0,0) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,59) size 18x18: "\x{25B6}"
                     RenderText {#text} at (0,0) size 18x60
                       text run at (0,0) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,224) size 125x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -324,12 +324,12 @@ layer at (0,0) size 785x1478
                 text run at (6,6) width 17: "ltr"
             RenderTableCell {TD} at (107,98) size 125x124 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
-                    RenderListMarker at (21,0) size 18x18: "\x{25B6}"
-                    RenderText {#text} at (38,0) size 61x18
-                      text run at (38,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
+                    RenderListMarker at (21,1) size 18x19: "\x{25B6}"
+                    RenderText {#text} at (38,1) size 61x19
+                      text run at (38,1) width 61: "summary"
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (22,0) size 17x18: "\x{25BC}"
                     RenderText {#text} at (38,0) size 60x18
@@ -337,12 +337,12 @@ layer at (0,0) size 785x1478
                   RenderBlock {SLOT} at (0,18) size 120x0
             RenderTableCell {TD} at (233,98) size 125x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
                     RenderListMarker at (21,0) size 18x18: "\x{25B6}"
                     RenderText {#text} at (38,0) size 61x18
                       text run at (38,0) width 61: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (22,0) size 17x18: "\x{25B2}"
                     RenderText {#text} at (38,0) size 60x18
@@ -355,12 +355,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,22) size 18x17: "\x{25BC}"
                     RenderText {#text} at (0,38) size 18x60
                       text run at (0,38) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,21) size 18x18: "\x{25B6}"
                     RenderText {#text} at (0,38) size 18x61
                       text run at (0,38) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,98) size 125x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -411,12 +411,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,81) size 18x17: "\x{25B2}"
                     RenderText {#text} at (0,22) size 18x60
                       text run at (0,22) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,81) size 18x18: "\x{25B6}"
                     RenderText {#text} at (0,21) size 18x61
                       text run at (0,21) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,224) size 125x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -467,12 +467,12 @@ layer at (0,0) size 785x1478
                 text run at (6,6) width 17: "ltr"
             RenderTableCell {TD} at (107,98) size 125x124 [border: (1px solid #000000)] [r=3 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
-                    RenderListMarker at (43,0) size 18x18: "\x{25B6}"
-                    RenderText {#text} at (60,0) size 60x18
-                      text run at (60,0) width 60: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
+                    RenderListMarker at (43,1) size 18x19: "\x{25B6}"
+                    RenderText {#text} at (60,1) size 60x19
+                      text run at (60,1) width 60: "summary"
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (44,0) size 17x18: "\x{25BC}"
                     RenderText {#text} at (60,0) size 60x18
@@ -480,12 +480,12 @@ layer at (0,0) size 785x1478
                   RenderBlock {SLOT} at (0,18) size 120x0
             RenderTableCell {TD} at (233,98) size 125x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
-                RenderBlock {DETAILS} at (0,0) size 120x18
-                  RenderListItem {SUMMARY} at (0,0) size 120x18
+                RenderBlock {DETAILS} at (0,0) size 120x20
+                  RenderListItem {SUMMARY} at (0,0) size 120x20
                     RenderListMarker at (43,0) size 18x18: "\x{25B6}"
                     RenderText {#text} at (60,0) size 60x18
                       text run at (60,0) width 60: "summary"
-                RenderBlock {DETAILS} at (0,18) size 120x18
+                RenderBlock {DETAILS} at (0,19) size 120x19
                   RenderListItem {SUMMARY} at (0,0) size 120x18
                     RenderListMarker at (44,0) size 17x18: "\x{25B2}"
                     RenderText {#text} at (60,0) size 60x18
@@ -498,12 +498,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,44) size 18x17: "\x{25BC}"
                     RenderText {#text} at (0,60) size 18x60
                       text run at (0,60) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,43) size 18x18: "\x{25B6}"
                     RenderText {#text} at (0,60) size 18x60
                       text run at (0,60) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,98) size 125x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120
@@ -554,12 +554,12 @@ layer at (0,0) size 785x1478
                     RenderListMarker at (0,103) size 18x17: "\x{25B2}"
                     RenderText {#text} at (0,44) size 18x60
                       text run at (0,44) width 60: "summary"
-                RenderBlock {DETAILS} at (18,0) size 18x120
-                  RenderListItem {SUMMARY} at (0,0) size 18x120
+                RenderBlock {DETAILS} at (18,0) size 20x120
+                  RenderListItem {SUMMARY} at (0,0) size 20x120
                     RenderListMarker at (0,103) size 18x17: "\x{25B6}"
                     RenderText {#text} at (0,43) size 18x61
                       text run at (0,43) width 60: "summary"
-                  RenderBlock {SLOT} at (18,0) size 0x120
+                  RenderBlock {SLOT} at (19,0) size 0x120
             RenderTableCell {TD} at (485,224) size 125x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 18x120

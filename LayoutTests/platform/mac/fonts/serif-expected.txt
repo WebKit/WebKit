@@ -7,21 +7,21 @@ layer at (0,0) size 785x5468
         RenderText {#text} at (0,0) size 316x18
           text run at (0,0) width 316: "This tests font choices and metrics for serif fonts."
       RenderBlock {P} at (0,34) size 769x126
-        RenderInline {FONT} at (0,0) size 768x125
-          RenderText {#text} at (0,0) size 124x17
+        RenderInline {FONT} at (0,0) size 768x126
+          RenderText {#text} at (0,0) size 124x18
             text run at (0,0) width 124: "Times New Roman"
-          RenderBR {BR} at (123,0) size 1x17
-          RenderText {#text} at (0,18) size 768x35
+          RenderBR {BR} at (123,0) size 1x18
+          RenderText {#text} at (0,18) size 768x36
             text run at (0,18) width 768: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\"
             text run at (0,36) width 377: "] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
-          RenderBR {BR} at (376,36) size 1x17
-          RenderInline {B} at (0,54) size 761x35
-            RenderText {#text} at (0,54) size 761x35
+          RenderBR {BR} at (376,36) size 1x18
+          RenderInline {B} at (0,54) size 761x36
+            RenderText {#text} at (0,54) size 761x36
               text run at (0,54) width 761: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
               text run at (0,72) width 421: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
-          RenderBR {BR} at (420,72) size 1x17
-          RenderInline {I} at (0,90) size 766x35
-            RenderText {#text} at (0,90) size 766x35
+          RenderBR {BR} at (420,72) size 1x18
+          RenderInline {I} at (0,90) size 766x36
+            RenderText {#text} at (0,90) size 766x36
               text run at (0,90) width 766: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\"
               text run at (0,108) width 373: "] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0

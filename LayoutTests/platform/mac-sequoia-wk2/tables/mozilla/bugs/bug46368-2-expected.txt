@@ -19,21 +19,21 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (308,20) size 472x23 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,20) size 245x19
                 text run at (2,2) width 245: "foo bar foo bar foo bar foo bar foo bar"
-      RenderBlock (anonymous) at (0,65) size 784x37
+      RenderBlock (anonymous) at (0,65) size 784x38
         RenderBR {BR} at (0,0) size 0x18
-        RenderButton {INPUT} at (0,19) size 52x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (0,19) size 52x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 36x13
             RenderText at (0,0) size 36x13
               text run at (0,0) width 36: "Reload"
         RenderText {#text} at (51,18) size 9x18
           text run at (51,18) width 9: "  "
-        RenderButton {INPUT} at (59,19) size 84x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (59,19) size 84x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 67x13
             RenderText at (0,0) size 67x13
               text run at (0,0) width 67: "Change Font"
         RenderText {#text} at (142,18) size 9x18
           text run at (142,18) width 9: "  "
-        RenderTextControl {INPUT} at (150,18) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+        RenderTextControl {INPUT} at (150,18) size 149x20 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
 layer at (162,94) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13

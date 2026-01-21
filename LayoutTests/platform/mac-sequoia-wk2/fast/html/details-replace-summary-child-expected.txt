@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 784x18
         RenderListItem {SUMMARY} at (0,0) size 784x18
           RenderListMarker at (0,0) size 17x18: "\x{25BC}"
-          RenderBlock {SPAN} at (16,2) size 63x15
+          RenderBlock {SPAN} at (16,2) size 63x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details1"
           RenderText {#text} at (78,0) size 5x18
             text run at (78,0) width 5: " "
-          RenderBlock {SPAN} at (82,2) size 63x15
+          RenderBlock {SPAN} at (82,2) size 63x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details3"
           RenderText {#text} at (0,0) size 0x0

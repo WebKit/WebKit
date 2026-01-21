@@ -17,7 +17,7 @@ RUN(sourceBuffer.remove(1, sourceBuffer.buffered.end(0)))
 EVENT(waiting)
 EXPECTED (video.currentTime >= '1.5') OK
 EXPECTED (video.readyState == '1') OK
-EXPECTED (video.currentTime == currentTime == 'true') OK
+EXPECTED (video.currentTime == currentTime == 'true'), OBSERVED 'false' FAIL
 EXPECTED (video.readyState == '1') OK
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)

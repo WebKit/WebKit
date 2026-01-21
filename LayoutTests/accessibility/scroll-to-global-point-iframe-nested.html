@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../resources/accessibility-helper.js"></script>
@@ -9,11 +9,11 @@
 <div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
 
 <iframe id="frame" srcdoc="<body> 
-    <style>button { border: 0; }</style> 
+    <style>body { button { border: 0; }</style> 
     <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div> 
     <div id='container' style='height: 100px; overflow: scroll'> 
         <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div> 
-        <button id='target'>Target</button> 
+        <button style='font-family: Ahem' id='target'>Target</button> 
         <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div> 
     </div> 
     <div style='border: 1px solid #000; height: 5000px;'>5000-pixel box</div> 

@@ -10,17 +10,17 @@ layer at (0,0) size 785x474
         RenderTableSection {TBODY} at (1,207) size 198x250
           RenderTableRow {TR} at (0,30) size 198x47
             RenderTableCell {TD} at (30,45) size 54x17 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,16) size 18x15
-                text run at (1,1) width 18: "foo"
+              RenderText {#text} at (1,15) size 18x17
+                text run at (1,0) width 18: "foo"
             RenderTableCell {TD} at (114,30) size 54x47 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 18x15
-                text run at (1,1) width 18: "bar"
-              RenderBR {BR} at (18,1) size 1x15
-              RenderText {#text} at (1,16) size 19x15
-                text run at (1,16) width 19: "baz"
-              RenderBR {BR} at (19,16) size 1x15
-              RenderText {#text} at (1,31) size 19x15
-                text run at (1,31) width 19: "zap"
+              RenderText {#text} at (1,0) size 18x17
+                text run at (1,0) width 18: "bar"
+              RenderBR {BR} at (18,0) size 1x17
+              RenderText {#text} at (1,15) size 19x17
+                text run at (1,15) width 19: "baz"
+              RenderBR {BR} at (19,15) size 1x17
+              RenderText {#text} at (1,30) size 19x17
+                text run at (1,30) width 19: "zap"
           RenderTableRow {TR} at (0,107) size 198x113
             RenderTableCell {TD} at (30,107) size 54x113 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 45x111

@@ -46,37 +46,6 @@ AXChildren:
 AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
-AXSize: NSSize: {9, 13}
-AXTitle:
-AXDescription:
-AXValue:
-AXFocused: 0
-AXEnabled: 1
-AXWindow:
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker:
-AXEndTextMarker:
-AXVisited: 0
-AXLinkedUIElements:
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement:
-AXLanguage:
-AXDOMIdentifier:
-AXDOMClassList:
-AXFocusableAncestor:
-AXEditableAncestor: (null)
-AXHighestEditableAncestor: (null)
-AXElementBusy: 0
-
-------------
-AXRole: AXGroup
-AXSubrole: AXMathIdentifier
-AXRoleDescription: group
-AXChildren:
-AXChildrenInNavigationOrder:
-AXHelp:
-AXParent:
 AXSize: NSSize: {9, 12}
 AXTitle:
 AXDescription:
@@ -108,7 +77,38 @@ AXChildren:
 AXChildrenInNavigationOrder:
 AXHelp:
 AXParent:
-AXSize: NSSize: {8, 13}
+AXSize: NSSize: {9, 11}
+AXTitle:
+AXDescription:
+AXValue:
+AXFocused: 0
+AXEnabled: 1
+AXWindow:
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker:
+AXEndTextMarker:
+AXVisited: 0
+AXLinkedUIElements:
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement:
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList:
+AXFocusableAncestor:
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXElementBusy: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren:
+AXChildrenInNavigationOrder:
+AXHelp:
+AXParent:
+AXSize: NSSize: {8, 12}
 AXTitle:
 AXDescription:
 AXValue:

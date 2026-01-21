@@ -6,7 +6,7 @@ layer at (0,0) size 800x266
       RenderBlock (floating) {DIV} at (0,0) size 588x258 [color=#FFFFFF] [bgcolor=#000080]
         RenderBlock (floating) {DIV} at (277,0) size 294x78 [color=#00FFFF] [bgcolor=#008080]
           RenderBlock {P} at (0,0) size 294x78
-            RenderText {#text} at (0,0) size 294x75
+            RenderText {#text} at (0,0) size 294x76
               text run at (0,0) width 294: "To the right of this teal box there should be a"
               text run at (0,18) width 104: "purple square, "
               text run at (103,18) width 191: "tightly squeezed in between"
@@ -14,7 +14,7 @@ layer at (0,0) size 800x266
               text run at (212,36) width 82: "outside edge"
               text run at (0,57) width 132: "of the blue block. \x{21E8}"
         RenderBlock {P} at (0,0) size 588x258
-          RenderText {#text} at (0,0) size 277x39
+          RenderText {#text} at (0,0) size 277x40
             text run at (0,0) width 277: "Inside this blue block on the right there"
             text run at (0,21) width 165: "should be a teal box. \x{21E8} "
           RenderInline {SPAN} at (0,21) size 588x237 [color=#000080]

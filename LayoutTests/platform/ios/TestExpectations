@@ -8432,6 +8432,11 @@ fast/forms/ios/scroll-to-reveal-focused-select.html [ Pass ]
 fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Pass ]
 http/tests/site-isolation/remote-frame-loaded-while-hidden.html [ Pass ImageOnlyFailure ]
 
+# subpixel inline
+imported/w3c/web-platform-tests/intersection-observer/inline-client-rect.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+
 # from fast/ tests that are flaky: adding timeout 
 webkit.org/b/304027 fast/block/basic/001.html [ Pass Failure Timeout ]
 

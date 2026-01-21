@@ -4,37 +4,37 @@ layer at (169,0) size 631x600
   RenderBlock {HTML} at (0,0) size 631x600
     RenderBody {BODY} at (8,8) size 591x584
       RenderBlock (anonymous) at (10,0) size 48x584
-        RenderInline {SPAN} at (8,0) size 32x466
-          RenderText {#text} at (8,0) size 32x466
-            text run at (8,0) width 466: "OFF=\x{897F}\x{66A6}2010\x{5E74}1\x{6708}20\x{65E5}365\x{56DE}"
+        RenderInline {SPAN} at (7,0) size 33x466
+          RenderText {#text} at (7,0) size 34x466
+            text run at (7,0) width 467: "OFF=\x{897F}\x{66A6}2010\x{5E74}1\x{6708}20\x{65E5}365\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (76,0) size 48x584
-        RenderInline {SPAN} at (8,0) size 32x374
-          RenderInline {SPAN} at (8,0) size 32x32
-            RenderCombineText {#text} at (8,0) size 32x32
-              text run at (8,0) width 32: "\x{FFFC}"
-          RenderText {#text} at (8,32) size 32x86
-            text run at (8,32) width 86: "=\x{897F}\x{66A6}"
-          RenderInline {SPAN} at (8,117) size 32x33
-            RenderCombineText {#text} at (8,117) size 32x33
-              text run at (8,117) width 32: "\x{FFFC}"
-          RenderText {#text} at (8,149) size 32x33
-            text run at (8,149) width 32: "\x{5E74}"
-          RenderInline {SPAN} at (8,181) size 32x33
-            RenderCombineText {#text} at (8,181) size 32x33
-              text run at (8,181) width 32: "\x{FFFC}"
-          RenderText {#text} at (8,213) size 32x33
-            text run at (8,213) width 32: "\x{6708}"
-          RenderInline {SPAN} at (8,245) size 32x33
-            RenderCombineText {#text} at (8,245) size 32x33
-              text run at (8,245) width 32: "\x{FFFC}"
-          RenderText {#text} at (8,277) size 32x33
-            text run at (8,277) width 32: "\x{65E5}"
-          RenderInline {SPAN} at (8,309) size 32x33
-            RenderCombineText {#text} at (8,309) size 32x33
-              text run at (8,309) width 32: "\x{FFFC}"
-          RenderText {#text} at (8,341) size 32x33
-            text run at (8,341) width 32: "\x{56DE}"
+        RenderInline {SPAN} at (7,0) size 33x374
+          RenderInline {SPAN} at (7,0) size 33x32
+            RenderCombineText {#text} at (7,0) size 34x32
+              text run at (7,0) width 33: "\x{FFFC}"
+          RenderText {#text} at (7,32) size 34x86
+            text run at (7,32) width 87: "=\x{897F}\x{66A6}"
+          RenderInline {SPAN} at (7,117) size 33x33
+            RenderCombineText {#text} at (7,117) size 34x33
+              text run at (7,117) width 33: "\x{FFFC}"
+          RenderText {#text} at (7,149) size 34x33
+            text run at (7,149) width 33: "\x{5E74}"
+          RenderInline {SPAN} at (7,181) size 33x33
+            RenderCombineText {#text} at (7,181) size 34x33
+              text run at (7,181) width 33: "\x{FFFC}"
+          RenderText {#text} at (7,213) size 34x33
+            text run at (7,213) width 33: "\x{6708}"
+          RenderInline {SPAN} at (7,245) size 33x33
+            RenderCombineText {#text} at (7,245) size 34x33
+              text run at (7,245) width 33: "\x{FFFC}"
+          RenderText {#text} at (7,277) size 34x33
+            text run at (7,277) width 33: "\x{65E5}"
+          RenderInline {SPAN} at (7,309) size 33x33
+            RenderCombineText {#text} at (7,309) size 34x33
+              text run at (7,309) width 33: "\x{FFFC}"
+          RenderText {#text} at (7,341) size 34x33
+            text run at (7,341) width 33: "\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (142,0) size 45x584
         RenderInline {SPAN} at (4,0) size 37x371
@@ -65,58 +65,58 @@ layer at (169,0) size 631x600
             text run at (4,338) width 32: "\x{56DE}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (205,0) size 386x584
-        RenderInline {SPAN} at (8,0) size 32x232
-          RenderText {#text} at (8,0) size 32x232
-            text run at (8,0) width 232: "OFF=\x{5B57}\x{3042}\x{FF21}A%"
+        RenderInline {SPAN} at (7,0) size 33x232
+          RenderText {#text} at (7,0) size 34x232
+            text run at (7,0) width 233: "OFF=\x{5B57}\x{3042}\x{FF21}A%"
         RenderBR {BR} at (15,231) size 18x1
-        RenderInline {SPAN} at (56,0) size 330x584
-          RenderInline {SPAN} at (56,0) size 32x32
-            RenderCombineText {#text} at (56,0) size 32x32
-              text run at (56,0) width 32: "\x{FFFC}"
-          RenderText {#text} at (56,32) size 32x22
-            text run at (56,32) width 22: "="
-          RenderInline {SPAN} at (56,53) size 32x33
-            RenderCombineText {#text} at (56,53) size 32x33
-              text run at (56,53) width 32: "\x{FFFC}"
-          RenderInline {SPAN} at (56,85) size 32x33
-            RenderCombineText {#text} at (56,85) size 32x33
-              text run at (56,85) width 32: "\x{FFFC}"
-          RenderInline {SPAN} at (56,117) size 32x33
-            RenderCombineText {#text} at (56,117) size 32x33
-              text run at (56,117) width 32: "\x{FFFC}"
-          RenderInline {SPAN} at (56,149) size 32x33
-            RenderCombineText {#text} at (56,149) size 32x33
-              text run at (56,149) width 32: "\x{FFFC}"
-          RenderInline {SPAN} at (56,181) size 32x33
-            RenderCombineText {#text} at (56,181) size 32x33
-              text run at (56,181) width 32: "\x{FFFC}"
+        RenderInline {SPAN} at (55,0) size 331x584
+          RenderInline {SPAN} at (55,0) size 33x32
+            RenderCombineText {#text} at (55,0) size 34x32
+              text run at (55,0) width 33: "\x{FFFC}"
+          RenderText {#text} at (55,32) size 34x22
+            text run at (55,32) width 23: "="
+          RenderInline {SPAN} at (55,53) size 33x33
+            RenderCombineText {#text} at (55,53) size 34x33
+              text run at (55,53) width 33: "\x{FFFC}"
+          RenderInline {SPAN} at (55,85) size 33x33
+            RenderCombineText {#text} at (55,85) size 34x33
+              text run at (55,85) width 33: "\x{FFFC}"
+          RenderInline {SPAN} at (55,117) size 33x33
+            RenderCombineText {#text} at (55,117) size 34x33
+              text run at (55,117) width 33: "\x{FFFC}"
+          RenderInline {SPAN} at (55,149) size 33x33
+            RenderCombineText {#text} at (55,149) size 34x33
+              text run at (55,149) width 33: "\x{FFFC}"
+          RenderInline {SPAN} at (55,181) size 33x33
+            RenderCombineText {#text} at (55,181) size 34x33
+              text run at (55,181) width 33: "\x{FFFC}"
           RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (146,0) size 240x584
             RenderBlock (floating) {SPAN} at (0,320) size 38x264 [border: (1px solid #FF0000)]
-              RenderText {#text} at (7,1) size 24x118
-                text run at (7,1) width 118: "float:right:"
-              RenderInline {SPAN} at (7,118) size 24x25
-                RenderCombineText {#text} at (7,118) size 24x25
-                  text run at (7,118) width 24: "\x{FFFC}"
-              RenderText {#text} at (7,142) size 24x25
-                text run at (7,142) width 24: "\x{5E74}"
-              RenderInline {SPAN} at (7,166) size 24x25
-                RenderCombineText {#text} at (7,166) size 24x25
-                  text run at (7,166) width 24: "\x{FFFC}"
-              RenderText {#text} at (7,190) size 24x25
-                text run at (7,190) width 24: "\x{6708}"
-              RenderInline {SPAN} at (7,214) size 24x25
-                RenderCombineText {#text} at (7,214) size 24x25
-                  text run at (7,214) width 24: "\x{FFFC}"
-              RenderText {#text} at (7,238) size 24x25
-                text run at (7,238) width 24: "\x{65E5}"
-            RenderInline {SPAN} at (15,0) size 209x576
-              RenderText {#text} at (15,0) size 209x576
-                text run at (15,0) width 320: "\x{305D}\x{306E}\x{5973}\x{304C}\x{306D}\x{304B}\x{3057}\x{3064}\x{3051}\x{306B}\x{6765}\x{3066}\x{304F}\x{308C}\x{308B}\x{307E}\x{3067}\x{3001}\x{308F}\x{305F}"
-                text run at (63,0) width 576: "\x{3057}\x{306F}\x{3051}\x{3063}\x{3057}\x{3066}\x{306D}\x{3069}\x{3053}\x{306B}\x{306F}\x{306F}\x{3044}\x{3089}\x{306A}\x{304B}\x{3063}\x{305F}\x{3002}\x{51AC}\x{306E}\x{3042}\x{3089}\x{3057}\x{304C}\x{3060}\x{3093}\x{3054}\x{306E}\x{3088}\x{3046}\x{306A}\x{96EA}\x{3092}\x{3075}\x{304D}"
-                text run at (111,0) width 576: "\x{3064}\x{3051}\x{3066}\x{7A93}\x{30AC}\x{30E9}\x{30B9}\x{3092}\x{767D}\x{304F}\x{3059}\x{308B}\x{3058}\x{3076}\x{3093}\x{306B}\x{306A}\x{308B}\x{3068}\x{3001}\x{3053}\x{306E}\x{5973}\x{306E}\x{4EBA}\x{306F}\x{4E21}\x{624B}\x{306E}\x{9593}\x{306B}\x{308F}\x{305F}\x{3057}\x{306E}\x{8DB3}"
-                text run at (159,0) width 576: "\x{3092}\x{304A}\x{3055}\x{3048}\x{3066}\x{3001}\x{6B4C}\x{3092}\x{6B4C}\x{3044}\x{306A}\x{304C}\x{3089}\x{6696}\x{3081}\x{3066}\x{304F}\x{308C}\x{305F}\x{3002}\x{305D}\x{306E}\x{6B4C}\x{306E}\x{7BC0}\x{3082}\x{6587}\x{53E5}\x{3082}\x{3001}\x{3044}\x{307E}\x{306B}\x{5FD8}\x{308C}\x{305A}"
-                text run at (207,0) width 64: "\x{306B}\x{3044}\x{308B}\x{3002}"
+              RenderText {#text} at (6,1) size 26x118
+                text run at (6,1) width 119: "float:right:"
+              RenderInline {SPAN} at (6,118) size 26x25
+                RenderCombineText {#text} at (6,118) size 26x25
+                  text run at (6,118) width 25: "\x{FFFC}"
+              RenderText {#text} at (6,142) size 26x25
+                text run at (6,142) width 25: "\x{5E74}"
+              RenderInline {SPAN} at (6,166) size 26x25
+                RenderCombineText {#text} at (6,166) size 26x25
+                  text run at (6,166) width 25: "\x{FFFC}"
+              RenderText {#text} at (6,190) size 26x25
+                text run at (6,190) width 25: "\x{6708}"
+              RenderInline {SPAN} at (6,214) size 26x25
+                RenderCombineText {#text} at (6,214) size 26x25
+                  text run at (6,214) width 25: "\x{FFFC}"
+              RenderText {#text} at (6,238) size 26x25
+                text run at (6,238) width 25: "\x{65E5}"
+            RenderInline {SPAN} at (15,0) size 210x576
+              RenderText {#text} at (15,0) size 210x576
+                text run at (15,0) width 321: "\x{305D}\x{306E}\x{5973}\x{304C}\x{306D}\x{304B}\x{3057}\x{3064}\x{3051}\x{306B}\x{6765}\x{3066}\x{304F}\x{308C}\x{308B}\x{307E}\x{3067}\x{3001}\x{308F}\x{305F}"
+                text run at (63,0) width 577: "\x{3057}\x{306F}\x{3051}\x{3063}\x{3057}\x{3066}\x{306D}\x{3069}\x{3053}\x{306B}\x{306F}\x{306F}\x{3044}\x{3089}\x{306A}\x{304B}\x{3063}\x{305F}\x{3002}\x{51AC}\x{306E}\x{3042}\x{3089}\x{3057}\x{304C}\x{3060}\x{3093}\x{3054}\x{306E}\x{3088}\x{3046}\x{306A}\x{96EA}\x{3092}\x{3075}\x{304D}"
+                text run at (111,0) width 577: "\x{3064}\x{3051}\x{3066}\x{7A93}\x{30AC}\x{30E9}\x{30B9}\x{3092}\x{767D}\x{304F}\x{3059}\x{308B}\x{3058}\x{3076}\x{3093}\x{306B}\x{306A}\x{308B}\x{3068}\x{3001}\x{3053}\x{306E}\x{5973}\x{306E}\x{4EBA}\x{306F}\x{4E21}\x{624B}\x{306E}\x{9593}\x{306B}\x{308F}\x{305F}\x{3057}\x{306E}\x{8DB3}"
+                text run at (159,0) width 577: "\x{3092}\x{304A}\x{3055}\x{3048}\x{3066}\x{3001}\x{6B4C}\x{3092}\x{6B4C}\x{3044}\x{306A}\x{304C}\x{3089}\x{6696}\x{3081}\x{3066}\x{304F}\x{308C}\x{305F}\x{3002}\x{305D}\x{306E}\x{6B4C}\x{306E}\x{7BC0}\x{3082}\x{6587}\x{53E5}\x{3082}\x{3001}\x{3044}\x{307E}\x{306B}\x{5FD8}\x{308C}\x{305A}"
+                text run at (207,0) width 65: "\x{306B}\x{3044}\x{308B}\x{3002}"
             RenderText {#text} at (0,0) size 0x0
 layer at (790,8) size 2x584 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 2x584 [color=#808080] [border: (1px inset #808080)]

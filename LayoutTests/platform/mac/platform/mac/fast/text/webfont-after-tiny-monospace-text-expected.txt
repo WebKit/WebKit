@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x30
-        RenderInline {SPAN} at (0,13) size 113x10
-          RenderText {#text} at (0,13) size 113x10
-            text run at (0,13) width 113: "Tiny monospace text."
+        RenderInline {SPAN} at (0,12) size 113x11
+          RenderText {#text} at (0,12) size 113x11
+            text run at (0,12) width 113: "Tiny monospace text."
         RenderText {#text} at (112,0) size 6x30
           text run at (112,0) width 6: " "
         RenderInline {SPAN} at (117,0) size 224x30

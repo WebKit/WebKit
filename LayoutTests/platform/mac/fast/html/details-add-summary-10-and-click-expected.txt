@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DETAILS} at (0,0) size 800x18
-        RenderListItem {SUMMARY} at (0,0) size 800x18
-          RenderListMarker at (0,0) size 17x18: "\x{25B6}"
-          RenderText {#text} at (16,0) size 40x18
-            text run at (16,0) width 40: "new 1"
+      RenderBlock {DETAILS} at (0,0) size 800x20
+        RenderListItem {SUMMARY} at (0,0) size 800x20
+          RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+          RenderText {#text} at (16,1) size 40x19
+            text run at (16,1) width 40: "new 1"
 caret: position 0 of child 0 {#text} of child 1 {SUMMARY} of child 1 {DETAILS} of body

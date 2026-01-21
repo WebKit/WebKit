@@ -4,7 +4,7 @@ layer at (0,0) size 800x240
   RenderBlock {HTML} at (0,0) size 800x240
     RenderBody {BODY} at (8,16) size 784x208
       RenderBlock {P} at (0,0) size 764x96 [color=#0000FF] [border: none (10px double #0000FF) none]
-        RenderText {#text} at (0,3) size 373x18
+        RenderText {#text} at (0,3) size 373x19
           text run at (0,3) width 373: "This paragraph should have two blue lines on its right. \x{21E8} "
         RenderInline {SPAN} at (0,3) size 752x93 [color=#C0C0C0]
           RenderText {#text} at (0,3) size 752x93
@@ -20,7 +20,7 @@ layer at (0,0) size 800x240
             text run at (0,78) width 158: "dummy text dummy text"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,112) size 764x96 [color=#0000FF] [border: none (1px solid #0000FF) none]
-        RenderText {#text} at (0,3) size 379x18
+        RenderText {#text} at (0,3) size 379x19
           text run at (0,3) width 379: "This paragraph should have a thin blue line on its right. \x{21E8} "
         RenderInline {SPAN} at (0,3) size 752x93 [color=#C0C0C0]
           RenderText {#text} at (0,3) size 752x93

@@ -6,8 +6,8 @@ FAIL Tascent = 6em > AxisHeight, Tdescent = 1em, symmetric = false, minsize = 14
 FAIL Tascent = 4em < AxisHeight, Tdescent = 3em, symmetric = false, minsize = 14em assert_approx_equals: mo ascent expected 50 +/- 5 but got 80
 FAIL Tascent = 6em > AxisHeight, Tdescent = 22em, symmetric = false, maxsize = 14em assert_approx_equals: mo ascent expected 55 +/- 5 but got 30
 FAIL Tascent = 4em < AxisHeight, Tdescent = 24em, symmetric = false, maxsize = 14em assert_approx_equals: mo ascent expected 50 +/- 5 but got 20
-FAIL symmetric stretching with respect to the math axis (minsize = 14em) assert_approx_equals: mo is symmetric expected 62 +/- 5 but got 78
-FAIL symmetric stretching with respect to the math axis (maxsize = 14em) assert_approx_equals: mo is symmetric expected 108 +/- 5 but got 32
+FAIL symmetric stretching with respect to the math axis (minsize = 14em) assert_approx_equals: mo is symmetric expected 61.65625 +/- 5 but got 78.34375
+FAIL symmetric stretching with respect to the math axis (maxsize = 14em) assert_approx_equals: mo is symmetric expected 107.921875 +/- 5 but got 32.078125
 ↨
 1
 
