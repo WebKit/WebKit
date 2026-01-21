@@ -960,8 +960,16 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 
             ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "setting frame rate to ", m_currentFrameRate, ", duration ", PAL::toMediaTime(frameDuration));
 
+#if PLATFORM(MAC)
+            AVCaptureConnection* captureConnection = [m_videoOutput connectionWithMediaType:AVMediaTypeVideo];
+            if (captureConnection.supportsVideoMinFrameDuration)
+                captureConnection.videoMinFrameDuration = frameDuration;
+            if (captureConnection.supportsVideoMaxFrameDuration)
+                captureConnection.videoMaxFrameDuration = frameDuration;
+#else
             [device() setActiveVideoMinFrameDuration: frameDuration];
             [device() setActiveVideoMaxFrameDuration: frameDuration];
+#endif
         } else
             ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
 
