@@ -115,7 +115,7 @@ static size_t processMemoryUsage()
 {
 #if OS(LINUX) || OS(HAIKU)
     ProcessMemoryStatus memoryStatus;
-    currentProcessMemoryStatus(memoryStatus);
+    currentProcessMemoryStatus(memoryStatus, MemoryStatusForceUpdate::Yes);
     return (memoryStatus.resident - memoryStatus.shared);
 #elif OS(FREEBSD)
     static size_t pageSize = sysconf(_SC_PAGE_SIZE);

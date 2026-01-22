@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
+void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus, MemoryStatusForceUpdate)
 {
     memoryStatus.size = 0;
     memoryStatus.resident = 0;

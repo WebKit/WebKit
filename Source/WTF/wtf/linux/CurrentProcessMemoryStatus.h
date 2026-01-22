@@ -29,8 +29,10 @@
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE void currentProcessMemoryStatus(ProcessMemoryStatus&);
+enum class MemoryStatusForceUpdate : bool { No, Yes };
+WTF_EXPORT_PRIVATE void currentProcessMemoryStatus(ProcessMemoryStatus&, MemoryStatusForceUpdate = MemoryStatusForceUpdate::No);
 
 } // namespace WTF
 
+using WTF::MemoryStatusForceUpdate;
 using WTF::currentProcessMemoryStatus;

@@ -62,6 +62,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     list(APPEND WTF_SOURCES
         linux/CurrentProcessMemoryStatus.cpp
         linux/MemoryFootprintLinux.cpp
+        linux/MemoryStatusMonitor.cpp
         linux/RealTimeThreads.cpp
 
         unix/MemoryPressureHandlerUnix.cpp

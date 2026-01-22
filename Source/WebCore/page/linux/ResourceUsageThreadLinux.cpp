@@ -313,7 +313,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageData& data)
 {
     ProcessMemoryStatus memoryStatus;
-    currentProcessMemoryStatus(memoryStatus);
+    currentProcessMemoryStatus(memoryStatus, MemoryStatusForceUpdate::Yes);
     data.totalDirtySize = memoryStatus.resident - memoryStatus.shared;
 
     size_t currentGCHeapCapacity = vm->heap.blockBytesAllocated();

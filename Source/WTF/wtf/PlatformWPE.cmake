@@ -20,6 +20,7 @@ list(APPEND WTF_SOURCES
 
     linux/CurrentProcessMemoryStatus.cpp
     linux/MemoryFootprintLinux.cpp
+    linux/MemoryStatusMonitor.cpp
     linux/RealTimeThreads.cpp
 
     posix/CPUTimePOSIX.cpp

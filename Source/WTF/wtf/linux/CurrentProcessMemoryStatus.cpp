@@ -26,43 +26,16 @@
 #include "config.h"
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <wtf/PageBlock.h>
+#include <wtf/linux/MemoryStatusMonitor.h>
 
 namespace WTF {
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
+void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus, MemoryStatusForceUpdate forceUpdate)
 {
-    FILE* file = fopen("/proc/self/statm", "r");
-    if (!file)
-        return;
-
-    char buffer[128];
-    char* line = fgets(buffer, 128, file);
-    fclose(file);
-    if (!line)
-        return;
-
-    size_t pageSize = WTF::pageSize();
-    char* end = nullptr;
-    unsigned long long intValue = strtoull(line, &end, 10);
-    memoryStatus.size = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.resident = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.shared = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.text = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.lib = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.data = intValue * pageSize;
-    intValue = strtoull(end, &end, 10);
-    memoryStatus.dt = intValue * pageSize;
+    auto& monitor = MemoryStatusMonitor::singleton();
+    if (forceUpdate == MemoryStatusForceUpdate::Yes)
+        monitor.updateMemoryStatus();
+    memoryStatus = monitor.memoryStatus();
 }
-IGNORE_CLANG_WARNINGS_END
 
 } // namespace WTF
