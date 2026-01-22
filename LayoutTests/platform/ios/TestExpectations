@@ -8367,8 +8367,8 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-012.xht [ ImageOnly
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnlyFailure ]
 
 # webkit.org/b/301655 Internals animation toggle causes the Image global preference to change, unpausing animations in tests
-fast/images/page-wide-animation-toggle.html [ Pass Timeout ]
-fast/images/individual-animation-toggle.html [ Pass Timeout ]
+fast/images/page-wide-animation-toggle.html [ Pass ]
+fast/images/individual-animation-toggle.html [ Pass ]
 
 webkit.org/b/301175 editing/selection/ios/become-first-responder-after-relinquishing-focus.html [ Pass Timeout ]
 

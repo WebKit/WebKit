@@ -345,6 +345,7 @@ ExceptionOr<void> InternalSettings::setAllowAnimationControlsOverride(bool allow
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
     settings().setAllowAnimationControlsOverride(allowAnimationControls);
+    Image::setSystemAllowsAnimationControls(allowAnimationControls);
     return { };
 }
 

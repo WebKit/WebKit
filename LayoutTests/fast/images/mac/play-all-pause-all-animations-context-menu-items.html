@@ -33,10 +33,10 @@ window.addEventListener("load", () => {
     shouldBecomeEqual("internals.isImageAnimating(img)", "false", () => {
       debug("Playing all animations via the context menu item.");
       eventSender.contextClick().find(item => item.title === "Play All Animations").click();
-      internals.settings.setAllowAnimationControlsOverride(false);
 
       shouldBecomeEqual("internals.isImageAnimating(img)", "true", () => {
         internals.settings.setImageAnimationControlEnabled(false);
+        internals.settings.setAllowAnimationControlsOverride(false);
         internals.clearMemoryCache();
         finishJSTest();
       });
