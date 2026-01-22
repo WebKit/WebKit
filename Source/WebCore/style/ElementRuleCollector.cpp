@@ -251,6 +251,11 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         collectMatchingRulesForList(matchRequest.ruleSet.focusVisiblePseudoClassRules(), matchRequest);
     if (&element == element.document().documentElement())
         collectMatchingRulesForList(matchRequest.ruleSet.rootElementRules(), matchRequest);
+    if (element.hasLocalName(HTMLNames::inputTag->localName())) {
+        auto typeAttr = element.getAttribute(HTMLNames::typeAttr);
+        if (!typeAttr.isNull())
+            collectMatchingRulesForList(matchRequest.ruleSet.inputElementRules(typeAttr.convertToASCIILowercase()), matchRequest);
+    }
     collectMatchingRulesForList(matchRequest.ruleSet.tagRules(element.localName(), isHTML), matchRequest);
     collectMatchingRulesForList(matchRequest.ruleSet.universalRules(), matchRequest);
 }

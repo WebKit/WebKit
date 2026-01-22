@@ -112,6 +112,7 @@ public:
     const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const RuleDataVector* focusVisiblePseudoClassRules() const { return &m_focusVisiblePseudoClassRules; }
     const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
+    const RuleDataVector* inputElementRules(const AtomString& type) const { return m_inputElementRules.get(type); }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
 
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
@@ -217,6 +218,7 @@ private:
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_focusVisiblePseudoClassRules;
     RuleDataVector m_rootElementRules;
+    AtomRuleMap m_inputElementRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
