@@ -150,16 +150,16 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
 
 CanvasDirection OffscreenCanvasRenderingContext2D::direction() const
 {
-    // FIXME: What should we do about inherit here?
     switch (state().direction) {
     case Direction::Inherit:
+        return Direction::Inherit;
     case Direction::Ltr:
         return Direction::Ltr;
     case Direction::Rtl:
         return Direction::Rtl;
     }
     ASSERT_NOT_REACHED();
-    return Direction::Ltr;
+    return Direction::Inherit;
 }
 
 auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
