@@ -29,9 +29,11 @@
 
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
+#import "TestResourceLoadDelegate.h"
 #import "WebExtensionUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKResourceLoadInfo.h>
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestRule.h>
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestTranslator.h>
 
@@ -2882,8 +2884,8 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithURLFilterAndReque
                 @"resource-type": @[ @"script" ],
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-        @"_identifier": @1,
-        @"_rulesetIdentifier": @"Test Ruleset",
+            @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         };
 
@@ -2906,6 +2908,9 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithURLFilterAndReque
     testPattern(@"com", @"://www.*", @"://www\\..*com");
     testPattern(@"com", @"://www./foo/bar", @"://www\\..*com/foo/bar");
     testPattern(@"com", @"://www.*/foo/bar", @"://www\\..*com/foo/bar");
+
+    // URL filter contains a separator character
+    testPattern(@"apple.com", @"||apple.com/*.css^", @"^[^:]+://+([^:/]+\\.)?apple\\.com/.*\\.css([^a-zA-Z0-9_.%-].*)?$");
 
     // Concatenating the request domain and URL filter
     testPattern(@"com", @"/foo/bar", @"^[^:]+://+([^:/]+\\.)?com.*/foo/bar");
@@ -3491,6 +3496,203 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, URLFilterSpecialCharacters)
 
     // Testing separator character.
     testPattern(@"apple^com", @"apple[^a-zA-Z0-9_.%-]com");
+    testPattern(@"||apple.com/*.css^", @"^[^:]+://+([^:/]+\\.)?apple\\.com/.*\\.css([^a-zA-Z0-9_.%-].*)?$");
+}
+
+static NSString *percentEncodedPathQueryAndFragmentForURL(NSURL *url)
+{
+    if (!url)
+        return nil;
+
+    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:YES];
+    if (!components)
+        return nil;
+
+    NSString *result = components.percentEncodedPath ?: @"";
+
+    if (components.percentEncodedQuery)
+        result = [result stringByAppendingFormat:@"?%@", components.percentEncodedQuery];
+
+    if (components.percentEncodedFragment)
+        result = [result stringByAppendingFormat:@"#%@", components.percentEncodedFragment];
+
+    return result;
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, URLFilterSpecialCharacterRuleList)
+{
+    struct URLExpectation {
+        String url;
+        bool shouldBeAllowed;
+        std::optional<bool> wasAllowed;
+    };
+
+    auto *rules = @(R"JSON(
+        [
+            { "id" : 1, "priority": 1, "action" : { "type" : "block" }, "condition" : { "urlFilter" : "||localhost:*/path/file.txt^" } },
+            { "id" : 2, "priority": 1, "action" : { "type" : "block" }, "condition" : { "urlFilter" : "example*^123|" } },
+            { "id" : 3, "priority": 1, "action" : { "type" : "block" }, "condition" : { "urlFilter" : "example*456|" } },
+            { "id" : 4, "priority": 1, "action" : { "type" : "block" }, "condition" : { "urlFilter" : "separatorEnd^|" } },
+            { "id" : 5, "priority": 1, "action" : { "type" : "block" }, "condition" : { "urlFilter" : "pipeSeparator%7C^" } },
+        ]
+    )JSON");
+
+    // Declare the URLs that will be fetched and their expected behavior. Test
+    // cases must be percent encoded in order for request verification complete
+    // as expected.
+    __block Vector<URLExpectation> urlExpectations {
+        // Root path serves `mainRequestBody`
+        { "/"_s, true, std::nullopt },
+        // Basic match of complex urlFilter pattern
+        { "/path/file.txt"_s, false, std::nullopt },
+        // urlFilter handling of uncollapsed path separators
+        { "/path//file.txt"_s, true, std::nullopt },
+        // urlFilter with a terminal separator character (^) - matching characters
+        { "/path/file.txt?"_s, false, std::nullopt },
+        { "/path/file.txt?query=true"_s, false, std::nullopt },
+        { "/path/file.txt/"_s, false, std::nullopt },
+        { "/path/file.txt/?"_s, false, std::nullopt },
+        { "/path/file.txt&"_s, false, std::nullopt },
+        // urlFilter with a terminal separator character (^) - non-matching characters
+        { "/path/file.txtfoo"_s, true, std::nullopt },
+        { "/path/file.txt%20"_s, true, std::nullopt },
+        { "/path/file.txt%25"_s, true, std::nullopt },
+        { "/path/file.txt."_s, true, std::nullopt },
+        { "/path/file.txtX"_s, true, std::nullopt },
+        // urlFilter with a mid-pattern separator character (^) and terminal right anchor (|)
+        { "/123"_s, true, std::nullopt },
+        { "/example?123"_s, false, std::nullopt },
+        { "/example/123"_s, false, std::nullopt },
+        { "/example_123"_s, true, std::nullopt },
+        { "/example/path/123"_s, false, std::nullopt },
+        { "/example?1234"_s, true, std::nullopt },
+        // urlFilter with a wildcard (*) and terminal right anchor (|)
+        { "/example?456"_s, false, std::nullopt },
+        { "/example/456"_s, false, std::nullopt },
+        { "/example_456"_s, false, std::nullopt },
+        { "/example/path/456"_s, false, std::nullopt },
+        { "/example/path/456?"_s, true, std::nullopt },
+        { "/example456"_s, false, std::nullopt },
+        // urlFilter with terminal separator charactor and right anchor (^|)
+        { "/separatorEnd"_s, false, std::nullopt },
+        { "/separatorEnd?"_s, false, std::nullopt },
+        { "/separatorEnd?allowed"_s, true, std::nullopt },
+        // urlFilter with pseudo right anchor (| or %7C) and terminal separator charactor (^)
+        { "/pipeSeparator"_s, true, std::nullopt },
+        { "/pipeSeparator%7C"_s, false, std::nullopt },
+        { "/pipeSeparator%7C?query"_s, false, std::nullopt },
+    };
+
+    NSMutableArray *mainRequestScriptLines = [NSMutableArray arrayWithArray:@[
+        @"<script>",
+        @"    async function fetchSubresources()",
+        @"    {",
+    ]];
+
+    // Dynamically construct the fetch script based on urlExpectations
+    for (const auto& expectation : urlExpectations)
+        [mainRequestScriptLines addObject:[NSString stringWithFormat:@"        try { await fetch('%s') } catch(e) { }", expectation.url.utf8().data()]];
+
+    [mainRequestScriptLines addObjectsFromArray:@[
+        @"        browser.test.sendMessage('Requests Complete');",
+        @"    }",
+        @"    fetchSubresources();",
+        @"</script>",
+    ]];
+
+    auto mainRequestBody = Util::constructScript(mainRequestScriptLines);
+
+    TestWebKitAPI::HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = TestWebKitAPI::HTTPServer::parsePath(request);
+            HTTPResponse response;
+
+            if (path == "/"_s)
+                response = { { { "Content-Type"_s, "text/html"_s } }, mainRequestBody };
+            else
+                response = { { { "Content-Type"_s, "text/plain"_s } }, "OK"_s };
+
+            co_await connection.awaitableSend(response.serialize());
+        }
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab');"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"urlFilterSpecialCharacterRules",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+
+    auto manager = Util::loadExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript, @"rules.json": rules });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    auto webView = manager.get().defaultTab.webView;
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    auto resourceLoadDelegate = adoptNS([TestResourceLoadDelegate new]);
+
+    // Record blocked URLs
+    navigationDelegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        String urlPath = percentEncodedPathQueryAndFragmentForURL(url);
+
+        for (auto& expectation : urlExpectations) {
+            if (expectation.url == urlPath) {
+                expectation.wasAllowed = false;
+                return;
+            }
+        }
+
+        // URL not in our expectations
+        EXPECT_TRUE(false) << "Unexpected blocked URL: " << urlPath.utf8().data();
+    };
+
+    // Record allowed URLs
+    resourceLoadDelegate.get().didCompleteWithError = ^(WKWebView *webView, _WKResourceLoadInfo *loadInfo, NSError *error, NSURLResponse *response) {
+        String urlPath = percentEncodedPathQueryAndFragmentForURL(loadInfo.originalURL);
+
+        for (auto& expectation : urlExpectations) {
+            if (expectation.url == urlPath) {
+                expectation.wasAllowed = true;
+                return;
+            }
+        }
+
+        // URL not in our expectations
+        EXPECT_TRUE(false) << "Unexpected allowed URL: " << urlPath.utf8().data();
+    };
+
+    webView.navigationDelegate = navigationDelegate.get();
+    webView._resourceLoadDelegate = resourceLoadDelegate.get();
+
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    [manager runUntilTestMessage:@"Requests Complete"];
+
+    // Verify all URLs were requested and had the expected behavior
+    for (const auto& expectation : urlExpectations) {
+        EXPECT_TRUE(expectation.wasAllowed.has_value()) << "URL was not requested: \"" << expectation.url.utf8().data() << "\"";
+        if (expectation.wasAllowed.has_value()) {
+            EXPECT_EQ(expectation.wasAllowed.value(), expectation.shouldBeAllowed)
+                << "URL " << expectation.url.utf8().data()
+                << " was " << (expectation.wasAllowed.value() ? "allowed" : "blocked")
+                << " but should have been " << (expectation.shouldBeAllowed ? "allowed" : "blocked");
+        }
+    }
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, UnacceptableResourceTypeForAllowAllRequests)

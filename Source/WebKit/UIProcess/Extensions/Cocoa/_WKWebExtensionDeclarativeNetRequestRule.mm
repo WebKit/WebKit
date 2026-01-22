@@ -1163,10 +1163,10 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     // Documentation: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/
 
     // Supported special charcters:
-    // '*' : Wildcard: Matches any number of characters.
-    // '|' : Left/right anchor: If used at either end of the pattern, specifies the beginning/end of the url respectively.
+    // '*'  : Wildcard: Matches any number of characters.
+    // '|'  : Left/right anchor: If used at either end of the pattern, specifies the beginning/end of the url respectively.
     // '||' : Domain name anchor: If used at the beginning of the pattern, specifies the start of a (sub-)domain of the URL.
-    // '^' : Separator character: This matches anything except a letter, a digit or one of the following: _ - . %.
+    // '^'  : Separator character: This matches anything except a letter, a digit or one of the following: _ - . %. This also match the end of the URL.
 
     // Therefore urlFilter is composed of the following parts: (optional Left/Domain name anchor) + pattern + (optional Right anchor).
     // All other regex special charaters are escaped in the pattern.
@@ -1183,10 +1183,22 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     if (hasEndAnchor)
         chromeURLFilter = [chromeURLFilter substringToIndex:chromeURLFilter.length - 1];
 
+    BOOL hasEndSeparator = [chromeURLFilter hasSuffix:@"^"];
+    if (hasEndSeparator)
+        chromeURLFilter = [chromeURLFilter substringToIndex:chromeURLFilter.length - 1];
+
     NSString *regexFilter = escapeCharactersInString(chromeURLFilter, @"?+[(){}$|\\.");
 
     regexFilter = [regexFilter stringByReplacingOccurrencesOfString:@"*" withString:@".*"];
+
     regexFilter = [regexFilter stringByReplacingOccurrencesOfString:@"^" withString:@"[^a-zA-Z0-9_.%-]"];
+
+    if (hasEndSeparator) {
+        if (hasEndAnchor)
+            regexFilter = [regexFilter stringByAppendingString:@"([^a-zA-Z0-9_.%-])?"];
+        else
+            regexFilter = [regexFilter stringByAppendingString:@"([^a-zA-Z0-9_.%-].*)?$"];
+    }
 
     if (hasDomainNameAnchor)
         regexFilter = [@"^[^:]+://+([^:/]+\\.)?" stringByAppendingString:regexFilter];
