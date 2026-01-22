@@ -248,7 +248,7 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
 #endif
 }
 
-// zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180
+// zoom.com https://bugs.webkit.org/show_bug.cgi?id=223180 (rdar://75070331)
 bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -256,7 +256,7 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldAutoplayWebAudioForArbitraryUserGestureQuirk);
 }
 
-// youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
+// youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598 (rdar://48782842)
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
 #if ENABLE(THUNDER)
@@ -268,7 +268,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
+// docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984 (rdar://26013388)
 bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 {
 #if PLATFORM(MAC)
@@ -534,7 +534,7 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
 
 // live.com rdar://52116170
 // sharepoint.com rdar://52116170
-// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
+// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945 (rdar://63374422)
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -710,7 +710,7 @@ bool Quirks::needsGoogleTranslateScrollingQuirk() const
 #endif
 }
 
-// play.geforcenow.com https://webkit.org/b/303622
+// play.geforcenow.com https://webkit.org/b/303622 (rdar://157575295)
 // FIXME: Remove as soon as nvidia adjusts the site for Safari. https://webkit.org/b/303718
 bool Quirks::needsGeforcenowWarningDisplayNoneQuirk() const
 {
@@ -1529,6 +1529,7 @@ bool Quirks::shouldDisableFetchMetadata() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDisableFetchMetadata);
 }
 
+// tympanus.net: rdar://143839620
 bool Quirks::shouldBlockFetchWithNewlineAndLessThan() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2049,6 +2050,7 @@ bool Quirks::shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node
     return false;
 }
 
+// scribd.com: rdar://142911382
 bool Quirks::shouldReuseLiveRangeForSelectionUpdate() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2199,6 +2201,7 @@ bool Quirks::needsNavigatorUserAgentDataQuirk() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsNavigatorUserAgentDataQuirk);
 }
 
+// netflix.com rdar://134980072
 bool Quirks::needsNowPlayingFullscreenSwapQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2206,6 +2209,7 @@ bool Quirks::needsNowPlayingFullscreenSwapQuirk() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsNowPlayingFullscreenSwapQuirk);
 }
 
+// crunchyroll.com rdar://163908769
 bool Quirks::needsSuppressPostLayoutBoundaryEventsQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2286,6 +2290,7 @@ bool Quirks::needsInstagramResizingReelsQuirk(const Element& element, const Rend
     return descendantsOfType<HTMLVideoElement>(element).first();
 }
 
+// nhl.com rdar://146862546
 bool Quirks::needsWebKitMediaTextTrackDisplayQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2329,6 +2334,7 @@ bool Quirks::shouldEnterNativeFullscreenWhenCallingElementRequestFullscreenQuirk
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen);
 }
 
+// nba.com: rdar://133321190
 bool Quirks::shouldDelayReloadWhenRegisteringServiceWorker() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -2552,7 +2558,7 @@ static void handleCEACStateGovQuirks(QuirksData& quirksData, const URL& quirksUR
 {
     auto topDocumentHost = quirksURL.host();
     if (topDocumentHost == "ceac.state.gov"_s || topDocumentHost.endsWith(".ceac.state.gov"_s)) {
-        // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
+        // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478 (rdar://34368591)
         quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFormControlToBeMouseFocusableQuirk);
     }
 }
@@ -2561,7 +2567,7 @@ static void handleMadisonCityK12Quirks(QuirksData& quirksData, const URL& /* qui
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("madisoncity.k12.al.us"_s);
 
-    // madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989
+    // madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989 (rdar://146888513)
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsFormControlToBeMouseFocusableQuirk);
 }
 
@@ -2877,7 +2883,7 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
     if (quirksData.isGoogleDocs) {
         // docs.google.com rdar://49864669
         quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk);
-        // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587
+        // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587 (rdar://problem/51616845)
         bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk = startsWithLettersIgnoringASCIICase(topDocumentPath, "/spreadsheets/"_s);
         quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk, needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk);
         bool needsIgnoringInputModeNoneQuirk = startsWithLettersIgnoringASCIICase(topDocumentPath, "/presentation/"_s);
@@ -3538,6 +3544,11 @@ void Quirks::determineRelevantQuirks()
 
     // rdar://133423460
     m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(quirksURL));
+
+    Ref document = *m_document;
+    m_quirksData.activeQuirks.forEachSetBit([&](unsigned index) {
+        document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, descriptionForSiteSpecificQuirk(static_cast<QuirksData::SiteSpecificQuirk>(index)));
+    });
 }
 
 bool Quirks::hasRelevantQuirks() const
