@@ -29,6 +29,7 @@
 
 #include "CachedCall.h"
 #include "InterpreterInlines.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "VMEntryScopeInlines.h"
@@ -281,6 +282,61 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
 IterationRecord iteratorDirect(JSGlobalObject* globalObject, JSValue object)
 {
     return { object, object.get(globalObject, globalObject->vm().propertyNames->next) };
+}
+
+Expected<IterationRecord, ASCIILiteral> getAsyncIterator(JSGlobalObject& globalObject, JSValue iterable)
+{
+    auto* iterableObject = iterable.getObject();
+    if (!iterableObject)
+        return makeUnexpected("iterable should be an object"_s);
+
+    Ref vm = globalObject.vm();
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    CallData callData;
+    auto method = iterableObject->getMethod(&globalObject, callData, vm->propertyNames->asyncIteratorSymbol, "asyncIteratorSymbol property should be callable"_s);
+    RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+    if (method.isUndefined()) {
+        auto syncMethod = iteratorMethod(&globalObject, iterableObject);
+        RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+        if (syncMethod.isUndefined())
+            return makeUnexpected("iterable should have an iterator symbol"_s);
+
+        callData = getCallData(syncMethod);
+        auto iterator = call(&globalObject, syncMethod, callData, iterableObject, { });
+        RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+        auto* iteratorObject = iterator.getObject();
+        if (!iteratorObject)
+            return makeUnexpected("iterator method should return an object"_s);
+
+        auto syncRecord = iteratorDirect(&globalObject, iterator);
+        RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+        auto* asyncFromSyncIterator = JSAsyncFromSyncIterator::create(vm, globalObject.asyncFromSyncIteratorStructure(), syncRecord.iterator, syncRecord.nextMethod);
+        RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+        auto record = iteratorDirect(&globalObject, asyncFromSyncIterator);
+        RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+        return record;
+    }
+
+    if (method.isUndefined())
+        return makeUnexpected("iterable should have an iterator symbol"_s);
+
+    callData = getCallData(method);
+    auto iterator = call(&globalObject, method, callData, iterableObject, { });
+    RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+
+    auto* iteratorObject = iterator.getObject();
+    if (!iteratorObject)
+        return makeUnexpected("iterator method should return an object"_s);
+
+    auto record = iteratorDirect(&globalObject, iterator);
+    RETURN_IF_EXCEPTION(throwScope, makeUnexpected(ASCIILiteral { }));
+    return record;
 }
 
 IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator)

@@ -1675,6 +1675,9 @@ public:
 
     size_t fileConnectionHandleCount(const FileSystemHandle&) const;
 
+    using IteratorResultPromise = DOMPromiseDeferred<IDLSequence<IDLAny>>;
+    void testAsyncIterator(JSDOMGlobalObject&, JSC::JSValue, IteratorResultPromise&&);
+
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     MockMediaDeviceRouteController& mockMediaDeviceRouteController();
 #endif

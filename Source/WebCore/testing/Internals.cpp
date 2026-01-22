@@ -62,6 +62,7 @@
 #include "CookieJar.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "Cursor.h"
+#include "DOMAsyncIterator.h"
 #include "DOMPointReadOnly.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
@@ -8240,6 +8241,54 @@ bool Internals::hasMediaSessionManager() const
 size_t Internals::fileConnectionHandleCount(const FileSystemHandle& handle) const
 {
     return handle.connectionHandleCount();
+}
+
+static void storeNextResults(DOMAsyncIterator& iterator, Vector<JSC::Strong<JSC::Unknown>>&& results, Internals::IteratorResultPromise&& promise)
+{
+    iterator.callNext([iterator = Ref { iterator }, results = WTF::move(results), promise = WTF::move(promise)](auto* globalObject, bool isOK, JSC::JSValue value) mutable {
+        if (!globalObject) {
+            promise.reject(Exception { ExceptionCode::InvalidStateError });
+            return;
+        }
+
+        if (!isOK) {
+            promise.rejectWithCallback([value](auto&) {
+                return value;
+            });
+            return;
+        }
+
+        Ref vm = globalObject->vm();
+        results.append({ vm.get(), value });
+
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        auto done = value.get(globalObject, vm->propertyNames->done);
+        if (scope.exception()) {
+            promise.reject(Exception { ExceptionCode::ExistingExceptionError });
+            return;
+        }
+
+        if (done.toBoolean(globalObject)) {
+            promise.resolve(WTF::move(results));
+            return;
+        }
+
+        storeNextResults(iterator.get(), WTF::move(results), WTF::move(promise));
+    });
+
+}
+
+void Internals::testAsyncIterator(JSDOMGlobalObject& globalObject, JSC::JSValue value, IteratorResultPromise&& promise)
+{
+    auto domIteratorOrException = DOMAsyncIterator::create(globalObject, value);
+    if (domIteratorOrException.hasException()) {
+        promise.reject(domIteratorOrException.releaseException());
+        return;
+    }
+
+    Vector<JSC::Strong<JSC::Unknown>> results;
+    Ref domIterator = domIteratorOrException.releaseReturnValue();
+    storeNextResults(domIterator.get(), WTF::move(results), WTF::move(promise));
 }
 
 #if ENABLE(MODEL_ELEMENT)
