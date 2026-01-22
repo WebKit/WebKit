@@ -356,6 +356,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioContext.h"
+#include "WaveShaperDSPKernel.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -5386,6 +5387,13 @@ void Internals::setAudioContextRestrictions(AudioContext& context, StringView re
             restrictions.add(AudioContext::BehaviorRestrictionFlags::RequirePageConsentForAudioStartRestriction);
     }
     context.addBehaviorRestriction(restrictions);
+}
+
+Vector<float> Internals::waveShaperProcessCurveWithData(Vector<float> source, Vector<float> curve)
+{
+    Vector<float> destination(source.size(), 0.0f);
+    WaveShaperDSPKernel::processCurveWithData(std::span { source }, std::span { destination }, std::span { curve });
+    return destination;
 }
 
 void Internals::useMockAudioDestinationCocoa()

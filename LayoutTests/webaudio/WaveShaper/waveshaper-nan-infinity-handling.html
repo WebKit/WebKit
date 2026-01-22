@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests WaveShaperDSPKernel::processCurveWithData handling of NaN, Infinity, and normal input values.");
+
+const curveSize = 256;
+const curve = Array.from({length: curveSize}, (_, i) => i / (curveSize - 1));
+
+function shouldBeCloseTo(actual, expected, tolerance) {
+    if (Math.abs(actual - expected) <= tolerance)
+        testPassed(actual + " is approximately " + expected);
+    else
+        testFailed(actual + " should be approximately " + expected);
+}
+
+// NaN Input
+output = internals.waveShaperProcessCurveWithData([NaN, NaN, NaN, NaN], curve);
+for (let i = 0; i < 4; i++) {
+    shouldBeFalse("isNaN(output[" + i + "])");
+    shouldBeTrue("isFinite(output[" + i + "])");
+}
+
+// Infinity Input
+output = internals.waveShaperProcessCurveWithData([Infinity], curve);
+shouldBeCloseTo(output[0], 0.0, 0.001);
+
+output = internals.waveShaperProcessCurveWithData([-Infinity], curve);
+shouldBeCloseTo(output[0], 0.0, 0.001);
+
+// Normal Input Range
+output = internals.waveShaperProcessCurveWithData([-1.0, 0.0, 1.0], curve);
+shouldBeCloseTo(output[0], curve[0], 0.001);
+shouldBeCloseTo(output[1], 0.5, 0.01);
+shouldBeCloseTo(output[2], curve[curveSize - 1], 0.001);
+
+// Mixed NaN and Valid Input
+output = internals.waveShaperProcessCurveWithData([0.0, NaN, 0.5, NaN], curve);
+shouldBeCloseTo(output[0], 0.5, 0.01);
+shouldBeTrue("isFinite(output[1])");
+shouldBeCloseTo(output[2], 0.75, 0.02);
+shouldBeTrue("isFinite(output[3])");
+
+// Empty Curve (passthrough)
+output = internals.waveShaperProcessCurveWithData([0.0, 0.5], []);
+shouldBeCloseTo(output[0], 0.0, 0.001);
+shouldBeCloseTo(output[1], 0.5, 0.001);
+</script>
+</body>
+</html>
