@@ -2549,10 +2549,10 @@ constant bool outIndexBufferIsUint16 = (((fixIndexBufferKey >> 2U) & 0x03U) == 2
 constant bool outIndexBufferIsUint32 = (((fixIndexBufferKey >> 2U) & 0x03U) == 3U);
 constant bool doPrimRestart = (fixIndexBufferKey & 0x00100U);
 constant uint fixIndexBufferMode = (fixIndexBufferKey >> 4U) & 0x0FU;
+constant uint restartIndex = indexBufferIsUint16 ? 0xFFFF : 0xFFFFFFFF;
 static inline uint readIdx(
                            const device ushort *indexBufferUint16,
                            const device uint *indexBufferUint32,
-                           const uint restartIndex,
                            const uint indexCount,
                            uint idx,
                            thread bool &foundRestart,
@@ -2588,7 +2588,6 @@ static inline void outputPrimitive(
                                    const device uint *indexBufferUint32,
                                    device ushort *outIndexBufferUint16,
                                    device uint *outIndexBufferUint32,
-                                   const uint restartIndex,
                                    const uint indexCount,
                                    thread uint &baseIndex,
                                    uint onIndex,
@@ -2602,7 +2601,7 @@ static inline void outputPrimitive(
     {
         case 0x00U:
         {
-            auto tmpIndex = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex, foundRestart, indexThatRestartedFirst);
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
@@ -2613,8 +2612,8 @@ static inline void outputPrimitive(
         break;
         case 0x01U:
         {
-            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
@@ -2635,8 +2634,8 @@ static inline void outputPrimitive(
         break;
         case 0x03U:
         {
-            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
@@ -2656,9 +2655,9 @@ static inline void outputPrimitive(
         break;
         case 0x04U:
         {
-            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 0, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 1, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
@@ -2682,9 +2681,9 @@ static inline void outputPrimitive(
         case 0x05U:
         {
             uint isOdd = ((onIndex - baseIndex) & 1);
-            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 0 + isOdd, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 1 - isOdd, foundRestart, indexThatRestartedFirst);
-            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, restartIndex, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex0 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 0 + isOdd, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex1 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 1 - isOdd, foundRestart, indexThatRestartedFirst);
+            auto tmpIndex2 = readIdx(indexBufferUint16, indexBufferUint32, indexCount, onIndex + 2, foundRestart, indexThatRestartedFirst);
             if(foundRestart)
             {
                 baseIndex = indexThatRestartedFirst + 1;
@@ -2726,7 +2725,6 @@ kernel void fixIndexBuffer(
                            constant uint &primCount [[ buffer(3) ]],
                            uint prim [[thread_position_in_grid]])
 {
-    constexpr uint restartIndex = 0xFFFFFFFF;
     uint baseIndex = 0;
     uint onIndex = onIndex;
     uint onOutIndex = onOutIndex;
@@ -2755,7 +2753,7 @@ kernel void fixIndexBuffer(
                 onOutIndex = prim * 3;
                 break;
         }
-        outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
+        outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, indexCount, baseIndex, onIndex, onOutIndex);
     }
 }
 static inline void generatePrimitive(

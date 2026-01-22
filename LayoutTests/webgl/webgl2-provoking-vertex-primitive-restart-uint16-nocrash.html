@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>PASS if no crash.</p>
+<canvas id="canvas" width="256" height="256"></canvas>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const canvas = document.getElementById('canvas');
+const gl = canvas.getContext('webgl2');
+const ext = gl.getExtension('WEBGL_provoking_vertex');
+
+const vertexShaderSource = `#version 300 es
+    in vec2 position;
+    flat out int color;
+    void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+        color = gl_VertexID;
+    }
+`;
+
+const fragmentShaderSource = `#version 300 es
+    precision mediump float;
+    flat in int color;
+    out vec4 fragColor;
+    void main() {
+        fragColor = vec4(float(color) / 10.0, 0.0, 0.0, 1.0);
+    }
+`;
+
+const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, vertexShaderSource);
+gl.compileShader(vertexShader);
+
+const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader, fragmentShaderSource);
+gl.compileShader(fragmentShader);
+
+const program = gl.createProgram();
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+ext.provokingVertexWEBGL(0x8E4E);
+
+const vertices = new Float32Array([
+    -0.9, -0.9,  // 0
+    -0.5, -0.9,  // 1
+    -0.9, -0.5,  // 2
+    -0.5, -0.5,  // 3
+     0.5, -0.9,  // 4
+     0.9, -0.9,  // 5
+     0.5, -0.5,  // 6
+]);
+
+const vbo = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+const positionLoc = gl.getAttribLocation(program, 'position');
+gl.enableVertexAttribArray(positionLoc);
+gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+// Index buffer with restart marker
+const indices = new Uint16Array([
+    0, 1, 2, 3,     // First strip
+    0xFFFF,         // Restart marker
+    4, 5, 6         // Second strip
+]);
+
+const ibo = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+// This triggers the bug
+gl.drawElements(gl.TRIANGLE_STRIP, 8, gl.UNSIGNED_SHORT, 0);
+gl.finish();
+
+// Wait for Metal completion handlers to report crash
+setTimeout(() => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 300);
+</script>
+</body>
+</html>
