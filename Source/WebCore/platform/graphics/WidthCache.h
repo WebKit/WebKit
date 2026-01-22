@@ -141,8 +141,11 @@ public:
         // Since this is just a width cache, we don't have enough information to satisfy glyph queries.
         if (glyphOverflow)
             return nullptr;
+        // Check the text length. Do this before checking if tab and ideograph characters in the run below.
+        if (run.length() > SmallStringKey::capacity())
+            return nullptr;
         // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
-        if (run.allowTabs())
+        if (run.allowTabs() && run.text().contains(tabCharacter))
             return nullptr;
         // width calculation with text-spacing depends on context of adjacent characters.
         if (hasTextSpacing && invalidateCacheForTextSpacing(run))
