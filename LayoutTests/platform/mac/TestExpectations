@@ -53,6 +53,8 @@ scrollbars/custom-scrollbar-scroller-style-change.html [ Pass ]
 
 http/tests/gzip-content-encoding [ Pass ]
 
+http/tests/security/registerBlobURL.html [ Pass ]
+
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
 
 fast/text/mac [ Pass ]

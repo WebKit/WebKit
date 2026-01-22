@@ -97,7 +97,9 @@
 #include <wtf/LogInitialization.h>
 
 #if PLATFORM(COCOA)
+#include <wtf/FileSystem.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -1135,8 +1137,28 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
     if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
         MESSAGE_CHECK(isFilePathAllowed(*session, path));
 
+    RefPtr sandboxExtension = SandboxExtension::create(WTF::move(extensionHandle));
+
+    if (!replacementPath.isEmpty()) {
+#if PLATFORM(COCOA)
+        // For transcoded files, check if the WebProcess has actual sandbox access
+        // via the extension granted for the original file, rather than checking
+        // our internal allowed paths list (which won't include temporary transcoded files).
+        if (sandboxExtension) {
+            // sandbox_check returns 0 on success (has access), non-zero on failure
+            if (sandbox_check(m_connection->remoteProcessID(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH | SANDBOX_CHECK_NO_REPORT), FileSystem::fileSystemRepresentation(replacementPath).data())) {
+                CONNECTION_RELEASE_LOG_ERROR(Sandbox, "registerInternalFileBlobURL: WebProcess does not have sandbox access to replacementPath");
+                MESSAGE_CHECK(false);
+            }
+        } else // No sandbox extension provided, fall back to path allowlist check
+            MESSAGE_CHECK(isFilePathAllowed(*session, replacementPath));
+#else
+        MESSAGE_CHECK(isFilePathAllowed(*session, replacementPath));
+#endif
+    }
+
     m_blobURLs.add({ url, std::nullopt });
-    session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTF::move(extensionHandle))), contentType);
+    session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, WTF::move(sandboxExtension)), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)

@@ -1,0 +1,111 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+
+async function main() {
+    if (!window.IPC) {
+        alert("PASS");
+        return;
+    }
+
+    const connection = IPC.connectionForProcessTarget('Networking');
+    const rootHandle = await new Promise(resolve =>
+        connection.sendWithAsyncReply(
+            0,
+            IPC.messages.NetworkStorageManager_FileSystemGetDirectory.name,
+            [
+                {type: 'uint8_t', value: 0},
+                {type: 'String', value: 'ww'},
+                {type: 'String', value: 'bb'},
+                {type: 'uint8_t', value: 0},
+
+                {type: 'uint8_t', value: 0},
+                {type: 'String', value: 'xxxx'},
+                {type: 'String', value: 'bb'},
+                {type: 'uint8_t', value: 0}
+            ], reply => resolve((new BigUint64Array(reply.arguments[0]))[1])
+        )
+    );
+
+    const rootPath = await new Promise(resolve =>
+        connection.sendWithAsyncReply(
+            0,
+            IPC.messages.NetworkStorageManager_GetFile.name,
+            [
+                {type: 'uint64_t', value: rootHandle},
+            ], reply => resolve((new TextDecoder()).decode(reply.arguments[0].slice(9)))
+        )
+    );
+
+    connection.sendMessage(
+        0,
+        IPC.messages.NetworkConnectionToWebProcess_RegisterInternalFileBlobURL.name,
+        [
+            {type: 'URL', value: 'blob:blobinternal:///b7701c13-a454-4b76-a3b1-e3e57d972c5d'},
+            {type: 'String', value: rootPath},
+            {type: 'String', value: '/private/var/db/com.apple.networkextension.tracker-info'},
+            {type: 'uint8_t', value: 0},
+            {type: 'String', value: 'text/html'}
+        ]
+    );
+
+    const blobURL = `blob:${location.origin}/13eeac27-7b76-4287-8d60-004badf4591b`;
+
+    connection.sendMessage(
+        0,
+        IPC.messages.NetworkConnectionToWebProcess_RegisterBlobURL.name,
+        [
+            {type: 'URL', value: blobURL},
+            {type: 'URL', value: 'blob:blobinternal:///b7701c13-a454-4b76-a3b1-e3e57d972c5d'},
+
+            // ContentSecurityPolicyResponseHeaders
+            {type: 'Vector', value: []},
+            {type: 'uint32_t', value: 200},
+
+            // CrossOriginEmbedderPolicy
+            {type: 'bool', value: 0},  // value
+            {type: 'bool', value: 0},  // reportOnlyValue
+            {type: 'String', value: ''},  // reportingEndpoint
+            {type: 'String', value: ''},  // reportOnlyReportingEndpoint
+
+            // CrossOriginOpenerPolicy
+            {type: 'bool', value: 0},  // value
+            {type: 'bool', value: 0},  // reportOnlyValue
+            {type: 'String', value: ''},  // reportingEndpoint
+            {type: 'String', value: ''},  // reportOnlyReportingEndpoint
+
+            // ReferrerPolicy
+            {type: 'uint8_t', value: 7},
+
+            {type: 'uint8_t', value: 1},
+            {type: 'String', value: location.protocol.substr(0, location.protocol.length - 1)},
+            {type: 'String', value: location.hostname},
+            {type: 'uint8_t', value: 1},
+            {type: 'uint16_t', value: location.port === '' ? 80 : parseInt(location.port)},
+        ]
+    );
+
+    try {
+        const response = await fetch(blobURL);
+        const data = await response.arrayBuffer();
+
+        if (data.byteLength > 0) {
+            alert("FAIL: " + new Uint8Array(data.slice(0, 100)));
+        }
+    } catch (e) {
+        // Fetch failed - this is expected when security fix is working
+        alert("PASS");
+    }
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+main().catch(e => {
+    console.log(e);
+}).finally(async () => {
+    globalThis.testRunner?.notifyDone();
+});
+
+</script>
