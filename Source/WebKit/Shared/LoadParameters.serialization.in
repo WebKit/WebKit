@@ -22,7 +22,6 @@
 
 enum class WebCore::LockHistory : bool;
 enum class WebCore::LockBackForwardList : bool;
-enum class WebCore::NavigationUpgradeToHTTPSBehavior : bool;
 
 [RValue] struct WebKit::LoadParameters {
     WebCore::PublicSuffix publicSuffix;

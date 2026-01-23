@@ -758,9 +758,10 @@ static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL,
     if (!frame.isMainFrame() || type != CachedResource::Type::MainResource)
         return false;
 
-    const bool isSameSiteBypassEnabled = (originalURL.isEmpty()
-        || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
-        && (advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain) || frame.loader().shouldSkipHTTPSUpgradeForSameSiteNavigation() || originalURL.protocolIs("http"_s));
+    bool isSameSiteNavigation = (originalURL.isEmpty() || RegistrableDomain(newURL) == RegistrableDomain(originalURL));
+    const bool isSameSiteBypassEnabled =
+        isSameSiteNavigation
+        && (advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain) || frame.loader().shouldNavigateWithHTTP(isSameSiteNavigation) || originalURL.protocolIs("http"_s));
 
     if (RefPtr document = frame.document(); document && document->quirks().shouldNotAutoUpgradeToHTTPSNavigation(newURL))
         return false;
@@ -768,7 +769,7 @@ static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL,
     return (isHTTPSByDefaultEnabled || httpsByDefaultMode != HTTPSByDefaultMode::Disabled)
         && newURL.protocolIs("http"_s)
         && !isSameSiteBypassEnabled
-        && !frame.loader().isHTTPFallbackInProgress();
+        && !frame.loader().isHTTPFallbackInProgressOrUpgradeDisabled();
 }
 
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
@@ -1173,7 +1174,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         // FIXME: Propagate a better error code
         bool isHTTPSOnlyActive = (m_documentLoader->httpsByDefaultMode() == HTTPSByDefaultMode::UpgradeWithUserMediatedFallback || m_documentLoader->httpsByDefaultMode() == HTTPSByDefaultMode::UpgradeAndNoFallback)
             && !m_documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain)
-            && !frame->loader().isHTTPFallbackInProgress()
+            && !frame->loader().isHTTPFallbackInProgressOrUpgradeDisabled()
             && !(committedDocumentURL.protocolIs("http"_s) && request.resourceRequest().isSameSite());
         if (!madeHTTPS && !LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(request.resourceRequest().url().protocol()) && type == CachedResource::Type::MainResource && isHTTPSOnlyActive)
             return makeUnexpected(platformStrategies()->loaderStrategy()->httpNavigationWithHTTPSOnlyError(request.resourceRequest()));

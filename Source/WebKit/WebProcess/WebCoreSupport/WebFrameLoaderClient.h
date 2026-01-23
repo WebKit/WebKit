@@ -38,7 +38,7 @@ namespace WebCore {
 enum class AdjustViewSize : bool;
 enum class PolicyAction : uint8_t;
 enum class PolicyDecisionMode;
-enum class NavigationUpgradeToHTTPSBehavior : bool;
+enum class NavigationUpgradeToHTTPSBehavior : uint8_t;
 class FloatSize;
 class FormState;
 class Frame;

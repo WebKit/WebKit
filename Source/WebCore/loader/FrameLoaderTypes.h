@@ -110,7 +110,8 @@ enum class NavigationHistoryBehavior : uint8_t {
     Reload // Internal, not part of the specification
 };
 
-enum class NavigationUpgradeToHTTPSBehavior : bool {
+enum class NavigationUpgradeToHTTPSBehavior : uint8_t {
+    Disabled,
     HTTPFallback,
     BasedOnPolicy
 };

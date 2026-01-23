@@ -5918,6 +5918,12 @@ enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {
     ShouldAllow,
 };
 
+enum class WebCore::NavigationUpgradeToHTTPSBehavior : uint8_t {
+    Disabled,
+    HTTPFallback,
+    BasedOnPolicy
+};
+
 header: <WebCore/NavigationScheduler.h>
 enum class WebCore::ScheduleLocationChangeResult : uint8_t {
     Stopped,
