@@ -34,9 +34,9 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         this._id = id || null;
         this._parentFrame = null;
         this._origin = null;
-        this._startLineNumber = 0;
-        this._startColumnNumber = 0;
-
+        this._startLineNumber = NaN;
+        this._startColumnNumber = NaN;
+        this._ownerNodeId = NaN;
         this._inlineStyleAttribute = false;
         this._inlineStyleTag = false;
 
@@ -107,6 +107,10 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         return this._startColumnNumber;
     }
 
+    get ownerNodeId() {
+        return this._ownerNodeId;
+    }
+
     hasInfo()
     {
         return this._hasInfo;
@@ -148,7 +152,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     // Protected
 
-    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber)
+    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber, ownerNodeId)
     {
         this._hasInfo = true;
 
@@ -161,6 +165,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         this._inlineStyleTag = inlineStyle;
         this._startLineNumber = startLineNumber;
         this._startColumnNumber = startColumnNumber;
+        this._ownerNodeId = ownerNodeId;
     }
 
     get revisionForRequestedContent()

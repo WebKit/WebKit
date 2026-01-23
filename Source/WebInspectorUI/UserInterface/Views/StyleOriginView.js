@@ -41,8 +41,17 @@ WI.StyleOriginView = class StyleOriginView
         switch (style.type) {
         case WI.CSSStyleDeclaration.Type.Rule:
             console.assert(style.ownerRule);
+            console.assert(style.ownerStyleSheet);
 
-            if (style.ownerRule.sourceCodeLocation) {
+            if (style.ownerRule.type === WI.CSSStyleSheet.Type.Author && isNaN(style.ownerStyleSheet.startLineNumber)) {
+                let styleTagLink = document.createElement("a");
+                styleTagLink.style.textDecoration = "underline";
+                styleTagLink.style.cursor = "pointer";
+                let ownerNodeId = style.ownerStyleSheet.ownerNodeId;
+                styleTagLink.textContent = `<style> (node ${ownerNodeId})`;
+                styleTagLink.addEventListener("click", () => WI.domManager.inspectElement(ownerNodeId));
+                this.element.appendChild(styleTagLink);
+            } else if (style.ownerRule.sourceCodeLocation) {
                 let options = {
                     dontFloat: true,
                     ignoreNetworkTab: true,

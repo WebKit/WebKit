@@ -477,7 +477,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
             const url = null;
             let styleSheet = WI.cssManager.styleSheetForIdentifier(styleSheetId);
-            styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber);
+            styleSheet.updateInfo(url, frame, styleSheet.origin, styleSheet.isInlineStyleTag(), styleSheet.startLineNumber, styleSheet.startColumnNumber, styleSheet.ownerNodeId);
             styleSheet[WI.CSSManager.PreferredInspectorStyleSheetSymbol] = true;
             callback(styleSheet);
         });
@@ -580,7 +580,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
         let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
         let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
-        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.ownerNodeId);
 
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetAdded, {styleSheet});
     }
@@ -724,7 +724,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.ownerNodeId);
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);
