@@ -89,7 +89,11 @@ void Content::setLineEllipsis(size_t lineIndex, Line::Ellipsis&& ellipsis)
     if (!lineEllipses)
         lineEllipses = makeUnique<LineEllipses>();
 
-    lineEllipses->grow(lineIndex + 1);
+    if (lineEllipses->size() <= lineIndex)
+        lineEllipses->grow(lineIndex + 1);
+    else
+        ASSERT(lineEllipses->at(lineIndex));
+
     lineEllipses->at(lineIndex) = WTF::move(ellipsis);
 }
 
