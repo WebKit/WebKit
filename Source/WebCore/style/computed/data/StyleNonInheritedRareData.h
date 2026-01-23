@@ -38,7 +38,6 @@
 #include <WebCore/StyleCounterIncrement.h>
 #include <WebCore/StyleCounterReset.h>
 #include <WebCore/StyleCounterSet.h>
-#include <WebCore/StyleFlowTolerance.h>
 #include <WebCore/StyleGapGutter.h>
 #include <WebCore/StyleMarginTrim.h>
 #include <WebCore/StyleMaskBorder.h>
@@ -175,8 +174,6 @@ public:
 
     GapGutter columnGap;
     GapGutter rowGap;
-
-    FlowTolerance flowTolerance;
 
     OffsetPath offsetPath;
     OffsetDistance offsetDistance;
