@@ -575,6 +575,17 @@ bool Quirks::inputMethodUsesCorrectKeyEventOrder() const
     return false;
 }
 
+bool Quirks::shouldIgnoreInputModeNone() const
+{
+#if PLATFORM(IOS_FAMILY)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldIgnoreInputModeNone);
+#else
+    return false;
+#endif
+}
+
 // FIXME: Remove after the site is fixed, <rdar://problem/50374200>
 // mail.google.com rdar://49403416
 bool Quirks::needsGMailOverflowScrollQuirk() const
@@ -2878,6 +2889,8 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
         // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587
         bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk = startsWithLettersIgnoringASCIICase(topDocumentPath, "/spreadsheets/"_s);
         quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk, needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk);
+        bool needsIgnoringInputModeNoneQuirk = startsWithLettersIgnoringASCIICase(topDocumentPath, "/presentation/"_s);
+        quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldIgnoreInputModeNone, needsIgnoringInputModeNoneQuirk);
     } else if (topDocumentHost == "mail.google.com"_s) {
         // mail.google.com rdar://49403416
         quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsGMailOverflowScrollQuirk);

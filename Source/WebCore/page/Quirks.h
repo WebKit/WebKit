@@ -86,6 +86,7 @@ public:
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     WEBCORE_EXPORT bool inputMethodUsesCorrectKeyEventOrder() const;
     bool shouldExposeShowModalDialog() const;
+    bool shouldIgnoreInputModeNone() const;
     bool shouldNavigatorPluginsBeEmpty() const;
     bool returnNullPictureInPictureElementDuringFullscreenChange() const;
 

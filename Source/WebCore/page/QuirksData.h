@@ -190,6 +190,7 @@ struct QuirksData {
         ShouldHideCoarsePointerCharacteristicsQuirk,
         ShouldHideSoftTopScrollEdgeEffectDuringFocusQuirk,
         ShouldIgnoreAriaForFastPathContentObservationCheckQuirk,
+        ShouldIgnoreInputModeNone,
 #endif
         ShouldIgnorePlaysInlineRequirementQuirk,
 #if ENABLE(TEXT_AUTOSIZING)

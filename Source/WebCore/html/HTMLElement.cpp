@@ -967,12 +967,15 @@ void HTMLElement::setAutocorrect(bool autocorrect)
 
 InputMode HTMLElement::canonicalInputMode() const
 {
-    return inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
+    auto mode = inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
+    if (mode == InputMode::None && protectedDocument()->quirks().shouldIgnoreInputModeNone())
+        return InputMode::Unspecified;
+    return mode;
 }
 
 const AtomString& HTMLElement::inputMode() const
 {
-    return stringForInputMode(canonicalInputMode());
+    return stringForInputMode(inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr)));
 }
 
 EnterKeyHint HTMLElement::canonicalEnterKeyHint() const
