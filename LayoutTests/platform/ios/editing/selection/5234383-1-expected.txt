@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 665x19
+        RenderText {#text} at (0,0) size 665x20
           text run at (0,0) width 330: "This tests moving forward by sentence boundaries. "
           text run at (329,0) width 336: "The caret should be at the start of the third sentence."
       RenderBlock {DIV} at (0,36) size 784x60
-        RenderText {#text} at (0,0) size 777x59
+        RenderText {#text} at (0,0) size 777x60
           text run at (0,0) width 777: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et "
           text run at (0,20) width 742: "netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. "
           text run at (0,40) width 667: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."

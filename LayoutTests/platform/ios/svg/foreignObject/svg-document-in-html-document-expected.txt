@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGForeignObject {foreignObject} at (0,0) size 300x100
       RenderBlock {html} at (0,0) size 300x191
         RenderBlock {p} at (0,0) size 300x20
-          RenderText {#text} at (0,0) size 220x19
+          RenderText {#text} at (0,0) size 220x20
             text run at (0,0) width 220: "Test from HTML in foreignObject"
         RenderBlock (anonymous) at (0,36) size 300x155
           RenderSVGRoot {svg} at (0,36) size 274x54

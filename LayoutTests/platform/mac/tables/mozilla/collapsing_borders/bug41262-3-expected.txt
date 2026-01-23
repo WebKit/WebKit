@@ -106,8 +106,8 @@ layer at (0,0) size 785x664
           text run at (0,0) width 500: "Following table should have 2px solid black line between rows. There should "
           text run at (499,0) width 269: "be a total of two lines. There will be three"
           text run at (0,18) width 218: "lines if user agent doesn't support "
-        RenderInline {CODE} at (217,20) size 111x15
-          RenderText {#text} at (217,20) size 111x15
+        RenderInline {CODE} at (217,20) size 111x16
+          RenderText {#text} at (217,20) size 111x16
             text run at (217,20) width 111: "tr:first-child"
         RenderText {#text} at (327,18) size 5x18
           text run at (327,18) width 5: "."

@@ -22,20 +22,20 @@ layer at (0,0) size 800x270
         RenderText {#text} at (0,0) size 322x18
           text run at (0,0) width 322: "Using font \"Meiryo\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,108) size 784x22
-        RenderText {#text} at (0,3) size 391x18
-          text run at (0,3) width 391: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
+        RenderText {#text} at (0,2) size 391x19
+          text run at (0,2) width 391: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,130) size 784x22
-        RenderText {#text} at (0,3) size 375x18
-          text run at (0,3) width 375: "Using font \"\x{FF2D}\x{FF33} \x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
+        RenderText {#text} at (0,2) size 375x19
+          text run at (0,2) width 375: "Using font \"\x{FF2D}\x{FF33} \x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,152) size 784x22
-        RenderText {#text} at (0,3) size 359x18
-          text run at (0,3) width 359: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
+        RenderText {#text} at (0,2) size 359x19
+          text run at (0,2) width 359: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,174) size 784x22
-        RenderText {#text} at (0,3) size 343x18
-          text run at (0,3) width 343: "Using font \"\x{FF2D}\x{FF33} \x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
+        RenderText {#text} at (0,2) size 343x19
+          text run at (0,2) width 343: "Using font \"\x{FF2D}\x{FF33} \x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,196) size 784x22
-        RenderText {#text} at (0,3) size 339x18
-          text run at (0,3) width 339: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
+        RenderText {#text} at (0,2) size 339x19
+          text run at (0,2) width 339: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,218) size 784x18
         RenderText {#text} at (0,0) size 320x18
           text run at (0,0) width 320: "Using font \"Times\". expected: backslash, actual: \\"

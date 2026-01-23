@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 751x39
+        RenderText {#text} at (0,0) size 751x40
           text run at (0,0) width 522: "This tries to select a table inside an editable region whose content is not editable. "
           text run at (521,0) width 230: "The table and its contents should be"
           text run at (0,20) width 56: "selected."
@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 30x28
             RenderTableRow {TR} at (0,2) size 30x24
               RenderTableCell {TD} at (2,2) size 26x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 22x19
+                RenderText {#text} at (2,2) size 22x20
                   text run at (2,2) width 22: "foo"
 selection start: position 0 of child 0 {TABLE} of child 2 {DIV} of body
 selection end:   position 1 of child 0 {TABLE} of child 2 {DIV} of body

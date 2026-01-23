@@ -8,14 +8,14 @@ layer at (0,0) size 800x2108
           RenderImage {IMG} at (1,1) size 604x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,700) size 736x20
-        RenderText {#text} at (0,0) size 550x19
+        RenderText {#text} at (0,0) size 550x20
           text run at (0,0) width 550: "percentage height images in DIV with no height (red) in a DIV with no height (green)"
       RenderBlock {DIV} at (32,752) size 672x672 [border: (3px dotted #008000)]
         RenderBlock {DIV} at (35,35) size 602x602 [border: (1px solid #FF0000)]
           RenderImage {IMG} at (1,1) size 883x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1456) size 736x20
-        RenderText {#text} at (0,0) size 481x19
+        RenderText {#text} at (0,0) size 481x20
           text run at (0,0) width 481: "percentage height image in table cell (red), in a DIV with no height (green)"
       RenderBlock {DIV} at (32,1508) size 672x536
         RenderTable {TABLE} at (0,0) size 260x536 [border: (1px solid #FF0000)]

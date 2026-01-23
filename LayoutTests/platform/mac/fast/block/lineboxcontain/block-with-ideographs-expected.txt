@@ -14,14 +14,14 @@ layer at (0,0) size 785x661
           RenderText {#text} at (7,97) size 55x48
             text run at (7,97) width 48: "\x{7530}"
         RenderBlock {div} at (0,146) size 769x69 [border: (1px solid #008000)]
-          RenderText {#text} at (1,9) size 48x55
-            text run at (1,9) width 48: "\x{70BA}"
-          RenderInline {ruby} at (49,9) size 48x55
-            RenderInline (generated) at (49,9) size 48x55
-              RenderText {#text} at (49,9) size 48x55
-                text run at (49,9) width 48: "\x{6AFB}"
-          RenderText {#text} at (97,9) size 48x55
-            text run at (97,9) width 48: "\x{7530}"
+          RenderText {#text} at (1,8) size 48x56
+            text run at (1,8) width 48: "\x{70BA}"
+          RenderInline {ruby} at (49,8) size 48x56
+            RenderInline (generated) at (49,8) size 48x56
+              RenderText {#text} at (49,8) size 48x56
+                text run at (49,8) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,8) size 48x56
+            text run at (97,8) width 48: "\x{7530}"
       RenderBlock {div} at (0,215) size 769x215
         RenderBlock {div} at (0,0) size 69x146 [border: (1px solid #FF0000)]
           RenderText {#text} at (7,1) size 55x48
@@ -33,14 +33,14 @@ layer at (0,0) size 785x661
           RenderText {#text} at (7,97) size 55x48
             text run at (7,97) width 48: "\x{7530}"
         RenderBlock {div} at (0,146) size 769x69 [border: (1px solid #008000)]
-          RenderText {#text} at (1,9) size 48x55
-            text run at (1,9) width 48: "\x{70BA}"
-          RenderInline {ruby} at (49,9) size 48x55
-            RenderInline (generated) at (49,9) size 48x55
-              RenderText {#text} at (49,9) size 48x55
-                text run at (49,9) width 48: "\x{6AFB}"
-          RenderText {#text} at (97,9) size 48x55
-            text run at (97,9) width 48: "\x{7530}"
+          RenderText {#text} at (1,8) size 48x56
+            text run at (1,8) width 48: "\x{70BA}"
+          RenderInline {ruby} at (49,8) size 48x56
+            RenderInline (generated) at (49,8) size 48x56
+              RenderText {#text} at (49,8) size 48x56
+                text run at (49,8) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,8) size 48x56
+            text run at (97,8) width 48: "\x{7530}"
       RenderBlock {div} at (0,430) size 769x215
         RenderBlock {div} at (0,0) size 69x146 [border: (1px solid #FF0000)]
           RenderText {#text} at (7,1) size 55x48
@@ -52,11 +52,11 @@ layer at (0,0) size 785x661
           RenderText {#text} at (7,97) size 55x48
             text run at (7,97) width 48: "\x{7530}"
         RenderBlock {div} at (0,146) size 769x69 [border: (1px solid #008000)]
-          RenderText {#text} at (1,9) size 48x55
-            text run at (1,9) width 48: "\x{70BA}"
-          RenderInline {ruby} at (49,9) size 48x55
-            RenderInline (generated) at (49,9) size 48x55
-              RenderText {#text} at (49,9) size 48x55
-                text run at (49,9) width 48: "\x{6AFB}"
-          RenderText {#text} at (97,9) size 48x55
-            text run at (97,9) width 48: "\x{7530}"
+          RenderText {#text} at (1,8) size 48x56
+            text run at (1,8) width 48: "\x{70BA}"
+          RenderInline {ruby} at (49,8) size 48x56
+            RenderInline (generated) at (49,8) size 48x56
+              RenderText {#text} at (49,8) size 48x56
+                text run at (49,8) width 48: "\x{6AFB}"
+          RenderText {#text} at (97,8) size 48x56
+            text run at (97,8) width 48: "\x{7530}"

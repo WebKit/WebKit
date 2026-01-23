@@ -1,44 +1,44 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x81
-  RenderBlock {HTML} at (0,0) size 800x81
-    RenderBody {BODY} at (8,16) size 784x57
+layer at (0,0) size 800x82
+  RenderBlock {HTML} at (0,0) size 800x82
+    RenderBody {BODY} at (8,16) size 784x58
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 582x19
+        RenderText {#text} at (0,0) size 582x20
           text run at (0,0) width 196: "This tests that the Credit Card "
           text run at (195,0) width 387: "AutoFill button renders. It can only be tested in the test tool."
-      RenderBlock {DIV} at (0,36) size 784x21
-        RenderTextControl {INPUT} at (0,1) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBlock {DIV} at (0,36) size 784x22
+        RenderTextControl {INPUT} at (0,1) size 154x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,3) size 142x14
             RenderBlock {DIV} at (0,0) size 115x14
-        RenderText {#text} at (153,0) size 5x19
+        RenderText {#text} at (153,0) size 5x20
           text run at (153,0) width 5: " "
-        RenderTextControl {INPUT} at (157,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (157,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,3) size 142x14
             RenderBlock {DIV} at (0,0) size 115x14
-        RenderText {#text} at (311,0) size 5x19
+        RenderText {#text} at (311,0) size 5x20
           text run at (311,0) width 5: " "
-        RenderTextControl {INPUT} at (315,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (315,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,3) size 142x14
             RenderBlock {DIV} at (0,0) size 115x14
-        RenderText {#text} at (469,0) size 5x19
+        RenderText {#text} at (469,0) size 5x20
           text run at (469,0) width 5: " "
-        RenderTextControl {INPUT} at (473,1) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (473,1) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderFlexibleBox {DIV} at (6,3) size 142x14
             RenderBlock {DIV} at (0,0) size 115x14
-layer at (14,56) size 115x14
+layer at (14,57) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (172,56) size 115x14
+layer at (172,57) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (330,56) size 115x14
+layer at (330,57) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (488,56) size 115x14
+layer at (488,57) size 115x14
   RenderBlock {DIV} at (0,0) size 115x14
-layer at (132,57) size 22x12
+layer at (132,58) size 22x12
   RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
-layer at (290,57) size 22x12
+layer at (290,58) size 22x12
   RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
-layer at (448,57) size 22x12
+layer at (448,58) size 22x12
   RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
-layer at (606,57) size 22x12
+layer at (606,58) size 22x12
   RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]

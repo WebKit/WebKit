@@ -4,7 +4,7 @@ layer at (0,0) size 800x389
   RenderBlock {HTML} at (0,0) size 800x389
     RenderBody {BODY} at (8,16) size 784x20
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 509x19
+        RenderText {#text} at (0,0) size 509x20
           text run at (0,0) width 509: "In all the following boxes, the fuchsia diamond should be surrounded by a ring."
       RenderBlock (floating) {DIV} at (1,37) size 79x54 [border: (1.50px solid #000000)]
         RenderBlock {DIV} at (1,1) size 76x51 [bgcolor=#FFFFCC]

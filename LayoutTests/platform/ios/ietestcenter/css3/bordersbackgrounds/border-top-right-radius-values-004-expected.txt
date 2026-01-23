@@ -4,7 +4,7 @@ layer at (0,0) size 800x434
   RenderBlock {HTML} at (0,0) size 800x434
     RenderBody {BODY} at (8,16) size 784x410
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 672x19
+        RenderText {#text} at (0,0) size 672x20
           text run at (0,0) width 672: "Test passes if the top right corner of each of the boxes is curved and if there is no red visible on the page."
       RenderTable {TABLE} at (0,36) size 310x374
         RenderTableSection {TBODY} at (0,0) size 310x374

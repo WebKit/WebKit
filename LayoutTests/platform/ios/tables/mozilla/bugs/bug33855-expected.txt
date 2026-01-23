@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                     RenderText at (0,0) size 64x14
                       text run at (0,0) width 64: "Empty trash"
               RenderTableCell {TD} at (231,2) size 373x22 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 4x19
+                RenderText {#text} at (1,1) size 4x20
                   text run at (1,1) width 4: " "
               RenderTableCell {TD} at (605,2) size 72x22 [r=0 c=4 rs=1 cs=1]
                 RenderButton {INPUT} at (1,1) size 70x20 [color=#FFFFFF] [bgcolor=#0088FF] [border: (1px solid #FFFFFF)]

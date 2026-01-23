@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x502
-  RenderBlock {HTML} at (0,0) size 800x502
-    RenderBody {BODY} at (8,16) size 784x478
+layer at (0,0) size 800x501
+  RenderBlock {HTML} at (0,0) size 800x501
+    RenderBody {BODY} at (8,16) size 784x477
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 746x19
+        RenderText {#text} at (0,0) size 746x20
           text run at (0,0) width 746: "Test that when we have images sprinkled within a span, borders, paddings and margins are still calculated correctly ."
       RenderBlock {DIV} at (0,36) size 212x221 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 200x129
@@ -24,12 +24,12 @@ layer at (0,0) size 800x502
             text run at (85,71) width 85 RTL: "\x{5D6}\x{5D0}\x{5EA} \x{2013} \x{5D0}\x{5D9}\x{5E0}\x{5D9} \x{5D9}\x{5D5}\x{5D3}\x{5E2}"
             text run at (0,103) width 30 RTL: "\x{5D1}\x{5E2}\x{5E6}\x{5DE}"
             text run at (29,103) width 145: " qqq rrr sss ttt uuu vvv"
-        RenderBlock {P} at (6,167) size 200x32
-          RenderInline {SPAN} at (25,5) size 163x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (45,6) size 88x19
+        RenderBlock {P} at (6,166) size 200x33
+          RenderInline {SPAN} at (25,5) size 163x22 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (45,6) size 88x20
               text run at (45,6) width 88: "Some fill text"
-            RenderImage {IMG} at (132,1) size 21x20
-      RenderBlock {DIV} at (0,257) size 212x221 [border: (1px solid #000000)]
+            RenderImage {IMG} at (132,1) size 21x21
+      RenderBlock {DIV} at (0,256) size 212x221 [border: (1px solid #000000)]
         RenderBlock {P} at (6,22) size 200x129
           RenderText {#text} at (10,6) size 190x52
             text run at (26,6) width 27 RTL: " \x{5DC}\x{5DE}\x{5D4}"
@@ -47,8 +47,8 @@ layer at (0,0) size 800x502
             text run at (30,71) width 85 RTL: "\x{5D6}\x{5D0}\x{5EA} \x{2013} \x{5D0}\x{5D9}\x{5E0}\x{5D9} \x{5D9}\x{5D5}\x{5D3}\x{5E2}"
             text run at (26,103) width 141: "qqq rrr sss ttt uuu vvv"
             text run at (166,103) width 34 RTL: "\x{5D1}\x{5E2}\x{5E6}\x{5DE} "
-        RenderBlock {P} at (6,167) size 200x32
-          RenderInline {SPAN} at (27,5) size 163x21 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (67,6) size 88x19
+        RenderBlock {P} at (6,166) size 200x33
+          RenderInline {SPAN} at (27,5) size 163x22 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (67,6) size 88x20
               text run at (67,6) width 88: "Some fill text"
-            RenderImage {IMG} at (47,1) size 21x20
+            RenderImage {IMG} at (47,1) size 21x21

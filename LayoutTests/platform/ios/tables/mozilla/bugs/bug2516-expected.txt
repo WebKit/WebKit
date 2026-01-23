@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 125x26
                   RenderTableRow {TR} at (0,2) size 125x22
                     RenderTableCell {TD} at (2,2) size 32x22 [bgcolor=#FF6600] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 30x19
+                      RenderText {#text} at (1,1) size 30x20
                         text run at (1,1) width 30: "Find"
                     RenderTableCell {TD} at (35,2) size 88x22 [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 86x19
+                      RenderText {#text} at (1,1) size 86x20
                         text run at (1,1) width 86: "rick was here"

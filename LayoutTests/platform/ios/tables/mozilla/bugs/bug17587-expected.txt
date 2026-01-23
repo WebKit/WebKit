@@ -16,13 +16,13 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 488x20
                   RenderTableRow {TR} at (0,0) size 488x20
                     RenderTableCell {TD} at (0,0) size 488x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 83x19
+                      RenderText {#text} at (0,0) size 83x20
                         text run at (0,0) width 83: "Top Nav Bar"
           RenderTableRow {TR} at (0,84) size 604x162
             RenderTableCell {TD} at (114,164) size 338x2 [border: (1px inset #000000)] [r=2 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (451,84) size 154x162 [border: (1px inset #000000)] [r=2 c=2 rs=1 cs=1]
-              RenderInline {B} at (1,1) size 150x159
-                RenderText {#text} at (1,1) size 150x159
+              RenderInline {B} at (1,1) size 150x160
+                RenderText {#text} at (1,1) size 150x160
                   text run at (1,1) width 126: "\"Freakish animal-"
                   text run at (1,21) width 128: "things, all sporting"
                   text run at (1,41) width 116: "maniacal smiles, "

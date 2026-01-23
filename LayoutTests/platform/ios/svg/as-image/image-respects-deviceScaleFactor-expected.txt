@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 527x19
+        RenderText {#text} at (0,0) size 527x20
           text run at (0,0) width 527: "This test passes if both of the circles have sharp edges when deviceScaleFactor=2."
       RenderBlock (anonymous) at (0,36) size 784x133
         RenderImage {IMG} at (0,0) size 128x128

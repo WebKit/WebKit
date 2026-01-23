@@ -4,37 +4,37 @@ layer at (0,0) size 800x240
   RenderBlock {HTML} at (0,0) size 800x240
     RenderBody {BODY} at (8,16) size 784x216
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 322x19
+        RenderText {#text} at (0,0) size 322x20
           text run at (0,0) width 322: "There should be no red borders on the table below"
       RenderTable {TABLE} at (0,36) size 155x180 [border: (2.50px none #000000)]
         RenderTableSection {TBODY} at (2,2) size 150x176
           RenderTableRow {TR} at (0,0) size 150x58
             RenderTableCell {TD} at (0,15) size 50x28 [border: (2.50px dotted #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,18) size 41x20
-                text run at (3,3) width 41: "dotted"
+              RenderText {#text} at (3,19) size 41x20
+                text run at (3,4) width 41: "dotted"
             RenderTableCell {TD} at (49,14) size 51x30 [border: (2.50px dotted #00FF00) (5px dotted #FF0000) (2.50px dotted #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,17) size 41x20
-                text run at (3,3) width 41: "dotted"
+              RenderText {#text} at (3,18) size 41x19
+                text run at (3,4) width 41: "dotted"
             RenderTableCell {TD} at (99,15) size 51x28 [border: (2.50px dotted #00FF00)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,18) size 41x20
-                text run at (3,3) width 41: "dotted"
+              RenderText {#text} at (3,19) size 41x20
+                text run at (3,4) width 41: "dotted"
           RenderTableRow {TR} at (0,57) size 150x61
             RenderTableCell {TD} at (0,74) size 50x27 [border: (2.50px dotted #00FF00) (5px dotted #FF0000) (2.50px dotted #00FF00)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,20) size 41x19
+              RenderText {#text} at (3,20) size 41x20
                 text run at (3,4) width 41: "dotted"
             RenderTableCell {TD} at (49,71) size 51x33 [border: (5px outset #00FF00)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,20) size 39x19
+              RenderText {#text} at (6,20) size 39x20
                 text run at (6,6) width 39: "outset"
             RenderTableCell {TD} at (99,74) size 51x27 [border: (2.50px dotted #00FF00) (5px dotted #FF0000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (6,20) size 40x19
+              RenderText {#text} at (6,20) size 40x20
                 text run at (6,4) width 40: "dotted"
           RenderTableRow {TR} at (0,117) size 150x58
             RenderTableCell {TD} at (0,132) size 50x28 [border: (2.50px dotted #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,18) size 41x20
-                text run at (3,3) width 41: "dotted"
+              RenderText {#text} at (3,19) size 41x20
+                text run at (3,4) width 41: "dotted"
             RenderTableCell {TD} at (49,131) size 51x30 [border: (5px dotted #FF0000) (2.50px dotted #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,20) size 41x19
+              RenderText {#text} at (3,20) size 41x20
                 text run at (3,6) width 41: "dotted"
             RenderTableCell {TD} at (99,132) size 51x28 [border: (2.50px dotted #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,18) size 41x20
-                text run at (3,3) width 41: "dotted"
+              RenderText {#text} at (3,19) size 41x20
+                text run at (3,4) width 41: "dotted"

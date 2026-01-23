@@ -4,7 +4,7 @@ layer at (0,0) size 800x362
   RenderBlock {HTML} at (0,0) size 800x362
     RenderBody {BODY} at (8,16) size 784x338
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 299x19
+        RenderText {#text} at (0,0) size 299x20
           text run at (0,0) width 299: "The orange bar should be in front of the video."
 layer at (8,52) size 402x302
   RenderBlock (relative positioned) {DIV} at (0,36) size 402x302 [border: (1px solid #000000)]
@@ -13,6 +13,6 @@ layer at (8,52) size 402x302
 layer at (9,53) size 400x300
   RenderVideo {VIDEO} at (0,0) size 400x300
 layer at (9,358) size 10x10
-  RenderBlock {DIV} at (1,306) size 10x10 [bgcolor=#008000]
+  RenderBlock {DIV} at (1,305) size 10x11 [bgcolor=#008000]
 layer at (9,293) size 400x60
   RenderBlock (positioned) {DIV} at (1,241) size 400x60 [bgcolor=#FFA500]

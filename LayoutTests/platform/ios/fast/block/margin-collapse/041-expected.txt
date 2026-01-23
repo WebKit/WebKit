@@ -4,7 +4,7 @@ layer at (0,0) size 800x120
   RenderBlock {HTML} at (0,0) size 800x120
     RenderBody {BODY} at (8,16) size 784x96
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 280x19
+        RenderText {#text} at (0,0) size 280x20
           text run at (0,0) width 280: "The two boxes below should look identical."
       RenderTable {TABLE} at (0,36) size 214x60
         RenderTableSection {TBODY} at (0,0) size 214x60

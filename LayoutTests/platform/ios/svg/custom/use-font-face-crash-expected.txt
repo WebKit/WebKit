@@ -1,18 +1,18 @@
-layer at (0,0) size 800x775
+layer at (0,0) size 800x774
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {html} at (0,0) size 800x600
     RenderBody {body} at (8,16) size 784x600
       RenderBlock {parsererror} at (16,0) size 752x138 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 716x24
-          RenderText {#text} at (0,0) size 318x22
+          RenderText {#text} at (0,0) size 318x23
             text run at (0,0) width 318: "This page contains the following errors:"
         RenderBlock {div} at (18,62) size 716x14
           RenderText {#text} at (0,0) size 512x13
             text run at (0,0) width 512: "error on line 1 at column 210: Extra content at the end of the document"
             text run at (511,0) width 1: " "
         RenderBlock {h3} at (18,94) size 716x24
-          RenderText {#text} at (0,0) size 419x22
+          RenderText {#text} at (0,0) size 419x23
             text run at (0,0) width 419: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,153) size 784x606
         RenderSVGRoot {svg} at (8,174) size 342x20

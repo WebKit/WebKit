@@ -1,8 +1,8 @@
-layer at (0,0) size 800x777
+layer at (0,0) size 800x776
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x777
-  RenderBlock {HTML} at (0,0) size 800x777
-    RenderBody {BODY} at (8,8) size 784x761
+layer at (0,0) size 800x776
+  RenderBlock {HTML} at (0,0) size 800x776
+    RenderBody {BODY} at (8,8) size 784x760
       RenderBlock {DIV} at (0,0) size 784x94
         RenderText {#text} at (0,31) size 47x19
           text run at (0,31) width 47: "Blank: "
@@ -65,7 +65,7 @@ layer at (0,0) size 800x777
               RenderGrid {DIV} at (10,10) size 54x72
               RenderFlexibleBox {DIV} at (74,0) size 238x92
                 RenderGrid {DIV} at (0,37) size 238x18
-      RenderBlock {DIV} at (0,567) size 784x97
+      RenderBlock {DIV} at (0,566) size 784x97
         RenderText {#text} at (0,77) size 96x19
           text run at (0,77) width 96: "75% progress: "
         RenderAttachment {ATTACHMENT} at (96,1) size 339x92 [color=#0088FF]
@@ -76,7 +76,7 @@ layer at (0,0) size 800x777
                   RenderBlock (generated) at (0,0) size 54x54 [border: (4px solid #3C3C4399)]
               RenderFlexibleBox {DIV} at (74,0) size 238x92
                 RenderGrid {DIV} at (0,37) size 238x18
-      RenderBlock {DIV} at (0,664) size 784x97
+      RenderBlock {DIV} at (0,663) size 784x97
         RenderText {#text} at (0,77) size 104x19
           text run at (0,77) width 104: "100% progress: "
         RenderAttachment {ATTACHMENT} at (104,1) size 339x92 [color=#0088FF]
@@ -136,12 +136,12 @@ layer at (180,517) size 238x17
     RenderBlock (anonymous) at (0,0) size 238x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (179,614) size 238x17
+layer at (179,613) size 238x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 238x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 238x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (187,711) size 238x17
+layer at (187,710) size 238x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 238x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 238x17
       RenderText {#text} at (0,0) size 56x17

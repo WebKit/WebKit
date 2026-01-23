@@ -4,7 +4,7 @@ layer at (0,0) size 800x346
   RenderBlock {HTML} at (0,0) size 800x346
     RenderBody {BODY} at (8,8) size 784x330
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 419x19
+        RenderText {#text} at (0,0) size 419x20
           text run at (0,0) width 419: "The two diagrams below should be identical, with no red present."
       RenderTable {TABLE} at (0,20) size 218x310
         RenderTableSection {TBODY} at (0,0) size 218x310

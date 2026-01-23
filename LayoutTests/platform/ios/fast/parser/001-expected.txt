@@ -5,18 +5,18 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIR} at (0,0) size 784x80
         RenderBlock (anonymous) at (40,0) size 744x20
-          RenderText {#text} at (0,0) size 27x19
+          RenderText {#text} at (0,0) size 27x20
             text run at (0,0) width 27: "One"
         RenderBlock {DIR} at (40,20) size 744x60
           RenderBlock (anonymous) at (40,0) size 704x20
-            RenderText {#text} at (0,0) size 29x19
+            RenderText {#text} at (0,0) size 29x20
               text run at (0,0) width 29: "Two"
           RenderBlock {DIR} at (40,20) size 704x40
             RenderBlock (anonymous) at (40,0) size 664x20
-              RenderText {#text} at (0,0) size 38x19
+              RenderText {#text} at (0,0) size 38x20
                 text run at (0,0) width 38: "Three"
             RenderBlock {CENTER} at (40,20) size 664x20
-              RenderText {#text} at (316,0) size 32x19
+              RenderText {#text} at (316,0) size 32x20
                 text run at (316,0) width 32: "Four"
       RenderBlock {PRE} at (0,96) size 784x332
         RenderText {#text} at (0,0) size 63x14
@@ -28,12 +28,12 @@ layer at (0,0) size 800x600
           text run at (0,318) width 102: "Also pre text"
           text run at (101,318) width 1: " "
       RenderBlock (anonymous) at (0,441) size 784x80
-        RenderInline {NOBR} at (0,0) size 784x79 [bgcolor=#CCCCCC]
-          RenderText {#text} at (0,0) size 139x19
+        RenderInline {NOBR} at (0,0) size 784x80 [bgcolor=#CCCCCC]
+          RenderText {#text} at (0,0) size 139x20
             text run at (0,0) width 139: "This text won't break."
           RenderBlock {PRE} at (0,33) size 784x14
             RenderText {#text} at (0,0) size 203x14
               text run at (0,0) width 203: "This will be preformatted."
-          RenderText {#text} at (0,60) size 236x19
+          RenderText {#text} at (0,60) size 236x20
             text run at (0,60) width 236: "Now we're back to nonbreaking text."
         RenderText {#text} at (0,0) size 0x0

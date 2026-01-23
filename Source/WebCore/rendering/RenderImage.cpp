@@ -611,22 +611,24 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                     if (availableLogicalWidth < textWidth)
                         return false;
                     auto availableLogicalHeight = isHorizontal ? (errorPictureDrawn ? imageOffset.height() : usableSize.height()) : usableSize.width();
-                    return availableLogicalHeight >= fontMetrics.intHeight();
+                    return availableLogicalHeight >= (settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight());
                 };
                 if (hasRoomForAltText()) {
                     context.setFillColor(style.visitedDependentColorApplyingColorFilter());
                     if (isHorizontal) {
                         auto altTextLocation = [&]() -> LayoutPoint {
                             auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
-                            auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.intAscent() + (paddingHeight / 2) - missingImageBorderWidth };
+                            auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + (settings().subpixelInlineLayoutEnabled() ? fontMetrics.ascent() : fontMetrics.intAscent()) + (paddingHeight / 2) - missingImageBorderWidth };
                             if (!style.writingMode().isInlineLeftToRight())
                                 contentHorizontalOffset += contentSize.width() - textWidth;
                             return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
                         };
-                        context.drawBidiText(fontCascade, textRun, altTextLocation());
+                        auto textOrigin = altTextLocation();
+                        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, document().deviceScaleFactor()));
+                        context.drawBidiText(fontCascade, textRun, textOrigin);
                     } else {
                         // FIXME: TextBoxPainter has this logic already, maybe we should transition to some painter class.
-                        auto contentLogicalHeight = fontMetrics.intHeight();
+                        auto contentLogicalHeight = settings().subpixelInlineLayoutEnabled() ? fontMetrics.height() : fontMetrics.intHeight();
                         auto adjustedPaintOffset = LayoutPoint { paintOffset.x(), paintOffset.y() - contentLogicalHeight };
 
                         auto visualLeft = size().width() / 2 - contentLogicalHeight / 2;
@@ -635,10 +637,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                             visualLeft = size().width() - visualRight;
                         visualLeft += adjustedPaintOffset.x();
 
+                        visualLeft = roundToDevicePixel(visualLeft, document().deviceScaleFactor());
+                        adjustedPaintOffset.setY(roundToDevicePixel(adjustedPaintOffset.y(), document().deviceScaleFactor()));
+
                         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
                         context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
-                        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().intAscent() };
-                        context.drawBidiText(fontCascade, textRun, textOrigin);
+                        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + (settings().subpixelInlineLayoutEnabled() ? fontCascade.metricsOfPrimaryFont().ascent() : fontCascade.metricsOfPrimaryFont().intAscent()) };
+                        context.drawBidiText(fontCascade, textRun, roundPointToDevicePixels(textOrigin, document().deviceScaleFactor()));
                         context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
                     }
                 }

@@ -5,16 +5,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (4,0) size 344x242
         RenderBlock {P} at (0,16) size 344x20
-          RenderText {#text} at (0,0) size 208x19
+          RenderText {#text} at (0,0) size 208x20
             text run at (0,0) width 208: "The initial value (should be like "
-          RenderInline {TT} at (207,2) size 33x17
-            RenderText {#text} at (207,2) size 33x17
+          RenderInline {TT} at (207,2) size 33x18
+            RenderText {#text} at (207,2) size 33x18
               text run at (207,2) width 33: "auto"
-          RenderText {#text} at (239,0) size 6x19
+          RenderText {#text} at (239,0) size 6x20
             text run at (239,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x190 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x175
+          RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2010}"
@@ -27,16 +27,16 @@ layer at (0,0) size 800x600
             text run at (7,161) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,0) size 344x242
         RenderBlock {P} at (0,16) size 344x20
-          RenderText {#text} at (0,0) size 83x19
+          RenderText {#text} at (0,0) size 83x20
             text run at (0,0) width 83: "The default ("
-          RenderInline {TT} at (82,2) size 197x17
-            RenderText {#text} at (82,2) size 197x17
+          RenderInline {TT} at (82,2) size 197x18
+            RenderText {#text} at (82,2) size 197x18
               text run at (82,2) width 197: "hyphenate-character: auto"
-          RenderText {#text} at (278,0) size 6x19
+          RenderText {#text} at (278,0) size 6x20
             text run at (278,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x190 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x175
+          RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2010}"
@@ -49,16 +49,16 @@ layer at (0,0) size 800x600
             text run at (7,161) width 39: "ened."
       RenderBlock (floating) {DIV} at (4,242) size 344x242
         RenderBlock {P} at (0,16) size 344x20
-          RenderText {#text} at (0,0) size 49x19
+          RenderText {#text} at (0,0) size 49x20
             text run at (0,0) width 49: "Bullet ("
-          RenderInline {TT} at (48,2) size 220x17
-            RenderText {#text} at (48,2) size 220x17
+          RenderInline {TT} at (48,2) size 220x18
+            RenderText {#text} at (48,2) size 220x18
               text run at (48,2) width 220: "hyphenate-character: \"\\2022\""
-          RenderText {#text} at (267,0) size 6x19
+          RenderText {#text} at (267,0) size 6x20
             text run at (267,0) width 6: ")"
         RenderBlock {DIV} at (0,52) size 344x190 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x175
+          RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{2022}"
@@ -71,16 +71,16 @@ layer at (0,0) size 800x600
             text run at (7,161) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,242) size 357x242
         RenderBlock {P} at (0,16) size 357x20
-          RenderText {#text} at (0,0) size 140x19
+          RenderText {#text} at (0,0) size 140x20
             text run at (0,0) width 140: "Middle dot and tilde ("
-          RenderInline {TT} at (139,2) size 212x17
-            RenderText {#text} at (139,2) size 212x17
+          RenderInline {TT} at (139,2) size 212x18
+            RenderText {#text} at (139,2) size 212x18
               text run at (139,2) width 212: "hyphenate-character: \"\\B7~\""
-          RenderText {#text} at (350,0) size 7x19
+          RenderText {#text} at (350,0) size 7x20
             text run at (350,0) width 7: ")"
         RenderBlock {DIV} at (0,52) size 344x190 [border: (3px solid #000000)]
           RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
-          RenderText {#text} at (7,7) size 330x175
+          RenderText {#text} at (7,7) size 330x176
             text run at (7,7) width 245: "The chief difficulty Alice found"
             text run at (7,29) width 245: "at first was in managing her"
             text run at (7,51) width 245: "flamingo: she succeeded in get" + hyphen string "\x{B7}~"

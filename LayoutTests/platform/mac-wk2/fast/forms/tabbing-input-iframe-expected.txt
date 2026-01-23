@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 454x18
         text run at (0,0) width 454: "This tests that you can tab out of a text field if an iframe comes after it."
       RenderBR {BR} at (453,0) size 1x18
-      RenderTextControl {INPUT} at (0,155) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderTextControl {INPUT} at (0,155) size 156x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderText {#text} at (155,156) size 5x18
         text run at (155,156) width 5: " "
       RenderIFrame {IFRAME} at (159,18) size 303x152 [border: (1px solid #000000)]
@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 284x134
       RenderText {#text} at (461,156) size 5x18
         text run at (461,156) width 5: " "
-      RenderTextControl {INPUT} at (465,155) size 157x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderTextControl {INPUT} at (465,155) size 157x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderText {#text} at (0,0) size 0x0
 layer at (15,167) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13

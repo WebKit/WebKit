@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x430
-  RenderBlock {HTML} at (0,0) size 800x430
-    RenderBody {BODY} at (8,16) size 784x398
+layer at (0,0) size 800x431
+  RenderBlock {HTML} at (0,0) size 800x431
+    RenderBody {BODY} at (8,16) size 784x399
       RenderBlock {P} at (0,0) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 230x18
           text run at (0,0) width 230: "This sentence should be underlined."
@@ -62,21 +62,21 @@ layer at (0,0) size 800x430
             text run at (171,21) width 21: "not"
         RenderText {#text} at (191,21) size 97x18
           text run at (191,21) width 97: " be underlined."
-      RenderBlock {P} at (0,328) size 784x36 [color=#000080]
-        RenderText {#text} at (0,0) size 577x18
+      RenderBlock {P} at (0,328) size 784x37 [color=#000080]
+        RenderText {#text} at (0,0) size 577x19
           text run at (0,0) width 486: "This sentence should have a long blue underline including between the two "
           text run at (485,0) width 92: "arrows here\x{2192}"
-        RenderInline {SPAN} at (576,0) size 156x18 [color=#FFFFFF]
-          RenderText {#text} at (576,0) size 156x18
+        RenderInline {SPAN} at (576,0) size 156x19 [color=#FFFFFF]
+          RenderText {#text} at (576,0) size 156x19
             text run at (576,0) width 156: " FAIL FAIL FAIL FAIL "
-        RenderText {#text} at (0,0) size 771x36
+        RenderText {#text} at (0,0) size 771x37
           text run at (731,0) width 40: "\x{2190}and"
           text run at (0,18) width 32: "here."
-      RenderBlock {P} at (0,380) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 348x18
+      RenderBlock {P} at (0,380) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 348x19
           text run at (0,0) width 348: "There should be a long blue underline between here\x{2192}"
-        RenderInline {SPAN} at (347,0) size 89x18
-          RenderText {#text} at (347,0) size 89x18
+        RenderInline {SPAN} at (347,0) size 89x19
+          RenderText {#text} at (347,0) size 89x19
             text run at (347,0) width 89: "                      "
-        RenderText {#text} at (435,0) size 76x18
+        RenderText {#text} at (435,0) size 76x19
           text run at (435,0) width 76: "\x{2190}and here."

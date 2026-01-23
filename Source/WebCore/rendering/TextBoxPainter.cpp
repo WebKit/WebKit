@@ -864,7 +864,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                     return 0.f;
                 auto baseOffset = underlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style.get());
                 auto wavyOffset = decoratingBox.textDecorationStyles.underline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
-                return baseOffset + wavyOffset;
+                return roundToDevicePixel(baseOffset + wavyOffset, m_document->deviceScaleFactor());
             };
             auto autoTextDecorationThickness = computedAutoTextDecorationThickness(decoratingBox.style.get(), m_document->deviceScaleFactor());
             auto overlineOffset = [&] {
@@ -873,7 +873,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 auto baseOffset = overlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style.get());
                 baseOffset += (autoTextDecorationThickness - textDecorationThickness);
                 auto wavyOffset = decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
-                return baseOffset - wavyOffset;
+                return roundToDevicePixel(baseOffset - wavyOffset, m_document->deviceScaleFactor());
             };
 
             return TextDecorationPainter::BackgroundDecorationGeometry {

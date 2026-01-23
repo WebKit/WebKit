@@ -3087,6 +3087,9 @@ imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure
 
 # 1px off
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ ImageOnlyFailure ]
+# subpixel inline layout
+# This old test case fails with Firefox and Chrome.
+webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-008.html [ ImageOnlyFailure ]
 
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]
@@ -5810,7 +5813,7 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lao/css3-counter-styles-1
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-114.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ Pass ImageOnlyFailure ]
-
+ 
 # CSS will-change failures
 webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-webkit-perspective-1.html [ ImageOnlyFailure ]

@@ -10,13 +10,13 @@
         (GraphicsLayer
           (position 18.00 10.00)
           (anchor 0.50 0.49)
-          (bounds 200.00 205.00)
+          (bounds 200.00 204.50)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 18.00 220.00)
           (anchor 0.50 0.49)
-          (bounds 200.00 205.00)
+          (bounds 200.00 204.50)
         )
       )
     )

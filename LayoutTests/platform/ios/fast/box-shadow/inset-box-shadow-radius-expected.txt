@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x594
-  RenderBlock {HTML} at (0,0) size 800x594
-    RenderBody {BODY} at (8,8) size 784x578
+layer at (0,0) size 800x593
+  RenderBlock {HTML} at (0,0) size 800x593
+    RenderBody {BODY} at (8,8) size 784x577
       RenderBlock {DIV} at (4,4) size 280x280
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (288,269) size 4x19
@@ -10,11 +10,11 @@ layer at (0,0) size 800x594
       RenderBlock {DIV} at (296,4) size 280x280
         RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (580,269) size 0x19
-      RenderBlock {DIV} at (4,293) size 280x280
+      RenderBlock {DIV} at (4,292) size 280x281
         RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (288,558) size 4x19
-        text run at (288,558) width 4: " "
-      RenderBlock {DIV} at (296,293) size 280x280
+      RenderText {#text} at (288,557) size 4x20
+        text run at (288,557) width 4: " "
+      RenderBlock {DIV} at (296,292) size 280x281
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (12,12) size 280x280
@@ -26,10 +26,10 @@ layer at (304,12) size 280x280
 layer at (304,12) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280
 layer at (12,301) size 280x280
-  RenderBlock (positioned) {DIV} at (12,301) size 280x280 [border: (50px solid #00FF000D)]
+  RenderBlock (positioned) {DIV} at (12,300) size 280x281 [border: (50px solid #00FF000D)]
 layer at (12,301) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280
 layer at (304,301) size 280x280
-  RenderBlock (positioned) {DIV} at (304,301) size 280x280 [border: (90px solid #00FF000D)]
+  RenderBlock (positioned) {DIV} at (304,300) size 280x281 [border: (90px solid #00FF000D)]
 layer at (304,301) size 280x280
   RenderBlock (relative positioned) {DIV} at (0,0) size 280x280

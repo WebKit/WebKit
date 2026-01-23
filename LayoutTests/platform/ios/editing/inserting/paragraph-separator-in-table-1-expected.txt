@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 625x19
+        RenderText {#text} at (0,0) size 625x20
           text run at (0,0) width 347: "This tests InsertParagraphSeparator inside table cells. "
           text run at (346,0) width 279: "'Cell' and 'Two' should be on separate lines."
       RenderBlock {DIV} at (0,36) size 784x50
@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 100x48
             RenderTableRow {TR} at (0,2) size 100x44
               RenderTableCell {TD} at (2,12) size 62x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,12) size 58x19
+                RenderText {#text} at (2,12) size 58x20
                   text run at (2,2) width 58: "Cell One"
               RenderTableCell {TD} at (65,2) size 33x44 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 27x19
+                RenderText {#text} at (2,2) size 27x20
                   text run at (2,2) width 27: "Cell"
-                RenderBR {BR} at (28,2) size 1x19
-                RenderInline {SPAN} at (2,22) size 29x19
-                  RenderText {#text} at (2,22) size 29x19
+                RenderBR {BR} at (28,2) size 1x20
+                RenderInline {SPAN} at (2,22) size 29x20
+                  RenderText {#text} at (2,22) size 29x20
                     text run at (2,22) width 29: "Two"
 caret: position 0 of child 0 {#text} of child 2 {SPAN} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

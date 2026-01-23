@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x528
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 751x39
+        RenderText {#text} at (0,0) size 751x40
           text run at (0,0) width 751: "This test tries to render the following text with Ahem, loaded from a WOFF file. The text below should be a series of"
           text run at (0,20) width 80: "black boxes."
-      RenderBlock {P} at (0,104) size 784x65
-        RenderText {#text} at (0,0) size 448x65
+      RenderBlock {P} at (0,104) size 784x64
+        RenderText {#text} at (0,0) size 448x64
           text run at (0,0) width 448: "Failure"

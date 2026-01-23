@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 146x19
+        RenderText {#text} at (0,0) size 146x20
           text run at (0,0) width 146: "This is to test a fix for "
-        RenderInline {A} at (145,0) size 69x19 [color=#0000EE]
-          RenderText {#text} at (145,0) size 69x19
+        RenderInline {A} at (145,0) size 69x20 [color=#0000EE]
+          RenderText {#text} at (145,0) size 69x20
             text run at (145,0) width 69: "bug 26660"
-        RenderText {#text} at (213,0) size 5x19
+        RenderText {#text} at (213,0) size 5x20
           text run at (213,0) width 5: "."
       RenderBlock {P} at (0,544) size 784x0
 layer at (8,103) size 252x52

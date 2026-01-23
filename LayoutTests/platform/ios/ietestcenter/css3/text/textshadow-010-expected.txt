@@ -4,7 +4,7 @@ layer at (0,0) size 800x122
   RenderBlock {HTML} at (0,0) size 800x122
     RenderBody {BODY} at (8,16) size 784x98
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 520x19
+        RenderText {#text} at (0,0) size 520x20
           text run at (0,0) width 520: "Test passes if there are two pairs of black and blue 'Filler Text' instances on page."
       RenderBlock {DIV} at (0,36) size 784x31
         RenderText {#text} at (679,1) size 105x29

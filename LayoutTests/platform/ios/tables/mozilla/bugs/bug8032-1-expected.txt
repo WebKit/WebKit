@@ -13,8 +13,8 @@ layer at (0,0) size 800x98
         RenderTableSection (anonymous) at (0,0) size 72x20
           RenderTableRow {DIV} at (0,0) size 72x20
             RenderTableCell {DIV} at (0,0) size 36x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 36x19
+              RenderText {#text} at (0,0) size 36x20
                 text run at (0,0) width 36: "white"
             RenderTableCell {DIV} at (35,0) size 37x20 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 36x19
+              RenderText {#text} at (0,0) size 36x20
                 text run at (0,0) width 36: "white"

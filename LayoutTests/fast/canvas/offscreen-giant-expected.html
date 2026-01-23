@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body style="font-family: Ahem">
 <canvas id="onscreen" width="100" height="10""></canvas>
 <script>
 const canvas = document.getElementById('onscreen');
@@ -8,7 +8,7 @@ const canvas = document.getElementById('onscreen');
 const context = canvas.getContext('2d');
 
 const square = new Path2D();
-square.rect(0, 0, 100, 10);
+square.rect(0, 0, 100, 20);
 context.fillStyle = 'green';
 context.fill(square);
 

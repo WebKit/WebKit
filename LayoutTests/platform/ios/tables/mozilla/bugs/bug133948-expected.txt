@@ -15,5 +15,5 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (1,1) size 734x534
                           RenderTableRow {TR} at (0,0) size 734x534
                             RenderTableCell {TD} at (0,246) size 734x42 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (11,257) size 4x19
+                              RenderText {#text} at (11,257) size 4x20
                                 text run at (11,11) width 4: " "

@@ -18,34 +18,34 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 717x39
+        RenderText {#text} at (0,0) size 717x40
           text run at (0,0) width 717: "This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the"
           text run at (0,20) width 83: "pasteboard). "
           text run at (82,20) width 342: "You should see the same thing in both regions below."
       RenderBlock {P} at (0,56) size 784x20
-        RenderInline {B} at (0,0) size 445x19
-          RenderText {#text} at (0,0) size 445x19
+        RenderInline {B} at (0,0) size 445x20
+          RenderText {#text} at (0,0) size 445x20
             text run at (0,0) width 445: "This demonstrates a bug: 'foo' is pulled out of its bordered block."
       RenderBlock {DIV} at (0,92) size 784x79
         RenderBlock {DIV} at (5,0) size 774x54 [border: (1px solid #FF0000)]
           RenderBlock (anonymous) at (1,1) size 772x20
-            RenderText {#text} at (0,0) size 22x19
+            RenderText {#text} at (0,0) size 22x20
               text run at (0,0) width 22: "foo"
           RenderBlock {DIV} at (6,26) size 762x22 [border: (1px solid #0000FF)]
-            RenderText {#text} at (1,1) size 21x19
+            RenderText {#text} at (1,1) size 21x20
               text run at (1,1) width 21: "bar"
         RenderBlock (anonymous) at (0,59) size 784x20
-          RenderText {#text} at (0,0) size 23x19
+          RenderText {#text} at (0,0) size 23x20
             text run at (0,0) width 23: "baz"
       RenderBlock {DIV} at (0,176) size 784x79
         RenderBlock {DIV} at (5,0) size 774x54 [border: (1px solid #FF0000)]
           RenderBlock (anonymous) at (1,1) size 772x20
-            RenderText {#text} at (0,0) size 22x19
+            RenderText {#text} at (0,0) size 22x20
               text run at (0,0) width 22: "foo"
           RenderBlock {DIV} at (6,26) size 762x22 [border: (1px solid #0000FF)]
-            RenderText {#text} at (1,1) size 21x19
+            RenderText {#text} at (1,1) size 21x20
               text run at (1,1) width 21: "bar"
         RenderBlock (anonymous) at (0,59) size 784x20
-          RenderText {#text} at (0,0) size 23x19
+          RenderText {#text} at (0,0) size 23x20
             text run at (0,0) width 23: "baz"
 caret: position 3 of child 1 {#text} of child 6 {DIV} of body

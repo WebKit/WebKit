@@ -165,12 +165,12 @@ static float computedUnderlineOffset(const UnderlineOffsetArguments& context)
             // Position underline relative to the bottom edge of the lowest element's content box.
             auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + std::max(context.textUnderlinePositionUnder->textRunOffsetFromBottomMost, 0.f);
             desiredOffset += styleToUse.textUnderlineOffset().resolve(styleToUse) + defaultGap(styleToUse);
-            underlineOffset = std::max<float>(desiredOffset, fontMetrics.intAscent());
+            underlineOffset = std::max<float>(desiredOffset, fontMetrics.ascent());
         }
     } else if (textUnderlinePosition.isFromFont())
-        underlineOffset = fontMetrics.intAscent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().resolve(styleToUse);
+        underlineOffset = fontMetrics.ascent() + fontMetrics.underlinePosition().value_or(0) + styleToUse.textUnderlineOffset().resolve(styleToUse);
     else
-        underlineOffset = fontMetrics.intAscent() + styleToUse.textUnderlineOffset().resolve(styleToUse, defaultGap(styleToUse));
+        underlineOffset = fontMetrics.ascent() + styleToUse.textUnderlineOffset().resolve(styleToUse, defaultGap(styleToUse));
     return underlineOffset;
 }
 
@@ -331,11 +331,11 @@ float textBoxEdgeAdjustmentForUnderline(const RenderStyle& style)
     case TextEdgeOver::Text:
         return 0.f;
     case TextEdgeOver::Cap:
-        return fontMetrics.intAscent() - fontMetrics.intCapHeight();
+        return fontMetrics.ascent() - fontMetrics.capHeight().value_or(0.f);
     case TextEdgeOver::Ex:
-        return roundf(fontMetrics.xHeight().value_or(0.f));
+        return fontMetrics.xHeight().value_or(0.f);
     case TextEdgeOver::Ideographic:
-        return fontMetrics.intAscent(FontBaseline::Ideographic);
+        return fontMetrics.ascent(FontBaseline::Ideographic);
     case TextEdgeOver::IdeographicInk:
         ASSERT_NOT_IMPLEMENTED_YET();
         return 0.f;

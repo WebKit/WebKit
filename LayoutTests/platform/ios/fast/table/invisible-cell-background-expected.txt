@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 320x19
+        RenderText {#text} at (0,0) size 320x20
           text run at (0,0) width 320: "This tests that the background of a table cell with "
-        RenderInline {TT} at (319,5) size 133x14
-          RenderText {#text} at (319,5) size 133x14
+        RenderInline {TT} at (319,5) size 133x15
+          RenderText {#text} at (319,5) size 133x15
             text run at (319,5) width 133: "visibility:hidden"
-        RenderText {#text} at (451,0) size 110x19
+        RenderText {#text} at (451,0) size 110x20
           text run at (451,0) width 110: " is never painted."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 465x19
+        RenderText {#text} at (0,0) size 465x20
           text run at (0,0) width 465: "You should see nine green squares and no red, orange or yellow squares."
       RenderTable {TABLE} at (4,72) size 27x25
         RenderTableSection {TBODY} at (0,0) size 27x25 [bgcolor=#FFFF00]

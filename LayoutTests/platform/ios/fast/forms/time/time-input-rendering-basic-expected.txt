@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (61,0) size 4x19
+      RenderText {#text} at (61,0) size 4x20
         text run at (61,0) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 61x22 clip at (9,9) size 59x20
-  RenderFlexibleBox {INPUT} at (0,0) size 61x22 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+layer at (8,9) size 61x22 clip at (9,10) size 59x20
+  RenderFlexibleBox {INPUT} at (0,0) size 61x23 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
     RenderBlock {DIV} at (6,4) size 49x14
       RenderText {#text} at (3,0) size 43x14
         text run at (3,0) width 43: "9:41\x{202F}AM"
-layer at (73,8) size 61x22 clip at (74,9) size 59x20
-  RenderFlexibleBox {INPUT} at (65,0) size 61x22 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+layer at (73,9) size 61x22 clip at (74,10) size 59x20
+  RenderFlexibleBox {INPUT} at (65,0) size 61x23 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
     RenderBlock {DIV} at (6,4) size 49x14
       RenderText {#text} at (3,0) size 43x14
         text run at (3,0) width 18: "AM"

@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 257x19
+        RenderText {#text} at (0,0) size 257x20
           text run at (0,0) width 257: "Text should not overlap the blue square."
       RenderBlock {DIV} at (0,36) size 406x210 [border: (3px solid #800000)]
-        RenderText {#text} at (5,5) size 393x99
+        RenderText {#text} at (5,5) size 393x100
           text run at (5,5) width 371: "Fusce at ante. In hac habitasse platea dictumst. Maecenas "
           text run at (5,25) width 393: "iaculis nonummy magna. Vivamus a tortor vitae enim ornare "
           text run at (5,45) width 357: "consectetuer. Lorem ipsum dolor sit amet, consectetuer "
           text run at (5,65) width 374: "adipiscing elit. Etiam et ipsum. Nam consectetuer mi eget "
           text run at (5,85) width 37: "velit. "
         RenderBlock (floating) {DIV} at (337,85) size 64x64 [bgcolor=#ADD8E6]
-        RenderText {#text} at (5,85) size 348x119
+        RenderText {#text} at (5,85) size 348x120
           text run at (41,85) width 260: "Sed nec risus vitae felis auctor ultricies. "
           text run at (5,105) width 336: "Pellentesque aliquet quam ac lorem. Duis interdum, "
           text run at (5,125) width 328: "elit in ultricies auctor, erat pede sollicitudin libero, "

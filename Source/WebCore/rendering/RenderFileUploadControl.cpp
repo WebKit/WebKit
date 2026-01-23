@@ -196,20 +196,20 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
                         if (!isHorizontalWritingMode) {
                             if (isBlockFlipped)
-                                return textVisualRect.x() - metrics.intAscent();
+                                return textVisualRect.x() - (settings().subpixelInlineLayoutEnabled() ? metrics.ascent() : metrics.intAscent());
 
-                            return textVisualRect.x() + metrics.intDescent();
+                            return textVisualRect.x() + (settings().subpixelInlineLayoutEnabled() ? metrics.descent() : metrics.intDescent());
                         }
 
                         if (isBlockFlipped)
-                            return textVisualRect.y() - metrics.intDescent();
+                            return textVisualRect.y() - (settings().subpixelInlineLayoutEnabled() ? metrics.descent() : metrics.intDescent());
 
-                        return textVisualRect.y() + metrics.intAscent();
+                        return textVisualRect.y() + (settings().subpixelInlineLayoutEnabled() ? metrics.ascent() : metrics.intAscent());
                     }
                 }
             }
             // File upload button is display: none (see ::file-selector-button).
-            return roundToInt(marginBoxLogicalHeight(containingBlock()->writingMode()));
+            return roundToDevicePixel(marginBoxLogicalHeight(containingBlock()->writingMode()), document().deviceScaleFactor());
         }();
 
         paintInfo.context().setFillColor(style().visitedDependentColorApplyingColorFilter());
@@ -220,10 +220,10 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
             if (writingMode().isLineOverLeft()) {
                 textLogicalLeft += font.width(textRun);
-                textLogicalTop += font.metricsOfPrimaryFont().intAscent();
+                textLogicalTop += (settings().subpixelInlineLayoutEnabled() ? font.metricsOfPrimaryFont().ascent() : font.metricsOfPrimaryFont().intAscent());
             }
 
-            auto textOrigin = IntPoint(roundToInt(textLogicalLeft), roundToInt(textLogicalTop));
+            auto textOrigin = roundPointToDevicePixels({ textLogicalLeft, textLogicalTop }, document().deviceScaleFactor());
             if (!isHorizontalWritingMode) {
                 textOrigin = textOrigin.transposedPoint();
 

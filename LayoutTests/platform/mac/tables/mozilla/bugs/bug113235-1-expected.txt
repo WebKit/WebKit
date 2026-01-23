@@ -16,12 +16,12 @@ layer at (0,0) size 785x11400
                   RenderTableSection {TBODY} at (1,1) size 565x50
                     RenderTableRow {TR} at (0,2) size 565x22
                       RenderTableCell {TD} at (2,2) size 112x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 5x17
+                        RenderText {#text} at (2,2) size 5x18
                           text run at (2,2) width 5: " "
                       RenderTableCell {TD} at (115,2) size 448x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderTableRow {TR} at (0,26) size 565x22
                       RenderTableCell {TD} at (2,26) size 112x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 108x17
+                        RenderText {#text} at (2,2) size 108x18
                           text run at (2,2) width 108: "Search again..."
                 RenderText {#text} at (2,54) size 707x15
                   text run at (2,54) width 327: "This text node only exists once in the original document! "
@@ -29,8 +29,8 @@ layer at (0,0) size 785x11400
                   text run at (632,54) width 77: "hang forever."
                 RenderInline {A} at (708,54) size 0x15
                 RenderBlock {H2} at (2,85) size 707x24
-                  RenderInline {A} at (0,0) size 164x22
-                    RenderText {#text} at (0,0) size 164x22
+                  RenderInline {A} at (0,0) size 164x23
+                    RenderText {#text} at (0,0) size 164x23
                       text run at (0,0) width 164: "Table of Contents"
                 RenderBlock {P} at (2,124) size 707x151
                   RenderInline {B} at (0,0) size 76x15
@@ -3586,8 +3586,8 @@ layer at (0,0) size 785x11400
                     RenderTableRow {TR} at (0,2) size 26x0
                     RenderTableRow {TR} at (0,4) size 26x20
                       RenderTableCell {TD} at (2,4) size 10x20 [r=1 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 8x17
+                        RenderText {#text} at (1,1) size 8x18
                           text run at (1,1) width 8: "x"
                       RenderTableCell {TD} at (14,4) size 10x20 [r=1 c=1 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 8x17
+                        RenderText {#text} at (1,1) size 8x18
                           text run at (1,1) width 8: "x"

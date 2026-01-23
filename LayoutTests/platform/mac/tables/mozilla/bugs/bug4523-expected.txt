@@ -16,9 +16,9 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 353x21
             RenderTableCell {TD} at (0,0) size 349x21 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 13x16
-              RenderInline {FONT} at (13,0) size 142x20 [color=#FFFFFF]
-                RenderInline {B} at (13,0) size 142x20
-                  RenderText {#text} at (13,0) size 142x20
+              RenderInline {FONT} at (13,0) size 142x21 [color=#FFFFFF]
+                RenderInline {B} at (13,0) size 142x21
+                  RenderText {#text} at (13,0) size 142x21
                     text run at (13,0) width 142: "Rugged Laptops"
             RenderTableCell {TD} at (348,3) size 5x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,3) size 4x18
@@ -34,9 +34,9 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 353x21
             RenderTableCell {TD} at (0,0) size 349x21 [bgcolor=#006666] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 13x16
-              RenderInline {FONT} at (13,0) size 142x20 [color=#FFFFFF]
-                RenderInline {B} at (13,0) size 142x20
-                  RenderText {#text} at (13,0) size 142x20
+              RenderInline {FONT} at (13,0) size 142x21 [color=#FFFFFF]
+                RenderInline {B} at (13,0) size 142x21
+                  RenderText {#text} at (13,0) size 142x21
                     text run at (13,0) width 142: "Rugged Laptops"
             RenderTableCell {TD} at (348,3) size 5x18 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,3) size 4x18

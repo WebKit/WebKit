@@ -81,15 +81,15 @@ layer at (0,0) size 785x1707
               RenderText {#text} at (0,2) size 226x16
                 text run at (0,2) width 226: "Your research is primarily focused on:"
             RenderBlock {SPAN} at (325,238) size 180x21 [color=#333333]
-              RenderBlock {INPUT} at (2,5) size 12x12 [color=#000000]
+              RenderBlock {INPUT} at (2,4) size 12x13 [color=#000000]
               RenderText {#text} at (16,2) size 31x16
                 text run at (16,2) width 31: "Texts"
             RenderBlock {SPAN} at (325,258) size 180x21 [color=#333333]
-              RenderBlock {INPUT} at (2,5) size 12x12 [color=#000000]
+              RenderBlock {INPUT} at (2,4) size 12x13 [color=#000000]
               RenderText {#text} at (16,2) size 136x16
                 text run at (16,2) width 136: "Performance materials"
             RenderBlock {SPAN} at (325,278) size 180x21 [color=#333333]
-              RenderBlock {INPUT} at (2,5) size 12x12 [color=#000000]
+              RenderBlock {INPUT} at (2,4) size 12x13 [color=#000000]
               RenderText {#text} at (16,2) size 22x16
                 text run at (16,2) width 22: "n/a"
             RenderBlock {H2} at (0,323) size 560x17 [color=#333333]
@@ -101,11 +101,11 @@ layer at (0,0) size 785x1707
             RenderBlock {SPAN} at (325,349) size 180x21 [color=#333333]
               RenderText {#text} at (0,2) size 19x16
                 text run at (0,2) width 19: "Yes"
-              RenderBlock {INPUT} at (20,5) size 13x12 [color=#000000]
+              RenderBlock {INPUT} at (20,4) size 13x13 [color=#000000]
               RenderText {#text} at (34,2) size 21x16
                 text run at (34,2) width 5: " "
                 text run at (38,2) width 17: "No"
-              RenderBlock {INPUT} at (56,5) size 13x12 [color=#000000]
+              RenderBlock {INPUT} at (56,4) size 13x13 [color=#000000]
               RenderText {#text} at (0,0) size 0x0
             RenderBlock {P} at (0,382) size 560x21 [color=#333333]
               RenderText {#text} at (0,2) size 388x16

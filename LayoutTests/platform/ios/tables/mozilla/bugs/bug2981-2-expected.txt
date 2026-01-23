@@ -15,11 +15,11 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,0) size 110x122
                     RenderTableCell {TD} at (0,0) size 110x122 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (5,1) size 100x100
-                      RenderText {#text} at (1,101) size 53x19
+                      RenderText {#text} at (1,101) size 53x20
                         text run at (1,101) width 53: "HELLO"
           RenderTableRow {TR} at (0,0) size 796x126
             RenderTableCell {TD} at (114,2) size 327x122 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,3) size 321x119
+              RenderText {#text} at (1,3) size 321x120
                 text run at (1,1) width 320: "The Zurich football team known as FC Blue Stars"
                 text run at (1,21) width 120: "is one of the city's "
                 text run at (120,21) width 162: "oldest-established clubs, "
@@ -32,6 +32,6 @@ layer at (0,0) size 800x600
                 text run at (1,101) width 75: "it now also "
                 text run at (75,101) width 126: "has an international"
             RenderTableCell {TD} at (441,42) size 355x42 [bgcolor=#E6E8FA] [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,43) size 320x39
+              RenderText {#text} at (1,43) size 320x40
                 text run at (1,1) width 320: "hello hello hello hello hello hello hello hello hello"
                 text run at (1,21) width 68: "hello hello"

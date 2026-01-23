@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TH} at (2,12) size 86x2 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TH} at (89,12) size 271x2 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TH} at (361,2) size 271x22 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (88,1) size 94x19
+              RenderText {#text} at (88,1) size 94x20
                 text run at (88,1) width 94: "text-align:left"
             RenderTableCell {TH} at (633,2) size 271x22 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (78,1) size 114x19
+              RenderText {#text} at (78,1) size 114x20
                 text run at (78,1) width 114: "text-align:center"
             RenderTableCell {TH} at (905,2) size 271x22 [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (83,1) size 104x19
+              RenderText {#text} at (83,1) size 104x20
                 text run at (83,1) width 104: "text-align:right"
           RenderTableRow {TR} at (0,26) size 1178x24
             RenderTableCell {TH} at (2,37) size 86x2 [r=1 c=0 rs=1 cs=1]
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 62: "Choose File"
           RenderTableRow {TR} at (0,52) size 1178x24
             RenderTableCell {TH} at (2,53) size 86x22 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 84x19
+              RenderText {#text} at (1,2) size 84x20
                 text run at (1,1) width 84: "direction:ltr"
             RenderTableCell {TD} at (89,52) size 271x24 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (2,2) size 266x20 "no file selected"
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 62: "Choose File"
           RenderTableRow {TR} at (0,78) size 1178x24
             RenderTableCell {TH} at (2,79) size 86x22 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,2) size 84x19
+              RenderText {#text} at (1,2) size 84x20
                 text run at (1,1) width 84: "direction:rtl"
             RenderTableCell {TD} at (89,78) size 271x24 [border: (1px solid #000000)] [r=3 c=1 rs=1 cs=1]
               RenderFileUploadControl {INPUT} at (2,2) size 266x20 "no file selected"

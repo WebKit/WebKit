@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (4,4) size 33x22
             text run at (4,4) width 33: "One"
           RenderBlock {H3} at (4,47) size 776x223 [border: (2px solid #FF0000)]
-            RenderInline {I} at (4,4) size 768x188
-              RenderText {#text} at (4,4) size 39x24
-                text run at (4,4) width 39: "Two"
+            RenderInline {I} at (4,3) size 768x189
+              RenderText {#text} at (4,3) size 39x26
+                text run at (4,3) width 39: "Two"
               RenderBlock {H3} at (4,53) size 768x139 [border: (2px solid #FF0000)]
-                RenderInline {I} at (4,4) size 760x100
-                  RenderText {#text} at (4,4) size 63x29
-                    text run at (4,4) width 63: "Three"
+                RenderInline {I} at (4,3) size 760x101
+                  RenderText {#text} at (4,3) size 63x31
+                    text run at (4,3) width 63: "Three"
                   RenderBlock {H3} at (4,62) size 760x42 [border: (2px solid #FF0000)]
-                    RenderInline {I} at (4,4) size 64x33
-                      RenderText {#text} at (4,4) size 64x33
-                        text run at (4,4) width 64: "Four"
+                    RenderInline {I} at (4,3) size 64x35
+                      RenderText {#text} at (4,3) size 64x35
+                        text run at (4,3) width 64: "Four"

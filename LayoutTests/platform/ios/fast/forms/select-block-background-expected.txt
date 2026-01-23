@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 551x19
+        RenderText {#text} at (0,0) size 551x20
           text run at (0,0) width 551: "This tests that backgrounds for list box items draw correctly when a list box is a block"
-        RenderBR {BR} at (551,0) size 0x19
+        RenderBR {BR} at (551,0) size 0x20
       RenderMenuList {SELECT} at (0,20) size 51x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (5,3) size 41x14
           RenderText at (0,0) size 28x14

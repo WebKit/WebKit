@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 775x39
+        RenderText {#text} at (0,0) size 775x40
           text run at (0,0) width 441: "Click on a link on the left hand column. Also note the overlap of the "
           text run at (440,0) width 335: "text box with the submit button. (And, removing the"
           text run at (0,20) width 156: "font tag that is wrapped "
           text run at (155,20) width 239: "around the text box clears up layout)."
       RenderBlock (anonymous) at (0,56) size 784x20
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x20
       RenderBlock {FORM} at (0,76) size 784x136
         RenderBlock {CENTER} at (0,0) size 784x136
           RenderTable {TABLE} at (92,0) size 600x136 [bgcolor=#EEEEEE] [border: (1px outset #000000)]
@@ -21,30 +21,30 @@ layer at (0,0) size 800x600
                     RenderTableSection {TBODY} at (1,1) size 113x118
                       RenderTableRow {TR} at (0,2) size 113x28
                         RenderTableCell {TD} at (2,2) size 109x27 [bgcolor=#CCCCCC] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,3) size 62x20 [color=#660099]
-                            RenderInline {B} at (3,3) size 62x20
-                              RenderText {#text} at (3,3) size 62x20
-                                text run at (3,3) width 62: "Netscape"
+                          RenderInline {A} at (3,4) size 62x20 [color=#660099]
+                            RenderInline {B} at (3,4) size 62x20
+                              RenderText {#text} at (3,4) size 62x20
+                                text run at (3,4) width 62: "Netscape"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,31) size 113x28
                         RenderTableCell {TD} at (2,32) size 109x27 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,3) size 58x20 [color=#660099]
-                            RenderInline {B} at (3,3) size 58x20
-                              RenderText {#text} at (3,3) size 58x20
-                                text run at (3,3) width 58: "Infoseek"
+                          RenderInline {A} at (3,4) size 58x20 [color=#660099]
+                            RenderInline {B} at (3,4) size 58x20
+                              RenderText {#text} at (3,4) size 58x20
+                                text run at (3,4) width 58: "Infoseek"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,61) size 113x27
                         RenderTableCell {TD} at (2,61) size 109x27 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,3) size 79x20 [color=#660099]
-                            RenderInline {B} at (3,3) size 79x20
-                              RenderText {#text} at (3,3) size 79x20
-                                text run at (3,3) width 79: "LookSmart"
+                          RenderInline {A} at (3,4) size 79x19 [color=#660099]
+                            RenderInline {B} at (3,4) size 79x19
+                              RenderText {#text} at (3,4) size 79x19
+                                text run at (3,4) width 79: "LookSmart"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,90) size 113x26
                         RenderTableCell {TD} at (2,90) size 109x26 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=3 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,3) size 66x19 [color=#660099]
-                            RenderInline {B} at (3,3) size 66x19
-                              RenderText {#text} at (3,3) size 66x19
+                          RenderInline {A} at (3,3) size 66x20 [color=#660099]
+                            RenderInline {B} at (3,3) size 66x20
+                              RenderText {#text} at (3,3) size 66x20
                                 text run at (3,3) width 66: "Directory"
                           RenderText {#text} at (0,0) size 0x0
                 RenderTableCell {TD} at (128,26) size 468x82 [bgcolor=#CCCCCC] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
@@ -65,16 +65,16 @@ layer at (0,0) size 800x600
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,38) size 457x30
                         RenderTableCell {TD} at (4,38) size 114x30 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                          RenderText {#text} at (5,5) size 27x19
+                          RenderText {#text} at (5,5) size 27x20
                             text run at (5,5) width 27: "asdf"
                         RenderTableCell {TD} at (121,38) size 114x30 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-                          RenderText {#text} at (5,5) size 27x19
+                          RenderText {#text} at (5,5) size 27x20
                             text run at (5,5) width 27: "asdf"
                         RenderTableCell {TD} at (238,38) size 114x30 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
-                          RenderText {#text} at (5,5) size 27x19
+                          RenderText {#text} at (5,5) size 27x20
                             text run at (5,5) width 27: "asdf"
                         RenderTableCell {TD} at (355,38) size 98x30 [border: (1px inset #000000)] [r=1 c=3 rs=1 cs=1]
-                          RenderText {#text} at (5,5) size 27x19
+                          RenderText {#text} at (5,5) size 27x20
                             text run at (5,5) width 27: "asdf"
 layer at (250,128) size 289x14 backgroundClip at (250,128) size 288x14 clip at (250,128) size 288x14
   RenderBlock {DIV} at (6,3) size 289x14

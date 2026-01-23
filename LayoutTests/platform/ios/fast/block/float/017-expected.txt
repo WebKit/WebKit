@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (452,16) size 0x19
         RenderImage {IMG} at (2,31) size 250x125 [bgcolor=#FFA500]
-        RenderText {#text} at (255,31) size 190x139
+        RenderText {#text} at (255,31) size 190x140
           text run at (255,31) width 190: "Theme Park Roller Coaster is"
           text run at (255,51) width 170: "an excellent game that lets"
           text run at (255,71) width 177: "you create your own virtual"
@@ -19,9 +19,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,189) size 784x0
       RenderBlock {DIV} at (0,189) size 304x44 [border: (2px solid #008000)]
         RenderImage {IMG} at (197,5) size 105x70 [bgcolor=#800080]
-        RenderText {#text} at (2,2) size 151x19
+        RenderText {#text} at (2,2) size 151x20
           text run at (2,2) width 151: "First non-breaking line."
-        RenderInline {NOBR} at (2,22) size 169x19
-          RenderText {#text} at (2,22) size 169x19
+        RenderInline {NOBR} at (2,22) size 169x20
+          RenderText {#text} at (2,22) size 169x20
             text run at (2,22) width 169: "Second non-breaking line."
         RenderText {#text} at (0,0) size 0x0

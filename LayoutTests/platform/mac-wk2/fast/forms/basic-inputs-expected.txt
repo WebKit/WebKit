@@ -33,25 +33,25 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (108,270) size 1x18
         RenderBR {BR} at (0,288) size 0x18
       RenderBlock {DIV} at (10,316) size 450x44 [border: (1px solid #FF0000)]
-        RenderText {#text} at (1,2) size 8x18
-          text run at (1,2) width 8: "a"
+        RenderText {#text} at (1,1) size 8x19
+          text run at (1,1) width 8: "a"
         RenderTextControl {INPUT} at (8,1) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderText {#text} at (163,2) size 29x18
-          text run at (163,2) width 29: "text "
+        RenderText {#text} at (163,1) size 29x19
+          text run at (163,1) width 29: "text "
         RenderTextControl {INPUT} at (191,1) size 155x21 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderText {#text} at (345,2) size 20x18
-          text run at (345,2) width 13: "b "
-          text run at (357,2) width 8: "a"
+        RenderText {#text} at (345,1) size 20x19
+          text run at (345,1) width 13: "b "
+          text run at (357,1) width 8: "a"
         RenderTextControl {INPUT} at (1,22) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (7,4) size 142x13
             RenderBlock {DIV} at (0,0) size 142x13
-        RenderText {#text} at (156,23) size 66x18
-          text run at (156,23) width 66: "password "
+        RenderText {#text} at (156,22) size 66x19
+          text run at (156,22) width 66: "password "
         RenderTextControl {INPUT} at (221,22) size 155x21 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderFlexibleBox {DIV} at (7,4) size 140x13
             RenderBlock {DIV} at (0,0) size 140x13
-        RenderText {#text} at (375,23) size 9x18
-          text run at (375,23) width 9: "b"
+        RenderText {#text} at (375,22) size 9x19
+          text run at (375,22) width 9: "b"
       RenderBlock {DIV} at (10,370) size 450x21 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 8x18
           text run at (1,1) width 8: "a"

@@ -8,16 +8,16 @@ getClientRects on a rect at absolute coordinates:
 { x 20.00 y 30.00 width 40.00 height 50.00 }
 
 getClientRects on a rotated rect:
-{ x 30.36 y 115.36 width 139.27 height 139.27 }
+{ x 30.36 y 114.86 width 139.27 height 139.27 }
 
 getClientRects on a g:
-{ x 0.00 y 105.00 width 260.00 height 110.00 }
+{ x 0.00 y 104.50 width 260.00 height 110.00 }
 
 getClientRects on a path:
-{ x 30.00 y 145.00 width 50.00 height 50.00 }
+{ x 30.00 y 144.50 width 50.00 height 50.00 }
 
 getClientRects on text:
-{ x 30.00 y 145.00 width 50.00 height 50.00 }
+{ x 30.00 y 144.50 width 50.00 height 50.00 }
 PASS successfullyParsed is true
 
 TEST COMPLETE

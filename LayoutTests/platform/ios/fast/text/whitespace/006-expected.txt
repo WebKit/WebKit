@@ -9,7 +9,7 @@ layer at (0,0) size 800x204
             text run at (16,2) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 503x19
+        RenderText {#text} at (0,0) size 503x20
           text run at (0,0) width 503: "There should be no red below, only three identical striped green and lime bars."
       RenderBlock {DIV} at (20,76) size 744x20
         RenderInline {SPAN} at (0,0) size 220x20 [color=#800000] [bgcolor=#FF0000]

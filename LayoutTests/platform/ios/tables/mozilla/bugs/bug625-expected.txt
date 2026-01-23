@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,12) size 784x20
-        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,0) size 0x20
       RenderTable {TABLE} at (0,32) size 642x219
         RenderTableSection {TBODY} at (0,0) size 642x219
           RenderTableRow {TR} at (0,0) size 642x27
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (217,27) size 426x192 [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 252x172 [border: (1px solid #000000)]
               RenderBR {BR} at (252,157) size 0x19
-              RenderText {#text} at (0,172) size 76x19
+              RenderText {#text} at (0,172) size 76x20
                 text run at (0,172) width 76: "Click Here!"
 layer at (8,8) size 1004x4 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 1004x4 [color=#808080] [border: (2px solid #000000)]

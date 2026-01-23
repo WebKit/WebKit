@@ -12,8 +12,8 @@ layer at (49,39) size 720x540
     RenderSVGEllipse {circle} at (193,93) size 432x432 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [cx=50.00] [cy=50.00] [r=30.00]
 layer at (48,38) size 722x542 layerType: foreground only
   RenderBody {body} at (48,38) size 722x542 [border: (1px solid #000000)]
-    RenderBlock {form} at (1,1) size 720x122
-      RenderFieldSet {fieldset} at (2,0) size 716x122 [border: (2px groove #C0C0C0)]
+    RenderBlock {form} at (1,1) size 720x123
+      RenderFieldSet {fieldset} at (2,0) size 716x123 [border: (2px groove #C0C0C0)]
         RenderBlock {legend} at (14,0) size 88x18
           RenderText {#text} at (2,0) size 84x18
             text run at (2,0) width 84: "HTML Form"
@@ -23,10 +23,10 @@ layer at (48,38) size 722x542 layerType: foreground only
               text run at (0,0) width 110: "Enter something:"
           RenderText {#text} at (109,0) size 5x18
             text run at (109,0) width 5: " "
-          RenderTextControl {input} at (113,0) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+          RenderTextControl {input} at (113,0) size 149x20 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {p} at (14,74) size 688x20
-          RenderButton {button} at (0,1) size 63x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+        RenderBlock {p} at (14,74) size 688x21
+          RenderButton {button} at (0,1) size 63x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,2) size 47x13
               RenderText {#text} at (0,0) size 47x13
                 text run at (0,0) width 47: "Activate!"

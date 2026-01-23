@@ -31,22 +31,22 @@ layer at (0,0) size 800x1142
             text run at (0,17) width 577: "another 'background-color' declaration, or by a 'background'"
             text run at (0,34) width 365: "declaration that does specify a color."
         RenderBlock (anonymous) at (4,352) size 628x20
-          RenderText {#text} at (0,0) size 410x19
+          RenderText {#text} at (0,0) size 410x20
             text run at (0,0) width 410: "This is in contradiction with the CSS2 specification which says:"
         RenderBlock {UL} at (4,388) size 628x40
           RenderListItem {LI} at (40,0) size 588x40
-            RenderListMarker at (-18,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 29x19
+            RenderListMarker at (-18,0) size 7x20: bullet
+            RenderText {#text} at (0,0) size 29x20
               text run at (0,0) width 29: "The "
-            RenderInline {A} at (28,0) size 83x19 [color=#0000EE]
-              RenderText {#text} at (28,0) size 83x19
+            RenderInline {A} at (28,0) size 83x20 [color=#0000EE]
+              RenderText {#text} at (28,0) size 83x20
                 text run at (28,0) width 83: "'background'"
-            RenderText {#text} at (0,0) size 578x39
+            RenderText {#text} at (0,0) size 578x40
               text run at (110,0) width 468: " property first sets all the individual background properties to their initial"
               text run at (0,20) width 383: "values, then assigns explicit values given in the declaration."
       RenderBlock {DIV} at (74,478) size 636x627 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
         RenderBlock (anonymous) at (4,4) size 628x20
-          RenderText {#text} at (0,0) size 221x19
+          RenderText {#text} at (0,0) size 221x20
             text run at (0,0) width 221: "This DIV has a green background."
         RenderBlock {H1} at (62,45) size 511x161 [border: (4px solid #008000)]
           RenderText {#text} at (4,5) size 499x150
@@ -55,7 +55,7 @@ layer at (0,0) size 800x1142
             text run at (4,81) width 483: "style rule is ignored on the Affected"
             text run at (4,119) width 136: "Browsers."
         RenderBlock (anonymous) at (4,235) size 628x21
-          RenderText {#text} at (0,0) size 158x19
+          RenderText {#text} at (0,0) size 158x20
             text run at (0,0) width 158: "The DIV continues here."
         RenderBlock {H1} at (62,276) size 511x161 [border: (4px solid #008000)]
           RenderText {#text} at (4,5) size 447x150
@@ -64,7 +64,7 @@ layer at (0,0) size 800x1142
             text run at (4,81) width 447: "!important rule is ignored on the"
             text run at (4,119) width 259: "Affected Browsers."
         RenderBlock (anonymous) at (4,466) size 628x21
-          RenderText {#text} at (0,0) size 158x19
+          RenderText {#text} at (0,0) size 158x20
             text run at (0,0) width 158: "The DIV continues here."
         RenderBlock {H1} at (62,508) size 511x85 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
           RenderText {#text} at (4,5) size 484x74
