@@ -187,6 +187,9 @@ bool WebFullScreenManager::supportsFullScreenForElement(const WebCore::Element& 
     if (!m_page->protectedCorePage()->isDocumentFullscreenEnabled())
         return false;
 
+    if (m_inWindowFullScreenMode && &element != m_element)
+        return false;
+
 #if PLATFORM(IOS_FAMILY)
     return PAL::currentUserInterfaceIdiomIsDesktop() || !withKeyboard;
 #else
