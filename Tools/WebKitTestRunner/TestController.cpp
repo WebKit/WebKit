@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2150,9 +2150,9 @@ static WKRetainPtr<WKArrayRef> WKURLArrayFromWKStringArray(const WKTypeRef array
     auto urlArray = adoptWK(WKMutableArrayCreate());
     const auto length = WKArrayGetSize(stringArray);
     for (size_t i = 0; i < length; i++) {
-        const auto str = WKArrayGetItemAtIndex(stringArray, i);
-        const auto cstr = toWTFString(stringValue(str)).utf8().data();
-        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr)).get());
+        auto str = WKArrayGetItemAtIndex(stringArray, i);
+        auto cstr = toWTFString(stringValue(str)).utf8();
+        WKArrayAppendItem(urlArray.get(), adoptWK(WKURLCreateWithUTF8CString(cstr.data())).get());
     }
 
     return urlArray;
