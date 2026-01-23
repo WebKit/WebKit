@@ -159,7 +159,8 @@ PropertyTable::~PropertyTable()
 void PropertyTable::seal()
 {
     forEachPropertyMutable([&](auto& entry) {
-        entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
+        if (!PropertyName(entry.key()).isPrivateName())
+            entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
         return IterationStatus::Continue;
     });
 }
@@ -167,10 +168,12 @@ void PropertyTable::seal()
 void PropertyTable::freeze()
 {
     forEachPropertyMutable([&](auto& entry) {
-        if (!(entry.attributes() & PropertyAttribute::Accessor))
-            entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly));
-        else
-            entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
+        if (!PropertyName(entry.key()).isPrivateName()) {
+            if (!(entry.attributes() & PropertyAttribute::Accessor))
+                entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly));
+            else
+                entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
+        }
         return IterationStatus::Continue;
     });
 }
@@ -179,7 +182,7 @@ bool PropertyTable::isSealed() const
 {
     bool result = true;
     forEachProperty([&](const auto& entry) {
-        if ((entry.attributes() & PropertyAttribute::DontDelete) != static_cast<unsigned>(PropertyAttribute::DontDelete)) {
+        if (!PropertyName(entry.key()).isPrivateName() && (entry.attributes() & PropertyAttribute::DontDelete) != static_cast<unsigned>(PropertyAttribute::DontDelete)) {
             result = false;
             return IterationStatus::Done;
         }
@@ -192,13 +195,15 @@ bool PropertyTable::isFrozen() const
 {
     bool result = true;
     forEachProperty([&](const auto& entry) {
-        if (!(entry.attributes() & PropertyAttribute::DontDelete)) {
-            result = false;
-            return IterationStatus::Done;
-        }
-        if (!(entry.attributes() & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))) {
-            result = false;
-            return IterationStatus::Done;
+        if (!PropertyName(entry.key()).isPrivateName()) {
+            if (!(entry.attributes() & PropertyAttribute::DontDelete)) {
+                result = false;
+                return IterationStatus::Done;
+            }
+            if (!(entry.attributes() & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))) {
+                result = false;
+                return IterationStatus::Done;
+            }
         }
         return IterationStatus::Continue;
     });
