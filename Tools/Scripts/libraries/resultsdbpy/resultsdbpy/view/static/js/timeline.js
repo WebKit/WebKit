@@ -74,44 +74,53 @@ function commitsForResults(results, limit, allCommits = true) {
     let commits = [];
     let repositories = new Set();
     let currentCommitIndex = CommitBank.commits.length - 1;
+
+    let uuids = new Set();
     Object.keys(results).forEach((key) => {
         results[key].forEach(pair => {
             pair.results.forEach(result => {
                 if (result.uuid < minDisplayedUuid)
                     return;
-                let candidateCommits = [];
-
-                if (!allCommits)
-                    currentCommitIndex = CommitBank.commits.length - 1;
-                while (currentCommitIndex >= 0) {
-                    if (CommitBank.commits[currentCommitIndex].uuid < result.uuid)
-                        break;
-                    if (allCommits || CommitBank.commits[currentCommitIndex].uuid === result.uuid)
-                        candidateCommits.push(CommitBank.commits[currentCommitIndex]);
-                    --currentCommitIndex;
-                }
-                if (candidateCommits.length === 0 || candidateCommits[candidateCommits.length - 1].uuid !== result.uuid)
-                    candidateCommits.push({
-                        id: '?',
-                        uuid: result.uuid,
-                    });
-
-                let index = 0;
-                candidateCommits.forEach(commit => {
-                    if (commit.repository_id)
-                        repositories.add(commit.repository_id);
-                    while (index < commits.length) {
-                        if (commit.uuid === commits[index].uuid)
-                            return;
-                        if (commit.uuid > commits[index].uuid) {
-                            commits.splice(index, 0, commit);
-                            return;
-                        }
-                        ++index;
-                    }
-                    commits.push(commit);
-                });
+                uuids.add(result.uuid);
             });
+        });
+    });
+
+    let sortedUuids = [...uuids].sort((a, b) => b - a);
+
+    sortedUuids.forEach(uuid => {
+        let candidateCommits = [];
+
+        if (!allCommits)
+            currentCommitIndex = CommitBank.commits.length - 1;
+        while (currentCommitIndex >= 0) {
+            if (CommitBank.commits[currentCommitIndex].uuid < uuid)
+                break;
+            if (allCommits || CommitBank.commits[currentCommitIndex].uuid === uuid)
+                candidateCommits.push(CommitBank.commits[currentCommitIndex]);
+            --currentCommitIndex;
+        }
+
+        if (candidateCommits.length === 0 || candidateCommits[candidateCommits.length - 1].uuid !== uuid)
+            candidateCommits.push({
+                id: '?',
+                uuid: uuid,
+            });
+
+        let index = 0;
+        candidateCommits.forEach(commit => {
+            if (commit.repository_id)
+                repositories.add(commit.repository_id);
+            while (index < commits.length) {
+                if (commit.uuid === commits[index].uuid)
+                    return;
+                if (commit.uuid > commits[index].uuid) {
+                    commits.splice(index, 0, commit);
+                    return;
+                }
+                ++index;
+            }
+            commits.push(commit);
         });
     });
     if (currentCommitIndex >= 0 && commits.length) {
@@ -1119,7 +1128,9 @@ class TimelineFromEndpoint {
             let resultsByKey = {};
             this.results[configuration.toKey()].forEach(pair => {
                 const strippedConfig = new Configuration(pair.configuration);
-                resultsByKey[strippedConfig.toKey()] = combineResults([], [...pair.results].sort(function(a, b) {return b.uuid - a.uuid;}));
+                const key = strippedConfig.toKey();
+                const sortedPairResults = [...pair.results].sort(function(a, b) {return b.uuid - a.uuid;});
+                resultsByKey[key] = combineResults(resultsByKey[key] || [], sortedPairResults);
                 strippedConfig.sdk = null;
                 mappedChildrenConfigs[strippedConfig.toKey()] = strippedConfig;
                 if (!childrenConfigsBySDK[strippedConfig.toKey()])
@@ -1138,9 +1149,16 @@ class TimelineFromEndpoint {
             childrenConfigs.forEach(config => {
                 childrenConfigsBySDK[config.toKey()].sort(function(a, b) {return a.compareSDKs(b);});
 
+                // If all configs map to the same key in resultsByKey,
+                // there's no point showing expandable SDK rows.
+                const uniqueResultKeys = [...new Set(
+                    childrenConfigsBySDK[config.toKey()].map(c => c.toKey())
+                )];
+                const hasMultipleResultSets = uniqueResultKeys.length > 1;
+
                 let resultsForConfig = [];
-                childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
-                    resultsForConfig = combineResults(resultsForConfig, resultsByKey[sdkConfig.toKey()]);
+                uniqueResultKeys.forEach(key => {
+                    resultsForConfig = combineResults(resultsForConfig, resultsByKey[key] || []);
                 });
                 allResults = combineResults(allResults, resultsForConfig);
 
@@ -1150,7 +1168,7 @@ class TimelineFromEndpoint {
                     queueParams['branch'] = branch;
                 const uuidsInThisSeries = new Set(resultsForConfig.map(r => r.uuid));
                 let myTimeline = Timeline.SeriesWithHeaderComponent(
-                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
+                    `${hasMultipleResultSets ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
                     Timeline.CanvasSeriesComponent(resultsForConfig, this.scale, {
                         getScaleFunc: options.getScaleFunc,
                         compareFunc: options.compareFunc,
@@ -1171,10 +1189,13 @@ class TimelineFromEndpoint {
                         exporter: exporterFactory(resultsForConfig),
                     }));
 
-                if (childrenConfigsBySDK[config.toKey()].length > 1) {
+                if (hasMultipleResultSets) {
                     let timelinesBySDK = [];
-                    childrenConfigsBySDK[config.toKey()].forEach(sdkConfig => {
-                        const seriesResults = resultsByKey[sdkConfig.toKey()];
+                    uniqueResultKeys.forEach(resultKey => {
+                        const sdkConfig = childrenConfigsBySDK[config.toKey()].find(c => c.toKey() === resultKey);
+                        if (sdkConfig === undefined)
+                            return;
+                        const seriesResults = resultsByKey[resultKey] || [];
                         const uuidsInThisSDKRow = new Set(seriesResults.map(r => r.uuid));
                         timelinesBySDK.push(
                             Timeline.SeriesWithHeaderComponent(`${Configuration.integerToVersion(sdkConfig.version)} (${sdkConfig.sdk})`,
