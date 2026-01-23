@@ -516,6 +516,7 @@ String codeForKeyEvent(NSEvent *event)
 String keyIdentifierForKeyEvent(NSEvent* event)
 {
     if ([event type] == NSEventTypeFlagsChanged) {
+        // FIXME: Use named constants instead of numeric key codes.
         switch ([event keyCode]) {
         case 54: // Right Command
         case 55: // Left Command
@@ -541,7 +542,7 @@ String keyIdentifierForKeyEvent(NSEvent* event)
             return emptyString();
         }
     }
-    
+
     RetainPtr<NSString> string = [event charactersIgnoringModifiers];
     if ([string length] != 1) {
         LOG(Events, "received an unexpected number of characters in key event: %zu", [string length]);
@@ -562,32 +563,17 @@ bool isKeypadEvent(NSEvent *event)
         return false;
     }
 
-    if ([event modifierFlags] & NSEventModifierFlagNumericPad)
-        return true;
-
+    // NSEventModifierFlagNumericPad is set for arrow keys, so handle them
+    // separately.
     switch ([event keyCode]) {
-    case 71: // Clear
-    case 81: // =
-    case 75: // /
-    case 67: // *
-    case 78: // -
-    case 69: // +
-    case 76: // Enter
-    case 65: // .
-    case 82: // 0
-    case 83: // 1
-    case 84: // 2
-    case 85: // 3
-    case 86: // 4
-    case 87: // 5
-    case 88: // 6
-    case 89: // 7
-    case 91: // 8
-    case 92: // 9
-        return true;
+    case kVK_LeftArrow:
+    case kVK_RightArrow:
+    case kVK_DownArrow:
+    case kVK_UpArrow:
+        return false;
+    default:
+        return [event modifierFlags] & NSEventModifierFlagNumericPad;
     }
-     
-     return false;
 }
 
 int windowsKeyCodeForKeyEvent(NSEvent* event)
@@ -624,6 +610,7 @@ bool isKeyUpEvent(NSEvent *event)
         return [event type] == NSEventTypeKeyUp;
     // FIXME: This logic fails if the user presses both Shift keys at once, for example:
     // we treat releasing one of them as keyDown.
+    // FIXME: Use named constants instead of numeric key codes.
     switch ([event keyCode]) {
     case 54: // Right Command
     case 55: // Left Command
@@ -707,7 +694,7 @@ UInt8 keyCharForEvent(NSEvent *event)
     UInt8 keyChar = 0;
     if (GetEventParameter(eventRef, kEventParamKeyMacCharCodes, typeChar, 0, sizeof(keyChar), &keyCharCount, &keyChar) != noErr)
         return 0;
-    
+
     return keyChar;
 }
 
