@@ -129,6 +129,7 @@ static void pas_mte_do_initialization(void)
     if (!*enabled_byte)
         return;
 
+    const char* name = getprogname();
     const char* lockdownModeProcName = "com.apple.WebKit.WebContent.CaptivePortal";
     bool isLockdownModeWebContentProcess = !strncmp(name, lockdownModeProcName, strlen(lockdownModeProcName));
     if (isLockdownModeWebContentProcess)
@@ -140,7 +141,6 @@ static void pas_mte_do_initialization(void)
     if (get_value_if_available(&mode, "JSC_allocationProfilingMode"))
         *mode_byte = (uint8_t)(mode & 0xFF);
 
-    const char* name = getprogname();
     bool isWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent", 27) || !strncmp(name, "jsc", 3);
 
     unsigned taggingRate = 100;
