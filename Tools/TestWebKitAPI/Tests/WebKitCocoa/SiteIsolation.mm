@@ -7867,4 +7867,105 @@ TEST(SiteIsolation, CrossSiteIFrameCanReceiveDeviceMotionEvents)
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
+
+static RetainPtr<TestWKWebView> setUpWakeLockWebView()
+{
+    ASCIILiteral mainFrameHTML= "<iframe src='https://examplesubframe.com/subframe' allow='screen-wake-lock' id='subFrame'></iframe>";
+    ASCIILiteral subFrameHTML = "<script> let lock; alert('frame loaded'); </script>";
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameHTML } },
+        { "/subframe"_s, { subFrameHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // must create a rect, otherwise document state will be hidden, and wake lock request will fail
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://examplemainframe.com/mainframe"]]];
+
+    // wait for frame to load
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "frame loaded");
+    return webView;
+}
+
+TEST(SiteIsolation, WakeLock)
+{
+    RetainPtr webView = setUpWakeLockWebView();
+
+    // create a lock
+    __block RetainPtr<NSError> error;
+    __block bool done = false;
+    auto firstChildFrame = [webView firstChildFrame];
+    [webView callAsyncJavaScript:@"lock = await navigator.wakeLock.request('screen');" arguments:nil inFrame:firstChildFrame inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *err) {
+        error = err;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(!!error) << [error description].UTF8String;
+
+    // make sure lock is not already released
+    ASSERT_FALSE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+
+    // release the lock
+    [webView callAsyncJavaScript:@"return await lock.release()" arguments:nil inFrame:firstChildFrame inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *err) {
+        error = err;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(!!error) << [error description].UTF8String;
+
+    // make sure the lock is realeased
+    ASSERT_TRUE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+}
+
+TEST(SiteIsolation, WakeLockCloseChildFrame)
+{
+    RetainPtr webView = setUpWakeLockWebView();
+
+    // create a lock
+    __block RetainPtr<NSError> error;
+    __block bool done = false;
+    auto firstChildFrame = [webView firstChildFrame];
+    [webView callAsyncJavaScript:@"lock = await navigator.wakeLock.request('screen');" arguments:nil inFrame:firstChildFrame inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *err) {
+        error = err;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(!!error) << [error description].UTF8String;
+
+    // make sure lock is not already released
+    ASSERT_FALSE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+
+    [[firstChildFrame webView] removeFromSuperview];
+    [webView waitUntilActivityStateUpdateDone];
+
+    // make sure the lock is realeased
+    ASSERT_TRUE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+}
+
+TEST(SiteIsolation, WakeLockCloseParentFrame)
+{
+    RetainPtr webView = setUpWakeLockWebView();
+
+    // create a lock
+    __block RetainPtr<NSError> error;
+    __block bool done = false;
+    auto firstChildFrame = [webView firstChildFrame];
+    [webView callAsyncJavaScript:@"lock = await navigator.wakeLock.request('screen');" arguments:nil inFrame:firstChildFrame inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *err) {
+        error = err;
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(!!error) << [error description].UTF8String;
+
+    // make sure lock is not already released
+    ASSERT_FALSE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+
+    [webView removeFromSuperview];
+    [webView waitUntilActivityStateUpdateDone];
+
+    // make sure the lock is realeased
+    ASSERT_TRUE([[webView objectByEvaluatingJavaScript:@"lock.released" inFrame:firstChildFrame] boolValue]);
+}
+
 }
