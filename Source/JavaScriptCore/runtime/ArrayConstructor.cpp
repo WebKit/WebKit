@@ -267,6 +267,24 @@ static ALWAYS_INLINE unsigned getArgumentsLength(ClonedArguments* arguments)
     return lengthValue.asInt32();
 }
 
+template<typename Arguments, typename Functor>
+static ALWAYS_INLINE void forEachArgumentsElement(JSGlobalObject* globalObject, Arguments* arguments, unsigned length, const Functor& func)
+{
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+    unsigned i;
+    for (i = 0; i < length; ++i) {
+        JSValue value = arguments->tryGetIndexQuickly(i);
+        if (!value)
+            break;
+        func(value, i);
+    }
+    for (; i < length; ++i) {
+        JSValue value = arguments->get(globalObject, i);
+        RETURN_IF_EXCEPTION(scope, void());
+        func(value, i);
+    }
+}
+
 template<typename Arguments>
 static ALWAYS_INLINE JSArray* tryCreateArrayFromArguments(JSGlobalObject* globalObject, Arguments* arguments)
 {
@@ -279,12 +297,10 @@ static ALWAYS_INLINE JSArray* tryCreateArrayFromArguments(JSGlobalObject* global
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
     IndexingType indexingType = IsArray;
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue value = arguments->getIndexQuickly(i);
-        if (!value)
-            value = jsUndefined();
+    forEachArgumentsElement(globalObject, arguments, length, [&](JSValue value, unsigned) {
         indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, value);
-    }
+    });
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     IndexingType resultIndexingType = resultStructure->indexingType();
@@ -306,18 +322,16 @@ static ALWAYS_INLINE JSArray* tryCreateArrayFromArguments(JSGlobalObject* global
     resultButterfly->setPublicLength(length);
 
     if (hasDouble(resultIndexingType)) {
-        for (uint64_t i = 0; i < length; ++i) {
-            JSValue value = arguments->getIndexQuickly(i);
+        forEachArgumentsElement(globalObject, arguments, length, [&](JSValue value, unsigned i) {
             ASSERT(value.isNumber());
             resultButterfly->contiguousDouble().atUnsafe(i) = value.asNumber();
-        }
+        });
+        RETURN_IF_EXCEPTION(scope, nullptr);
     } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
-        for (size_t i = 0; i < length; ++i) {
-            JSValue value = arguments->getIndexQuickly(i);
-            if (!value)
-                value = jsUndefined();
+        forEachArgumentsElement(globalObject, arguments, length, [&](JSValue value, unsigned i) {
             resultButterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(value);
-        }
+        });
+        RETURN_IF_EXCEPTION(scope, nullptr);
     } else
         RELEASE_ASSERT_NOT_REACHED();
 
