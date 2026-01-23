@@ -68,6 +68,8 @@ bool ZStream::initializeIfNecessary(Algorithm algorithm, Operation operation)
     }
     if (result != Z_OK)
         return false;
+
+    m_operation = operation;
     m_isInitialized = true;
     return true;
 }
@@ -79,8 +81,14 @@ ZStream::ZStream()
 
 ZStream::~ZStream()
 {
-    if (m_isInitialized)
+    if (!m_isInitialized)
+        return;
+
+    if (m_operation == Operation::Compression)
         deflateEnd(&m_stream);
+    else
+        inflateEnd(&m_stream);
+
 }
 
 }

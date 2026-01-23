@@ -43,6 +43,7 @@ public:
 
 private:
     z_stream m_stream;
+    Operation m_operation { Operation::Compression };
     bool m_isInitialized { false };
 };
 
