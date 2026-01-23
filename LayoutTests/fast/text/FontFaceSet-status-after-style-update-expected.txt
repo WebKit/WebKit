@@ -4,9 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS fonts.status is "loaded"
-Loading font
 PASS fonts.status is "loading"
-Deleting style
 PASS fonts.status is "loaded"
 PASS successfullyParsed is true
 

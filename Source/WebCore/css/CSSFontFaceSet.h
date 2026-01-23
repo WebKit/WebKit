@@ -43,13 +43,7 @@ template<typename> class ExceptionOr;
 
 struct FontEventClient : public AbstractRefCountedAndCanMakeWeakPtr<FontEventClient> {
     virtual ~FontEventClient() = default;
-
-    virtual void faceDidStartLoading(CSSFontFace&) = 0;
-    virtual void faceDidFinishLoading(CSSFontFace&, CSSFontFace::Status) = 0;
-
-    virtual void didAddFace(CSSFontFace&) = 0;
-    virtual void didDeletedFace(CSSFontFace&) = 0;
-
+    virtual void faceFinished(CSSFontFace&, CSSFontFace::Status) = 0;
     virtual void startedLoading() = 0;
     virtual void completedLoading() = 0;
 };
@@ -76,7 +70,7 @@ public:
     bool hasFace(const CSSFontFace&) const;
     size_t faceCount() const { return m_faces.size(); }
     void add(CSSFontFace&);
-    void remove(CSSFontFace&);
+    void remove(const CSSFontFace&);
     void purge();
     void emptyCaches();
     void clear();
@@ -87,6 +81,11 @@ public:
     ExceptionOr<bool> check(ScriptExecutionContext&, const String& font, const String& text);
 
     CSSSegmentedFontFace* fontFace(FontSelectionRequest, const AtomString& family);
+
+    enum class Status { Loading, Loaded };
+    Status status() const { return m_status; }
+
+    bool hasActiveFontFaces() { return status() == Status::Loading; }
 
     size_t facesPartitionIndex() const { return m_facesPartitionIndex; }
 
@@ -130,7 +129,7 @@ private:
     HashMap<String, FontSelectionHashMap, ASCIICaseInsensitiveHash> m_cache;
     HashMap<StyleRuleFontFace*, CSSFontFace*> m_constituentCSSConnections;
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
-
+    Status m_status { Status::Loaded };
     WeakHashSet<FontModifiedObserver> m_fontModifiedObservers;
     WeakHashSet<FontEventClient> m_fontEventClients;
     WeakPtr<CSSFontSelector> m_owningFontSelector;

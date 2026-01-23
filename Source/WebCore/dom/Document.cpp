@@ -4410,7 +4410,6 @@ void Document::implicitClose()
 
     m_processingLoadEvent = false;
 
-    // FIXME: This needs to notify all FontFaceSet objects, not just the one owned by the CSSFontSelector: webkit.org/b/304381.
     if (RefPtr fontSelector = fontSelectorIfExists()) {
         if (RefPtr fontFaceSet = fontSelector->fontFaceSetIfExists())
             fontFaceSet->documentDidFinishLoading();

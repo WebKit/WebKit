@@ -713,7 +713,6 @@ bindings/js/JSEventTargetCustom.cpp
 bindings/js/JSExecState.cpp
 bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFetchEventCustom.cpp
-bindings/js/JSFontFaceSetLoadEventCustom.cpp
 bindings/js/JSHTMLAllCollectionCustom.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp
 bindings/js/JSHTMLElementCustom.cpp
@@ -993,7 +992,6 @@ css/DeprecatedCSSOMValue.cpp
 css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
-css/FontFaceSetLoadEvent.cpp
 css/ImmutableStyleProperties.cpp
 css/MediaList.cpp
 css/MediaQueryList.cpp
@@ -4133,8 +4131,6 @@ JSFocusEvent.cpp
 JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
-JSFontFaceSetLoadEvent.cpp
-JSFontFaceSetLoadEventInit.cpp
 JSFormDataEvent.cpp
 JSFragmentDirective.cpp
 JSFullscreenOptions.cpp

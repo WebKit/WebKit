@@ -1,7 +1,7 @@
 <!DOCTYPE html><!-- webkit-test-runner [ FontFaceSetConstructorEnabled=true ] -->
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
@@ -10,44 +10,34 @@ if (window.internals) {
     internals.invalidateFontCache();
 }
 window.jsTestIsAsync = true;
-
-let font;
-let set1;
-let set2;
-
-// Waiting for the load event is necessary because of webkit.org/b/304381.
-(async () => {
-    await new Promise((resolve) => { window.onload = resolve; });
-    await new Promise((resolve) => { setTimeout(resolve); });
-
-    font = new FontFace("WebFont", "url('../../resources/Ahem.ttf') format('truetype')");
-    shouldBeEqualToString("font.status", "unloaded");
-    set1 = new FontFaceSet([font]);
-    set2 = new FontFaceSet([font]);
-    shouldBeEqualToString("set1.status", "loaded");
-    shouldBeEqualToString("set2.status", "loaded");
-    font.load();
-    shouldBeEqualToString("font.status", "loading");
-    shouldBeEqualToString("set1.status", "loading");
-    shouldBeEqualToString("set2.status", "loading");
-    let count = 0;
-    set1.ready.then(function() {
-        ++count;
-        if (count == 2)
-            finishJSTest();
-    }, function() {
-        testFailed("Promise should not be rejected.");
+var font = new FontFace("WebFont", "url('../../resources/Ahem.ttf') format('truetype')");
+shouldBeEqualToString("font.status", "unloaded");
+var set1 = new FontFaceSet([font]);
+var set2 = new FontFaceSet([font]);
+shouldBeEqualToString("set1.status", "loaded");
+shouldBeEqualToString("set2.status", "loaded");
+font.load();
+shouldBeEqualToString("font.status", "loading");
+shouldBeEqualToString("set1.status", "loading");
+shouldBeEqualToString("set2.status", "loading");
+var count = 0;
+set1.ready.then(function() {
+    ++count;
+    if (count == 2)
         finishJSTest();
-    });
-    set2.ready.then(function() {
-        ++count;
-        if (count == 2)
-            finishJSTest();
-    }, function() {
-        testFailed("Promise should not be rejected.");
+}, function() {
+    testFailed("Promise should not be rejected.");
+    finishJSTest();
+});
+set1.ready.then(function() {
+    ++count;
+    if (count == 2)
         finishJSTest();
-    });
-})();
+}, function() {
+    testFailed("Promise should not be rejected.");
+    finishJSTest();
+});
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

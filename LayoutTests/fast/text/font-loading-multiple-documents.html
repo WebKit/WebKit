@@ -22,16 +22,11 @@ if (window.testRunner)
 <script>
 var font = new FontFace("WebFont", "url('../../resources/Ahem.ttf') format('truetype')");
 document.fonts.add(font);
-try {
-	document.getElementById("target").contentWindow.document.fonts.add(font);
-	font.load().then(function() {
-	    if (window.testRunner)
-	        testRunner.notifyDone();
-	});
-} catch (e) {
+document.getElementById("target").contentWindow.document.fonts.add(font);
+font.load().then(function() {
     if (window.testRunner)
         testRunner.notifyDone();
-}
+});
 </script>
 </body>
 </html>

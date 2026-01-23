@@ -1,7 +1,0 @@
-Font loading test
-
-PASS The initial ready promise fired
-PASS Loading a font should fire a `loadingdone` event with the correct `fontfaceset`
-PASS Loading a second font should fire a `loadingdone` event with the correct `fontfaceset`
-PASS Loading a missing font should fire a `loadingerror` event with the correct `fontfaceset`
-

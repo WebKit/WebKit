@@ -8,20 +8,14 @@ promise_test(async t => {
   const fontSet = document.fonts;
   let loadingFired = false;
 
-  fontSet.addEventListener("loading", (e) => {
-    assert_not_equals(e.fontfaces.findIndex(fontface => fontface.family === "TestFont1"), -1, "The 'loading' event.fontfaces contained `TestFont1`");
-    assert_not_equals(e.fontfaces.findIndex(fontface => fontface.family === "TestFont2"), -1, "The 'loading' event.fontfaces contained `TestFont2`");
+  fontSet.addEventListener("loading", () => {
     loadingFired = true;
   });
   
-  const testFont1 = new FontFace("TestFont1", "url(/fonts/Ahem.ttf)");
-  const testFont2 = new FontFace("TestFont2", "url(/fonts/Ahem.ttf)");
-  fontSet.add(testFont1);
-  fontSet.add(testFont2);
-
-  await Promise.all([testFont1.load(), testFont2.load()]);
-
+  const TestFont = new FontFace("GoodFont", "url(/fonts/Ahem.ttf)");
+  fontSet.add(TestFont);
+  await TestFont.load();
   await fontSet.ready;
   assert_true(loadingFired, "The 'loading' event should have fired");
-}, "FontFaceSet fires correct loading event, with the loading fontfaces");
+}, "FontFaceSet fires correct loading event");
 </script>

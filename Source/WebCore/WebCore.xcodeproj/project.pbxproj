@@ -7960,11 +7960,6 @@
 		0F11A54E0F39233100C37884 /* RenderSelectionGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectionGeometry.h; sourceTree = "<group>"; };
 		0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAFilters.h; sourceTree = "<group>"; };
 		0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAFiltersCocoa.mm; sourceTree = "<group>"; };
-		0F1532EE2EEBAB59005604E5 /* FontFaceSetLoadEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FontFaceSetLoadEvent.idl; sourceTree = "<group>"; };
-		0F1532EF2EEBAB59005604E5 /* FontFaceSetLoadEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FontFaceSetLoadEventInit.idl; sourceTree = "<group>"; };
-		0F1532F02EEBACD9005604E5 /* FontFaceSetLoadEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFaceSetLoadEvent.h; sourceTree = "<group>"; };
-		0F1532F12EEBACD9005604E5 /* FontFaceSetLoadEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontFaceSetLoadEvent.cpp; sourceTree = "<group>"; };
-		0F1532F22EEBACD9005604E5 /* FontFaceSetLoadEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontFaceSetLoadEventInit.h; sourceTree = "<group>"; };
 		0F16BED92304F05300B4A167 /* GPUBasedCanvasRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBasedCanvasRenderingContext.cpp; sourceTree = "<group>"; };
 		0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorIOS.h; sourceTree = "<group>"; };
 		0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollAnimatorIOS.mm; sourceTree = "<group>"; };
@@ -7985,7 +7980,6 @@
 		0F2F14BF2F0C766B001B0536 /* FEConvolveMatrixCoreImageApplier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FEConvolveMatrixCoreImageApplier.mm; sourceTree = "<group>"; };
 		0F2F14C42F0C7B82001B0536 /* FELightingCoreImageApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FELightingCoreImageApplier.h; sourceTree = "<group>"; };
 		0F2F14C52F0C7B82001B0536 /* FELightingCoreImageApplier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FELightingCoreImageApplier.mm; sourceTree = "<group>"; };
-		0F362E922EF5FF05000DA44A /* JSFontFaceSetLoadEventCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceSetLoadEventCustom.cpp; sourceTree = "<group>"; };
 		0F36E7361BD1837A002DB891 /* LayoutPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutPoint.cpp; sourceTree = "<group>"; };
 		0F36E7381BD184B9002DB891 /* LayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutSize.cpp; sourceTree = "<group>"; };
 		0F376F3F2994C58D004CA2F9 /* FontSelector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontSelector.cpp; sourceTree = "<group>"; };
@@ -8117,10 +8111,6 @@
 		0F99059926F6BE7F0054FBE0 /* ScrollingMomentumCalculator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculator.h; sourceTree = "<group>"; };
 		0F99059B26F6BE940054FBE0 /* ScrollingMomentumCalculatorMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingMomentumCalculatorMac.h; sourceTree = "<group>"; };
 		0F99059C26F6BE950054FBE0 /* ScrollingMomentumCalculatorMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingMomentumCalculatorMac.mm; sourceTree = "<group>"; };
-		0F991C442EEBD08C00E6ED4B /* JSFontFaceSetLoadEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFontFaceSetLoadEvent.h; sourceTree = "<group>"; };
-		0F991C452EEBD08C00E6ED4B /* JSFontFaceSetLoadEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceSetLoadEvent.cpp; sourceTree = "<group>"; };
-		0F991C462EEBD08C00E6ED4B /* JSFontFaceSetLoadEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFontFaceSetLoadEventInit.h; sourceTree = "<group>"; };
-		0F991C472EEBD08C00E6ED4B /* JSFontFaceSetLoadEventInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontFaceSetLoadEventInit.cpp; sourceTree = "<group>"; };
 		0F9B547522B4A772007B5E8A /* ScrollingStateOverflowScrollProxyNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingStateOverflowScrollProxyNode.h; sourceTree = "<group>"; };
 		0F9B547622B4A773007B5E8A /* ScrollingStateOverflowScrollProxyNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateOverflowScrollProxyNode.cpp; sourceTree = "<group>"; };
 		0F9DAA0C1FD1C6630079C5B2 /* DOMGCOutputConstraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMGCOutputConstraint.cpp; sourceTree = "<group>"; };
@@ -29367,10 +29357,6 @@
 				C280833E1C6DC22C001451B6 /* JSFontFace.h */,
 				1C24EEA61C72A7B40080F8FC /* JSFontFaceSet.cpp */,
 				1C24EEA71C72A7B40080F8FC /* JSFontFaceSet.h */,
-				0F991C452EEBD08C00E6ED4B /* JSFontFaceSetLoadEvent.cpp */,
-				0F991C442EEBD08C00E6ED4B /* JSFontFaceSetLoadEvent.h */,
-				0F991C472EEBD08C00E6ED4B /* JSFontFaceSetLoadEventInit.cpp */,
-				0F991C462EEBD08C00E6ED4B /* JSFontFaceSetLoadEventInit.h */,
 				1C9077F82751FD4C004EF165 /* JSGPU.cpp */,
 				1C9078B92751FD99004EF165 /* JSGPU.h */,
 				1C9078252751FD5F004EF165 /* JSGPUAdapter.cpp */,
@@ -31265,7 +31251,6 @@
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,
 				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
 				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
-				0F362E922EF5FF05000DA44A /* JSFontFaceSetLoadEventCustom.cpp */,
 				84BBE5482597E7F100AA8F28 /* JSHTMLAllCollectionCustom.cpp */,
 				6E576BC324EB509C0094D4AA /* JSHTMLCanvasElementCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
@@ -40534,11 +40519,6 @@
 				1C24EEA21C729CE40080F8FC /* FontFaceSet.cpp */,
 				1C24EEA31C729CE40080F8FC /* FontFaceSet.h */,
 				1C24EEA11C729B320080F8FC /* FontFaceSet.idl */,
-				0F1532F12EEBACD9005604E5 /* FontFaceSetLoadEvent.cpp */,
-				0F1532F02EEBACD9005604E5 /* FontFaceSetLoadEvent.h */,
-				0F1532EE2EEBAB59005604E5 /* FontFaceSetLoadEvent.idl */,
-				0F1532F22EEBACD9005604E5 /* FontFaceSetLoadEventInit.h */,
-				0F1532EF2EEBAB59005604E5 /* FontFaceSetLoadEventInit.idl */,
 				7C3A8ABC2509A256008C477F /* FontFaceSource.idl */,
 				BC4A532E256057CD0028C592 /* FontLoadTimingOverride.h */,
 				C2AB0B031E6DE92C001348C5 /* FontSelectionValueInlines.h */,

@@ -1163,10 +1163,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEventInit.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.cpp

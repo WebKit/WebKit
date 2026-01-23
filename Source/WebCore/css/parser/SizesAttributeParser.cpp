@@ -39,6 +39,7 @@
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSPrimitiveNumericUnits.h"
 #include "CSSPropertyParserOptions.h"
+#include "CSSPropertyParserState.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSTokenizer.h"
 #include "FontCascade.h"

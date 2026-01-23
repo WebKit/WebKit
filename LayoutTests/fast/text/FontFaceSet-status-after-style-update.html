@@ -14,28 +14,16 @@ if (window.internals) {
 }
 </style>
 <script src="../../resources/js-test.js"></script>
-<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
-<script>    
-
-jsTestIsAsync = true;
+<script>
+description("This function makes sure document.fonts.status gets updated after style changes.");
 let fonts = document.fonts;
-(async () => {
-    description("This function makes sure document.fonts.status gets updated after style changes.");
-    shouldBeEqualToString("fonts.status", "loaded");
-    debug("Loading font");
-    fonts.values().next().value.load();
-    shouldBeEqualToString("fonts.status", "loading");
-    debug("Deleting style");
-    document.getElementById("head").removeChild(document.getElementById("style"));
-
-    await UIHelper.renderingUpdate();
-
-    shouldBeEqualToString("fonts.status", "loaded");
-    finishJSTest();
-})();
-
+shouldBeEqualToString("fonts.status", "loaded");
+fonts.values().next().value.load();
+shouldBeEqualToString("fonts.status", "loading");
+document.getElementById("head").removeChild(document.getElementById("style"));
+shouldBeEqualToString("fonts.status", "loaded");
 </script>
 </body>
 </html>

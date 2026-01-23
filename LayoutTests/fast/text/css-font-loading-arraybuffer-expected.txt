@@ -3,8 +3,8 @@ This test makes sure that an ArrayBufferView can be successfully passed to the F
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS fontFace1.status is "unloaded"
-PASS fontFace2.status is "unloaded"
+PASS fontFace1.status is "loaded"
+PASS fontFace2.status is "loaded"
 PASS document.getElementById('probe1').getBoundingClientRect().width is 100
 PASS document.getElementById('probe2').getBoundingClientRect().width is 100
 PASS successfullyParsed is true
