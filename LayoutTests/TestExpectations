@@ -8191,6 +8191,3 @@ webkit.org/b/295810 [ Debug ] fast/dynamic/disappearing-content-on-size-change-c
 webkit.org/b/301250 ipc/dictionary-callbacks.html [ Skip ]
 
 imported/w3c/web-platform-tests/fetch/security/dangling-markup/dangling-markup-mitigation.tentative.https.html [ Skip ]
-
-# rdar://168512100 (REGRESSION(305413.31@safari-7624-branch): Broke editing/pasteboard/img-srcset-copy-paste-canonicalization.html)
-editing/pasteboard/img-srcset-copy-paste-canonicalization.html [ Failure ]
