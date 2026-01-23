@@ -4633,3 +4633,6 @@ http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
 imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
 imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails
 imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html [ Failure ] # Harness Error The operation is not supported.
+
+# Broken on GTK, WPE and Windows https://bugs.webkit.org/show_bug.cgi?id=306146
+editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
