@@ -2557,15 +2557,23 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         return true;
     };
 
+    bool computedBoundsForFromKeyframe = false;
+    bool computedBoundsForToKeyframe = false;
     for (const auto& keyframe : m_blendingKeyframes) {
         if (!animatablePropertiesContainTransformRelatedProperty(keyframe.properties()))
             continue;
+
+        auto offset = keyframe.offset();
+        if (!offset)
+            computedBoundsForFromKeyframe = true;
+        if (offset == 1.0)
+            computedBoundsForToKeyframe = true;
 
         auto blendedStyleForKeyframe = RenderStyle::clonePtr(*unanimatedStyle);
 
         ComputedEffectTiming computedTiming;
         computedTiming.currentIteration = 0;
-        computedTiming.progress = keyframe.offset();
+        computedTiming.progress = offset;
 
         setAnimatedPropertiesInStyle(*blendedStyleForKeyframe, computedTiming);
 
@@ -2573,7 +2581,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
             return false;
     }
 
-    if (m_blendingKeyframes.hasImplicitKeyframes()) {
+    if (!computedBoundsForFromKeyframe || !computedBoundsForToKeyframe) {
         if (!addStyleToCumulativeBounds(*unanimatedStyle))
             return false;
     }
