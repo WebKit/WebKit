@@ -1826,6 +1826,13 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
     ASSERT(!m_wrapOpportunityList.isEmpty());
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 
+    if (m_partialLeadingTextItem && &*m_partialLeadingTextItem == &lastInlineItemToAdd) {
+        LineCandidate lineCandidate;
+        lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), formattingContext().formattingUtils().inlineItemWidth(*m_partialLeadingTextItem, { }, false));
+        commitCandidateContent(lineCandidate, { });
+        return 1;
+    }
+
     size_t numberOfFloatsInRange = 0;
     auto endOfCandidateContent = layoutRange.startIndex();
     for (; endOfCandidateContent < layoutRange.endIndex(); ++endOfCandidateContent) {
