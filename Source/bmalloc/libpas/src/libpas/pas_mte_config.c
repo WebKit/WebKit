@@ -131,7 +131,7 @@ static void pas_mte_do_initialization(void)
 
     const char* lockdownModeProcName = "com.apple.WebKit.WebContent.CaptivePortal";
     bool isLockdownModeWebContentProcess = !strncmp(name, lockdownModeProcName, strlen(lockdownModeProcName));
-    if (isLockdownModeWebContentProcess) {
+    if (isLockdownModeWebContentProcess)
         *lockdown_mode_byte = 1;
     else
         *lockdown_mode_byte = 0;
