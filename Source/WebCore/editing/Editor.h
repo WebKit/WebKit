@@ -442,6 +442,7 @@ public:
     WEBCORE_EXPORT bool cancelCompositionIfSelectionIsInvalid();
     WEBCORE_EXPORT std::optional<SimpleRange> compositionRange() const;
     WEBCORE_EXPORT bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
+    bool hasDeadKeyComposition() const;
 
     // getting international text input composition state (for use by LegacyInlineTextBox)
     Text* compositionNode() const { return m_compositionNode.get(); }
@@ -691,6 +692,7 @@ private:
     void selectComposition();
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
     void setComposition(const String&, SetCompositionMode);
+    String compositionText() const;
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, OptionSet<FrameSelection::SetSelectionOption>);
 

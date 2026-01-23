@@ -4301,7 +4301,8 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     // If frame changed as a result of keydown dispatch, then return early to avoid sending a subsequent keypress message to the new frame.
     bool changedFocusedFrame = frame->page() && frame.ptr() != frame->page()->focusController().focusedOrMainFrame();
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
-    if (keydownResult && !backwardCompatibilityMode)
+    bool requiresKeyPressEvent = backwardCompatibilityMode || frame->protectedEditor()->hasDeadKeyComposition();
+    if (keydownResult && !requiresKeyPressEvent)
         return keydownResult;
 
     // Focus may have changed during keydown handling, so refetch element.

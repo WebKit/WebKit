@@ -149,6 +149,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -2306,7 +2307,27 @@ void Editor::confirmComposition()
 
     if (!m_compositionNode)
         return;
-    setComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), ConfirmComposition);
+    setComposition(compositionText(), ConfirmComposition);
+}
+
+String Editor::compositionText() const
+{
+    if (!m_compositionNode)
+        return { };
+
+    return protectedCompositionNode()->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart);
+}
+
+bool Editor::hasDeadKeyComposition() const
+{
+    if (!m_compositionNode)
+        return false;
+
+    if (m_compositionStart + 1 != m_compositionEnd)
+        return false;
+
+    auto compositionText = this->compositionText();
+    return compositionText.length() == 1 && isLetterOrSymbolModifier(compositionText[0]);
 }
 
 void Editor::confirmOrCancelCompositionAndNotifyClient()
