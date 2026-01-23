@@ -176,7 +176,8 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
             context->beginLoadingFontSoon(*m_fontRequest);
     } else {
         bool success = false;
-        if (m_hasSVGFontFaceElement) {
+        // SafeFontParser does not support OpenType (OTF) fonts, so we can fail early here instead of having it converted and failing later at the parsing.
+        if (m_hasSVGFontFaceElement && trustedTypes != DownloadableBinaryFontTrustedTypes::SafeFontParser) {
             if (m_svgFontFaceElement) {
                 if (RefPtr fontElement = dynamicDowncast<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                     ASSERT(!m_inDocumentCustomPlatformData);
