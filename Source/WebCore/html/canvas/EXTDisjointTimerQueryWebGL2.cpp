@@ -77,8 +77,8 @@ void EXTDisjointTimerQueryWebGL2::queryCounterEXT(WebGLQuery& query, GCGLenum ta
     context->graphicsContextGL()->queryCounterEXT(query.object(), target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    context->protectedScriptExecutionContext()->checkedEventLoop()->queueMicrotask([&] {
-        query.makeResultAvailable();
+    context->protectedScriptExecutionContext()->checkedEventLoop()->queueMicrotask([query = Ref { query }] {
+        query->makeResultAvailable();
     });
 }
 
