@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSNavigator.h"
 
+#include "LocalDOMWindow.h"
+#include "LocalFrame.h"
 #include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 #include "WebCoreOpaqueRootInlines.h"
@@ -41,6 +43,31 @@ void JSNavigator::visitAdditionalChildren(Visitor& visitor)
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNavigator);
+
+bool JSNavigator::defineOwnProperty(JSC::JSObject* object, JSC::JSGlobalObject* lexicalGlobalObject, JSC::PropertyName propertyName, const JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+{
+#if ENABLE(WEB_AUTHN)
+    using namespace JSC;
+    VM& vm = lexicalGlobalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (propertyName == Identifier::fromString(vm, "credentials"_s)) {
+        if (auto* window = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject)) {
+            if (RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped())) {
+                if (RefPtr frame = localDOMWindow->frame()) {
+                    if (frame->settings().webAuthenticationSecureEnabled())
+                        return typeError(lexicalGlobalObject, scope, shouldThrow, "Cannot redefine credentials property"_s);
+                }
+            }
+        }
+    }
+
+    scope.release();
+    return Base::defineOwnProperty(object, lexicalGlobalObject, propertyName, descriptor, shouldThrow);
+#else
+    return Base::defineOwnProperty(object, lexicalGlobalObject, propertyName, descriptor, shouldThrow);
+#endif
+}
 
 #if ENABLE(MEDIA_STREAM)
 JSC::JSValue JSNavigator::getUserMedia(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)

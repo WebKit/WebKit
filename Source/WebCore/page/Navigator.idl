@@ -18,6 +18,7 @@
 */
 
 [
+    CustomDefineOwnProperty,
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
     Exposed=Window

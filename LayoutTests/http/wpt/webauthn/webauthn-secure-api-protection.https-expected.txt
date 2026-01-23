@@ -1,0 +1,12 @@
+PASS: window.PublicKeyCredential cannot be overridden
+PASS: navigator.credentials.get cannot be overridden
+PASS: navigator.credentials.create cannot be overridden
+PASS: navigator.credentials returns real object even when navigator is shadowed
+PASS: Object.defineProperty on navigator blocked: Attempting to change configurable attribute of unconfigurable property.
+PASS: Object.defineProperty on navigator.credentials blocked: Cannot redefine credentials property
+PASS: Object.defineProperty on credentials.get blocked: Attempting to change configurable attribute of unconfigurable property.
+PASS: Object.defineProperty on credentials.create blocked: Attempting to change configurable attribute of unconfigurable property.
+PASS: PublicKeyCredential.isConditionalMediationAvailable cannot be overridden
+PASS: PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable cannot be overridden
+PASS: PublicKeyCredential.getClientCapabilities cannot be overridden
+
