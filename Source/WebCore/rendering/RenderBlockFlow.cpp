@@ -3962,6 +3962,9 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
             // Do not interfere with margin collapsing.
             if (!blockRenderer->isInFlow() || !logicalHeight)
                 return false;
+            // FIXME: This should be some narrower test.
+            if (blockRenderer->isRenderTable())
+                return false;
             if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(*blockRenderer))
                 return !renderBlock->containsFloats();
             return true;
@@ -4058,7 +4061,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
         auto& renderer = *walker.current();
         auto* box = dynamicDowncast<RenderBox>(renderer);
         hasInFlowBlockLevelElement = hasInFlowBlockLevelElement || (box && box->isBlockLevelBox() && box->isInFlow());
-        auto childNeedsLayout = relayoutChildren == RelayoutChildren::Yes || (box && box->hasRelativeDimensions());
+        auto childNeedsLayout = relayoutChildren == RelayoutChildren::Yes || (box && box->hasRelativeDimensions() && !box->isBlockLevelBox());
         auto childNeedsPreferredWidthComputation = relayoutChildren == RelayoutChildren::Yes && box && box->shouldInvalidatePreferredWidths();
         if (childNeedsLayout)
             renderer.setNeedsLayout(MarkOnlyThis);

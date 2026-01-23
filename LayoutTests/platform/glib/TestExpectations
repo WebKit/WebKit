@@ -4772,6 +4772,7 @@ webkit.org/b/298433 [ Release ] imported/w3c/web-platform-tests/selection/caret/
 
 # Needs rebaseline.
 fast/text/glyph-display-lists [ Skip ]
+fast/repaint/table-in-inline-repaint.html [ Failure ]
 
 # Now that partial fonts are working, two characters previously rendered as a square are now showing correctly, which makes the test fail.
 # Probably the test should be updated.
