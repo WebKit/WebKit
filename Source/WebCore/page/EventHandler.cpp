@@ -1973,6 +1973,12 @@ static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mou
 
 }
 
+static LastKnownMousePositionSource mousePositionSource(const PlatformMouseEvent& event)
+{
+    using enum LastKnownMousePositionSource;
+    return event.syntheticClickType() == SyntheticClickType::NoTap ? Mouse : Touch;
+}
+
 HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouseEvent)
 {
     Ref frame = m_frame.get();
@@ -2016,7 +2022,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 
     m_mousePressed = true;
     m_capturesDragging = true;
-    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition(), mousePositionSource(platformMouseEvent));
     m_mouseDownTimestamp = platformMouseEvent.timestamp();
 #if ENABLE(DRAG_SUPPORT)
     m_mouseDownMayStartDrag = false;
@@ -2159,7 +2165,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
-    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition(), mousePositionSource(platformMouseEvent));
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Release, HitTestRequest::Type::DisallowUserAgentShadowContent };
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(hitType, platformMouseEvent);
@@ -2314,7 +2320,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
     }
 #endif
 
-    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition(), mousePositionSource(platformMouseEvent));
 
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
@@ -2540,7 +2546,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
 #endif
 
     m_mousePressed = false;
-    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition());
+    setLastKnownMousePosition(platformMouseEvent.position(), platformMouseEvent.globalPosition(), mousePositionSource(platformMouseEvent));
 
     if (m_svgPan) {
         m_svgPan = false;
@@ -2619,7 +2625,7 @@ bool EventHandler::handleMouseForceEvent(const PlatformMouseEvent& event)
     }
 #endif
 
-    setLastKnownMousePosition(event.position(), event.globalPosition());
+    setLastKnownMousePosition(event.position(), event.globalPosition(), mousePositionSource(event));
 
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::DisallowUserAgentShadowContent };
 
@@ -3152,6 +3158,9 @@ void EventHandler::updateMouseEventTargetAfterLayoutIfNeeded()
     if (!view || !m_elementUnderMouse)
         return;
 
+    if (m_lastKnownMousePositionSource == LastKnownMousePositionSource::Touch)
+        return;
+
     RefPtr document = frame->document();
 
     // Clear element tracking if there's a document mismatch.
@@ -3519,7 +3528,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling));
     
     setFrameWasScrolledByUser();
-    setLastKnownMousePosition(event.position(), event.globalPosition());
+    setLastKnownMousePosition(event.position(), event.globalPosition(), LastKnownMousePositionSource::Wheel);
 
     if (m_frame->isMainFrame()) {
         RefPtr page = m_frame->page();
@@ -5605,10 +5614,11 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-void EventHandler::setLastKnownMousePosition(const DoublePoint& position, const DoublePoint& globalPosition)
+void EventHandler::setLastKnownMousePosition(const DoublePoint& position, const DoublePoint& globalPosition, std::optional<LastKnownMousePositionSource>&& source)
 {
     m_lastKnownMousePosition = position;
     m_lastKnownMouseGlobalPosition = globalPosition;
+    m_lastKnownMousePositionSource = WTF::move(source);
 }
 
 void EventHandler::setImmediateActionStage(ImmediateActionStage stage)
