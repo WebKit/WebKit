@@ -216,6 +216,7 @@ private:
                 case DoubleRepUse:
                     // It is always valuable to get rid of a double multiplication by 2.
                     // We won't have half-register dependencies issues on x86 and we won't have to load the constants.
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     m_node->setOp(ArithAdd);
                     child2.setNode(m_node->child1().node());
                     m_changed = true;
@@ -227,6 +228,7 @@ private:
                     // For integers, we can only convert compatible modes.
                     // ArithAdd does handle do negative zero check for example.
                     if (m_node->arithMode() == Arith::CheckOverflow || m_node->arithMode() == Arith::Unchecked) {
+                        m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                         m_node->setOp(ArithAdd);
                         child2.setNode(m_node->child1().node());
                         m_changed = true;
@@ -266,9 +268,11 @@ private:
             if (m_node->child2()->isNumberConstant()) {
                 double yOperandValue = m_node->child2()->asNumber();
                 if (yOperandValue == 1) {
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     convertToIdentityOverChild1();
                     m_changed = true;
                 } else if (yOperandValue == 2) {
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     m_node->setOp(ArithMul);
                     m_node->child2() = m_node->child1();
                     m_changed = true;
