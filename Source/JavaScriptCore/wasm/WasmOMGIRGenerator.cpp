@@ -3407,7 +3407,7 @@ auto OMGIRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size,
     if (isRefType(elementType.unpacked()))
         initValue = m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()));
     else if (elementType.elementSize() == 16)
-        initValue = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), v128_t { });
+        initValue = constant(V128, v128_t { });
     else if (elementType.elementSize() <= 4)
         initValue = constant(Int32, 0);
     else
@@ -3862,9 +3862,12 @@ auto OMGIRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& res
     const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         Value* initValue;
-        if (Wasm::isRefType(structType.field(i).type))
+        auto fieldType = structType.field(i).type;
+        if (Wasm::isRefType(fieldType))
             initValue = m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()));
-        else if (typeSizeInBytes(structType.field(i).type) <= 4)
+        else if (typeSizeInBytes(fieldType) == 16)
+            initValue = constant(V128, v128_t { });
+        else if (typeSizeInBytes(fieldType) <= 4)
             initValue = constant(Int32, 0);
         else
             initValue = constant(Int64, 0);
