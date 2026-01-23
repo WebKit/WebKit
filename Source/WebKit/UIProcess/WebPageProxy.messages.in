@@ -221,11 +221,11 @@ messages -> WebPageProxy {
     ShouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier itemID) -> (enum:uint8_t WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem) Synchronous
 
     # Undo/Redo messages
-    RegisterEditCommandForUndo(uint64_t commandID, String label) AllowedWhenWaitingForSyncReply
+    RegisterEditCommandForUndo(WebKit::WebUndoStepID commandID, String label) AllowedWhenWaitingForSyncReply
     ClearAllEditCommands()
     RegisterInsertionUndoGrouping()
     CanUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (bool result) Synchronous
-    ExecuteUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> () Synchronous
+    ExecuteUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (uint32_t undoVersion, Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>> pendingUndoRedo) Synchronous
 
     # Diagnostic messages logging
     LogDiagnosticMessageFromWebProcess(String message, String description, enum:bool WebCore::ShouldSample shouldSample)

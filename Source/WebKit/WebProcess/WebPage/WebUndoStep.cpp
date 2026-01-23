@@ -28,15 +28,9 @@
 
 namespace WebKit {
 
-static WebUndoStepID generateUndoStep()
-{
-    static WebUndoStepID uniqueEntryID = 1;
-    return uniqueEntryID++;
-}
-
 Ref<WebUndoStep> WebUndoStep::create(Ref<WebCore::UndoStep>&& step)
 {
-    return adoptRef(*new WebUndoStep(WTF::move(step), generateUndoStep()));
+    return adoptRef(*new WebUndoStep(WTF::move(step), WebUndoStepID::generate()));
 }
 
 WebUndoStep::~WebUndoStep() = default;

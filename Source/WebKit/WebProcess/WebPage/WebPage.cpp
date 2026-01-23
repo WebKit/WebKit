@@ -5611,24 +5611,36 @@ void WebPage::removeWebEditCommand(WebUndoStepID stepID)
         undoStep->didRemoveFromUndoManager();
 }
 
-void WebPage::unapplyEditCommand(WebUndoStepID stepID)
+void WebPage::unapplyEditCommand(uint32_t undoVersion, WebUndoStepID stepID, CompletionHandler<void()>&& completionHandler)
 {
+    if (undoVersion < m_currentUndoVersion)
+        return completionHandler();
+
+    m_currentUndoVersion = undoVersion;
+
     RefPtr step = webUndoStep(stepID);
     if (!step)
-        return;
+        return completionHandler();
 
     step->protectedStep()->unapply();
+    completionHandler();
 }
 
-void WebPage::reapplyEditCommand(WebUndoStepID stepID)
+void WebPage::reapplyEditCommand(uint32_t undoVersion, WebUndoStepID stepID, CompletionHandler<void()>&& completionHandler)
 {
+    if (undoVersion < m_currentUndoVersion)
+        return completionHandler();
+
+    m_currentUndoVersion = undoVersion;
+
     RefPtr step = webUndoStep(stepID);
     if (!step)
-        return;
+        return completionHandler();
 
     setIsInRedo(true);
     step->protectedStep()->reapply();
     setIsInRedo(false);
+    completionHandler();
 }
 
 void WebPage::didRemoveEditCommand(WebUndoStepID commandID)

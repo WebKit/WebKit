@@ -382,16 +382,34 @@ bool WebEditorClient::canRedo() const
     return result;
 }
 
+static void applyPendingUndoRedo(WebPage& page, uint32_t undoVersion, const Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>>& pendingUndoRedo)
+{
+    for (auto undoRedo : pendingUndoRedo) {
+        if (undoRedo.second == UndoOrRedo::Undo)
+            page.unapplyEditCommand(undoVersion, undoRedo.first, [] { });
+        else {
+            ASSERT(undoRedo.second == UndoOrRedo::Redo);
+            page.reapplyEditCommand(undoVersion, undoRedo.first, [] { });
+        }
+    }
+}
+
 void WebEditorClient::undo()
 {
-    if (RefPtr page = m_page.get())
-        page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Undo));
+    if (RefPtr page = m_page.get()) {
+        auto result = page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Undo));
+        if (result.succeeded())
+            applyPendingUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
+    }
 }
 
 void WebEditorClient::redo()
 {
-    if (RefPtr page = m_page.get())
-        page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo));
+    if (RefPtr page = m_page.get()) {
+        auto result = page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo));
+        if (result.succeeded())
+            applyPendingUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
+    }
 }
 
 WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::FrameIdentifier frameID, const String& originIdentifier)

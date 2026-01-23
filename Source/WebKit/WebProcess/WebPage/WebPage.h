@@ -539,6 +539,7 @@ struct WebPageCreationParameters;
 struct WebPageProxyIdentifierType;
 struct WebPreferencesStore;
 struct WebURLSchemeHandlerIdentifierType;
+struct WebUndoStepIDType;
 struct WebsitePoliciesData;
 
 template<typename T> class MonotonicObjectIdentifier;
@@ -568,7 +569,7 @@ using VisitedLinkTableIdentifier = ObjectIdentifier<VisitedLinkTableIdentifierTy
 using WKEventModifiers = uint32_t;
 using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
 using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandlerIdentifierType>;
-using WebUndoStepID = uint64_t;
+using WebUndoStepID = ObjectIdentifier<WebUndoStepIDType>;
 
 enum class DisallowLayoutViewportHeightExpansionReason : uint8_t {
     ElementFullScreen       = 1 << 0,
@@ -746,6 +747,8 @@ public:
     WebUndoStep* webUndoStep(WebUndoStepID);
     void addWebUndoStep(WebUndoStepID, Ref<WebUndoStep>&&);
     void removeWebEditCommand(WebUndoStepID);
+    void unapplyEditCommand(uint32_t undoVersion, WebUndoStepID, CompletionHandler<void()>&&);
+    void reapplyEditCommand(uint32_t undoVersion, WebUndoStepID, CompletionHandler<void()>&&);
     bool isInRedo() const { return m_isInRedo; }
     void setIsInRedo(bool isInRedo) { m_isInRedo = isInRedo; }
 
@@ -2399,8 +2402,6 @@ private:
 
     void setMainFrameIsScrollable(bool);
 
-    void unapplyEditCommand(WebUndoStepID commandID);
-    void reapplyEditCommand(WebUndoStepID commandID);
     void didRemoveEditCommand(WebUndoStepID commandID);
 
     void updateLastNodeBeforeWritingSuggestions(const WebCore::KeyboardEvent&);
@@ -2795,6 +2796,7 @@ private:
     bool m_mayStartMediaWhenInWindow { false };
 
     HashMap<WebUndoStepID, RefPtr<WebUndoStep>> m_undoStepMap;
+    uint32_t m_currentUndoVersion { 0 };
 
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;

@@ -10487,9 +10487,7 @@ void WebPageProxy::compositionWasCanceled()
 
 void WebPageProxy::registerEditCommandForUndo(IPC::Connection& connection, WebUndoStepID commandID, String&& label)
 {
-    Ref commandProxy = WebEditCommandProxy::create(commandID, WTF::move(label), *this);
-    MESSAGE_CHECK_BASE(commandProxy->commandID(), connection);
-    registerEditCommand(WTF::move(commandProxy), UndoOrRedo::Undo);
+    registerEditCommand(WebEditCommandProxy::create(commandID, WTF::move(label), *this), UndoOrRedo::Undo);
 }
 
 void WebPageProxy::registerInsertionUndoGrouping()
@@ -10506,17 +10504,32 @@ void WebPageProxy::canUndoRedo(UndoOrRedo action, CompletionHandler<void(bool)>&
     completionHandler(pageClient && pageClient->canUndoRedo(action));
 }
 
-void WebPageProxy::executeUndoRedo(UndoOrRedo action, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::executeUndoRedo(UndoOrRedo action, CompletionHandler<void(uint32_t undoVersion, Vector<std::pair<WebUndoStepID, UndoOrRedo>>&&)>&& completionHandler)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->executeUndoRedo(action);
-    completionHandler();
+    // FIXME: <rdar://168324268> Fix this for site isolation. We need a separate pending undo/redo stack for each process.
+    ++m_undoVersion;
+    completionHandler(m_undoVersion, WTF::moveToVector(std::exchange(m_pendingUndoRedo, { })));
 }
 
 void WebPageProxy::clearAllEditCommands()
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->clearAllEditCommands();
+}
+
+void WebPageProxy::addPendingUndoRedo(WebUndoStepID commandID, UndoOrRedo action)
+{
+    ++m_undoVersion;
+    m_pendingUndoRedo.append({ commandID, action });
+}
+
+void WebPageProxy::removePendingUndoRedo(WebUndoStepID commandID)
+{
+    m_pendingUndoRedo.removeFirstMatching([commandID](auto& item) {
+        return item.first == commandID;
+    });
 }
 
 #if USE(APPKIT)
