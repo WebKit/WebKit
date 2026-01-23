@@ -242,7 +242,7 @@ public:
     void defaultWheelEventHandler(Node*, WheelEvent&);
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, OptionSet<EventHandling>);
 
-    WEBCORE_EXPORT void setLastKnownMousePosition(DoublePoint position, DoublePoint globalPosition);
+    WEBCORE_EXPORT void setLastKnownMousePosition(const DoublePoint& position, const DoublePoint& globalPosition);
 
     bool handlePasteGlobalSelection();
 

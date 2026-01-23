@@ -155,6 +155,11 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint
     notImplemented();
 }
 
+void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates)
+{
+    notImplemented();
+}
+
 String WebPageProxy::stringSelectionForPasteboard()
 {
     notImplemented();

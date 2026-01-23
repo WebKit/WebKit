@@ -2905,6 +2905,8 @@ private:
 
     bool shouldForceForegroundPriorityForClientNavigation() const;
 
+    void updateMouseEventTargetAfterWindowAndViewFramesChanged(const WebCore::FloatRect&);
+
     bool canCreateFrame(WebCore::FrameIdentifier) const;
     Ref<WebPageProxy> downloadOriginatingPage(const API::Navigation*);
     Ref<WebPageProxy> navigationOriginatingPage(const FrameInfoData&);

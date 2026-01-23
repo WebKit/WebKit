@@ -208,8 +208,30 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
         if (!hasRunningProcess())
             return;
 
-        protectedLegacyMainFrameProcess()->send(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), webPageIDInMainFrameProcess());
+        protectedLegacyMainFrameProcess()->sendWithAsyncReply(
+            Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates),
+            [this, protectedThis, viewFrameInWindowCoordinates]() {
+                updateMouseEventTargetAfterWindowAndViewFramesChanged(viewFrameInWindowCoordinates);
+            },
+            webPageIDInMainFrameProcess()
+        );
     });
+}
+
+void WebPageProxy::updateMouseEventTargetAfterWindowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates)
+{
+    RetainPtr window = platformWindow();
+
+    // The origin of mac coordinate system is the bottom left corner. We need to convert
+    // the point to the web coordinate system which has an origin of the top left corner.
+    auto macMouseLocationInWindow = [window mouseLocationOutsideOfEventStream];
+
+    auto webMouseLocationInWindow = DoublePoint(macMouseLocationInWindow.x, [window frame].size.height - macMouseLocationInWindow.y);
+
+    // do same conversion as above
+    auto macMouseLocationInScreen = [NSEvent mouseLocation];
+    auto webMouseLocationInScreen = DoublePoint(macMouseLocationInScreen.x, [[NSScreen mainScreen] frame].size.height - macMouseLocationInScreen.y);
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::UpdateMouseEventTargetAfterWindowAndViewFramesChanged(webMouseLocationInWindow, webMouseLocationInScreen), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)

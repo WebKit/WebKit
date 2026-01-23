@@ -59,7 +59,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
     KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
     MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
-    SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::IntPoint eventPoint, WebCore::IntPoint globalPoint);
+    SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::DoublePoint eventPoint, WebCore::DoublePoint globalPoint);
 
 #if PLATFORM(IOS_FAMILY)
     SetSceneIdentifier(String sceneIdentifier)
@@ -529,7 +529,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if PLATFORM(COCOA)
-    WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates)
+    WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates) -> () Async
+    UpdateMouseEventTargetAfterWindowAndViewFramesChanged(WebCore::DoublePoint mousePositionInView, WebCore::DoublePoint currentMouseGlobalPosition)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(struct WebCore::AccessibilityRemoteToken elementToken, struct WebCore::AccessibilityRemoteToken windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous

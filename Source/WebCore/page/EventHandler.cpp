@@ -5605,7 +5605,7 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
-void EventHandler::setLastKnownMousePosition(DoublePoint position, DoublePoint globalPosition)
+void EventHandler::setLastKnownMousePosition(const DoublePoint& position, const DoublePoint& globalPosition)
 {
     m_lastKnownMousePosition = position;
     m_lastKnownMouseGlobalPosition = globalPosition;
