@@ -489,8 +489,11 @@ public:
 
     ~ImageAnalysisGestureDeferralToken()
     {
-        if (auto view = m_view.get())
-            [view _endImageAnalysisGestureDeferral:m_shouldPreventTextSelection ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
+        auto shouldPreventGestures = m_shouldPreventTextSelection ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No;
+        ensureOnMainRunLoop([weakView = m_view, shouldPreventGestures] {
+            if (RetainPtr view = weakView.get())
+                [view _endImageAnalysisGestureDeferral:shouldPreventGestures];
+        });
     }
 
     void setShouldPreventTextSelection()
