@@ -5022,3 +5022,109 @@ TEST(WKNavigation, AllowResourceLoadFromBlockedPortWithCustomScheme)
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "This resource was loaded");
     EXPECT_EQ(requestsSchemeHandled, 2u);
 }
+
+TEST(Navigation, FormResubmited)
+{
+    using namespace TestWebKitAPI;
+    std::optional<bool> requestHadSecFetchSiteCrossOrigin { false };
+    bool didReceiveForm { false };
+    auto httpsServer = HTTPServer(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+
+            if (path == "/main.html"_s) {
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, ""
+                    "<html><body>"
+                    "<form action='https://example1.com/submit' method='POST' id='form'>"
+                    "  <input type='text' id='name' name='name' value='value'/>"
+                    "  <input type='submit'/>"
+                    "</form>"
+                    "<script>"
+                    "window.didSubmit = false;"
+                    "onload = () => alert('Ready');"
+                    "function submitForm()"
+                    "{"
+                    "  form.submit();"
+                    "}"
+                    "</script>"
+                    "</body></html>"_s).serialize());
+                continue;
+            }
+
+            if (path == "/submit"_s) {
+                didReceiveForm = true;
+                requestHadSecFetchSiteCrossOrigin = contains(request.span(), "Sec-Fetch-Site: cross-site"_span);
+                if (requestHadSecFetchSiteCrossOrigin) {
+                    co_await connection.awaitableSend(HTTPResponse({ 403, { }, ""_s }).serialize());
+                    continue;
+                }
+
+                co_await connection.awaitableSend(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, ""
+                    "<html><body>"
+                    "<script>"
+                    "window.didSubmit = true;"
+                    "</script>"
+                    "</body></html>"_s).serialize());
+                continue;
+            }
+
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto navDelegate = adoptNS([TestNavigationDelegate new]);
+    [navDelegate allowAnyTLSCertificate];
+
+    __block bool didCommitNavigation = false;
+    navDelegate.get().didCommitNavigation = ^(WKWebView *, WKNavigation *) {
+        didCommitNavigation = true;
+    };
+
+    [webView setNavigationDelegate:navDelegate.get()];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    // Load main page from same origin as form submission
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example1.com/main.html"]]];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "Ready");
+
+    // Submit form - same origin.
+    didReceiveForm = false;
+    requestHadSecFetchSiteCrossOrigin = { };
+    [webView evaluateJavaScript:@"submitForm();" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didReceiveForm);
+    EXPECT_FALSE(requestHadSecFetchSiteCrossOrigin.value_or(true));
+
+    // Load main page from different origin as form submission
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example2.com/main.html"]]];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "Ready");
+
+    // Submit form - cross origin
+    didReceiveForm = false;
+    didCommitNavigation = false;
+    requestHadSecFetchSiteCrossOrigin = { };
+    [webView evaluateJavaScript:@"submitForm();" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didCommitNavigation);
+
+    EXPECT_TRUE(didReceiveForm);
+    EXPECT_TRUE(requestHadSecFetchSiteCrossOrigin.value_or(false));
+
+    // Submit form via reload - cross origin
+    didReceiveForm = false;
+    requestHadSecFetchSiteCrossOrigin = { };
+    [webView reload];
+    TestWebKitAPI::Util::run(&didReceiveForm);
+
+    EXPECT_TRUE(requestHadSecFetchSiteCrossOrigin.value_or(false));
+}

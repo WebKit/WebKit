@@ -969,6 +969,29 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     // FIXME: Decide whether to support client hints
 }
 
+static bool shouldReuseExistingFetchMetadata(const LocalFrame& frame, const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode)
+{
+    if (mode != FetchOptions::Mode::Navigate || type != CachedResource::Type::MainResource)
+        return false;
+
+    RefPtr loader = frame.loader().activeDocumentLoader();
+    if (loader && loader->triggeringAction().type() != NavigationType::FormResubmitted)
+        return false;
+
+    ASSERT_UNUSED(request, request.hasHTTPHeaderField(HTTPHeaderName::SecFetchDest));
+    ASSERT(request.hasHTTPHeaderField(HTTPHeaderName::SecFetchMode));
+    ASSERT(request.hasHTTPHeaderField(HTTPHeaderName::SecFetchSite));
+
+    return true;
+}
+
+static bool shouldUpdateFetchMetadata(const LocalFrame& frame, const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode)
+{
+    return frame.document()
+        && !frame.protectedDocument()->quirks().shouldDisableFetchMetadata()
+        && !shouldReuseExistingFetchMetadata(frame, request, type, mode);
+}
+
 void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
     // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
@@ -980,7 +1003,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
     Ref frame = frameLoader.frame();
-    if (frame->document() && !frame->protectedDocument()->quirks().shouldDisableFetchMetadata()) {
+    if (shouldUpdateFetchMetadata(frame, request.resourceRequest(), type, request.options().mode)) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frame, frame->isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
