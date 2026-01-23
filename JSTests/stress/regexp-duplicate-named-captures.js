@@ -215,3 +215,6 @@ testRegExpSyntaxError("(?:(?<x>c)x)(?:(?<x>a)|(?<x>b))", "", "SyntaxError: Inval
 testRegExpSyntaxError("(?:(?<x>a)|(?<x>b))(?:(?<x>c)x)", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<x>c)x|(?<y>d))(?:(?<y>a)|(?<x>b))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
 testRegExpSyntaxError("(?:(?<y>a)|(?<x>b))(?:(?<x>c)x|(?<y>d))", "", "SyntaxError: Invalid regular expression: duplicate group specifier name");
+
+// Test named capture groups backtracking doesn't confuse numbered backreferences
+testRegExp(/(?<l>x)|((?<l>(|)\1?.){2})x/, "caffeeeee", null);

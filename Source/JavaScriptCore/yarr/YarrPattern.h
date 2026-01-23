@@ -211,8 +211,10 @@ struct PatternTerm {
         AssertionWordBoundary,
         PatternCharacter,
         CharacterClass,
-        BackReference,
-        ForwardReference,
+        NumberedBackReference,
+        NamedBackReference,
+        NumberedForwardReference,
+        NamedForwardReference,
         ParenthesesSubpattern,
         ParentheticalAssertion,
         DotStarEnclosure,
@@ -299,7 +301,7 @@ struct PatternTerm {
     }
 
     PatternTerm(unsigned spatternId, OptionSet<Flags> currFlags)
-        : type(Type::BackReference)
+        : type(Type::NumberedBackReference)
         , m_currentFlags(currFlags)
         , m_capture(false)
         , m_invert(false)
@@ -323,9 +325,24 @@ struct PatternTerm {
         quantityMinCount = quantityMaxCount = 1;
     }
 
-    static PatternTerm ForwardReference(OptionSet<Flags> currFlags)
+    static PatternTerm NamedBackReference(unsigned subpatternId, OptionSet<Flags> currFlags)
     {
-        auto term = PatternTerm(Type::ForwardReference, currFlags);
+        PatternTerm term(subpatternId, currFlags);
+        ASSERT(term.type == Type::NumberedBackReference);
+        term.type = Type::NamedBackReference;
+        return term;
+    }
+
+    static PatternTerm NumberedForwardReference(OptionSet<Flags> currFlags)
+    {
+        auto term = PatternTerm(Type::NumberedForwardReference, currFlags);
+        term.backReferenceSubpatternId = 0;
+        return term;
+    }
+
+    static PatternTerm NamedForwardReference(OptionSet<Flags> currFlags)
+    {
+        auto term = PatternTerm(Type::NamedForwardReference, currFlags);
         term.backReferenceSubpatternId = 0;
         return term;
     }
@@ -345,10 +362,16 @@ struct PatternTerm {
         return PatternTerm(Type::AssertionWordBoundary, currFlags, invert);
     }
 
-    void convertToBackreference()
+    void convertToNumberedBackreference()
     {
-        ASSERT(type == Type::ForwardReference);
-        type = Type::BackReference;
+        ASSERT(type == Type::NumberedForwardReference);
+        type = Type::NumberedBackReference;
+    }
+
+    void convertToNamedBackreference()
+    {
+        ASSERT(type == Type::NamedForwardReference);
+        type = Type::NamedBackReference;
     }
 
     bool invert() const

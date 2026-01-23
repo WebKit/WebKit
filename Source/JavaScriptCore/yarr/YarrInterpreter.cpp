@@ -2361,17 +2361,18 @@ public:
         m_bodyDisjunction->terms.last().m_matchDirection = matchDirection;
     }
 
-    void atomBackReference(unsigned subpatternId, MatchDirection matchDirection, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType, OptionSet<Flags> flags)
+    void atomBackReference(bool isNamed, unsigned subpatternId, MatchDirection matchDirection, unsigned inputPosition, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType, OptionSet<Flags> flags)
     {
         ASSERT(subpatternId);
 
         m_bodyDisjunction->terms.append(ByteTerm::BackReference(subpatternId, matchDirection, inputPosition, flags));
 
-        if (m_pattern.hasDuplicateNamedCaptureGroups()) {
+        if (isNamed && m_pattern.hasDuplicateNamedCaptureGroups()) {
             auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
             if (duplicateNamedGroupId)
                 m_bodyDisjunction->terms.last().atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
         }
+
         m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
         m_bodyDisjunction->terms.last().frameLocation = frameLocation;
@@ -2765,15 +2766,17 @@ public:
                     break;
                 }
 
-                case PatternTerm::Type::BackReference: {
+                case PatternTerm::Type::NumberedBackReference:
+                case PatternTerm::Type::NamedBackReference: {
                     auto currentInputPosition = currentCountAlreadyChecked - term.inputPosition;
                     if (currentInputPosition.hasOverflowed())
                         return ErrorCode::OffsetTooLarge;
-                    atomBackReference(term.backReferenceSubpatternId, matchDirection, currentInputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType, term.m_currentFlags);
+                    atomBackReference(term.type == PatternTerm::Type::NamedBackReference, term.backReferenceSubpatternId, matchDirection, currentInputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType, term.m_currentFlags);
                     break;
                 }
 
-                case PatternTerm::Type::ForwardReference:
+                case PatternTerm::Type::NumberedForwardReference:
+                case PatternTerm::Type::NamedForwardReference:
                     break;
 
                 case PatternTerm::Type::ParenthesesSubpattern: {

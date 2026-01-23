@@ -1194,10 +1194,10 @@ public:
                     continue;
                 }
                 term->backReferenceSubpatternId = namedGroupSubpatternId;
-                term->convertToBackreference();
+                term->convertToNamedBackreference();
                 m_pattern.m_containsBackreferences = true;
             } else if (term->backReferenceSubpatternId && term->backReferenceSubpatternId <= m_pattern.m_numSubpatterns) {
-                term->convertToBackreference();
+                term->convertToNumberedBackreference();
                 m_pattern.m_containsBackreferences = true;
             }
         }
@@ -1536,7 +1536,7 @@ public:
     {
         ASSERT(subpatternId);
         if (subpatternId > m_pattern.m_numSubpatterns) {
-            m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
+            m_alternative->m_terms.append(PatternTerm::NumberedForwardReference(m_flags));
             if (parenthesisMatchDirection() == Backward) {
                 // When matching backwards, this forward reference could actually be
                 // a backreference for a captured paren in the lookbehind yet to be parsed.
@@ -1557,7 +1557,7 @@ public:
             ASSERT((term.type == PatternTerm::Type::ParenthesesSubpattern) || (term.type == PatternTerm::Type::ParentheticalAssertion));
 
             if ((term.type == PatternTerm::Type::ParenthesesSubpattern) && term.capture() && (subpatternId == term.parentheses.subpatternId)) {
-                m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
+                m_alternative->m_terms.append(PatternTerm::NumberedForwardReference(m_flags));
                 return;
             }
         }
@@ -1585,14 +1585,14 @@ public:
                 ASSERT((term.type == PatternTerm::Type::ParenthesesSubpattern) || (term.type == PatternTerm::Type::ParentheticalAssertion));
 
                 if ((term.type == PatternTerm::Type::ParenthesesSubpattern) && term.capture() && (subpatternId == term.parentheses.subpatternId)) {
-                    m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
+                    m_alternative->m_terms.append(PatternTerm::NamedForwardReference(m_flags));
                     return;
                 }
             }
         }
 
         if (parenthesisMatchDirection() == Forward) {
-            m_alternative->m_terms.append(PatternTerm(parenIndices.last(), m_flags));
+            m_alternative->m_terms.append(PatternTerm::NamedBackReference(parenIndices.last(), m_flags));
             PatternTerm& lastTerm = m_alternative->lastTerm();
             lastTerm.m_matchDirection = parenthesisMatchDirection();
             m_pattern.m_containsBackreferences = true;
@@ -1602,7 +1602,7 @@ public:
         // When part of a lookbehind, it could be the case that a prior alternative has a duplicate
         // named capture. Therefore we create a ForwardReference that will be converted to a
         // Backreference when the lookbehind or alternative is closed.
-        m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
+        m_alternative->m_terms.append(PatternTerm::NamedForwardReference(m_flags));
         PatternTerm& term = m_alternative->lastTerm();
         term.m_matchDirection = parenthesisMatchDirection();
         // We record the current subpatternId, which we use when we try to convert to a back reference.
@@ -1614,7 +1614,7 @@ public:
 
     void atomNamedForwardReference(const String& subpatternName)
     {
-        m_alternative->m_terms.append(PatternTerm::ForwardReference(m_flags));
+        m_alternative->m_terms.append(PatternTerm::NamedForwardReference(m_flags));
 
         if (parenthesisMatchDirection() == Backward) {
             PatternTerm& term = m_alternative->lastTerm();
@@ -1787,14 +1787,16 @@ public:
                 term.inputPosition = currentInputPosition;
                 break;
 
-            case PatternTerm::Type::BackReference:
+            case PatternTerm::Type::NumberedBackReference:
+            case PatternTerm::Type::NamedBackReference:
                 term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
                 currentCallFrameSize += YarrStackSpaceForBackTrackInfoBackReference;
                 alternative->m_hasFixedSize = false;
                 break;
 
-            case PatternTerm::Type::ForwardReference:
+            case PatternTerm::Type::NumberedForwardReference:
+            case PatternTerm::Type::NamedForwardReference:
                 break;
 
             case PatternTerm::Type::PatternCharacter:
@@ -2861,13 +2863,18 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
             out.print(",frame location ", frameLocation);
         out.println();
         break;
-    case Type::BackReference:
+    case Type::NumberedBackReference:
+    case Type::NamedBackReference:
+        out.print(type == Type::NumberedBackReference ? "numbered " : "named ");
         out.print("back reference of subpattern #", backReferenceSubpatternId);
         out.printf(" inputPosition %u", inputPosition);
         out.println();
         break;
-    case Type::ForwardReference:
-        out.println("forward reference");
+    case Type::NumberedForwardReference:
+        out.println("numbered forward reference");
+        break;
+    case Type::NamedForwardReference:
+        out.println("named forward reference");
         break;
     case Type::ParenthesesSubpattern:
         if (m_capture)
