@@ -83,19 +83,6 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - ComputedStyleBase::NonInheritedFlags
-
-inline bool ComputedStyleBase::NonInheritedFlags::hasPseudoStyle(PseudoElementType pseudo) const
-{
-    ASSERT(allPublicPseudoElementTypes.contains(pseudo));
-    return EnumSet<PseudoElementType>::fromRaw(pseudoBits).contains(pseudo);
-}
-
-inline bool ComputedStyleBase::NonInheritedFlags::hasAnyPublicPseudoStyles() const
-{
-    return !!pseudoBits;
-}
-
 // MARK: - Non-property getters
 
 inline bool ComputedStyleBase::usesViewportUnits() const
@@ -269,7 +256,7 @@ inline AppleVisualEffect ComputedStyleBase::usedAppleVisualEffectForSubtree() co
 
 inline std::optional<PseudoElementType> ComputedStyleBase::pseudoElementType() const
 {
-    return m_nonInheritedFlags.pseudoElementType ? std::make_optional(static_cast<PseudoElementType>(m_nonInheritedFlags.pseudoElementType - 1)) : std::nullopt;
+    return m_nonInheritedData->rareData->pseudoElementType ? std::make_optional(static_cast<PseudoElementType>(m_nonInheritedData->rareData->pseudoElementType - 1)) : std::nullopt;
 }
 
 inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
@@ -279,12 +266,13 @@ inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
 
 inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const
 {
-    return m_nonInheritedFlags.hasPseudoStyle(pseudo);
+    ASSERT(allPublicPseudoElementTypes.contains(pseudo));
+    return EnumSet<PseudoElementType>::fromRaw(m_nonInheritedData->rareData->pseudoBits).contains(pseudo);
 }
 
 inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
 {
-    return m_nonInheritedFlags.hasAnyPublicPseudoStyles();
+    return !!m_nonInheritedData->rareData->pseudoBits;
 }
 
 // MARK: - Custom properties

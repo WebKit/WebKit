@@ -25,6 +25,7 @@
 #pragma once
 
 #include "PropertyAllowlist.h"
+#include "PseudoElementRequest.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StylePropertiesInlines.h"
@@ -53,6 +54,8 @@ struct MatchResult : RefCounted<MatchResult> {
     bool isForLink { false };
     bool isCompletelyNonCacheable { false };
     bool hasStartingStyle { false };
+    std::optional<PseudoElementRequest> pseudoElementRequest { };
+    EnumSet<PseudoElementType> matchedPseudoElements;
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
     Vector<MatchedProperties> authorDeclarations;
@@ -82,7 +85,13 @@ inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
 
 inline bool MatchResult::cacheablePropertiesEqual(const MatchResult& other) const
 {
-    if (isForLink != other.isForLink || hasStartingStyle != other.hasStartingStyle)
+    if (isForLink != other.isForLink || hasStartingStyle != other.hasStartingStyle || matchedPseudoElements != other.matchedPseudoElements)
+        return false;
+
+    if (pseudoElementRequest.has_value() != other.pseudoElementRequest.has_value())
+        return false;
+
+    if (pseudoElementRequest && pseudoElementRequest->type() != other.pseudoElementRequest->type())
         return false;
 
     // Only author style can be non-cacheable.
@@ -131,7 +140,14 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 inline void add(Hasher& hasher, const MatchResult& matchResult)
 {
     ASSERT(!matchResult.isCompletelyNonCacheable);
-    add(hasher, matchResult.isForLink, matchResult.nonCacheablePropertyIds, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
+    add(hasher,
+        matchResult.isForLink,
+        matchResult.nonCacheablePropertyIds,
+        matchResult.pseudoElementRequest ? static_cast<unsigned>(enumToUnderlyingType(matchResult.pseudoElementRequest->type()) + 1) : 0u,
+        matchResult.matchedPseudoElements,
+        matchResult.userAgentDeclarations,
+        matchResult.userDeclarations,
+        matchResult.authorDeclarations);
 }
 
 }

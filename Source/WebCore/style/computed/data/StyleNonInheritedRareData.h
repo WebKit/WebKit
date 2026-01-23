@@ -98,6 +98,9 @@ class GridItemData;
 class MarqueeData;
 class MaskBorderData;
 
+constexpr auto PublicPseudoIDBits = 17;
+constexpr auto PseudoElementTypeBits = 5;
+
 // This class is for rarely used non-inherited property data. By grouping them
 // together, we save space, and only allocate this object when someone actually
 // uses one of these properties.
@@ -258,6 +261,8 @@ public:
     PREFERRED_TYPE(Contain) unsigned contain : 5;
     PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 1;
     PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
+    PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits { 0 };
+    unsigned pseudoBits : PublicPseudoIDBits { 0 };
 
 private:
     NonInheritedRareData();

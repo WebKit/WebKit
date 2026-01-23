@@ -439,10 +439,8 @@ using WebkitBoxFlex = Number<CSS::All, float>;
 using WebkitBoxFlexGroup = Integer<CSS::Nonnegative>;
 using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 
-constexpr auto PublicPseudoIDBits = 17;
 constexpr auto TextDecorationLineBits = 5;
 constexpr auto TextTransformBits = 6;
-constexpr auto PseudoElementTypeBits = 5;
 
 using PseudoStyleCache = HashMap<PseudoElementIdentifier, std::unique_ptr<RenderStyle>>;
 
@@ -764,8 +762,6 @@ public:
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;
         PREFERRED_TYPE(bool) unsigned lastChildState : 1;
         PREFERRED_TYPE(bool) unsigned isLink : 1;
-        PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits;
-        unsigned pseudoBits : PublicPseudoIDBits;
         unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element. PREFERRED_TYPE elided to avoid header inclusion.
 
         // If you add more style bits here, you will also need to update ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom().

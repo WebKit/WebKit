@@ -32,6 +32,9 @@ namespace Style {
 
 using namespace CSS::Literals;
 
+static_assert(PublicPseudoIDBits == allPublicPseudoElementTypes.size());
+static_assert(PublicPseudoIDBits < 1 << PseudoElementTypeBits);
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonInheritedRareData);
 
 NonInheritedRareData::NonInheritedRareData()
@@ -252,6 +255,8 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , contain(o.contain)
     , overflowContinue(o.overflowContinue)
     , scrollSnapStop(o.scrollSnapStop)
+    , pseudoElementType(o.pseudoElementType)
+    , pseudoBits(o.pseudoBits)
 {
 }
 
@@ -369,7 +374,9 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && marginTrim == o.marginTrim
         && contain == o.contain
         && overflowContinue == o.overflowContinue
-        && scrollSnapStop == o.scrollSnapStop;
+        && scrollSnapStop == o.scrollSnapStop
+        && pseudoElementType == o.pseudoElementType
+        && pseudoBits == o.pseudoBits;
 }
 
 Contain NonInheritedRareData::usedContain() const
@@ -544,6 +551,9 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT_WITH_CAST(OverflowContinue, overflowContinue);
     LOG_IF_DIFFERENT_WITH_CAST(ScrollSnapStop, scrollSnapStop);
+
+    LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
+    LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);
 }
 #endif // !LOG_DISABLED
 

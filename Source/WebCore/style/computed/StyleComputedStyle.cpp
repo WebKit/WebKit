@@ -128,7 +128,7 @@ void ComputedStyle::copyContentFrom(const ComputedStyle& other)
 
 void ComputedStyle::copyPseudoElementBitsFrom(const ComputedStyle& other)
 {
-    m_nonInheritedFlags.pseudoBits = other.m_nonInheritedFlags.pseudoBits;
+    m_nonInheritedData.access().rareData.access().pseudoBits = other.m_nonInheritedData->rareData->pseudoBits;
 }
 
 bool ComputedStyle::operator==(const ComputedStyle& other) const

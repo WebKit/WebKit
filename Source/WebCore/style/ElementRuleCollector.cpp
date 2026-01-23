@@ -214,7 +214,7 @@ void ElementRuleCollector::collectMatchingRules(DeclarationOrigin origin)
 
 void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest)
 {
-    ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::StyleInvalidation && m_pseudoElementRequest), "When in StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
+    ASSERT_WITH_MESSAGE(!(m_mode == SelectorChecker::Mode::StyleInvalidation && pseudoElementRequest()), "When in StyleInvalidation or SharingRules, SelectorChecker does not try to match the pseudo ID. While ElementRuleCollector supports matching a particular pseudoId in this case, this would indicate a error at the call site since matching a particular element should be unnecessary.");
 
     auto& element = this->element();
     auto* shadowRoot = element.containingShadowRoot();
@@ -241,8 +241,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         for (auto* rules : ruleVectors)
             collectMatchingRulesForList(rules, matchRequest);
     }
-    if (m_pseudoElementRequest && m_pseudoElementRequest->nameArgument() != nullAtom())
-        collectMatchingRulesForList(matchRequest.ruleSet.namedPseudoElementRules(m_pseudoElementRequest->nameArgument()), matchRequest);
+    if (pseudoElementRequest() && pseudoElementRequest()->nameArgument() != nullAtom())
+        collectMatchingRulesForList(matchRequest.ruleSet.namedPseudoElementRules(pseudoElementRequest()->nameArgument()), matchRequest);
     if (element.isLink())
         collectMatchingRulesForList(matchRequest.ruleSet.linkPseudoClassRules(), matchRequest);
     if (matchesFocusPseudoClass(element))
@@ -497,7 +497,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
     auto matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
     if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
-        ASSERT_WITH_MESSAGE(!m_pseudoElementRequest, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
+        ASSERT_WITH_MESSAGE(!pseudoElementRequest(), "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
 
         switch (matchBasedOnRuleHash) {
         case MatchBasedOnRuleHash::None:
@@ -532,7 +532,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
 #if !ASSERT_MSG_DISABLED
             unsigned ignoreSpecificity;
-            ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || !m_pseudoElementRequest, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+            ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || !pseudoElementRequest(), "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
             bool selectorMatches = SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &specificity);
 
@@ -542,10 +542,10 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     SelectorChecker::CheckingContext context(m_mode);
-    if (m_pseudoElementRequest) {
-        auto pseudoElementIdentifier = m_pseudoElementRequest->identifier();
+    if (pseudoElementRequest()) {
+        auto pseudoElementIdentifier = pseudoElementRequest()->identifier();
         context.setRequestedPseudoElement(pseudoElementIdentifier);
-        context.scrollbarState = m_pseudoElementRequest->scrollbarState();
+        context.scrollbarState = pseudoElementRequest()->scrollbarState();
         if (isNamedViewTransitionPseudoElement(pseudoElementIdentifier))
             context.classList = classListForNamedViewTransitionPseudoElement(element().document(), pseudoElementIdentifier.nameArgument);
     }
@@ -572,7 +572,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
             specificity = selector.computeSpecificity();
     }
 
-    m_matchedPseudoElements.add(context.publicPseudoElements);
+    m_result->matchedPseudoElements.add(context.publicPseudoElements);
     m_styleRelations.appendVector(context.styleRelations);
 
     return selectorMatches;
@@ -584,7 +584,7 @@ void ElementRuleCollector::collectMatchingRulesForListSlow(const RuleSet::RuleDa
         if (!ruleData.isEnabled()) [[unlikely]]
             continue;
 
-        if (!ruleData.canMatchPseudoElement() && m_pseudoElementRequest)
+        if (!ruleData.canMatchPseudoElement() && pseudoElementRequest())
             continue;
 
         if (m_selectorMatchingState && m_selectorMatchingState->selectorFilter.fastRejectSelector(ruleData.descendantSelectorIdentifierHashes()))
@@ -931,7 +931,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
 void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyframe)
 {
     ASSERT(m_result->authorDeclarations.isEmpty());
-    auto propertyAllowlist = m_pseudoElementRequest ? propertyAllowlistForPseudoElement(m_pseudoElementRequest->type()) : PropertyAllowlist::None;
+    auto propertyAllowlist = pseudoElementRequest() ? propertyAllowlistForPseudoElement(pseudoElementRequest()->type()) : PropertyAllowlist::None;
     m_result->authorDeclarations.append({ keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlist });
 }
 

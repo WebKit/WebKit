@@ -59,7 +59,6 @@
 namespace WebCore {
 namespace Style {
 
-static_assert(PublicPseudoIDBits == allPublicPseudoElementTypes.size());
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
 // Value zero is used to indicate no pseudo-element.
@@ -442,9 +441,6 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT(firstChildState);
     LOG_IF_DIFFERENT(lastChildState);
     LOG_IF_DIFFERENT(isLink);
-
-    LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
-    LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);
 }
 
 void ComputedStyleBase::InheritedFlags::dumpDifferences(TextStream& ts, const InheritedFlags& other) const

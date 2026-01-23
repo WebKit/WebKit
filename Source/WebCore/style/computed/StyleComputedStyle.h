@@ -40,7 +40,6 @@ public:
     void fastPathInheritFrom(const ComputedStyle&);
     void copyNonInheritedFrom(const ComputedStyle&);
     void copyContentFrom(const ComputedStyle&);
-    void copyPseudoElementsFrom(const ComputedStyle&);
     void copyPseudoElementBitsFrom(const ComputedStyle&);
 
     // MARK: - Comparisons

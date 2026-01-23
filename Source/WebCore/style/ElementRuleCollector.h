@@ -24,7 +24,6 @@
 #include "MatchResult.h"
 #include "MediaQueryEvaluator.h"
 #include "PropertyAllowlist.h"
-#include "PseudoElementRequest.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleScopeOrdinal.h"
@@ -61,7 +60,7 @@ public:
 
     bool matchesAnyAuthorRules();
 
-    void setPseudoElementRequest(const std::optional<PseudoElementRequest>& request) { m_pseudoElementRequest = request; }
+    void setPseudoElementRequest(const std::optional<PseudoElementRequest>& request) { m_result->pseudoElementRequest = request; }
     void setMedium(const MQ::MediaQueryEvaluator& medium) { m_isPrintStyle = medium.isPrintMedia(); }
 
 
@@ -72,7 +71,8 @@ public:
 
     void clearMatchedRules();
 
-    EnumSet<PseudoElementType> matchedPseudoElements() const { return m_matchedPseudoElements; }
+    std::optional<PseudoElementRequest> pseudoElementRequest() const { return m_result->pseudoElementRequest; }
+    EnumSet<PseudoElementType> matchedPseudoElements() const { return m_result->matchedPseudoElements; }
     const Relations& styleRelations() const { return m_styleRelations; }
 
     void addAuthorKeyframeRules(const StyleRuleKeyframe&);
@@ -126,7 +126,6 @@ private:
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
-    std::optional<PseudoElementRequest> m_pseudoElementRequest { };
     const SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 
     Vector<MatchedRule, 64> m_matchedRules;
@@ -136,7 +135,6 @@ private:
     Vector<Ref<const StyleRule>> m_matchedRuleList;
     Ref<MatchResult> m_result;
     Relations m_styleRelations;
-    EnumSet<PseudoElementType> m_matchedPseudoElements;
 };
 
 ALWAYS_INLINE void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)
