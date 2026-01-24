@@ -50,33 +50,24 @@ constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig
 namespace WebConfig {
 
 using Slot = uint64_t;
-// Used primarily as storage for WTFConfig.
-// However, other components also use it to stow their own configurations:
-// - the storage for allocator configs is located at the start of the
-//   region, and is laid out a la ReservedGlobalConfigSlots below.
-// - JSC::Config is located after the body of the WTFConfig,
-//   at the address `spaceForExtensions`
 extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 
-constexpr size_t reservedSlotsForLibpasConfiguration = 2;
 constexpr size_t reservedSlotsForExecutableAllocator = 2;
-struct ReservedGlobalConfigSlots {
-    // Unlike with the other two allocator configuration regions,
-    // Libpas does NOT reference these definitions to see how much space it has /
-    // what offset it starts at, as it doesn't depend on WTF and can't include
-    // cpp headers.
-    // Instead, it assumes
-    //   A) it gets at least two slots of storage,
-    //   B) that that storage starts at byte 0 of g_config (i.e. no offset)
-    Slot reservationForLibpas[reservedSlotsForLibpasConfiguration];
-    Slot reservationForExecutableAllocator[reservedSlotsForExecutableAllocator];
-    Slot reservationForGigacage[Gigacage::reservedSlotsForGigacageConfig];
-    // Storage for the WTF config proper begins here
+constexpr size_t reservedSlotsForMTEConfiguration = 2;
+constexpr size_t reservedSlotsForAllocationProfiling = 2;
+
+enum ReservedConfigByteOffset {
+    ReservedByteForExecutableAllocator0 = 0,
+    ReservedByteForExecutableAllocator1,
+    // The MTE offsets must be kept in sync with pas_mte_config.h
+    ReservedByteForMTEEnablement,
+    ReservedByteForMTEExtendedConfiguration,
+    ReservedByteForAllocationProfiling,
+    ReservedByteForAllocationProfilingMode,
+    NumberOfReservedConfigBytes
 };
 
-#if !USE(SYSTEM_MALLOC)
-static_assert(Gigacage::startOffsetOfGigacageConfig == offsetof(ReservedGlobalConfigSlots, reservationForGigacage));
-#endif
+static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * (reservedSlotsForExecutableAllocator + reservedSlotsForMTEConfiguration + reservedSlotsForAllocationProfiling));
 
 } // namespace WebConfig
 
@@ -121,15 +112,15 @@ struct Config {
     uint64_t spaceForExtensions[1];
 };
 
-constexpr size_t startOffsetOfWTFConfig = sizeof(WebConfig::ReservedGlobalConfigSlots);
-constexpr size_t startSlotOfWTFConfig = startOffsetOfWTFConfig / sizeof(WebConfig::Slot);
+constexpr size_t startSlotOfWTFConfig = Gigacage::reservedSlotsForGigacageConfig;
+constexpr size_t startOffsetOfWTFConfig = startSlotOfWTFConfig * sizeof(WebConfig::Slot);
 
 constexpr size_t offsetOfWTFConfigExtension = startOffsetOfWTFConfig + offsetof(WTF::Config, spaceForExtensions);
 
 constexpr size_t alignmentOfWTFConfig = std::alignment_of<WTF::Config>::value;
 
+static_assert(Gigacage::reservedBytesForGigacageConfig + sizeof(WTF::Config) <= ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) == startOffsetOfWTFConfig);
-static_assert(startOffsetOfWTFConfig + sizeof(WTF::Config) <= ConfigSizeToProtect);
 
 WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
 

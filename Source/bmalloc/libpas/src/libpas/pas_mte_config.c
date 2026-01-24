@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Apple Inc. All rights reserved.
+ * Copyright (c) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,49 +108,38 @@ static bool get_value_if_available(unsigned* valuePtr, const char* var)
 
 static void pas_mte_do_initialization(void)
 {
-    pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+    uint8_t* enabled_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG);
+    uint8_t* mode_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_MODE_BITS);
+    uint8_t* medium_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG);
+    uint8_t* lockdown_mode_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG);
+    uint8_t* hardened_byte = &PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG);
 
     struct proc_bsdinfo info;
     int rc = proc_pidinfo(getpid(), PROC_PIDTBSDINFO, 0, &info, sizeof(info));
     if (rc == sizeof(info) && info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED)
-        config->enabled = true;
+        *enabled_byte = 1;
 
     if (is_env_true("JSC_useAllocationProfiling") || is_env_true("MTE_overrideEnablementForJavaScriptCore")) {
         PAS_ASSERT(!(is_env_false("JSC_useAllocationProfiling") || is_env_false("MTE_overrideEnablementForJavaScriptCore")));
-        config->enabled = true;
+        *enabled_byte = 1;
     }
     if (is_env_false("JSC_useAllocationProfiling") || is_env_false("MTE_overrideEnablementForJavaScriptCore"))
-        config->enabled = false;
+        *enabled_byte = 0;
 
-    if (!config->enabled)
+    if (!*enabled_byte)
         return;
 
-<<<<<<< HEAD
     const char* name = getprogname();
     const char* lockdownModeProcName = "com.apple.WebKit.WebContent.CaptivePortal";
     bool isLockdownModeWebContentProcess = !strncmp(name, lockdownModeProcName, strlen(lockdownModeProcName));
     if (isLockdownModeWebContentProcess)
         *lockdown_mode_byte = 1;
-=======
-    uint64_t ldmState = 0;
-    size_t sysCtlLen = sizeof(ldmState);
-    if (sysctlbyname("security.mac.lockdown_mode_state", &ldmState, &sysCtlLen, NULL, 0) >= 0 && ldmState == 1)
-        config->is_lockdown_mode = true;
->>>>>>> 807130f62415 ([libpas] Refactor libpas runtime configuration code)
     else
-        config->is_lockdown_mode = false;
+        *lockdown_mode_byte = 0;
 
     unsigned mode = 0;
-    if (get_value_if_available(&mode, "JSC_allocationProfilingMode")) {
-        uint8_t mode_byte = (uint8_t)(mode & 0xFF);
-        config->mode_bits.retag_on_scavenge = (mode_byte >> PAS_MTE_FEATURE_RETAG_ON_SCAVENGE) & 1;
-        config->mode_bits.log_on_tag = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_TAG) & 1;
-        config->mode_bits.log_on_purify = (mode_byte >> PAS_MTE_FEATURE_LOG_ON_PURIFY) & 1;
-        config->mode_bits.log_page_alloc = (mode_byte >> PAS_MTE_FEATURE_LOG_PAGE_ALLOC) & 1;
-        config->mode_bits.zero_tag_all = (mode_byte >> PAS_MTE_FEATURE_ZERO_TAG_ALL) & 1;
-        config->mode_bits.adjacent_tag_exclusion = (mode_byte >> PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION) & 1;
-        config->mode_bits.assert_adjacent_tags_are_disjoint = (mode_byte >> PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT) & 1;
-    }
+    if (get_value_if_available(&mode, "JSC_allocationProfilingMode"))
+        *mode_byte = (uint8_t)(mode & 0xFF);
 
     bool isWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent", 27) || !strncmp(name, "jsc", 3);
 
@@ -166,7 +155,7 @@ static void pas_mte_do_initialization(void)
     // Debug option to unconditionally override the tagging rate.
     get_value_if_available(&taggingRate, "MTE_taggingRate");
 
-    config->tagging_rate = taggingRate;
+    PAS_MTE_CONFIG_BYTE(PAS_MTE_TAGGING_RATE) = taggingRate;
 
     if (isWebContentProcess) {
         // For a variety of reasons, a full MTE implementation in the WebContent process is not generally practical.
@@ -176,24 +165,24 @@ static void pas_mte_do_initialization(void)
 
         bool wcp_is_hardened = false;
         bool isEnhancedSecurityWebContentProcess = !strncmp(name, "com.apple.WebKit.WebContent.EnhancedSecurity", 44);
-        if (config->is_lockdown_mode || isEnhancedSecurityWebContentProcess)
+        if (*lockdown_mode_byte || isEnhancedSecurityWebContentProcess)
             wcp_is_hardened = true;
 
         if (wcp_is_hardened) {
-            config->medium_tagging_enabled = true;
-            config->enabled = true;
-            config->is_hardened = true;
+            *medium_byte = 1;
+            *enabled_byte = 1;
+            *hardened_byte = 1;
 
             pas_mte_force_nontaggable_user_allocations_into_large_heap();
         } else {
-            config->medium_tagging_enabled = false;
+            *medium_byte = 0;
 #if !PAS_USE_MTE_IN_WEBCONTENT
             // Disable tagging in libpas by default in WebContent process
-            config->enabled = false;
+            *enabled_byte = 0;
 #else
-            config->enabled = true;
+            *enabled_byte = 1;
 #endif
-            config->is_hardened = false;
+            *hardened_byte = 0;
             // FIXME: rdar://159974195
             bmalloc_common_primitive_heap.is_non_compact_heap = false;
         }
@@ -201,41 +190,54 @@ static void pas_mte_do_initialization(void)
 #ifndef NDEBUG
         if (is_env_true("MTE_disableForWebContent")) {
             PAS_ASSERT(!is_env_true("MTE_overrideEnablementForWebContent"));
-            config->enabled = false;
-            config->medium_tagging_enabled = false;
+            *enabled_byte = 0;
+            *medium_byte = 0;
         }
 #endif
         if (is_env_true("MTE_overrideEnablementForWebContent")) {
-            config->enabled = true;
-            config->medium_tagging_enabled = true;
+            *enabled_byte = 1;
+            *medium_byte = 1;
         } else if (is_env_false("MTE_overrideEnablementForWebContent")) {
-            config->enabled = false;
-            config->medium_tagging_enabled = false;
+            *enabled_byte = 0;
+            *medium_byte = 0;
         }
     } else {
-        config->medium_tagging_enabled = true; // Tag libpas medium objects in privileged processes
-        config->is_hardened = true;
+        *medium_byte = 1; // Tag libpas medium objects in privileged processes
+        *hardened_byte = 1;
     }
 }
 
 static bool pas_mte_is_enabled(void)
 {
-    const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+    const uint8_t* enabledByte = ((const uint8_t*)(g_config + 2));
     struct proc_bsdinfo info;
     int rc = proc_pidinfo(getpid(), PROC_PIDTBSDINFO, 0, &info, sizeof(info));
-    return (rc == sizeof(info) && (info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED) && config->enabled);
+    return (rc == sizeof(info) && (info.pbi_flags & PAS_MTE_PROC_FLAG_SEC_ENABLED) && !!*enabledByte);
+}
+
+static void pas_mte_get_config_bytes(uint8_t (*bytes_out)[6])
+{
+    (*bytes_out)[0] = PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG);
+    (*bytes_out)[1] = PAS_MTE_CONFIG_BYTE(PAS_MTE_MODE_BITS);
+    (*bytes_out)[2] = PAS_MTE_CONFIG_BYTE(PAS_MTE_TAGGING_RATE);
+    (*bytes_out)[3] = PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG);
+    (*bytes_out)[4] = PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG);
+    (*bytes_out)[5] = PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG);
 }
 
 #else // !PAS_ENABLE_MTE
 
-static PAS_UNUSED void pas_mte_do_initialization(void) {
-    pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
-    config->enabled = false;
-}
+static PAS_UNUSED void pas_mte_do_initialization(void) { }
 
 static PAS_UNUSED bool pas_mte_is_enabled(void)
 {
     return false;
+}
+
+static PAS_UNUSED void pas_mte_get_config_bytes(uint8_t (*bytes_out)[6])
+{
+    for (int i = 0; i < 6; i++)
+        (*bytes_out)[i] = 0;
 }
 
 #endif // PAS_ENABLE_MTE
@@ -256,7 +258,8 @@ static void pas_report_config(void)
     const int pid = getpid();
     const mach_port_t threadno = pthread_mach_thread_np(pthread_self());
 
-    const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
+    uint8_t mte_conf[6];
+    pas_mte_get_config_bytes(&mte_conf);
 
 #define LOG_FMT_STR_FOR_HEAP_CONFIG(name) "\n\tHeap-Config " #name ":" \
                                    "\n\t\tPage Configs (Enabled/MTE Taggable, Static Max Obj Size):" \
@@ -272,15 +275,15 @@ static void pas_report_config(void)
     cfg.medium_bitfit_config.base.is_enabled, cfg.medium_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.medium_bitfit_config.base), \
     cfg.marge_bitfit_config.base.is_enabled, cfg.marge_bitfit_config.base.allow_mte_tagging, max_object_size_for_page_config_sans_heap(&cfg.marge_bitfit_config.base)
 #define LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(rcfg) \
-    rcfg.base.max_segregated_object_size, rcfg.base.max_bitfit_object_size, rcfg.base.directory_size_bound_for_baseline_allocators, rcfg.base.directory_size_bound_for_no_view_cache
+        rcfg.base.max_segregated_object_size, rcfg.base.max_bitfit_object_size, rcfg.base.directory_size_bound_for_baseline_allocators, rcfg.base.directory_size_bound_for_no_view_cache
 
     fprintf(stderr,
         "%s(%d,0x%x) malloc: libpas config:"
         "\n\tDeallocation Log (Max Entries, Max Bytes): %zu, %zuB"
         "\n\tScavenger (Period, Deep-Sleep Timeout, Epoch-Delta): %.2fms, %.2fms, %llu"
-        "\n\tMTE (Enabled/Tagging-Rate/Medium-Enabled/Lockdown/Hardened/ATE/RoS/ZTA): (%u, %u, %u, %u, %u, %u, %u, %u)"
+        "\n\tMTE (Enabled/Mode-Bits/Tagging-Rate/Medium-Enabled/Lockdown/Hardened): (%u, %u, %u, %u, %u, %u)"
 #if PAS_ENABLE_BMALLOC
-        "\n\tForwarding to System Heap: %u"
+        "\n\tUsing System Heap: %u"
         LOG_FMT_STR_FOR_HEAP_CONFIG(bmalloc)
         "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
         "\n\t\t\tFlex: %uB, %uB, %uB, %uB"
@@ -303,10 +306,9 @@ static void pas_report_config(void)
         progname, pid, (int)threadno,
         (size_t)PAS_DEALLOCATION_LOG_SIZE, (size_t)PAS_DEALLOCATION_LOG_MAX_BYTES,
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
-        config->enabled, config->tagging_rate, config->medium_tagging_enabled, config->is_lockdown_mode, config->is_hardened,
-        config->mode_bits.adjacent_tag_exclusion, config->mode_bits.retag_on_scavenge, config->mode_bits.zero_tag_all,
+        mte_conf[0], mte_conf[1], mte_conf[2], mte_conf[3], mte_conf[4], mte_conf[5],
 #if PAS_ENABLE_BMALLOC
-        pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),
+        pas_system_heap_is_enabled(pas_heap_config_kind_bmalloc),
         LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_flex_runtime_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),

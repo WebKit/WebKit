@@ -436,10 +436,8 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
 #if !USE(SYSTEM_MALLOC)
         static_assert(WebConfig::reservedSlotsForExecutableAllocator >= 2);
-        constexpr size_t startSlot = offsetof(WebConfig::ReservedGlobalConfigSlots, reservationForExecutableAllocator) / sizeof(WebConfig::Slot);
-
-        WebConfig::g_config[startSlot] = std::bit_cast<uintptr_t>(reservation.base);
-        WebConfig::g_config[startSlot + 1] = std::bit_cast<uintptr_t>(reservationEnd);
+        WebConfig::g_config[0] = std::bit_cast<uintptr_t>(reservation.base);
+        WebConfig::g_config[1] = std::bit_cast<uintptr_t>(reservationEnd);
 #endif
 
 #if HAVE(KDEBUG_H)

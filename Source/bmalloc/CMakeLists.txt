@@ -173,7 +173,6 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_report_crash.c
     libpas/src/libpas/pas_reserved_memory_provider.c
     libpas/src/libpas/pas_root.c
-    libpas/src/libpas/pas_runtime_config.c
     libpas/src/libpas/pas_scavenger.c
     libpas/src/libpas/pas_segregated_directory.c
     libpas/src/libpas/pas_segregated_exclusive_view.c
@@ -609,7 +608,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_report_crash_pgm_report.h
     libpas/src/libpas/pas_reserved_memory_provider.h
     libpas/src/libpas/pas_root.h
-    libpas/src/libpas/pas_runtime_config.h
     libpas/src/libpas/pas_scavenger.h
     libpas/src/libpas/pas_segmented_vector.h
     libpas/src/libpas/pas_segregated_deallocation_logging_mode.h
