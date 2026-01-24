@@ -730,4 +730,27 @@ void BitmapImageSource::dump(TextStream& ts) const
     ts.dumpProperty("decode-count-for-testing"_s, m_decodeCountForTesting);
 }
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+std::optional<unsigned> BitmapImageSource::spatialLeftEyeFrameIndex() const
+{
+    if (RefPtr decoder = decoderIfExists())
+        return decoder->spatialLeftEyeFrameIndex();
+    return std::nullopt;
+}
+
+std::optional<unsigned> BitmapImageSource::spatialRightEyeFrameIndex() const
+{
+    if (RefPtr decoder = decoderIfExists())
+        return decoder->spatialRightEyeFrameIndex();
+    return std::nullopt;
+}
+
+std::optional<SpatialImageEyeProperties> BitmapImageSource::spatialEyePropertiesAtIndex(unsigned index) const
+{
+    if (RefPtr decoder = decoderIfExists())
+        return decoder->spatialEyePropertiesAtIndex(index);
+    return std::nullopt;
+}
+#endif
+
 } // namespace WebCore

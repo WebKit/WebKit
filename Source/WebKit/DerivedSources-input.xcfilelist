@@ -375,6 +375,7 @@ $(PROJECT_DIR)/Shared/ScriptTrackingPrivacyFilter.serialization.in
 $(PROJECT_DIR)/Shared/ScrollingAccelerationCurve.serialization.in
 $(PROJECT_DIR)/Shared/SerializedNode.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
+$(PROJECT_DIR)/Shared/ShareableSpatialImage.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/SyntheticEditingCommandType.serialization.in
 $(PROJECT_DIR)/Shared/TextAnimationType.serialization.in

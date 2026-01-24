@@ -30,6 +30,10 @@
 #include <WebCore/ImageTypes.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+#include <WebCore/SpatialImageTypes.h>
+#endif
+
 namespace WebCore {
 
 class FragmentedSharedBuffer;
@@ -92,12 +96,11 @@ public:
 
     virtual SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize&, AllowImageSubsampling) { return SubsamplingLevel::Default; }
 
-#if ENABLE(QUICKLOOK_FULLSCREEN)
-    virtual bool shouldUseQuickLookForFullscreen() const { return false; }
-#endif
-
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     virtual bool isSpatial() const { return false; }
+    virtual std::optional<unsigned> spatialLeftEyeFrameIndex() const { return std::nullopt; }
+    virtual std::optional<unsigned> spatialRightEyeFrameIndex() const { return std::nullopt; }
+    virtual std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned) const { return std::nullopt; }
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)

@@ -84,9 +84,15 @@ private:
     String decodeUTI(const SharedBuffer&) const;
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-    bool isSpatial() const;
     bool isMaybePanoramic() const;
-    bool shouldUseQuickLookForFullscreen() const;
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    bool isSpatial() const;
+    std::optional<unsigned> spatialEyeFrameIndex(const CFStringRef) const;
+    std::optional<unsigned> spatialLeftEyeFrameIndex() const;
+    std::optional<unsigned> spatialRightEyeFrameIndex() const;
+    std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned) const;
 #endif
 
     bool m_isAllDataReceived { false };

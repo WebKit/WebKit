@@ -162,9 +162,6 @@ public:
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }
 #endif
-#if ENABLE(QUICKLOOK_FULLSCREEN)
-    virtual bool shouldUseQuickLookForFullscreen() const { return false; }
-#endif
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     virtual bool isSpatial() const { return false; }

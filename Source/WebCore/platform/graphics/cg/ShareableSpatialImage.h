@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,37 @@
 
 #pragma once
 
-#include <WebCore/FloatSize.h>
-#include <WebCore/ShareableBitmap.h>
-#include <WebCore/ShareableSpatialImage.h>
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
 
-namespace WebKit {
+#include "BitmapImage.h"
+#include "ShareableBitmap.h"
+#include "SpatialImageTypes.h"
 
-struct FullScreenMediaDetails {
-    enum class Type : uint8_t { None, Video, ElementWithVideo, Image };
+#include <wtf/RetainPtr.h>
 
-    Type type { Type::None };
-    WebCore::FloatSize mediaDimensions { };
+namespace WebCore {
 
-#if ENABLE(QUICKLOOK_FULLSCREEN)
-    using ImageData = Variant<std::monostate, WebCore::ShareableBitmap::Handle, WebCore::ShareableSpatialImage>;
-    ImageData imageData;
-#endif
+class ShareableSpatialImage {
+public:
+    ShareableSpatialImage(ShareableSpatialImage&&) = default;
+    ShareableSpatialImage(const ShareableSpatialImage&) = default;
+    WEBCORE_EXPORT ShareableSpatialImage(ShareableBitmap::Handle&&, ShareableBitmap::Handle&&, const SpatialImageEyeProperties&, const SpatialImageEyeProperties&);
+
+    ShareableSpatialImage& operator=(ShareableSpatialImage&&) = default;
+
+    WEBCORE_EXPORT static std::optional<ShareableSpatialImage> create(BitmapImage&);
+
+    WEBCORE_EXPORT RetainPtr<CFDataRef> createHEICData() const;
+
+private:
+    friend struct IPC::ArgumentCoder<ShareableSpatialImage, void>;
+
+    ShareableBitmap::Handle m_leftHandle;
+    ShareableBitmap::Handle m_rightHandle;
+    SpatialImageEyeProperties m_leftMetadata;
+    SpatialImageEyeProperties m_rightMetadata;
 };
 
-}
+} // namespace WebCore
+
+#endif // USE(CG)

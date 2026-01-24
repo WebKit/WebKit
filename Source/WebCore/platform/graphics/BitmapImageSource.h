@@ -171,12 +171,11 @@ private:
     SubsamplingLevel maximumSubsamplingLevel() const { return m_descriptor.maximumSubsamplingLevel(); }
     SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext& context, const FloatSize& scaleFactor, AllowImageSubsampling allowImageSubsampling) final { return m_descriptor.subsamplingLevelForScaleFactor(context, scaleFactor, allowImageSubsampling); }
 
-#if ENABLE(QUICKLOOK_FULLSCREEN)
-    bool shouldUseQuickLookForFullscreen() const final { return m_descriptor.shouldUseQuickLookForFullscreen(); }
-#endif
-
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
     bool isSpatial() const final { return m_descriptor.isSpatial(); }
+    std::optional<unsigned> spatialLeftEyeFrameIndex() const final;
+    std::optional<unsigned> spatialRightEyeFrameIndex() const final;
+    std::optional<SpatialImageEyeProperties> spatialEyePropertiesAtIndex(unsigned) const final;
 #endif
 
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)

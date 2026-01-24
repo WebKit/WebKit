@@ -47,7 +47,8 @@
 #include <wtf/cf/TypeCastsCF.h>
 
 #include "MediaAccessibilitySoftLink.h"
-#if ENABLE(QUICKLOOK_FULLSCREEN)
+
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
 #include "PhotosFormatSoftLink.h"
 #endif
 
@@ -771,21 +772,163 @@ bool ImageDecoderCG::isMaybePanoramic() const
     constexpr float panoramicImageAspectRatioThreshold = 2.0;
     return aspectRatio > panoramicImageAspectRatioThreshold;
 }
+#endif
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
 bool ImageDecoderCG::isSpatial() const
 {
     CGImageSourceRef imageSource = m_nativeDecoder.get();
+
     if (!canLoad_PhotosFormats_PFMetadataImageSourceIsSpatialMedia())
         return false;
 
     return softLink_PhotosFormats_PFMetadataImageSourceIsSpatialMedia(imageSource);
 }
 
-bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
+std::optional<unsigned> ImageDecoderCG::spatialEyeFrameIndex(const CFStringRef groupImageIndex) const
 {
-    return isMaybePanoramic() || isSpatial();
+    if (!isSpatial())
+        return std::nullopt;
+
+    CGImageSourceRef source = m_nativeDecoder.get();
+    RetainPtr containerProps = adoptCF(CGImageSourceCopyProperties(source, nullptr));
+    if (!containerProps)
+        return std::nullopt;
+
+    RetainPtr groupsArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(containerProps.get(), kCGImagePropertyGroups));
+    if (!groupsArray || !CFArrayGetCount(groupsArray.get()))
+        return std::nullopt;
+
+    RetainPtr groupInfo = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(groupsArray.get(), 0));
+    if (!groupInfo)
+        return std::nullopt;
+
+    if (RetainPtr num = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(groupInfo.get(), groupImageIndex))) {
+        unsigned index;
+        CFNumberGetValue(num.get(), kCFNumberIntType, &index);
+        return index;
+    }
+
+    return std::nullopt;
 }
-#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
+std::optional<unsigned> ImageDecoderCG::spatialLeftEyeFrameIndex() const
+{
+    return spatialEyeFrameIndex(kCGImagePropertyGroupImageIndexLeft);
+}
+
+std::optional<unsigned> ImageDecoderCG::spatialRightEyeFrameIndex() const
+{
+    return spatialEyeFrameIndex(kCGImagePropertyGroupImageIndexRight);
+}
+
+static std::optional<SpatialImageEyeProperties> spatialImageEyePropertiesFromDictionary(CFDictionaryRef props, CFDictionaryRef groupInfo)
+{
+    if (!props || !groupInfo)
+        return std::nullopt;
+
+    SpatialImageEyeProperties result;
+
+    if (RetainPtr groupIndex = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(groupInfo, kCGImagePropertyGroupIndex))) {
+        unsigned index = 0;
+        CFNumberGetValue(groupIndex.get(), kCFNumberIntType, &index);
+        result.groupMetadata.groupIndex = index;
+    }
+
+    if (RetainPtr disparity = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(groupInfo, kCGImagePropertyGroupImageDisparityAdjustment))) {
+        float value = 0.0f;
+        CFNumberGetValue(disparity.get(), kCFNumberFloatType, &value);
+        result.groupMetadata.disparityAdjustment = value;
+    }
+
+    if (RetainPtr heifDict = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(props, kCGImagePropertyHEIFDictionary))) {
+        // Getting cameraMetadata.extrinsics.position.
+        [&]() {
+            RetainPtr extrinsicsDict = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(heifDict.get(), kIIOMetadata_CameraExtrinsicsKey));
+            if (!extrinsicsDict)
+                return;
+            RetainPtr positionArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(extrinsicsDict.get(), kIIOCameraExtrinsics_Position));
+            if (!positionArray)
+                return;
+            if (CFArrayGetCount(positionArray.get()) != 3)
+                return;
+            for (CFIndex i = 0; i < 3; ++i) {
+                if (RetainPtr num = dynamic_cf_cast<CFNumberRef>(CFArrayGetValueAtIndex(positionArray.get(), i))) {
+                    float value = 0.0f;
+                    CFNumberGetValue(num.get(), kCFNumberFloatType, &value);
+                    result.cameraMetadata.extrinsics.position[i] = value;
+                }
+            }
+        }();
+
+        // Getting cameraMetadata.extrinsics.rotation.
+        [&]() {
+            RetainPtr extrinsicsDict = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(heifDict.get(), kIIOMetadata_CameraExtrinsicsKey));
+            if (!extrinsicsDict)
+                return;
+            RetainPtr rotationArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(extrinsicsDict.get(), kIIOCameraExtrinsics_Rotation));
+            if (!rotationArray)
+                return;
+            if (CFArrayGetCount(rotationArray.get()) != 9)
+                return;
+            for (CFIndex i = 0; i < 9; ++i) {
+                if (RetainPtr num = dynamic_cf_cast<CFNumberRef>(CFArrayGetValueAtIndex(rotationArray.get(), i))) {
+                    float value = 0.0f;
+                    CFNumberGetValue(num.get(), kCFNumberFloatType, &value);
+                    result.cameraMetadata.extrinsics.rotation[i] = value;
+                }
+            }
+        }();
+
+        // Getting cameraMetadata.intrinsics.
+        [&]() {
+            RetainPtr modelDict = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(heifDict.get(), kIIOMetadata_CameraModelKey));
+            if (!modelDict)
+                return;
+            RetainPtr intrinsicsArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(modelDict.get(), kIIOCameraModel_Intrinsics));
+            if (!intrinsicsArray)
+                return;
+            if (CFArrayGetCount(intrinsicsArray.get()) != 9)
+                return;
+            for (CFIndex i = 0; i < 9; ++i) {
+                if (RetainPtr num = dynamic_cf_cast<CFNumberRef>(CFArrayGetValueAtIndex(intrinsicsArray.get(), i))) {
+                    float value = 0.0f;
+                    CFNumberGetValue(num.get(), kCFNumberFloatType, &value);
+                    result.cameraMetadata.intrinsics.matrix[i] = value;
+                }
+            }
+        }();
+    }
+
+    return result;
+}
+
+std::optional<SpatialImageEyeProperties> ImageDecoderCG::spatialEyePropertiesAtIndex(unsigned index) const
+{
+    if (!isSpatial())
+        return std::nullopt;
+
+    CGImageSourceRef source = m_nativeDecoder.get();
+    RetainPtr containerProps = adoptCF(CGImageSourceCopyProperties(source, nullptr));
+    if (!containerProps)
+        return std::nullopt;
+
+    RetainPtr groupsArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(containerProps.get(), kCGImagePropertyGroups));
+    if (!groupsArray || !CFArrayGetCount(groupsArray.get()))
+        return std::nullopt;
+
+    RetainPtr groupInfo = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(groupsArray.get(), 0));
+    if (!groupInfo)
+        return std::nullopt;
+
+    RetainPtr props = adoptCF(CGImageSourceCopyPropertiesAtIndex(source, index, imageSourceMetadataOptions().get()));
+
+    if (!props)
+        return std::nullopt;
+
+    return spatialImageEyePropertiesFromDictionary(props.get(), groupInfo.get());
+}
+#endif
 
 } // namespace WebCore
 

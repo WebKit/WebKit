@@ -442,6 +442,7 @@ platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/ShareableBitmapCG.mm @nonARC @no-unify
+platform/graphics/cg/ShareableSpatialImage.cpp @no-unify
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.mm @nonARC
 platform/graphics/cocoa/AV1UtilitiesCocoa.mm @nonARC @no-unify
