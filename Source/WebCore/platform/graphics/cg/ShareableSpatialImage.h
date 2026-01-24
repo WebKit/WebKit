@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT RetainPtr<CFDataRef> createHEICData() const;
 
 private:
-    friend struct IPC::ArgumentCoder<ShareableSpatialImage, void>;
+    friend struct IPC::ArgumentCoder<ShareableSpatialImage>;
 
     ShareableBitmap::Handle m_leftHandle;
     ShareableBitmap::Handle m_rightHandle;
