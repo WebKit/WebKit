@@ -68,15 +68,63 @@ class Contributor(object):
         self.can_commit = False
         self.can_review = False
         self.is_bot = False
+        self._bugzilla_email = None  # Cached validated email
+
+    def _validate_bugzilla_email(self):
+        """Validates which email from emails list exists in Bugzilla."""
+        if len(self.emails) == 0:
+            return None
+
+        # If only one email, no need to validate
+        if len(self.emails) == 1:
+            return self.emails[0]
+
+        try:
+            import urllib.request
+            import urllib.parse
+            from webkitpy.common.config import urls
+
+            # Check each email one at a time (Bugzilla REST API requires this)
+            for email in self.emails:
+                try:
+                    url = f"{urls.bug_server_url}rest/user?names={urllib.parse.quote(email)}"
+                    req = urllib.request.Request(url)
+
+                    # Make the REST API call with a short timeout
+                    with urllib.request.urlopen(req, timeout=5) as response:
+                        data = json.loads(
+                            response.read().decode('utf-8'))
+
+                        # If the API returns a user, this email is valid
+                        if 'users' in data and len(data['users']) > 0:
+                            # Verify email matches what we're looking for
+                            for user in data['users']:
+                                if user.get('name', '').lower() == email:
+                                    return email
+                except Exception:
+                    # If this email fails, try the next one
+                    continue
+
+        except Exception as e:
+            # If validation fails for any reason (network error, timeout, etc.),
+            # fall back to the first email
+            pass
+
+        # Default to first email if validation fails or no match found
+        return self.emails[0]
 
     def bugzilla_email(self):
-        # FIXME: We're assuming the first email is a valid bugzilla email,
-        # which might not be right.
-        return self.emails[0]
+        # Return cached email if already validated
+        if self._bugzilla_email is not None:
+            return self._bugzilla_email
+
+        # Validate and cache the result
+        self._bugzilla_email = self._validate_bugzilla_email()
+        return self._bugzilla_email
 
     @property
     def email(self):
-        self.bugzilla_email()
+        return self.bugzilla_email()
 
     def __str__(self):
         return string_utils.encode(u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0])), target_type=str)
