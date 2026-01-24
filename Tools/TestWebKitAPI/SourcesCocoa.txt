@@ -197,6 +197,7 @@ Tests/WebKitCocoa/MouseSupportUIDelegate.mm @nonARC
 Tests/WebKitCocoa/NSAttributedStringWebKitAdditions.mm @nonARC
 Tests/WebKitCocoa/NSFileManagerExtras.mm @nonARC
 Tests/WebKitCocoa/Navigation.mm @nonARC
+Tests/WebKitCocoa/NavigationAPI.mm @nonARC
 Tests/WebKitCocoa/NavigationAction.mm @nonARC
 Tests/WebKitCocoa/NavigationSwipeTests.mm @nonARC
 Tests/WebKitCocoa/NetworkProcess.mm @nonARC

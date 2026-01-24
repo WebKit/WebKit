@@ -810,12 +810,11 @@ static bool documentCanHaveURLRewritten(const Document& document, const URL& tar
     const URL& documentURL = document.url();
     Ref documentOrigin = document.securityOrigin();
     auto targetOrigin = SecurityOrigin::create(targetURL);
-    bool isSameSite = documentOrigin->isSameSiteAs(targetOrigin);
-    bool isSameOrigin = documentOrigin->isSameOriginAs(targetOrigin);
 
-    // For cross-window navigation with document.domain, we need to check same-origin rather than same-site
-    // to account for document.domain modifications that make cross-origin windows same-origin-domain
-    if (!isSameSite && !isSameOrigin)
+    if (!documentOrigin->isSameOriginAs(targetOrigin))
+        return false;
+
+    if (documentURL.user() != targetURL.user() || documentURL.password() != targetURL.password())
         return false;
 
     if (targetURL.protocolIsInHTTPFamily())
