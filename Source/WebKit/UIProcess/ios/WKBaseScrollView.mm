@@ -133,6 +133,12 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+    // In iOS 17, the default value of `-[UIScrollView allowsKeyboardScrolling]` is `NO`.
+    // To maintain existing behavior of WKBaseScrollView, this property must be initially set to `YES`.
+    self.allowsKeyboardScrolling = YES;
+#endif
+
     _axesToPreventMomentumScrolling = UIAxisNeither;
     [self.panGestureRecognizer addTarget:self action:@selector(_updatePanGestureToPreventScrolling)];
     return self;

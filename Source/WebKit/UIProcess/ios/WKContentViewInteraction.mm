@@ -7840,11 +7840,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_focusedElementInformation.elementType == WebKit::InputType::Select)
         return NO;
 
-    if (!self.webView.scrollView.scrollEnabled)
+    UIScrollView *scrollView = animator.scrollView ?: self.webView.scrollView;
+    if (!scrollView.scrollEnabled)
         return NO;
 
 #if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
-    if (!self.webView.scrollView.allowsKeyboardScrolling)
+    if (!scrollView.allowsKeyboardScrolling)
         return NO;
 #endif
 
