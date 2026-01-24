@@ -22,9 +22,11 @@
 
 /* Begin PBXBuildFile section */
 		0100000C37BABA0A0A993999 /* pas_mte_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0100000A37BABA0A0A993999 /* pas_mte_config.c */; };
+		0100000C37BABA0A0A993999 /* pas_runtime_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 0100000A47BABA0A0A993999 /* pas_runtime_config.c */; };
 		0100000C37BABA0A0A999999 /* pas_mte.c in Sources */ = {isa = PBXBuildFile; fileRef = 0100000A37BABA0A0A999999 /* pas_mte.c */; };
 		0100000D37BABA0A0A991999 /* pas_zero_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0100000B37BABA0A0A991999 /* pas_zero_memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0100000D37BABA0A0A993999 /* pas_mte_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0100000B37BABA0A0A993999 /* pas_mte_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0100000D47BABA0A0A993999 /* pas_runtime_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 0100000B47BABA0A0A993999 /* pas_runtime_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0100000D37BABA0A0A999999 /* pas_mte.h in Headers */ = {isa = PBXBuildFile; fileRef = 0100000B37BABA0A0A999999 /* pas_mte.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F99999C37AAAA0000999999 /* pas_stats.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F99999A37AAAA0000999999 /* pas_stats.c */; };
 		0F99999D37AAAA0000999999 /* pas_stats.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99999B37AAAA0000999999 /* pas_stats.h */; settings = {ATTRIBUTES = (Private, ); };};
@@ -755,12 +757,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0100000A37BABA0A0A993999 /* pas_mte_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_mte_config.c; path = libpas/src/libpas/pas_mte_config.c; sourceTree = "<group>"; };
+		0100000A47BABA0A0A993999 /* pas_mte_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_mte_config.c; path = libpas/src/libpas/pas_mte_config.c; sourceTree = "<group>"; };
+		0100000A37BABA0A0A993999 /* pas_runtime_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_runtime_config.c; path = libpas/src/libpas/pas_runtime_config.c; sourceTree = "<group>"; };
 		0100000A37BABA0A0A999999 /* pas_mte.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_mte.c; path = libpas/src/libpas/pas_mte.c; sourceTree = "<group>"; };
 		0100000B37BABA0A0A991999 /* pas_zero_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_zero_memory.h; path = libpas/src/libpas/pas_zero_memory.h; sourceTree = "<group>"; };
 		0100000B37BABA0A0A993999 /* pas_mte_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_mte_config.h; path = libpas/src/libpas/pas_mte_config.h; sourceTree = "<group>"; };
 		0F99999A37AAAA0000999999 /* pas_stats.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_stats.c; path = libpas/src/libpas/pas_stats.c; sourceTree = "<group>"; };
 		0F99999B37AAAA0000999999 /* pas_stats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_stats.h; path = libpas/src/libpas/pas_stats.h; sourceTree = "<group>"; };
+		0100000B47BABA0A0A993999 /* pas_runtime_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_runtime_config.h; path = libpas/src/libpas/pas_runtime_config.h; sourceTree = "<group>"; };
 		0100000B37BABA0A0A999999 /* pas_mte.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_mte.h; path = libpas/src/libpas/pas_mte.h; sourceTree = "<group>"; };
 		07FB5E3C2EA4B31B00603B46 /* bmalloc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bmalloc.swift; sourceTree = "<group>"; };
 		0F18F83C25C3467700721C2A /* pas_segregated_exclusive_view_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_exclusive_view_inlines.h; path = libpas/src/libpas/pas_segregated_exclusive_view_inlines.h; sourceTree = "<group>"; };
@@ -1966,6 +1970,8 @@
 				0FC40AE32451499200876DA0 /* pas_reserved_memory_provider.h */,
 				0F87005325AF8A1A000E1ABF /* pas_root.c */,
 				0F87005925AF8A1A000E1ABF /* pas_root.h */,
+				0100000A47BABA0A0A993999 /* pas_runtime_config.c */,
+				0100000B47BABA0A0A993999 /* pas_runtime_config.h */,
 				0FC40A6D2451498A00876DA0 /* pas_scavenger.c */,
 				0FC40A572451498800876DA0 /* pas_scavenger.h */,
 				0FC40A702451498A00876DA0 /* pas_segmented_vector.h */,
@@ -2703,6 +2709,7 @@
 				2B6EB7A029EE102E00F10400 /* pas_report_crash_pgm_report.h in Headers */,
 				DD4BEC6529CBA49700398E35 /* pas_reserved_memory_provider.h in Headers */,
 				DD4BEC8529CBA49700398E35 /* pas_root.h in Headers */,
+				0100000D47BABA0A0A993999 /* pas_runtime_config.h in Headers */,
 				DD4BED4829CBA49700398E35 /* pas_scavenger.h in Headers */,
 				DD4BEDD029CBA49700398E35 /* pas_segmented_vector.h in Headers */,
 				DD4BECF529CBA49700398E35 /* pas_segregated_deallocation_logging_mode.h in Headers */,
@@ -3121,6 +3128,7 @@
 				2BDF4F4C29E8B8BA0056BF50 /* pas_report_crash.c in Sources */,
 				DD4BECB829CBA49700398E35 /* pas_reserved_memory_provider.c in Sources */,
 				DD4BEC2C29CBA49700398E35 /* pas_root.c in Sources */,
+				0100000C47BABA0A0A993999 /* pas_runtime_config.c in Sources */,
 				DD4BEC3329CBA49700398E35 /* pas_scavenger.c in Sources */,
 				DD4BED5029CBA49700398E35 /* pas_segregated_directory.c in Sources */,
 				DD4BECF829CBA49700398E35 /* pas_segregated_exclusive_view.c in Sources */,

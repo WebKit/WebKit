@@ -100,17 +100,15 @@ struct Config {
     size_t allocSizes[static_cast<size_t>(NumberOfKinds)];
 };
 
-// The first 6 slots are reserved for use by system allocators
-constexpr size_t startSlotOfGigacageConfig = 6;
+// Should be kept in sync with the layout of
+// WTFConfig.h:ReservedGlobalConfigSlots
+constexpr size_t startSlotOfGigacageConfig = 4;
 constexpr size_t startOffsetOfGigacageConfig = startSlotOfGigacageConfig * sizeof(WebConfig::Slot);
-
-constexpr size_t reservedSlotsForGigacageConfig = 16;
-constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(WebConfig::Slot);
-
-constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>::value;
-
-static_assert(sizeof(Gigacage::Config) + startOffsetOfGigacageConfig <= reservedBytesForGigacageConfig);
+constexpr size_t alignmentOfGigacageConfig = std::alignment_of_v<Gigacage::Config>;
 static_assert(bmalloc::roundUpToMultipleOf<alignmentOfGigacageConfig>(startOffsetOfGigacageConfig) == startOffsetOfGigacageConfig);
+
+constexpr size_t reservedBytesForGigacageConfig = sizeof(Config);
+constexpr size_t reservedSlotsForGigacageConfig = bmalloc::roundUpToMultipleOf<sizeof(WebConfig::Slot)>(reservedBytesForGigacageConfig);
 
 #define g_gigacageConfig (*std::bit_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))
 

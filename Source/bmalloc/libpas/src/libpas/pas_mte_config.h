@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Apple Inc. All rights reserved.
+ * Copyright (c) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define PAS_MTE_CONFIG_H
 
 #include "pas_platform.h"
+#include "pas_runtime_config.h"
 #include "pas_config.h"
 #if defined(PAS_BMALLOC)
 #include "BPlatform.h"
@@ -66,36 +67,14 @@
 #if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
 #if PAS_ENABLE_MTE
 
-typedef uint64_t Slot;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern Slot g_config[];
-#ifdef __cplusplus
-}
-#endif
-
-#define PAS_MTE_ENABLE_FLAG 0
-#define PAS_MTE_MODE_BITS 1
-#define PAS_MTE_TAGGING_RATE 2
-#define PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG 3
-#define PAS_MTE_LOCKDOWN_MODE_FLAG 4
-#define PAS_MTE_HARDENED_FLAG 5
-
-// Must be kept in sync with the offsets in WTFConfig.h:ReservedConfigByteOffset
-#define PAS_MTE_CONFIG_RESERVED_BYTE_OFFSET 2
-#define PAS_MTE_CONFIG_BYTE(byte) (((uint8_t*)(g_config + PAS_MTE_CONFIG_RESERVED_BYTE_OFFSET))[byte])
-
-#define PAS_USE_MTE (PAS_MTE_CONFIG_BYTE(PAS_MTE_ENABLE_FLAG))
+#define PAS_USE_MTE (PAS_RUNTIME_CONFIG_PTR->enabled)
 #ifndef PAS_USE_MTE_IN_WEBCONTENT
 #define PAS_USE_MTE_IN_WEBCONTENT 1
 #endif
 
-#define PAS_MTE_CONFIG_FIELD(byte, bit) (((PAS_MTE_CONFIG_BYTE(byte)) & (1UL << (bit))) ? 1 : 0)
-#define PAS_MTE_MEDIUM_TAGGING_ENABLED (PAS_MTE_CONFIG_BYTE(PAS_MTE_MEDIUM_TAGGING_ENABLE_FLAG))
-#define PAS_MTE_IS_LOCKDOWN_MODE (PAS_MTE_CONFIG_BYTE(PAS_MTE_LOCKDOWN_MODE_FLAG))
-#define PAS_MTE_IS_HARDENED (PAS_MTE_CONFIG_BYTE(PAS_MTE_HARDENED_FLAG))
+#define PAS_MTE_MEDIUM_TAGGING_ENABLED (PAS_RUNTIME_CONFIG_PTR->medium_tagging_enabled)
+#define PAS_MTE_IS_LOCKDOWN_MODE (PAS_RUNTIME_CONFIG_PTR->is_lockdown_mode)
+#define PAS_MTE_IS_HARDENED (PAS_RUNTIME_CONFIG_PTR->is_hardened)
 #define PAS_MTE_USE_LARGE_OBJECT_DELEGATION (PAS_USE_MTE && PAS_MTE_IS_HARDENED)
 
 #define PAS_VM_MTE 0x2000
@@ -126,6 +105,17 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION 5
 #define PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT 6
 
+// Helper to access feature bits by index (for dynamic feature checking)
+#define PAS_MTE_FEATURE_BIT(feature) ( \
+    (feature) == PAS_MTE_FEATURE_RETAG_ON_SCAVENGE ? PAS_RUNTIME_CONFIG_PTR->mode_bits.retag_on_scavenge : \
+    (feature) == PAS_MTE_FEATURE_LOG_ON_TAG ? PAS_RUNTIME_CONFIG_PTR->mode_bits.log_on_tag : \
+    (feature) == PAS_MTE_FEATURE_LOG_ON_PURIFY ? PAS_RUNTIME_CONFIG_PTR->mode_bits.log_on_purify : \
+    (feature) == PAS_MTE_FEATURE_LOG_PAGE_ALLOC ? PAS_RUNTIME_CONFIG_PTR->mode_bits.log_page_alloc : \
+    (feature) == PAS_MTE_FEATURE_ZERO_TAG_ALL ? PAS_RUNTIME_CONFIG_PTR->mode_bits.zero_tag_all : \
+    (feature) == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION ? PAS_RUNTIME_CONFIG_PTR->mode_bits.adjacent_tag_exclusion : \
+    (feature) == PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT ? PAS_RUNTIME_CONFIG_PTR->mode_bits.assert_adjacent_tags_are_disjoint : \
+    0)
+
 #define PAS_MTE_FEATURE_FORCED(feature) (0)
 #define PAS_MTE_FEATURE_HARDENED_FORCED(feature) (feature == PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION || feature == PAS_MTE_FEATURE_RETAG_ON_SCAVENGE)
 #define PAS_MTE_FEATURE_DEBUG_FORCED(feature) (feature == PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)
@@ -137,7 +127,7 @@ extern Slot g_config[];
 #define PAS_MTE_FEATURE_FORCED_IN_DEBUG_BUILD(feature) \
     (PAS_MTE_FEATURE_FORCED_IN_RELEASE_BUILD(feature) || \
      PAS_MTE_FEATURE_DEBUG_FORCED(feature) || \
-     PAS_MTE_CONFIG_FIELD(PAS_MTE_MODE_BITS, feature))
+     PAS_MTE_FEATURE_BIT(feature))
 
 #ifndef NDEBUG
 #define PAS_MTE_FEATURE_ENABLED(feature) (PAS_USE_MTE && PAS_MTE_FEATURE_FORCED_IN_DEBUG_BUILD(feature))
