@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCallbackObject_h
-#define JSCallbackObject_h
+#pragma once
 
 #if JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
 #include "JSAPIWrapperObject.h"
@@ -269,5 +268,3 @@ template<> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info;
 
 // include the actual template class implementation
 #include "JSCallbackObjectFunctions.h"
-
-#endif // JSCallbackObject_h

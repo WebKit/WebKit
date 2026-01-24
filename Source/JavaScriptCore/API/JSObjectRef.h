@@ -24,12 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSObjectRef_h
-#define JSObjectRef_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/JSValueRef.h>
-#include <JavaScriptCore/WebKitAvailability.h>
+#include "JSBase.h"
+#include "JSValueRef.h"
+#include "WebKitAvailability.h"
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -751,5 +750,3 @@ JS_EXPORT void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef acc
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSObjectRef_h */

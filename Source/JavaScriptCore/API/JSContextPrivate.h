@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextPrivate_h
-#define JSContextPrivate_h
+#pragma once
 
 #if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
-#import <JavaScriptCore/JSContext.h>
+#import "JSContext.h"
 
 @protocol JSModuleLoaderDelegate <NSObject>
 
@@ -115,5 +114,3 @@
 @end
 
 #endif
-
-#endif // JSContextInternal_h

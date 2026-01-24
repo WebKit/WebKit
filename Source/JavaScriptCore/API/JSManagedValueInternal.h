@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSManagedValueInternal_h
-#define JSManagedValueInternal_h
+#pragma once
 
-#import <JavaScriptCore/JSBase.h>
-#import <JavaScriptCore/JSManagedValue.h>
+#import "JSBase.h"
+#import "JSManagedValue.h"
 
 #if JSC_OBJC_API_ENABLED
 
@@ -39,5 +38,3 @@
 @end
 
 #endif // JSC_OBJC_API_ENABLED
-
-#endif // JSManagedValueInternal_h

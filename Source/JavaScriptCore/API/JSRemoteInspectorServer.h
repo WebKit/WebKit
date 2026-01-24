@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSRemoteInspectorServer_h
-#define JSRemoteInspectorServer_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
+#include "JSBase.h"
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -38,5 +37,3 @@ JS_EXPORT uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t po
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSRemoteInspectorServer_h */

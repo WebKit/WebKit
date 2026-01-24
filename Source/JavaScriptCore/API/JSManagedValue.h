@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSManagedValue_h
-#define JSManagedValue_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/WebKitAvailability.h>
+#include "JSBase.h"
+#include "WebKitAvailability.h"
 
 #if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
@@ -77,5 +76,3 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @end
 
 #endif
-
-#endif /* JSManagedValue_h */

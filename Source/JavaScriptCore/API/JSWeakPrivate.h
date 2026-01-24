@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSWeakPrivate_h
-#define JSWeakPrivate_h
+#pragma once
 
-#include <JavaScriptCore/JSObjectRef.h>
+#include "JSObjectRef.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,6 +43,3 @@ JS_EXPORT JSObjectRef JSWeakGetObject(JSWeakRef);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSWeakPrivate_h
-

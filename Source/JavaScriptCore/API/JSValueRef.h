@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSValueRef_h
-#define JSValueRef_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/WebKitAvailability.h>
+#include "JSBase.h"
+#include "WebKitAvailability.h"
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -551,5 +550,3 @@ JS_EXPORT void JSValueUnprotect(JSC_NULL_UNSPECIFIED JSContextRef ctx, JSC_NULL_
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSValueRef_h */

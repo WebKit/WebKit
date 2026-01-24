@@ -24,14 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JavaScript_h
-#define JavaScript_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSTypedArray.h>
-#include <JavaScriptCore/JSValueRef.h>
-
-#endif /* JavaScript_h */
+#include "JSBase.h"
+#include "JSContextRef.h"
+#include "JSObjectRef.h"
+#include "JSStringRef.h"
+#include "JSTypedArray.h"
+#include "JSValueRef.h"

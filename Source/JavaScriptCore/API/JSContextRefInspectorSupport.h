@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextRefInspectorSupport_h
-#define JSContextRefInspectorSupport_h
+#pragma once
 
 #ifndef __cplusplus
 #error Requires C++ Support.
 #endif
 
-#include <JavaScriptCore/JSContextRefPrivate.h>
+#include "JSContextRefPrivate.h"
 
 namespace Inspector {
 class AugmentableInspectorController;
@@ -39,5 +38,3 @@ class AugmentableInspectorController;
 extern "C" {
 JS_EXPORT Inspector::AugmentableInspectorController* JSGlobalContextGetAugmentableInspectorController(JSGlobalContextRef);
 }
-
-#endif // JSContextRefInspectorSupport_h

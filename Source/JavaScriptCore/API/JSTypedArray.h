@@ -24,11 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSTypedArray_h
-#define JSTypedArray_h
+#pragma once
 
-#include <JavaScriptCore/JSBase.h>
-#include <JavaScriptCore/JSValueRef.h>
+#include "JSBase.h"
+#include "JSValueRef.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -176,5 +175,3 @@ JS_EXPORT size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSTypedArray_h */

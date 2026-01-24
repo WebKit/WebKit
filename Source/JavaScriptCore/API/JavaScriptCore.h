@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JavaScriptCore_h
-#define JavaScriptCore_h
+#pragma once
 
-#include <JavaScriptCore/JavaScript.h>
-#include <JavaScriptCore/JSStringRefCF.h>
+#include "JavaScript.h"
+#include "JSStringRefCF.h"
 
-#include <JavaScriptCore/JSContext.h>
-#include <JavaScriptCore/JSValue.h>
-#include <JavaScriptCore/JSManagedValue.h>
-#include <JavaScriptCore/JSVirtualMachine.h>
-#include <JavaScriptCore/JSExport.h>
-
-#endif /* JavaScriptCore_h */
+#include "JSContext.h"
+#include "JSValue.h"
+#include "JSManagedValue.h"
+#include "JSVirtualMachine.h"
+#include "JSExport.h"

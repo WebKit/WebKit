@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSClassRef_h
-#define JSClassRef_h
+#pragma once
 
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/OpaqueJSString.h>
-#include <JavaScriptCore/Protect.h>
-#include <JavaScriptCore/Weak.h>
+#include "JSObjectRef.h"
+#include "OpaqueJSString.h"
+#include "Protect.h"
+#include "Weak.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -141,5 +140,3 @@ private:
 };
 
 #undef OPAQUE_JSCLASS_METHOD
-
-#endif // JSClassRef_h

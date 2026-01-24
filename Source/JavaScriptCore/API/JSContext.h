@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContext_h
-#define JSContext_h
+#pragma once
 
-#include <JavaScriptCore/JavaScript.h>
-#include <JavaScriptCore/WebKitAvailability.h>
+#include "JavaScript.h"
+#include "WebKitAvailability.h"
 
 #if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
@@ -241,5 +240,3 @@ JSC_CLASS_AVAILABLE(macos(10.9), ios(7.0))
 @end
 
 #endif
-
-#endif /* JSContext_h */

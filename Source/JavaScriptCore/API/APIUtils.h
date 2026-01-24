@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUtils_h
-#define APIUtils_h
+#pragma once
 
 #include "Exception.h"
 #include "JSCJSValue.h"
@@ -63,5 +62,3 @@ inline void setException(JSContextRef ctx, JSValueRef* returnedExceptionRef, JSC
     globalObject->checkedInspectorController()->reportAPIException(globalObject, JSC::Exception::create(vm, exception));
 #endif
 }
-
-#endif /* APIUtils_h */

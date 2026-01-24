@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSScriptRefPrivate_h
-#define JSScriptRefPrivate_h
+#pragma once
 
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSValueRef.h>
+#include "JSContextRef.h"
+#include "JSStringRef.h"
+#include "JSValueRef.h"
 
 /*! @typedef JSScriptRef A JavaScript script reference. */
 typedef struct OpaqueJSScript* JSScriptRef;
@@ -95,5 +94,3 @@ JS_EXPORT JSValueRef JSScriptEvaluate(JSContextRef ctx, JSScriptRef script, JSVa
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSScriptRefPrivate_h */
