@@ -158,7 +158,7 @@ enum class TapHandlingResult : uint8_t;
 
 - (void)_incrementFocusPreservationCount;
 - (void)_decrementFocusPreservationCount;
-- (NSUInteger)_resetFocusPreservationCount;
+- (void)_resetFocusPreservationCountAndReleaseActiveFocusState;
 
 - (void)_setOpaqueInternal:(BOOL)opaque;
 - (NSString *)_contentSizeCategory;

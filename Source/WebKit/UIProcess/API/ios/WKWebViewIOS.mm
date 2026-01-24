@@ -338,9 +338,13 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
         --_focusPreservationCount;
 }
 
-- (NSUInteger)_resetFocusPreservationCount
+- (void)_resetFocusPreservationCountAndReleaseActiveFocusState
 {
-    return std::exchange(_focusPreservationCount, 0);
+    if (std::exchange(_focusPreservationCount, 0))
+        RELEASE_LOG_ERROR(ViewState, "Keyboard dismissed with nonzero focus preservation count; check for unbalanced calls to -_incrementFocusPreservationCount");
+
+    if (std::exchange(_activeFocusedStateRetainCount, 0))
+        RELEASE_LOG_ERROR(ViewState, "Keyboard dismissed with nonzero active state retain count; make sure all callbacks returned from -_retainActiveFocusedState are invoked");
 }
 
 - (BOOL)_isRetainingActiveFocusedState
@@ -4669,10 +4673,10 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 - (void (^)(void))_retainActiveFocusedState
 {
     ++_activeFocusedStateRetainCount;
-
     // FIXME: Use something like CompletionHandlerCallChecker to ensure that the returned block is called before it's released.
     return adoptNS([[self] {
-        --_activeFocusedStateRetainCount;
+        if (_activeFocusedStateRetainCount)
+            --_activeFocusedStateRetainCount;
     } copy]).autorelease();
 }
 

@@ -89,6 +89,7 @@ TEST(FocusPreservationTests, UserCanDismissInputViewRegardlessOfFocusPreservatio
     Util::run(&inputFocused);
 
     [[webView textInputContentView] _preserveFocusWithToken:NSUUID.UUID destructively:YES];
+    [webView _retainActiveFocusedState];
     // Simulates a user tapping on the Done button above the keyboard.
     [webView dismissFormAccessoryView];
     [webView waitForNextPresentationUpdate];
