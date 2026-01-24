@@ -5651,10 +5651,14 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
     RegisterAtOffsetList calleeSaves = params.code().calleeSaveRegisterAtOffsetList();
 
-    // Be careful not to clobber this below.
-    // We also need to make sure that we preserve this if it is used by the patchpoint body.
     AllowMacroScratchRegisterUsage allowScratch(jit);
     auto tmp = jit.scratchRegister();
+
+#if CPU(X86_64)
+    // On x64, the scratch register may alias one of the inputs and needs special saving.
+    //
+    // Be careful not to clobber this below.
+    // We also need to make sure that we preserve this if it is used by the patchpoint body.
     bool tmpNeedsSaving = false;
     int tmpSpillOffsetRelativeToOriginalSP = 0;
 
@@ -5686,6 +5690,30 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
         tmpSpillOffsetRelativeToOriginalSP = allocateSpill(WidthPtr);
         jit.storePtr(tmp, CCallHelpers::Address(MacroAssembler::stackPointerRegister, tmpSpillOffsetRelativeToOriginalSP));
     }
+#else
+    constexpr bool tmpNeedsSaving = false;
+    constexpr int tmpSpillOffsetRelativeToOriginalSP = 0;
+
+    // Set up a valid frame so that we can clobber this one.
+    jit.emitRestore(calleeSaves);
+
+#if ASSERT_ENABLED
+    for (unsigned i = 0; i < params.size(); ++i) {
+        auto arg = params[i];
+        if (arg.isGPR()) {
+            ASSERT(!calleeSaves.find(arg.gpr()));
+            ASSERT(arg.gpr() != tmp);
+            continue;
+        }
+        if (arg.isFPR()) {
+            ASSERT(!calleeSaves.find(arg.fpr()));
+            continue;
+        }
+    }
+
+    ASSERT(!calleeSaves.find(tmp));
+#endif // ASSERT_ENABLED
+#endif // CPU(X86_64)
 
 #if ASSERT_ENABLED
     // Let's make sure we never rely on these slots, so we can use them for scratch in the future.
@@ -5816,7 +5844,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
             continue;
         }
 
-        auto saveSrc = [tmp, tmpNeedsSaving, tmpSpillOffsetRelativeToOriginalSP, dstType, &allocateSpill, &jit, &fpOffsetToSPOffset](ValueRep src) -> std::tuple<int, Width> {
+        auto saveSrc = [=, &allocateSpill, &jit, &fpOffsetToSPOffset](ValueRep src) -> std::tuple<int, Width> {
             int srcOffset = 0;
             if (tmpNeedsSaving && src.isGPR() && src.gpr() == tmp) {
                 // Before tmp may have been clobbered, it was spilled to tmpSpill.
@@ -5948,9 +5976,11 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     if (tmpNeedsSaving)
         jit.loadPtr(CCallHelpers::Address(MacroAssembler::stackPointerRegister, tmpSpillOffsetRelativeToOriginalSP), tmp);
 
-    // Nothing after restoring tmp can use the scratch register since it might clobber an input.
     {
+#if CPU(X86_64)
+        // On x64, nothing after restoring tmp can use the scratch register since it might clobber an input.
         DisallowMacroScratchRegisterUsage disallowScratch(jit);
+#endif
 
         jit.addPtr(MacroAssembler::TrustedImm32(newSPAtPrologueOffsetFromSP), MacroAssembler::stackPointerRegister);
 
@@ -6102,7 +6132,17 @@ auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const TypeDefin
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobberEarly(WTF::move(clobbers));
+#if CPU(X86_64)
+    // Our wasm x64 calling convention uses all caller-saved registers, including the scratch
+    // register. This means clobbering the scratch registers early can exhaust allocatable
+    // registers and crash in the regalloc.
+    //
+    // Until the calling convention is reworked, prepareForTailCallImpl has special handling
+    // around saving and restoring the scratch register if it is also used as an input.
     patchpoint->clobberLate(RegisterSetBuilder::macroClobberedGPRs());
+#else
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+#endif
     patchpoint->appendVector(WTF::move(patchArgs));
     // See prepareForTailCallImpl for the heart of this patchpoint.
     block->append(patchpoint);
