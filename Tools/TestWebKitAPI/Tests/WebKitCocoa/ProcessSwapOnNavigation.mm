@@ -5621,7 +5621,10 @@ TEST(ProcessSwap, RelatedWebViewBeforeWebProcessLaunch)
 
     auto pid2 = [webView2 _webProcessIdentifier];
 
-    EXPECT_EQ(pid1, pid2); // WebViews are related so they should share the same process.
+    if (isSiteIsolationEnabled(webView1.get()))
+        EXPECT_NE(pid1, pid2); // Site Isolation puts different sites into different processes, even if WebViews are related
+    else
+        EXPECT_EQ(pid1, pid2); // WebViews are related so they should share the same process.
 }
 
 TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
