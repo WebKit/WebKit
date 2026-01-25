@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x18
         RenderListItem {SUMMARY} at (0,0) size 784x18
-          RenderListMarker at (0,0) size 15x18: "\x{25BE}"
-          RenderText {#text} at (14,0) size 64x18
-            text run at (14,0) width 64: "summary "
-          RenderInline {B} at (77,0) size 145x18
-            RenderText {#text} at (77,0) size 145x18
-              text run at (77,0) width 145: "should have bold test"
+          RenderListMarker at (0,0) size 17x18: "\x{25BC}"
+          RenderText {#text} at (16,0) size 64x18
+            text run at (16,0) width 64: "summary "
+          RenderInline {B} at (79,0) size 145x18
+            RenderText {#text} at (79,0) size 145x18
+              text run at (79,0) width 145: "should have bold test"
         RenderBlock {SLOT} at (0,18) size 784x0

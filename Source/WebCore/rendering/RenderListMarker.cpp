@@ -25,9 +25,11 @@
 #include "config.h"
 #include "RenderListMarker.h"
 
+#include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
 #include "Document.h"
 #include "FontCascade.h"
+#include "FontCascadeDescription.h"
 #include "GraphicsContext.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
@@ -144,6 +146,15 @@ struct TextRunWithUnderlyingString {
     operator const TextRun&() const { return textRun; }
 };
 
+static FontCascade disclosureMarkerFontCascade(const RenderStyle& style, Document& document)
+{
+    auto fontDescription = FontCascadeDescription { style.fontDescription() };
+    fontDescription.setFamilies(Vector<AtomString> { "system-ui"_s });
+    auto fontCascade = FontCascade(WTF::move(fontDescription));
+    fontCascade.update(&document.fontSelector());
+    return fontCascade;
+}
+
 static auto textRunForContent(ListMarkerTextContent textContent, const RenderStyle& style) -> TextRunWithUnderlyingString
 {
     ASSERT(!textContent.isEmpty());
@@ -164,6 +175,14 @@ static auto textRunForContent(ListMarkerTextContent textContent, const RenderSty
     }
     auto textRun = RenderBlock::constructTextRun(textForRun, style);
     return { WTF::move(textRun), WTF::move(textForRun) };
+}
+
+void RenderListMarker::paintDisclosureMarker(GraphicsContext& context, const FloatRect& markerRect)
+{
+    auto systemUIFontCascade = disclosureMarkerFontCascade(style(), document());
+    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + snap(systemUIFontCascade.metricsOfPrimaryFont().ascent(), *this) };
+    textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), writingMode().isLogicalLeftInlineStart());
+    context.drawText(systemUIFontCascade, textRunForContent(m_textContent, style()), textOrigin);
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -231,6 +250,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.fillRect(markerRect);
         return;
     }
+
     if (m_textContent.isEmpty())
         return;
 
@@ -245,7 +265,12 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + snap(style().metricsOfPrimaryFont().ascent(), *this) };
+    if (isDisclosureMarker()) {
+        paintDisclosureMarker(context, markerRect);
+        return;
+    }
+
+    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + snap(style().fontCascade().metricsOfPrimaryFont().ascent(), *this) };
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), writingMode().isLogicalLeftInlineStart());
     context.drawText(style().fontCascade(), textRunForContent(m_textContent, style()), textOrigin);
 }
@@ -385,7 +410,12 @@ void RenderListMarker::computePreferredLogicalWidths()
         return;
     }
 
-    const FontCascade& font = style().fontCascade();
+    std::optional<FontCascade> systemUIFontCascade;
+    // Use system-ui font for disclosure triangles
+    if (isDisclosureMarker())
+        systemUIFontCascade = disclosureMarkerFontCascade(style(), document());
+
+    auto& font = systemUIFontCascade ? *systemUIFontCascade : style().fontCascade();
 
     LayoutUnit logicalWidth;
     if (widthUsesMetricsOfPrimaryFont())
@@ -445,12 +475,12 @@ bool RenderListMarker::isInside() const
 
 bool RenderListMarker::isDisclosureMarker() const
 {
-    auto& listStyleType = style().listStyleType();
-    if (std::optional counterStyle = listStyleType.tryCounterStyle()) {
-        AtomString& identifier = counterStyle->identifier.value;
-        return identifier == "disclosure-open"_s || identifier == "disclosure-closed"_s;
-    }
-    return false;
+    auto counter = counterStyle();
+    if (!counter)
+        return false;
+    auto system = counter->system();
+    return system == CSSCounterStyleDescriptors::System::DisclosureClosed
+        || system == CSSCounterStyleDescriptors::System::DisclosureOpen;
 }
 
 const RenderListItem* RenderListMarker::listItem() const
@@ -477,8 +507,21 @@ FloatRect RenderListMarker::relativeMarkerRect()
     } else {
         if (m_textContent.isEmpty())
             return { };
-        auto& font = style().fontCascade();
-        relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), snap(font.metricsOfPrimaryFont().height(), *this) };
+
+        // Use system-ui font for disclosure triangles
+        if (isDisclosureMarker()) {
+            auto systemUIFontCascade = disclosureMarkerFontCascade(style(), document());
+            auto& fontMetrics = style().metricsOfPrimaryFont();
+            auto& systemUIFontMetrics = systemUIFontCascade.metricsOfPrimaryFont();
+            auto width = systemUIFontCascade.width(textRunForContent(m_textContent, style()));
+            auto height = snap(systemUIFontMetrics.height(), *this);
+            // Center vertically within the original font metrics
+            auto yOffset = (snap(fontMetrics.height(), *this) - height) / 2.0f;
+            relativeRect = { 0.f, yOffset, width, height };
+        } else {
+            auto& font = style().fontCascade();
+            relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), snap(font.metricsOfPrimaryFont().height(), *this) };
+        }
     }
 
     if (!writingMode().isHorizontal()) {

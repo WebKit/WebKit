@@ -97,6 +97,7 @@ private:
     RenderBox* parentBox(RenderBox&);
     FloatRect relativeMarkerRect();
     LayoutRect localSelectionRect();
+    void paintDisclosureMarker(GraphicsContext&, const FloatRect& markerRect);
 
     RefPtr<CSSCounterStyle> counterStyle() const;
     bool widthUsesMetricsOfPrimaryFont() const;
