@@ -10,8 +10,6 @@ body.hide-containers .container {
 .container {
     width: 600px;
     height: 200px;
-    -webkit-columns: 3;
-    -webkit-column-fill: auto;
     columns: 3;
     column-fill: auto;
     line-height: 20px; /* 10 lines per page */
@@ -19,6 +17,8 @@ body.hide-containers .container {
     margin: 0 0 20px 0;
     padding: 0;
     overflow: hidden;
+    orphans: 1;
+    widows: 1;
 }
 
 .block {

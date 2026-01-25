@@ -16,8 +16,8 @@ layer at (10,10) size 382x650 backgroundClip at (0,0) size 1188x585 clip at (0,0
         text run at (0,12) width 377: "The reason it should not be split is that the line contains no"
         text run at (0,27) width 376: "text and so we should be willing to allow it to sit at the top"
         text run at (0,42) width 94: "of a new page."
-    RenderBlock (anonymous) at (0,92) size 382x558
-      RenderBlock {DIV} at (0,208) size 50x300 [bgcolor=#00FF00]
+    RenderBlock (anonymous) at (0,300) size 382x350
+      RenderBlock {DIV} at (0,0) size 50x300 [bgcolor=#00FF00]
       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,508) size 382x50 [bgcolor=#800080]
+      RenderBlock {DIV} at (0,300) size 382x50 [bgcolor=#800080]
       RenderText {#text} at (0,0) size 0x0
