@@ -5,6 +5,7 @@ Menu option 2
 Menu option 3
 This works like a switch.
 This behaves like a textbox
+Custom slider
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -31,6 +32,8 @@ This behaves like a textbox
         (interaction (0,132) width=800 height=20)
         (cornerRadius 8.00),
         (interaction (0,152) width=800 height=20)
+        (cornerRadius 8.00),
+        (interaction (0,172) width=800 height=20)
         (cornerRadius 8.00)])
       )
     )
