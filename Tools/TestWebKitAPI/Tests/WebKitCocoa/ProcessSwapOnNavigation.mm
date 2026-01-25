@@ -5646,6 +5646,12 @@ TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
     }];
 
     [webView1 setNavigationDelegate:delegate.get()];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+    [webView1 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView1 _webProcessIdentifier];
 
     auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webView2Configuration setProcessPool:processPool.get()];
@@ -5653,18 +5659,14 @@ TEST(ProcessSwap, ReloadRelatedWebViewAfterCrash)
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     webView2Configuration.get()._relatedWebView = webView1.get(); // webView2 will be related to webView1 and webView1's URL will be used for process swap decision.
     ALLOW_DEPRECATED_DECLARATIONS_END
+
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
-    [webView1 loadRequest:request];
-
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto pid1 = [webView1 _webProcessIdentifier];
-
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    // Under Site Isolation, related WebViews might use the same process only if they are loading the same site.
+    if (isSiteIsolationEnabled(webView2.get()))
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+
     [webView2 loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
