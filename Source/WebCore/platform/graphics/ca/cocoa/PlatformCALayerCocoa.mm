@@ -385,6 +385,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->setBackdropRootIsOpaque(backdropRootIsOpaque());
     newLayer->copyFiltersFrom(*this);
     newLayer->updateCustomAppearance(customAppearance());
+    newLayer->setShadowPath(shadowPath());
 
     if (type == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         ASSERT(PAL::isAVFoundationFrameworkAvailable() && [newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()]);
@@ -1002,6 +1003,20 @@ void PlatformCALayerCocoa::setCornerRadius(float value)
     [m_layer setCornerRadius:value];
     if (value)
         [m_layer setCornerCurve:kCACornerCurveCircular];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+Path PlatformCALayerCocoa::shadowPath() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy([m_layer shadowPath]))) };
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void PlatformCALayerCocoa::setShadowPath(const Path& path)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer setShadowPath:path.platformPath()];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

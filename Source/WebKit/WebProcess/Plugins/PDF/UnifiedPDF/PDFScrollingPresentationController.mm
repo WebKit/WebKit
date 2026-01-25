@@ -237,9 +237,11 @@ void PDFScrollingPresentationController::updatePageBackgroundLayers()
 
         pageContainerLayer->setPosition(destinationRect.location());
         pageContainerLayer->setSize(destinationRect.size());
+        pageContainerLayer->setShadowPath(shadowPathForLayer(pageContainerLayer.get()));
 
         auto pageBackgroundLayer = pageContainerLayer->children()[0];
         pageBackgroundLayer->setSize(pageBoundsRect.size());
+        pageBackgroundLayer->setShadowPath(shadowPathForLayer(pageBackgroundLayer.get()));
 
         TransformationMatrix documentScaleTransform;
         documentScaleTransform.scale(documentLayout.scale());

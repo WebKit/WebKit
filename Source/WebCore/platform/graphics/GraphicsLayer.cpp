@@ -1146,6 +1146,15 @@ TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& cu
     return ts;
 }
 
+void GraphicsLayer::setShadowPath(const Path& path)
+{
+#if USE(CA)
+    m_shadowPath = path;
+#else
+    UNUSED_PARAM(path);
+#endif
+}
+
 String GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);

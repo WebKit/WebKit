@@ -246,6 +246,9 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
         if (layerProperties.changedProperties & LayerChange::AppleVisualEffectChanged)
             ts.dumpProperty("appleVisualEffectData"_s, layerProperties.appleVisualEffectData);
 #endif
+
+        if (layerProperties.changedProperties & LayerChange::ShadowPathChanged)
+            ts.dumpProperty("shadowPath"_s, layerProperties.shadowPath.isEmpty() ? "empty" : "set");
     }
 }
 

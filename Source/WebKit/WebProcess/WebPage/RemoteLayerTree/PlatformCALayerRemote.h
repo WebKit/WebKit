@@ -199,6 +199,9 @@ public:
     float cornerRadius() const override;
     void setCornerRadius(float) override;
 
+    WebCore::Path shadowPath() const override;
+    void setShadowPath(const WebCore::Path&) override;
+
     void setAntialiasesEdges(bool) override;
 
     WebCore::MediaPlayerVideoGravity videoGravity() const override;

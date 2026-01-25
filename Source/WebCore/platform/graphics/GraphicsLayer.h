@@ -550,6 +550,8 @@ public:
     virtual void purgeFrontBufferForTesting() { }
     virtual void purgeBackBufferForTesting() { }
 
+    virtual void setShadowPath(const Path&);
+
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
@@ -696,6 +698,7 @@ protected:
 
     EventRegion m_eventRegion;
 #if USE(CA)
+    Path m_shadowPath;
     MediaPlayerVideoGravity m_videoGravity { MediaPlayerVideoGravity::ResizeAspect };
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;

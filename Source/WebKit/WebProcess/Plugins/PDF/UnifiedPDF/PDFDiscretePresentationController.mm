@@ -1181,9 +1181,11 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
 
         pageContainerLayer->setPosition(destinationRect.location());
         pageContainerLayer->setSize(destinationRect.size());
+        pageContainerLayer->setShadowPath(shadowPathForLayer(*pageContainerLayer));
 
         RefPtr pageBackgroundLayer = pageBackgroundLayerForPageContainerLayer(*pageContainerLayer);
         pageBackgroundLayer->setSize(pageBounds.size());
+        pageBackgroundLayer->setShadowPath(shadowPathForLayer(*pageBackgroundLayer));
         pageBackgroundLayer->setTransform(documentScaleTransform);
     };
 

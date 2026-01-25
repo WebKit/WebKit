@@ -968,6 +968,20 @@ void PlatformCALayerRemote::setCornerRadius(float value)
     m_properties.notePropertiesChanged(LayerChange::CornerRadiusChanged);
 }
 
+WebCore::Path PlatformCALayerRemote::shadowPath() const
+{
+    return m_properties.shadowPath;
+}
+
+void PlatformCALayerRemote::setShadowPath(const WebCore::Path& path)
+{
+    if (m_properties.shadowPath.definitelyEqual(path))
+        return;
+
+    m_properties.shadowPath = path;
+    m_properties.notePropertiesChanged(LayerChange::ShadowPathChanged);
+}
+
 void PlatformCALayerRemote::setAntialiasesEdges(bool antialiases)
 {
     if (antialiases == m_properties.antialiasesEdges)

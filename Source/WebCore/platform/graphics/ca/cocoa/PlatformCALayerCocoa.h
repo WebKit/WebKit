@@ -162,6 +162,9 @@ public:
     float cornerRadius() const override;
     void setCornerRadius(float) override;
 
+    Path shadowPath() const override;
+    void setShadowPath(const Path&) override;
+
     void setAntialiasesEdges(bool) override;
 
     MediaPlayerVideoGravity videoGravity() const override;

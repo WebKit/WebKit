@@ -553,6 +553,12 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::AppleVisualEffectChanged)
         updateAppleVisualEffect(layer, layerTreeNode, properties.appleVisualEffectData);
 #endif
+
+    if (properties.changedProperties & LayerChange::ShadowPathChanged) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [layer setShadowPath:properties.shadowPath.protectedPlatformPath().get()];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 }
 
 void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)

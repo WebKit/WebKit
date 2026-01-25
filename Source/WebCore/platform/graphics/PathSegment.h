@@ -56,7 +56,7 @@ public:
         PathCloseSubpath
     >;
 
-    PathSegment(Data&&);
+    WEBCORE_EXPORT PathSegment(Data&&);
 
     bool operator==(const PathSegment&) const = default;
 

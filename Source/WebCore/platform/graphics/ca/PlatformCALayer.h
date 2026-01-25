@@ -292,6 +292,9 @@ public:
     virtual float cornerRadius() const = 0;
     virtual void setCornerRadius(float) = 0;
 
+    virtual Path shadowPath() const = 0;
+    virtual void setShadowPath(const Path&) = 0;
+
     virtual void setAntialiasesEdges(bool) = 0;
 
     virtual MediaPlayerVideoGravity videoGravity() const = 0;

@@ -44,6 +44,7 @@ enum class GraphicsLayerType : uint8_t;
 enum class TiledBackingScrollability : uint8_t;
 class GraphicsLayer;
 class GraphicsLayerClient;
+class Path;
 };
 
 namespace WebKit {
@@ -140,7 +141,8 @@ protected:
     void clearAsyncRenderer();
 
     bool shouldUseInProcessBackingStore() const;
-    bool shouldAddPageBackgroundLayerShadow() const;
+
+    WebCore::Path shadowPathForLayer(const WebCore::GraphicsLayer&) const;
 
     const Ref<UnifiedPDFPlugin> m_plugin;
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;

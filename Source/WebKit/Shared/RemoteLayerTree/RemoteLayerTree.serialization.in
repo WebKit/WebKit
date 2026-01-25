@@ -79,6 +79,7 @@ header: "RemoteLayerTreeTransaction.h"
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged
 #endif
+    ShadowPathChanged
 };
 
 header: "RemoteLayerBackingStore.h"
@@ -242,6 +243,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 #if HAVE(CORE_MATERIAL)
     [OptionalTupleBit=WebKit::LayerChange::AppleVisualEffectChanged] WebCore::AppleVisualEffectData appleVisualEffectData;
 #endif
+    [OptionalTupleBit=WebKit::LayerChange::ShadowPathChanged] WebCore::Path shadowPath;
 };
 
 using WebKit::LayerHostingContextID = uint32_t;

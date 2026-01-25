@@ -2345,6 +2345,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsScalingFiltersChanged)
         updateContentsScalingFilters();
 
+    if (m_uncommittedChanges & ShadowPathChanged)
+        updateShadowPath();
+
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
@@ -4729,6 +4732,7 @@ ASCIILiteral GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::DrawsHDRContentChanged: return "DrawsHDRContentChanged"_s;
     case LayerChange::TonemappingEnabledChanged: return "TonemappingEnabledChanged"_s;
 #endif
+    case LayerChange::ShadowPathChanged: return "ShadowPathChanged"_s;
     }
     ASSERT_NOT_REACHED();
     return ""_s;
@@ -4918,6 +4922,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | ContentsRectsChanged
         | SeparatedChanged
 #endif
+        | ShadowPathChanged
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | CoverageRectChanged);
 #else
@@ -5391,6 +5396,20 @@ void GraphicsLayerCA::purgeBackBufferForTesting()
 {
     if (RefPtr layer = primaryLayer())
         layer->purgeBackBufferForTesting();
+}
+
+void GraphicsLayerCA::setShadowPath(const Path& path)
+{
+    if (m_shadowPath.definitelyEqual(path))
+        return;
+
+    GraphicsLayer::setShadowPath(path);
+    noteLayerPropertyChanged(ShadowPathChanged);
+}
+
+void GraphicsLayerCA::updateShadowPath()
+{
+    m_layer->setShadowPath(m_shadowPath);
 }
 
 void GraphicsLayerCA::markFrontBufferVolatileForTesting()

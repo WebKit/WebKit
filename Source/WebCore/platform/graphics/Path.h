@@ -49,7 +49,7 @@ public:
     Path(PathSegment&&);
     WEBCORE_EXPORT Path(Vector<PathSegment>&&);
     explicit Path(const Vector<FloatPoint>& points);
-    Path(Ref<PathImpl>&&);
+    WEBCORE_EXPORT Path(Ref<PathImpl>&&);
 
     Path(const Path&) = default;
     Path(Path&&) = default;
