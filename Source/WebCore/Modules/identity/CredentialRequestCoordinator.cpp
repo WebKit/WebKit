@@ -311,11 +311,12 @@ void CredentialRequestCoordinator::abortPicker(ExceptionOr<JSC::JSValue>&& reaso
         m_currentPromise.reset();
     }
 
-    m_client->dismissDigitalCredentialsPicker([this](bool success) {
+    m_client->dismissDigitalCredentialsPicker([weakThis = WeakPtr { *this }](bool success) {
         if (!success)
             LOG(DigitalCredentials, "Failed to dismiss the credentials picker.");
 
-        setState(PickerState::Idle);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setState(PickerState::Idle);
     });
 }
 
