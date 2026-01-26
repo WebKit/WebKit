@@ -529,18 +529,20 @@ ipintOp(_call_indirect, macro()
     subp t0, t1
     storei t1, CallSiteIndex[cfr]
 
-    loadb IPInt::CallIndirectMetadata::length[MC], t2
-    advancePCByReg(t2)
-
     # Get function index by pointer, use it as a return for callee
     move sp, a2
 
     # Get callIndirectMetadata
     move cfr, a1
     move MC, a3
-    advanceMC(IPInt::CallIndirectMetadata::signature)
 
     operationCallMayThrow(macro() cCall4(_ipint_extern_prepare_call_indirect) end)
+
+    # operationCallMayThrow saves the call site index, so we have to advance the PC after.
+    # Otherwise, the wrong call site index will be saved.
+    loadb IPInt::CallIndirectMetadata::length[MC], t3
+    advancePCByReg(t3)
+    advanceMC(IPInt::CallIndirectMetadata::signature)
 
     loadp [sp], IPIntCallCallee
     loadp 8[sp], IPIntCallFunctionSlot
@@ -576,9 +578,6 @@ end)
 ipintOp(_return_call_indirect, macro()
     saveCallSiteIndex()
 
-    loadb IPInt::TailCallIndirectMetadata::length[MC], t0
-    advancePCByReg(t0)
-
     # Get function index by pointer, use it as a return for callee
     move sp, a2
 
@@ -586,6 +585,11 @@ ipintOp(_return_call_indirect, macro()
     move cfr, a1
     move MC, a3
     operationCallMayThrow(macro() cCall4(_ipint_extern_prepare_call_indirect) end)
+
+    # operationCallMayThrow saves the call site index, so we have to advance the PC after.
+    # Otherwise, the wrong call site index will be saved.
+    loadb IPInt::TailCallIndirectMetadata::length[MC], t3
+    advancePCByReg(t3)
 
     loadp [sp], IPIntCallCallee
     loadp 8[sp], IPIntCallFunctionSlot
@@ -618,13 +622,16 @@ end)
 ipintOp(_return_call_ref, macro()
     saveCallSiteIndex()
 
-    loadb IPInt::TailCallRefMetadata::length[MC], t2
-    advancePCByReg(t2)
-
     move cfr, a1
     move MC, a2
     move sp, a3
     operationCallMayThrow(macro() cCall4(_ipint_extern_prepare_call_ref) end)
+
+    # operationCallMayThrow saves the call site index, so we have to advance the PC after.
+    # Otherwise, the wrong call site index will be saved.
+    loadb IPInt::TailCallRefMetadata::length[MC], t3
+    advancePCByReg(t3)
+
     loadp [sp], IPIntCallCallee
     loadp 8[sp], IPIntCallFunctionSlot
     addp 16, sp
