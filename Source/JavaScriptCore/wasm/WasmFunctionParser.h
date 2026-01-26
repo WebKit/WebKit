@@ -3838,6 +3838,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_VALIDATOR_FAIL_IF(!ControlType::isIf(data.controlData), "else block isn't associated to an if");
         WASM_TRY_ADD_TO_CONTEXT(addElseToUnreachable(data.controlData));
         m_expressionStack = WTF::move(data.elseBlockStack);
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3866,6 +3867,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
                 m_context.notifyFunctionUsesSIMD();
             m_expressionStack.constructAndAppend(argumentType, results[i]);
         }
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3878,6 +3880,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_expressionStack = { };
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(data.controlData), "catch block isn't associated to a try");
         WASM_TRY_ADD_TO_CONTEXT(addCatchAllToUnreachable(data.controlData));
+        resetLocalInitStackToHeight(data.localInitStackHeight);
         return { };
     }
 
@@ -3898,6 +3901,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             Stack emptyStack;
             WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
             m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+            resetLocalInitStackToHeight(controlEntry.localInitStackHeight);
         }
         m_unreachableBlocks--;
         return { };
@@ -3917,6 +3921,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             }
 
             m_expressionStack.swap(data.enclosedExpressionStack);
+            if (!ControlType::isTopLevel(data.controlData))
+                resetLocalInitStackToHeight(data.localInitStackHeight);
         }
         m_unreachableBlocks--;
         return { };
