@@ -5926,10 +5926,15 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
             }
             if (src.isFPR()) {
                 srcOffset = allocateSpill(dstType.width());
-                if (dstType.width() <= Width::Width64)
-                    jit.storeDouble(src.fpr(), CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
-                else
-                    jit.storeVector(src.fpr(), CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset));
+                auto dst = CCallHelpers::Address(MacroAssembler::stackPointerRegister, srcOffset);
+                if (dstType == Types::F32)
+                    jit.storeFloat(src.fpr(), dst);
+                else if (dstType == Types::F64)
+                    jit.storeDouble(src.fpr(), dst);
+                else {
+                    ASSERT(dstType == Types::V128);
+                    jit.storeVector(src.fpr(), dst);
+                }
             } else if (src.isConstant()) {
                 if (toB3Type(dstType).kind() == Float) {
                     srcOffset = allocateSpill(Width32);
