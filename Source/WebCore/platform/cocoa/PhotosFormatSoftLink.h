@@ -25,5 +25,7 @@
 
 #import <wtf/SoftLinking.h>
 
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, PhotosFormats);
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, PhotosFormats, PFMetadataImageSourceIsSpatialMedia, bool, (CGImageSourceRef source), (source));
+#endif
