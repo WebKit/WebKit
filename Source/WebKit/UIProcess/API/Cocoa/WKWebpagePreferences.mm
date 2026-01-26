@@ -164,6 +164,12 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
 
 } // namespace WebKit
 
+// EnhancedSecurityFeatureEnabled is a temporary NSUserDefault, See: rdar://163369863
+static BOOL isEnhancedSecurityFeatureEnabled()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"EnhancedSecurityFeatureEnabled"];
+}
+
 static Ref<API::WebsitePolicies> protectedWebsitePolicies(WKWebpagePreferences *preferences)
 {
     return *preferences->_websitePolicies;
@@ -512,11 +518,16 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)_setEnhancedSecurityEnabled:(BOOL)isEnhancedSecurityEnabled
 {
+    if (!isEnhancedSecurityFeatureEnabled())
+        return;
+
     _websitePolicies->setIsEnhancedSecurityEnabled(isEnhancedSecurityEnabled);
 }
 
 - (BOOL)_enhancedSecurityEnabled
 {
+    if (!isEnhancedSecurityFeatureEnabled())
+        return NO;
     return _websitePolicies->isEnhancedSecurityEnabled();
 }
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -842,6 +853,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setSecurityRestrictionMode:(WKSecurityRestrictionMode)mode
 {
+    if (!isEnhancedSecurityFeatureEnabled())
+        return;
+
     switch (mode) {
     case WKSecurityRestrictionModeNone:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
@@ -860,6 +874,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (WKSecurityRestrictionMode)securityRestrictionMode
 {
+    if (!isEnhancedSecurityFeatureEnabled())
+        return WKSecurityRestrictionModeNone;
     if (Ref { *_websitePolicies }->lockdownModeEnabled())
         return WKSecurityRestrictionModeLockdown;
     if (_websitePolicies->isEnhancedSecurityEnabled())

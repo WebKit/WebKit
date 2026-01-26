@@ -41,6 +41,19 @@ namespace TestWebKitAPI {
 
 #if !PLATFORM(IOS)
 
+class EnhancedSecurityTest : public testing::Test {
+public:
+    virtual void SetUp()
+    {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"EnhancedSecurityFeatureEnabled"];
+    }
+
+    virtual void TearDown()
+    {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"EnhancedSecurityFeatureEnabled"];
+    }
+};
+
 static bool isEnhancedSecurityEnabled(WKWebView *webView)
 {
     __block bool gotResponse = false;
@@ -67,7 +80,7 @@ static bool isJITEnabled(WKWebView *webView)
     return isJITEnabledResult;
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityEnablesTrue)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityEnablesTrue)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
@@ -83,7 +96,7 @@ TEST(EnhancedSecurity, EnhancedSecurityEnablesTrue)
 #endif
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityEnableFalse)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityEnableFalse)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
@@ -99,7 +112,7 @@ TEST(EnhancedSecurity, EnhancedSecurityEnableFalse)
 #endif
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityDisablesJIT)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityDisablesJIT)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
@@ -110,7 +123,7 @@ TEST(EnhancedSecurity, EnhancedSecurityDisablesJIT)
     EXPECT_EQ(false, isJITEnabled(webView.get()));
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterNavigation)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityNavigationStaysEnabledAfterNavigation)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
@@ -136,7 +149,7 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterNavigation)
     EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
 }
 
-TEST(EnhancedSecurity, PSONToEnhancedSecurity)
+TEST_F(EnhancedSecurityTest, PSONToEnhancedSecurity)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
@@ -180,7 +193,7 @@ TEST(EnhancedSecurity, PSONToEnhancedSecurity)
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
 }
 
-TEST(EnhancedSecurity, PSONToEnhancedSecuritySamePage)
+TEST_F(EnhancedSecurityTest, PSONToEnhancedSecuritySamePage)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
@@ -234,7 +247,7 @@ static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
     return processPoolConfiguration;
 }
 
-TEST(EnhancedSecurity, PSONToEnhancedSecuritySharedProcessPool)
+TEST_F(EnhancedSecurityTest, PSONToEnhancedSecuritySharedProcessPool)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -286,7 +299,7 @@ TEST(EnhancedSecurity, PSONToEnhancedSecuritySharedProcessPool)
     EXPECT_NE(pid1, [webView2 _webProcessIdentifier]);
 }
 
-TEST(EnhancedSecurity, PSONToEnhancedSecuritySharedProcessPoolReverse)
+TEST_F(EnhancedSecurityTest, PSONToEnhancedSecuritySharedProcessPoolReverse)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -339,7 +352,7 @@ TEST(EnhancedSecurity, PSONToEnhancedSecuritySharedProcessPoolReverse)
 }
 
 #if USE(APPLE_INTERNAL_SDK)
-TEST(EnhancedSecurity, ProcessVariantMatchesConfiguration)
+TEST_F(EnhancedSecurityTest, ProcessVariantMatchesConfiguration)
 {
     auto webViewConfiguration1 = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration1.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
@@ -363,7 +376,7 @@ TEST(EnhancedSecurity, ProcessVariantMatchesConfiguration)
 }
 #endif
 
-TEST(EnhancedSecurity, ProcessCanLaunch)
+TEST_F(EnhancedSecurityTest, ProcessCanLaunch)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
@@ -397,7 +410,7 @@ TEST(EnhancedSecurity, ProcessCanLaunch)
 
 }
 
-TEST(EnhancedSecurity, CaptivePortalProcessCanLaunch)
+TEST_F(EnhancedSecurityTest, CaptivePortalProcessCanLaunch)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
@@ -433,7 +446,7 @@ TEST(EnhancedSecurity, CaptivePortalProcessCanLaunch)
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNavigationRequestDisables)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNavigationRequestDisables)
 {
     HTTPServer server({
         { "/example"_s, { "<iframe id='webkit_frame' src='https://example.com/webkit'></iframe>"_s } },
@@ -481,7 +494,7 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNaviga
 
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNavigationRequestDisablesCrossOrigin)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNavigationRequestDisablesCrossOrigin)
 {
 
     HTTPServer server({
@@ -530,7 +543,7 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNaviga
 
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavigationRequestEnabled)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavigationRequestEnabled)
 {
 
     HTTPServer server({
@@ -579,7 +592,7 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavig
 
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavigationRequestEnabledCrossOrigin)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavigationRequestEnabledCrossOrigin)
 {
 
     HTTPServer server({
@@ -627,7 +640,7 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavig
 #endif
 }
 
-TEST(EnhancedSecurity, WindowOpenWithNoopenerFromEnhancedSecurityPage)
+TEST_F(EnhancedSecurityTest, WindowOpenWithNoopenerFromEnhancedSecurityPage)
 {
     HTTPServer server({
         { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit', '_blank', 'noopener')</script>"_s } },
@@ -670,7 +683,7 @@ TEST(EnhancedSecurity, WindowOpenWithNoopenerFromEnhancedSecurityPage)
     EXPECT_FALSE(hasOpener);
 }
 
-TEST(EnhancedSecurity, WindowOpenWithOpenerFromEnhancedSecurityPage)
+TEST_F(EnhancedSecurityTest, WindowOpenWithOpenerFromEnhancedSecurityPage)
 {
     HTTPServer server({
         { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
@@ -711,7 +724,7 @@ TEST(EnhancedSecurity, WindowOpenWithOpenerFromEnhancedSecurityPage)
 #endif
 }
 
-TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityInheritsEnhancedSecurity)
+TEST_F(EnhancedSecurityTest, WindowOpenNoopenerFromEnhancedSecurityInheritsEnhancedSecurity)
 {
     HTTPServer server({
         { "/target"_s, { "target page"_s } },
@@ -781,7 +794,7 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityInheritsEnhancedSec
     EXPECT_FALSE(hasOpener);
 }
 
-TEST(EnhancedSecurity, WindowOpenNoopenerFromStandardWithEnhancedSecurityViaDelegate)
+TEST_F(EnhancedSecurityTest, WindowOpenNoopenerFromStandardWithEnhancedSecurityViaDelegate)
 {
     HTTPServer server({
         { "/opener"_s, { "<script>function openwithnoopener() {w = window.open('https://webkit.org/opened', '_blank', 'noopener')}</script>"_s } },
@@ -850,7 +863,7 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromStandardWithEnhancedSecurityViaDele
     EXPECT_FALSE(hasOpener);
 }
 
-TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityWithStandardViaDelegate)
+TEST_F(EnhancedSecurityTest, WindowOpenNoopenerFromEnhancedSecurityWithStandardViaDelegate)
 {
     HTTPServer server({
         { "/opener"_s, { "<script>function openwithnoopener() {w = window.open('https://webkit.org/opened', '_blank', 'noopener')}</script>"_s } },
@@ -913,7 +926,7 @@ TEST(EnhancedSecurity, WindowOpenNoopenerFromEnhancedSecurityWithStandardViaDele
     EXPECT_FALSE(hasOpener);
 }
 
-TEST(EnhancedSecurity, LockdownModeTakesPrecedenceOverEnhancedSecurity)
+TEST_F(EnhancedSecurityTest, LockdownModeTakesPrecedenceOverEnhancedSecurity)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences._enhancedSecurityEnabled = YES;
@@ -932,7 +945,7 @@ TEST(EnhancedSecurity, LockdownModeTakesPrecedenceOverEnhancedSecurity)
 #endif
 }
 
-TEST(EnhancedSecurity, EnhancedSecurityRequestedWhenLockdownModeActive)
+TEST_F(EnhancedSecurityTest, EnhancedSecurityRequestedWhenLockdownModeActive)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
