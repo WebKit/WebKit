@@ -32,6 +32,8 @@
 #pragma once
 
 #include "BaseTextInputType.h"
+#include "PopupMenuClient.h"
+#include "SearchPopupMenu.h"
 #include "Timer.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -39,7 +41,7 @@ namespace WebCore {
 
 class SearchFieldResultsButtonElement;
 
-class SearchInputType final : public BaseTextInputType {
+class SearchInputType final : public BaseTextInputType, public PopupMenuClient {
     WTF_MAKE_TZONE_ALLOCATED(SearchInputType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SearchInputType);
 public:
@@ -47,6 +49,43 @@ public:
     {
         return adoptRef(*new SearchInputType(element));
     }
+
+    // CheckedPtr interface - resolve multiple inheritance ambiguity
+    uint32_t checkedPtrCount() const final { return BaseTextInputType::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return BaseTextInputType::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { BaseTextInputType::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { BaseTextInputType::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+
+    // PopupMenuClient methods
+    void valueChanged(unsigned listIndex, bool fireEvents = true) override;
+    void selectionChanged(unsigned, bool) override { }
+    void selectionCleared() override { }
+    String itemText(unsigned listIndex) const override;
+    String itemLabel(unsigned listIndex) const override;
+    String itemIcon(unsigned listIndex) const override;
+    String itemToolTip(unsigned) const override { return String(); }
+    String itemAccessibilityText(unsigned) const override { return String(); }
+    bool itemIsEnabled(unsigned listIndex) const override;
+    PopupMenuStyle itemStyle(unsigned listIndex) const override;
+    PopupMenuStyle menuStyle() const override;
+    int clientInsetLeft() const override;
+    int clientInsetRight() const override;
+    LayoutUnit clientPaddingLeft() const override;
+    LayoutUnit clientPaddingRight() const override;
+    int listSize() const override;
+    int popupSelectedIndex() const override;
+    void popupDidHide() override;
+    bool itemIsSeparator(unsigned listIndex) const override;
+    bool itemIsLabel(unsigned listIndex) const override;
+    bool itemIsSelected(unsigned listIndex) const override;
+    bool shouldPopOver() const override { return false; }
+    void setTextFromItem(unsigned listIndex) override;
+    FontSelector* fontSelector() const override;
+    HostWindow* hostWindow() const override;
+    Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) override;
+
+    Vector<RecentSearch>& recentSearches() { return m_recentSearches; }
 
 private:
     explicit SearchInputType(HTMLInputElement&);
@@ -68,6 +107,8 @@ private:
 
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
     RefPtr<HTMLElement> m_cancelButton;
+
+    Vector<RecentSearch> m_recentSearches;
 };
 
 } // namespace WebCore

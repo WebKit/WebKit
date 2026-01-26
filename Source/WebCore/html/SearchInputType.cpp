@@ -32,7 +32,9 @@
 #include "config.h"
 #include "SearchInputType.h"
 
+#include "DocumentInlines.h"
 #include "ContainerNodeInlines.h"
+#include "CSSFontSelector.h"
 #include "ElementInlines.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -40,6 +42,7 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "NodeRenderStyle.h"
+#include "RenderScrollbar.h"
 #include "RenderSearchField.h"
 #include "RenderStyle+GettersInlines.h"
 #include "ScriptDisallowedScope.h"
@@ -61,15 +64,202 @@ SearchInputType::SearchInputType(HTMLInputElement& element)
     ASSERT(needsShadowSubtree());
 }
 
+// PopupMenuClient methods
+void SearchInputType::valueChanged(unsigned listIndex, bool fireEvents)
+{
+    ASSERT(static_cast<int>(listIndex) < listSize());
+    RefPtr inputElement = element();
+    if (static_cast<int>(listIndex) == (listSize() - 1)) {
+        if (fireEvents) {
+            m_recentSearches.clear();
+            const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
+            if (!name.isEmpty()) {
+                if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
+                    renderer->updatePopup(name, m_recentSearches);
+            }
+        }
+    } else {
+        inputElement->setValue(itemText(listIndex));
+        inputElement->select();
+    }
+}
+
+String SearchInputType::itemText(unsigned listIndex) const
+{
+#if !PLATFORM(IOS_FAMILY)
+    int size = listSize();
+    if (size == 1) {
+        ASSERT(!listIndex);
+        return searchMenuNoRecentSearchesText();
+    }
+    if (!listIndex)
+        return searchMenuRecentSearchesText();
+#endif
+    if (itemIsSeparator(listIndex))
+        return String();
+#if !PLATFORM(IOS_FAMILY)
+    if (static_cast<int>(listIndex) == (size - 1))
+        return searchMenuClearRecentSearchesText();
+#endif
+    return m_recentSearches[listIndex - 1].string;
+}
+
+String SearchInputType::itemLabel(unsigned) const
+{
+    return String();
+}
+
+String SearchInputType::itemIcon(unsigned) const
+{
+    return String();
+}
+
+bool SearchInputType::itemIsEnabled(unsigned listIndex) const
+{
+    if (!listIndex || itemIsSeparator(listIndex))
+        return false;
+    return true;
+}
+
+PopupMenuStyle SearchInputType::itemStyle(unsigned) const
+{
+    return menuStyle();
+}
+
+PopupMenuStyle SearchInputType::menuStyle() const
+{
+    auto defaultStyle = RenderStyle::create();
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer());
+    CheckedRef style = renderer ? renderer->style() : defaultStyle;
+    return PopupMenuStyle(
+        style->visitedDependentColorApplyingColorFilter(),
+        style->visitedDependentBackgroundColorApplyingColorFilter(),
+        style->fontCascade(),
+        nullString(),
+        style->usedVisibility() == Visibility::Visible,
+        style->display() == DisplayType::None,
+        true,
+        style->writingMode().bidiDirection(),
+        isOverride(style->unicodeBidi()),
+        PopupMenuStyle::CustomBackgroundColor
+    );
+}
+
+int SearchInputType::clientInsetLeft() const
+{
+    // Inset the menu by the radius of the cap on the left so that
+    // it only runs along the straight part of the bezel.
+    return height() / 2;
+}
+
+int SearchInputType::clientInsetRight() const
+{
+    // Inset the menu by the radius of the cap on the right so that
+    // it only runs along the straight part of the bezel (unless it needs
+    // to be wider).
+    return height() / 2;
+}
+
+LayoutUnit SearchInputType::clientPaddingLeft() const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer());
+    return renderer ? renderer->clientPaddingLeft() : 0_lu;
+}
+
+LayoutUnit SearchInputType::clientPaddingRight() const
+{
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer());
+    return renderer ? renderer->clientPaddingRight() : 0_lu;
+}
+
+int SearchInputType::listSize() const
+{
+    // If there are no recent searches, then our menu will have 1 "No recent searches" item.
+    if (!m_recentSearches.size())
+        return 1;
+    // Otherwise, leave room in the menu for a header, a separator, and the "Clear recent searches" item.
+    return m_recentSearches.size() + 3;
+}
+
+int SearchInputType::popupSelectedIndex() const
+{
+    return -1;
+}
+
+void SearchInputType::popupDidHide()
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer()))
+        renderer->popupDidHide();
+}
+
+bool SearchInputType::itemIsSeparator(unsigned listIndex) const
+{
+    // The separator will be the second to last item in our list.
+    return static_cast<int>(listIndex) == (listSize() - 2);
+}
+
+bool SearchInputType::itemIsLabel(unsigned listIndex) const
+{
+    return !listIndex;
+}
+
+bool SearchInputType::itemIsSelected(unsigned) const
+{
+    return false;
+}
+
+void SearchInputType::setTextFromItem(unsigned listIndex)
+{
+    protectedElement()->setValue(itemText(listIndex));
+}
+
+FontSelector* SearchInputType::fontSelector() const
+{
+    return &protectedElement()->protectedDocument()->fontSelector();
+}
+
+HostWindow* SearchInputType::hostWindow() const
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer()))
+        return renderer->hostWindow();
+    return nullptr;
+}
+
+Ref<Scrollbar> SearchInputType::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
+{
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer());
+    if (renderer && renderer->checkedStyle()->usesLegacyScrollbarStyle())
+        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, protectedElement().get());
+    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
+}
+
 void SearchInputType::addSearchResult()
 {
 #if !PLATFORM(IOS_FAMILY)
-    // Normally we've got the correct renderer by the time we get here. However when the input type changes
-    // we don't update the associated renderers until after the next tree update, so we could actually end up here
-    // with a mismatched renderer (e.g. through form submission).
-    ASSERT(element());
-    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
-        renderer->addSearchResult();
+    RefPtr inputElement = element();
+    if (inputElement->maxResults() <= 0)
+        return;
+
+    String value = inputElement->value();
+    if (value.isEmpty())
+        return;
+
+    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer());
+    if (renderer && renderer->page().usesEphemeralSession())
+        return;
+
+    m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
+        return recentSearch.string == value;
+    });
+
+    RecentSearch recentSearch = { value, WallTime::now() };
+    m_recentSearches.insert(0, recentSearch);
+    while (static_cast<int>(m_recentSearches.size()) > inputElement->maxResults())
+        m_recentSearches.removeLast();
+
+    const AtomString& name = inputElement->attributeWithoutSynchronization(nameAttr);
+    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(inputElement->renderer()))
+        renderer->updatePopup(name, m_recentSearches);
 #endif
 }
 

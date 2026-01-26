@@ -49,6 +49,7 @@
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "SearchInputType.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include "UnicodeBidi.h"
@@ -90,58 +91,31 @@ inline HTMLElement* RenderSearchField::cancelButtonElement() const
     return protectedInputElement()->cancelButtonElement();
 }
 
-void RenderSearchField::addSearchResult()
-{
-    Ref inputElement = this->inputElement();
-    if (inputElement->maxResults() <= 0)
-        return;
-
-    String value = inputElement->value();
-    if (value.isEmpty())
-        return;
-
-    if (page().usesEphemeralSession())
-        return;
-
-    m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
-        return recentSearch.string == value;
-    });
-
-    RecentSearch recentSearch = { value, WallTime::now() };
-    m_recentSearches.insert(0, recentSearch);
-    while (static_cast<int>(m_recentSearches.size()) > inputElement->maxResults())
-        m_recentSearches.removeLast();
-
-    AtomString name = autosaveName();
-    if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
-
-    m_searchPopup->saveRecentSearches(name, m_recentSearches);
-}
-
 void RenderSearchField::showPopup()
 {
     if (m_searchPopupIsVisible)
         return;
 
     if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
+        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*protectedInputElement()->inputType()));
 
-    if (!m_searchPopup->enabled())
+    Ref popup = *m_searchPopup;
+    if (!popup->enabled())
         return;
 
     m_searchPopupIsVisible = true;
 
+    auto recentSearches = downcast<SearchInputType>(*protectedInputElement()->inputType()).recentSearches();
     const AtomString& name = autosaveName();
-    m_searchPopup->loadRecentSearches(name, m_recentSearches);
+    popup->loadRecentSearches(name, recentSearches);
 
     // Trim the recent searches list if the maximum size has changed since we last saved.
-    if (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults()) {
+    if (static_cast<int>(recentSearches.size()) > protectedInputElement()->maxResults()) {
         do {
-            m_recentSearches.removeLast();
-        } while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults());
+            recentSearches.removeLast();
+        } while (static_cast<int>(recentSearches.size()) > protectedInputElement()->maxResults());
 
-        m_searchPopup->saveRecentSearches(name, m_recentSearches);
+        popup->saveRecentSearches(name, recentSearches);
     }
 
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
@@ -177,12 +151,14 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
 std::span<const RecentSearch> RenderSearchField::recentSearches()
 {
     if (!m_searchPopup)
-        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
+        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*protectedInputElement()->inputType()));
+
+    auto& recentSearches = downcast<SearchInputType>(*protectedInputElement()->inputType()).recentSearches();
 
     const AtomString& name = autosaveName();
-    m_searchPopup->loadRecentSearches(name, m_recentSearches);
+    protectedSearchPopup()->loadRecentSearches(name, recentSearches);
 
-    return m_recentSearches.span();
+    return recentSearches.span();
 }
 
 void RenderSearchField::updateFromElement()
@@ -222,83 +198,11 @@ const AtomString& RenderSearchField::autosaveName() const
     return protectedInputElement()->attributeWithoutSynchronization(nameAttr);
 }
 
-// PopupMenuClient methods
-void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
+void RenderSearchField::updatePopup(const AtomString& name, const Vector<RecentSearch>& searchItems)
 {
-    ASSERT(static_cast<int>(listIndex) < listSize());
-    if (static_cast<int>(listIndex) == (listSize() - 1)) {
-        if (fireEvents) {
-            m_recentSearches.clear();
-            const AtomString& name = autosaveName();
-            if (!name.isEmpty()) {
-                if (!m_searchPopup)
-                    m_searchPopup = page().chrome().createSearchPopupMenu(*this);
-                m_searchPopup->saveRecentSearches(name, m_recentSearches);
-            }
-        }
-    } else {
-        Ref input = inputElement();
-        input->setValue(itemText(listIndex));
-        input->select();
-    }
-}
-
-String RenderSearchField::itemText(unsigned listIndex) const
-{
-#if !PLATFORM(IOS_FAMILY)
-    int size = listSize();
-    if (size == 1) {
-        ASSERT(!listIndex);
-        return searchMenuNoRecentSearchesText();
-    }
-    if (!listIndex)
-        return searchMenuRecentSearchesText();
-#endif
-    if (itemIsSeparator(listIndex))
-        return String();
-#if !PLATFORM(IOS_FAMILY)
-    if (static_cast<int>(listIndex) == (size - 1))
-        return searchMenuClearRecentSearchesText();
-#endif
-    return m_recentSearches[listIndex - 1].string;
-}
-
-String RenderSearchField::itemLabel(unsigned) const
-{
-    return String();
-}
-
-String RenderSearchField::itemIcon(unsigned) const
-{
-    return String();
-}
-
-bool RenderSearchField::itemIsEnabled(unsigned listIndex) const
-{
-     if (!listIndex || itemIsSeparator(listIndex))
-        return false;
-    return true;
-}
-
-PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
-{
-    return menuStyle();
-}
-
-PopupMenuStyle RenderSearchField::menuStyle() const
-{
-    return PopupMenuStyle(
-        style().visitedDependentColorApplyingColorFilter(),
-        style().visitedDependentBackgroundColorApplyingColorFilter(),
-        style().fontCascade(),
-        nullString(),
-        style().usedVisibility() == Visibility::Visible,
-        style().display() == DisplayType::None,
-        true,
-        writingMode().bidiDirection(),
-        isOverride(style().unicodeBidi()),
-        PopupMenuStyle::CustomBackgroundColor
-    );
+    if (!m_searchPopup)
+        m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*protectedInputElement()->inputType()));
+    protectedSearchPopup()->saveRecentSearches(name, searchItems);
 }
 
 int RenderSearchField::clientInsetLeft() const
@@ -337,44 +241,10 @@ LayoutUnit RenderSearchField::clientPaddingRight() const
     return padding;
 }
 
-int RenderSearchField::listSize() const
-{
-    // If there are no recent searches, then our menu will have 1 "No recent searches" item.
-    if (!m_recentSearches.size())
-        return 1;
-    // Otherwise, leave room in the menu for a header, a separator, and the "Clear recent searches" item.
-    return m_recentSearches.size() + 3;
-}
-
-int RenderSearchField::popupSelectedIndex() const
-{
-    return -1;
-}
 
 void RenderSearchField::popupDidHide()
 {
     m_searchPopupIsVisible = false;
-}
-
-bool RenderSearchField::itemIsSeparator(unsigned listIndex) const
-{
-    // The separator will be the second to last item in our list.
-    return static_cast<int>(listIndex) == (listSize() - 2);
-}
-
-bool RenderSearchField::itemIsLabel(unsigned listIndex) const
-{
-    return !listIndex;
-}
-
-bool RenderSearchField::itemIsSelected(unsigned) const
-{
-    return false;
-}
-
-void RenderSearchField::setTextFromItem(unsigned listIndex)
-{
-    protectedInputElement()->setValue(itemText(listIndex));
 }
 
 FontSelector* RenderSearchField::fontSelector() const
@@ -385,14 +255,6 @@ FontSelector* RenderSearchField::fontSelector() const
 HostWindow* RenderSearchField::hostWindow() const
 {
     return RenderTextControlSingleLine::hostWindow();
-}
-
-Ref<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
-{
-    bool usesLegacyScrollbarStyle = style().usesLegacyScrollbarStyle();
-    if (usesLegacyScrollbarStyle)
-        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, protectedInputElement().ptr());
-    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
 }
 
 }

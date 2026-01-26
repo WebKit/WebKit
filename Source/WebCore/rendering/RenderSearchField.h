@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "PopupMenuClient.h"
 #include "RenderTextControlSingleLine.h"
 #include "SearchPopupMenu.h"
 
@@ -30,7 +29,7 @@ namespace WebCore {
 
 class HTMLInputElement;
 
-class RenderSearchField final : public RenderTextControlSingleLine, private PopupMenuClient {
+class RenderSearchField final : public RenderTextControlSingleLine {
     WTF_MAKE_TZONE_ALLOCATED(RenderSearchField);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSearchField);
 public:
@@ -39,19 +38,19 @@ public:
 
     void updateCancelButtonVisibility() const;
 
-    void addSearchResult();
-
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
     void hidePopup();
+    void popupDidHide();
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
-    // CheckedPtr interface.
-    uint32_t checkedPtrCount() const final { return RenderTextControlSingleLine::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { RenderTextControlSingleLine::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { RenderTextControlSingleLine::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    void updatePopup(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems);
+    int clientInsetRight() const;
+    int clientInsetLeft() const;
+    LayoutUnit clientPaddingRight() const;
+    LayoutUnit clientPaddingLeft() const;
+    FontSelector* fontSelector() const;
+    HostWindow* hostWindow() const;
 
 private:
     void willBeDestroyed() override;
@@ -60,33 +59,6 @@ private:
     Visibility visibilityForCancelButton() const;
     const AtomString& autosaveName() const;
 
-    // PopupMenuClient methods
-    void valueChanged(unsigned listIndex, bool fireEvents = true) override;
-    void selectionChanged(unsigned, bool) override { }
-    void selectionCleared() override { }
-    String itemText(unsigned listIndex) const override;
-    String itemLabel(unsigned listIndex) const override;
-    String itemIcon(unsigned listIndex) const override;
-    String itemToolTip(unsigned) const override { return String(); }
-    String itemAccessibilityText(unsigned) const override { return String(); }
-    bool itemIsEnabled(unsigned listIndex) const override;
-    PopupMenuStyle itemStyle(unsigned listIndex) const override;
-    PopupMenuStyle menuStyle() const override;
-    int clientInsetLeft() const override;
-    int clientInsetRight() const override;
-    LayoutUnit clientPaddingLeft() const override;
-    LayoutUnit clientPaddingRight() const override;
-    int listSize() const override;
-    int popupSelectedIndex() const override;
-    void popupDidHide() override;
-    bool itemIsSeparator(unsigned listIndex) const override;
-    bool itemIsLabel(unsigned listIndex) const override;
-    bool itemIsSelected(unsigned listIndex) const override;
-    bool shouldPopOver() const override { return false; }
-    void setTextFromItem(unsigned listIndex) override;
-    FontSelector* fontSelector() const override;
-    HostWindow* hostWindow() const override;
-    Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) override;
     RefPtr<SearchPopupMenu> protectedSearchPopup() const { return m_searchPopup; };
 
     HTMLElement* resultsButtonElement() const;
@@ -94,7 +66,6 @@ private:
 
     bool m_searchPopupIsVisible;
     RefPtr<SearchPopupMenu> m_searchPopup;
-    Vector<RecentSearch> m_recentSearches;
 };
 
 } // namespace WebCore
