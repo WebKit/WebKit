@@ -143,7 +143,7 @@ void WebCodecsBase::unblockControlMessageQueue()
 
 bool WebCodecsBase::virtualHasPendingActivity() const
 {
-    return m_state == WebCodecsCodecState::Configured && (m_codecControlMessagesPending || m_isMessageQueueBlocked);
+    return m_codecControlMessagesPending || m_isMessageQueueBlocked;
 }
 
 } // namespace WebCore
