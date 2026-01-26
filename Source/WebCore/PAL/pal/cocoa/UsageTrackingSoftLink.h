@@ -31,9 +31,9 @@
 
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, UsageTracking);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, UsageTracking);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, USVideoUsage);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, USVideoUsage);
 #define _AXSIsolatedTreeModeFunctionIsAvailable PAL::canLoad_libAccessibility__AXSIsolatedTreeMode
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, UsageTracking, USVideoMetadataKeyCanShowControlsManager, NSString *)

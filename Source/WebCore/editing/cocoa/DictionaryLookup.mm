@@ -64,8 +64,8 @@
 
 #if PLATFORM(MACCATALYST)
 #import <UIKitMacHelper/UINSRevealController.h>
-SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
-SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(UIKitMacHelper)
+SOFT_LINK_REQUIRED(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
 #endif // PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)

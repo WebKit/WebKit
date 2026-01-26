@@ -80,7 +80,7 @@
         className *alloc##className##Instance(); \
         inline className *alloc##className##Instance() { return [get##className##Class() alloc]; }
 
-#    define SOFT_LINK_CLASS(framework, className)                                       \
+#    define SOFT_LINK_CLASS_REQUIRED(framework, className)                                       \
         @class className;                                                               \
         static Class init##className();                                                 \
         Class (*get##className##Class)() = init##className;                             \

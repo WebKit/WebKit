@@ -50,10 +50,10 @@
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(SafariSafeBrowsing);
-SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
-SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupResult);
-SOFT_LINK_CLASS(SafariSafeBrowsing, SSBServiceLookupResult);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(SafariSafeBrowsing);
+SOFT_LINK_CLASS_REQUIRED(SafariSafeBrowsing, SSBLookupContext);
+SOFT_LINK_CLASS_REQUIRED(SafariSafeBrowsing, SSBLookupResult);
+SOFT_LINK_CLASS_REQUIRED(SafariSafeBrowsing, SSBServiceLookupResult);
 
 static bool committedNavigation;
 static bool warningShown;

@@ -54,12 +54,12 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-SOFT_LINK_FRAMEWORK(Contacts)
-SOFT_LINK_CLASS(Contacts, CNMutableContact)
+SOFT_LINK_FRAMEWORK_REQUIRED(Contacts)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNMutableContact)
 
-SOFT_LINK_FRAMEWORK(MapKit)
-SOFT_LINK_CLASS(MapKit, MKMapItem)
-SOFT_LINK_CLASS(MapKit, MKPlacemark)
+SOFT_LINK_FRAMEWORK_REQUIRED(MapKit)
+SOFT_LINK_CLASS_REQUIRED(MapKit, MKMapItem)
+SOFT_LINK_CLASS_REQUIRED(MapKit, MKPlacemark)
 
 @interface NSArray (AttachmentTestingHelpers)
 - (_WKAttachment *)_attachmentWithName:(NSString *)name;

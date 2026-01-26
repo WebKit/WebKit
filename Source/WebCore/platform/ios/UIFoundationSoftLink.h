@@ -30,23 +30,23 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, UIFoundation)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebCore, UIFoundation)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSColor)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextAttachment)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSMutableParagraphStyle)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextList)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSColor)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSTextAttachment)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSMutableParagraphStyle)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSTextList)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSTextTableBlock)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSTextTable)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSTextTab)
 
 SPECIALIZE_OBJC_TYPE_TRAITS(NSTextAttachment, WebCore::getNSTextAttachmentClassSingleton())
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSAdaptiveImageGlyph)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, NSAdaptiveImageGlyph)
 
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
 #define NSAdaptiveImageGlyphAttributeName WebCore::get_UIFoundation_NSAdaptiveImageGlyphAttributeNameSingleton()
 
 #endif

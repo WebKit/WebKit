@@ -30,7 +30,7 @@
 #import "GameControllerSPI.h"
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, GameController)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_REQUIRED(WebCore, GameController)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCController, WEBCORE_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCControllerButtonInput, WEBCORE_EXPORT)
 
@@ -60,7 +60,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCHa
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCHapticsLocalityRightTrigger, NSString *, WEBCORE_EXPORT)
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
 #endif
 
 #if PLATFORM(VISION) && __has_include(<GameController/GCEventInteraction.h>)
@@ -68,8 +68,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCEvent
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && ENABLE(POINTER_LOCK)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouse, WEBCORE_EXPORT)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *, WEBCORE_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(WebCore, GameController, GCMouse, WEBCORE_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT_REQUIRED(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *, WEBCORE_EXPORT)
 #endif
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.mm>)

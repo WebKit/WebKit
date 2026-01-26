@@ -54,9 +54,9 @@
 #import <UIKit/UIKit.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(CoreSVG)
-SOFT_LINK(CoreSVG, CGSVGDocumentCreateFromData, CGSVGDocumentRef, (CFDataRef data, CFDictionaryRef options), (data, options))
-SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (document))
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(CoreSVG)
+SOFT_LINK_REQUIRED(CoreSVG, CGSVGDocumentCreateFromData, CGSVGDocumentRef, (CFDataRef data, CFDictionaryRef options), (data, options))
+SOFT_LINK_REQUIRED(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (document))
 #endif
 
 namespace WebKit {

@@ -28,6 +28,6 @@
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MACCATALYST)
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AppKit)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, NSAccessibilityRemoteUIElement)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebKit, AppKit)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebKit, NSAccessibilityRemoteUIElement)
 #endif

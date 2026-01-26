@@ -184,8 +184,8 @@ static NSString * const WebKitResourceMonitorURLsForTestingIdentifier = @"com.ap
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
-SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(BackBoardServices)
+SOFT_LINK_REQUIRED(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -194,8 +194,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL(libAccessibility, kAXSReduceMotionAutoplayAnimatedIm
 #endif
 
 #if PLATFORM(MAC)
-SOFT_LINK_LIBRARY_WITH_PATH(libFontRegistry, "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ATS.framework/Versions/A/Resources/")
-SOFT_LINK(libFontRegistry, XTCopyPropertiesForAllFontsWithOptions, CFArrayRef, (CFSetRef propertyKeys, XTScope scope, XTOptions options), (propertyKeys, scope, options));
+SOFT_LINK_LIBRARY_WITH_PATH_REQUIRED(libFontRegistry, "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ATS.framework/Versions/A/Resources/")
+SOFT_LINK_REQUIRED(libFontRegistry, XTCopyPropertiesForAllFontsWithOptions, CFArrayRef, (CFSetRef propertyKeys, XTScope scope, XTOptions options), (propertyKeys, scope, options));
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)

@@ -30,8 +30,8 @@
 #import <dispatch/dispatch.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, Accessibility, PAL_EXPORT);
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, Accessibility, PAL_EXPORT);
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, Accessibility, AXCustomContent, PAL_EXPORT);
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, Accessibility, AXCustomContent, PAL_EXPORT);
 
 #endif

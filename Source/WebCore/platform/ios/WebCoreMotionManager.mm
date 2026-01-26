@@ -40,17 +40,17 @@
 #import <wtf/SoftLinking.h>
 
 // Get CoreLocation classes
-SOFT_LINK_FRAMEWORK(CoreLocation)
+SOFT_LINK_FRAMEWORK_REQUIRED(CoreLocation)
 
-SOFT_LINK_CLASS(CoreLocation, CLLocationManager)
-SOFT_LINK_CLASS(CoreLocation, CLHeading)
+SOFT_LINK_CLASS_REQUIRED(CoreLocation, CLLocationManager)
+SOFT_LINK_CLASS_REQUIRED(CoreLocation, CLHeading)
 
 // Get CoreMotion classes
-SOFT_LINK_FRAMEWORK(CoreMotion)
+SOFT_LINK_FRAMEWORK_REQUIRED(CoreMotion)
 
-SOFT_LINK_CLASS(CoreMotion, CMMotionManager)
-SOFT_LINK_CLASS(CoreMotion, CMAccelerometerData)
-SOFT_LINK_CLASS(CoreMotion, CMDeviceMotion)
+SOFT_LINK_CLASS_REQUIRED(CoreMotion, CMMotionManager)
+SOFT_LINK_CLASS_REQUIRED(CoreMotion, CMAccelerometerData)
+SOFT_LINK_CLASS_REQUIRED(CoreMotion, CMDeviceMotion)
 
 static const double kGravity = 9.80665;
 

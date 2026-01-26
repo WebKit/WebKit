@@ -85,8 +85,8 @@
 - (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)attributes subresources:(NSArray **)subresources;
 @end
 #else
-SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
-SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(WebKitLegacy)
+SOFT_LINK_REQUIRED(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 #endif
 
 namespace WebCore {

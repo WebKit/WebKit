@@ -32,9 +32,9 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, GameController)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCController)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCControllerButtonInput)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebCore, GameController)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, GCController)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, GCControllerButtonInput)
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCInputButtonA, NSString *)
 #define GCInputButtonA WebCore::get_GameController_GCInputButtonASingleton()
@@ -78,18 +78,18 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCHapticsLocalit
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(WebCore, GameController, GCHapticsLocalityRightTrigger, NSString *)
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
 #endif
 
 #if PLATFORM(VISION) && __has_include(<GameController/GCEventInteraction.h>)
 #import <GameController/GCEventInteraction.h>
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCEventInteraction)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, GCEventInteraction)
 #endif
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && ENABLE(POINTER_LOCK)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, GCMouse)
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, GCMouse)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, GameController, GCMouseDidStopBeingCurrentNotification, NSString *)
 
 SPECIALIZE_OBJC_TYPE_TRAITS(GCMouse, WebCore::getGCMouseClassSingleton())
 #endif

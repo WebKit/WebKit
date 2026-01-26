@@ -50,8 +50,8 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(TextInput)
-SOFT_LINK_CLASS(TextInput, TIPreferencesController);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(TextInput)
+SOFT_LINK_CLASS_REQUIRED(TextInput, TIPreferencesController);
 
 static unsigned globalKeyboardUpdateForChangedSelectionCount = 0;
 

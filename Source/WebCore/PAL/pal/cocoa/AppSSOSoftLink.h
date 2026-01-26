@@ -33,26 +33,26 @@
 #import <pal/spi/cocoa/AppSSOSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AppSSO);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, AppSSO);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, SOAuthorization);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, SOAuthorization);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, SOAuthorizationHints);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, SOAuthorizationHints);
 
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AppSSO, SOAuthorizationOptionUserActionInitiated, NSString*);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, AppSSO, SOAuthorizationOptionUserActionInitiated, NSString*);
 #define SOAuthorizationOptionUserActionInitiated PAL::get_AppSSO_SOAuthorizationOptionUserActionInitiatedSingleton()
 
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AppSSO, SOAuthorizationOptionInitiatorOrigin, NSString*);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, AppSSO, SOAuthorizationOptionInitiatorOrigin, NSString*);
 #define SOAuthorizationOptionInitiatorOrigin PAL::get_AppSSO_SOAuthorizationOptionInitiatorOriginSingleton()
 
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AppSSO, SOAuthorizationOptionInitiatingAction, NSString*);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, AppSSO, SOAuthorizationOptionInitiatingAction, NSString*);
 #define SOAuthorizationOptionInitiatingAction PAL::get_AppSSO_SOAuthorizationOptionInitiatingActionSingleton()
 
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AppSSO, SOErrorDomain, NSErrorDomain);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, AppSSO, SOErrorDomain, NSErrorDomain);
 #define SOErrorDomain PAL::get_AppSSO_SOErrorDomainSingleton()
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AppSSOCore);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, AppSSOCore);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, SOAuthorizationHintsCore);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, SOAuthorizationHintsCore);
 
 #endif

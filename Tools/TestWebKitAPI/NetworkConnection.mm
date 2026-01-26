@@ -39,7 +39,7 @@
 #import <wtf/text/StringToIntegerConversion.h>
 
 #if HAVE(WEB_TRANSPORT)
-SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_FRAMEWORK_REQUIRED(Network)
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_metadata_set_local_draining, void, (nw_protocol_metadata_t metadata), (metadata))
 #define nw_webtransport_metadata_set_local_draining softLinknw_webtransport_metadata_set_local_draining
 SOFT_LINK_MAY_FAIL(Network, nw_connection_abort_reads, void, (nw_connection_t connection, uint64_t error_code), (connection, error_code))

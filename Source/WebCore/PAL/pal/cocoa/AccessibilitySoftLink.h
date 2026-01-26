@@ -33,8 +33,8 @@
 #import <Accessibility/Accessibility.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, Accessibility);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, Accessibility);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AXCustomContent);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, AXCustomContent);
 
 #endif

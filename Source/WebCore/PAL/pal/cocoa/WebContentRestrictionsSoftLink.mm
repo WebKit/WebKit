@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, WebContentRestrictions, PAL_EXPORT)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, WebContentRestrictions, PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, WebContentRestrictions, WCRBrowserEngineClient, PAL_EXPORT);
 
 #endif

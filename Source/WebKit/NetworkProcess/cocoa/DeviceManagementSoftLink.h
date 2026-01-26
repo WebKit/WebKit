@@ -30,7 +30,7 @@
 #import "DeviceManagementSPI.h"
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, DeviceManagement);
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, DMFWebsitePolicyMonitor);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebKit, DeviceManagement);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebKit, DMFWebsitePolicyMonitor);
 
 #endif // HAVE(DEVICE_MANAGEMENT)

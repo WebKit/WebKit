@@ -42,9 +42,9 @@
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_LIBRARY(libAccessibility)
-SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionPreference, CFStringRef);
-SOFT_LINK_CONSTANT(libAccessibility, kAXSReduceMotionChangedNotification, CFStringRef);
+SOFT_LINK_LIBRARY_REQUIRED(libAccessibility)
+SOFT_LINK_CONSTANT_REQUIRED(libAccessibility, kAXSReduceMotionPreference, CFStringRef);
+SOFT_LINK_CONSTANT_REQUIRED(libAccessibility, kAXSReduceMotionChangedNotification, CFStringRef);
 
 #define NOTIFICATION_CENTER CFNotificationCenterGetDarwinNotifyCenter()
 #define REDUCED_MOTION_PREFERENCE getkAXSReduceMotionPreferenceSingleton()

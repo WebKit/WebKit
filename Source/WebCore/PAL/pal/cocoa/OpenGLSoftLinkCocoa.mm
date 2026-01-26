@@ -30,19 +30,19 @@
 #include <OpenGL/OpenGL.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, OpenGL, PAL_EXPORT)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, OpenGL, PAL_EXPORT)
 
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, OpenGL, CGLChoosePixelFormat, CGLError, (const CGLPixelFormatAttribute *attribs, CGLPixelFormatObj *pix, GLint *npix), (attribs, pix, npix), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, OpenGL, CGLReleasePixelFormat, void, (CGLPixelFormatObj pix), (pix), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, OpenGL, CGLChoosePixelFormat, CGLError, (const CGLPixelFormatAttribute *attribs, CGLPixelFormatObj *pix, GLint *npix), (attribs, pix, npix), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, OpenGL, CGLReleasePixelFormat, void, (CGLPixelFormatObj pix), (pix), PAL_EXPORT)
 
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLCreateContext, CGLError, (CGLPixelFormatObj pix, CGLContextObj share, CGLContextObj *ctx), (pix, share, ctx))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLDescribePixelFormat, CGLError, (CGLPixelFormatObj pix, GLint pix_num, CGLPixelFormatAttribute attrib, GLint *value), (pix, pix_num, attrib, value))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLDescribeRenderer, CGLError, (CGLRendererInfoObj rend, GLint rend_num, CGLRendererProperty prop, GLint *value), (rend, rend_num, prop, value))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLDestroyContext, CGLError, (CGLContextObj ctx), (ctx))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLDestroyRendererInfo, CGLError, (CGLRendererInfoObj rend), (rend))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLGetParameter, CGLError, (CGLContextObj ctx, CGLContextParameter pname, GLint *params), (ctx, pname, params))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLQueryRendererInfo, CGLError, (GLuint display_mask, CGLRendererInfoObj *rend, GLint *nrend), (display_mask, rend, nrend))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLSetVirtualScreen, CGLError, (CGLContextObj ctx, GLint screen), (ctx, screen))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OpenGL, CGLUpdateContext, CGLError, (CGLContextObj ctx), (ctx))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLCreateContext, CGLError, (CGLPixelFormatObj pix, CGLContextObj share, CGLContextObj *ctx), (pix, share, ctx))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLDescribePixelFormat, CGLError, (CGLPixelFormatObj pix, GLint pix_num, CGLPixelFormatAttribute attrib, GLint *value), (pix, pix_num, attrib, value))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLDescribeRenderer, CGLError, (CGLRendererInfoObj rend, GLint rend_num, CGLRendererProperty prop, GLint *value), (rend, rend_num, prop, value))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLDestroyContext, CGLError, (CGLContextObj ctx), (ctx))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLDestroyRendererInfo, CGLError, (CGLRendererInfoObj rend), (rend))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLGetParameter, CGLError, (CGLContextObj ctx, CGLContextParameter pname, GLint *params), (ctx, pname, params))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLQueryRendererInfo, CGLError, (GLuint display_mask, CGLRendererInfoObj *rend, GLint *nrend), (display_mask, rend, nrend))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLSetVirtualScreen, CGLError, (CGLContextObj ctx, GLint screen), (ctx, screen))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OpenGL, CGLUpdateContext, CGLError, (CGLContextObj ctx), (ctx))
 
 #endif

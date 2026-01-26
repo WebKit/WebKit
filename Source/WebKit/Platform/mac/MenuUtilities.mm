@@ -43,7 +43,7 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
-SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
+SOFT_LINK_CLASS_REQUIRED(TelephonyUtilities, TUCall)
 #endif
 
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>

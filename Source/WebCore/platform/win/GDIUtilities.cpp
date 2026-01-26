@@ -29,7 +29,7 @@
 #include "HWndDC.h"
 #include <wtf/win/SoftLinking.h>
 
-SOFT_LINK_LIBRARY(user32);
+SOFT_LINK_LIBRARY_REQUIRED(user32);
 SOFT_LINK_OPTIONAL(user32, GetDpiForWindow, UINT, STDAPICALLTYPE, (HWND));
 
 namespace WebCore {

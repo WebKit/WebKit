@@ -54,8 +54,8 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
+SOFT_LINK_FRAMEWORK_REQUIRED(UIKit)
+SOFT_LINK_CLASS_REQUIRED(UIKit, UIPhysicalKeyboardEvent)
 
 @interface UIPhysicalKeyboardEvent (UIPhysicalKeyboardEventHack)
 @property (nonatomic, assign, setter=_setModifierFlags:) NSInteger _modifierFlags;

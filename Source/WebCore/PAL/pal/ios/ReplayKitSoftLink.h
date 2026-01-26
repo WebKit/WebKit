@@ -32,9 +32,9 @@
 #import <ReplayKit/ReplayKit.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ReplayKit)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, ReplayKit)
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, RPScreenRecorder)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, RPScreenRecorder)
 
 #endif // HAVE(REPLAYKIT)
 

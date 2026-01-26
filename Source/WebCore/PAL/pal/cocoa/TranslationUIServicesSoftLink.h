@@ -32,8 +32,8 @@
 #import <pal/spi/cocoa/TranslationUIServicesSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, TranslationUIServices)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, LTUISourceMeta)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, LTUITranslationViewController)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, TranslationUIServices)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, LTUISourceMeta)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, LTUITranslationViewController)
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

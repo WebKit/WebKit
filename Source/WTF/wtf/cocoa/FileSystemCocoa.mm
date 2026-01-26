@@ -42,10 +42,10 @@
 #import <apfs/apfs_fsctl.h>
 #endif
 
-SOFT_LINK_PRIVATE_FRAMEWORK(Bom)
-SOFT_LINK(Bom, BOMCopierNew, BOMCopier, (), ())
-SOFT_LINK(Bom, BOMCopierFree, void, (BOMCopier copier), (copier))
-SOFT_LINK(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fromObj, const char* toObj, CFDictionaryRef options), (copier, fromObj, toObj, options))
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(Bom)
+SOFT_LINK_REQUIRED(Bom, BOMCopierNew, BOMCopier, (), ())
+SOFT_LINK_REQUIRED(Bom, BOMCopierFree, void, (BOMCopier copier), (copier))
+SOFT_LINK_REQUIRED(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fromObj, const char* toObj, CFDictionaryRef options), (copier, fromObj, toObj, options))
 
 #define kBOMCopierOptionCreatePKZipKey CFSTR("createPKZip")
 #define kBOMCopierOptionExtractPKZipKey CFSTR("extractPKZip")

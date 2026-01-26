@@ -35,10 +35,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
-SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionCategoryAmbient, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionCategoryPlayback, NSString *)
+SOFT_LINK_FRAMEWORK_REQUIRED(AVFoundation)
+SOFT_LINK_CLASS_REQUIRED(AVFoundation, AVAudioSession)
+SOFT_LINK_CONSTANT_REQUIRED(AVFoundation, AVAudioSessionCategoryAmbient, NSString *)
+SOFT_LINK_CONSTANT_REQUIRED(AVFoundation, AVAudioSessionCategoryPlayback, NSString *)
 
 static bool didBeginPlaying = false;
 

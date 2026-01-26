@@ -32,18 +32,18 @@
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, DataDetectorsUI)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, DataDetectorsUI)
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDContextMenuAction);
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDContextMenuConfiguration);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDContextMenuAction);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDContextMenuConfiguration);
 #endif
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDDetectionController)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsReferenceDateKey, const NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDataDetectorsTrailingText, const NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsUI, kDDContextMenuWantsPreviewKey, const NSString *)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDDetectionController)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, DataDetectorsUI, kDataDetectorsReferenceDateKey, const NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, DataDetectorsUI, kDataDetectorsTrailingText, const NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, DataDetectorsUI, kDDContextMenuWantsPreviewKey, const NSString *)
 
 #endif
 

@@ -30,8 +30,8 @@
 #import <Foundation/Foundation.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, SystemStatus)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_REQUIRED(PAL, SystemStatus)
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, SystemStatus, STDynamicActivityAttributionPublisher, PAL_EXPORT);
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, SystemStatus, STDynamicActivityAttributionPublisher, PAL_EXPORT);
 
 #endif

@@ -36,10 +36,10 @@
 #include <mach/mach_types.h>
 #endif
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreGraphics)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, CoreGraphics)
 
 #if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreGraphics, CGContextSetOwnerIdentity, void, (CGContextRef context, task_id_token_t owner), (context, owner))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, CoreGraphics, CGContextSetOwnerIdentity, void, (CGContextRef context, task_id_token_t owner), (context, owner))
 #define CGContextSetOwnerIdentity PAL::softLink_CoreGraphics_CGContextSetOwnerIdentity
 #endif
 

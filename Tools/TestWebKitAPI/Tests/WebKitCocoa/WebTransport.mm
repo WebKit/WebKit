@@ -45,7 +45,7 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
 
-SOFT_LINK_FRAMEWORK(Network)
+SOFT_LINK_FRAMEWORK_REQUIRED(Network)
 
 // FIXME: Replace this soft linking with a HAVE macro once rdar://158191390 is available on all tested OS builds.
 SOFT_LINK_MAY_FAIL(Network, nw_webtransport_options_set_allow_joining_before_ready, void, (nw_protocol_options_t options, bool allow), (options, allow))

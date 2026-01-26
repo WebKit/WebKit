@@ -51,15 +51,15 @@
 
 // FIXME: Stop soft linking Contacts once the dependency cycle is removed on macOS (<rdar://problem/70887934>),
 // or when Contacts can be upward linked (<rdar://problem/36135137>).
-SOFT_LINK_FRAMEWORK(Contacts);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubAdministrativeAreaKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
+SOFT_LINK_FRAMEWORK_REQUIRED(Contacts);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressCityKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressCountryKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressPostalCodeKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressStateKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressStreetKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressSubAdministrativeAreaKey, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(Contacts, CNPostalAddressSubLocalityKey, NSString *);
 
 namespace WebKit {
 

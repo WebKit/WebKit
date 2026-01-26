@@ -61,19 +61,19 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 #if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
-SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUICore)
-SOFT_LINK_CLASS(PhotosUICore, PXActivityProgressController)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(PhotosUICore)
+SOFT_LINK_CLASS_REQUIRED(PhotosUICore, PXActivityProgressController)
 #else
-SOFT_LINK_PRIVATE_FRAMEWORK(PhotosUIPrivate)
-SOFT_LINK_CLASS(PhotosUIPrivate, PUActivityProgressController)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(PhotosUIPrivate)
+SOFT_LINK_CLASS_REQUIRED(PhotosUIPrivate, PUActivityProgressController)
 #endif
 
 #if HAVE(PHOTOS_UI)
-SOFT_LINK_FRAMEWORK(PhotosUI)
-SOFT_LINK_CLASS(PhotosUI, PHPickerConfiguration)
-SOFT_LINK_CLASS(PhotosUI, PHPickerFilter)
-SOFT_LINK_CLASS(PhotosUI, PHPickerResult)
-SOFT_LINK_CLASS(PhotosUI, PHPickerViewController)
+SOFT_LINK_FRAMEWORK_REQUIRED(PhotosUI)
+SOFT_LINK_CLASS_REQUIRED(PhotosUI, PHPickerConfiguration)
+SOFT_LINK_CLASS_REQUIRED(PhotosUI, PHPickerFilter)
+SOFT_LINK_CLASS_REQUIRED(PhotosUI, PHPickerResult)
+SOFT_LINK_CLASS_REQUIRED(PhotosUI, PHPickerViewController)
 #endif
 
 enum class WKFileUploadPanelImagePickerType : uint8_t {

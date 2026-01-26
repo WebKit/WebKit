@@ -35,20 +35,20 @@
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, VisionKitCore)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzer)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzerRequest)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalyzer)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalyzerRequest)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalysis)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, VisionKitCore)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKImageAnalyzer)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKImageAnalyzerRequest)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCImageAnalyzer)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCImageAnalyzerRequest)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCImageAnalysis)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalysisInteraction)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCImageAnalysisOverlayView)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCImageAnalysisInteraction)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCImageAnalysisOverlayView)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, VisionKitCore, vk_cgImageRemoveBackground, void, (CGImageRef image, BOOL crop, VKCGImageRemoveBackgroundCompletion completion), (image, crop, completion))
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, VisionKitCore, vk_cgImageRemoveBackgroundWithDownsizing, void, (CGImageRef image, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *)), (image, canDownsize, cropToFit, completion))
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCRemoveBackgroundRequestHandler)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCRemoveBackgroundRequest)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VKCRemoveBackgroundResult)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCRemoveBackgroundRequestHandler)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCRemoveBackgroundRequest)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, VKCRemoveBackgroundResult)
 #endif
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

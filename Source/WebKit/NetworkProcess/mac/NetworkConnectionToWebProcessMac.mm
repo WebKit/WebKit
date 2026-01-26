@@ -35,7 +35,7 @@
 #if PLATFORM(MAC)
 
 #if ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
-SOFT_LINK_FRAMEWORK(CoreServices)
+SOFT_LINK_FRAMEWORK_REQUIRED(CoreServices)
 SOFT_LINK_OPTIONAL(CoreServices, _LSApplicationCheckInProxy, Boolean, __cdecl, (LSSessionID, const audit_token_t, CFDictionaryRef applicationInfoRef, void(^block)(CFDictionaryRef, CFErrorRef)))
 #endif
 

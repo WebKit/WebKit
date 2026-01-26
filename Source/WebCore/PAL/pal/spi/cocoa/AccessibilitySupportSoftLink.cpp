@@ -30,7 +30,7 @@
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_LIBRARY_FOR_SOURCE(PAL, libAccessibility)
+SOFT_LINK_LIBRARY_FOR_SOURCE_REQUIRED(PAL, libAccessibility)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, libAccessibility, _AXSIsolatedTreeMode, AXSIsolatedTreeMode, (void), (), PAL_EXPORT)
 
 #endif

@@ -64,8 +64,8 @@
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
 #import "SafariServicesSPI.h"
-SOFT_LINK_FRAMEWORK(SafariServices)
-SOFT_LINK_CLASS(SafariServices, SSReadingList)
+SOFT_LINK_FRAMEWORK_REQUIRED(SafariServices)
+SOFT_LINK_CLASS_REQUIRED(SafariServices, SSReadingList)
 #endif
 
 #import "TCCSoftLink.h"

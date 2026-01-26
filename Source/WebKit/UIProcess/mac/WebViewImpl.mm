@@ -192,9 +192,9 @@
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-SOFT_LINK_FRAMEWORK(AVKit)
-SOFT_LINK_CLASS(AVKit, AVTouchBarPlaybackControlsProvider)
-SOFT_LINK_CLASS(AVKit, AVTouchBarScrubber)
+SOFT_LINK_FRAMEWORK_REQUIRED(AVKit)
+SOFT_LINK_CLASS_REQUIRED(AVKit, AVTouchBarPlaybackControlsProvider)
+SOFT_LINK_CLASS_REQUIRED(AVKit, AVTouchBarScrubber)
 
 static NSString * const WKMediaExitFullScreenItem = @"WKMediaExitFullScreenItem";
 #endif // HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

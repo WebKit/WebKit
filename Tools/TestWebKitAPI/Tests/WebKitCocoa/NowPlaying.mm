@@ -40,12 +40,12 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(MediaRemote)
-SOFT_LINK(MediaRemote, MRMediaRemoteSetWantsNowPlayingNotifications, void, (bool wantsNotifications), (wantsNotifications))
-SOFT_LINK(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
-SOFT_LINK(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteNowPlayingApplicationDidChangeNotification, CFStringRef)
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey, CFStringRef)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(MediaRemote)
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteSetWantsNowPlayingNotifications, void, (bool wantsNotifications), (wantsNotifications))
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
+SOFT_LINK_REQUIRED(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
+SOFT_LINK_CONSTANT_REQUIRED(MediaRemote, kMRMediaRemoteNowPlayingApplicationDidChangeNotification, CFStringRef)
+SOFT_LINK_CONSTANT_REQUIRED(MediaRemote, kMRMediaRemoteNowPlayingApplicationPIDUserInfoKey, CFStringRef)
 #define MRMediaRemoteSetWantsNowPlayingNotifications softLinkMRMediaRemoteSetWantsNowPlayingNotifications
 #define MRMediaRemoteGetNowPlayingClient softLinkMRMediaRemoteGetNowPlayingClient
 #define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier

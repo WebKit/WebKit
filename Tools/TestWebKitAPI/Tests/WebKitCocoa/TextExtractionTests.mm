@@ -40,8 +40,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(SafariSafeBrowsing);
-SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(SafariSafeBrowsing);
+SOFT_LINK_CLASS_REQUIRED(SafariSafeBrowsing, SSBLookupContext);
 
 @interface WKWebView (TextExtractionTests)
 - (NSString *)synchronouslyGetDebugText:(_WKTextExtractionConfiguration *)configuration;

@@ -56,8 +56,8 @@
 #import <pal/spi/mac/SystemPreviewSPI.h>
 #endif
 
-SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
-SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(AssetViewer);
+SOFT_LINK_CLASS_REQUIRED(AssetViewer, ASVInlinePreview);
 
 namespace WebKit {
 

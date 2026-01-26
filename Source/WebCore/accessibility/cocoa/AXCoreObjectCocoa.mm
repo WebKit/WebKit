@@ -38,19 +38,19 @@
 #if PLATFORM(IOS_FAMILY)
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(AXRuntime);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(AXRuntime);
 
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontName, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenFontName, NSString *);
 #define AccessibilityTokenFontName getUIAccessibilityTokenFontNameSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontFamily, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenFontFamily, NSString *);
 #define AccessibilityTokenFontFamily getUIAccessibilityTokenFontFamilySingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontSize, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenFontSize, NSString *);
 #define AccessibilityTokenFontSize getUIAccessibilityTokenFontSizeSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBold, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenBold, NSString *);
 #define AccessibilityTokenBold getUIAccessibilityTokenBoldSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenItalic, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenItalic, NSString *);
 #define AccessibilityTokenItalic getUIAccessibilityTokenItalicSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenAttachment, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenAttachment, NSString *);
 #define AccessibilityTokenAttachment getUIAccessibilityTokenAttachmentSingleton()
 
 #endif // PLATFORM(IOS_FAMILY)

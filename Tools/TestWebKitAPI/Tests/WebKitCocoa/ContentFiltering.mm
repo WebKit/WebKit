@@ -52,8 +52,8 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
 SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
-SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
-SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(WebContentAnalysis);
+SOFT_LINK_CLASS_REQUIRED(WebContentAnalysis, WebFilterEvaluator);
 
 using Decision = WebCore::MockContentFilterSettings::Decision;
 using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
