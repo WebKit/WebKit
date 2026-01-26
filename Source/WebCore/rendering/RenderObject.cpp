@@ -1053,6 +1053,9 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
+    if (view().frameView().layoutContext().repaintsBlocked())
+        return;
+
     ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
 
     if (view().printing())
