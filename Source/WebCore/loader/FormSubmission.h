@@ -78,7 +78,7 @@ public:
         String m_acceptCharset;
     };
 
-    static Ref<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
+    static RefPtr<FormSubmission> create(HTMLFormElement&, HTMLFormControlElement* overrideSubmitter, const Attributes&, Event*, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
     URL requestURL() const;

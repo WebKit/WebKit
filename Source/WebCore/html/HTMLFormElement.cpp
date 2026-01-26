@@ -404,7 +404,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     auto shouldLockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
     auto formSubmission = FormSubmission::create(*this, submitter, m_attributes, event, shouldLockHistory, trigger);
 
-    if (!isConnected())
+    if (!formSubmission || !isConnected())
         return;
 
     auto relAttributes = parseFormRelAttributes(getAttribute(HTMLNames::relAttr));
@@ -416,9 +416,9 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     m_plannedFormSubmission = formSubmission;
 
     if (formSubmission->method() == FormSubmission::Method::Dialog)
-        submitDialog(WTF::move(formSubmission));
+        submitDialog(formSubmission.releaseNonNull());
     else
-        frame->loader().submitForm(WTF::move(formSubmission));
+        frame->loader().submitForm(formSubmission.releaseNonNull());
 
     m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;

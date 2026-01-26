@@ -170,7 +170,7 @@ static PAL::TextEncoding encodingFromAcceptCharset(const String& acceptCharset, 
     return document.textEncoding();
 }
 
-Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormControlElement* overrideSubmitter, const Attributes& attributes, Event* event, LockHistory lockHistory, FormSubmissionTrigger trigger)
+RefPtr<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormControlElement* overrideSubmitter, const Attributes& attributes, Event* event, LockHistory lockHistory, FormSubmissionTrigger trigger)
 {
     auto copiedAttributes = attributes;
 
@@ -217,6 +217,9 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     auto result = form.constructEntryList(submitter.copyRef(), WTF::move(domFormData), &formValues);
     RELEASE_ASSERT(result);
+    // Calling form.constructEntryList can run JavaScript and potentially detach the frame.
+    if (!document->frame())
+        return nullptr;
     domFormData = result.releaseNonNull();
 
     RefPtr<FormData> formData;
