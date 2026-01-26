@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 575x19
+      RenderText {#text} at (0,0) size 575x20
         text run at (0,0) width 575: "This tests that background color and background images can be set on the new text fields."
-      RenderBR {BR} at (574,0) size 1x19
+      RenderBR {BR} at (574,0) size 1x20
       RenderTextControl {INPUT} at (0,20) size 155x22 [bgcolor=#FFC0CB] [border: (1px solid #3C3C4399)]
-      RenderBR {BR} at (154,19) size 1x19
+      RenderBR {BR} at (154,19) size 1x20
       RenderTextControl {INPUT} at (0,41) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderText {#text} at (0,0) size 0x0
 layer at (15,31) size 141x14

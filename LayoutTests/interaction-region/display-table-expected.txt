@@ -13,8 +13,8 @@ is a link with display: table.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (guard (0,-10) width=28.45 height=39),
-        (interaction (0,0) width=28.45 height=19)
+        (guard (0,-9.50) width=28.45 height=39),
+        (interaction (0,0.50) width=28.45 height=19)
         (cornerRadius 8.00)])
       )
     )

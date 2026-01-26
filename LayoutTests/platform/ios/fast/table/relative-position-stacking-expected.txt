@@ -4,7 +4,7 @@ layer at (0,0) size 800x136
   RenderBlock {HTML} at (0,0) size 800x136
     RenderBody {BODY} at (8,8) size 784x120
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 372x19
+        RenderText {#text} at (0,0) size 372x20
           text run at (0,0) width 372: "Will be green if relative positioning stacking is supported:"
       RenderTable {TABLE} at (0,20) size 100x100
         RenderTableSection {TBODY} at (0,0) size 100x100

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 455x19
+      RenderText {#text} at (0,0) size 455x20
         text run at (0,0) width 455: "This tests that you can tab out of a text field if an iframe comes after it."
-      RenderBR {BR} at (454,0) size 1x19
+      RenderBR {BR} at (454,0) size 1x20
       RenderTextControl {INPUT} at (0,158) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderText {#text} at (153,157) size 5x19
         text run at (153,157) width 5: " "

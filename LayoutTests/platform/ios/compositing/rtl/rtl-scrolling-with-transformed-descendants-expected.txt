@@ -6,10 +6,10 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 1
+      (children 5
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 404.00 209.00)
+          (bounds 404.00 208.50)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
@@ -25,14 +25,74 @@
                   (anchor 0.00 0.00)
                   (bounds 766.00 205.00)
                   (drawsContent 1)
-                  (children 1
-                    (GraphicsLayer
-                      (position 462.00 0.00)
-                      (anchor 0.00 0.00)
-                      (bounds 150.00 200.00)
-                      (contentsOpaque 1)
-                    )
-                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 400.00 204.50)
+          (clips 1)
+          (children 1
+            (GraphicsLayer
+              (bounds origin 366.00 0.00)
+              (children 1
+                (GraphicsLayer
+                  (position 462.00 0.00)
+                  (anchor 0.00 0.00)
+                  (bounds 150.00 200.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 400.00 204.50)
+          (clips 1)
+          (children 1
+            (GraphicsLayer
+              (bounds origin 366.00 0.00)
+              (children 1
+                (GraphicsLayer
+                  (position 308.00 0.00)
+                  (bounds 150.00 200.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 400.00 204.50)
+          (clips 1)
+          (children 1
+            (GraphicsLayer
+              (bounds origin 366.00 0.00)
+              (children 1
+                (GraphicsLayer
+                  (position 154.00 0.00)
+                  (bounds 150.00 200.00)
+                  (contentsOpaque 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 400.00 204.50)
+          (clips 1)
+          (children 1
+            (GraphicsLayer
+              (bounds origin 366.00 0.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 150.00 200.00)
+                  (contentsOpaque 1)
                 )
               )
             )

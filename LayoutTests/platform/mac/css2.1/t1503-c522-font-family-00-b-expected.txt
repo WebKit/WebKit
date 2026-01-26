@@ -14,7 +14,7 @@ layer at (0,0) size 800x287
           RenderText {#text} at (0,0) size 314x18
             text run at (0,0) width 314: "This sentence should be in a sans-serif font."
         RenderBlock {P} at (0,54) size 784x25 [color=#000080]
-          RenderText {#text} at (0,0) size 266x25
+          RenderText {#text} at (0,-1) size 266x27
             text run at (0,0) width 266: "This sentence should be in a cursive font."
         RenderBlock {P} at (0,79) size 784x25 [color=#000080]
           RenderText {#text} at (0,0) size 296x25
@@ -39,7 +39,7 @@ layer at (0,0) size 800x287
           RenderText {#text} at (0,0) size 314x18
             text run at (0,0) width 314: "This sentence should be in a sans-serif font."
         RenderBlock {P} at (0,51) size 784x25 [color=#000080]
-          RenderText {#text} at (0,0) size 266x25
+          RenderText {#text} at (0,-1) size 266x27
             text run at (0,0) width 266: "This sentence should be in a cursive font."
         RenderBlock {P} at (0,76) size 784x25 [color=#000080]
           RenderText {#text} at (0,0) size 296x25

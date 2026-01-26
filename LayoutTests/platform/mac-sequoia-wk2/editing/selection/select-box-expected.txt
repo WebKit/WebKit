@@ -60,11 +60,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 706x18
           text run at (0,0) width 300: "This tests caret movement across a select box. "
           text run at (299,0) width 407: "The caret should skip over the select box as if it were an image."
-      RenderBlock {DIV} at (0,34) size 784x19
-        RenderBlock {DIV} at (0,0) size 784x19
+      RenderBlock {DIV} at (0,34) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
           RenderText {#text} at (0,0) size 73x18
             text run at (0,0) width 73: "select box: "
-          RenderMenuList {SELECT} at (72,1) size 39x18 [bgcolor=#FFFFFF]
+          RenderMenuList {SELECT} at (72,1) size 39x19 [bgcolor=#FFFFFF]
             RenderBlock (anonymous) at (0,0) size 38x18
               RenderText at (8,2) size 6x13
                 text run at (8,2) width 6: "1"

@@ -30,21 +30,21 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (5,199) size 212x37 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
       RenderBR {BR} at (221,207) size 1x19
       RenderTextControl {INPUT} at (0,240) size 154x32 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderText {#text} at (153,244) size 5x20
-        text run at (153,244) width 5: " "
+      RenderText {#text} at (153,245) size 5x19
+        text run at (153,245) width 5: " "
       RenderTextControl {INPUT} at (157,240) size 155x32 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (311,244) size 1x20
-      RenderTextControl {INPUT} at (0,272) size 154x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderText {#text} at (153,271) size 5x20
-        text run at (153,271) width 5: " "
-      RenderTextControl {INPUT} at (157,272) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-      RenderText {#text} at (311,271) size 5x20
-        text run at (311,271) width 5: " "
-      RenderTextControl {INPUT} at (315,272) size 155x21 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderBR {BR} at (311,245) size 1x19
+      RenderTextControl {INPUT} at (0,273) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderText {#text} at (153,272) size 5x19
+        text run at (153,272) width 5: " "
+      RenderTextControl {INPUT} at (157,273) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+      RenderText {#text} at (311,272) size 5x19
+        text run at (311,272) width 5: " "
+      RenderTextControl {INPUT} at (315,273) size 155x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (469,271) size 1x20
-      RenderBR {BR} at (153,304) size 1x20
+      RenderBR {BR} at (469,272) size 1x19
+      RenderBR {BR} at (153,305) size 1x19
 layer at (29,11) size 127x14
   RenderBlock {DIV} at (20,3) size 128x14 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 62x14
@@ -95,7 +95,7 @@ layer at (26,215) size 186x19
   RenderBlock {DIV} at (12,8) size 187x19
 layer at (14,252) size 142x25
   RenderBlock {DIV} at (6,3) size 142x25
-    RenderText {#text} at (0,5) size 29x14
+    RenderText {#text} at (0,5) size 29x15
       text run at (0,5) width 29: "Value"
 layer at (172,257) size 142x14
   RenderBlock {DIV} at (6,8) size 142x15 [color=#A9A9A9]
@@ -120,7 +120,7 @@ layer at (330,284) size 142x14
 layer at (330,284) size 142x14
   RenderBlock {DIV} at (6,3) size 142x14
 layer at (8,301) size 154x33
-  RenderTextControl {INPUT} at (0,292) size 154x34 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (0,293) size 154x33 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (14,317) size 142x14
   RenderBlock {DIV} at (6,16) size 142x14 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 62x14

@@ -1,10 +1,10 @@
-layer at (0,0) size 800x613
+layer at (0,0) size 800x611
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x613
-  RenderBlock {HTML} at (0,0) size 800x613
-    RenderBody {BODY} at (8,8) size 784x597
+layer at (0,0) size 800x611
+  RenderBlock {HTML} at (0,0) size 800x611
+    RenderBody {BODY} at (8,8) size 784x595
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 88x19
+        RenderText {#text} at (0,0) size 88x20
           text run at (0,0) width 88: "No line break"
       RenderTable {TABLE} at (0,20) size 123x61 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 123x61
@@ -15,10 +15,10 @@ layer at (0,0) size 800x613
                 text run at (21,36) width 77: "loremipsum"
               RenderImage {IMG} at (97,1) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,99) size 784x20
-        RenderText {#text} at (0,0) size 88x19
+      RenderBlock (anonymous) at (0,98) size 784x21
+        RenderText {#text} at (0,0) size 88x20
           text run at (0,0) width 88: "No line break"
-      RenderTable {TABLE} at (0,119) size 103x61 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,118) size 103x61 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 103x61
           RenderTableRow {TR} at (0,2) size 103x57
             RenderTableCell {TD} at (2,2) size 99x57 [r=0 c=0 rs=1 cs=1]
@@ -26,21 +26,21 @@ layer at (0,0) size 800x613
                 text run at (1,36) width 77: "loremipsum"
               RenderImage {IMG} at (77,1) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,198) size 784x20
-        RenderText {#text} at (0,0) size 154x19
+      RenderBlock (anonymous) at (0,197) size 784x20
+        RenderText {#text} at (0,0) size 154x20
           text run at (0,0) width 154: "Line break after the \"a\"."
-      RenderTable {TABLE} at (0,218) size 103x76 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,217) size 103x76 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 103x76
           RenderTableRow {TR} at (0,2) size 103x72
             RenderTableCell {TD} at (2,2) size 99x72 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 88x19
+              RenderText {#text} at (1,1) size 88x20
                 text run at (1,1) width 88: "a loremipsum"
               RenderImage {IMG} at (1,21) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,312) size 784x20
-        RenderText {#text} at (0,0) size 154x19
+      RenderBlock (anonymous) at (0,311) size 784x20
+        RenderText {#text} at (0,0) size 154x20
           text run at (0,0) width 154: "Line break after the \"a\"."
-      RenderTable {TABLE} at (0,332) size 123x111 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,331) size 123x111 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 123x111
           RenderTableRow {TR} at (0,2) size 123x107
             RenderTableCell {TD} at (2,2) size 119x107 [r=0 c=0 rs=1 cs=1]
@@ -49,27 +49,27 @@ layer at (0,0) size 800x613
               RenderImage {IMG} at (12,1) size 21x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (32,36) size 77x19
                 text run at (32,36) width 77: "loremipsum"
-              RenderImage {IMG} at (1,56) size 20x50 [bgcolor=#ADD8E6]
+              RenderImage {IMG} at (1,55) size 20x51 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,461) size 784x20
-        RenderText {#text} at (0,0) size 188x19
+      RenderBlock (anonymous) at (0,459) size 784x21
+        RenderText {#text} at (0,0) size 188x20
           text run at (0,0) width 188: "Line break after \"wideword\"."
-      RenderTable {TABLE} at (0,481) size 123x116 [bgcolor=#C0C0C0]
-        RenderTableSection {TBODY} at (0,0) size 123x116
-          RenderTableRow {TR} at (0,2) size 123x112
-            RenderTableCell {TD} at (2,2) size 119x112 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,479) size 123x116 [bgcolor=#C0C0C0]
+        RenderTableSection {TBODY} at (0,0) size 123x115
+          RenderTableRow {TR} at (0,2) size 123x111
+            RenderTableCell {TD} at (2,2) size 119x111 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,36) size 68x19
                 text run at (1,36) width 68: "wideword "
               RenderImage {IMG} at (68,1) size 21x50 [bgcolor=#ADD8E6]
-              RenderText {#text} at (1,91) size 77x19
-                text run at (1,91) width 77: "loremipsum"
-              RenderImage {IMG} at (77,56) size 21x50 [bgcolor=#ADD8E6]
+              RenderText {#text} at (1,90) size 77x20
+                text run at (1,90) width 77: "loremipsum"
+              RenderImage {IMG} at (77,55) size 21x51 [bgcolor=#ADD8E6]
               RenderText {#text} at (0,0) size 0x0
 layer at (8,97) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,89) size 784x2 [color=#808080] [border: (1px inset #808080)]
-layer at (8,196) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,188) size 784x2 [color=#808080] [border: (1px inset #808080)]
-layer at (8,310) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,302) size 784x2 [color=#808080] [border: (1px inset #808080)]
-layer at (8,459) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,451) size 784x2 [color=#808080] [border: (1px inset #808080)]
+  RenderBlock {HR} at (0,88) size 784x3 [color=#808080] [border: (1px inset #808080)]
+layer at (8,195) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,187) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,309) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,301) size 784x2 [color=#808080] [border: (1px inset #808080)]
+layer at (8,458) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,449) size 784x3 [color=#808080] [border: (1px inset #808080)]

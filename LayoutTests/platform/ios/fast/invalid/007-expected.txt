@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,15) size 0x0
         RenderBlock {DIV} at (0,0) size 784x40
           RenderInline {A} at (0,0) size 784x40
-            RenderText {#text} at (0,0) size 36x19
+            RenderText {#text} at (0,0) size 36x20
               text run at (0,0) width 36: "Hello"
             RenderBlock {DIV} at (0,20) size 784x20
-              RenderText {#text} at (0,0) size 40x19
+              RenderText {#text} at (0,0) size 40x20
                 text run at (0,0) width 40: "World"
           RenderText {#text} at (0,0) size 0x0

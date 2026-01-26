@@ -8,43 +8,43 @@ layer at (8,8) size 784x584
       RenderTableSection {TBODY} at (0,0) size 784x74
         RenderTableRow {TR} at (0,2) size 784x22
           RenderTableCell {TD} at (2,2) size 8x22 [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 4x19
+            RenderText {#text} at (1,1) size 4x20
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,2) size 490x22 [r=0 c=1 rs=1 cs=1]
-            RenderInline {A} at (1,1) size 374x19 [color=#0000EE]
-              RenderText {#text} at (1,1) size 374x19
+            RenderInline {A} at (1,1) size 374x20 [color=#0000EE]
+              RenderText {#text} at (1,1) size 374x20
                 text run at (1,1) width 374: "In order to pass there must be a directory entry below here"
           RenderTableCell {TD} at (502,2) size 205x22 [r=0 c=2 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 151x19
+            RenderText {#text} at (1,1) size 151x20
               text run at (1,1) width 151: "Mar 1, 1996, 10:15 PM"
           RenderTableCell {TD} at (708,2) size 75x22 [r=0 c=3 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 55x19
+            RenderText {#text} at (1,1) size 55x20
               text run at (1,1) width 55: "0.28 KB"
         RenderTableRow {TR} at (0,26) size 784x22
           RenderTableCell {TD} at (2,26) size 8x22 [r=1 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 4x19
+            RenderText {#text} at (1,1) size 4x20
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,26) size 490x22 [r=1 c=1 rs=1 cs=1]
-            RenderInline {A} at (1,1) size 63x19 [color=#0000EE]
-              RenderText {#text} at (1,1) size 63x19
+            RenderInline {A} at (1,1) size 63x20 [color=#0000EE]
+              RenderText {#text} at (1,1) size 63x20
                 text run at (1,1) width 63: "directory/"
           RenderTableCell {TD} at (502,26) size 205x22 [r=1 c=2 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 155x19
+            RenderText {#text} at (1,1) size 155x20
               text run at (1,1) width 155: "Feb 13, 1996, 11:58 PM"
           RenderTableCell {TD} at (708,26) size 75x22 [r=1 c=3 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 11x19
+            RenderText {#text} at (1,1) size 11x20
               text run at (1,1) width 11: "--"
         RenderTableRow {TR} at (0,50) size 784x22
           RenderTableCell {TD} at (2,50) size 8x22 [r=2 c=0 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 4x19
+            RenderText {#text} at (1,1) size 4x20
               text run at (1,1) width 4: " "
           RenderTableCell {TD} at (11,50) size 490x22 [r=2 c=1 rs=1 cs=1]
-            RenderInline {A} at (1,1) size 68x19 [color=#0000EE]
-              RenderText {#text} at (1,1) size 68x19
+            RenderInline {A} at (1,1) size 68x20 [color=#0000EE]
+              RenderText {#text} at (1,1) size 68x20
                 text run at (1,1) width 68: "third entry"
           RenderTableCell {TD} at (502,50) size 205x22 [r=2 c=2 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 155x19
+            RenderText {#text} at (1,1) size 155x20
               text run at (1,1) width 155: "Feb 13, 1996, 11:14 PM"
           RenderTableCell {TD} at (708,50) size 75x22 [r=2 c=3 rs=1 cs=1]
-            RenderText {#text} at (1,1) size 55x19
+            RenderText {#text} at (1,1) size 55x20
               text run at (1,1) width 55: "0.61 KB"

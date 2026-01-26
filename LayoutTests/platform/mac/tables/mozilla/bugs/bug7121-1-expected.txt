@@ -8,14 +8,14 @@ layer at (0,0) size 800x600
           text run at (0,0) width 782: "In this table (modeled after mozilla.org template) the cells in column two are requesting colspans of (2,3,2,6) respectively."
           text run at (0,18) width 773: "Notice that they all want to span more than one column (which means, in the case of this table, all rows are requesting to"
           text run at (0,36) width 288: "span more columns than the number of 'real' "
-        RenderInline {CODE} at (287,38) size 32x15
-          RenderText {#text} at (287,38) size 32x15
+        RenderInline {CODE} at (287,38) size 32x16
+          RenderText {#text} at (287,38) size 32x16
             text run at (287,38) width 32: "<TD>"
         RenderText {#text} at (0,36) size 762x36
           text run at (318,36) width 444: " in any single rows [i.e., all rows in the top table want to span 9 cells,"
           text run at (0,54) width 188: "but the maximum number of "
-        RenderInline {CODE} at (187,56) size 32x15
-          RenderText {#text} at (187,56) size 32x15
+        RenderInline {CODE} at (187,56) size 32x16
+          RenderText {#text} at (187,56) size 32x16
             text run at (187,56) width 32: "<TD>"
         RenderText {#text} at (218,54) size 109x18
           text run at (218,54) width 109: " in any row is 8]."

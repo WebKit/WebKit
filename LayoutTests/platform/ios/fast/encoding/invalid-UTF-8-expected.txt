@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 336x19
+        RenderText {#text} at (0,0) size 336x20
           text run at (0,0) width 336: "This tests the rendering of invalid UTF-8 sequences."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 511x19
+        RenderText {#text} at (0,0) size 511x20
           text run at (0,0) width 511: "The output should be: \"\x{442}??\x{442}\" (with black diamonds in place of question marks)."
       RenderBlock {P} at (0,90) size 784x20
-        RenderText {#text} at (0,0) size 34x19
+        RenderText {#text} at (0,0) size 34x20
           text run at (0,0) width 34: "\x{442}\x{FFFD}\x{FFFD}\x{442}"
 layer at (8,80) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,72) size 784x2 [color=#808080] [border: (1px inset #808080)]

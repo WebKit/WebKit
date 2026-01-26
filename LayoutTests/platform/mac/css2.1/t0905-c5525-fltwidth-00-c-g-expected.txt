@@ -1,8 +1,8 @@
 layer at (0,0) size 785x794
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x794
-  RenderBlock {HTML} at (0,0) size 785x794
-    RenderBody {BODY} at (8,32) size 769x730
+  RenderBlock {HTML} at (0,0) size 785x795
+    RenderBody {BODY} at (8,32) size 769x731
       RenderBlock {P} at (32,0) size 705x122 [color=#000080]
         RenderText {#text} at (0,7) size 679x115
           text run at (0,7) width 679: "\x{21E9} The following blue box should be exactly half the"
@@ -99,7 +99,7 @@ layer at (0,0) size 785x794
           text run at (649,432) width 120: "dummy text this is"
           text run at (0,450) width 321: "some dummy text this is some dummy text this is "
           text run at (320,450) width 276: "some dummy text this is some dummy text"
-      RenderBlock {P} at (32,654) size 705x76 [color=#000080]
-        RenderText {#text} at (20,0) size 685x76
+      RenderBlock {P} at (32,654) size 705x77 [color=#000080]
+        RenderText {#text} at (20,0) size 685x77
           text run at (20,0) width 685: "The above gray text should flow around the blue box."
           text run at (673,39) width 32: "\x{21E7}"

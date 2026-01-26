@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (4,0) size 344x284
         RenderBlock {P} at (0,16) size 344x18
-          RenderInline {TT} at (0,2) size 118x15
-            RenderText {#text} at (0,2) size 118x15
-              text run at (0,2) width 118: "hyphens: manual"
+          RenderInline {TT} at (0,1) size 118x17
+            RenderText {#text} at (0,1) size 118x17
+              text run at (0,1) width 118: "hyphens: manual"
           RenderText {#text} at (117,0) size 139x18
             text run at (117,0) width 139: " without soft hyphens"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,0) size 344x284
         RenderBlock {P} at (0,16) size 344x18
-          RenderInline {TT} at (0,2) size 102x15
-            RenderText {#text} at (0,2) size 102x15
-              text run at (0,2) width 102: "hyphens: none"
+          RenderInline {TT} at (0,1) size 102x17
+            RenderText {#text} at (0,1) size 102x17
+              text run at (0,1) width 102: "hyphens: none"
           RenderText {#text} at (101,0) size 119x18
             text run at (101,0) width 119: " with soft hyphens"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -51,9 +51,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 271: "itself round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (4,284) size 344x284
         RenderBlock {P} at (0,16) size 344x18
-          RenderInline {TT} at (0,2) size 118x15
-            RenderText {#text} at (0,2) size 118x15
-              text run at (0,2) width 118: "hyphens: manual"
+          RenderInline {TT} at (0,1) size 118x17
+            RenderText {#text} at (0,1) size 118x17
+              text run at (0,1) width 118: "hyphens: manual"
           RenderText {#text} at (117,0) size 119x18
             text run at (117,0) width 119: " with soft hyphens"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -75,9 +75,9 @@ layer at (0,0) size 800x600
             text run at (7,205) width 230: "round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,284) size 344x284
         RenderBlock {P} at (0,16) size 344x18
-          RenderInline {TT} at (0,2) size 102x15
-            RenderText {#text} at (0,2) size 102x15
-              text run at (0,2) width 102: "hyphens: auto"
+          RenderInline {TT} at (0,1) size 102x17
+            RenderText {#text} at (0,1) size 102x17
+              text run at (0,1) width 102: "hyphens: auto"
           RenderText {#text} at (101,0) size 139x18
             text run at (101,0) width 139: " without soft hyphens"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]

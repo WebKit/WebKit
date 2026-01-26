@@ -349,7 +349,7 @@ TEST(RequestTextInputContext, FocusedEditableLineWithOnlyLineBreak)
 
     NSArray<_WKTextInputContext *> *contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView bounds]];
     EXPECT_EQ(1UL, contexts.count);
-    EXPECT_EQ(CGRectMake(0, 0, 0, 19), contexts[0].boundingRect);
+    EXPECT_EQ(CGRectMake(0, 0, 0, 20), contexts[0].boundingRect);
 }
 
 TEST(RequestTextInputContext, FocusAfterNavigation)

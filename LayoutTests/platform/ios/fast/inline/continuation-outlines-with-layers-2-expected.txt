@@ -4,12 +4,12 @@ layer at (0,0) size 800x320
   RenderBlock {HTML} at (0,0) size 800x320
     RenderBody {BODY} at (8,16) size 784x288
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 332x19
+        RenderText {#text} at (0,0) size 332x20
           text run at (0,0) width 332: "This should be an unobscured fuzzy green polygon:"
       RenderBlock {DIV} at (0,36) size 784x100
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,152) size 784x20
-        RenderText {#text} at (0,0) size 161x19
+        RenderText {#text} at (0,0) size 161x20
           text run at (0,0) width 161: "This is just for reference:"
       RenderBlock {DIV} at (0,188) size 784x100
         RenderInline {SPAN} at (0,0) size 160x100 [bgcolor=#FFFFFF]

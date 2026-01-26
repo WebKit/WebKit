@@ -7,11 +7,11 @@ layer at (8,8) size 168x86 clip at (18,18) size 148x66
   RenderBlock (floating) {DIV} at (0,0) size 168x86 [border: (10px solid #FF0000)]
     RenderImage {IMG} at (10,10) size 86x66
     RenderBlock {DIV} at (10,10) size 148x12
-      RenderText {#text} at (92,0) size 7x12
+      RenderText {#text} at (92,-1) size 7x14
         text run at (92,0) width 7: "x"
     RenderBlock {DIV} at (10,22) size 148x48
-      RenderText {#text} at (92,0) size 49x48
+      RenderText {#text} at (92,-1) size 49x50
         text run at (92,0) width 42: "Ted and"
-        text run at (92,12) width 17: "the"
-        text run at (92,24) width 49: "miniature"
-        text run at (92,36) width 32: "Teddy"
+        text run at (92,11) width 17: "the"
+        text run at (92,23) width 49: "miniature"
+        text run at (92,35) width 32: "Teddy"

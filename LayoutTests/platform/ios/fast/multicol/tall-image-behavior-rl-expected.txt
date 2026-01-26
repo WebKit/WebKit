@@ -8,18 +8,18 @@ layer at (488,8) size 304x584
     RenderMultiColumnSet at (2,2) size 300x580
 layer at (140,10) size 650x282
   RenderMultiColumnFlowThread at (2,2) size 650x282
-    RenderBlock {P} at (16,0) size 126x282
-      RenderText {#text} at (1,0) size 40x238
-        text run at (1,0) width 238: "This image should not be split across"
-        text run at (22,0) width 59: "columns."
-      RenderBR {BR} at (22,58) size 19x1
-      RenderText {#text} at (43,0) size 82x273
-        text run at (43,0) width 272: "The reason it should not be split is that the"
-        text run at (64,0) width 264: "line contains no text and so we should be"
-        text run at (85,0) width 273: "willing to allow it to sit at the top of a new"
-        text run at (106,0) width 35: "page."
-    RenderBlock (anonymous) at (158,0) size 492x282
-      RenderBlock {DIV} at (142,0) size 300x50 [bgcolor=#00FF00]
+    RenderBlock {P} at (16,0) size 120x282
+      RenderText {#text} at (0,0) size 40x238
+        text run at (0,0) width 238: "This image should not be split across"
+        text run at (20,0) width 59: "columns."
+      RenderBR {BR} at (20,58) size 20x1
+      RenderText {#text} at (40,0) size 80x273
+        text run at (40,0) width 273: "The reason it should not be split is that the"
+        text run at (60,0) width 264: "line contains no text and so we should be"
+        text run at (80,0) width 273: "willing to allow it to sit at the top of a new"
+        text run at (100,0) width 35: "page."
+    RenderBlock (anonymous) at (152,0) size 498x282
+      RenderBlock {DIV} at (148,0) size 300x50 [bgcolor=#00FF00]
       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (442,0) size 50x282 [bgcolor=#800080]
+      RenderBlock {DIV} at (448,0) size 50x282 [bgcolor=#800080]
       RenderText {#text} at (0,0) size 0x0

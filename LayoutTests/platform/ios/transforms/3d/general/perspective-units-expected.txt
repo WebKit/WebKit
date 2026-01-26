@@ -4,7 +4,7 @@ layer at (0,0) size 800x581
   RenderBlock {HTML} at (0,0) size 800x581
     RenderBody {BODY} at (8,16) size 784x557
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 514x19
+        RenderText {#text} at (0,0) size 514x20
           text run at (0,0) width 514: "-webkit-perspective should take units. All four should look qualitatively similar."
       RenderBlock (anonymous) at (0,36) size 784x521
         RenderText {#text} at (242,157) size 4x19
@@ -27,6 +27,6 @@ layer at (520,62) size 202x152
 layer at (521,63) size 200x150
   RenderBlock {DIV} at (1,1) size 200x150 [bgcolor=#0000FF]
 layer at (48,249) size 404x304
-  RenderBlock {DIV} at (40,197) size 404x304 [border: (2px solid #000000)]
+  RenderBlock {DIV} at (40,196) size 404x305 [border: (2px solid #000000)]
 layer at (50,251) size 400x300
   RenderBlock {DIV} at (2,2) size 400x300 [bgcolor=#0000FF]

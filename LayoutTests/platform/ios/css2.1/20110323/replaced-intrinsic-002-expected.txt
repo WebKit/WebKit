@@ -4,7 +4,7 @@ layer at (8,8) size 150x175
   RenderBlock (relative positioned) {HTML} at (8,8) size 150x175
     RenderBody {BODY} at (0,0) size 150x175
       RenderBlock {P} at (0,0) size 150x175
-        RenderText {#text} at (0,0) size 366x19
+        RenderText {#text} at (0,0) size 366x20
           text run at (0,0) width 366: "There should be an exact square of green below this line:"
         RenderEmbeddedObject {OBJECT} at (0,20) size 300x150
           layer at (0,0) size 300x150

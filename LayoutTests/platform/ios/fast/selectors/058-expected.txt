@@ -5,5 +5,5 @@ layer at (0,0) size 800x52
     RenderBody {BODY} at (8,16) size 784x20
       RenderBlock {FORM} at (0,0) size 784x20 [bgcolor=#00FF00]
         RenderBlock {P} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 308x19
+          RenderText {#text} at (0,0) size 308x20
             text run at (0,0) width 308: "The paragraph should have a green background."

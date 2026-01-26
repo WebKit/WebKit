@@ -4,7 +4,7 @@ layer at (0,0) size 800x300
   RenderBlock {HTML} at (0,0) size 800x300
     RenderBody {BODY} at (8,16) size 784x276
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 317x19
+        RenderText {#text} at (0,0) size 317x20
           text run at (0,0) width 317: "There should be a green block with no red below."
       RenderBlock {DIV} at (15,36) size 90x240 [color=#008000] [bgcolor=#FF0000]
         RenderBlock {DIV} at (0,0) size 90x33

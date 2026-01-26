@@ -4,7 +4,7 @@ layer at (0,0) size 800x286
   RenderBlock {HTML} at (0,0) size 800x286
     RenderBody {BODY} at (8,16) size 784x262
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 612x19
+        RenderText {#text} at (0,0) size 612x20
           text run at (0,0) width 612: "Test passes if there are two black boxes with rounded corners and red is not visible on the page."
       RenderTable {TABLE} at (0,36) size 450x226
         RenderTableSection {TBODY} at (0,0) size 450x226

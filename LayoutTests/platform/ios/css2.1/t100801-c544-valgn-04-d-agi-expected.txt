@@ -4,7 +4,7 @@ layer at (0,0) size 800x259
   RenderBlock {HTML} at (0,0) size 800x259
     RenderBody {BODY} at (8,16) size 784x228
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 737x39
+        RenderText {#text} at (0,0) size 737x40
           text run at (0,0) width 391: "Change your window size. However the lines wrap, the blue "
           text run at (390,0) width 347: "rectanglues should always have their tops on the same"
           text run at (0,20) width 86: "alignment as "
@@ -18,9 +18,9 @@ layer at (0,0) size 800x259
         RenderImage {IMG} at (68,8) size 11x11
         RenderText {#text} at (78,8) size 16x16
           text run at (78,8) width 16: " "
-        RenderInline {SPAN} at (93,7) size 113x39
-          RenderText {#text} at (93,7) size 113x39
-            text run at (93,7) width 113: "xxx"
+        RenderInline {SPAN} at (93,8) size 113x39
+          RenderText {#text} at (93,8) size 113x39
+            text run at (93,8) width 113: "xxx"
         RenderText {#text} at (206,8) size 15x16
           text run at (206,8) width 15: " "
         RenderImage {IMG} at (221,8) size 10x11

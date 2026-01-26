@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 769x39
+        RenderText {#text} at (0,0) size 769x40
           text run at (0,0) width 383: "This tests for a crash when pasting content into a table cell. "
           text run at (382,0) width 387: "The table cell has some collapsed whitespace at the end of it"
           text run at (0,20) width 141: "that tickled the crash. "
@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 88x28
             RenderTableRow {TR} at (0,2) size 88x24
               RenderTableCell {TD} at (2,2) size 84x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 84x19
+                RenderText {#text} at (2,2) size 84x20
                   text run at (2,2) width 84: "Hello World "
 caret: position 11 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

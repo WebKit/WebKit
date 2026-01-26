@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (2,2) size 184x48
                           RenderTableRow {TR} at (0,2) size 184x44
                             RenderTableCell {TD} at (2,2) size 180x44 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 171x39
+                              RenderText {#text} at (2,2) size 171x40
                                 text run at (2,2) width 171: "THIS TABLE NEEDS TO"
                                 text run at (2,22) width 67: "BE HERE"
                   RenderTableRow {TR} at (0,92) size 196x36
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
                                     text run at (0,0) width 152: "USE THIS JAVASCRIPT HERE"
                               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (208,2) size 756x44 [border: (1px solid #C0C0C0)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 752x39
+              RenderText {#text} at (2,2) size 752x40
                 text run at (2,2) width 752: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,22) width 602: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
 layer at (32,29) size 142x14

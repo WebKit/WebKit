@@ -16,10 +16,10 @@ layer at (0,0) size 800x1395
           RenderTableRow {TR} at (0,2) size 752x403
             RenderTableCell {TD} at (2,2) size 135x723 [bgcolor=#FFFFFF] [r=0 c=0 rs=2 cs=1]
               RenderBlock {H2} at (5,18) size 125x21
-                RenderText {#text} at (0,0) size 118x19
+                RenderText {#text} at (0,0) size 118x20
                   text run at (0,0) width 118: "Weekly Feature"
               RenderBlock {P} at (5,51) size 125x113
-                RenderText {#text} at (0,0) size 110x111
+                RenderText {#text} at (0,0) size 110x112
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"
@@ -28,10 +28,10 @@ layer at (0,0) size 800x1395
                   text run at (0,80) width 110: "blah blah blah blah"
                   text run at (0,96) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,176) size 125x21
-                RenderText {#text} at (0,0) size 81x19
+                RenderText {#text} at (0,0) size 81x20
                   text run at (0,0) width 81: "Contribute"
               RenderBlock {P} at (5,210) size 125x113
-                RenderText {#text} at (0,0) size 110x111
+                RenderText {#text} at (0,0) size 110x112
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"
@@ -40,45 +40,45 @@ layer at (0,0) size 800x1395
                   text run at (0,80) width 110: "blah blah blah blah"
                   text run at (0,96) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,335) size 125x21
-                RenderText {#text} at (0,0) size 82x19
+                RenderText {#text} at (0,0) size 82x20
                   text run at (0,0) width 82: "Newsforge"
               RenderBlock {P} at (5,368) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,413) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,458) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,503) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,548) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,593) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,638) size 125x21
-                RenderText {#text} at (0,0) size 82x19
+                RenderText {#text} at (0,0) size 82x20
                   text run at (0,0) width 82: "Resources"
               RenderBlock {P} at (5,672) size 125x33
-                RenderText {#text} at (0,0) size 110x31
+                RenderText {#text} at (0,0) size 110x32
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
             RenderTableCell {TD} at (139,2) size 474x1199 [bgcolor=#FFFFFF] [r=0 c=1 rs=2 cs=1]
               RenderBlock {H2} at (5,18) size 464x21
-                RenderText {#text} at (0,0) size 190x19
+                RenderText {#text} at (0,0) size 190x20
                   text run at (0,0) width 190: "The Latest of Linux.com!"
               RenderBlock {P} at (5,51) size 464x241
-                RenderText {#text} at (0,0) size 448x239
+                RenderText {#text} at (0,0) size 448x240
                   text run at (0,0) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,16) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,32) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
@@ -95,7 +95,7 @@ layer at (0,0) size 800x1395
                   text run at (0,208) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,224) width 110: "blah blah blah blah"
               RenderBlock {P} at (5,304) size 464x241
-                RenderText {#text} at (0,0) size 448x239
+                RenderText {#text} at (0,0) size 448x240
                   text run at (0,0) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,16) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,32) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
@@ -112,10 +112,10 @@ layer at (0,0) size 800x1395
                   text run at (0,208) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,224) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,557) size 464x21
-                RenderText {#text} at (0,0) size 122x19
+                RenderText {#text} at (0,0) size 122x20
                   text run at (0,0) width 122: "Linux.com Live!"
               RenderBlock {P} at (5,591) size 464x241
-                RenderText {#text} at (0,0) size 448x239
+                RenderText {#text} at (0,0) size 448x240
                   text run at (0,0) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,16) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,32) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
@@ -132,10 +132,10 @@ layer at (0,0) size 800x1395
                   text run at (0,208) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,224) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,844) size 464x21
-                RenderText {#text} at (0,0) size 57x19
+                RenderText {#text} at (0,0) size 57x20
                   text run at (0,0) width 57: "Tuneup"
               RenderBlock {P} at (5,877) size 464x241
-                RenderText {#text} at (0,0) size 448x239
+                RenderText {#text} at (0,0) size 448x240
                   text run at (0,0) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,16) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,32) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
@@ -152,37 +152,37 @@ layer at (0,0) size 800x1395
                   text run at (0,208) width 448: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,224) width 110: "blah blah blah blah"
               RenderBlock {H2} at (5,1130) size 464x21
-                RenderText {#text} at (0,0) size 30x19
+                RenderText {#text} at (0,0) size 30x20
                   text run at (0,0) width 30: "Poll"
               RenderBlock {P} at (5,1164) size 464x17
-                RenderText {#text} at (0,0) size 311x15
+                RenderText {#text} at (0,0) size 311x16
                   text run at (0,0) width 311: "This stuff is cropped off in Mozilla for whatever reason"
             RenderTableCell {TD} at (615,2) size 135x403 [bgcolor=#FFFFFF] [r=0 c=2 rs=1 cs=1]
               RenderBlock {H2} at (5,18) size 125x21
-                RenderText {#text} at (0,0) size 47x19
+                RenderText {#text} at (0,0) size 47x20
                   text run at (0,0) width 47: "OSDN"
               RenderBlock {P} at (5,51) size 125x81
-                RenderText {#text} at (0,0) size 110x79
+                RenderText {#text} at (0,0) size 110x80
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"
                   text run at (0,48) width 110: "blah blah blah blah"
                   text run at (0,64) width 53: "blah blah"
               RenderBlock {H2} at (5,144) size 125x21
-                RenderText {#text} at (0,0) size 45x19
+                RenderText {#text} at (0,0) size 45x20
                   text run at (0,0) width 45: "POTD"
               RenderBlock {P} at (5,178) size 125x81
-                RenderText {#text} at (0,0) size 110x79
+                RenderText {#text} at (0,0) size 110x80
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"
                   text run at (0,48) width 110: "blah blah blah blah"
                   text run at (0,64) width 53: "blah blah"
               RenderBlock {H2} at (5,271) size 125x21
-                RenderText {#text} at (0,0) size 48x19
+                RenderText {#text} at (0,0) size 48x20
                   text run at (0,0) width 48: "Log In"
               RenderBlock {P} at (5,304) size 125x81
-                RenderText {#text} at (0,0) size 110x79
+                RenderText {#text} at (0,0) size 110x80
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"
@@ -191,11 +191,11 @@ layer at (0,0) size 800x1395
           RenderTableRow {TR} at (0,406) size 752x795
             RenderTableCell {TD} at (615,1030) size 135x171 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
               RenderBlock {H2} at (5,642) size 125x41
-                RenderText {#text} at (0,0) size 88x39
+                RenderText {#text} at (0,0) size 88x40
                   text run at (0,0) width 88: "Community"
                   text run at (0,20) width 56: "Banner"
               RenderBlock {P} at (5,695) size 125x81
-                RenderText {#text} at (0,0) size 110x79
+                RenderText {#text} at (0,0) size 110x80
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,16) width 110: "blah blah blah blah"
                   text run at (0,32) width 110: "blah blah blah blah"

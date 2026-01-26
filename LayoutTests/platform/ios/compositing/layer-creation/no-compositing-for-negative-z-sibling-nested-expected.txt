@@ -15,11 +15,11 @@
               (preserves3D 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 204.00 122.00)
+                  (bounds 204.00 121.50)
                   (children 1
                     (GraphicsLayer
                       (anchor 0.00 0.00)
-                      (bounds 204.00 109.00)
+                      (bounds 204.00 108.50)
                       (drawsContent 1)
                       (transform [5.00 0.00 0.00 0.00] [0.00 5.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
                     )

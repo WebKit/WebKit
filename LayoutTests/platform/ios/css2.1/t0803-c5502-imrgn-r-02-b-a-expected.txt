@@ -4,7 +4,7 @@ layer at (0,0) size 800x127
   RenderBlock {HTML} at (0,0) size 800x127
     RenderBody {BODY} at (8,16) size 784x96
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 248x19
+        RenderText {#text} at (0,0) size 248x20
           text run at (0,0) width 248: "There should be a green square below:"
       RenderBlock {DIV} at (15,36) size 75x60 [bgcolor=#FF0000]
         RenderBlock {P} at (0,0) size 75x60 [color=#FFFFFF] [bgcolor=#FFFFFF]

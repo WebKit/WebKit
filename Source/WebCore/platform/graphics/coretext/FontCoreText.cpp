@@ -46,6 +46,7 @@
 #include <unicode/uchar.h>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/cf/VectorCF.h>
@@ -155,6 +156,18 @@ void Font::platformInit()
     if (origin() == Origin::Local && needsAscentAdjustment(familyName.get()))
         ascent += std::round((ascent + descent) * 0.15f);
 #endif
+
+    if (isAhemFont(familyName.get())) {
+        auto tolerance = [&] (auto a, auto b) {
+            auto toleranceInPixel = 0.01f;
+            return toleranceInPixel / std::max(std::abs(a), std::abs(b)) * 100.f;
+        };
+        auto roundedAscent = std::round(ascent);
+        if (WTF::areEssentiallyEqual(ascent, roundedAscent, tolerance(ascent, roundedAscent))) {
+            ascent = roundedAscent;
+            descent = std::round(descent);
+        }
+    }
 
     // Compute line spacing before the line metrics hacks are applied.
 #if !PLATFORM(IOS_FAMILY)

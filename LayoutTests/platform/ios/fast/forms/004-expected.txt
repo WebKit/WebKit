@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMenuList {SELECT} at (0,1) size 51x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderMenuList {SELECT} at (0,1) size 51x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (6,3) size 39x14
           RenderText at (0,0) size 27x14
             text run at (0,0) width 27: "Hello"
-      RenderText {#text} at (51,0) size 4x19
+      RenderText {#text} at (51,0) size 4x20
         text run at (51,0) width 4: " "
-      RenderMenuList {SELECT} at (55,1) size 72x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderMenuList {SELECT} at (55,1) size 72x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (6,3) size 60x14
           RenderText at (0,0) size 48x14
             text run at (0,0) width 48: "Goodbye"

@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 632x18
           text run at (0,0) width 632: "This tests that native pop-ups are rendered in logical order even in visually-ordered Hebrew pages."
-      RenderBlock {P} at (0,52) size 784x19
-        RenderText {#text} at (0,1) size 398x18
+      RenderBlock {P} at (0,52) size 784x20
+        RenderText {#text} at (0,1) size 398x19
           text run at (0,1) width 398: "Text on the pop-up and in the list should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,87) size 784x21
         RenderMenuList {SELECT} at (0,0) size 64x21 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]

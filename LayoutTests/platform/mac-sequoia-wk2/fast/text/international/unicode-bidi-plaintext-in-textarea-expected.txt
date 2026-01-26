@@ -19,33 +19,33 @@ layer at (8,44) size 371x58 clip at (9,45) size 369x56
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
-        text run at (0,14) width 29: "hello!"
-        text run at (28,14) width 1: " "
-      RenderBR {BR} at (0,27) size 0x13
+        text run at (0,13) width 29: "hello!"
+        text run at (28,13) width 1: " "
+      RenderBR {BR} at (0,26) size 0x14
 layer at (8,106) size 371x58 clip at (9,107) size 369x56
   RenderTextControl {TEXTAREA} at (0,62) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
-        text run at (0,14) width 29: "hello!"
-        text run at (28,14) width 1: " "
-      RenderBR {BR} at (0,27) size 0x13
+        text run at (0,13) width 29: "hello!"
+        text run at (28,13) width 1: " "
+      RenderBR {BR} at (0,26) size 0x14
 layer at (8,168) size 371x58 clip at (9,169) size 369x56
   RenderTextControl {TEXTAREA} at (0,124) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
-        text run at (0,14) width 29: "hello!"
-        text run at (28,14) width 1: " "
-      RenderBR {BR} at (0,27) size 0x13
+        text run at (0,13) width 29: "hello!"
+        text run at (28,13) width 1: " "
+      RenderBR {BR} at (0,26) size 0x14
 layer at (8,230) size 371x58 clip at (9,231) size 369x56
   RenderTextControl {TEXTAREA} at (0,186) size 371x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 365x40
       RenderText {#text} at (0,0) size 365x27
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
-        text run at (0,14) width 29: "hello!"
-        text run at (28,14) width 1: " "
-      RenderBR {BR} at (0,27) size 0x13
+        text run at (0,13) width 29: "hello!"
+        text run at (28,13) width 1: " "
+      RenderBR {BR} at (0,26) size 0x14

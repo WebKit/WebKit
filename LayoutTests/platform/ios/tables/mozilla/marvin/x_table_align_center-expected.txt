@@ -7,5 +7,5 @@ layer at (0,0) size 800x46
         RenderTableSection (anonymous) at (1,1) size 310x28
           RenderTableRow {tr} at (0,2) size 310x24
             RenderTableCell {td} at (2,2) size 306x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 302x19
+              RenderText {#text} at (2,2) size 302x20
                 text run at (2,2) width 302: "This table should be center aligned on the page"

@@ -21,12 +21,12 @@ layer at (8,8) size 15x200
 layer at (8,8) size 0x200
   RenderMultiColumnFlowThread at (0,0) size 0x200
     RenderImage {IMG} at (0,0) size 15x200 [bgcolor=#C0C0C0]
-layer at (8,208) size 16x100
-  RenderBlock (positioned) {DIV} at (0,200) size 16x100
-    RenderInline {A} at (0,0) size 16x84
-      RenderBlock {P} at (0,16) size 16x68
-        RenderText {#text} at (0,0) size 16x68
+layer at (8,208) size 16x96
+  RenderBlock (positioned) {DIV} at (0,200) size 16x96
+    RenderInline {A} at (0,0) size 16x80
+      RenderBlock {P} at (0,16) size 16x64
+        RenderText {#text} at (0,0) size 16x64
           text run at (0,0) width 16: "A"
-          text run at (0,17) width 16: "B"
-          text run at (0,34) width 16: "C"
-          text run at (0,51) width 16: "D"
+          text run at (0,16) width 16: "B"
+          text run at (0,32) width 16: "C"
+          text run at (0,48) width 16: "D"

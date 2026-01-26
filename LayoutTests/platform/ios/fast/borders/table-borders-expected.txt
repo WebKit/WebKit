@@ -9,5 +9,5 @@ layer at (28,28) size 22x38
     RenderTableSection {TBODY} at (5,5) size 12x28
       RenderTableRow {TR} at (0,2) size 12x24
         RenderTableCell {TD} at (2,2) size 8x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (2,2) size 4x19
+          RenderText {#text} at (2,2) size 4x20
             text run at (2,2) width 4: " "

@@ -4,7 +4,7 @@ layer at (0,0) size 800x165
   RenderBlock {html} at (0,0) size 800x165
     RenderBody {body} at (8,16) size 784x141
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 700x19
+        RenderText {#text} at (0,0) size 700x20
           text run at (0,0) width 700: "Below two svg areas are shown. Both should have the text aligned to the paths in the same way (Bug 13052)."
       RenderBlock {div} at (0,36) size 784x105
         RenderSVGRoot {svg} at (18,70) size 63x63

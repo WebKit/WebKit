@@ -13,11 +13,11 @@ layer at (8,16) size 760x460
 layer at (13,21) size 367x740
   RenderMultiColumnFlowThread at (5,5) size 367x740
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderMultiColumnSpannerPlaceholder at (0,20) size 0x0
     RenderBlock (anonymous) at (0,20) size 367x700
-      RenderText {#text} at (0,0) size 367x699
+      RenderText {#text} at (0,0) size 367x700
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -57,7 +57,7 @@ layer at (13,21) size 367x740
         text run at (0,660) width 357: "dolor sit amet, consectetuer adipiscing elit. Nulla varius"
         text run at (0,680) width 76: "enim ac mi."
     RenderBlock (generated) at (0,720) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"
 layer at (8,492) size 760x460
   RenderBlock {DIV} at (0,475) size 760x461 [border: (5px solid #800000)]
@@ -69,10 +69,10 @@ layer at (8,492) size 760x460
 layer at (13,497) size 367x740
   RenderMultiColumnFlowThread at (5,5) size 367x740
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderBlock (anonymous) at (0,20) size 367x700
-      RenderText {#text} at (0,0) size 367x699
+      RenderText {#text} at (0,0) size 367x700
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -113,7 +113,7 @@ layer at (13,497) size 367x740
         text run at (0,680) width 76: "enim ac mi."
     RenderMultiColumnSpannerPlaceholder at (0,720) size 0x0
     RenderBlock (generated) at (0,720) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"
 layer at (8,968) size 760x491
   RenderBlock {DIV} at (0,951) size 760x493 [border: (5px solid #800000)]
@@ -125,10 +125,10 @@ layer at (8,968) size 760x491
 layer at (13,973) size 367x804
   RenderMultiColumnFlowThread at (5,5) size 367x804
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderBlock {P} at (0,36) size 367x260
-      RenderText {#text} at (0,0) size 367x259
+      RenderText {#text} at (0,0) size 367x260
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -145,7 +145,7 @@ layer at (13,973) size 367x804
         text run at (0,240) width 76: "enim ac mi."
     RenderMultiColumnSpannerPlaceholder at (0,312) size 0x0
     RenderBlock {P} at (0,328) size 367x440
-      RenderText {#text} at (0,0) size 367x439
+      RenderText {#text} at (0,0) size 367x440
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -170,7 +170,7 @@ layer at (13,973) size 367x804
         text run at (0,400) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,420) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderBlock (generated) at (0,784) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"
 layer at (8,1475) size 760x476
   RenderBlock {DIV} at (0,1459) size 760x477 [border: (5px solid #800000)]
@@ -182,10 +182,10 @@ layer at (8,1475) size 760x476
 layer at (13,1480) size 367x772
   RenderMultiColumnFlowThread at (5,5) size 367x772
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderBlock (anonymous) at (0,20) size 367x260
-      RenderText {#text} at (0,0) size 367x259
+      RenderText {#text} at (0,0) size 367x260
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -202,10 +202,10 @@ layer at (13,1480) size 367x772
         text run at (0,240) width 76: "enim ac mi."
     RenderMultiColumnSpannerPlaceholder at (0,280) size 0x0
     RenderBlock (anonymous) at (0,280) size 367x220
-      RenderInline {SPAN} at (0,0) size 43x19
-        RenderText {#text} at (0,0) size 43x19
+      RenderInline {SPAN} at (0,0) size 43x20
+        RenderText {#text} at (0,0) size 43x20
           text run at (0,0) width 43: "Lorem"
-      RenderText {#text} at (0,0) size 367x219
+      RenderText {#text} at (0,0) size 367x220
         text run at (42,0) width 322: " ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -218,7 +218,7 @@ layer at (13,1480) size 367x772
         text run at (0,180) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderBlock {P} at (0,516) size 367x220
-      RenderText {#text} at (0,0) size 367x219
+      RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -231,7 +231,7 @@ layer at (13,1480) size 367x772
         text run at (0,180) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderBlock (generated) at (0,752) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"
 layer at (8,1967) size 760x476
   RenderBlock {DIV} at (0,1951) size 760x477 [border: (5px solid #800000)]
@@ -243,11 +243,11 @@ layer at (8,1967) size 760x476
 layer at (13,1972) size 367x772
   RenderMultiColumnFlowThread at (5,5) size 367x772
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderBlock (anonymous) at (0,20) size 367x480
-      RenderInline {SPAN} at (0,0) size 367x279
-        RenderText {#text} at (0,0) size 367x219
+      RenderInline {SPAN} at (0,0) size 367x280
+        RenderText {#text} at (0,0) size 367x220
           text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
           text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
           text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -260,12 +260,12 @@ layer at (13,1972) size 367x772
           text run at (0,180) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
           text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
         RenderBlock {SPAN} at (0,220) size 367x40
-          RenderText {#text} at (0,0) size 364x39
+          RenderText {#text} at (0,0) size 364x40
             text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
             text run at (0,20) width 158: "Nulla varius enim ac mi."
-        RenderText {#text} at (0,260) size 43x19
+        RenderText {#text} at (0,260) size 43x20
           text run at (0,260) width 43: "Lorem"
-      RenderText {#text} at (0,260) size 367x219
+      RenderText {#text} at (0,260) size 367x220
         text run at (42,260) width 322: " ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,280) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,300) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -279,7 +279,7 @@ layer at (13,1972) size 367x772
         text run at (0,460) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderMultiColumnSpannerPlaceholder at (0,500) size 0x0
     RenderBlock {P} at (0,516) size 367x220
-      RenderText {#text} at (0,0) size 367x219
+      RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -292,7 +292,7 @@ layer at (13,1972) size 367x772
         text run at (0,180) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderBlock (generated) at (0,752) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"
 layer at (8,2459) size 760x502
   RenderBlock {DIV} at (0,2443) size 760x502 [border: (5px solid #800000)]
@@ -304,10 +304,10 @@ layer at (8,2459) size 760x502
 layer at (13,2464) size 367x824 backgroundClip at (0,0) size 800x2977 clip at (0,0) size 800x2977
   RenderMultiColumnFlowThread at (5,5) size 367x824
     RenderBlock (generated) at (0,0) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 168x19
+      RenderText at (0,0) size 168x20
         text run at (0,0) width 168: "Before Generated Content"
     RenderBlock {P} at (0,36) size 367x220
-      RenderText {#text} at (0,0) size 367x219
+      RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -320,11 +320,11 @@ layer at (13,2464) size 367x824 backgroundClip at (0,0) size 800x2977 clip at (0
         text run at (0,180) width 333: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
         text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderBlock {P} at (0,282) size 367x40
-      RenderText {#text} at (0,0) size 364x39
+      RenderText {#text} at (0,0) size 364x40
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 158: "Nulla varius enim ac mi."
     RenderBlock {P} at (0,338) size 367x220
-      RenderText {#text} at (0,0) size 367x219
+      RenderText {#text} at (0,0) size 367x220
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,20) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,40) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -338,13 +338,13 @@ layer at (13,2464) size 367x824 backgroundClip at (0,0) size 800x2977 clip at (0
         text run at (0,200) width 275: "dolor sit amet, consectetuer adipiscing elit."
     RenderMultiColumnSpannerPlaceholder at (0,564) size 0x0
     RenderBlock (anonymous) at (0,564) size 367x240
-      RenderInline {SPAN} at (0,0) size 367x239
-        RenderText {#text} at (0,0) size 364x19
+      RenderInline {SPAN} at (0,0) size 367x240
+        RenderText {#text} at (0,0) size 364x20
           text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         RenderBlock {SPAN} at (0,20) size 367x20
-          RenderText {#text} at (0,0) size 158x19
+          RenderText {#text} at (0,0) size 158x20
             text run at (0,0) width 158: "Nulla varius enim ac mi."
-        RenderText {#text} at (0,40) size 365x199
+        RenderText {#text} at (0,40) size 365x200
           text run at (0,40) width 303: "Curabitur sollicitudin felis quis lectus. Quisque"
           text run at (0,60) width 364: "adipiscing rhoncus sem. Proin nulla purus, vulputate vel,"
           text run at (0,80) width 365: "varius ut, euismod et, nisi. Sed vitae felis vel orci sagittis"
@@ -357,5 +357,5 @@ layer at (13,2464) size 367x824 backgroundClip at (0,0) size 800x2977 clip at (0
           text run at (0,220) width 179: "consectetuer adipiscing elit."
       RenderText {#text} at (0,0) size 0x0
     RenderBlock (generated) at (0,804) size 367x20 [bgcolor=#FFFF00]
-      RenderText at (0,0) size 159x19
+      RenderText at (0,0) size 159x20
         text run at (0,0) width 159: "After Generated Content"

@@ -53,7 +53,7 @@
             shouldBe("initialSelectionRects[0].left", "0");
             shouldBe("initialSelectionRects[0].top", "2");
             shouldBe("initialSelectionRects[0].width", "309");
-            shouldBe("initialSelectionRects[0].height", "112");
+            shouldBe("initialSelectionRects[0].height", "113");
             document.scrollingElement.scrollTop += 5000;
             return UIHelper.getUISelectionViewRects();
         })
@@ -63,7 +63,7 @@
             shouldBe("finalSelectionRects[0].left", "0");
             shouldBe("finalSelectionRects[0].top", "2");
             shouldBe("finalSelectionRects[0].width", "309");
-            shouldBe("finalSelectionRects[0].height", "112");
+            shouldBe("finalSelectionRects[0].height", "113");
             finishJSTest();
         });
     }

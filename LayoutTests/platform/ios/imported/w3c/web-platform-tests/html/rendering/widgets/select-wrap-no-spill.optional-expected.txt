@@ -1,5 +1,5 @@
 
 
 
-FAIL Selected OPTION label with white-space:pre-wrap should not spill out. assert_equals: expected 23 but got 117
+FAIL Selected OPTION label with white-space:pre-wrap should not spill out. assert_equals: expected 24 but got 117
 

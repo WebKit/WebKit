@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x40
         RenderListItem {SUMMARY} at (0,0) size 784x20
-          RenderListMarker at (0,0) size 17x19: "\x{25BC}"
-          RenderText {#text} at (16,0) size 60x19
+          RenderListMarker at (0,0) size 17x20: "\x{25BC}"
+          RenderText {#text} at (16,0) size 60x20
             text run at (16,0) width 60: "summary"
         RenderBlock {SLOT} at (0,20) size 784x20
-          RenderText {#text} at (0,0) size 160x19
+          RenderText {#text} at (0,0) size 160x20
             text run at (0,0) width 160: "should have no bold test."

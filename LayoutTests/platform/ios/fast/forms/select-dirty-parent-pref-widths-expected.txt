@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x91
-  RenderBlock {HTML} at (0,0) size 800x91
-    RenderBody {BODY} at (8,8) size 784x67
-      RenderTable {TABLE} at (0,0) size 55x31 [border: (1px outset #000000)]
-        RenderTableSection {TBODY} at (1,1) size 53x29
-          RenderTableRow {TR} at (0,2) size 53x25
-            RenderTableCell {TD} at (2,2) size 49x25 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderMenuList {SELECT} at (2,3) size 45x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+layer at (0,0) size 800x92
+  RenderBlock {HTML} at (0,0) size 800x92
+    RenderBody {BODY} at (8,8) size 784x68
+      RenderTable {TABLE} at (0,0) size 55x32 [border: (1px outset #000000)]
+        RenderTableSection {TBODY} at (1,1) size 53x30
+          RenderTableRow {TR} at (0,2) size 53x26
+            RenderTableCell {TD} at (2,2) size 49x26 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderMenuList {SELECT} at (2,3) size 45x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
                 RenderBlock (anonymous) at (6,3) size 33x14
                   RenderText at (0,0) size 21x14
                     text run at (0,0) width 21: "test"
-      RenderBlock {P} at (0,47) size 784x20
-        RenderText {#text} at (0,0) size 459x19
+      RenderBlock {P} at (0,47) size 784x21
+        RenderText {#text} at (0,0) size 459x20
           text run at (0,0) width 459: "The select element in the table above must not spill outside of the table."

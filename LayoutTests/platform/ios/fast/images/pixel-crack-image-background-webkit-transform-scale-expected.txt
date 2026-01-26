@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 749x19
+        RenderText {#text} at (0,0) size 749x20
           text run at (0,0) width 438: "Test pixel cracks when background sprite is transformed with scale. "
           text run at (437,0) width 312: "Need to run pixel test to verify if it is successful."
 layer at (12,72) size 16x16

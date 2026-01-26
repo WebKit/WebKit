@@ -7,33 +7,33 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 794x372
           RenderTableRow {TR} at (0,0) size 794x28
             RenderTableCell {TD} at (0,0) size 794x28 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=3]
-              RenderText {#text} at (4,4) size 239x19
+              RenderText {#text} at (4,4) size 239x20
                 text run at (4,4) width 145: "   Join Now   Sign In   "
                 text run at (148,4) width 95: "   Personalize: "
-              RenderInline {A} at (242,4) size 53x19
-                RenderText {#text} at (242,4) size 53x19
+              RenderInline {A} at (242,4) size 53x20
+                RenderText {#text} at (242,4) size 53x20
                   text run at (242,4) width 53: "Settings"
-              RenderText {#text} at (294,4) size 14x19
+              RenderText {#text} at (294,4) size 14x20
                 text run at (294,4) width 14: " \x{2022} "
-              RenderInline {A} at (307,4) size 52x19
-                RenderText {#text} at (307,4) size 52x19
+              RenderInline {A} at (307,4) size 52x20
+                RenderText {#text} at (307,4) size 52x20
                   text run at (307,4) width 52: "Content"
-              RenderText {#text} at (358,4) size 15x19
+              RenderText {#text} at (358,4) size 15x20
                 text run at (358,4) width 15: " \x{2022} "
-              RenderInline {A} at (372,4) size 46x19
-                RenderText {#text} at (372,4) size 46x19
+              RenderInline {A} at (372,4) size 46x20
+                RenderText {#text} at (372,4) size 46x20
                   text run at (372,4) width 46: "Layout"
-              RenderText {#text} at (417,4) size 14x19
+              RenderText {#text} at (417,4) size 14x20
                 text run at (417,4) width 14: " \x{2022} "
-              RenderInline {A} at (431,4) size 114x19
-                RenderText {#text} at (431,4) size 114x19
+              RenderInline {A} at (431,4) size 114x20
+                RenderText {#text} at (431,4) size 114x20
                   text run at (431,4) width 114: "Colors & Themes"
-              RenderText {#text} at (544,4) size 15x19
+              RenderText {#text} at (544,4) size 15x20
                 text run at (544,4) width 15: " \x{2022} "
-              RenderInline {A} at (558,4) size 48x19
-                RenderText {#text} at (558,4) size 48x19
+              RenderInline {A} at (558,4) size 48x20
+                RenderText {#text} at (558,4) size 48x20
                   text run at (558,4) width 48: "Sign In"
-              RenderText {#text} at (605,4) size 185x19
+              RenderText {#text} at (605,4) size 185x20
                 text run at (605,4) width 9: "  "
                 text run at (613,4) width 92: "   My Links:   "
                 text run at (704,4) width 86: "  Lite \x{2022} Email"
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
                           RenderTableRow {TR} at (0,2) size 334x324
                             RenderTableCell {TD} at (2,162) size 127x4 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                             RenderTableCell {TD} at (130,2) size 73x324 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 68x319
+                              RenderText {#text} at (2,2) size 68x320
                                 text run at (2,2) width 57: "This guy"
                                 text run at (2,22) width 43: "should"
                                 text run at (2,42) width 54: "have the"

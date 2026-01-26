@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {html} at (0,0) size 800x600
     RenderBody {body} at (8,16) size 784x409
       RenderBlock {p} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 738x39
+        RenderText {#text} at (0,0) size 738x40
           text run at (0,0) width 738: "The left edges of the black boxes below should line up with the left edges of their containing red or green boxes. In"
           text run at (0,20) width 293: "addition, all the assertions below should pass."
       RenderBlock {div} at (0,56) size 800x200

@@ -5,6 +5,6 @@ layer at (0,0) size 800x36
     RenderBody {BODY} at (8,8) size 784x20
       RenderBlock {DIV} at (0,0) size 784x20
         RenderBlock {DIV} at (0,0) size 100x20
-          RenderText {#text} at (0,0) size 4x19
+          RenderText {#text} at (0,0) size 4x20
             text run at (0,0) width 4: " "
       RenderBlock {DIV} at (0,20) size 784x0

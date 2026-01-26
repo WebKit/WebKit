@@ -7810,17 +7810,17 @@ StorageBlockingPolicy:
 
 SubpixelInlineLayoutEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: css
   humanReadableName: "Subpixels in inline layout (in block direction)"
   humanReadableDescription: "Subpixels in line layout (in block direction)"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 SupportHDRCompositorTonemappingEnabled:
   type: bool

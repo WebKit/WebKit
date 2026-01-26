@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,65) size 784x22
               RenderTableCell {TD} at (0,67) size 784x17 [r=1 c=0 rs=1 cs=1]
                 RenderBlock {P} at (0,2) size 784x17
-                  RenderInline {FONT} at (376,0) size 32x15
-                    RenderInline {A} at (376,0) size 32x15 [color=#0000EE]
-                      RenderText {#text} at (376,0) size 32x15
+                  RenderInline {FONT} at (376,0) size 32x16
+                    RenderInline {A} at (376,0) size 32x16 [color=#0000EE]
+                      RenderText {#text} at (376,0) size 32x16
                         text run at (376,0) width 32: "Home"
             RenderTableRow {TR} at (0,86) size 784x33
               RenderTableCell {TD} at (0,94) size 784x17 [r=2 c=0 rs=1 cs=1]

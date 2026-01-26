@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x582
           RenderTableRow {TR} at (0,2) size 782x578
             RenderTableCell {TD} at (2,279) size 66x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,279) size 32x19
+              RenderText {#text} at (2,279) size 32x20
                 text run at (2,2) width 32: "Hurz"
             RenderTableCell {TD} at (69,279) size 712x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,279) size 385x19
+              RenderText {#text} at (2,279) size 385x20
                 text run at (2,2) width 299: "very long text that forces the browser window "
                 text run at (300,2) width 87: "to be scrolled"

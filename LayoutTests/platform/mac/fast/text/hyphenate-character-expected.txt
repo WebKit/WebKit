@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 208x18
             text run at (0,0) width 208: "The initial value (should be like "
-          RenderInline {TT} at (207,2) size 33x15
-            RenderText {#text} at (207,2) size 33x15
-              text run at (207,2) width 33: "auto"
+          RenderInline {TT} at (207,1) size 33x17
+            RenderText {#text} at (207,1) size 33x17
+              text run at (207,1) width 33: "auto"
           RenderText {#text} at (239,0) size 6x18
             text run at (239,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 83x18
             text run at (0,0) width 83: "The default ("
-          RenderInline {TT} at (82,2) size 197x15
-            RenderText {#text} at (82,2) size 197x15
-              text run at (82,2) width 197: "hyphenate-character: auto"
+          RenderInline {TT} at (82,1) size 197x17
+            RenderText {#text} at (82,1) size 197x17
+              text run at (82,1) width 197: "hyphenate-character: auto"
           RenderText {#text} at (278,0) size 6x18
             text run at (278,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -59,9 +59,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 49x18
             text run at (0,0) width 49: "Bullet ("
-          RenderInline {TT} at (48,2) size 220x15
-            RenderText {#text} at (48,2) size 220x15
-              text run at (48,2) width 220: "hyphenate-character: \"\\2022\""
+          RenderInline {TT} at (48,1) size 220x17
+            RenderText {#text} at (48,1) size 220x17
+              text run at (48,1) width 220: "hyphenate-character: \"\\2022\""
           RenderText {#text} at (267,0) size 6x18
             text run at (267,0) width 6: ")"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]
@@ -85,9 +85,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,16) size 357x18
           RenderText {#text} at (0,0) size 140x18
             text run at (0,0) width 140: "Middle dot and tilde ("
-          RenderInline {TT} at (139,2) size 212x15
-            RenderText {#text} at (139,2) size 212x15
-              text run at (139,2) width 212: "hyphenate-character: \"\\B7~\""
+          RenderInline {TT} at (139,1) size 212x17
+            RenderText {#text} at (139,1) size 212x17
+              text run at (139,1) width 212: "hyphenate-character: \"\\B7~\""
           RenderText {#text} at (350,0) size 7x18
             text run at (350,0) width 7: ")"
         RenderBlock {DIV} at (0,50) size 344x234 [border: (3px solid #000000)]

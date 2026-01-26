@@ -12,7 +12,7 @@ Tests whether a compositing layer containing only canvas uses a standard DPI bac
       (children 1
         (GraphicsLayer
           (position 8.00 52.00)
-          (bounds 1000.00 1005.00)
+          (bounds 1000.00 1004.50)
           (opacity 0.50)
           (device scale 2.00)
           (children 1

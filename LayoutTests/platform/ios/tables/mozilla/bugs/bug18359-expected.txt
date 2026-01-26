@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 676x50
             RenderTableRow {TR} at (0,2) size 676x22
               RenderTableCell {TD} at (2,2) size 106x22 [r=0 c=0 rs=1 cs=1]
-                RenderInline {B} at (1,1) size 95x19
-                  RenderText {#text} at (1,1) size 95x19
+                RenderInline {B} at (1,1) size 95x20
+                  RenderText {#text} at (1,1) size 95x20
                     text run at (1,1) width 95: "Trigger URL:"
               RenderTableCell {TD} at (109,2) size 471x22 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (1,1) size 469x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 38: "Trigger"
             RenderTableRow {TR} at (0,26) size 676x22
               RenderTableCell {TD} at (2,26) size 106x22 [r=1 c=0 rs=1 cs=1]
-                RenderInline {B} at (1,1) size 104x19
-                  RenderText {#text} at (1,1) size 104x19
+                RenderInline {B} at (1,1) size 104x20
+                  RenderText {#text} at (1,1) size 104x20
                     text run at (1,1) width 104: "Run Test Case:"
               RenderTableCell {TD} at (109,26) size 471x22 [r=1 c=1 rs=1 cs=1]
                 RenderMenuList {SELECT} at (1,1) size 252x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]

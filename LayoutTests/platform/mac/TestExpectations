@@ -472,7 +472,6 @@ webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 
 # The following ref-test appears to fail on EWS bots as well.
-webkit.org/b/112176 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112176 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
@@ -1701,8 +1700,6 @@ webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-
 
 webkit.org/b/223271 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
 
-webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
-
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
@@ -2457,7 +2454,6 @@ http/tests/inspector/network/xhr-response-body.html [ Pass Failure ]
 accessibility/checkbox-radio-element-rect.html [ Pass Failure ]
 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Failure ImageOnlyFailure ]
 workers/btoa-oom.html [ Pass Timeout ]
-fast/canvas/offscreen-giant.html [ Pass ImageOnlyFailure ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-horizontal-far.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html [ Pass Failure ]

@@ -8,38 +8,38 @@ layer at (0,0) size 800x142
           RenderTableSection {TBODY} at (1,1) size 123x80
             RenderTableRow {TR} at (0,2) size 123x24
               RenderTableCell {TD} at (2,2) size 67x24 [bgcolor=#00FF00] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 63x19
+                RenderText {#text} at (2,2) size 63x20
                   text run at (2,2) width 63: "green cell"
               RenderTableCell {TD} at (70,2) size 25x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "1.2"
               RenderTableCell {TD} at (96,2) size 25x24 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "1.3"
             RenderTableRow {TR} at (0,28) size 123x24
               RenderTableCell {TD} at (2,28) size 67x24 [bgcolor=#00FF00] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 63x19
+                RenderText {#text} at (2,2) size 63x20
                   text run at (2,2) width 63: "green cell"
               RenderTableCell {TD} at (70,28) size 25x24 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "2.2"
               RenderTableCell {TD} at (96,28) size 25x24 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "2.3"
             RenderTableRow {TR} at (0,54) size 123x24
               RenderTableCell {TD} at (2,54) size 67x24 [bgcolor=#00FF00] [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 63x19
+                RenderText {#text} at (2,2) size 63x20
                   text run at (2,2) width 63: "green cell"
               RenderTableCell {TD} at (70,54) size 25x24 [border: (1px inset #000000)] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "3.2"
               RenderTableCell {TD} at (96,54) size 25x24 [border: (1px inset #000000)] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 20x19
+                RenderText {#text} at (2,2) size 20x20
                   text run at (2,2) width 20: "3.3"
       RenderBlock {P} at (0,98) size 784x20
-        RenderText {#text} at (0,0) size 224x19
+        RenderText {#text} at (0,0) size 224x20
           text run at (0,0) width 224: "This paragraph contains some text "
-        RenderInline {SPAN} at (223,0) size 308x19 [bgcolor=#00FF00]
-          RenderText {#text} at (223,0) size 308x19
+        RenderInline {SPAN} at (223,0) size 308x20 [bgcolor=#00FF00]
+          RenderText {#text} at (223,0) size 308x20
             text run at (223,0) width 308: "and a span that should have a green background"
         RenderText {#text} at (0,0) size 0x0

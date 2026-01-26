@@ -1,13 +1,13 @@
 layer at (0,0) size 800x626
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x626
-  RenderBlock {HTML} at (0,0) size 800x626
-    RenderBody {BODY} at (8,8) size 784x610
+  RenderBlock {HTML} at (0,0) size 800x627
+    RenderBody {BODY} at (8,8) size 784x611
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 420x36
           text run at (0,1) width 420: "Form Element Geometry Tests"
       RenderBlock {P} at (0,59) size 784x21
-        RenderText {#text} at (0,0) size 551x19
+        RenderText {#text} at (0,0) size 551x20
           text run at (0,0) width 551: "These tests help us tune the widget classes in KWQ to have all the right fudge factors."
       RenderBlock {H2} at (0,99) size 784x31
         RenderText {#text} at (0,1) size 167x28
@@ -206,25 +206,25 @@ layer at (0,0) size 800x626
               RenderText at (0,0) size 47x14
                 text run at (0,0) width 47: "xxxxxxxx"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,568) size 784x22
-        RenderMenuList {SELECT} at (0,1) size 24x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderBlock {DIV} at (0,568) size 784x23
+        RenderMenuList {SELECT} at (0,1) size 24x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 12x14
             RenderText at (0,0) size 0x14
               text run at (0,0) width 0: " "
-        RenderText {#text} at (24,0) size 4x19
+        RenderText {#text} at (24,0) size 4x20
           text run at (24,0) width 4: " "
-        RenderMenuList {SELECT} at (28,1) size 27x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (28,1) size 27x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 15x14
             RenderText at (0,0) size 3x14
               text run at (0,0) width 3: "|"
-        RenderText {#text} at (55,0) size 4x19
+        RenderText {#text} at (55,0) size 4x20
           text run at (55,0) width 4: " "
-        RenderMenuList {SELECT} at (59,1) size 71x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderMenuList {SELECT} at (59,1) size 71x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (6,3) size 59x14
             RenderText at (0,0) size 47x14
               text run at (0,0) width 47: "xxxxxxxx"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,589) size 784x21
+      RenderBlock {DIV} at (0,590) size 784x21
         RenderInline {FONT} at (0,5) size 127x12
           RenderText {#text} at (0,0) size 0x0
           RenderMenuList {SELECT} at (0,0) size 24x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]

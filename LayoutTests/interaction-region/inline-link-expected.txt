@@ -12,23 +12,23 @@ This is a link. This is a wiki-style link. This is a link with a background. Thi
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=36.45 height=27)
+        (interaction (-4,-3.50) width=36.45 height=27)
         (cornerRadius 8.00),
-        (interaction (87.11,-4) width=36.45 height=27)
+        (interaction (87.11,-3.50) width=36.45 height=27)
         (cornerRadius 8.00),
-        (guard (250.21,-10) width=28.45 height=39),
-        (interaction (250.21,0) width=28.45 height=19),
-        (guard (464.40,-10) width=28.45 height=39),
-        (interaction (464.40,0) width=28.45 height=19),
-        (guard (657.49,-10) width=28.45 height=39),
-        (interaction (657.49,0) width=28.45 height=19),
-        (guard (131.98,10) width=28.45 height=39),
-        (interaction (131.98,20) width=28.45 height=19),
-        (guard (431.60,10) width=28.45 height=39),
-        (interaction (431.60,20) width=28.45 height=19),
-        (interaction (642.10,16) width=128.99 height=27)
+        (guard (250.21,-9.50) width=28.45 height=39),
+        (interaction (250.21,0.50) width=28.45 height=19),
+        (guard (464.40,-9.50) width=28.45 height=39),
+        (interaction (464.40,0.50) width=28.45 height=19),
+        (guard (657.49,-9.50) width=28.45 height=39),
+        (interaction (657.49,0.50) width=28.45 height=19),
+        (guard (131.98,10.50) width=28.45 height=39),
+        (interaction (131.98,20.50) width=28.45 height=19),
+        (guard (431.60,10.50) width=28.45 height=39),
+        (interaction (431.60,20.50) width=28.45 height=19),
+        (interaction (642.10,16.50) width=128.99 height=27)
         (cornerRadius 8.00),
-        (interaction (767.09,16) width=36.45 height=27)
+        (interaction (767.09,16.50) width=36.45 height=27)
         (cornerRadius 8.00)])
       )
     )

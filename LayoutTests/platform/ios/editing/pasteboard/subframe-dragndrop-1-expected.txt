@@ -14,12 +14,12 @@ layer at (0,0) size 800x600
           layer at (0,0) size 300x300
             RenderBlock {HTML} at (0,0) size 300x300
               RenderBody {BODY} at (8,8) size 284x284 [bgcolor=#FFFFE0]
-                RenderText {#text} at (0,0) size 72x19
+                RenderText {#text} at (0,0) size 72x20
                   text run at (0,0) width 72: "foo bar baz"
                 RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,320) size 800x40
-        RenderText {#text} at (0,0) size 773x39
+        RenderText {#text} at (0,0) size 773x40
           text run at (0,0) width 773: "This test uses the eventSender to do drag and drop. To run it manually, drag the word selected in the above subframe and"
           text run at (0,20) width 116: "drop it after 'baz'. "
           text run at (115,20) width 217: "The result should be 'foo baz bar'."

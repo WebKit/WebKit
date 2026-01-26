@@ -9,7 +9,7 @@
       (children 5
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 404.00 209.00)
+          (bounds 404.00 208.50)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
@@ -32,7 +32,7 @@
         )
         (GraphicsLayer
           (position 10.00 10.00)
-          (bounds 400.00 205.00)
+          (bounds 400.00 204.50)
           (clips 1)
           (children 1
             (GraphicsLayer
@@ -50,7 +50,7 @@
         )
         (GraphicsLayer
           (position 10.00 10.00)
-          (bounds 400.00 205.00)
+          (bounds 400.00 204.50)
           (clips 1)
           (children 1
             (GraphicsLayer
@@ -67,7 +67,7 @@
         )
         (GraphicsLayer
           (position 10.00 10.00)
-          (bounds 400.00 205.00)
+          (bounds 400.00 204.50)
           (clips 1)
           (children 1
             (GraphicsLayer
@@ -84,7 +84,7 @@
         )
         (GraphicsLayer
           (position 10.00 10.00)
-          (bounds 400.00 205.00)
+          (bounds 400.00 204.50)
           (clips 1)
           (children 1
             (GraphicsLayer

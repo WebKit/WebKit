@@ -22,8 +22,8 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 778x58 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 128x18
                   text run at (2,2) width 128: "The following text: "
-                RenderInline {TT} at (129,4) size 87x15
-                  RenderText {#text} at (129,4) size 87x15
+                RenderInline {TT} at (129,4) size 87x16
+                  RenderText {#text} at (129,4) size 87x16
                     text run at (129,4) width 87: "hello world"
                 RenderText {#text} at (2,2) size 761x54
                   text run at (215,2) width 543: ", is written using the <tt> tag. It should show up as Monaco 11 point, but instead it is"
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,166) size 784x18
         RenderText {#text} at (0,0) size 296x18
           text run at (0,0) width 296: "Here is the same text again outside a <table>: "
-        RenderInline {TT} at (295,2) size 87x15
-          RenderText {#text} at (295,2) size 87x15
+        RenderInline {TT} at (295,2) size 87x16
+          RenderText {#text} at (295,2) size 87x16
             text run at (295,2) width 87: "hello world"
         RenderText {#text} at (381,0) size 240x18
           text run at (381,0) width 240: ". Notice it is displayed correctly now."

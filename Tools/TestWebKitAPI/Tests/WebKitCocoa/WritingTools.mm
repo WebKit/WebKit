@@ -2304,8 +2304,8 @@ TEST(WritingTools, ShowDetailsForSuggestions)
     };
 #else
     const Vector<WebCore::IntRect> expectedRects {
-        { { 8, 9 }, { 40, 19 } },
-        { { 97, 9 }, { 47, 19 } },
+        { { 8, 9 }, { 40, 20 } },
+        { { 97, 9 }, { 47, 20 } },
     };
 #endif
 
@@ -4045,8 +4045,8 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadin
     };
 #else
     const Vector<WebCore::IntRect> expectedRects {
-        { { 196, 8 }, { 29, 19 } },
-        { { 84, 44 }, { 40, 19 } },
+        { { 196, 8 }, { 29, 20 } },
+        { { 84, 44 }, { 40, 20 } },
     };
 #endif
 

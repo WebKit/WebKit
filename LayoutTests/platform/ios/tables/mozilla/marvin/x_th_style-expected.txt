@@ -7,10 +7,10 @@ layer at (0,0) size 800x46
         RenderTableSection (anonymous) at (1,1) size 680x28
           RenderTableRow {tr} at (0,2) size 680x24
             RenderTableCell {th} at (2,2) size 337x24 [bgcolor=#00FF00] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 333x19
+              RenderText {#text} at (2,2) size 333x20
                 text run at (2,2) width 217: "This heading cell should have a "
                 text run at (218,2) width 117: "lime background"
             RenderTableCell {th} at (340,2) size 338x24 [bgcolor=#00FF00] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 333x19
+              RenderText {#text} at (2,2) size 333x20
                 text run at (2,2) width 217: "This heading cell should have a "
                 text run at (218,2) width 117: "lime background"

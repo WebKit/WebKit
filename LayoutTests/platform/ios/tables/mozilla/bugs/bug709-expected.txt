@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 753x26
           RenderTableRow {TR} at (0,2) size 753x22
             RenderTableCell {TD} at (2,2) size 308x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 306x19
+              RenderText {#text} at (1,1) size 306x20
                 text run at (1,1) width 306: "The quick brown fox jumped over the lazy dog."
             RenderTableCell {TD} at (311,2) size 440x22 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 438x19
+              RenderText {#text} at (1,1) size 438x20
                 text run at (1,1) width 438: "Now is the time for all good men to come to the aid of their country."

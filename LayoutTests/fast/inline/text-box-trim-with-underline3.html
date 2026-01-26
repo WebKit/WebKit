@@ -5,36 +5,36 @@ div {
     font-size: 20px;
     text-box: trim-start cap alphabetic;
     text-decoration: underline;
-    margin-bottom: 30px;
+    position: absolute;
 }
 </style>
 <!-- Underline placement relative to the content should not change when trim is applied. -->
 
-<div>PASS if underline forms a single line</div>
-<div>
+<div style="top: 0px;">PASS if underline forms a single line</div>
+<div style="top: 40px;">
   <span>PASS if underline forms a single line</span>
 </div>
-<div>
+<div style="top: 80px;">
   <span>PASS if underline forms a single
     <span style="text-decoration: underline;">line</span>
   </span>
 </div>
-<div>
+<div style="top: 120px;">
   <span style="text-decoration: underline;">PASS if underline forms a single
     <span style="text-box: trim-both cap alphabetic">line</span>
   </span>
 </div>
-<div>
+<div style="top: 160px;">
   <span style="text-decoration: underline;">PASS if underline forms a single
     <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
   </span>
 </div>
-<div>
+<div style="top: 200px;">
   <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
     <span style="text-decoration: underline;">line</span>
   </span>
 </div>
-<div>
+<div style="top: 240px;">
   <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
     <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
   </span>

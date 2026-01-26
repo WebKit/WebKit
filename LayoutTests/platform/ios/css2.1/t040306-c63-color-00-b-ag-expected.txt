@@ -4,10 +4,10 @@ layer at (0,0) size 800x120
   RenderBlock {HTML} at (0,0) size 800x120
     RenderBody {BODY} at (8,16) size 784x96 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 662x19
+        RenderText {#text} at (0,0) size 662x20
           text run at (0,0) width 662: "There should be three solid bars of colour below, each longer than the last, each of the colour specified."
       RenderBlock {DIV} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 39x19
+        RenderText {#text} at (0,0) size 39x20
           text run at (0,0) width 39: "Blue: "
         RenderInline {SPAN} at (38,5) size 16x15
           RenderText {#text} at (38,5) size 16x15
@@ -18,7 +18,7 @@ layer at (0,0) size 800x120
         RenderImage {IMG} at (68,5) size 16x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,56) size 784x20
-        RenderText {#text} at (0,0) size 56x19
+        RenderText {#text} at (0,0) size 56x20
           text run at (0,0) width 56: "Orange: "
         RenderInline {SPAN} at (55,5) size 16x15 [color=#FFA500]
           RenderText {#text} at (55,5) size 16x15
@@ -35,7 +35,7 @@ layer at (0,0) size 800x120
         RenderImage {IMG} at (115,5) size 16x15 [color=#FF0000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,76) size 784x20
-        RenderText {#text} at (0,0) size 43x19
+        RenderText {#text} at (0,0) size 43x20
           text run at (0,0) width 43: "Lime: "
         RenderInline {SPAN} at (42,5) size 16x15 [color=#00FF00]
           RenderText {#text} at (42,5) size 16x15

@@ -4,7 +4,7 @@ layer at (0,0) size 800x1345
   RenderBlock {HTML} at (0,0) size 800x1345
     RenderBody {BODY} at (8,8) size 784x1329 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 363x19
+        RenderText {#text} at (0,0) size 363x20
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,36) size 784x168
         RenderText {#text} at (0,0) size 617x168
@@ -33,90 +33,90 @@ layer at (0,0) size 800x1345
           text run at (0,154) width 539: ".eleven {border-style: none; border-color: red; border-width: thick;}"
           text run at (538,154) width 1: " "
       RenderBlock {P} at (0,235) size 784x30 [border: (5px dotted #000000)]
-        RenderText {#text} at (5,5) size 480x19
+        RenderText {#text} at (5,5) size 480x20
           text run at (5,5) width 480: "This paragraph should have a thick black dotted border all the way around."
       RenderBlock {P} at (0,281) size 784x30 [border: (5px dashed #000000)]
-        RenderText {#text} at (5,5) size 484x19
+        RenderText {#text} at (5,5) size 484x20
           text run at (5,5) width 484: "This paragraph should have a thick black dashed border all the way around."
       RenderBlock {P} at (0,327) size 784x30 [border: (5px solid #000000)]
-        RenderText {#text} at (5,5) size 471x19
+        RenderText {#text} at (5,5) size 471x20
           text run at (5,5) width 471: "This paragraph should have a thick black solid border all the way around."
       RenderBlock {P} at (0,373) size 784x30 [border: (5px double #000000)]
-        RenderText {#text} at (5,5) size 483x19
+        RenderText {#text} at (5,5) size 483x20
           text run at (5,5) width 483: "This paragraph should have a thick black double border all the way around."
       RenderBlock {P} at (0,419) size 784x30 [border: (5px groove #808000)]
-        RenderText {#text} at (5,5) size 482x19
+        RenderText {#text} at (5,5) size 482x20
           text run at (5,5) width 482: "This paragraph should have a thick olive groove border all the way around."
       RenderBlock {P} at (0,465) size 784x30 [border: (5px ridge #808000)]
-        RenderText {#text} at (5,5) size 470x19
+        RenderText {#text} at (5,5) size 470x20
           text run at (5,5) width 470: "This paragraph should have a thick olive ridge border all the way around."
       RenderBlock {P} at (0,511) size 784x30 [border: (5px inset #808000)]
-        RenderText {#text} at (5,5) size 467x19
+        RenderText {#text} at (5,5) size 467x20
           text run at (5,5) width 467: "This paragraph should have a thick olive inset border all the way around."
       RenderBlock {P} at (0,557) size 784x30 [border: (5px outset #808000)]
-        RenderText {#text} at (5,5) size 475x19
+        RenderText {#text} at (5,5) size 475x20
           text run at (5,5) width 475: "This paragraph should have a thick olive outset border all the way around."
       RenderBlock {P} at (0,603) size 784x50 [border: (5px double #800080) (5px groove #800080) (5px double #800080) (5px groove #800080)]
-        RenderText {#text} at (5,5) size 757x39
+        RenderText {#text} at (5,5) size 757x40
           text run at (5,5) width 627: "This paragraph should have thick double top and bottom borders, and thick grooved side borders. "
           text run at (631,5) width 131: "The color of all four"
           text run at (5,25) width 208: "sides should be based on purple."
       RenderBlock {P} at (0,669) size 784x50 [border: (5px double #800080) (5px groove #800080) (5px ridge #800080) (5px inset #800080)]
-        RenderText {#text} at (5,5) size 738x39
+        RenderText {#text} at (5,5) size 738x40
           text run at (5,5) width 713: "This paragraph should have, in clockwise order from the top, a double, grooved, ridged, and inset thick border. "
           text run at (717,5) width 26: "The"
           text run at (5,25) width 312: "color of all four sides should be based on purple."
       RenderBlock {P} at (0,735) size 784x20
-        RenderText {#text} at (0,0) size 283x19
+        RenderText {#text} at (0,0) size 283x20
           text run at (0,0) width 283: "This paragraph should have no border at all."
       RenderTable {TABLE} at (0,771) size 784x558 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x556
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (4,4) size 161x19
-                RenderText {#text} at (4,4) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x20
+                RenderText {#text} at (4,4) size 161x20
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x528
             RenderTableCell {TD} at (0,278) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,254) size 4x19
+              RenderText {#text} at (4,254) size 4x20
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 770x528 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x30 [border: (5px dotted #000000)]
-                RenderText {#text} at (5,5) size 480x19
+                RenderText {#text} at (5,5) size 480x20
                   text run at (5,5) width 480: "This paragraph should have a thick black dotted border all the way around."
               RenderBlock {P} at (4,50) size 762x30 [border: (5px dashed #000000)]
-                RenderText {#text} at (5,5) size 484x19
+                RenderText {#text} at (5,5) size 484x20
                   text run at (5,5) width 484: "This paragraph should have a thick black dashed border all the way around."
               RenderBlock {P} at (4,96) size 762x30 [border: (5px solid #000000)]
-                RenderText {#text} at (5,5) size 471x19
+                RenderText {#text} at (5,5) size 471x20
                   text run at (5,5) width 471: "This paragraph should have a thick black solid border all the way around."
               RenderBlock {P} at (4,142) size 762x30 [border: (5px double #000000)]
-                RenderText {#text} at (5,5) size 483x19
+                RenderText {#text} at (5,5) size 483x20
                   text run at (5,5) width 483: "This paragraph should have a thick black double border all the way around."
               RenderBlock {P} at (4,188) size 762x30 [border: (5px groove #808000)]
-                RenderText {#text} at (5,5) size 482x19
+                RenderText {#text} at (5,5) size 482x20
                   text run at (5,5) width 482: "This paragraph should have a thick olive groove border all the way around."
               RenderBlock {P} at (4,234) size 762x30 [border: (5px ridge #808000)]
-                RenderText {#text} at (5,5) size 470x19
+                RenderText {#text} at (5,5) size 470x20
                   text run at (5,5) width 470: "This paragraph should have a thick olive ridge border all the way around."
               RenderBlock {P} at (4,280) size 762x30 [border: (5px inset #808000)]
-                RenderText {#text} at (5,5) size 467x19
+                RenderText {#text} at (5,5) size 467x20
                   text run at (5,5) width 467: "This paragraph should have a thick olive inset border all the way around."
               RenderBlock {P} at (4,326) size 762x30 [border: (5px outset #808000)]
-                RenderText {#text} at (5,5) size 475x19
+                RenderText {#text} at (5,5) size 475x20
                   text run at (5,5) width 475: "This paragraph should have a thick olive outset border all the way around."
               RenderBlock {P} at (4,372) size 762x50 [border: (5px double #800080) (5px groove #800080) (5px double #800080) (5px groove #800080)]
-                RenderText {#text} at (5,5) size 727x39
+                RenderText {#text} at (5,5) size 727x40
                   text run at (5,5) width 627: "This paragraph should have thick double top and bottom borders, and thick grooved side borders. "
                   text run at (631,5) width 101: "The color of all"
                   text run at (5,25) width 238: "four sides should be based on purple."
               RenderBlock {P} at (4,438) size 762x50 [border: (5px double #800080) (5px groove #800080) (5px ridge #800080) (5px inset #800080)]
-                RenderText {#text} at (5,5) size 738x39
+                RenderText {#text} at (5,5) size 738x40
                   text run at (5,5) width 713: "This paragraph should have, in clockwise order from the top, a double, grooved, ridged, and inset thick border. "
                   text run at (717,5) width 26: "The"
                   text run at (5,25) width 312: "color of all four sides should be based on purple."
               RenderBlock {P} at (4,504) size 762x20
-                RenderText {#text} at (0,0) size 283x19
+                RenderText {#text} at (0,0) size 283x20
                   text run at (0,0) width 283: "This paragraph should have no border at all."
 layer at (8,225) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,217) size 784x2 [color=#808080] [border: (1px inset #808080)]

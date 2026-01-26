@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 758x39
+        RenderText {#text} at (0,0) size 758x40
           text run at (0,0) width 387: "This tests selection preservation during an indent operation. "
           text run at (386,0) width 372: "The selection should start and end in the same parts of the"
           text run at (0,20) width 369: "words 'foo' and 'bar' before and after the indent operation."
       RenderBlock {DIV} at (0,56) size 784x40
         RenderBlock {BLOCKQUOTE} at (40,0) size 744x40
-          RenderInline {SPAN} at (0,0) size 22x19
-            RenderText {#text} at (0,0) size 22x19
+          RenderInline {SPAN} at (0,0) size 22x20
+            RenderText {#text} at (0,0) size 22x20
               text run at (0,0) width 22: "foo"
-            RenderBR {BR} at (21,0) size 1x19
-          RenderInline {SPAN} at (0,20) size 21x19
-            RenderText {#text} at (0,20) size 21x19
+            RenderBR {BR} at (21,0) size 1x20
+          RenderInline {SPAN} at (0,20) size 21x20
+            RenderText {#text} at (0,20) size 21x20
               text run at (0,20) width 21: "bar"
 selection start: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body
 selection end:   position 2 of child 0 {#text} of child 1 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

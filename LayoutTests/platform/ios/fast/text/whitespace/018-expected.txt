@@ -9,98 +9,98 @@ layer at (0,0) size 800x232
             text run at (0,2) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 599x19
+        RenderText {#text} at (0,0) size 599x20
           text run at (0,0) width 599: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
       RenderBlock {DIV} at (0,72) size 304x144 [color=#00FF00] [bgcolor=#008000]
-        RenderText {#text} at (0,-1) size 304x33
-          text run at (0,-1) width 0: " "
-          text run at (0,15) width 304: "1234567890123456789"
-        RenderInline {SPAN} at (0,15) size 304x49
-          RenderText {#text} at (0,31) size 32x17
-            text run at (0,31) width 32: "x "
-          RenderInline {SPAN} at (32,31) size 112x17
-            RenderText {#text} at (32,31) size 32x17
-              text run at (32,31) width 32: "x "
-            RenderInline {SPAN} at (64,31) size 0x17
-            RenderText {#text} at (64,31) size 16x17
-              text run at (64,31) width 16: "x"
-            RenderInline {SPAN} at (80,31) size 16x17
-              RenderText {#text} at (80,31) size 16x17
-                text run at (80,31) width 16: " "
-            RenderText {#text} at (96,31) size 48x17
-              text run at (96,31) width 48: "x x"
-          RenderText {#text} at (144,31) size 48x17
-            text run at (144,31) width 48: " x "
-          RenderInline {SPAN} at (192,31) size 64x17
-            RenderText {#text} at (192,31) size 64x17
-              text run at (192,31) width 64: "x x "
-          RenderText {#text} at (256,31) size 32x17
-            text run at (256,31) width 32: "x "
-          RenderInline {SPAN} at (288,31) size 16x17
-            RenderText {#text} at (288,31) size 16x17
-              text run at (288,31) width 16: "x"
-          RenderText {#text} at (0,47) size 64x17
-            text run at (0,47) width 64: "1234"
-        RenderText {#text} at (64,47) size 448x17
-          text run at (64,47) width 448: "567890123456789 xxxx xxxx xx"
-        RenderInline {SPAN} at (512,47) size 112x17
-          RenderText {#text} at (512,47) size 16x17
-            text run at (512,47) width 16: "x"
-          RenderInline {SPAN} at (528,47) size 96x17
-            RenderText {#text} at (528,47) size 96x17
-              text run at (528,47) width 96: "x xxxx"
+        RenderText {#text} at (0,0) size 304x32
+          text run at (0,0) width 0: " "
+          text run at (0,16) width 304: "1234567890123456789"
+        RenderInline {SPAN} at (0,16) size 304x48
+          RenderText {#text} at (0,32) size 32x16
+            text run at (0,32) width 32: "x "
+          RenderInline {SPAN} at (32,32) size 112x16
+            RenderText {#text} at (32,32) size 32x16
+              text run at (32,32) width 32: "x "
+            RenderInline {SPAN} at (64,32) size 0x16
+            RenderText {#text} at (64,32) size 16x16
+              text run at (64,32) width 16: "x"
+            RenderInline {SPAN} at (80,32) size 16x16
+              RenderText {#text} at (80,32) size 16x16
+                text run at (80,32) width 16: " "
+            RenderText {#text} at (96,32) size 48x16
+              text run at (96,32) width 48: "x x"
+          RenderText {#text} at (144,32) size 48x16
+            text run at (144,32) width 48: " x "
+          RenderInline {SPAN} at (192,32) size 64x16
+            RenderText {#text} at (192,32) size 64x16
+              text run at (192,32) width 64: "x x "
+          RenderText {#text} at (256,32) size 32x16
+            text run at (256,32) width 32: "x "
+          RenderInline {SPAN} at (288,32) size 16x16
+            RenderText {#text} at (288,32) size 16x16
+              text run at (288,32) width 16: "x"
+          RenderText {#text} at (0,48) size 64x16
+            text run at (0,48) width 64: "1234"
+        RenderText {#text} at (64,48) size 448x16
+          text run at (64,48) width 448: "567890123456789 xxxx xxxx xx"
+        RenderInline {SPAN} at (512,48) size 112x16
+          RenderText {#text} at (512,48) size 16x16
+            text run at (512,48) width 16: "x"
+          RenderInline {SPAN} at (528,48) size 96x16
+            RenderText {#text} at (528,48) size 96x16
+              text run at (528,48) width 96: "x xxxx"
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,63) size 16x17
-          text run at (0,63) width 16: "x"
-        RenderInline {SPAN} at (16,63) size 112x17
-          RenderText {#text} at (16,63) size 16x17
-            text run at (16,63) width 16: " "
-          RenderInline {SPAN} at (32,63) size 16x17
-            RenderText {#text} at (32,63) size 16x17
-              text run at (32,63) width 16: " "
-          RenderText {#text} at (48,63) size 16x17
-            text run at (48,63) width 16: " "
-          RenderInline {SPAN} at (64,63) size 16x17
-            RenderText {#text} at (64,63) size 16x17
-              text run at (64,63) width 16: " "
-          RenderText {#text} at (80,63) size 16x17
-            text run at (80,63) width 16: " "
-          RenderInline {SPAN} at (96,63) size 16x17
-            RenderText {#text} at (96,63) size 16x17
-              text run at (96,63) width 16: " "
-          RenderText {#text} at (112,63) size 16x17
-            text run at (112,63) width 16: " "
-          RenderInline {SPAN} at (128,63) size 0x17
+        RenderText {#text} at (0,64) size 16x16
+          text run at (0,64) width 16: "x"
+        RenderInline {SPAN} at (16,64) size 112x16
+          RenderText {#text} at (16,64) size 16x16
+            text run at (16,64) width 16: " "
+          RenderInline {SPAN} at (32,64) size 16x16
+            RenderText {#text} at (32,64) size 16x16
+              text run at (32,64) width 16: " "
+          RenderText {#text} at (48,64) size 16x16
+            text run at (48,64) width 16: " "
+          RenderInline {SPAN} at (64,64) size 16x16
+            RenderText {#text} at (64,64) size 16x16
+              text run at (64,64) width 16: " "
+          RenderText {#text} at (80,64) size 16x16
+            text run at (80,64) width 16: " "
+          RenderInline {SPAN} at (96,64) size 16x16
+            RenderText {#text} at (96,64) size 16x16
+              text run at (96,64) width 16: " "
+          RenderText {#text} at (112,64) size 16x16
+            text run at (112,64) width 16: " "
+          RenderInline {SPAN} at (128,64) size 0x16
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (128,63) size 32x17
-          text run at (128,63) width 32: "  "
-        RenderInline {SPAN} at (160,63) size 16x17
-          RenderText {#text} at (160,63) size 16x17
-            text run at (160,63) width 16: " "
-        RenderInline {SPAN} at (176,63) size 16x17
-          RenderText {#text} at (176,63) size 16x17
-            text run at (176,63) width 16: " "
-        RenderText {#text} at (192,63) size 48x17
-          text run at (192,63) width 48: "   "
-        RenderInline {SPAN} at (240,63) size 0x17
+        RenderText {#text} at (128,64) size 32x16
+          text run at (128,64) width 32: "  "
+        RenderInline {SPAN} at (160,64) size 16x16
+          RenderText {#text} at (160,64) size 16x16
+            text run at (160,64) width 16: " "
+        RenderInline {SPAN} at (176,64) size 16x16
+          RenderText {#text} at (176,64) size 16x16
+            text run at (176,64) width 16: " "
+        RenderText {#text} at (192,64) size 48x16
+          text run at (192,64) width 48: "   "
+        RenderInline {SPAN} at (240,64) size 0x16
           RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (240,63) size 0x17
+        RenderInline {SPAN} at (240,64) size 0x16
           RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,79) size 384x17
-          text run at (0,79) width 384: "  x x  x x  x x    x    "
-          text run at (384,79) width 0: " "
-        RenderInline {SPAN} at (0,95) size 624x17
-          RenderText {#text} at (0,95) size 624x17
-            text run at (0,95) width 624: "x x x x x x x x x x xxxx xxxx xxxx xxxx"
-        RenderText {#text} at (0,95) size 624x33
-          text run at (624,95) width 0: " "
-          text run at (0,111) width 624: "x                 x x    x  x    x    x"
-        RenderInline {SPAN} at (0,111) size 640x33
-          RenderText {#text} at (0,127) size 304x17
-            text run at (0,127) width 304: "xxxxxxxxxxxxxxxxxxx"
-          RenderInline {SPAN} at (304,127) size 336x17
-            RenderText {#text} at (304,127) size 336x17
-              text run at (304,127) width 336: " x    x  x xxxx xxxx "
-        RenderText {#text} at (640,127) size 0x17
-          text run at (640,127) width 0: " "
+        RenderText {#text} at (0,80) size 384x16
+          text run at (0,80) width 384: "  x x  x x  x x    x    "
+          text run at (384,80) width 0: " "
+        RenderInline {SPAN} at (0,96) size 624x16
+          RenderText {#text} at (0,96) size 624x16
+            text run at (0,96) width 624: "x x x x x x x x x x xxxx xxxx xxxx xxxx"
+        RenderText {#text} at (0,96) size 624x32
+          text run at (624,96) width 0: " "
+          text run at (0,112) width 624: "x                 x x    x  x    x    x"
+        RenderInline {SPAN} at (0,112) size 640x32
+          RenderText {#text} at (0,128) size 304x16
+            text run at (0,128) width 304: "xxxxxxxxxxxxxxxxxxx"
+          RenderInline {SPAN} at (304,128) size 336x16
+            RenderText {#text} at (304,128) size 336x16
+              text run at (304,128) width 336: " x    x  x xxxx xxxx "
+        RenderText {#text} at (640,128) size 0x16
+          text run at (640,128) width 0: " "

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (0,0) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 575x19
+        RenderText {#text} at (0,0) size 575x20
           text run at (0,0) width 575: "Tests double-clicking on a word. If the test succeeds, the word \"word\" should be selected."
 layer at (14,11) size 142x14
   RenderBlock {DIV} at (6,3) size 142x14

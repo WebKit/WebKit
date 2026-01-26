@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 38x18
             RenderText at (8,2) size 6x13
               text run at (8,2) width 6: "1"
-      RenderBlock {DIV} at (0,70) size 784x19
+      RenderBlock {DIV} at (0,70) size 784x20
         RenderText {#text} at (0,0) size 30x18
           text run at (0,0) width 30: "xfoo"
-        RenderMenuList {SELECT} at (29,1) size 39x18 [bgcolor=#FFFFFF]
+        RenderMenuList {SELECT} at (29,1) size 39x19 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 38x18
             RenderText at (8,2) size 6x13
               text run at (8,2) width 6: "1"

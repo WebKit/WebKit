@@ -52,7 +52,7 @@ layer at (0,0) size 800x703
         RenderTableSection {TBODY} at (1,1) size 598x28
           RenderTableRow {TR} at (0,2) size 598x24
             RenderTableCell {TD} at (2,2) size 594x24 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 217x19
+              RenderText {#text} at (2,2) size 217x20
                 text run at (2,2) width 217: "600px table for width comparison"
       RenderTable {TABLE} at (0,239) size 650x60 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 648x58

@@ -13,6 +13,6 @@ description("Test for https://bugs.webkit.org/show_bug.cgi?id=71996");
 var test = document.getElementById("test");
 var style = window.getComputedStyle(test);
 shouldBeEqualToString("style.verticalAlign", "-1px");
-shouldBeCloseTo("test.offsetTop", 10, 1);
+shouldBe("test.offsetTop", "10");
 isSuccessfullyParsed();
 </script>

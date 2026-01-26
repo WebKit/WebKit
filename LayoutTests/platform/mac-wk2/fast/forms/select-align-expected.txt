@@ -11,22 +11,22 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (1,1) size 298x18
             RenderText at (8,2) size 158x13
               text run at (8,2) width 158: "This is should be left justified."
-        RenderBR {BR} at (300,0) size 0x18
+        RenderBR {BR} at (300,-1) size 0x19
         RenderMenuList {SELECT} at (0,20) size 300x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
           RenderBlock (anonymous) at (1,1) size 298x18
             RenderText at (8,2) size 158x13
               text run at (8,2) width 158: "This is should be left justified."
-        RenderBR {BR} at (300,20) size 0x18
+        RenderBR {BR} at (300,19) size 0x19
         RenderMenuList {SELECT} at (0,40) size 300x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
           RenderBlock (anonymous) at (1,1) size 298x18
             RenderText at (8,2) size 158x13
               text run at (8,2) width 158: "This is should be left justified."
-        RenderBR {BR} at (300,40) size 0x18
+        RenderBR {BR} at (300,39) size 0x19
         RenderMenuList {SELECT} at (0,60) size 300x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
           RenderBlock (anonymous) at (1,1) size 298x18
             RenderText at (8,2) size 158x13
               text run at (8,2) width 158: "This is should be left justified."
-        RenderBR {BR} at (300,60) size 0x18
+        RenderBR {BR} at (300,59) size 0x19
         RenderMenuList {SELECT} at (0,80) size 300x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
           RenderBlock (anonymous) at (1,1) size 298x18
             RenderText at (8,2) size 158x13

@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock {P} at (0,0) size 60x584
-        RenderText {#text} at (0,0) size 59x567
-          text run at (0,0) width 519: "In this test, you should see three blocks that are aligned right within a black box. "
-          text run at (0,518) width 33: "They"
-          text run at (20,0) width 506: "should be stacked horizontally with the green box in between two olive boxes. "
-          text run at (20,505) width 61: "The olive"
+        RenderText {#text} at (0,0) size 60x567
+          text run at (0,0) width 520: "In this test, you should see three blocks that are aligned right within a black box. "
+          text run at (0,518) width 34: "They"
+          text run at (20,0) width 507: "should be stacked horizontally with the green box in between two olive boxes. "
+          text run at (20,505) width 62: "The olive"
           text run at (40,0) width 286: "boxes and the green box should be 100x100."
 layer at (376,8) size 340x240
   RenderBlock (positioned) {DIV} at (84,8) size 340x240 [border: (20px solid #000000)]

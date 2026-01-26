@@ -6,6 +6,6 @@ layer at (0,0) size 800x20
       RenderInline {body} at (0,0) size 800x20
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (0,0) size 800x20
-          RenderText {#text} at (0,0) size 340x19
+          RenderText {#text} at (0,0) size 340x20
             text run at (0,0) width 340: "This line should be green and there should be no red."
       RenderText {#text} at (0,0) size 0x0

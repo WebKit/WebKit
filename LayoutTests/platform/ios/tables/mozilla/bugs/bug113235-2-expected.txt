@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderInline {FONT} at (0,0) size 784x77
-        RenderText {#text} at (0,0) size 707x15
+        RenderText {#text} at (0,0) size 707x16
           text run at (0,0) width 327: "This text node only exists once in the original document! "
           text run at (326,0) width 305: "If it were a large collection of inlines, the page would "
           text run at (630,0) width 77: "hang forever."
-        RenderInline {A} at (706,0) size 0x15
+        RenderInline {A} at (706,0) size 0x16
         RenderBlock {H2} at (0,32) size 784x25
-          RenderInline {A} at (0,0) size 164x23
-            RenderText {#text} at (0,0) size 164x23
+          RenderInline {A} at (0,0) size 164x24
+            RenderText {#text} at (0,0) size 164x24
               text run at (0,0) width 164: "Table of Contents"
         RenderTable {TABLE} at (0,72) size 4x5
           RenderTableSection {TBODY} at (0,0) size 4x4

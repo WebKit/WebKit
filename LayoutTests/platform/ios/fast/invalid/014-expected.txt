@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 612x19
+        RenderText {#text} at (0,0) size 612x20
           text run at (0,0) width 289: "Random tests of some bizarre combinations. "
           text run at (288,0) width 324: "H2 should allow a form inside it, but p should not."
         RenderText {#text} at (0,0) size 0x0
