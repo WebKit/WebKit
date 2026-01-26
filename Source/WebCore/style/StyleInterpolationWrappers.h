@@ -170,7 +170,7 @@ StyleTypeWrapper(CSSPropertyID, const T& (GetterRenderStyle::*getter)() const, v
 template<typename T, typename GetterRenderStyle, typename SetterRenderStyle>
 StyleTypeWrapper(CSSPropertyID, T (GetterRenderStyle::*getter)() const, void (SetterRenderStyle::*setter)(T&&)) -> StyleTypeWrapper<T, T, T&&>;
 
-template<typename T> class VisitedAffectedStyleTypeWrapper : public WrapperBase {
+template<typename T> class VisitedAffectedStyleTypeWrapper final : public WrapperBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisitedAffectedStyleTypeWrapper, Animation);
 public:
     VisitedAffectedStyleTypeWrapper(CSSPropertyID property, const T& (ComputedStyleProperties::*getter)() const, void (ComputedStyleProperties::*setter)(T&&), const T& (ComputedStyleProperties::*visitedGetter)() const, void (ComputedStyleProperties::*visitedSetter)(T&&))
@@ -187,7 +187,9 @@ public:
 
     bool canInterpolate(const RenderStyle& a, const RenderStyle& b, CompositeOperation operation) const override
     {
-        return m_wrapper.canInterpolate(a, b, operation) || m_visitedWrapper.canInterpolate(a, b, operation);
+        const_cast<VisitedAffectedStyleTypeWrapper&>(*this).m_wrapperCanInterpolate = m_wrapper.canInterpolate(a, b, operation);
+        const_cast<VisitedAffectedStyleTypeWrapper&>(*this).m_visitedWrapperCanInterpolate = m_visitedWrapper.canInterpolate(a, b, operation);
+        return m_wrapperCanInterpolate || m_visitedWrapperCanInterpolate;
     }
 
     bool requiresInterpolationForAccumulativeIteration(const RenderStyle& a, const RenderStyle& b) const override
@@ -197,8 +199,19 @@ public:
 
     void interpolate(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const Context& context) const override
     {
-        m_wrapper.interpolate(destination, from, to, context);
-        m_visitedWrapper.interpolate(destination, from, to, context);
+        bool usesNonNormalizeDiscreteInterpolation = CSSProperty::animationUsesNonNormalizedDiscreteInterpolation(property());
+
+        auto wrapperContext = context;
+        wrapperContext.isDiscrete = !m_wrapperCanInterpolate;
+        if (!usesNonNormalizeDiscreteInterpolation)
+            wrapperContext.normalizeProgress();
+        m_wrapper.interpolate(destination, from, to, wrapperContext);
+
+        auto visitedWrapperContext = context;
+        visitedWrapperContext.isDiscrete = !m_visitedWrapperCanInterpolate;
+        if (!usesNonNormalizeDiscreteInterpolation)
+            visitedWrapperContext.normalizeProgress();
+        m_visitedWrapper.interpolate(destination, from, to, visitedWrapperContext);
     }
 
 #if !LOG_DISABLED
@@ -211,6 +224,8 @@ public:
 
     StyleTypeWrapper<T, const T&, T&&> m_wrapper;
     StyleTypeWrapper<T, const T&, T&&> m_visitedWrapper;
+    bool m_wrapperCanInterpolate { false };
+    bool m_visitedWrapperCanInterpolate { false };
 };
 
 // MARK: - Discrete Wrappers
