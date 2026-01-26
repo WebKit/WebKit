@@ -97,6 +97,15 @@ void Content::setLineEllipsis(size_t lineIndex, Line::Ellipsis&& ellipsis)
     lineEllipses->at(lineIndex) = WTF::move(ellipsis);
 }
 
+void Content::setEllipsisOnTrailingLine(Line::Ellipsis&& ellipsis)
+{
+    if (lines.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    setLineEllipsis(lines.size() - 1, WTF::move(ellipsis));
+}
+
 std::optional<Line::Ellipsis> Content::lineEllipsis(size_t lineIndex) const
 {
     if (!lines[lineIndex].hasEllipsis())
