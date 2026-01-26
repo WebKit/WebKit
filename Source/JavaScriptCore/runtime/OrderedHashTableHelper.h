@@ -418,6 +418,9 @@ public:
     ALWAYS_INLINE static void addImpl(JSGlobalObject* globalObject, HashTable* owner, Storage& base, JSValue key, JSValue value, FindResult& result)
     {
         VM& vm = getVM(globalObject);
+        // We're transitioning between states here, if a termination comes in we could leave the storage
+        // in an inconsistent state. It's much easier to pause termination until the storage is updated.
+        DeferTerminationForAWhile noTermination(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete(base));
         ASSERT(!isValidTableIndex(result.entryKeyIndex));
@@ -472,6 +475,9 @@ public:
     ALWAYS_INLINE static void shrinkIfNeeded(JSGlobalObject* globalObject, HashTable* owner, Storage& base)
     {
         VM& vm = globalObject->vm();
+        // We're transitioning between states here, if a termination comes in we could leave the storage
+        // in an inconsistent state. It's much easier to pause termination until the storage is updated.
+        DeferTerminationForAWhile noTermination(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
         ASSERT(!isObsolete(base));
         TableSize capacity = Helper::capacity(base);
