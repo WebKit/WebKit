@@ -2259,7 +2259,8 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     if (url.protocolIsAbout())
         return;
 
-    if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
+    bool siteIsolationEnabled = m_sharedPreferencesForWebProcess.siteIsolationEnabled;
+    if (!siteIsolationEnabled && !url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
         // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
         // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
         m_site = makeUnexpected(SiteState::MultipleSites);
@@ -2278,7 +2279,7 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
         return;
     }
 
-    if (m_sharedPreferencesForWebProcess.siteIsolationEnabled)
+    if (siteIsolationEnabled)
         ASSERT((m_site && *m_site == site) || m_site.error() == SiteState::SharedProcess);
     else {
         // Associate the process with this site.
