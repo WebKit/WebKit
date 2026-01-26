@@ -727,15 +727,9 @@ static size_t computeSize(HashSet<uint64_t, DefaultHash<uint64_t>, WTF::Unsigned
 
 bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortIndex)
 {
-    bool needsUpdate = false;
-    if (maxUnsignedIndex > m_maxUnsignedIndex) {
-        m_maxUnsignedIndex = maxUnsignedIndex;
-        needsUpdate = true;
-    }
-    if (m_maxUshortIndex > maxUshortIndex) {
-        m_maxUshortIndex = maxUshortIndex;
-        needsUpdate = true;
-    }
+    const bool needsUpdate = maxUnsignedIndex > m_maxUnsignedIndex || maxUshortIndex > m_maxUshortIndex;
+    m_maxUnsignedIndex = std::max(m_maxUnsignedIndex, maxUnsignedIndex);
+    m_maxUshortIndex = std::max(m_maxUshortIndex, maxUshortIndex);
 
     return needsUpdate;
 }
