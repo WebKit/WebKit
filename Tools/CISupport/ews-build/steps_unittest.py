@@ -2408,6 +2408,218 @@ class TestRunWebKitTestsInStressMode(BuildStepMixinAdditions, unittest.TestCase)
         return self.run_step()
 
 
+class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'webdriver_tests.json'
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(RunWebDriverTests())
+        self.setProperty('buildername', 'GTK-Linux-64-bit-Release-WebDriver-Tests')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'gtk-linux-bot-14')
+
+    def test_success_wpe(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='All tests run as expected\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='webdriver-tests')
+        return self.run_step()
+
+    def test_success_flaky(self):
+        self.setup_step(ReRunWebDriverTests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='All tests run as expected\n')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='webdriver-tests')
+
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_post_flaky_state(_):
+            step = self.get_nth_step(0)
+            self.assertFalse(
+                any(isinstance(s, RunWebDriverTestsWithoutChange) for s in step.steps_to_add),
+                f"ReRunWebDriverTests should not be in scheduled steps: {step.steps_to_add}"
+            )
+
+        return d
+
+    def test_failure_triggers_run_wihtout_change(self):
+        self.setup_step(ReRunWebDriverTests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='Unexpected failures (1)\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 failure')
+
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_triggered_clean_run(_):
+            step = self.get_nth_step(0)
+            self.assertTrue(
+                any(isinstance(s, RevertAppliedChanges) for s in step.steps_to_add),
+                f"RevertAppliedChanges not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, CompileWebKitWithoutChange) for s in step.steps_to_add),
+                f"CompileWebKitWithoutChange not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, RunWebDriverTestsWithoutChange) for s in step.steps_to_add),
+                f"RunWebDriverTestsWithoutChange not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, AnalyzeWebDriverTestsResults) for s in step.steps_to_add),
+                f"AnalyzeWebDriverTestsResults not found: {step.steps_to_add}"
+            )
+            self.assertTrue(
+                any(isinstance(s, InstallWpeDependencies) for s in step.steps_to_add),
+                f"InstallWpeDependencies not found for WPE: {step.steps_to_add}"
+            )
+        return d
+
+    def test_one_failure(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='Unexpected failures (1)\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 failure')
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_post_failure_state(_):
+            step = self.get_nth_step(0)
+            summary = step.getResultSummary()
+            self.assertIn('build', summary)
+
+            self.assertTrue(
+                any(isinstance(s, ReRunWebDriverTests) for s in step.steps_to_add),
+                f"ReRunWebDriverTests not found in scheduled steps: {step.steps_to_add}"
+            )
+
+        return d
+
+    def test_new_passes(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='Expected to fail, but passed (1)\n')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 new pass')
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_build_summary(_):
+            step = self.get_nth_step(0)
+            summary = step.getResultSummary()
+            self.assertNotIn('build', summary)
+
+        return d
+
+    def test_failures_and_new_passes(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                log_environ=True,
+                logfiles={'json': self.jsonFileName},
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                timeout=5400
+            )
+            .log('stdio', stdout='''filter-test-logs progress: 11300 lines processed
+filter-test-logs progress: 20000 lines processed
+filter-test-logs progress: 44000 lines processed
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO] 6228 tests ran as expected, 554 didn't
+
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO] Expected to fail, but passed (92)
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/selenium/py/test/selenium/webdriver/common/bidi_script_tests.py::test_get_realms[wpewebkit]
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/selenium/py/test/selenium/webdriver/common/bidi_script_tests.py::test_get_realms_filtered_by_context[wpewebkit]
+
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO] Unexpected failures (42)
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/w3c/webdriver/tests/bidi/network/subscribe_test.py::test_subscribe_to_module[wpewebkit]
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/w3c/webdriver/tests/bidi/script/evaluate_test.py::test_evaluate_exception[wpewebkit]
+
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO] Unexpected timeouts (7)
+webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/w3c/webdriver/tests/bidi/browsing_context/navigate_test.py::test_navigate_slow_page[wpewebkit]
+  ''')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='42 failures, 7 timeouts and 92 new passes')
+        d = self.run_step()
+
+        @d.addCallback
+        def verify_build_summary(_):
+            step = self.get_nth_step(0)
+            summary = step.getResultSummary()
+            self.assertIn('build', summary)
+
+        return d
+
+
 class TestRunWebKitTestsInStressGuardmallocMode(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

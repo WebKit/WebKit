@@ -6143,6 +6143,153 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
+class RunWebDriverTests(shell.Test, ShellMixin):
+    name = "run-webdriver-tests"
+    description = ["webdriver-tests running"]
+    descriptionDone = ["webdriver-tests"]
+    jsonFileName = "webdriver_tests.json"
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--verbose", f"--json-output={jsonFileName}", WithProperties("--%(configuration)s")]
+    logfiles = {"json": jsonFileName}
+    suffix = 'first_run'
+
+    def __init__(self, **kwargs):
+        kwargs['timeout'] = 90 * 60
+        super().__init__(**kwargs)
+        self.failuresCount = 0
+        self.timeoutCount = 0
+        self.newPassesCount = 0
+        self.steps_to_add = []
+
+    @defer.inlineCallbacks
+    def run(self):
+        additionalArguments = self.getProperty('additionalArguments')
+        if additionalArguments:
+            self.command += additionalArguments
+
+        platform = self.getProperty('platform')
+        self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+        self.command = self.shell_command(' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver')
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        logText = self.log_observer.getStdout()
+
+        foundFailures = re.findall(r"Unexpected failures \((\d+)\)", logText, re.MULTILINE)
+        if foundFailures:
+            self.failuresCount = int(foundFailures[0])
+        foundTimeouts = re.findall(r"Unexpected timeouts \((\d+)\)", logText, re.MULTILINE)
+        if foundTimeouts:
+            self.timeoutCount = int(foundTimeouts[0])
+        foundNewPasses = re.findall(r"Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
+        if foundNewPasses:
+            self.newPassesCount = int(foundNewPasses[0])
+
+        self.steps_to_add.extend([
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                additions=f'{self.build.number}',
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ])
+
+        if rc != 0:
+            retVal = FAILURE
+            self.doOnFailure()
+        elif self.failuresCount:
+            retVal = FAILURE
+            self.doOnFailure()
+        elif self.newPassesCount:
+            retVal = WARNINGS
+        else:
+            retVal = SUCCESS
+
+        self.build.addStepsAfterCurrentStep(self.steps_to_add)
+
+        defer.returnValue(retVal)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            summaries = []
+            summary = None
+            shouldReportBuild = False
+            if self.failuresCount:
+                suffix = "" if self.failuresCount == 1 else "s"
+                summaries.append(f"{self.failuresCount} failure{suffix}")
+                shouldReportBuild = True
+            if self.timeoutCount:
+                suffix = "" if self.timeoutCount == 1 else "s"
+                summaries.append(f"{self.timeoutCount} timeout{suffix}")
+                shouldReportBuild = True
+            if self.newPassesCount:
+                suffix = "" if self.newPassesCount == 1 else "es"
+                summaries.append(f"{self.newPassesCount} new pass{suffix}")
+
+            if len(summaries) >= 2:
+                last = summaries.pop()
+                summary = ', '.join(summaries) + ' and ' + last
+            elif summaries:
+                summary = summaries[0]
+
+            if summary:
+                result = {'step': summary}
+                if shouldReportBuild:
+                    result['build'] = summary
+
+                return result
+        return super().getResultSummary()
+
+    def doOnFailure(self):
+        self.steps_to_add.extend([
+            ValidateChange(verifyBugClosed=False, addURLs=False),
+            KillOldProcesses(),
+            ReRunWebDriverTests(),
+        ])
+
+
+class ReRunWebDriverTests(RunWebDriverTests):
+    name = 're-run-webdriver-tests'
+    suffix = 'second_run'
+
+    def doOnFailure(self):
+        self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
+        platform = self.getProperty('platform')
+        if platform == 'wpe':
+            self.steps_to_add.append(InstallWpeDependencies())
+        elif platform == 'gtk':
+            self.steps_to_add.append(InstallGtkDependencies())
+        self.steps_to_add.append(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.steps_to_add.append(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.steps_to_add.append(KillOldProcesses())
+        self.steps_to_add.append(RunWebDriverTestsWithoutChange())
+        self.steps_to_add.append(AnalyzeWebDriverTestsResults())
+
+class RunWebDriverTestsWithoutChange(RunWebDriverTests):
+    name = 'run-webdriver-tests-without-change'
+
+    def doOnFailure(self):
+        pass
+
+    def analyze_failures(self):
+        pass
+
+
+class AnalyzeWebDriverTestsResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'analyze-webdriver-tests-results'
+    description = ['analyze-webdriver-test-results']
+    descriptionDone = ['analyze-webdriver-tests-results']
+
+
+
+
+
 class ArchiveTestResults(shell.ShellCommand):
     command = ['python3', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']

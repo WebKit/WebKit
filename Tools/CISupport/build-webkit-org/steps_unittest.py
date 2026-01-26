@@ -1993,13 +1993,14 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 log_environ=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             )
             .log('stdio', stdout='All tests run as expected\n')
@@ -2010,14 +2011,15 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.configureStep()
-        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 log_environ=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --wpe 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             )
             .log('stdio', stdout='Unexpected failures (554)\n')
@@ -2037,13 +2039,14 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_new_passes(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 log_environ=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             )
             .log('stdio', stdout='Expected to fail, but passed (1)\n')
@@ -2063,13 +2066,14 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
     def test_failures_and_new_passes(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('platform', 'gtk')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 log_environ=True,
                 logfiles={'json': self.jsonFileName},
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
+                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webdriver-tests --verbose --json-output=webdriver_tests.json --release --gtk 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver'],
                 timeout=5400
             )
             .log('stdio', stdout='''filter-test-logs progress: 11300 lines processed
