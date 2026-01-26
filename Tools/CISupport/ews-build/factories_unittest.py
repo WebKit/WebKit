@@ -793,6 +793,25 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'run-api-tests',
             'set-build-summary'
         ],
+        'WebDriver-Tests-WPE-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'set-credential-helper',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'jhbuild',
+            'kill-old-processes',
+            'download-built-product',
+            'extract-built-product',
+            'run-webdriver-tests',
+            'set-build-summary'
+        ],
         'Services-EWS': [
             'configure-build',
             'check-change-relevance',

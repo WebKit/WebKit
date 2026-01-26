@@ -6028,6 +6028,105 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
+class RunWebDriverTests(shell.Test, ShellMixin):
+    name = "run-webdriver-tests"
+    description = ["webdriver-tests running"]
+    descriptionDone = ["webdriver-tests"]
+    jsonFileName = "webdriver_tests.json"
+    command = ["python3", "Tools/Scripts/run-webdriver-tests", "--verbose", f"--json-output={jsonFileName}", WithProperties("--%(configuration)s")]
+    logfiles = {"json": jsonFileName}
+
+    def __init__(self, **kwargs):
+        kwargs['timeout'] = 90 * 60
+        super().__init__(**kwargs)
+        self.failuresCount = 0
+        self.timeoutCount = 0
+        self.newPassesCount = 0
+
+    @defer.inlineCallbacks
+    def run(self):
+        additionalArguments = self.getProperty('additionalArguments')
+        if additionalArguments:
+            self.command += additionalArguments
+
+        platform = self.getProperty('platform')
+        self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
+        self.command = self.shell_command(' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs webdriver')
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+
+        logText = self.log_observer.getStdout()
+
+        foundFailures = re.findall(r"Unexpected failures \((\d+)\)", logText, re.MULTILINE)
+        if foundFailures:
+            self.failuresCount = int(foundFailures[0])
+        foundTimeouts = re.findall(r"Unexpected timeouts \((\d+)\)", logText, re.MULTILINE)
+        if foundTimeouts:
+            self.timeoutCount = int(foundTimeouts[0])
+        foundNewPasses = re.findall(r"Expected to .+, but passed \((\d+)\)", logText, re.MULTILINE)
+        if foundNewPasses:
+            self.newPassesCount = int(foundNewPasses[0])
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                additions=f'{self.build.number}',
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        if rc != 0:
+            defer.returnValue(FAILURE)
+        elif self.failuresCount:
+            defer.returnValue(FAILURE)
+        elif self.newPassesCount:
+            defer.returnValue(WARNINGS)
+        else:
+            defer.returnValue(SUCCESS)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            summaries = []
+            summary = None
+            shouldReportBuild = False
+            if self.failuresCount:
+                suffix = "" if self.failuresCount == 1 else "s"
+                summaries.append(f"{self.failuresCount} failure{suffix}")
+                shouldReportBuild = True
+            if self.timeoutCount:
+                suffix = "" if self.timeoutCount == 1 else "s"
+                summaries.append(f"{self.timeoutCount} timeout{suffix}")
+                shouldReportBuild = True
+            if self.newPassesCount:
+                suffix = "" if self.newPassesCount == 1 else "es"
+                summaries.append(f"{self.newPassesCount} new pass{suffix}")
+
+            if len(summaries) >= 2:
+                last = summaries.pop()
+                summary = ', '.join(summaries) + ' and ' + last
+            elif summaries:
+                summary = summaries[0]
+
+            if summary:
+                result = {'step': summary}
+                if shouldReportBuild:
+                    result['build'] = summary
+
+                return result
+        return super().getResultSummary()
+
+
+
+
 class ArchiveTestResults(shell.ShellCommand):
     command = ['python3', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']

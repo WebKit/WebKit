@@ -147,6 +147,7 @@ class BuildFactory(Factory):
 class TestFactory(Factory):
     LayoutTestClass = None
     APITestClass = None
+    WebDriverTestClass = None
     willTriggerCrashLogSubmission = False
     skipBuildIfNoResult = False
 
@@ -169,9 +170,11 @@ class TestFactory(Factory):
             self.addStep(self.LayoutTestClass())
         if self.APITestClass:
             self.addStep(self.APITestClass())
+        if self.WebDriverTestClass:
+            self.addStep(self.WebDriverTestClass())
         if self.willTriggerCrashLogSubmission:
             self.addStep(TriggerCrashLogSubmission())
-        if self.LayoutTestClass or self.APITestClass:
+        if self.LayoutTestClass or self.APITestClass or self.WebDriverTestClass:
             self.addStep(SetBuildSummary())
 
 
@@ -227,6 +230,10 @@ class JSCTestsFactory(Factory):
 
 class APITestsFactory(TestFactory):
     APITestClass = RunAPITests
+
+
+class WebDriverTestsFactory(TestFactory):
+    WebDriverTestClass = RunWebDriverTests
 
 
 class iOSBuildFactory(BuildFactory):

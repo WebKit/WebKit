@@ -40,6 +40,7 @@
     { "name": "igalia17-wpe-ews", "platform": "wpe" },
     { "name": "igalia18-wpe-ews", "platform": "wpe" },
     { "name": "igalia19-wpe-ews", "platform": "wpe" },
+    { "name": "igalia20-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "playstation-ews-001", "platform": "playstation" },
     { "name": "playstation-ews-002", "platform": "playstation" },
@@ -487,6 +488,13 @@
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["wpe-build-ews"],
       "workernames": ["igalia12-wpe-ews", "igalia13-wpe-ews", "igalia14-wpe-ews", "igalia15-wpe-ews"]
+    },
+    {
+      "name": "WebDriver-Tests-WPE-EWS", "shortname": "wpe-webdriver", "icon": "testOnly",
+      "factory": "WebDriverTestsFactory", "platform": "wpe",
+      "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["wpe-build-ews"],
+      "workernames": ["igalia20-wpe-ews"]
     },
     {
       "name": "Services-EWS", "shortname": "services", "icon": "testOnly",
