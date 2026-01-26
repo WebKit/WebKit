@@ -39,9 +39,9 @@ public:
 private:
     void clear();
     void populate();
-    CheckedPtr<WebCore::PopupMenuClient> checkedClient() const { return m_client; }
+    RefPtr<WebCore::PopupMenuClient> protectedClient() const { return m_client; }
 
-    CheckedPtr<WebCore::PopupMenuClient> m_client;
+    RefPtr<WebCore::PopupMenuClient> m_client;
     RetainPtr<NSPopUpButtonCell> m_popup;
 };
 

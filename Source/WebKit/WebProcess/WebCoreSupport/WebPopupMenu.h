@@ -62,7 +62,7 @@ private:
     Vector<WebPopupItem> populateItems();
     void setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
 
-    CheckedPtr<WebCore::PopupMenuClient> m_popupClient;
+    RefPtr<WebCore::PopupMenuClient> m_popupClient;
     WeakPtr<WebPage> m_page;
 };
 

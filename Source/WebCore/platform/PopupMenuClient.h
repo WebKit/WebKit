@@ -25,7 +25,6 @@
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/PopupMenuStyle.h>
 #include <WebCore/ScrollTypes.h>
-#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
@@ -37,7 +36,7 @@ class HostWindow;
 class Scrollbar;
 class ScrollableArea;
 
-class PopupMenuClient : public AbstractCanMakeCheckedPtr  {
+class PopupMenuClient : public AbstractRefCountedAndCanMakeWeakPtr<PopupMenuClient>  {
 public:
     virtual ~PopupMenuClient() = default;
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;

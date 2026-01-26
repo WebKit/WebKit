@@ -47,12 +47,9 @@ class HTMLSelectElement : public HTMLFormControlElement, public PopupMenuClient,
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
-    // CheckedPtr interface disambiguation.
-    uint32_t checkedPtrCount() const final { return HTMLFormControlElement::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return HTMLFormControlElement::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { HTMLFormControlElement::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { HTMLFormControlElement::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    // PopupMenuClient ref-counting (disambiguate from FormAssociatedElement)
+    void ref() const final { HTMLFormControlElement::ref(); }
+    void deref() const final { HTMLFormControlElement::deref(); }
 
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLSelectElement> create(Document&);

@@ -50,12 +50,9 @@ public:
         return adoptRef(*new SearchInputType(element));
     }
 
-    // CheckedPtr interface - resolve multiple inheritance ambiguity
-    uint32_t checkedPtrCount() const final { return BaseTextInputType::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return BaseTextInputType::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { BaseTextInputType::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { BaseTextInputType::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    // PopupMenuClient ref-counting (disambiguating from InputType)
+    void ref() const final { BaseTextInputType::ref(); }
+    void deref() const final { BaseTextInputType::deref(); }
 
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireEvents = true) override;

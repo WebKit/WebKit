@@ -58,7 +58,7 @@ void WebPopupMenu::disconnectClient()
 
 void WebPopupMenu::didChangeSelectedIndex(int newIndex)
 {
-    CheckedPtr popupClient = m_popupClient;
+    RefPtr popupClient = m_popupClient;
     if (!popupClient)
         return;
 
@@ -69,13 +69,13 @@ void WebPopupMenu::didChangeSelectedIndex(int newIndex)
 
 void WebPopupMenu::setTextForIndex(int index)
 {
-    if (CheckedPtr popupClient = m_popupClient)
+    if (RefPtr popupClient = m_popupClient)
         popupClient->setTextFromItem(index);
 }
 
 Vector<WebPopupItem> WebPopupMenu::populateItems()
 {
-    CheckedPtr popupClient = m_popupClient;
+    RefPtr popupClient = m_popupClient;
     return Vector<WebPopupItem>(popupClient->listSize(), [&](size_t i) {
         if (popupClient->itemIsSeparator(i))
             return WebPopupItem(WebPopupItem::Type::Separator);
@@ -91,7 +91,7 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedI
 {
     // FIXME: We should probably inform the client to also close the menu.
     Vector<WebPopupItem> items = populateItems();
-    CheckedPtr popupClient = m_popupClient;
+    RefPtr popupClient = m_popupClient;
     RefPtr page = m_page.get();
 
     if (items.isEmpty() || !page) {
@@ -115,7 +115,7 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedI
 void WebPopupMenu::hide()
 {
     RefPtr page = m_page.get();
-    CheckedPtr popupClient = m_popupClient;
+    RefPtr popupClient = m_popupClient;
     if (!page || !popupClient)
         return;
 

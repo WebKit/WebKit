@@ -38,7 +38,7 @@ using namespace WebCore;
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
 #if USE(APPKIT)
-    CheckedPtr popupClient = m_popupClient;
+    RefPtr popupClient = m_popupClient;
     std::optional<InstalledFont> font = popupClient->menuStyle().checkedFont()->primaryFont()->toSerializableInstalledFont();
     if (!font) {
         double pointSize = popupClient->menuStyle().checkedFont()->primaryFont()->platformData().size();
