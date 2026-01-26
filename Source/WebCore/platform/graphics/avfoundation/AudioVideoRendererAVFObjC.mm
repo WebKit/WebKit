@@ -86,7 +86,7 @@ AudioVideoRendererAVFObjC::AudioVideoRendererAVFObjC(const Logger& originalLogge
     : m_logger(originalLogger)
     , m_logIdentifier(logSiteIdentifier)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(originalLogger, logSiteIdentifier))
-    , m_synchronizer([adoptNS(PAL::allocAVSampleBufferRenderSynchronizerInstance()) init])
+    , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_listener(WebAVSampleBufferListener::create(*this))
     , m_startupTime(MonotonicTime::now())
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
@@ -920,7 +920,7 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
     if (!m_audioTracksMap.add(trackId, AudioTrackProperties()).isNewEntry)
         return;
 
-    RetainPtr renderer = [adoptNS(PAL::allocAVSampleBufferAudioRendererInstance()) init];
+    RetainPtr renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
 
     if (!renderer) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");
@@ -1169,9 +1169,11 @@ void AudioVideoRendererAVFObjC::ensureLayer()
         return;
     }
 
-    m_sampleBufferDisplayLayer = [adoptNS(PAL::allocAVSampleBufferDisplayLayerInstance()) init];
+    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     if (!m_sampleBufferDisplayLayer) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferDisplayLayer init] returned nil! bailing!");
+        ASSERT_NOT_REACHED();
+        notifyError(PlatformMediaError::VideoDecodingError);
         return;
     }
     [m_sampleBufferDisplayLayer setName:@"AudioVideoRendererAVFObjC AVSampleBufferDisplayLayer"];
@@ -1212,9 +1214,11 @@ void AudioVideoRendererAVFObjC::ensureVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_sampleBufferVideoRenderer = [adoptNS(PAL::allocAVSampleBufferVideoRendererInstance()) init];
+    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
     if (!m_sampleBufferVideoRenderer) {
         ERROR_LOG(LOGIDENTIFIER, "-[VSampleBufferVideoRenderer init] returned nil! bailing!");
+        ASSERT_NOT_REACHED();
+        notifyError(PlatformMediaError::VideoDecodingError);
         return;
     }
 
