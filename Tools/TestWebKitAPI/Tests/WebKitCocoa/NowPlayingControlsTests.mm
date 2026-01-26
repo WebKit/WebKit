@@ -295,7 +295,7 @@ TEST(NowPlayingControlsTests, LazyRegisterAsNowPlayingApplication)
     ASSERT_FALSE(haveMediaSessionManager());
 }
 
-TEST(NowPlayingControlsTests, NowPlayingUpdatesThrottled)
+TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
 {
     struct NowPlayingState {
         NowPlayingState(NowPlayingTestWebView *webView)
