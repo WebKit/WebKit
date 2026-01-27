@@ -144,7 +144,7 @@ function test()
         description: "Clearing the console should reset the $n values.",
         test(resolve, reject) {
             let value = 999;
-            WI.mainFrameTarget.ConsoleAgent.clearMessages();
+            ConsoleAgent.clearMessages();
             RuntimeAgent.saveResult(createCallArgumentWithValue(value), (error, savedResultIndex) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(savedResultIndex === 1, `Value ${value} should become $1.`);

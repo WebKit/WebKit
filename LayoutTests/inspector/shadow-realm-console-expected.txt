@@ -5,9 +5,9 @@ We really just want to test that the shadow realm's console output gets redirect
 == Running test suite: ShadowRealm.Console.basic
 -- Running test case: ShadowRealm.Console.basic.log
 PASS: message text should be 'hello'
-PASS: message target should be the main frame
+PASS: message target should be the main page
 
 -- Running test case: ShadowRealm.Console.nested.log
 PASS: message text should be 'hello'
-PASS: message target should be the main frame
+PASS: message target should be the main page
 
