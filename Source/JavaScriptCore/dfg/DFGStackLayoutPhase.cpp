@@ -227,6 +227,8 @@ public:
             }
         }
         
+        ASSERT(m_graph.m_planStage < PlanStage::AfterStackLayout);
+        m_graph.m_planStage = PlanStage::AfterStackLayout;
         return true;
     }
 

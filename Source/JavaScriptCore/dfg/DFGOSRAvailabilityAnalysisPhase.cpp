@@ -296,7 +296,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         if (!localAvailability.isFlushUseful() || localAvailability.flushedAt().virtualRegister() == VirtualRegister())
             return;
 
-        // In theory this is O(n) and we could have a seperate HashMap tracking Operand -> AbstractHeap's with relevant flushes. In practice, the availability heap is small (there's not usually a lot of phantom objects) so the O(n) search isn't bad.
+        // In theory this is O(n) and we could have a separate HashMap tracking Operand -> AbstractHeap's with relevant flushes. In practice, the availability heap is small (there's not usually a lot of phantom objects) so the O(n) search isn't bad.
         for (auto& heapPair : m_availability.m_heap) {
             if (heapPair.value.flushedAt().virtualRegister() == localAvailability.flushedAt().virtualRegister())
                 heapPair.value.setFlush(FlushedAt(ConflictingFlush));
@@ -347,7 +347,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         const Vector<FlushFormat>& argumentFormats = m_graph.m_argumentFormats[entrypointIndex];
         for (unsigned argument = argumentFormats.size(); argument--; ) {
             FlushedAt flushedAt = FlushedAt(argumentFormats[argument], virtualRegisterForArgumentIncludingThis(argument));
-            m_availability.m_locals.argument(argument) = Availability(flushedAt);
+            m_availability.m_locals.argument(argument).setFlush(flushedAt);
         }
         break;
     }
@@ -359,7 +359,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
     case LoadVarargs:
     case ForwardVarargs: {
         LoadVarargsData* data = node->loadVarargsData();
-        m_availability.m_locals.operand(data->count) = Availability(FlushedAt(FlushedInt32, data->machineCount));
+        m_availability.m_locals.operand(data->count) = Availability(node->child1().node(), FlushedAt(FlushedInt32, data->machineCount));
         for (unsigned i = data->limit; i--;) {
             m_availability.m_locals.operand(data->start + i) =
                 Availability(FlushedAt(FlushedJSValue, data->machineStart.isValid() ? (data->machineStart + i) : VirtualRegister()));

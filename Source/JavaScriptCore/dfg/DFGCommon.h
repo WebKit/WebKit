@@ -254,7 +254,8 @@ inline KillStatus killStatusForDoesKill(bool doesKill)
 enum class PlanStage {
     Initial,
     AfterFixup,
-    LICMAndLater
+    LICMAndLater, // Inclusive of LICM
+    AfterStackLayout,
 };
 
 // If possible, this will acquire a lock to make sure that if multiple threads

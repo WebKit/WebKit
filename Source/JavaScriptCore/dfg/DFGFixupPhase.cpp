@@ -72,6 +72,7 @@ public:
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
             fixupChecksInBlock(m_graph.block(blockIndex));
 
+        ASSERT(m_graph.m_planStage < PlanStage::AfterFixup);
         m_graph.m_planStage = PlanStage::AfterFixup;
 
         return true;
