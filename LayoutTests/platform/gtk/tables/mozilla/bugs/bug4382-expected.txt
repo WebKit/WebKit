@@ -4,32 +4,32 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 260x17
+        RenderText {#text} at (0,0) size 260x18
           text run at (0,0) width 260: "The select should not contain blank items"
-        RenderBR {BR} at (260,0) size 0x17
+        RenderBR {BR} at (260,0) size 0x18
       RenderBlock {FORM} at (0,18) size 784x30
-        RenderInline {B} at (0,6) size 47x17
-          RenderText {#text} at (0,6) size 47x17
+        RenderInline {B} at (0,6) size 47x18
+          RenderText {#text} at (0,6) size 47x18
             text run at (0,6) width 47: "Search"
-        RenderText {#text} at (46,6) size 5x17
+        RenderText {#text} at (46,6) size 5x18
           text run at (46,6) width 5: " "
         RenderTextControl {INPUT} at (50,3) size 175x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-        RenderText {#text} at (224,6) size 5x17
+        RenderText {#text} at (224,6) size 5x18
           text run at (224,6) width 5: " "
         RenderMenuList {SELECT} at (228,0) size 89x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 86x28
-            RenderText at (5,5) size 44x17
+            RenderText at (5,5) size 44x18
               text run at (5,5) width 44: "Excite"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,64) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 260x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {#text} at (0,18) size 260x18
           text run at (0,18) width 260: "The select should not contain blank items"
-        RenderBR {BR} at (260,18) size 0x17
+        RenderBR {BR} at (260,18) size 0x18
       RenderBlock {FORM} at (0,100) size 784x30
         RenderMenuList {SELECT} at (0,0) size 256x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 254x28
-            RenderText at (5,5) size 75x17
+            RenderText at (5,5) size 75x18
               text run at (5,5) width 75: "Quick Link"
 layer at (62,32) size 168x18
   RenderBlock {DIV} at (3,3) size 168x18

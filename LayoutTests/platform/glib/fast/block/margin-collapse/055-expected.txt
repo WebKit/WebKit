@@ -4,7 +4,7 @@ layer at (0,0) size 800x212
   RenderBlock {HTML} at (0,0) size 800x212
     RenderBody {BODY} at (8,16) size 784x188
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 461x17
+        RenderText {#text} at (0,0) size 461x18
           text run at (0,0) width 405: "All the following should look the same (and all should look like "
           text run at (405,0) width 56: "the first)."
       RenderTable {TABLE} at (0,34) size 450x154

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 206x17
+        RenderText {#text} at (0,0) size 206x18
           text run at (0,0) width 206: "Should say \"SUCCESS\" below:"
       RenderBlock {DIV} at (0,34) size 784x84 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (2,2) size 780x50 [border: (10px solid #008000)]
@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (2,2) size 43x26
             RenderTableRow {TR} at (0,2) size 43x22
               RenderTableCell {TD} at (2,2) size 39x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 35x17
+                RenderText {#text} at (2,2) size 35x18
                   text run at (2,2) width 35: "Table"
       RenderBlock {P} at (0,134) size 784x18
-        RenderText {#text} at (0,0) size 71x17
+        RenderText {#text} at (0,0) size 71x18
           text run at (0,0) width 71: "SUCCESS"

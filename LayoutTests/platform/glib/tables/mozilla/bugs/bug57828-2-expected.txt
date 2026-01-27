@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 404x17
+        RenderText {#text} at (0,0) size 404x18
           text run at (0,0) width 404: "The table below takes out the nowrap with the cell of 1% width."
       RenderTable {TABLE} at (0,34) size 675x59
         RenderTableSection {TBODY} at (0,0) size 675x59
           RenderTableRow {TR} at (0,0) size 675x59 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,17) size 632x25 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (2,19) size 152x20
-                RenderInline {B} at (2,19) size 152x20
-                  RenderText {#text} at (2,19) size 152x20
+              RenderInline {FONT} at (2,19) size 152x21
+                RenderInline {B} at (2,19) size 152x21
+                  RenderText {#text} at (2,19) size 152x21
                     text run at (2,2) width 152: "Technology News"
-              RenderInline {FONT} at (153,23) size 183x15
-                RenderText {#text} at (153,23) size 183x15
+              RenderInline {FONT} at (153,23) size 183x16
+                RenderText {#text} at (153,23) size 183x16
                   text run at (153,6) width 63: " - updated "
                   text run at (215,6) width 121: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
@@ -33,20 +33,20 @@ layer at (0,0) size 800x600
                             text run at (3,41) width 34: "Yahoo!"
                       RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,109) size 784x18
-        RenderText {#text} at (0,0) size 471x17
+        RenderText {#text} at (0,0) size 471x18
           text run at (0,0) width 471: "The table below leaves in the nowrap but take out the 1% width in the cell."
       RenderTable {TABLE} at (0,143) size 675x26
         RenderTableSection {TBODY} at (0,0) size 675x26
           RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,0) size 507x26 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (2,2) size 152x21
-                RenderInline {B} at (2,2) size 152x21
-                  RenderText {#text} at (2,2) size 152x21
-                    text run at (2,2) width 152: "Technology News"
-              RenderInline {FONT} at (153,6) size 183x16
-                RenderText {#text} at (153,6) size 183x16
-                  text run at (153,6) width 63: " - updated "
-                  text run at (215,6) width 121: "12:15 PM ET Oct 24"
+              RenderInline {FONT} at (2,3) size 152x20
+                RenderInline {B} at (2,3) size 152x20
+                  RenderText {#text} at (2,3) size 152x20
+                    text run at (2,3) width 152: "Technology News"
+              RenderInline {FONT} at (153,7) size 183x15
+                RenderText {#text} at (153,7) size 183x15
+                  text run at (153,7) width 63: " - updated "
+                  text run at (215,7) width 121: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (506,0) size 170x26 [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 109x22

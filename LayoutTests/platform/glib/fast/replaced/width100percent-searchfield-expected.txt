@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 224x17
+        RenderText {#text} at (0,0) size 224x18
           text run at (0,0) width 224: "These textfields should not overlap."
       RenderTable {TABLE} at (0,18) size 784x28
         RenderTableSection {TBODY} at (0,0) size 784x28
@@ -25,11 +25,11 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
             RenderTableCell {TD} at (28,4) size 755x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 4x17
+              RenderText {#text} at (1,4) size 4x18
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,46) size 784x36
-        RenderBR {BR} at (0,0) size 0x17
-        RenderBR {BR} at (0,18) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,82) size 784x28
         RenderTableSection {TBODY} at (0,0) size 784x28
           RenderTableRow {TR} at (0,1) size 784x26
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 RenderFlexibleBox {DIV} at (3,3) size 0x18
                   RenderBlock {DIV} at (16,0) size 0x18
             RenderTableCell {TD} at (28,4) size 755x20 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 4x17
+              RenderText {#text} at (1,4) size 4x18
                 text run at (1,1) width 4: " "
 layer at (13,32) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]

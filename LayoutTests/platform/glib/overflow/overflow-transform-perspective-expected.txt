@@ -4,7 +4,7 @@ layer at (0,0) size 800x134
   RenderBlock {HTML} at (0,0) size 800x134
     RenderBody {BODY} at (8,8) size 784x118
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 355x17
+        RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The result should have horizontal and vertical scrollbars."
 layer at (8,26) size 100x100 clip at (8,26) size 85x85 scrollWidth 89 scrollHeight 94
   RenderBlock {DIV} at (0,18) size 100x100

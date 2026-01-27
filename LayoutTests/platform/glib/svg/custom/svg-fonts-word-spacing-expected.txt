@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 72x17
+        RenderText {#text} at (0,0) size 72x18
           text run at (0,0) width 72: "no spacing:"
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,1) size 66x18
           text run at (0,1) width 66: "abc abc abc"
       RenderBlock (anonymous) at (0,74) size 784x18
-        RenderText {#text} at (0,0) size 294x17
+        RenderText {#text} at (0,0) size 294x18
           text run at (0,0) width 294: "word-spacing: 100px, all should look the same"
       RenderBlock {P} at (0,110) size 784x20
         RenderText {#text} at (0,1) size 266x18

@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Response reader read() promise should reject after a network error happening after resolving fetch promise
+TIMEOUT Response reader closed promise should reject after a network error happening after resolving fetch promise Test timed out
+

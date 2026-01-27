@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 322x17
+        RenderText {#text} at (0,0) size 322x18
           text run at (0,0) width 322: "This is a repaint test of inline blocks with overflow."
       RenderBlock (anonymous) at (0,44) size 784x20
-        RenderInline {SPAN} at (0,0) size 198x17
-          RenderText {#text} at (0,0) size 98x17
+        RenderInline {SPAN} at (0,0) size 198x18
+          RenderText {#text} at (0,0) size 98x18
             text run at (0,0) width 98: "Here comes an "
           RenderBlock {SPAN} at (98,0) size 100x20 [bgcolor=#C0C0C0]
-            RenderText {#text} at (0,0) size 92x35
+            RenderText {#text} at (0,0) size 92x36
               text run at (0,0) width 74: "inline block"
               text run at (0,18) width 92: "with overflow."
         RenderText {#text} at (0,0) size 0x0

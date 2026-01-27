@@ -188,7 +188,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 742x35
+        RenderText {#text} at (0,0) size 742x36
           text run at (0,0) width 277: "This tests caret movement across an iframe. "
           text run at (277,0) width 465: "The caret shouldn't enter the iframe as the user arrows across it (unless we"
           text run at (0,18) width 194: "decide later that we want it to)."
@@ -203,7 +203,7 @@ layer at (0,0) size 800x600
               RenderBlock {HTML} at (0,0) size 400x200
                 RenderBody {BODY} at (8,8) size 384x184
                   RenderBlock {P} at (0,0) size 384x90
-                    RenderText {#text} at (0,0) size 382x89
+                    RenderText {#text} at (0,0) size 382x90
                       text run at (0,0) width 316: "This tests caret movement through an inline table. "
                       text run at (316,0) width 37: "There"
                       text run at (0,18) width 382: "should be visual positions before and after the inline table, as"
@@ -219,33 +219,33 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (1,1) size 130x74
                           RenderTableRow {TR} at (0,2) size 130x22
                             RenderTableCell {TD} at (2,2) size 43x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 27x17
+                              RenderText {#text} at (2,2) size 27x18
                                 text run at (2,2) width 27: "One"
                             RenderTableCell {TD} at (47,2) size 38x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 29x17
+                              RenderText {#text} at (2,2) size 29x18
                                 text run at (2,2) width 29: "Two"
                             RenderTableCell {TD} at (87,2) size 41x22 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 37x17
+                              RenderText {#text} at (2,2) size 37x18
                                 text run at (2,2) width 37: "Three"
                           RenderTableRow {TR} at (0,26) size 130x22
                             RenderTableCell {TD} at (2,26) size 43x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 30x17
+                              RenderText {#text} at (2,2) size 30x18
                                 text run at (2,2) width 30: "Four"
                             RenderTableCell {TD} at (47,26) size 38x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 28x17
+                              RenderText {#text} at (2,2) size 28x18
                                 text run at (2,2) width 28: "Five"
                             RenderTableCell {TD} at (87,26) size 41x22 [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 21x17
+                              RenderText {#text} at (2,2) size 21x18
                                 text run at (2,2) width 21: "Six"
                           RenderTableRow {TR} at (0,50) size 130x22
                             RenderTableCell {TD} at (2,50) size 43x22 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 39x17
+                              RenderText {#text} at (2,2) size 39x18
                                 text run at (2,2) width 39: "Seven"
                             RenderTableCell {TD} at (47,50) size 38x22 [border: (1px inset #000000)] [r=2 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 34x17
+                              RenderText {#text} at (2,2) size 34x18
                                 text run at (2,2) width 34: "Eight"
                             RenderTableCell {TD} at (87,50) size 41x22 [border: (1px inset #000000)] [r=2 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 31x17
+                              RenderText {#text} at (2,2) size 31x18
                                 text run at (2,2) width 31: "Nine"
                       RenderText {#text} at (210,9) size 68x17
                         text run at (210,9) width 68: "The End..."

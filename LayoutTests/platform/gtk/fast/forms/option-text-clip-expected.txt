@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 697x17
+      RenderText {#text} at (0,0) size 697x18
         text run at (0,0) width 697: "This tests that the option text is clipped properly, and doesn't spill over into the arrow part of the popup control."
-      RenderBR {BR} at (696,0) size 1x17
+      RenderBR {BR} at (696,0) size 1x18
       RenderMenuList {SELECT} at (0,18) size 150x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 148x28
-          RenderText at (5,5) size 184x17
+          RenderText at (5,5) size 184x18
             text run at (5,5) width 184: "12345 6789 ABCD EFGH"
       RenderText {#text} at (0,0) size 0x0

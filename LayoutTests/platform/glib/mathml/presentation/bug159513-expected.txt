@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x109
+layer at (0,0) size 800x110
   RenderBlock {HTML} at (0,0) size 800x110
     RenderBody {BODY} at (8,16) size 784x86
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 261x17
+        RenderText {#text} at (0,0) size 261x18
           text run at (0,0) width 261: "Test passes if horizontal operators stretch."
       RenderBlock (anonymous) at (0,34) size 784x52
         RenderMathMLMath {math} at (0,10) size 60x37
@@ -14,7 +14,7 @@ layer at (0,0) size 800x109
               RenderBlock (anonymous) at (0,0) size 12x17
                 RenderText {#text} at (0,-63) size 12x149
                   text run at (0,-63) width 12: "^"
-        RenderText {#text} at (60,32) size 4x17
+        RenderText {#text} at (60,32) size 4x18
           text run at (60,32) width 4: " "
         RenderMathMLMath {math} at (64,16) size 60x36
           RenderMathMLUnderOver {munder} at (0,0) size 60x36
@@ -23,7 +23,7 @@ layer at (0,0) size 800x109
               RenderBlock (anonymous) at (0,0) size 7x4
                 RenderText {#text} at (0,-80) size 7x149
                   text run at (0,-80) width 7: "_"
-        RenderText {#text} at (124,32) size 4x17
+        RenderText {#text} at (124,32) size 4x18
           text run at (124,32) width 4: " "
         RenderMathMLMath {math} at (128,8) size 60x39
           RenderMathMLUnderOver {mover} at (0,0) size 60x39
@@ -32,7 +32,7 @@ layer at (0,0) size 800x109
               RenderBlock (anonymous) at (0,0) size 12x7
                 RenderText {#text} at (0,-73) size 12x149
                   text run at (0,-73) width 12: "~"
-        RenderText {#text} at (188,32) size 4x17
+        RenderText {#text} at (188,32) size 4x18
           text run at (188,32) width 4: " "
         RenderMathMLMath {math} at (192,0) size 60x47
           RenderMathMLUnderOver {mover} at (0,0) size 60x47
@@ -41,7 +41,7 @@ layer at (0,0) size 800x109
               RenderBlock (anonymous) at (0,0) size 11x14
                 RenderText {#text} at (0,-66) size 11x149
                   text run at (0,-66) width 11: "\x{AF}"
-        RenderText {#text} at (252,32) size 4x17
+        RenderText {#text} at (252,32) size 4x18
           text run at (252,32) width 4: " "
         RenderMathMLMath {math} at (256,10) size 60x37
           RenderMathMLUnderOver {mover} at (0,0) size 60x37
@@ -50,7 +50,7 @@ layer at (0,0) size 800x109
               RenderBlock (anonymous) at (0,0) size 11x16
                 RenderText {#text} at (0,-64) size 11x149
                   text run at (0,-64) width 11: "\x{2C6}"
-        RenderText {#text} at (316,32) size 4x17
+        RenderText {#text} at (316,32) size 4x18
           text run at (316,32) width 4: " "
         RenderMathMLMath {math} at (320,10) size 60x37
           RenderMathMLUnderOver {mover} at (0,0) size 60x37

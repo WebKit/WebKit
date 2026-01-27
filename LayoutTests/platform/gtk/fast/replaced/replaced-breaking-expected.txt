@@ -12,29 +12,29 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderButton {INPUT} at (1,103) size 51x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 35x18
-            RenderText at (0,0) size 35x17
+            RenderText at (0,0) size 35x18
               text run at (0,0) width 35: "input"
         RenderButton {INPUT} at (1,130) size 51x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 35x18
-            RenderText at (0,0) size 35x17
+            RenderText at (0,0) size 35x18
               text run at (0,0) width 35: "input"
         RenderText {#text} at (0,0) size 0x0
         RenderButton {BUTTON} at (1,157) size 60x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 44x18
-            RenderText {#text} at (0,0) size 44x17
+            RenderText {#text} at (0,0) size 44x18
               text run at (0,0) width 44: "button"
         RenderButton {BUTTON} at (1,184) size 60x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 44x18
-            RenderText {#text} at (0,0) size 44x17
+            RenderText {#text} at (0,0) size 44x18
               text run at (0,0) width 44: "button"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (1,211) size 70x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 68x28
-            RenderText at (5,5) size 42x17
+            RenderText at (5,5) size 42x18
               text run at (5,5) width 42: "select"
         RenderMenuList {SELECT} at (1,241) size 70x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 68x28
-            RenderText at (5,5) size 42x17
+            RenderText at (5,5) size 42x18
               text run at (5,5) width 42: "select"
         RenderText {#text} at (0,0) size 0x0
         RenderListBox {SELECT} at (1,271) size 63x55 [bgcolor=#FFFFFF] [border: (1px inset #808080)]

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 592x17
+        RenderText {#text} at (0,0) size 592x18
           text run at (0,0) width 469: "Test that the intensity of text-shadow does not depend on the transparency "
           text run at (468,0) width 124: "of the text fill color."
       RenderBlock {DIV} at (0,34) size 784x72
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,122) size 784x18
-        RenderText {#text} at (0,0) size 400x17
+        RenderText {#text} at (0,0) size 400x18
           text run at (0,0) width 400: "There should be three identical green squares on the line above."
       RenderBlock {DIV} at (0,156) size 784x72
         RenderText {#text} at (0,0) size 48x24
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,244) size 784x18
-        RenderText {#text} at (0,0) size 470x17
+        RenderText {#text} at (0,0) size 470x18
           text run at (0,0) width 470: "There should be three identical soft-edged green squares on the line above."
       RenderBlock {DIV} at (0,278) size 784x72 [textStrokeColor=#0000FF] [textStrokeWidth=5.00]
         RenderText {#text} at (0,0) size 48x24
@@ -50,5 +50,5 @@ layer at (0,0) size 800x600
             text run at (96,0) width 24: "A"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,366) size 784x18
-        RenderText {#text} at (0,0) size 400x17
+        RenderText {#text} at (0,0) size 400x18
           text run at (0,0) width 400: "There should be three identical green squares on the line above."

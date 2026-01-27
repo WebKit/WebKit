@@ -3,5 +3,5 @@ layer at (0,0) size 1000x18
 layer at (0,0) size 1000x18
   RenderBlock {HTML} at (0,0) size 1000x18
     RenderBody {BODY} at (0,0) size 1000x18
-      RenderText {#text} at (0,0) size 311x17
+      RenderText {#text} at (0,0) size 311x18
         text run at (0,0) width 311: "Text should start at the top right edge of the page."

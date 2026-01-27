@@ -4,10 +4,10 @@ layer at (0,0) size 785x3024
   RenderBlock {HTML} at (0,0) size 785x3024
     RenderBody {BODY} at (8,16) size 2000x3000
       RenderBlock {P} at (0,0) size 2000x18
-        RenderText {#text} at (0,0) size 77x17
+        RenderText {#text} at (0,0) size 77x18
           text run at (0,0) width 77: "Got click at "
-        RenderInline {SPAN} at (77,0) size 120x17
-          RenderText {#text} at (77,0) size 120x17
+        RenderInline {SPAN} at (77,0) size 120x18
+          RenderText {#text} at (77,0) size 120x18
             text run at (77,0) width 120: "clicked at 172, 117"
 layer at (158,103) size 28x28
   RenderBlock (positioned) {DIV} at (158,103) size 28x28 [bgcolor=#FF0000]

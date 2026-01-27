@@ -11,22 +11,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x151
         RenderBlock {DIV} at (0,0) size 784x54
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 254x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 254x27
             text run at (0,27) width 254: "Key binding for control-O"
         RenderBlock {DIV} at (0,70) size 784x81
-          RenderText {#text} at (0,0) size 177x26
+          RenderText {#text} at (0,0) size 177x27
             text run at (0,0) width 177: "Expected results:"
-          RenderBR {BR} at (176,0) size 1x26
-          RenderText {#text} at (0,27) size 90x26
+          RenderBR {BR} at (176,0) size 1x27
+          RenderText {#text} at (0,27) size 90x27
             text run at (0,27) width 90: "one five |"
-          RenderBR {BR} at (90,27) size 0x26
-          RenderText {#text} at (0,54) size 137x26
+          RenderBR {BR} at (90,27) size 0x27
+          RenderText {#text} at (0,54) size 137x27
             text run at (0,54) width 137: "two three four"
       RenderBlock {DIV} at (0,175) size 784x27
         RenderBlock {DIV} at (0,0) size 784x27
-          RenderText {#text} at (0,0) size 222x26
+          RenderText {#text} at (0,0) size 222x27
             text run at (0,0) width 222: "one five two three four"
 caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

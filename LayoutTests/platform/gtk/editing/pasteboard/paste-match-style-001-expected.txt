@@ -21,26 +21,26 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 267x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 267x27
             text run at (0,27) width 267: "Pasting and matching style."
         RenderBlock {DIV} at (14,84) size 756x108
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 748x53
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 748x54
             text run at (0,27) width 748: "The pasted letter should match the style of the preexisting bold letter. Should"
             text run at (0,54) width 362: "see this content in the red box below:"
-          RenderBR {BR} at (362,54) size 0x26
-          RenderInline {B} at (0,81) size 25x26
-            RenderText {#text} at (0,81) size 25x26
+          RenderBR {BR} at (362,54) size 0x27
+          RenderInline {B} at (0,81) size 25x27
+            RenderText {#text} at (0,81) size 25x27
               text run at (0,81) width 25: "ab"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,230) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
-          RenderInline {B} at (2,2) size 25x26
-            RenderText {#text} at (2,2) size 25x26
+          RenderInline {B} at (2,2) size 25x27
+            RenderText {#text} at (2,2) size 25x27
               text run at (2,2) width 25: "ab"
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

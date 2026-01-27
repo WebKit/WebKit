@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (107,1) size 112x53
               text run at (107,1) width 112: "world"
       RenderBlock {P} at (0,73) size 784x72
-        RenderText {#text} at (0,0) size 768x71
+        RenderText {#text} at (0,0) size 768x72
           text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "
           text run at (562,0) width 172: "The dictionary returned by "
           text run at (0,18) width 747: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers. "

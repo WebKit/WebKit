@@ -4,28 +4,28 @@ layer at (0,0) size 800x268
   RenderBlock {HTML} at (0,0) size 800x268
     RenderBody {BODY} at (8,16) size 784x244
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 775x35
+        RenderText {#text} at (0,0) size 775x36
           text run at (0,0) width 775: "Test passes if each of the orange boxes is sandwiched between two blue boxes and all blue and orange boxes are below the"
           text run at (0,18) width 99: "big yellow box."
 layer at (8,68) size 192x192
   RenderBlock (relative positioned) {DIV} at (0,52) size 192x192 [bgcolor=#FFFF00]
     RenderText {#text} at (0,0) size 0x0
-layer at (8,260) size 192x125
-  RenderInline (relative positioned) {DIV} at (0,0) size 192x125 [bgcolor=#0000FF]
-    RenderText {#text} at (0,0) size 65x17
+layer at (8,260) size 192x126
+  RenderInline (relative positioned) {DIV} at (0,0) size 192x126 [bgcolor=#0000FF]
+    RenderText {#text} at (0,0) size 65x18
       text run at (0,0) width 65: "Filler Text"
     RenderBlock {DIV} at (0,18) size 192x18 [bgcolor=#FFA500]
-      RenderText {#text} at (0,0) size 65x17
+      RenderText {#text} at (0,0) size 65x18
         text run at (0,0) width 65: "Filler Text"
-    RenderText {#text} at (0,36) size 65x17
+    RenderText {#text} at (0,36) size 65x18
       text run at (0,36) width 65: "Filler Text"
     RenderBlock {DIV} at (0,54) size 192x18 [bgcolor=#FFA500]
-      RenderText {#text} at (0,0) size 65x17
+      RenderText {#text} at (0,0) size 65x18
         text run at (0,0) width 65: "Filler Text"
-    RenderText {#text} at (0,72) size 65x17
+    RenderText {#text} at (0,72) size 65x18
       text run at (0,72) width 65: "Filler Text"
     RenderBlock {DIV} at (0,90) size 192x18 [bgcolor=#FFA500]
-      RenderText {#text} at (0,0) size 65x17
+      RenderText {#text} at (0,0) size 65x18
         text run at (0,0) width 65: "Filler Text"
-    RenderText {#text} at (0,108) size 65x17
+    RenderText {#text} at (0,108) size 65x18
       text run at (0,108) width 65: "Filler Text"

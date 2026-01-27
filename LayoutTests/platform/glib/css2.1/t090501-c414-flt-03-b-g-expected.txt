@@ -18,7 +18,7 @@ layer at (0,0) size 800x238
         RenderBlock {DIV} at (16,0) size 752x70 [color=#0000FF] [bgcolor=#000080]
           RenderImage {IMG} at (8,8) size 160x160
           RenderImage {IMG} at (584,8) size 160x160
-          RenderText {#text} at (168,8) size 392x53
+          RenderText {#text} at (168,8) size 392x54
             text run at (168,8) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
             text run at (168,26) width 198: "Blue rectangle. Blue rectangle. "
             text run at (366,26) width 194: "Blue rectangle. Blue rectangle."

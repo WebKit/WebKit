@@ -13,12 +13,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 781x35
+        RenderText {#text} at (0,0) size 781x36
           text run at (0,0) width 402: "This tests inserting a paragraph separator after a horizontal rule. "
           text run at (402,0) width 379: "You should see 'foo', empty paragraph, horizontal rule, 'bar',"
           text run at (0,18) width 329: "and the caret should be just after the horizontal rule. "
-        RenderInline {B} at (0,18) size 777x35
-          RenderText {#text} at (0,18) size 777x35
+        RenderInline {B} at (0,18) size 777x36
+          RenderText {#text} at (0,18) size 777x36
             text run at (329,18) width 168: "This demonstrates 8345. "
             text run at (497,18) width 280: "The caret after a horizontal rule is drawn"
             text run at (0,36) width 381: "in the same location as the caret before a horizontal rule."
@@ -27,11 +27,11 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 784x72
             RenderBlock (anonymous) at (0,0) size 784x18
-              RenderText {#text} at (0,0) size 21x17
+              RenderText {#text} at (0,0) size 21x18
                 text run at (0,0) width 21: "foo"
             RenderBlock (anonymous) at (0,36) size 784x36
-              RenderBR {BR} at (0,0) size 0x17
-              RenderText {#text} at (0,18) size 24x17
+              RenderBR {BR} at (0,0) size 0x18
+              RenderText {#text} at (0,18) size 24x18
                 text run at (0,18) width 24: "bar"
 layer at (8,104) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,26) size 784x2 [color=#808080] [border: (1px inset #808080)]

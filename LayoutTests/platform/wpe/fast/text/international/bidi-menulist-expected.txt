@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
           text run at (0,1) width 29: "abc"
           text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,142) size 784x68
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,19) size 143x17
           text run at (0,19) width 143: "2) text-align: right"
         RenderBR {BR} at (142,19) size 1x17
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
           text run at (0,1) width 29: "abc"
           text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,229) size 784x68
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,19) size 85x17
           text run at (0,19) width 85: "3) No style"
         RenderBR {BR} at (85,19) size 0x17
@@ -55,4 +55,4 @@ layer at (0,0) size 800x600
           text run at (0,1) width 29: "abc"
           text run at (29,1) width 58 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}\x{5DF}"
       RenderBlock (anonymous) at (0,316) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18

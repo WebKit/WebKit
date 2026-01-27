@@ -75,19 +75,19 @@ layer at (0,0) size 785x775
             text run at (0,0) width 640: "How does your browser fare on this test?"
           RenderMenuList {SELECT} at (0,16) size 278x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock (anonymous) at (1,1) size 276x28
-              RenderText at (5,5) size 162x17
+              RenderText at (5,5) size 162x18
                 text run at (5,5) width 162: "The test renders correctly."
-          RenderText {#text} at (278,23) size 16x16
+          RenderText {#text} at (278,23) size 16x17
             text run at (278,23) width 16: " "
-          RenderInline {LABEL} at (294,23) size 317x16
-            RenderText {#text} at (294,23) size 144x16
+          RenderInline {LABEL} at (294,23) size 317x17
+            RenderText {#text} at (294,23) size 144x17
               text run at (294,23) width 144: "Comment: "
             RenderTextControl {INPUT} at (438,19) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-          RenderText {#text} at (611,23) size 16x16
+          RenderText {#text} at (611,23) size 16x17
             text run at (611,23) width 16: " "
           RenderButton {INPUT} at (627,18) size 61x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 45x18
-              RenderText at (0,0) size 45x17
+              RenderText at (0,0) size 45x18
                 text run at (0,0) width 45: "Submit"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,609) size 769x17

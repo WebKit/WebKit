@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 220x17
+        RenderText {#text} at (0,0) size 220x18
           text run at (0,0) width 220: "This is a initial test for simple ruby."
-        RenderBR {BR} at (219,0) size 1x17
-        RenderBR {BR} at (0,18) size 0x17
+        RenderBR {BR} at (219,0) size 1x18
+        RenderBR {BR} at (0,18) size 0x18
       RenderBlock {P} at (0,52) size 784x28
         RenderText {#text} at (0,10) size 161x17
           text run at (0,10) width 161: "Ruby is often used in the "

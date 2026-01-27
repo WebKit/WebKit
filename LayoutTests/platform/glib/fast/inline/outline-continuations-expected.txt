@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderInline {BIG} at (0,0) size 50x42
         RenderText {#text} at (0,0) size 0x0
         RenderInline {PARSERERROR} at (0,0) size 50x61
-          RenderText {#text} at (0,0) size 50x21
+          RenderText {#text} at (0,0) size 50x22
             text run at (0,0) width 50: "TEXT"
           RenderBlock {P} at (0,41) size 784x0

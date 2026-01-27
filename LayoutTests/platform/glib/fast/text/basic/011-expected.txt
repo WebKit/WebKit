@@ -4,10 +4,10 @@ layer at (0,0) size 800x142
   RenderBlock {HTML} at (0,0) size 800x142
     RenderBody {BODY} at (8,8) size 784x126
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 99x17
+        RenderText {#text} at (0,0) size 99x18
           text run at (0,0) width 99: "Select this text. "
-        RenderInline {FONT} at (0,5) size 764x29
-          RenderText {#text} at (0,5) size 764x29
+        RenderInline {FONT} at (0,5) size 764x30
+          RenderText {#text} at (0,5) size 764x30
             text run at (99,5) width 84: "I am teeny and tiny. "
             text run at (182,5) width 298: "I am going to have lots of text but each line should retain the big height. "
             text run at (479,5) width 285: "If the lines shrink, it means that the root line box's height is not being"
@@ -15,11 +15,11 @@ layer at (0,0) size 800x142
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,52) size 784x0
       RenderBlock {DIV} at (0,52) size 784x74
-        RenderInline {FONT} at (0,0) size 778x73
-          RenderText {#text} at (0,0) size 431x36
+        RenderInline {FONT} at (0,0) size 778x74
+          RenderText {#text} at (0,0) size 431x37
             text run at (0,0) width 431: "This text is absolutely enormous. "
-          RenderInline {FONT} at (0,20) size 778x48
-            RenderText {#text} at (0,20) size 778x48
+          RenderInline {FONT} at (0,20) size 778x49
+            RenderText {#text} at (0,20) size 778x49
               text run at (431,20) width 84: "I am teeny and tiny. "
               text run at (514,20) width 264: "I am going to have lots of text but each line should retain the big"
               text run at (0,57) width 31: "height. "

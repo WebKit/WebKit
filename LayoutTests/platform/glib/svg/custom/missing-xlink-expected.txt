@@ -1,18 +1,18 @@
-layer at (0,0) size 785x773
+layer at (0,0) size 785x772
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x600
   RenderBlock {html} at (0,0) size 785x600
     RenderBody {body} at (8,16) size 769x600
       RenderBlock {parsererror} at (16,0) size 737x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 701x23
-          RenderText {#text} at (0,0) size 309x21
+          RenderText {#text} at (0,0) size 309x22
             text run at (0,0) width 309: "This page contains the following errors:"
         RenderBlock {div} at (18,61) size 701x15
           RenderText {#text} at (0,0) size 567x14
             text run at (0,0) width 567: "error on line 6 at column 24: Namespace prefix xlink for href on a is not defined"
             text run at (567,0) width 0: " "
         RenderBlock {h3} at (18,94) size 701x23
-          RenderText {#text} at (0,0) size 410x21
+          RenderText {#text} at (0,0) size 410x22
             text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
       RenderBlock (anonymous) at (0,152) size 769x605
         RenderSVGRoot {svg} at (8,168) size 192x124

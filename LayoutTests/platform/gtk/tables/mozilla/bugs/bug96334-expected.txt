@@ -21,7 +21,7 @@ layer at (0,0) size 800x585
                         RenderTableSection {TBODY} at (2,2) size 264x26
                           RenderTableRow {TR} at (0,2) size 264x22
                             RenderTableCell {TD} at (2,2) size 260x22 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 247x17
+                              RenderText {#text} at (2,2) size 247x18
                                 text run at (2,2) width 247: "THIS TABLE NEEDS TO BE HERE"
                   RenderTableRow {TR} at (0,74) size 276x46
                     RenderTableCell {TD} at (2,74) size 272x46 [border: (1px solid #C0C0C0)] [r=1 c=0 rs=1 cs=1]
@@ -31,14 +31,14 @@ layer at (0,0) size 800x585
                             RenderTableCell {TD} at (2,2) size 260x34 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
                               RenderMenuList {SELECT} at (2,2) size 256x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
                                 RenderBlock (anonymous) at (1,1) size 254x28
-                                  RenderText at (5,5) size 228x17
+                                  RenderText at (5,5) size 228x18
                                     text run at (5,5) width 228: "USE THIS JAVASCRIPT HERE"
                               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (288,2) size 772x40 [border: (1px solid #C0C0C0)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 768x35
+              RenderText {#text} at (2,2) size 768x36
                 text run at (2,2) width 768: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
                 text run at (2,20) width 612: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
 layer at (29,29) size 186x18 scrollWidth 197
   RenderBlock {DIV} at (3,3) size 186x18
-    RenderText {#text} at (0,0) size 196x17
+    RenderText {#text} at (0,0) size 196x18
       text run at (0,0) width 196: "THIS NEEDS THIS VALUE"

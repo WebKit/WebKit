@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 773x35
+        RenderText {#text} at (0,0) size 773x36
           text run at (0,0) width 656: "You should see a green rectangle below that is 100 pixels tall and that fills the width of the content area. "
           text run at (655,0) width 118: "If you see any red,"
           text run at (0,18) width 143: "then the test has failed."

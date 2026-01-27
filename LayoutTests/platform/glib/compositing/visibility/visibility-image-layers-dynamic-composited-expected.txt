@@ -1,38 +1,38 @@
 Initial
 
-layer at (0,0) size 800x422
-  RenderBlock {HTML} at (0,0) size 800x422
-    RenderBody {BODY} at (8,10) size 784x392
-      RenderBlock {H2} at (0,317) size 784x28
-        RenderText {#text} at (0,0) size 63x26
+layer at (0,0) size 800x421
+  RenderBlock {HTML} at (0,0) size 800x421
+    RenderBody {BODY} at (8,10) size 784x391
+      RenderBlock {H2} at (0,316) size 784x28
+        RenderText {#text} at (0,0) size 63x27
           text run at (0,0) width 63: "Initial"
-      RenderBlock {PRE} at (0,364) size 784x0
-      RenderBlock {H2} at (0,364) size 784x28
-        RenderText {#text} at (0,0) size 120x26
+      RenderBlock {PRE} at (0,363) size 784x0
+      RenderBlock {H2} at (0,363) size 784x28
+        RenderText {#text} at (0,0) size 120x27
           text run at (0,0) width 120: "After step 1"
-      RenderBlock {PRE} at (0,411) size 784x0
+      RenderBlock {PRE} at (0,410) size 784x0
 layer at (18,10) size 764x144
   RenderBlock (relative positioned) {DIV} at (10,0) size 764x144
     RenderImage {IMG} at (20,20) size 100x100
 After step 1
 
-layer at (0,0) size 800x422
-  RenderBlock {HTML} at (0,0) size 800x422
-    RenderBody {BODY} at (8,10) size 784x392
-      RenderBlock {H2} at (0,317) size 784x28
-        RenderText {#text} at (0,0) size 63x26
+layer at (0,0) size 800x421
+  RenderBlock {HTML} at (0,0) size 800x421
+    RenderBody {BODY} at (8,10) size 784x391
+      RenderBlock {H2} at (0,316) size 784x28
+        RenderText {#text} at (0,0) size 63x27
           text run at (0,0) width 63: "Initial"
-      RenderBlock {PRE} at (0,364) size 784x0
-      RenderBlock {H2} at (0,364) size 784x28
-        RenderText {#text} at (0,0) size 120x26
+      RenderBlock {PRE} at (0,363) size 784x0
+      RenderBlock {H2} at (0,363) size 784x28
+        RenderText {#text} at (0,0) size 120x27
           text run at (0,0) width 120: "After step 1"
-      RenderBlock {PRE} at (0,411) size 784x0
+      RenderBlock {PRE} at (0,410) size 784x0
 layer at (18,10) size 764x144
   RenderBlock (relative positioned) {DIV} at (10,0) size 764x144
 layer at (38,30) size 100x100
   RenderImage {IMG} at (20,20) size 100x100
-layer at (18,164) size 764x144
-  RenderBlock (relative positioned) {DIV} at (10,154) size 764x144
+layer at (18,164) size 764x143
+  RenderBlock (relative positioned) {DIV} at (10,153) size 764x144
 layer at (38,184) size 100x100
   RenderImage {IMG} at (20,20) size 100x100
 

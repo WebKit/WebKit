@@ -4,7 +4,7 @@ layer at (0,0) size 800x256
   RenderBlock {HTML} at (0,0) size 800x256
     RenderBody {BODY} at (8,16) size 784x190
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 754x35
+        RenderText {#text} at (0,0) size 754x36
           text run at (0,0) width 754: "There should be four identical white boxes in the teal block below, all the same size, each one a little lower down on the"
           text run at (0,18) width 134: "line, in a step pattern."
       RenderBlock {DIV} at (50,86) size 684x104 [color=#FFFFFF] [bgcolor=#008080]

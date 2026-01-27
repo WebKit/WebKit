@@ -4,13 +4,13 @@ layer at (0,0) size 800x288
   RenderBlock {html} at (0,0) size 800x288
     RenderBody {body} at (8,21) size 784x251
       RenderBlock {h1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 112x36
+        RenderText {#text} at (0,0) size 112x37
           text run at (0,0) width 112: "Test for "
-        RenderInline {a} at (111,0) size 144x36 [color=#0000EE]
-          RenderText {#text} at (111,0) size 144x36
+        RenderInline {a} at (111,0) size 144x37 [color=#0000EE]
+          RenderText {#text} at (111,0) size 144x37
             text run at (111,0) width 144: "Bug 42352"
       RenderBlock {p} at (0,58) size 784x19
-        RenderText {#text} at (0,0) size 506x17
+        RenderText {#text} at (0,0) size 506x18
           text run at (0,0) width 506: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
       RenderBlock {p} at (0,92) size 784x20
         RenderText {#text} at (0,2) size 35x16

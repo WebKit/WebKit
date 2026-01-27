@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 501x17
+        RenderText {#text} at (0,0) size 501x18
           text run at (0,0) width 424: "there's a table below this line with cellspacing=1 and border=2 and "
           text run at (424,0) width 77: "several lines"
-        RenderBR {BR} at (501,0) size 0x17
-        RenderText {#text} at (0,18) size 412x17
+        RenderBR {BR} at (501,0) size 0x18
+        RenderText {#text} at (0,18) size 412x18
           text run at (0,18) width 412: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
       RenderTable {TABLE} at (0,52) size 777x529 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 773x525
           RenderTableRow {TR} at (0,1) size 773x283
             RenderTableCell {TD} at (1,1) size 771x204 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=0 c=0 rs=4 cs=2]
               RenderBlock {P} at (5,5) size 761x42
-                RenderInline {FONT} at (0,0) size 23x26 [color=#E91C05]
-                  RenderText {#text} at (0,0) size 23x26
+                RenderInline {FONT} at (0,0) size 23x27 [color=#E91C05]
+                  RenderText {#text} at (0,0) size 23x27
                     text run at (0,0) width 23: "W"
-                RenderInline {B} at (23,7) size 230x17
-                  RenderInline {FONT} at (23,7) size 230x17 [color=#E91C05]
-                    RenderText {#text} at (23,7) size 230x17
+                RenderInline {B} at (23,7) size 230x18
+                  RenderInline {FONT} at (23,7) size 230x18 [color=#E91C05]
+                    RenderText {#text} at (23,7) size 230x18
                       text run at (23,7) width 230: "elcome to Pacific Shore Properties"
-                    RenderBR {BR} at (252,7) size 1x17
+                    RenderBR {BR} at (252,7) size 1x18
                 RenderInline {FONT} at (0,27) size 362x15
                   RenderText {#text} at (0,27) size 362x15
                     text run at (0,27) width 362: "Pacific Shore Properties is situated on beautiful Mayne Island."

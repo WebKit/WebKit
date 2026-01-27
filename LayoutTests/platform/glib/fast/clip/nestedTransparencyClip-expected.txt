@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 741x35
+        RenderText {#text} at (0,0) size 741x36
           text run at (0,0) width 741: "This test is for a bug we had with clipping transparency layers. The bug is visual, so the pixel test is more worthwhile."
           text run at (0,18) width 644: "Below, \"Peach,\" \"Plum,\" and \"Pear\" should appear. Before, we were clipping out \"Plum\" and \"Pear.\""
-        RenderBR {BR} at (643,18) size 1x17
-        RenderBR {BR} at (0,36) size 0x17
+        RenderBR {BR} at (643,18) size 1x18
+        RenderBR {BR} at (0,36) size 0x18
 layer at (8,62) size 784x18
   RenderBlock {DIV} at (0,54) size 784x18
-    RenderText {#text} at (0,0) size 38x17
+    RenderText {#text} at (0,0) size 38x18
       text run at (0,0) width 38: "Peach"
     RenderText {#text} at (0,0) size 0x0
 layer at (8,80) size 33x18
   RenderBlock (positioned) {DIV} at (8,80) size 33x18
-    RenderText {#text} at (0,0) size 33x17
+    RenderText {#text} at (0,0) size 33x18
       text run at (0,0) width 33: "Plum"
     RenderText {#text} at (0,0) size 0x0
 layer at (8,98) size 28x18
   RenderBlock (positioned) {DIV} at (0,18) size 28x18
-    RenderText {#text} at (0,0) size 28x17
+    RenderText {#text} at (0,0) size 28x18
       text run at (0,0) width 28: "Pear"

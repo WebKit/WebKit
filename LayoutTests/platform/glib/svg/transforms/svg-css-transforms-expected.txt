@@ -5,19 +5,19 @@ layer at (0,0) size 800x580
     RenderBody {body} at (8,8) size 784x564
       RenderBlock {div} at (10,10) size 220x544
         RenderBlock {h2} at (0,19) size 220x28
-          RenderText {#text} at (0,0) size 120x26
+          RenderText {#text} at (0,0) size 120x27
             text run at (0,0) width 120: "SVG nested"
         RenderBlock {h2} at (0,286) size 220x28
-          RenderText {#text} at (0,0) size 114x26
+          RenderText {#text} at (0,0) size 114x27
             text run at (0,0) width 114: "CSS nested"
-      RenderText {#text} at (240,0) size 4x17
+      RenderText {#text} at (240,0) size 4x18
         text run at (240,0) width 4: " "
       RenderBlock {div} at (254,10) size 220x544
         RenderBlock {h2} at (0,19) size 220x28
-          RenderText {#text} at (0,0) size 162x26
+          RenderText {#text} at (0,0) size 162x27
             text run at (0,0) width 162: "SVG compound"
         RenderBlock {h2} at (0,286) size 220x28
-          RenderText {#text} at (0,0) size 156x26
+          RenderText {#text} at (0,0) size 156x27
             text run at (0,0) width 156: "CSS compound"
       RenderText {#text} at (0,0) size 0x0
 layer at (28,85) size 200x200

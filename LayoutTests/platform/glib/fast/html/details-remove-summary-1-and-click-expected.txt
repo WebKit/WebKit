@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {DETAILS} at (0,0) size 800x19
-        RenderListItem {SUMMARY} at (0,0) size 800x19
-          RenderListMarker at (0,1) size 12x17: "\x{25BE}"
-          RenderText {#text} at (12,1) size 44x17
-            text run at (12,1) width 44: "Details"
-        RenderBlock {SLOT} at (0,19) size 800x0
+      RenderBlock {DETAILS} at (0,0) size 800x18
+        RenderListItem {SUMMARY} at (0,0) size 800x18
+          RenderListMarker at (0,0) size 20x18: "\x{25BC}"
+          RenderText {#text} at (20,0) size 44x18
+            text run at (20,0) width 44: "Details"
+        RenderBlock {SLOT} at (0,18) size 800x0
 caret: position 0 of child 0 {#text} of child 0 {SUMMARY} of child 0 {SLOT} of {#document-fragment} of child 1 {DETAILS} of body

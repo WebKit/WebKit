@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x104 [border: (5px solid #FF0000)]
         RenderMenuList {SELECT} at (37,37) size 55x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 53x28
-            RenderText at (5,5) size 27x17
+            RenderText at (5,5) size 27x18
               text run at (5,5) width 27: "One"
-        RenderText {#text} at (92,43) size 26x17
+        RenderText {#text} at (92,43) size 26x18
           text run at (92,43) width 26: "blaa"
 caret: position 0 of child 0 {SELECT} of child 0 {DIV} of body

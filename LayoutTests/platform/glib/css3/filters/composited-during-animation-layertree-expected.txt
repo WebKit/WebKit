@@ -15,16 +15,16 @@
           (bounds 160.00 90.00)
         )
         (GraphicsLayer
-          (position 18.00 132.00)
+          (position 18.00 131.00)
+          (bounds 160.00 91.00)
+        )
+        (GraphicsLayer
+          (position 18.00 245.00)
           (bounds 160.00 90.00)
         )
         (GraphicsLayer
-          (position 18.00 246.00)
-          (bounds 160.00 90.00)
-        )
-        (GraphicsLayer
-          (position 18.00 360.00)
-          (bounds 160.00 90.00)
+          (position 18.00 358.00)
+          (bounds 160.00 91.00)
         )
       )
     )

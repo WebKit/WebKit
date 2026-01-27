@@ -4,7 +4,7 @@ layer at (0,0) size 800x212
   RenderBlock {HTML} at (0,0) size 800x212
     RenderBody {BODY} at (8,16) size 784x188
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 188x17
+        RenderText {#text} at (0,0) size 188x18
           text run at (0,0) width 188: "This circle is drawn via SVG."
       RenderBlock (anonymous) at (0,34) size 784x154
         RenderSVGRoot {svg} at (8,50) size 40x40

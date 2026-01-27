@@ -4,41 +4,41 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 712x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
+        RenderInline {I} at (0,0) size 712x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6334"
-          RenderText {#text} at (0,0) size 712x35
+          RenderText {#text} at (0,0) size 712x36
             text run at (559,0) width 153: " REGRESSION: <input"
             text run at (0,18) width 370: "type=\"button\"> text is reversed on \"visual Hebrew\" pages"
-        RenderText {#text} at (369,18) size 5x17
+        RenderText {#text} at (369,18) size 5x18
           text run at (369,18) width 5: "."
       RenderBlock {P} at (0,70) size 784x18
-        RenderText {#text} at (0,0) size 303x17
+        RenderText {#text} at (0,0) size 303x18
           text run at (0,0) width 303: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
       RenderBlock (anonymous) at (0,104) size 784x54
         RenderButton {BUTTON} at (0,0) size 58x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 42x18
-            RenderText {#text} at (0,0) size 42x17
+            RenderText {#text} at (0,0) size 42x18
               text run at (0,0) width 42: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (58,4) size 0x17
+        RenderBR {BR} at (58,4) size 0x18
         RenderButton {INPUT} at (0,27) size 58x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 42x18
-            RenderText at (0,0) size 42x17
+            RenderText at (0,0) size 42x18
               text run at (0,0) width 42 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,184) size 784x18
-        RenderText {#text} at (0,0) size 249x17
+        RenderText {#text} at (0,0) size 249x18
           text run at (0,0) width 249: "The following lines should be identical:"
       RenderBlock {P} at (0,218) size 784x18
-        RenderText {#text} at (0,0) size 76x17
+        RenderText {#text} at (0,0) size 76x18
           text run at (0,0) width 16: "21"
           text run at (16,0) width 60 RTL: "\x{5D4}\x{5DE}\x{5D0}\x{5D4} \x{5D4}-"
       RenderBlock {P} at (0,252) size 784x18
-        RenderText {#text} at (0,0) size 76x17
+        RenderText {#text} at (0,0) size 76x18
           text run at (0,0) width 76: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]

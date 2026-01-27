@@ -68,25 +68,25 @@ layer at (20,20) size 362x977 backgroundClip at (0,0) size 800x600 clip at (0,0)
         text run at (0,335) width 352: "36px grid. The grid should reset at the top of the second"
         text run at (0,377) width 51: "column."
       RenderBR {BR} at (51,377) size 0x17
-    RenderBlock {DIV} at (0,395) size 362x544
-      RenderText {#text} at (0,17) size 342x190
+    RenderBlock {DIV} at (0,394) size 362x545
+      RenderText {#text} at (0,17) size 342x191
         text run at (0,17) width 299: "All of this text even though it's"
         text run at (0,59) width 342: "smaller should be on the 36px grid."
         text run at (0,139) width 328: "The grid should reset at the top of"
         text run at (0,181) width 188: "the second column."
-      RenderBR {BR} at (188,181) size 0x26
-      RenderText {#text} at (0,223) size 342x152
+      RenderBR {BR} at (188,181) size 0x27
+      RenderText {#text} at (0,223) size 342x153
         text run at (0,223) width 299: "All of this text even though it's"
         text run at (0,265) width 342: "smaller should be on the 36px grid."
         text run at (0,307) width 328: "The grid should reset at the top of"
         text run at (0,349) width 188: "the second column."
-      RenderBR {BR} at (188,349) size 0x26
-      RenderText {#text} at (0,391) size 342x152
+      RenderBR {BR} at (188,349) size 0x27
+      RenderText {#text} at (0,391) size 342x153
         text run at (0,391) width 299: "All of this text even though it's"
         text run at (0,433) width 342: "smaller should be on the 36px grid."
         text run at (0,475) width 328: "The grid should reset at the top of"
         text run at (0,517) width 188: "the second column."
-      RenderBR {BR} at (188,517) size 0x26
-    RenderBlock {DIV} at (0,939) size 362x38
+      RenderBR {BR} at (188,517) size 0x27
+    RenderBlock {DIV} at (0,938) size 362x39
       RenderText {#text} at (0,27) size 274x11
         text run at (0,27) width 274: "All of this text even though it's smaller should be on the 36px grid."

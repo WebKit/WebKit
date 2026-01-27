@@ -16,26 +16,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x108
-        RenderText {#text} at (0,0) size 764x80
+        RenderText {#text} at (0,0) size 764x81
           text run at (0,0) width 764: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with "
           text run at (0,27) width 760: "with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\". Fix for "
           text run at (0,54) width 90: "this bug: "
-        RenderInline {A} at (90,54) size 260x26 [color=#0000EE]
-          RenderText {#text} at (90,54) size 260x26
+        RenderInline {A} at (90,54) size 260x27 [color=#0000EE]
+          RenderText {#text} at (90,54) size 260x27
             text run at (90,54) width 260: "<rdar://problem/3927554>"
-        RenderText {#text} at (0,54) size 691x53
+        RenderText {#text} at (0,54) size 691x54
           text run at (350,54) width 341: " Style info applied to remainder of "
           text run at (0,81) width 347: "document after a newline is entered"
       RenderBlock {DIV} at (0,108) size 784x12
       RenderBlock {P} at (0,144) size 784x55 [border: (2px solid #0000FF)]
-        RenderInline {B} at (14,14) size 32x26
-          RenderText {#text} at (14,14) size 32x26
+        RenderInline {B} at (14,14) size 32x27
+          RenderText {#text} at (14,14) size 32x27
             text run at (14,14) width 32: "foo"
       RenderBlock {P} at (0,223) size 784x82 [border: (2px solid #0000FF)]
-        RenderInline {B} at (14,14) size 12x26
-          RenderText {#text} at (14,14) size 12x26
+        RenderInline {B} at (14,14) size 12x27
+          RenderText {#text} at (14,14) size 12x27
             text run at (14,14) width 12: "x"
-          RenderBR {BR} at (26,14) size 0x26 [bgcolor=#008000]
-        RenderText {#text} at (14,41) size 31x26
+          RenderBR {BR} at (26,14) size 0x27 [bgcolor=#008000]
+        RenderText {#text} at (14,41) size 31x27
           text run at (14,41) width 31: "bar"
 caret: position 1 of child 0 {#text} of child 0 {B} of child 6 {P} of body

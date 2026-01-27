@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 641x17
+        RenderText {#text} at (0,0) size 641x18
           text run at (0,0) width 641: "The black text should be identical to, and overlap, the red text, so there should be no red pixels below."
       RenderBlock {DIV} at (0,34) size 784x186
         RenderBlock {DIV} at (0,0) size 784x165 [color=#FF0000]

@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x30
-        RenderText {#text} at (0,6) size 122x17
+        RenderText {#text} at (0,6) size 122x18
           text run at (0,6) width 122: "Left to right select: "
         RenderMenuList {SELECT} at (122,0) size 132x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 130x28
-            RenderText at (5,5) size 57x17
+            RenderText at (5,5) size 57x18
               text run at (5,5) width 57: "Alabama"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,30) size 784x30
-        RenderText {#text} at (662,6) size 122x17
+        RenderText {#text} at (662,6) size 122x18
           text run at (662,6) width 8 RTL: ": "
           text run at (670,6) width 114: "Right to left select"
         RenderMenuList {SELECT} at (530,0) size 132x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 130x28
-            RenderText at (68,5) size 57x17
+            RenderText at (68,5) size 57x18
               text run at (68,5) width 57: "Alabama"
         RenderText {#text} at (0,0) size 0x0

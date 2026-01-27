@@ -1,23 +1,23 @@
-layer at (0,0) size 785x704
+layer at (0,0) size 785x705
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x704
-  RenderBlock {HTML} at (0,0) size 785x704
-    RenderBody {BODY} at (8,8) size 769x688
-      RenderBlock {P} at (0,0) size 769x72
-        RenderText {#text} at (0,0) size 751x35
+layer at (0,0) size 785x705
+  RenderBlock {HTML} at (0,0) size 785x705
+    RenderBody {BODY} at (8,8) size 769x689
+      RenderBlock {P} at (0,0) size 769x73
+        RenderText {#text} at (0,0) size 751x36
           text run at (0,0) width 358: "This test shows the following bugs with text-orientation. "
           text run at (358,0) width 393: "The far right test mis-renders differently in both the simple and"
           text run at (0,18) width 389: "complex text paths. The simple text path mis-renders because "
-        RenderInline {TT} at (389,21) size 304x15
-          RenderText {#text} at (389,21) size 304x15
+        RenderInline {TT} at (389,21) size 304x16
+          RenderText {#text} at (389,21) size 304x16
             text run at (389,21) width 304: "CTFontGetVerticalTranslationsForGlyphs"
-        RenderText {#text} at (0,18) size 757x53
+        RenderText {#text} at (0,18) size 757x54
           text run at (693,18) width 47: " returns"
-          text run at (0,36) width 434: "incorrect values for horizontal glyphs that have vertical counterparts. "
-          text run at (434,36) width 323: "The complex text code path mis-renders because of"
-          text run at (0,54) width 102: "API deficiency. "
-          text run at (101,54) width 603: "There is no way to tell CoreText to use upright horizontal glyphs when rendering a vertical line."
-      RenderBlock {DIV} at (0,88) size 170x600
+          text run at (0,37) width 434: "incorrect values for horizontal glyphs that have vertical counterparts. "
+          text run at (434,37) width 323: "The complex text code path mis-renders because of"
+          text run at (0,55) width 102: "API deficiency. "
+          text run at (101,55) width 603: "There is no way to tell CoreText to use upright horizontal glyphs when rendering a vertical line."
+      RenderBlock {DIV} at (0,88) size 170x601
         RenderBlock {DIV} at (0,0) size 170x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (2,1) size 40x173
             RenderText {#text} at (2,1) size 40x173

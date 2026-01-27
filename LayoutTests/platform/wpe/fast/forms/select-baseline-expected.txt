@@ -3,47 +3,47 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 462x17
+      RenderText {#text} at (0,0) size 462x18
         text run at (0,0) width 462: "This tests that empty select controls and buttons have the correct baseline."
-      RenderBR {BR} at (462,0) size 0x17
+      RenderBR {BR} at (462,0) size 0x18
       RenderMenuList {SELECT} at (0,18) size 28x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 26x28
-          RenderText at (5,5) size 0x17
+          RenderText at (5,5) size 0x18
             text run at (5,5) width 0: " "
-      RenderText {#text} at (28,24) size 29x17
+      RenderText {#text} at (28,24) size 29x18
         text run at (28,24) width 29: " test "
       RenderMenuList {SELECT} at (57,18) size 49x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 47x28
-          RenderText at (5,5) size 21x17
+          RenderText at (5,5) size 21x18
             text run at (5,5) width 21: "test"
-      RenderText {#text} at (106,24) size 4x17
+      RenderText {#text} at (106,24) size 4x18
         text run at (106,24) width 4: " "
       RenderMenuList {SELECT} at (110,18) size 28x30 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
         RenderBlock (anonymous) at (1,1) size 26x28
-          RenderText at (5,5) size 0x17
+          RenderText at (5,5) size 0x18
             text run at (5,5) width 0: " "
-      RenderText {#text} at (138,24) size 29x17
+      RenderText {#text} at (138,24) size 29x18
         text run at (138,24) width 29: " test "
       RenderMenuList {SELECT} at (167,18) size 49x30 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
         RenderBlock (anonymous) at (1,1) size 47x28
-          RenderText at (5,5) size 21x17
+          RenderText at (5,5) size 21x18
             text run at (5,5) width 21: "test"
-      RenderText {#text} at (216,24) size 4x17
+      RenderText {#text} at (216,24) size 4x18
         text run at (216,24) width 4: " "
-      RenderButton {BUTTON} at (220,34) size 16x9 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-      RenderText {#text} at (236,24) size 4x17
+      RenderButton {BUTTON} at (220,34) size 16x10 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (236,24) size 4x18
         text run at (236,24) width 4: " "
       RenderButton {BUTTON} at (240,20) size 37x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 21x18
-          RenderText {#text} at (0,0) size 21x17
+          RenderText {#text} at (0,0) size 21x18
             text run at (0,0) width 21: "test"
-      RenderText {#text} at (277,24) size 4x17
+      RenderText {#text} at (277,24) size 4x18
         text run at (277,24) width 4: " "
-      RenderButton {BUTTON} at (281,34) size 16x9 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
-      RenderText {#text} at (297,24) size 4x17
+      RenderButton {BUTTON} at (281,34) size 16x10 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
+      RenderText {#text} at (297,24) size 4x18
         text run at (297,24) width 4: " "
       RenderButton {BUTTON} at (301,20) size 37x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (2px outset #C0C0C0)]
         RenderBlock (anonymous) at (8,4) size 21x18
-          RenderText {#text} at (0,0) size 21x17
+          RenderText {#text} at (0,0) size 21x18
             text run at (0,0) width 21: "test"
       RenderText {#text} at (0,0) size 0x0
