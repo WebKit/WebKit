@@ -191,6 +191,17 @@ void PositionedLayoutConstraints::captureGridArea()
             ? gridContainer->width() : gridContainer->height();
         m_containingRange.moveTo(containerSize - m_containingRange.max());
     }
+
+    // FIXME: Get PositionedLayoutConstraints to work in pre-corrected coordinates instead of assuming it's wrong and doing "fixup" afterwards, so we don't have to "unfixup" here.
+    if (LogicalBoxAxis::Inline == m_containingAxis) {
+        if (BoxAxis::Horizontal == m_physicalAxis) {
+            if (gridContainer->shouldPlaceVerticalScrollbarOnLeft())
+                m_containingRange.moveBy(-gridContainer->verticalScrollbarWidth());
+        } else {
+            if (!m_containingWritingMode.isInlineTopToBottom())
+                m_containingRange.moveBy(-gridContainer->horizontalScrollbarHeight());
+        }
+    }
 }
 
 LayoutRange PositionedLayoutConstraints::extractRange(LayoutRect anchorRect)

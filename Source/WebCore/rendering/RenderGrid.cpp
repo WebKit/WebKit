@@ -2276,7 +2276,15 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
 {
     ASSERT(gridItem.isOutOfFlowPositioned());
     bool isRowAxis = direction == Style::GridTrackSizingDirection::Columns;
-    LayoutUnit borderEdge = isRowAxis ? borderStart() : borderBefore();
+    auto borderEdge = [&]() {
+        if (isRowAxis) {
+            if (writingMode().isHorizontal() && (writingMode().isInlineLeftToRight() == shouldPlaceVerticalScrollbarOnLeft()))
+                return borderStart() + scrollbarLogicalWidth();
+            return borderStart();
+        }
+        return borderBefore();
+    }();
+
     if (currentGrid().needsItemsPlacement()) {
         // Haven't completed in-flow placement and grid sizing yet.
         // Return something basic that doesn't access unbuilt data structures.
@@ -2446,9 +2454,9 @@ LayoutRect RenderGrid::contentOverflowRect() const
     LayoutRect contentArea;
     if (writingMode().isInlineFlipped()) {
         contentArea.shiftEdgesTo(
-            translateRTLCoordinate(m_columnPositions.first()),
-            m_rowPositions.first(),
             translateRTLCoordinate(m_columnPositions.last()),
+            m_rowPositions.first(),
+            translateRTLCoordinate(m_columnPositions.first()),
             m_rowPositions.last());
     } else {
         contentArea.shiftEdgesTo(
@@ -2456,6 +2464,8 @@ LayoutRect RenderGrid::contentOverflowRect() const
             m_rowPositions.first(),
             m_columnPositions.last(),
             m_rowPositions.last());
+        if (writingMode().isHorizontal() && shouldPlaceVerticalScrollbarOnLeft())
+            contentArea.move(verticalScrollbarWidth(), 0);
     }
 
     if (writingMode().isVertical())
@@ -2483,14 +2493,10 @@ LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
 {
     LayoutUnit width = borderLogicalLeft() + borderLogicalRight() + clientLogicalWidth();
 
-#if !PLATFORM(IOS_FAMILY)
-    // FIXME: Ideally scrollbarLogicalWidth() should return zero in iOS so we don't need this
-    // (see bug https://webkit.org/b/191857).
     // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
     // so we need to take into account when computing the position of the columns.
-    if (writingMode().isHorizontal())
-        width += scrollbarLogicalWidth();
-#endif
+    if (isHorizontalWritingMode() && shouldPlaceVerticalScrollbarOnLeft())
+        width += verticalScrollbarWidth();
 
     return width - coordinate;
 }
@@ -2513,6 +2519,9 @@ LayoutUnit RenderGrid::logicalOffsetForGridItem(const RenderBox& gridItem, Style
     // to translate positions from RTL to LTR, as it's more convenient for painting.
     if (writingMode().isInlineFlipped())
         rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) ? gridItem.logicalHeight()  : gridItem.logicalWidth());
+    else if (writingMode().isHorizontal() && shouldPlaceVerticalScrollbarOnLeft())
+        rowAxisOffset += verticalScrollbarWidth();
+
     return rowAxisOffset;
 }
 
