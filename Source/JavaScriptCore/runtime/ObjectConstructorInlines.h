@@ -65,7 +65,7 @@ ALWAYS_INLINE void objectAssignIndexedPropertiesFast(JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, void());
 }
 
-ALWAYS_INLINE bool checkStrucureForClone(Structure* structure)
+ALWAYS_INLINE bool checkStructureForClone(Structure* structure)
 {
     static constexpr bool verbose = false;
 
@@ -152,7 +152,7 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         return false;
     }
 
-    if (!checkStrucureForClone(targetStructure))
+    if (!checkStructureForClone(targetStructure))
         return false;
 
     if (targetStructure->transitionWatchpointSetIsStillValid()) {
@@ -180,7 +180,7 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         }
     }
 
-    if (!checkStrucureForClone(sourceStructure))
+    if (!checkStructureForClone(sourceStructure))
         return false;
 
     if (!sourceStructure->didTransition()) {
@@ -205,14 +205,17 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
 
     dataLogLnIf(verbose, "Use fast cloning!");
 
+    bool canCopyInlineStorage = source->hasInlineStorage();
+
     unsigned propertyCapacity = sourceStructure->outOfLineCapacity();
     if (propertyCapacity) {
         Butterfly* newButterfly = Butterfly::createUninitialized(vm, target, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
         // memcpy is fine since newButterfly is not tied to any object yet.
         memcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
-        gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
+        if (canCopyInlineStorage)
+            gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
         target->nukeStructureAndSetButterfly(vm, targetStructure->id(), newButterfly);
-    } else
+    } else if (canCopyInlineStorage)
         gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
     target->setStructure(vm, sourceStructure);
 
@@ -244,7 +247,7 @@ ALWAYS_INLINE JSObject* tryCreateObjectViaCloning(VM& vm, JSGlobalObject* global
         }
     }
 
-    if (!checkStrucureForClone(sourceStructure))
+    if (!checkStructureForClone(sourceStructure))
         return nullptr;
 
     if (!sourceStructure->didTransition()) {
