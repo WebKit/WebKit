@@ -3950,6 +3950,10 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
     if (!inlineLayout())
         return false;
 
+    // Tables rely on inline layout recomputing the block height.
+    if (isRenderTableCell())
+        return false;
+
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         ASSERT(!walker.current()->selfNeedsLayout());
 
