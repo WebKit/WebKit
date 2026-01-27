@@ -48,6 +48,50 @@ static constexpr auto blobsDirectoryName = "Blobs"_s;
 static constexpr auto blobSuffix = "-blob"_s;
 static const unsigned currentVersion = 16;
 
+std::span<const uint8_t> CacheStorageDiskStore::SafeFileData::span() const
+{
+    return WTF::switchOn(data,
+        [](const std::monostate&) { return std::span<const uint8_t> { }; },
+        [](const FileSystem::MappedFileData& mapped) { return mapped.span(); },
+        [](const Vector<uint8_t>& vector) { return vector.span(); }
+    );
+}
+
+RefPtr<WebCore::SharedBuffer> CacheStorageDiskStore::SafeFileData::convertToSharedBuffer() &&
+{
+    return WTF::switchOn(WTF::move(data),
+        [](std::monostate&&) -> RefPtr<WebCore::SharedBuffer> { return nullptr; },
+        [](FileSystem::MappedFileData&& mapped) -> RefPtr<WebCore::SharedBuffer> { return WebCore::SharedBuffer::create(WTF::move(mapped)); },
+        [](Vector<uint8_t>&& vector) -> RefPtr<WebCore::SharedBuffer> { return WebCore::SharedBuffer::create(WTF::move(vector)); }
+    );
+}
+
+CacheStorageDiskStore::SafeFileData::operator bool() const
+{
+    return !std::holds_alternative<std::monostate>(data);
+}
+
+CacheStorageDiskStore::SafeFileData CacheStorageDiskStore::SafeFileData::read(const String& filePath)
+{
+    bool canMapFile = true;
+    if (!FileSystem::isSafeToUseMemoryMapForPath(filePath)) {
+        canMapFile = FileSystem::makeSafeToUseMemoryMapForPath(filePath);
+        RELEASE_LOG_ERROR_IF(!canMapFile, CacheStorage, "CacheStorageDiskStore::SafeFileData::read fails to mark file %" SENSITIVE_LOG_STRING " as safe to use for mmap", filePath.utf8().data());
+    }
+
+    // Try memory mapping first if it's safe to do so.
+    if (canMapFile) {
+        if (auto mapped = FileSystem::mapFile(filePath, FileSystem::MappedFileMode::Private))
+            return { WTF::move(*mapped) };
+    }
+
+    // Fall back to reading entire file if mmap is not safe or failed.
+    if (auto readData = FileSystem::readEntireFile(filePath))
+        return { WTF::move(*readData) };
+
+    return { std::monostate() };
+}
+
 static bool shouldStoreBodyAsBlob(const Vector<uint8_t>& bodyData)
 {
     return bodyData.size() > WTF::pageSize();
@@ -309,7 +353,7 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
     return StoredRecordInformation { info, WTF::move(*metaData), WTF::move(*header) };
 }
 
-std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(std::span<const uint8_t> buffer, FileSystem::MappedFileData&& blobBuffer)
+std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(std::span<const uint8_t> buffer, SafeFileData&& blobBuffer)
 {
     auto storedInfo = readRecordInfoFromFileData(m_salt, buffer);
     if (!storedInfo)
@@ -330,14 +374,14 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
         // MappedFileData, or by taking a read-only virtual copy of bodyData.
         responseBody = WebCore::SharedBuffer::create(bodyData);
     } else {
-        if (!blobBuffer)
+        auto sharedBuffer = WTF::move(blobBuffer).convertToSharedBuffer();
+        if (!sharedBuffer)
             return std::nullopt;
 
-        auto sharedBuffer = WebCore::SharedBuffer::create(WTF::move(blobBuffer));
         if (storedInfo->metaData.bodyHash != computeSHA1(sharedBuffer->span(), m_salt))
             return std::nullopt;
 
-        responseBody = sharedBuffer;
+        responseBody = sharedBuffer.releaseNonNull();
     }
 
     if (!responseBody)
@@ -359,11 +403,11 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallbac
                     continue;
 
                 auto recordFile = FileSystem::pathByAppendingComponent(cacheDirectory, recordName);
-                auto fileData = FileSystem::mapFile(recordFile, FileSystem::MappedFileMode::Private);
+                auto fileData = SafeFileData::read(recordFile);
                 if (!fileData)
                     continue;
 
-                if (auto storedRecordInfo = readRecordInfoFromFileData(salt, fileData->span()))
+                if (auto storedRecordInfo = readRecordInfoFromFileData(salt, fileData.span()))
                     recordInfos.append(WTF::move(storedRecordInfo->info));
             }
         }
@@ -384,8 +428,9 @@ void CacheStorageDiskStore::readRecordsInternal(const Vector<CacheStorageRecordI
         Vector<std::optional<CacheStorageRecord>> records;
         for (auto& recordInfo : recordInfos) {
             auto recordFile = recordFilePathWithDirectory(directory, recordInfo.key());
-            auto fileData = valueOrDefault(FileSystem::mapFile(recordFile, FileSystem::MappedFileMode::Private));
-            auto blobData = !fileData.size() ? FileSystem::MappedFileData { } : valueOrDefault(FileSystem::mapFile(recordBlobFilePath(recordFile), FileSystem::MappedFileMode::Private));
+            auto fileData = SafeFileData::read(recordFile);
+            auto blobData = fileData ? SafeFileData::read(recordBlobFilePath(recordFile)) : SafeFileData { std::monostate() };
+
             auto record = readRecordFromFileData(fileData.span(), WTF::move(blobData));
             if (!record) {
                 RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readRecordsInternal fails to decode record from file", this);
