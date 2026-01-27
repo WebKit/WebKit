@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1320,10 +1320,12 @@ void SWServer::unregisterServiceWorkerClientInternal(const ClientOrigin& clientO
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
     ASSERT(clientsByRegistrableDomainIterator != m_clientsByRegistrableDomain.end());
-    auto& clientsForRegistrableDomain = clientsByRegistrableDomainIterator->value;
-    clientsForRegistrableDomain.remove(clientIdentifier);
-    if (clientsForRegistrableDomain.isEmpty())
-        m_clientsByRegistrableDomain.remove(clientsByRegistrableDomainIterator);
+    if (clientsByRegistrableDomainIterator != m_clientsByRegistrableDomain.end()) {
+        auto& clientsForRegistrableDomain = clientsByRegistrableDomainIterator->value;
+        clientsForRegistrableDomain.remove(clientIdentifier);
+        if (clientsForRegistrableDomain.isEmpty())
+            m_clientsByRegistrableDomain.remove(clientsByRegistrableDomainIterator);
+    }
 
     bool didUnregister = false;
     if (shouldUpdateRegistrations == ShouldUpdateRegistrations::Yes) {
@@ -1364,7 +1366,8 @@ void SWServer::unregisterServiceWorkerClientInternal(const ClientOrigin& clientO
                 if (protectedThis->removeContextConnectionIfPossible(clientRegistrableDomain) == ShouldDelayRemoval::Yes) {
                     auto iterator = protectedThis->m_clientIdentifiersPerOrigin.find(clientOrigin);
                     ASSERT(iterator != protectedThis->m_clientIdentifiersPerOrigin.end());
-                    iterator->value.terminateServiceWorkersTimer->startOneShot(protectedThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
+                    if (iterator != protectedThis->m_clientIdentifiersPerOrigin.end())
+                        iterator->value.terminateServiceWorkersTimer->startOneShot(protectedThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
                     return;
                 }
 
@@ -1406,6 +1409,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     if (clientIterator != m_clientsById.end() && clientIterator->value->identifier.processIdentifier() != clientIdentifier.processIdentifier())
         return;
 
+    // Also unregister unknown clientIdentifier in case Service Worker maps get out-of-sync.
     unregisterServiceWorkerClientInternal(clientOrigin, clientIdentifier, ShouldUpdateRegistrations::Yes);
 }
 
