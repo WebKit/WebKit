@@ -44,6 +44,8 @@ public:
     
     bool requiresLayer() const override { return false; }
 
+    bool isInsideEntirelyHiddenLayer() const override { return false; }
+
     void layout() override;
     
     void paintIntoRect(GraphicsContext&, const LayoutPoint&, const LayoutRect&);
