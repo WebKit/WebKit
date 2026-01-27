@@ -98,7 +98,13 @@ public:
         ASSERT(kind() == Load || kind() == LoadFromPrototype);
         return u.load.offset;
     }
-    
+
+    void setConstantValue(FrozenValue* value)
+    {
+        ASSERT(kind() == Constant);
+        u.constant = value;
+    }
+
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
     
@@ -127,6 +133,7 @@ public:
     
     RegisteredStructureSet& set() { return m_set; }
     const RegisteredStructureSet& set() const { return m_set; }
+    GetByOffsetMethod& method() { return m_method; }
     const GetByOffsetMethod& method() const { return m_method; }
     
     void dumpInContext(PrintStream&, DumpContext*) const;
