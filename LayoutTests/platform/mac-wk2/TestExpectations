@@ -2414,6 +2414,8 @@ webkit.org/b/304851 imported/w3c/web-platform-tests/workers/worker-performance.w
 
 webkit.org/b/304995 [ Release ] imported/w3c/web-platform-tests/largest-contentful-paint/video-poster.html [ Pass Failure ]
 
+webkit.org/b/305069 http/tests/lists/list-new-parent-no-sibling-append.html [ Pass Crash ]
+
 webkit.org/b/305086 [ arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
 
 webkit.org/b/305403 [ Sequoia ] http/tests/performance/performance-resource-timing-redirection-cross-origin-media.html [ Failure ]
