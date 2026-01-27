@@ -36,8 +36,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, PDFKit)
-SOFT_LINK_CLASS(PDFKit, PDFDocument)
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA_REQUIRED(Quartz, PDFKit)
+SOFT_LINK_CLASS_REQUIRED(PDFKit, PDFDocument)
 
 extern "C" {
 bool CGContextGetAllowsFontSmoothing(CGContextRef context);

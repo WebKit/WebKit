@@ -32,14 +32,14 @@
 #import <pal/spi/cocoa/WebPrivacySPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, WebPrivacy)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResourceRequestOptions)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResources)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPLinkFilteringData)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPStorageAccessPromptQuirk)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPStorageAccessPromptQuirksData)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WPStorageAccessUserAgentStringQuirkData)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPNotificationUserInfoResourceTypeKey, NSString *)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPResourceDataChangedNotificationName, NSNotificationName)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, WebPrivacy)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPResourceRequestOptions)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPResources)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPLinkFilteringData)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPStorageAccessPromptQuirk)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPStorageAccessPromptQuirksData)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WPStorageAccessUserAgentStringQuirkData)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, WebPrivacy, WPNotificationUserInfoResourceTypeKey, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, WebPrivacy, WPResourceDataChangedNotificationName, NSNotificationName)
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

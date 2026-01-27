@@ -34,20 +34,20 @@ namespace WebKit {
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-SOFT_LINK_PRIVATE_FRAMEWORK(PhoneNumbers);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(PhoneNumbers);
 
 typedef struct CF_BRIDGED_TYPE(id) __CFPhoneNumber* CFPhoneNumberRef;
 
 // These functions are declared with __attribute__((visibility ("default")))
 // We currently don't have a way to soft link such functions, so we forward declare them again here.
 extern "C" CFPhoneNumberRef CFPhoneNumberCreate(CFAllocatorRef, CFStringRef, CFStringRef);
-SOFT_LINK(PhoneNumbers, CFPhoneNumberCreate, CFPhoneNumberRef, (CFAllocatorRef allocator, CFStringRef digits, CFStringRef countryCode), (allocator, digits, countryCode));
+SOFT_LINK_REQUIRED(PhoneNumbers, CFPhoneNumberCreate, CFPhoneNumberRef, (CFAllocatorRef allocator, CFStringRef digits, CFStringRef countryCode), (allocator, digits, countryCode));
 
 extern "C" CFStringRef CFPhoneNumberCopyFormattedRepresentation(CFPhoneNumberRef);
-SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyFormattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
+SOFT_LINK_REQUIRED(PhoneNumbers, CFPhoneNumberCopyFormattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
 
 extern "C" CFStringRef CFPhoneNumberCopyUnformattedRepresentation(CFPhoneNumberRef);
-SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
+SOFT_LINK_REQUIRED(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef, (CFPhoneNumberRef phoneNumber), (phoneNumber));
 
 
 RetainPtr<NSString> formattedPhoneNumberString(NSString *originalPhoneNumber)

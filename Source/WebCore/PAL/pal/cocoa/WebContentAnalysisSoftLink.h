@@ -32,7 +32,7 @@
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, WebContentAnalysis);
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WebFilterEvaluator);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, WebContentAnalysis);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WebFilterEvaluator);
 
 #endif

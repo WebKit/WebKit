@@ -39,10 +39,10 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(PIP)
-SOFT_LINK_CLASS(PIP, PIPPanel)
-SOFT_LINK_CLASS(PIP, PIPPrerollAttributes)
-SOFT_LINK_CLASS(PIP, PIPViewController)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(PIP)
+SOFT_LINK_CLASS_REQUIRED(PIP, PIPPanel)
+SOFT_LINK_CLASS_REQUIRED(PIP, PIPPrerollAttributes)
+SOFT_LINK_CLASS_REQUIRED(PIP, PIPViewController)
 
 static bool didEnterPiP = false;
 

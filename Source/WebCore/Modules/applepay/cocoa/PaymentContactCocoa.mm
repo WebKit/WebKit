@@ -34,9 +34,9 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
-SOFT_LINK_FRAMEWORK(Contacts)
-SOFT_LINK_CLASS(Contacts, CNMutablePostalAddress)
-SOFT_LINK_CLASS(Contacts, CNPhoneNumber)
+SOFT_LINK_FRAMEWORK_REQUIRED(Contacts)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNMutablePostalAddress)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNPhoneNumber)
 
 namespace WebCore {
 

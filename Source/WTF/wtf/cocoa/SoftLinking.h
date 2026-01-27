@@ -42,7 +42,7 @@
 
 #pragma mark - Soft-link macros for use within a single source file
 
-#define SOFT_LINK_LIBRARY(lib) \
+#define SOFT_LINK_LIBRARY_REQUIRED(lib) \
     static void* lib##Library() \
     { \
         static void* dylib = ^{ \
@@ -53,7 +53,7 @@
         return dylib; \
     }
 
-#define SOFT_LINK_SYSTEM_LIBRARY(lib) \
+#define SOFT_LINK_SYSTEM_LIBRARY_REQUIRED(lib) \
     static void* lib##Library() \
     { \
         static void* dylib = ^{ \
@@ -74,7 +74,7 @@ static void* lib##Library() \
     return dylib; \
 }
 
-#define SOFT_LINK_LIBRARY_WITH_PATH(lib, path) \
+#define SOFT_LINK_LIBRARY_WITH_PATH_REQUIRED(lib, path) \
     static void* lib##Library() \
     { \
         static void* dylib = ^{ \
@@ -85,7 +85,7 @@ static void* lib##Library() \
         return dylib; \
     }
 
-#define SOFT_LINK_FRAMEWORK(framework) \
+#define SOFT_LINK_FRAMEWORK_REQUIRED(framework) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary = ^{ \
@@ -96,7 +96,7 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK_PRIVATE_FRAMEWORK(framework) \
+#define SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(framework) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary = ^{ \
@@ -121,7 +121,7 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA(umbrella, framework) \
+#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA_REQUIRED(umbrella, framework) \
     static void* framework##Library() \
     { \
         static void* frameworkLibrary = ^{ \
@@ -162,7 +162,7 @@ static void* lib##Library() \
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK(framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_REQUIRED(framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
@@ -222,7 +222,7 @@ static void* lib##Library() \
         return ptr; \
     }
 
-#define SOFT_LINK_CLASS(framework, className) \
+#define SOFT_LINK_CLASS_REQUIRED(framework, className) \
     @class className; \
     static Class init##className(); \
     static Class (*get##className##ClassSingleton)() = init##className; \
@@ -281,7 +281,7 @@ static void* lib##Library() \
     } \
     _Pragma("clang diagnostic pop")
 
-#define SOFT_LINK_POINTER(framework, name, type) \
+#define SOFT_LINK_POINTER_REQUIRED(framework, name, type) \
     static type init##name(); \
     static type (*get##name)() = init##name; \
     static type pointer##name; \
@@ -321,7 +321,7 @@ static void* lib##Library() \
         return pointer##name; \
     }
 
-#define SOFT_LINK_CONSTANT(framework, name, type) \
+#define SOFT_LINK_CONSTANT_REQUIRED(framework, name, type) \
     static type init##name(); \
     static type (*get##name##Singleton)() = init##name; \
     struct Constant##name##Wrapper { SUPPRESS_UNRETAINED_LOCAL type constant; }; \
@@ -376,7 +376,7 @@ static void* lib##Library() \
 // See Source/WebCore/platform/cf/CoreMediaSoftLink.{cpp,h} for an example implementation.
 
 
-#define SOFT_LINK_LIBRARY_FOR_HEADER(functionNamespace, lib) \
+#define SOFT_LINK_LIBRARY_FOR_HEADER_REQUIRED(functionNamespace, lib) \
     namespace functionNamespace { \
     extern void* lib##Library(bool isOptional = false); \
     bool is##lib##LibraryAvailable(); \
@@ -385,7 +385,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_LIBRARY_FOR_SOURCE(functionNamespace, lib) \
+#define SOFT_LINK_LIBRARY_FOR_SOURCE_REQUIRED(functionNamespace, lib) \
     namespace functionNamespace { \
     extern void* lib##Library(bool isOptional = false); \
     void* lib##Library(bool isOptional) \
@@ -401,7 +401,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_FOR_HEADER(functionNamespace, framework) \
+#define SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(functionNamespace, framework) \
     namespace functionNamespace { \
     extern void* framework##Library(bool isOptional = false); \
     bool is##framework##FrameworkAvailable(); \
@@ -410,7 +410,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, flags, export) \
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT_REQUIRED(functionNamespace, framework, flags, export) \
     namespace functionNamespace { \
     export void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
@@ -426,16 +426,16 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
-    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, RTLD_NOW, export)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, export) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT_REQUIRED(functionNamespace, framework, RTLD_NOW, export)
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS(functionNamespace, framework, flags) \
-    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT(functionNamespace, framework, flags, )
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_REQUIRED(functionNamespace, framework, flags) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_AND_EXPORT_REQUIRED(functionNamespace, framework, flags, )
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
-    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS(functionNamespace, framework, RTLD_NOW)
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_REQUIRED(functionNamespace, framework) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS_REQUIRED(functionNamespace, framework, RTLD_NOW)
 
-#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
+#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, export) \
     namespace functionNamespace { \
     export void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
@@ -451,10 +451,10 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
-    SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, )
+#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_REQUIRED(functionNamespace, framework) \
+    SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, )
 
-#define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, className) \
+#define SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(functionNamespace, className) \
     @class className; \
     namespace functionNamespace { \
     extern Class (*get##className##ClassSingleton)(); \
@@ -465,7 +465,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(functionNamespace, className, availability) \
+#define SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY_REQUIRED(functionNamespace, className, availability) \
     @class className; \
     namespace functionNamespace { \
     extern Class (*get##className##ClassSingleton)(); \
@@ -503,20 +503,20 @@ static void* lib##Library() \
 #define SOFT_LINK_IS_OPTIONAL true
 #define SOFT_LINK_IS_NOT_OPTIONAL false
 
-#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, isOptional) \
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL_REQUIRED(functionNamespace, framework, className, export, isOptional) \
     SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, isOptional, )
 
-#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, export) \
-    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, SOFT_LINK_IS_NOT_OPTIONAL)
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, className, export) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL_REQUIRED(functionNamespace, framework, className, export, SOFT_LINK_IS_NOT_OPTIONAL)
 
 #define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(functionNamespace, framework, className, export) \
-    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, export, SOFT_LINK_IS_OPTIONAL)
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL_REQUIRED(functionNamespace, framework, className, export, SOFT_LINK_IS_OPTIONAL)
 
-#define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
-    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, , SOFT_LINK_IS_NOT_OPTIONAL)
+#define SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(functionNamespace, framework, className) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL_REQUIRED(functionNamespace, framework, className, , SOFT_LINK_IS_NOT_OPTIONAL)
 
 #define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(functionNamespace, framework, className) \
-    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(functionNamespace, framework, className, , SOFT_LINK_IS_OPTIONAL)
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL_REQUIRED(functionNamespace, framework, className, , SOFT_LINK_IS_OPTIONAL)
 
 #define SOFT_LINK_CLASS_ALLOC_FUNCTION(className, availability) \
     NS_RETURNS_RETAINED className *alloc##className##Instance() availability; \
@@ -528,12 +528,12 @@ static void* lib##Library() \
 #define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT_AND_AVAILABILITY(functionNamespace, framework, className, export, availability) \
     SOFT_LINK_CLASS_FOR_SOURCE_INTERNAL(functionNamespace, framework, className, export, SOFT_LINK_IS_OPTIONAL, SOFT_LINK_CLASS_ALLOC_FUNCTION(className, availability))
 
-#define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
     variableType get_##framework##_##variableName##Singleton(); \
     }
 
-#define SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, export) \
+#define SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, variableName, variableType, export) \
     namespace functionNamespace { \
     export variableType get_##framework##_##variableName##Singleton(); \
     variableType get_##framework##_##variableName##Singleton() \
@@ -550,8 +550,8 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
-    SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
+#define SOFT_LINK_CONSTANT_FOR_SOURCE_REQUIRED(functionNamespace, framework, variableName, variableType) \
+    SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, variableName, variableType, )
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
@@ -590,7 +590,7 @@ static void* lib##Library() \
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
     SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
-#define SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
+#define SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
@@ -602,13 +602,13 @@ static void* lib##Library() \
     } \
     } \
 
-#define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+#define SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
-#define SOFT_LINK_FUNCTION_FOR_HEADER_WITH_CF_RETURNS_RETAINED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, CF_RETURNS_RETAINED)
+#define SOFT_LINK_FUNCTION_FOR_HEADER_WITH_CF_RETURNS_RETAINED_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_HEADER_INTERNAL_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, CF_RETURNS_RETAINED)
 
-#define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
+#define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
@@ -627,8 +627,8 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
-    SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
+#define SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER_INTERNAL(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, functionAttributes) \
     WTF_EXTERN_C_BEGIN \
@@ -680,12 +680,12 @@ static void* lib##Library() \
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
-#define SOFT_LINK_POINTER_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_POINTER_FOR_HEADER_REQUIRED(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
     extern variableType (*get_##framework##_##variableName)(); \
     }
 
-#define SOFT_LINK_POINTER_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_POINTER_FOR_SOURCE_REQUIRED(functionNamespace, framework, variableName, variableType) \
     namespace functionNamespace { \
     static variableType init##framework##variableName(); \
     variableType (*get_##framework##_##variableName)() = init##framework##variableName; \
@@ -710,7 +710,7 @@ static void* lib##Library() \
     } \
     }
 
-#define SOFT_LINK_VARIABLE_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_VARIABLE_FOR_HEADER_REQUIRED(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
     extern variableType variableName; \
     WTF_EXTERN_C_END \
@@ -718,7 +718,7 @@ static void* lib##Library() \
     variableType * get_##framework##_##variableName(); \
     }
 
-#define SOFT_LINK_VARIABLE_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_VARIABLE_FOR_SOURCE_REQUIRED(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
     extern variableType variableName; \
     WTF_EXTERN_C_END \

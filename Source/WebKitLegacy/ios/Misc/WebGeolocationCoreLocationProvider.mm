@@ -37,13 +37,13 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK(CoreLocation)
+SOFT_LINK_FRAMEWORK_REQUIRED(CoreLocation)
 
-SOFT_LINK_CLASS(CoreLocation, CLLocationManager)
-SOFT_LINK_CLASS(CoreLocation, CLLocation)
+SOFT_LINK_CLASS_REQUIRED(CoreLocation, CLLocationManager)
+SOFT_LINK_CLASS_REQUIRED(CoreLocation, CLLocation)
 
-SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyBest, double)
-SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
+SOFT_LINK_CONSTANT_REQUIRED(CoreLocation, kCLLocationAccuracyBest, double)
+SOFT_LINK_CONSTANT_REQUIRED(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
 #define kCLLocationAccuracyBest getkCLLocationAccuracyBestSingleton()
 #define kCLLocationAccuracyHundredMeters getkCLLocationAccuracyHundredMetersSingleton()

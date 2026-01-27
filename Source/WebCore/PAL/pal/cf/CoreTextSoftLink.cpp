@@ -27,8 +27,8 @@
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, OTSVG)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_REQUIRED(PAL, OTSVG)
 
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableCreateFromData, OTSVGTableRef, (CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize), (svgTable, unitsPerEm, fontSize))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableGetDocumentIndexForGlyph, CFIndex, (OTSVGTableRef table, CGGlyph glyph), (table, glyph))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableRelease, void, (OTSVGTableRef table), (table))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OTSVG, OTSVGTableCreateFromData, OTSVGTableRef, (CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize), (svgTable, unitsPerEm, fontSize))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OTSVG, OTSVGTableGetDocumentIndexForGlyph, CFIndex, (OTSVGTableRef table, CGGlyph glyph), (table, glyph))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, OTSVG, OTSVGTableRelease, void, (OTSVGTableRef table), (table))

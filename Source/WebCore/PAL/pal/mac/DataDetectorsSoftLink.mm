@@ -30,25 +30,25 @@
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/cocoa/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, PAL_EXPORT)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, PAL_EXPORT)
 
 #if HAVE(SECURE_ACTION_CONTEXT)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDSecureActionContext, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDSecureActionContext, PAL_EXPORT)
 #else
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDActionContext, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDActionContext, PAL_EXPORT)
 #endif
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDActionsManager, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDActionsManager, PAL_EXPORT)
 
 #if HAVE(DATA_DETECTORS_MAC_ACTION)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDMacAction, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDMacAction, PAL_EXPORT)
 #else
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDAction, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDAction, PAL_EXPORT)
 #endif
 
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withButton, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped, CGFloat scale), (allocator, rects, count, globalVisibleRect, style, withButton, writingDirection, endsWithEOL, flipped, scale), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withButton, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped, CGFloat scale), (allocator, rects, count, globalVisibleRect, style, withButton, writingDirection, endsWithEOL, flipped, scale), PAL_EXPORT)
 
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight), PAL_EXPORT)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton), PAL_EXPORT)
 
 #endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION)

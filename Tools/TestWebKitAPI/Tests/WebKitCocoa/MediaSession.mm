@@ -46,27 +46,27 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(MediaRemote)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(MediaRemote)
 
-SOFT_LINK(MediaRemote, MRMediaRemoteSendCommandToApp, Boolean, (MRMediaRemoteCommand command, CFDictionaryRef options, MROriginRef origin, CFStringRef appDisplayID, MRSendCommandAppOptions appOptions, dispatch_queue_t replyQ, void(^completion)(MRSendCommandError err, CFArrayRef handlerReturnStatuses)), (command, options, origin, appDisplayID, appOptions, replyQ, completion));
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteSendCommandToApp, Boolean, (MRMediaRemoteCommand command, CFDictionaryRef options, MROriginRef origin, CFStringRef appDisplayID, MRSendCommandAppOptions appOptions, dispatch_queue_t replyQ, void(^completion)(MRSendCommandError err, CFArrayRef handlerReturnStatuses)), (command, options, origin, appDisplayID, appOptions, replyQ, completion));
 #define MRMediaRemoteSendCommandToApp softLinkMRMediaRemoteSendCommandToApp
 
-SOFT_LINK(MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ());
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ());
 #define MRMediaRemoteGetLocalOrigin softLinkMRMediaRemoteGetLocalOrigin
 
-SOFT_LINK(MediaRemote, MRMediaRemoteGetSupportedCommandsForOrigin, void, (MROriginRef origin, dispatch_queue_t queue, void(^completion)(CFArrayRef commands)), (origin, queue, completion));
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteGetSupportedCommandsForOrigin, void, (MROriginRef origin, dispatch_queue_t queue, void(^completion)(CFArrayRef commands)), (origin, queue, completion));
 #define MRMediaRemoteGetSupportedCommandsForOrigin softLinkMRMediaRemoteGetSupportedCommandsForOrigin
 
-SOFT_LINK(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
+SOFT_LINK_REQUIRED(MediaRemote, MRMediaRemoteGetNowPlayingClient, void, (dispatch_queue_t queue, void(^completion)(MRNowPlayingClientRef, CFErrorRef)), (queue, completion))
 #define MRMediaRemoteGetNowPlayingClient softLinkMRMediaRemoteGetNowPlayingClient
 
-SOFT_LINK(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
+SOFT_LINK_REQUIRED(MediaRemote, MRNowPlayingClientGetProcessIdentifier, pid_t, (MRNowPlayingClientRef client), (client))
 #define MRNowPlayingClientGetProcessIdentifier softLinkMRNowPlayingClientGetProcessIdentifier
 
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef)
+SOFT_LINK_CONSTANT_REQUIRED(MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef)
 #define kMRMediaRemoteOptionSkipInterval getkMRMediaRemoteOptionSkipIntervalSingleton()
 
-SOFT_LINK_CONSTANT(MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef)
+SOFT_LINK_CONSTANT_REQUIRED(MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef)
 #define kMRMediaRemoteOptionPlaybackPosition getkMRMediaRemoteOptionPlaybackPositionSingleton()
 
 #if !USE(APPLE_INTERNAL_SDK)

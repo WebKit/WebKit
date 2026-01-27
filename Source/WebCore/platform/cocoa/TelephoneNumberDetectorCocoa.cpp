@@ -39,9 +39,9 @@ struct __DDDFACache;
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
-SOFT_LINK(DataDetectorsCore, DDDFACacheCreateFromFramework, struct __DDDFACache*, (), ())
-SOFT_LINK(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (struct __DDDFACache* cache), (cache))
-SOFT_LINK(DataDetectorsCore, DDDFAScannerFirstResultInUnicharArray, Boolean, (DDDFAScannerRef scanner, const UniChar* str, unsigned length, int* startPos, int* endPos), (scanner, str, length, startPos, endPos))
+SOFT_LINK_REQUIRED(DataDetectorsCore, DDDFACacheCreateFromFramework, struct __DDDFACache*, (), ())
+SOFT_LINK_REQUIRED(DataDetectorsCore, DDDFAScannerCreateFromCache, DDDFAScannerRef, (struct __DDDFACache* cache), (cache))
+SOFT_LINK_REQUIRED(DataDetectorsCore, DDDFAScannerFirstResultInUnicharArray, Boolean, (DDDFAScannerRef scanner, const UniChar* str, unsigned length, int* startPos, int* endPos), (scanner, str, length, startPos, endPos))
 
 namespace WebCore {
 namespace TelephoneNumberDetector {

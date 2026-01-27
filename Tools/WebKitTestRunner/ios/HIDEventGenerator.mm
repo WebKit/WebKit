@@ -39,10 +39,10 @@
 #import <wtf/Vector.h>
 #import <wtf/darwin/DispatchExtras.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
-SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
-SOFT_LINK(BackBoardServices, BKSHIDEventGetDigitizerAttributes, BKSHIDEventDigitizerAttributes *, (IOHIDEventRef event), (event));
-SOFT_LINK_CLASS(BackBoardServices, BKSHIDEventDigitizerAttributes);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(BackBoardServices)
+SOFT_LINK_REQUIRED(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
+SOFT_LINK_REQUIRED(BackBoardServices, BKSHIDEventGetDigitizerAttributes, BKSHIDEventDigitizerAttributes *, (IOHIDEventRef event), (event));
+SOFT_LINK_CLASS_REQUIRED(BackBoardServices, BKSHIDEventDigitizerAttributes);
 
 class ActiveModifierState {
 public:

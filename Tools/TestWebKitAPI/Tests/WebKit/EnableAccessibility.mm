@@ -38,8 +38,8 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #endif
 
-SOFT_LINK_LIBRARY(libAccessibility)
-SOFT_LINK_CONSTANT(libAccessibility, kAXSApplicationAccessibilityEnabledNotification, CFStringRef);
+SOFT_LINK_LIBRARY_REQUIRED(libAccessibility)
+SOFT_LINK_CONSTANT_REQUIRED(libAccessibility, kAXSApplicationAccessibilityEnabledNotification, CFStringRef);
 
 TEST(WebKit, EnableAccessibilityCrash)
 {

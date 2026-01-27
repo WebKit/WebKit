@@ -34,11 +34,11 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_LIBRARY(libnetworkextension)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDisposition_t)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDomainContextRef)
-SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
+SOFT_LINK_LIBRARY_REQUIRED(libnetworkextension)
+SOFT_LINK_CLASS_REQUIRED(libnetworkextension, NEHelperTrackerDisposition_t)
+SOFT_LINK_CLASS_REQUIRED(libnetworkextension, NEHelperTrackerAppInfoRef)
+SOFT_LINK_CLASS_REQUIRED(libnetworkextension, NEHelperTrackerDomainContextRef)
+SOFT_LINK_REQUIRED(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
 
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_set_attributed_bundle_identifier, void, __cdecl, (nw_parameters_t, const char*))

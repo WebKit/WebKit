@@ -43,9 +43,9 @@
 #import <wtf/darwin/DispatchOSObject.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 
-SOFT_LINK_FRAMEWORK(CoreLocation)
+SOFT_LINK_FRAMEWORK_REQUIRED(CoreLocation)
 
-SOFT_LINK_CLASS(CoreLocation, CLLocationManager)
+SOFT_LINK_CLASS_REQUIRED(CoreLocation, CLLocationManager)
 
 static const NSInteger kGeolocationChallengeThreshold = 2;
 static constexpr Seconds kGeolocationChallengeTimeout = 24_h;

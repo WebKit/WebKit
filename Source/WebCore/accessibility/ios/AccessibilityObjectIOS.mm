@@ -52,15 +52,15 @@
 SOFT_LINK_CLASS_OPTIONAL(AXRuntime, AXRemoteElement);
 #endif
 
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBlockquoteLevel, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenBlockquoteLevel, NSString *);
 #define AccessibilityTokenBlockquoteLevel getUIAccessibilityTokenBlockquoteLevelSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenUnderline, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenUnderline, NSString *);
 #define AccessibilityTokenUnderline getUIAccessibilityTokenUnderlineSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenLanguage, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityTokenLanguage, NSString *);
 #define AccessibilityTokenLanguage getUIAccessibilityTokenLanguageSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityInlineTextCompletion, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityInlineTextCompletion, NSString *);
 #define AccessibilityInlineTextCompletion getUIAccessibilityInlineTextCompletionSingleton()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityAcceptedInlineTextCompletion, NSString *);
+SOFT_LINK_CONSTANT_REQUIRED(AXRuntime, UIAccessibilityAcceptedInlineTextCompletion, NSString *);
 #define AccessibilityAcceptedInlineTextCompletion getUIAccessibilityAcceptedInlineTextCompletionSingleton()
 
 namespace WebCore {

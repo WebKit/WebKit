@@ -28,70 +28,70 @@
 #include <pal/spi/mac/MediaRemoteSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaRemote)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebCore, MediaRemote)
 
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ())
 #define MRMediaRemoteGetLocalOrigin softLink_MediaRemote_MRMediaRemoteGetLocalOrigin
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteAddAsyncCommandHandlerBlock, void*, (MRMediaRemoteAsyncCommandHandlerBlock block), (block))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteAddAsyncCommandHandlerBlock, void*, (MRMediaRemoteAsyncCommandHandlerBlock block), (block))
 #define MRMediaRemoteAddAsyncCommandHandlerBlock softLink_MediaRemote_MRMediaRemoteAddAsyncCommandHandlerBlock
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteRemoveCommandHandlerBlock, void, (void* observer), (observer))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteRemoveCommandHandlerBlock, void, (void* observer), (observer))
 #define MRMediaRemoteRemoveCommandHandlerBlock softLink_MediaRemote_MRMediaRemoteRemoveCommandHandlerBlock
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetSupportedCommands, void, (CFArrayRef commands, MROriginRef origin, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err)), (commands, origin, replyQ, completion))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteSetSupportedCommands, void, (CFArrayRef commands, MROriginRef origin, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError err)), (commands, origin, replyQ, completion))
 #define MRMediaRemoteSetSupportedCommands softLink_MediaRemote_MRMediaRemoteSetSupportedCommands
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingVisibility, void, (MROriginRef origin, MRNowPlayingClientVisibility visibility), (origin, visibility))
 #define MRMediaRemoteSetNowPlayingVisibility softLink_MediaRemote_MRMediaRemoteSetNowPlayingVisibility
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoCreate, MRMediaRemoteCommandInfoRef, (CFAllocatorRef allocator), (allocator));
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteCommandInfoCreate, MRMediaRemoteCommandInfoRef, (CFAllocatorRef allocator), (allocator));
 #define MRMediaRemoteCommandInfoCreate softLink_MediaRemote_MRMediaRemoteCommandInfoCreate
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetCommand, void, (MRMediaRemoteCommandInfoRef commandInfo, MRMediaRemoteCommand command), (commandInfo, command))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetCommand, void, (MRMediaRemoteCommandInfoRef commandInfo, MRMediaRemoteCommand command), (commandInfo, command))
 #define MRMediaRemoteCommandInfoSetCommand softLink_MediaRemote_MRMediaRemoteCommandInfoSetCommand
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetEnabled, void, (MRMediaRemoteCommandInfoRef commandInfo, Boolean enabled), (commandInfo, enabled))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetEnabled, void, (MRMediaRemoteCommandInfoRef commandInfo, Boolean enabled), (commandInfo, enabled))
 #define MRMediaRemoteCommandInfoSetEnabled softLink_MediaRemote_MRMediaRemoteCommandInfoSetEnabled
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetOptions, void, (MRMediaRemoteCommandInfoRef commandInfo, CFDictionaryRef options), (commandInfo, options))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteCommandInfoSetOptions, void, (MRMediaRemoteCommandInfoRef commandInfo, CFDictionaryRef options), (commandInfo, options))
 #define MRMediaRemoteCommandInfoSetOptions softLink_MediaRemote_MRMediaRemoteCommandInfoSetOptions
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetCanBeNowPlayingApplication, Boolean, (Boolean flag), (flag))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteSetCanBeNowPlayingApplication, Boolean, (Boolean flag), (flag))
 #define MRMediaRemoteSetCanBeNowPlayingApplication softLink_MediaRemote_MRMediaRemoteSetCanBeNowPlayingApplication
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfo, void, (CFDictionaryRef info), (info))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfo, void, (CFDictionaryRef info), (info))
 #define MRMediaRemoteSetNowPlayingInfo softLink_MediaRemote_MRMediaRemoteSetNowPlayingInfo
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfoWithMergePolicy, void, (CFDictionaryRef info, MRMediaRemoteMergePolicy mergePolicy), (info, mergePolicy))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfoWithMergePolicy, void, (CFDictionaryRef info, MRMediaRemoteMergePolicy mergePolicy), (info, mergePolicy))
 #define MRMediaRemoteSetNowPlayingInfoWithMergePolicy softLink_MediaRemote_MRMediaRemoteSetNowPlayingInfoWithMergePolicy
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin, void, (MROriginRef origin, MRPlaybackState playbackState, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError)), (origin, playbackState, replyQ, completion))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin, void, (MROriginRef origin, MRPlaybackState playbackState, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError)), (origin, playbackState, replyQ, completion))
 #define MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin softLink_MediaRemote_MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetParentApplication, void, (MROriginRef origin, CFStringRef parentAppDisplayID), (origin, parentAppDisplayID))
 #define MRMediaRemoteSetParentApplication softLink_MediaRemote_MRMediaRemoteSetParentApplication
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTitle, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoTitle, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoTitle get_MediaRemote_kMRMediaRemoteNowPlayingInfoTitleSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtist, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtist, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtist get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtistSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoAlbum, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoAlbum, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoAlbum get_MediaRemote_kMRMediaRemoteNowPlayingInfoAlbumSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkData, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkData, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtworkData get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtworkDataSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkDataHeight, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkDataHeight, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtworkDataHeight get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtworkDataHeightSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkDataWidth, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkDataWidth, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtworkDataWidth get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtworkDataWidthSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkMIMEType, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkMIMEType, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtworkMIMEType get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtworkMIMETypeSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoDuration, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoDuration, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoArtworkIdentifier get_MediaRemote_kMRMediaRemoteNowPlayingInfoArtworkIdentifierSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkIdentifier, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoArtworkIdentifier, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoDuration get_MediaRemote_kMRMediaRemoteNowPlayingInfoDurationSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoElapsedTime, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoElapsedTime, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoElapsedTime get_MediaRemote_kMRMediaRemoteNowPlayingInfoElapsedTimeSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoPlaybackRate, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoPlaybackRate, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoPlaybackRate get_MediaRemote_kMRMediaRemoteNowPlayingInfoPlaybackRateSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteOptionPlaybackPosition, CFStringRef);
 #define kMRMediaRemoteOptionPlaybackPosition get_MediaRemote_kMRMediaRemoteOptionPlaybackPositionSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoUniqueIdentifier, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteNowPlayingInfoUniqueIdentifier, CFStringRef);
 #define kMRMediaRemoteNowPlayingInfoUniqueIdentifier get_MediaRemote_kMRMediaRemoteNowPlayingInfoUniqueIdentifierSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, MediaRemote, kMRMediaRemoteOptionSkipInterval, CFStringRef);
 #define kMRMediaRemoteOptionSkipInterval get_MediaRemote_kMRMediaRemoteOptionSkipIntervalSingleton()
 
 #if PLATFORM(IOS_FAMILY)
-SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())
 #define MRMediaRemoteCopyPickableRoutes softLink_MediaRemote_MRMediaRemoteCopyPickableRoutes
 #endif
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, MRUIControllerProvider);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, MRUIControllerProvider);
 #endif

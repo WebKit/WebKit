@@ -38,9 +38,9 @@
 
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_LIBRARY(libAccessibility)
-SOFT_LINK(libAccessibility, _AXSZoomTouchSetEnabled, void, (Boolean enabled), (enabled));
-SOFT_LINK(libAccessibility, _AXSApplicationAccessibilitySetEnabled, void, (Boolean enabled), (enabled));
+SOFT_LINK_LIBRARY_REQUIRED(libAccessibility)
+SOFT_LINK_REQUIRED(libAccessibility, _AXSZoomTouchSetEnabled, void, (Boolean enabled), (enabled));
+SOFT_LINK_REQUIRED(libAccessibility, _AXSApplicationAccessibilitySetEnabled, void, (Boolean enabled), (enabled));
 
 @implementation WKWebView (WKAccessibilityTesting)
 - (NSArray<NSValue *> *)rectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text

@@ -32,7 +32,7 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-SOFT_LINK_LIBRARY_FOR_HEADER(PAL, libAccessibility)
+SOFT_LINK_LIBRARY_FOR_HEADER_REQUIRED(PAL, libAccessibility)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, libAccessibility, _AXSIsolatedTreeMode, AXSIsolatedTreeMode, (void), ())
 #define _AXSIsolatedTreeMode_Soft PAL::softLink_libAccessibility__AXSIsolatedTreeMode
 #define _AXSIsolatedTreeModeFunctionIsAvailable PAL::islibAccessibilityLibaryAvailable() && PAL::canLoad_libAccessibility__AXSIsolatedTreeMode

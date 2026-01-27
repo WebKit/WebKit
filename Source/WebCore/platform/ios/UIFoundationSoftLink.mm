@@ -30,22 +30,22 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
-// FIXME: Remove SOFT_LINK_PRIVATE_FRAMEWORK(UIFoundation) and move symbols from NSAttributedStringSPI.h to here.
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, UIFoundation)
+// FIXME: Remove SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(UIFoundation) and move symbols from NSAttributedStringSPI.h to here.
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_REQUIRED(WebCore, UIFoundation)
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSColor)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextAttachment)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSMutableParagraphStyle)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextList)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTableBlock)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTable)
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTab)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSColor)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSTextAttachment)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSMutableParagraphStyle)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSTextList)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSTextTableBlock)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSTextTable)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSTextTab)
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSAdaptiveImageGlyph)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSAdaptiveImageGlyph)
 
-SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
+SOFT_LINK_CONSTANT_FOR_SOURCE_REQUIRED(WebCore, UIFoundation, NSAdaptiveImageGlyphAttributeName, NSString *)
 
 #endif
 

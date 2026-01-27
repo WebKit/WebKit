@@ -55,12 +55,12 @@
 #import <BrowserEngineKit/BrowserEngineKit.h>
 #endif
 
-SOFT_LINK_FRAMEWORK(Contacts)
-SOFT_LINK_CLASS(Contacts, CNMutableContact)
+SOFT_LINK_FRAMEWORK_REQUIRED(Contacts)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNMutableContact)
 
-SOFT_LINK_FRAMEWORK(MapKit)
-SOFT_LINK_CLASS(MapKit, MKMapItem)
-SOFT_LINK_CLASS(MapKit, MKPlacemark)
+SOFT_LINK_FRAMEWORK_REQUIRED(MapKit)
+SOFT_LINK_CLASS_REQUIRED(MapKit, MKMapItem)
+SOFT_LINK_CLASS_REQUIRED(MapKit, MKPlacemark)
 
 #if !USE(APPLE_INTERNAL_SDK)
 

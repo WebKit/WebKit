@@ -35,11 +35,11 @@
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, MediaToolbox)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, MediaToolbox)
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, FigPhotoDecompressionSetHardwareCutoff, void, (int, size_t numPixelsCutoff), (format, numPixelsCutoff))
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, FigVideoTargetCreateWithVideoReceiverEndpointID, OSStatus, (CFAllocatorRef allocator, xpc_object_t videoReceiverXPCEndpointID, CFDictionaryRef creationOptions, CF_RETURNS_RETAINED FigVideoTargetRef* videoTargetOut), (allocator, videoReceiverXPCEndpointID, creationOptions, videoTargetOut))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, MediaToolbox, FigVideoTargetCreateWithVideoReceiverEndpointID, OSStatus, (CFAllocatorRef allocator, xpc_object_t videoReceiverXPCEndpointID, CFDictionaryRef creationOptions, CF_RETURNS_RETAINED FigVideoTargetRef* videoTargetOut), (allocator, videoReceiverXPCEndpointID, creationOptions, videoTargetOut))
 #define FigVideoTargetCreateWithVideoReceiverEndpointID PAL::softLink_MediaToolbox_FigVideoTargetCreateWithVideoReceiverEndpointID
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MTShouldPlayHDRVideo, Boolean, (CFArrayRef displayList), (displayList))
@@ -50,9 +50,9 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, MT_GetShouldPlayHDRVid
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, kMTSupportNotification_ShouldPlayHDRVideoChanged, CFStringRef)
 #define kMTSupportNotification_ShouldPlayHDRVideoChanged PAL::get_MediaToolbox_kMTSupportNotification_ShouldPlayHDRVideoChangedSingleton()
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapGetStorage, void*, (MTAudioProcessingTapRef tap), (tap))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, MediaToolbox, MTAudioProcessingTapGetStorage, void*, (MTAudioProcessingTapRef tap), (tap))
 #define MTAudioProcessingTapGetStorage softLink_MediaToolbox_MTAudioProcessingTapGetStorage
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTAudioProcessingTapGetSourceAudio, OSStatus, (MTAudioProcessingTapRef tap, CMItemCount numberFrames, AudioBufferList *bufferListInOut, MTAudioProcessingTapFlags *flagsOut, CMTimeRange *timeRangeOut, CMItemCount *numberFramesOut), (tap, numberFrames, bufferListInOut, flagsOut, timeRangeOut, numberFramesOut))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, MediaToolbox, MTAudioProcessingTapGetSourceAudio, OSStatus, (MTAudioProcessingTapRef tap, CMItemCount numberFrames, AudioBufferList *bufferListInOut, MTAudioProcessingTapFlags *flagsOut, CMTimeRange *timeRangeOut, CMItemCount *numberFramesOut), (tap, numberFrames, bufferListInOut, flagsOut, timeRangeOut, numberFramesOut))
 #define MTAudioProcessingTapGetSourceAudio softLink_MediaToolbox_MTAudioProcessingTapGetSourceAudio
 
 // FIXME: CoreMedia doesn't specify CF_RETURNS_RETAINED. See rdar://148149858.

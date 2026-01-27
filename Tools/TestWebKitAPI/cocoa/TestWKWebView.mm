@@ -74,12 +74,12 @@
 #import "UIKitSPIForTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <wtf/SoftLinking.h>
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIWindow)
+SOFT_LINK_FRAMEWORK_REQUIRED(UIKit)
+SOFT_LINK_CLASS_REQUIRED(UIKit, UIWindow)
 
 #if USE(BROWSERENGINEKIT)
 // FIXME: This workaround can be removed once the fix for rdar://120390585 lands in the SDK.
-SOFT_LINK_CLASS(UIKit, UIKeyEvent)
+SOFT_LINK_CLASS_REQUIRED(UIKit, UIKeyEvent)
 #endif
 
 static NSString *overrideBundleIdentifier(id, SEL)

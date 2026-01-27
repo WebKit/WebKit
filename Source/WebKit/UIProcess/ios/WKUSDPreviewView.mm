@@ -46,8 +46,8 @@
 
 #import <pal/ios/QuickLookSoftLink.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
-SOFT_LINK_CLASS(AssetViewer, ASVThumbnailView);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(AssetViewer);
+SOFT_LINK_CLASS_REQUIRED(AssetViewer, ASVThumbnailView);
 
 static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 {

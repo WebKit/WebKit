@@ -56,8 +56,8 @@ WEBCORE_EXPORT NSString *WebUIApplicationDidEnterBackgroundNotification = @"WebU
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(MediaExperience)
 SOFT_LINK_CLASS_OPTIONAL(MediaExperience, AVSystemController)
-SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
-SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_ServerConnectionDiedNotification, NSString *)
+SOFT_LINK_CONSTANT_REQUIRED(MediaExperience, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+SOFT_LINK_CONSTANT_REQUIRED(MediaExperience, AVSystemController_ServerConnectionDiedNotification, NSString *)
 #endif
 
 using namespace WebCore;

@@ -28,5 +28,5 @@
 #import <NaturalLanguage/NaturalLanguage.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, NaturalLanguage)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, NLTokenizer)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, NaturalLanguage)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, NLTokenizer)

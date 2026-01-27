@@ -206,7 +206,7 @@
 #define WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(thisPtr, channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, thisPtr, thisPtr->m_sessionID ? thisPtr->m_sessionID->toUInt64() : 0, ##__VA_ARGS__)
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA_REQUIRED(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 

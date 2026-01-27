@@ -33,7 +33,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 
-SOFT_LINK_SYSTEM_LIBRARY(libsystem_networkextension)
+SOFT_LINK_SYSTEM_LIBRARY_REQUIRED(libsystem_networkextension)
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_create_xcode_issue, void, __cdecl, (const char*, const void*, size_t))
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_copy_current_stacktrace, void*, __cdecl, (size_t*))
 SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_should_save_stacktrace, bool, __cdecl, (void))

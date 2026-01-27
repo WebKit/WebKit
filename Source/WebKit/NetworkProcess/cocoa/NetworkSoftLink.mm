@@ -30,7 +30,7 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, Network)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_REQUIRED(WebKit, Network)
 
 #endif // HAVE(WEB_TRANSPORT) || HAVE(NWSETTINGS_UNIFIED_HTTP_WEBKIT)
 

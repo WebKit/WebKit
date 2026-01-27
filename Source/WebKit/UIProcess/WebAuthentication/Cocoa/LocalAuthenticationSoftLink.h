@@ -28,6 +28,6 @@
 #import "LocalAuthenticationSPI.h"
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, LocalAuthentication);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebKit, LocalAuthentication);
 
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, LAContext);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebKit, LAContext);

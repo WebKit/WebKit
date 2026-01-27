@@ -45,8 +45,8 @@
 #import <pal/ios/QuickLookSoftLink.h>
 
 #if PLATFORM(VISION)
-SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
-SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(AssetViewer);
+SOFT_LINK_CLASS_REQUIRED(AssetViewer, ASVLaunchPreview);
 #endif
 
 static bool hasTriggerInfo;

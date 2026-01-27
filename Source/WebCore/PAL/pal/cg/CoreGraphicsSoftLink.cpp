@@ -33,10 +33,10 @@
 #include <mach/mach_types.h>
 #endif
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CoreGraphics, PAL_EXPORT)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, CoreGraphics, PAL_EXPORT)
 
 #if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
-SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreGraphics, CGContextSetOwnerIdentity, void, (CGContextRef context, task_id_token_t owner), (context, owner), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, CoreGraphics, CGContextSetOwnerIdentity, void, (CGContextRef context, task_id_token_t owner), (context, owner), PAL_EXPORT)
 #endif
 
 #if PLATFORM(MAC)

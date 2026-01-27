@@ -29,8 +29,8 @@
 
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, SystemStatus)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, SystemStatus)
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, STDynamicActivityAttributionPublisher);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, STDynamicActivityAttributionPublisher);
 
 #endif

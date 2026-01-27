@@ -29,15 +29,15 @@
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, QuickLook)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_REQUIRED(PAL, QuickLook)
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, QuickLook, QLItem, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, QuickLook, QLPreviewController, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE(PAL, QuickLook, QLPreviewConverter)
-SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, QuickLook, QLItem, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, QuickLook, QLPreviewController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_REQUIRED(PAL, QuickLook, QLPreviewConverter)
+SOFT_LINK_CONSTANT_FOR_SOURCE_REQUIRED(PAL, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
+SOFT_LINK_FUNCTION_FOR_SOURCE_REQUIRED(PAL, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 
 #endif // USE(QUICK_LOOK)

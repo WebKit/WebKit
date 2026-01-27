@@ -33,8 +33,8 @@
 #import <pal/spi/cocoa/CryptoKitPrivateSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CryptoKitPrivate);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, CryptoKitPrivate);
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, RSABSSATokenBlinder);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, RSABSSATokenBlinder);
 
 #endif

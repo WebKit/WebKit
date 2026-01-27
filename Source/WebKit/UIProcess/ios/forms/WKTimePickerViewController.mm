@@ -35,8 +35,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(ClockKitUI)
-SOFT_LINK_CLASS(ClockKitUI, CLKUIWheelsOfTimeView)
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(ClockKitUI)
+SOFT_LINK_CLASS_REQUIRED(ClockKitUI, CLKUIWheelsOfTimeView)
 
 static NSString *timePickerTimeZoneForFormatting = @"UTC";
 static NSString *timePickerDateFormat = @"HH:mm";

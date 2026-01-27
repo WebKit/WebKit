@@ -44,15 +44,15 @@
 #import "UIKitUtilities.h"
 #endif
 
-SOFT_LINK_FRAMEWORK(Contacts)
-SOFT_LINK_CLASS(Contacts, CNContactFormatter)
-SOFT_LINK_CLASS(Contacts, CNLabeledValue)
-SOFT_LINK_CLASS(Contacts, CNMutableContact)
-SOFT_LINK_CLASS(Contacts, CNPhoneNumber)
+SOFT_LINK_FRAMEWORK_REQUIRED(Contacts)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNContactFormatter)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNLabeledValue)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNMutableContact)
+SOFT_LINK_CLASS_REQUIRED(Contacts, CNPhoneNumber)
 
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
-SOFT_LINK_FRAMEWORK(ContactsUI)
-SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
+SOFT_LINK_FRAMEWORK_REQUIRED(ContactsUI)
+SOFT_LINK_CLASS_REQUIRED(ContactsUI, CNContactPickerViewController)
 #endif
 
 #pragma mark - Delegate Wrappers

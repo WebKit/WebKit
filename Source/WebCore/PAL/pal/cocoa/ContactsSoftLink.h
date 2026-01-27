@@ -36,35 +36,35 @@
 #import <Contacts/Contacts.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, Contacts)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNContact)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNLabeledValue)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNPhoneNumber)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNPostalAddress)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNMutableContact)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, CNMutablePostalAddress)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactDepartmentNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactFamilyNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactGivenNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactJobTitleKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactMiddleNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactNamePrefixKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactNameSuffixKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactNicknameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactNoteKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactOrganizationNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPhoneticFamilyNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPhoneticGivenNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPhoneticMiddleNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPhoneticOrganizationNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPreviousFamilyNameKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactBirthdayKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactNonGregorianBirthdayKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPhoneNumbersKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactEmailAddressesKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactPostalAddressesKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactDatesKey, NSString *);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Contacts, CNContactUrlAddressesKey, NSString *);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, Contacts)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNContact)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNLabeledValue)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNPhoneNumber)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNPostalAddress)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNMutableContact)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, CNMutablePostalAddress)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactDepartmentNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactFamilyNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactGivenNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactJobTitleKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactMiddleNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactNamePrefixKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactNameSuffixKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactNicknameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactNoteKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactOrganizationNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPhoneticFamilyNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPhoneticGivenNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPhoneticMiddleNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPhoneticOrganizationNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPreviousFamilyNameKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactBirthdayKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactNonGregorianBirthdayKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPhoneNumbersKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactEmailAddressesKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactPostalAddressesKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactDatesKey, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, Contacts, CNContactUrlAddressesKey, NSString *);
 
 #endif
 

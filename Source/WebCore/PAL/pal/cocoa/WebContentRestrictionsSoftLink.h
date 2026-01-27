@@ -30,7 +30,7 @@
 #import <pal/spi/cocoa/WebContentRestrictionsSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, WebContentRestrictions);
-SOFT_LINK_CLASS_FOR_HEADER(PAL, WCRBrowserEngineClient);
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, WebContentRestrictions);
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, WCRBrowserEngineClient);
 
 #endif

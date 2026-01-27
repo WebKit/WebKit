@@ -57,11 +57,11 @@
 #import "ARKitSoftLink.h"
 #import <pal/spi/ios/SystemPreviewSPI.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
-SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
+SOFT_LINK_PRIVATE_FRAMEWORK_REQUIRED(AssetViewer);
+SOFT_LINK_CLASS_REQUIRED(AssetViewer, ARQuickLookWebKitItem);
 
 #if PLATFORM(VISION)
-SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
+SOFT_LINK_CLASS_REQUIRED(AssetViewer, ASVLaunchPreview);
 
 @interface ASVLaunchPreview (Staging_101981518)
 + (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;

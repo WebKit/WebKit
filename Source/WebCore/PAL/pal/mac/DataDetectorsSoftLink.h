@@ -29,26 +29,26 @@
 #import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, DataDetectors)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, DataDetectors)
 
 #if HAVE(SECURE_ACTION_CONTEXT)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDSecureActionContext)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDSecureActionContext)
 #else
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDActionContext)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDActionContext)
 #endif
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDActionsManager)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDActionsManager)
 
 #if HAVE(DATA_DETECTORS_MAC_ACTION)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDMacAction)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDMacAction)
 #else
-SOFT_LINK_CLASS_FOR_HEADER(PAL, DDAction)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, DDAction)
 #endif
 
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withButton, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped, CGFloat scale), (allocator, rects, count, globalVisibleRect, style, withButton, writingDirection, endsWithEOL, flipped, scale))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withButton, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped, CGFloat scale), (allocator, rects, count, globalVisibleRect, style, withButton, writingDirection, endsWithEOL, flipped, scale))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
 
 namespace PAL {
 

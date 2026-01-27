@@ -29,19 +29,19 @@
 #include <pal/spi/ios/QuickLookSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, QuickLook)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, QuickLook)
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, QLItem)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, QLPreviewController)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, QLPreviewConverter)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, QLItem)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, QLPreviewController)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, QLPreviewConverter)
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, QuickLook, kQLPreviewOptionPasswordKey, CFStringRef);
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
 #define QLPreviewGetSupportedMIMETypes softLink_QuickLook_QLPreviewGetSupportedMIMETypes
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
 #define QLTypeCopyBestMimeTypeForFileNameAndMimeType softLink_QuickLook_QLTypeCopyBestMimeTypeForFileNameAndMimeType
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 #define QLTypeCopyBestMimeTypeForURLAndMimeType softLink_QuickLook_QLTypeCopyBestMimeTypeForURLAndMimeType
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
+SOFT_LINK_FUNCTION_FOR_HEADER_REQUIRED(PAL, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
 #define QLTypeCopyUTIForURLAndMimeType softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType
 
 #endif // USE(QUICK_LOOK)

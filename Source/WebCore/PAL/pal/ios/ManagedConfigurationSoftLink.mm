@@ -30,9 +30,9 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, ManagedConfiguration)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_REQUIRED(PAL, ManagedConfiguration)
 
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ManagedConfiguration, MCProfileConnection, PAL_EXPORT);
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, ManagedConfiguration, MCProfileConnection, PAL_EXPORT);
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT_REQUIRED(PAL, ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *, PAL_EXPORT)
 
 #endif

@@ -30,9 +30,9 @@
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ManagedConfiguration)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(PAL, ManagedConfiguration)
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, MCProfileConnection);
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(PAL, MCProfileConnection);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(PAL, ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
 
 #endif

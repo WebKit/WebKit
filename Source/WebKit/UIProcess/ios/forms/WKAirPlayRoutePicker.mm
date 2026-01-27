@@ -37,10 +37,10 @@
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
-SOFT_LINK_FRAMEWORK(MediaPlayer)
-SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
-SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsConfiguration)
-SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
+SOFT_LINK_FRAMEWORK_REQUIRED(MediaPlayer)
+SOFT_LINK_CLASS_REQUIRED(MediaPlayer, MPAVRoutingController)
+SOFT_LINK_CLASS_REQUIRED(MediaPlayer, MPMediaControlsConfiguration)
+SOFT_LINK_CLASS_REQUIRED(MediaPlayer, MPMediaControlsViewController)
 
 @interface MPMediaControlsConfiguration (WKMPMediaControlsConfiguration)
 @property (nonatomic) BOOL sortByIsVideoRoute;

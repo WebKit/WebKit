@@ -30,32 +30,32 @@
 #import <CoreHaptics/CoreHaptics.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, CoreHaptics)
+SOFT_LINK_FRAMEWORK_FOR_HEADER_REQUIRED(WebCore, CoreHaptics)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, CHHapticEngine)
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, CHHapticPattern)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, CHHapticEngine)
+SOFT_LINK_CLASS_FOR_HEADER_REQUIRED(WebCore, CHHapticPattern)
 
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyEvent, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyEvent, NSString *);
 #define CHHapticPatternKeyEvent WebCore::get_CoreHaptics_CHHapticPatternKeyEventSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyEventType, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyEventType, NSString *);
 #define CHHapticPatternKeyEventType WebCore::get_CoreHaptics_CHHapticPatternKeyEventTypeSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticEventTypeHapticTransient, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticEventTypeHapticTransient, NSString *);
 #define CHHapticEventTypeHapticTransient WebCore::get_CoreHaptics_CHHapticEventTypeHapticTransientSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticEventTypeHapticContinuous, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticEventTypeHapticContinuous, NSString *);
 #define CHHapticEventTypeHapticContinuous WebCore::get_CoreHaptics_CHHapticEventTypeHapticContinuousSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyTime, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyTime, NSString *);
 #define CHHapticPatternKeyTime WebCore::get_CoreHaptics_CHHapticPatternKeyTimeSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyEventParameters, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyEventParameters, NSString *);
 #define CHHapticPatternKeyEventParameters WebCore::get_CoreHaptics_CHHapticPatternKeyEventParametersSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyParameterID, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyParameterID, NSString *);
 #define CHHapticPatternKeyParameterID WebCore::get_CoreHaptics_CHHapticPatternKeyParameterIDSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyParameterValue, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyParameterValue, NSString *);
 #define CHHapticPatternKeyParameterValue WebCore::get_CoreHaptics_CHHapticPatternKeyParameterValueSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticEventParameterIDHapticIntensity, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticEventParameterIDHapticIntensity, NSString *);
 #define CHHapticEventParameterIDHapticIntensity WebCore::get_CoreHaptics_CHHapticEventParameterIDHapticIntensitySingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyEventDuration, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyEventDuration, NSString *);
 #define CHHapticPatternKeyEventDuration WebCore::get_CoreHaptics_CHHapticPatternKeyEventDurationSingleton()
-SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreHaptics, CHHapticPatternKeyPattern, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER_REQUIRED(WebCore, CoreHaptics, CHHapticPatternKeyPattern, NSString *);
 #define CHHapticPatternKeyPattern WebCore::get_CoreHaptics_CHHapticPatternKeyPatternSingleton()
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
