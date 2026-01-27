@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -319,6 +319,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
     if (keyData.size() < headerSize + 1)
         return nullptr;
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]) + sizeof(InitialOctet);
+    if (keyData.size() < headerSize)
+        return nullptr;
 
     CCRSACryptorRef ccPublicKey = nullptr;
     auto dataAfterHeader = keyData.subspan(headerSize);
@@ -377,6 +379,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
     if (keyData.size() < headerSize + 1)
         return nullptr;
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]);
+    if (keyData.size() < headerSize)
+        return nullptr;
 
     CCRSACryptorRef ccPrivateKey = nullptr;
     auto dataAfterHeader = keyData.subspan(headerSize);

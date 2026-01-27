@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a SPKI RSA-OAEP key with invalid length byte causing buffer overread");
+
+// This test verifies that importing a malformed SPKI key where the final
+// length byte has a large value (0xFF) is rejected gracefully.
+// Without proper bounds checking, this would cause subspan() to attempt
+// accessing memory far beyond the buffer.
+//
+// Key structure (19 bytes):
+// - Offset 0: 0x30 (SequenceMark)
+// - Offset 1: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 2-17: 16 placeholder bytes
+// - Offset 18: 0x83 (length byte indicating 3 more bytes encode the length)
+//
+// headerSize computation:
+// 1. headerSize = 1
+// 2. Check: 19 >= 2 (pass)
+// 3. headerSize = 1 + 1 + 15 + 1 = 18
+// 4. Check: 19 >= 19 (pass)
+// 5. bytesUsedToEncodedLength(0x83) = 131 - 128 + 1 = 4
+//    headerSize = 18 + 4 + 1 = 23
+// 6. subspan(23) on 19-byte buffer -> buffer overread without bounds check
+
+var extractable = true;
+
+// 19 bytes: 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 83
+var invalidLengthSpkiKey = hexStringToUint8Array("30000000000000000000000000000000000083");
+
+// Should reject with DataError, not crash or read beyond buffer
+shouldReject('crypto.subtle.importKey("spki", invalidLengthSpkiKey, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["encrypt"])');
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a SPKI RSA-OAEP key where headerSize equals keyData.size()");
+
+// This test verifies that importing a malformed SPKI key where the computed
+// headerSize exactly equals the buffer size is rejected gracefully.
+// After stripping the header, there would be zero bytes left for the key data.
+//
+// Key structure (20 bytes):
+// - Offset 0: 0x30 (SequenceMark)
+// - Offset 1: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 2-18: 17 placeholder bytes
+// - Offset 19: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+//
+// headerSize computation:
+// 1. headerSize = 1
+// 2. Check: 20 >= 2 (pass)
+// 3. headerSize = 1 + 1 + 15 + 1 = 18
+// 4. Check: 20 >= 19 (pass)
+// 5. headerSize = 18 + 1 + 1 = 20
+// 6. headerSize == keyData.size(), subspan(20) returns empty span
+// 7. CCRSACryptorImport fails with 0 bytes of key data
+
+var extractable = true;
+
+// 20 bytes: 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+var emptyKeyDataSpki = hexStringToUint8Array("3000000000000000000000000000000000000000");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("spki", emptyKeyDataSpki, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["encrypt"])');
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
