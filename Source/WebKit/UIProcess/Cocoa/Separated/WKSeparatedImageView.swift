@@ -31,11 +31,11 @@ internal import WebKit_Internal
 @implementation
 extension WKSeparatedImageView {
     @nonobjc
-    var viewMode: ViewMode
+    final var viewMode: ViewMode
     @nonobjc
-    var cachedViewModeInfo: (NSString, ViewMode)?
+    final var cachedViewModeInfo: (NSString, ViewMode)?
     @nonobjc
-    var desiredViewingModeSpatial: Bool = true {
+    final var desiredViewingModeSpatial: Bool = true {
         didSet {
             #if canImport(RealityFoundation, _version: 387)
             self.portalEntity?.components[ImagePresentationComponent.self]?.desiredViewingMode =
@@ -48,49 +48,49 @@ extension WKSeparatedImageView {
     }
 
     @nonobjc
-    var cgImage: CGImage?
+    final var cgImage: CGImage?
     @nonobjc
-    var imageData: Data?
+    final var imageData: Data?
     @nonobjc
-    var imageHash: NSString?
+    final var imageHash: NSString?
 
     @nonobjc
-    var computeHashTask: Task<Void, Error>?
+    final var computeHashTask: Task<Void, Error>?
     @nonobjc
-    var pickViewModeTask: Task<ViewMode, Error>?
+    final var pickViewModeTask: Task<ViewMode, Error>?
     @nonobjc
-    var generate3DImageTask: Task<Void, Error>?
+    final var generate3DImageTask: Task<Void, Error>?
 
     #if canImport(RealityFoundation, _version: 387)
     @nonobjc
-    var spatial3DImage: ImagePresentationComponent.Spatial3DImage?
+    final var spatial3DImage: ImagePresentationComponent.Spatial3DImage?
     #endif
     @nonobjc
-    var portalEntity: Entity?
+    final var portalEntity: Entity?
     @nonobjc
-    var contentView: UIView
+    final var contentView: UIView
     @nonobjc
-    var cornerView: UIView
+    final var cornerView: UIView
     @nonobjc
-    var spinner: UIActivityIndicatorView?
+    final var spinner: UIActivityIndicatorView?
     @nonobjc
-    var toggleHostingView: UIView?
+    final var toggleHostingView: UIView?
 
     @nonobjc
-    var isSeparated: Bool = false
+    final var isSeparated: Bool = false
     @nonobjc
-    var isAttached: Bool = false
+    final var isAttached: Bool = false
     @nonobjc
-    var isRenderingIPC: Bool = false
+    final var isRenderingIPC: Bool = false
 
     @nonobjc
-    var updateScheduled = false
+    final var updateScheduled = false
 
     @nonobjc
-    var logPrefix: String = ""
+    final var logPrefix: String = ""
 
     @nonobjc
-    private var scaleObservation: NSKeyValueObservation?
+    final private var scaleObservation: NSKeyValueObservation?
 
     @objc
     fileprivate init() {
