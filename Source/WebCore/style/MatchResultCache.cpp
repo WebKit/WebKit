@@ -135,7 +135,7 @@ PropertyCascade::IncludedProperties MatchResultCache::computeAndUpdateChangedPro
         if (propertyID < firstLowPriorityProperty || propertyID == CSSPropertyLineHeight)
             return PropertyCascade::normalProperties();
 
-        result.ids.append(propertyID);
+        result.ids.append(cascadeAliasProperty(propertyID));
     }
 
     return result;
