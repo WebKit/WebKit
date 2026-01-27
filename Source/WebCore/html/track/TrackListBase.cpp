@@ -139,7 +139,19 @@ void TrackListBase::scheduleAddTrackEvent(Ref<TrackBase>&& track)
     // bubble and is not cancelable, and that uses the TrackEvent interface, with
     // the track attribute initialized to the text track's TextTrack object, at
     // the media element's textTracks attribute's TextTrackList object.
+
+    const char* trackType = "Unknown";
+    switch (track->type()) {
+        case TrackBase::AudioTrack: trackType = "AudioTrack"; break;
+        case TrackBase::VideoTrack: trackType = "VideoTrack"; break;
+        case TrackBase::TextTrack: trackType = "TextTrack"; break;
+        default: break;
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "[TrackListBase::scheduleAddTrackEvent] - Queueing 'addtrack' event for " << trackType);
+
     scheduleTrackEvent(eventNames().addtrackEvent, WTF::move(track));
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[TrackListBase::scheduleAddTrackEvent] - Event queued via queueTaskToDispatchEvent");
 }
 
 void TrackListBase::scheduleRemoveTrackEvent(Ref<TrackBase>&& track)

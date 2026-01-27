@@ -13,6 +13,10 @@
 
                 waitForAndFail(video, 'error')
                 video.src = "http://127.0.0.1:8000/media/resources/hls/multiple-cues-per-sample/master.m3u8";
+                [
+                    'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'durationchange',
+                    'error', 'abort', 'suspend', 'stalled', 'waiting', 'emptied'
+                ].forEach(event => { waitForEvent(event) });
 
                 await waitFor(video.textTracks, 'addtrack')
                 track = video.textTracks[0];

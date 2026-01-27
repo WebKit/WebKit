@@ -43,6 +43,8 @@ AudioTrackList::~AudioTrackList() = default;
 
 void AudioTrackList::append(Ref<AudioTrack>&& track)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[AudioTrackList::append] - Adding track: id='" << track->id() << "', label='" << track->label() << "', kind='" << track->kind() << "'");
+
     // Insert tracks in the media file order.
     size_t index = track->inbandTrackIndex();
     size_t insertionIndex;
@@ -56,6 +58,7 @@ void AudioTrackList::append(Ref<AudioTrack>&& track)
     if (!track->trackList())
         track->setTrackList(*this);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "[AudioTrackList::append] - Calling scheduleAddTrackEvent, total tracks now=" << m_inbandTracks.size());
     scheduleAddTrackEvent(WTF::move(track));
 }
 

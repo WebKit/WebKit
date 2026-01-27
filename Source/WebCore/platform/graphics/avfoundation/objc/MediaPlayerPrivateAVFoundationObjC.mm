@@ -1198,6 +1198,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
         [m_avPlayerItem addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
     }
 
+    // Log the initial tracks state to check if tracks are already populated before KVO fires
+    NSArray *initialTracks = [m_avPlayerItem tracks];
+    // Note: hasEnabledAudio/hasEnabledVideo are KVO properties, not public methods. Use valueForKey to access them.
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem] - After KVO setup, initial tracks count=" << (initialTracks ? [initialTracks count] : 0) << ", hasEnabledAudio=" << [[m_avPlayerItem valueForKey:@"hasEnabledAudio"] boolValue] << ", hasEnabledVideo=" << [[m_avPlayerItem valueForKey:@"hasEnabledVideo"] boolValue]);
+
     [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player->pitchCorrectionAlgorithm(), player->preservesPitch(), m_requestedRate).createNSString().get()];
 
 #if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
@@ -1997,6 +2002,7 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     if (*m_cachedAssetIsPlayable && *m_cachedTracksArePlayable)
         return MediaPlayerAVAssetStatusPlayable;
 
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::assetStatus] - Asset loaded but not fully playable");
     return MediaPlayerAVAssetStatusLoaded;
 }
 
@@ -2352,6 +2358,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::tracksChanged] - m_avPlayerItem=" << (m_avPlayerItem ? "EXISTS" : "NULL"));
+
     String primaryAudioTrackLanguage = m_languageOfPrimaryAudioTrack;
     m_languageOfPrimaryAudioTrack = String();
 
@@ -2365,6 +2373,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
     // asked about those fairly fequently.
     if (!m_avPlayerItem) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::tracksChanged] - Taking ASSET-BASED path (m_avPlayerItem is NULL, updateAudioTracks will NOT be called)");
         // We don't have a player item yet, so check with the asset because some assets support inspection
         // prior to becoming ready to play.
         RetainPtr firstEnabledVideoTrack = firstEnabledVisibleTrack();
@@ -2379,6 +2388,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
             size.setHeight(-size.height());
         presentationSizeDidChange(size);
     } else {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::tracksChanged] - Taking PLAYER-ITEM-BASED path (m_avPlayerItem exists, will call updateAudioTracks)");
         bool hasVideo = false;
         bool hasAudio = false;
         bool hasMetaData = false;
@@ -2523,6 +2533,8 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
 template <typename RefT, typename PassRefT>
 void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* group, Vector<RefT>& oldItems, const Vector<String>& characteristics, RefT (*itemFactory)(MediaSelectionOptionAVFObjC&), RefPtr<MediaPlayer>& player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT))
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[determineChangedTracksFromNewTracksAndOldItems] - called with MediaSelectionGroupAVFObjC, oldItems count: " << oldItems.size());
+
     group->updateOptions(characteristics);
 
     ListHashSet<Ref<MediaSelectionOptionAVFObjC>> newSelectionOptions;
@@ -2532,6 +2544,8 @@ void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* 
             continue;
         newSelectionOptions.add(option);
     }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[determineChangedTracksFromNewTracksAndOldItems] - found " << newSelectionOptions.size() << " new selection options");
 
     ListHashSet<Ref<MediaSelectionOptionAVFObjC>> oldSelectionOptions;
     for (auto& oldItem : oldItems) {
@@ -2551,6 +2565,8 @@ void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* 
         if (!oldSelectionOptions.contains(newOption.ptr()))
             addedSelectionOptions.add(newOption);
     }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[determineChangedTracksFromNewTracksAndOldItems] - removed options: " << removedSelectionOptions.size() << ", added options: " << addedSelectionOptions.size());
 
     typedef Vector<RefT> ItemVector;
     ItemVector replacementItems;
@@ -2572,37 +2588,61 @@ void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* 
     oldItems.swap(replacementItems);
 
     if (player) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[determineChangedTracksFromNewTracksAndOldItems] - notifying player of " << removedItems.size() << " removed and " << addedItems.size() << " added tracks");
+
         for (auto& removedItem : removedItems)
             (player.get()->*removedFunction)(removedItem.get());
 
         for (auto& addedItem : addedItems)
             (player.get()->*addedFunction)(addedItem.get());
     }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[determineChangedTracksFromNewTracksAndOldItems] - finished, final oldItems count: " << oldItems.size());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - starting updateAudioTracks");
+
     auto player = this->player();
-    if (!player)
+    if (!player) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - no player, returning early");
         return;
-
-    size_t count = m_audioTracks.size();
-
-    Vector<String> characteristics = player->preferredAudioCharacteristics();
-    if (!m_audibleGroup) {
-        if (RetainPtr<AVMediaSelectionGroup> group = safeMediaSelectionGroupForAudibleMedia())
-            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), characteristics);
     }
 
-    if (m_audibleGroup)
+    size_t count = m_audioTracks.size();
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - current track count: " << count);
+
+    Vector<String> characteristics = player->preferredAudioCharacteristics();
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - preferred audio characteristics count: " << characteristics.size());
+    for (size_t i = 0; i < characteristics.size(); ++i)
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - characteristic[" << i << "]: " << characteristics[i]);
+
+    if (!m_audibleGroup) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - m_audibleGroup is null, attempting to create");
+        if (RetainPtr<AVMediaSelectionGroup> group = safeMediaSelectionGroupForAudibleMedia()) {
+            ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - creating MediaSelectionGroupAVFObjC");
+            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group.get(), characteristics);
+        } else {
+            ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - safeMediaSelectionGroupForAudibleMedia returned null");
+        }
+    } else {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - m_audibleGroup already exists");
+    }
+
+    if (m_audibleGroup) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - using m_audibleGroup for track determination");
         determineChangedTracksFromNewTracksAndOldItems(m_audibleGroup.get(), m_audioTracks, characteristics, &AudioTrackPrivateAVFObjC::create, player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
-    else
+    } else {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - using m_cachedTracks for track determination");
         determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeAudio, m_audioTracks, &AudioTrackPrivateAVFObjC::create, player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
+    }
 
     for (auto& track : m_audioTracks)
         track->resetPropertiesFromTrack();
 
     ALWAYS_LOG(LOGIDENTIFIER, "track count was ", count, ", is ", m_audioTracks.size());
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::updateAudioTracks] - finished updateAudioTracks, final track count: " << m_audioTracks.size());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
@@ -3113,12 +3153,18 @@ AVAssetTrack* MediaPlayerPrivateAVFoundationObjC::firstEnabledVisibleTrack() con
 
 bool MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups()
 {
-    if (!m_avAsset)
+    if (!m_avAsset) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups] - m_avAsset is null, returning false");
         return false;
+    }
 
-    if ([m_avAsset statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
+    auto status = [m_avAsset statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL];
+    if (status != AVKeyValueStatusLoaded) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups] - availableMediaCharacteristicsWithMediaSelectionOptions status: " << (int)status << " (not loaded), returning false");
         return false;
+    }
 
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups] - media selection groups loaded, returning true");
     return true;
 }
 
@@ -3133,12 +3179,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 AVMediaSelectionGroup* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia()
 {
-    if (!hasLoadedMediaSelectionGroups())
+    if (!hasLoadedMediaSelectionGroups()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia] - media selection groups not loaded, returning nil");
         return nil;
+    }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [m_avAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+    auto* group = [m_avAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+    if (group) {
+        auto optionsCount = [[group options] count];
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia] - found audible media selection group with " << optionsCount << " options");
+    } else {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia] - no audible media selection group found, returning nil");
+    }
+
+    return group;
 }
 
 AVMediaSelectionGroup* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia()
@@ -3828,6 +3885,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(const RetainPtr<NSArr
 
 void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(const RetainPtr<NSArray>& tracks)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::tracksDidChange] - ENTERED, tracks count=" << (tracks ? [tracks count] : 0));
     for (AVPlayerItemTrack *track in m_cachedTracks.get())
         [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
 
@@ -3867,6 +3925,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(const RetainPtr<NSArray
 void MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange(bool hasEnabledAudio)
 {
     ALWAYS_LOG(LOGIDENTIFIER, hasEnabledAudio);
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange] - hasEnabledAudio=" << hasEnabledAudio << ", will call tracksChanged()");
     m_cachedHasEnabledAudio = hasEnabledAudio;
 
     tracksChanged();
@@ -4451,6 +4510,9 @@ NSArray* playerKVOProperties()
         }
 
         if (context == MediaPlayerAVFoundationObservationContextPlayerItem && !willChange) {
+            // Log ALL PlayerItem KVO callbacks to diagnose ARM64 vs Intel differences
+            ALWAYS_LOG_WITH_STREAM(stream << "[KVO PlayerItem] - keyPath=" << [keyPath.get() UTF8String]);
+
             // A value changed for an AVPlayerItem
             if ([keyPath isEqualToString:@"status"])
                 player.playerItemStatusDidChange([newValue intValue]);

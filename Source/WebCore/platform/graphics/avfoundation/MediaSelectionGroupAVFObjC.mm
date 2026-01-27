@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#import "Logging.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <objc/runtime.h>
@@ -138,16 +139,24 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
 {
     assertIsMainThread();
 
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - starting updateOptions with " << characteristics.size() << " characteristics");
+    for (size_t i = 0; i < characteristics.size(); ++i)
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - characteristic[" << i << "]: " << characteristics[i]);
+
     RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[PAL::getAVMediaSelectionGroupClassSingleton() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
     RetainPtr<NSMutableSet> oldAVOptions = adoptNS([[NSMutableSet alloc] initWithCapacity:m_options.size()]);
     for (auto& avOption : m_options.keys())
         [oldAVOptions addObject:(__bridge AVMediaSelectionOption *)avOption];
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - newAVOptions count: " << [newAVOptions count] << ", oldAVOptions count: " << [oldAVOptions count]);
 
     RetainPtr<NSMutableSet> addedAVOptions = adoptNS([newAVOptions mutableCopy]);
     [addedAVOptions minusSet:oldAVOptions.get()];
 
     RetainPtr<NSMutableSet> removedAVOptions = adoptNS([oldAVOptions mutableCopy]);
     [removedAVOptions minusSet:newAVOptions.get()];
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - addedAVOptions count: " << [addedAVOptions count] << ", removedAVOptions count: " << [removedAVOptions count]);
 
     for (AVMediaSelectionOption* removedAVOption in removedAVOptions.get()) {
         if (RefPtr protectedSelectedOption = selectedOption(); protectedSelectedOption && removedAVOption == protectedSelectedOption->avMediaSelectionOption())
@@ -158,12 +167,18 @@ void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteris
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<AVMediaSelectionOption> selectedOption = [m_playerItem selectedMediaOptionInMediaSelectionGroup:m_mediaSelectionGroup.get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - currently selected AVMediaSelectionOption: " << (selectedOption ? "exists" : "nil"));
+
     for (AVMediaSelectionOption* addedAVOption in addedAVOptions.get()) {
         Ref addedOption = MediaSelectionOptionAVFObjC::create(*this, addedAVOption);
-        if (addedAVOption == selectedOption)
+        if (addedAVOption == selectedOption) {
             m_selectedOption = addedOption.get();
+            ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - added option matches selected option");
+        }
         m_options.set((__bridge CFTypeRef)addedAVOption, WTF::move(addedOption));
     }
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - m_shouldSelectOptionAutomatically: " << m_shouldSelectOptionAutomatically);
 
     if (!m_shouldSelectOptionAutomatically)
         return;
@@ -171,28 +186,39 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr filteredOptions = [PAL::getAVMediaSelectionGroupClassSingleton() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]
         filteredAndSortedAccordingToPreferredLanguages:createNSArray(userPreferredLanguages(ShouldMinimizeLanguages::No)).get()];
 
-    if (![filteredOptions count] && characteristics.isEmpty())
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - filteredOptions count after language filtering: " << [filteredOptions count]);
+
+    if (![filteredOptions count] && characteristics.isEmpty()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - no filtered options and no characteristics, returning early");
         return;
+    }
 
     // If no options match our language selection, search for matching characteristics across all the group's options
     if (![filteredOptions count])
         filteredOptions = [m_mediaSelectionGroup options];
 
     RetainPtr optionsWithCharacteristics = [PAL::getAVMediaSelectionGroupClassSingleton() mediaSelectionOptionsFromArray:filteredOptions.get() withMediaCharacteristics:createNSArray(characteristics).get()];
-    if (optionsWithCharacteristics && [optionsWithCharacteristics count])
+    if (optionsWithCharacteristics && [optionsWithCharacteristics count]) {
         filteredOptions = optionsWithCharacteristics;
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - found " << [optionsWithCharacteristics count] << " options with requested characteristics");
+    }
 
-    if (![filteredOptions count])
+    if (![filteredOptions count]) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - no filtered options after all filtering, returning early");
         return;
+    }
 
     RetainPtr preferredOption = [filteredOptions objectAtIndex:0];
-    if (RefPtr protectedSelectedOption = this->selectedOption(); protectedSelectedOption && protectedSelectedOption->avMediaSelectionOption() == preferredOption)
+    if (RefPtr protectedSelectedOption = this->selectedOption(); protectedSelectedOption && protectedSelectedOption->avMediaSelectionOption() == preferredOption) {
+        ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - preferred option is already selected, returning early");
         return;
+    }
 
     ASSERT(m_options.contains((__bridge CFTypeRef)preferredOption.get()));
     RefPtr selectedOptionAVFObjC = m_options.get((__bridge CFTypeRef)preferredOption.get());
     m_selectedOption = selectedOptionAVFObjC;
     m_selectionTimer.startOneShot(0_s);
+    ALWAYS_LOG_WITH_STREAM(stream << "[MediaSelectionGroupAVFObjC::updateOptions] - set new selected option and started selection timer");
 }
 
 void MediaSelectionGroupAVFObjC::setSelectedOption(MediaSelectionOptionAVFObjC* option)

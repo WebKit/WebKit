@@ -1285,11 +1285,13 @@ void HTMLMediaElement::mediaPlayerActiveSourceBuffersChanged()
 
 void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[HTMLMediaElement::scheduleEvent] - scheduling event: " << eventName);
     scheduleEvent(Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::Yes));
 }
 
 void HTMLMediaElement::scheduleEvent(Ref<Event>&& event)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "[HTMLMediaElement::scheduleEvent] - scheduling event (from Ref<Event>): " << event->type());
     queueCancellableTaskToDispatchEvent(*this, TaskSource::MediaElement, m_asyncEventsCancellationGroup, WTF::move(event));
 }
 

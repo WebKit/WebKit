@@ -52,6 +52,12 @@
 
         waitForEvent('addtrack', addTrack, false, false, video.audioTracks);
         video.src = '../resources/hls/audio-description/main.m3u8';
+
+        // DEBUGGING
+        [
+            'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'durationchange',
+            'error', 'abort', 'suspend', 'stalled', 'waiting', 'emptied'
+        ].forEach(event => { waitForEvent(event) } );
     }
     </script>
 </head>

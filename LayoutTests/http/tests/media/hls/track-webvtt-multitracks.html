@@ -7,6 +7,10 @@
             video = document.getElementById('video');
             waitForAndFail(video, 'error');
             video.src = "../resources/hls/test-webvtt-multitracks.m3u8";
+            [
+                'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'durationchange',
+                'error', 'abort', 'suspend', 'stalled', 'waiting', 'emptied'
+            ].forEach(event => { waitForEvent(event) });
             await Promise.all([
                 video.play(),
                 waitFor(video.textTracks, 'addtrack', true),

@@ -8,6 +8,10 @@
             
             video = document.getElementById('video');
             video.src = "../resources/hls/test-webvtt-default.m3u8";
+            [
+                'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'durationchange',
+                'error', 'abort', 'suspend', 'stalled', 'waiting', 'emptied'
+            ].forEach(event => { waitForEvent(event) });
             video.play();
             await waitFor(video.textTracks, 'addtrack');
 
