@@ -162,6 +162,13 @@ void RenderGrid::styleDidChange(Style::Difference diff, const RenderStyle* oldSt
         return newStyle.gridTemplateList(direction).sizes != oldStyle->gridTemplateList(direction).sizes;
     };
 
+    if (oldStyle->writingMode().isOrthogonal(newStyle.writingMode())) {
+        for (auto& gridItem : childrenOfType<RenderGrid>(*this)) {
+            if (gridItem.isSubgrid())
+                gridItem.setNeedsItemPlacement();
+        }
+    }
+
     if (hasDifferentTrackSizes(Style::GridTrackSizingDirection::Columns) || hasDifferentTrackSizes(Style::GridTrackSizingDirection::Rows)) {
         for (auto& gridItem : childrenOfType<RenderBox>(*this))
             gridItem.setChildNeedsLayout();
