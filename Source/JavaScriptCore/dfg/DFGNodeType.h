@@ -593,7 +593,7 @@ namespace JSC { namespace DFG {
     macro(MapStorageOrSentinel, NodeResultJS) /* If the map storage is not materialized, return the sentinel. */ \
     macro(MapIterationNext, NodeResultJS) \
     macro(MapIterationEntry, NodeResultJS) \
-    macro(MapIterationEntryKey, NodeResultInt32) \
+    macro(MapIterationEntryKey, NodeResultJS) \
     macro(MapIterationEntryValue, NodeResultJS) \
     macro(SetAdd, NodeMustGenerate) \
     macro(MapSet, NodeMustGenerate | NodeHasVarArgs) \
