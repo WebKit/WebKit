@@ -69,6 +69,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         this.element.classList.add("source-code");
 
+        this._boundHandleTextAreaContextMenu = this._handleTextAreaContextMenu.bind(this);
+        this._codeMirror.getScrollerElement().addEventListener("contextmenu", this._boundHandleTextAreaContextMenu);
+
         if (this._supportsDebugging) {
             WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._breakpointStatusDidChange, this);
             WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointStatusDidChange, this);
@@ -203,6 +206,8 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._updateTokenTrackingControllerState, this);
         else
             this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+
+        this._codeMirror.getScrollerElement().removeEventListener("contextmenu", this._boundHandleTextAreaContextMenu);
 
         WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, this._logCleared, this);
     }
@@ -1689,6 +1694,85 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 this._addThreadIndicatorForTarget(target);
         }
     }
+  
+    _handleTextAreaContextMenu(event)
+    {
+        let coords = this._codeMirror.coordsChar({left: event.pageX, top: event.pageY});
+        let token = this._codeMirror.getTokenAt(coords);
+
+        // Only proceed if we have a script and clicked on a token
+        if (!this._getAssociatedScript() || !token?.type)
+            return;
+
+        // Check if token is an identifier (variable or function name)
+        if (!(token.type.includes("variable") || token.type.includes("def")))
+            return;
+
+        if (!this._isFunctionDeclarationToken(coords, token))
+            return;
+
+        // Show custom menu - prevent OS default menu
+        event.preventDefault();
+
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        contextMenu.appendItem(WI.UIString("Copy Function"), () => {
+            this._copyFunctionAtPosition(new WI.SourceCodePosition(coords.line, coords.ch));
+        });
+
+        contextMenu.appendSeparator();
+        contextMenu.appendItem(WI.UIString("Copy"), () => document.execCommand('copy'));
+    }
+
+    _isFunctionDeclarationToken(coords, token)
+    {
+        let lineText = this._codeMirror.getLine(coords.line);
+
+        // Check for traditional function declaration: "function identifier"
+        let textBeforeToken = lineText.substring(0, token.start);
+        if (WI.SourceCodeTextEditor.FunctionKeywordRegex.test(textBeforeToken))
+            return true;
+
+        // Check for arrow function: "const/let identifier = () =>" or "identifier = () =>"
+        let textAfterToken = lineText.substring(token.end);
+        if (WI.SourceCodeTextEditor.ArrowFunctionRegex.test(textAfterToken))
+            return true;
+
+        return false;
+    }
+
+    _copyFunctionAtPosition(position)
+    {
+        let script = this._getAssociatedScript();
+        if (!script)
+            return;
+
+        script.requestScriptSyntaxTree((syntaxTree) => {
+            if (!syntaxTree)
+                return;
+
+            // Find the function node where we clicked on its name
+            let functionNode = syntaxTree.containersOfPosition(position).find((node) => {
+                if (!node.id)
+                    return false;
+
+                // Check if this node is a function (declaration, expression, or arrow function)
+                if (!WI.SourceCodeTextEditor.FunctionNodeTypes.has(node.type))
+                    return false;
+
+                // Verify that we clicked specifically on the function's name
+                let {startPosition: nameStart, endPosition: nameEnd} = node.id;
+                return position.lineNumber === nameStart.lineNumber &&
+                       position.columnNumber >= nameStart.columnNumber &&
+                       position.columnNumber <= nameEnd.columnNumber;
+            });
+
+            if (functionNode) {
+                let functionText = this.getTextInRange(functionNode.startPosition, functionNode.endPosition);
+                InspectorFrontendHost.copyText(functionText);
+            }
+        });
+    }
 
     _debuggerDidPause(event)
     {
@@ -2403,6 +2487,14 @@ WI.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease = 1000;
 WI.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling = 100;
 WI.SourceCodeTextEditor.WidgetContainsMultipleIssuesSymbol = Symbol("source-code-widget-contains-multiple-issues");
 WI.SourceCodeTextEditor.WidgetContainsMultipleThreadsSymbol = Symbol("source-code-widget-contains-multiple-threads");
+
+WI.SourceCodeTextEditor.FunctionKeywordRegex = /\bfunction\s*$/;
+WI.SourceCodeTextEditor.ArrowFunctionRegex = /^\s*=\s*(?:async\s+)?\([^)]*\)\s*=>/;
+WI.SourceCodeTextEditor.FunctionNodeTypes = new Set([
+    WI.ScriptSyntaxTree.NodeType.FunctionDeclaration,
+    WI.ScriptSyntaxTree.NodeType.FunctionExpression,
+    WI.ScriptSyntaxTree.NodeType.ArrowFunctionExpression
+]);
 
 WI.SourceCodeTextEditor.Event = {
     ContentWillPopulate: "source-code-text-editor-content-will-populate",
