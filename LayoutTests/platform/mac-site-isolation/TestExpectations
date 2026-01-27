@@ -4,10 +4,6 @@
 # Tests that crash #
 ####################
 http/tests/inspector/target/provisional-load-cancels-previous-load.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?7-8 [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?7-8 [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html?origin=cross-site-redirect [ Skip ]
 imported/w3c/web-platform-tests/speculation-rules/speculation-tags/same-site-to-cross-site-redirection-prefetch.https.html [ Skip ]
 
