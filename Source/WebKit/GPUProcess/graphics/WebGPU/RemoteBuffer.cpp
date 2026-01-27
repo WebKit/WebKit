@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBufferMessages.h"
+#include "RemoteBufferProxy.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 
@@ -111,7 +112,7 @@ void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
 {
     auto sharedData = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto data = sharedData ? sharedData->span() : std::span<const uint8_t> { };
-    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write)) {
+    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write) || data.size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }

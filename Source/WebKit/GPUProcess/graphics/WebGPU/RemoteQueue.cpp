@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteBufferProxy.h"
 #include "RemoteQueueMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
@@ -92,12 +93,12 @@ void RemoteQueue::writeBuffer(
     auto data = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
-    if (!convertedBuffer) {
+    if (!convertedBuffer || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }
 
-    protectedBacking()->writeBufferNoCopy(*convertedBuffer, bufferOffset, data ? data->mutableSpan() : std::span<uint8_t> { }, 0, std::nullopt);
+    protectedBacking()->writeBufferNoCopy(*convertedBuffer, bufferOffset, data->mutableSpan(), 0, std::nullopt);
     completionHandler(true);
 }
 
@@ -130,7 +131,7 @@ void RemoteQueue::writeTexture(
     ASSERT(convertedDestination);
     auto convertedSize = objectHeap->convertFromBacking(size);
     ASSERT(convertedSize);
-    if (!convertedDestination || !convertedDestination || !convertedSize) {
+    if (!convertedDestination || !convertedDestination || !convertedSize || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }
