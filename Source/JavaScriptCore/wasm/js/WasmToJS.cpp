@@ -449,6 +449,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
         }
         default:  {
             if (Wasm::isRefType(returnType)) {
+                if (!returnType.isNullable()) {
+                    auto isNotNull = jit.branchIfNotNull(JSRInfo::returnValueJSR);
+                    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+                    emitThrowWasmToJSException(jit, GPRInfo::argumentGPR0, ExceptionType::TypeErrorUnexpectedNullReference);
+                    isNotNull.link(&jit);
+                }
+
                 if (Wasm::isExternref(returnType)) {
                     // Do nothing.
                 } else if (Wasm::isFuncref(returnType)) {

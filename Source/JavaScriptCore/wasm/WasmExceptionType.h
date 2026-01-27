@@ -67,6 +67,7 @@ namespace Wasm {
     macro(NullArrayInitData, "array.init_data to a null reference"_s) \
     macro(TypeErrorInvalidValueUse, "an exported wasm function cannot contain an invalid parameter or return value"_s) \
     macro(TypeErrorV128TagAccessInJS, "a v128 parameter of a tag may not be accessed from JS"_s) \
+    macro(TypeErrorUnexpectedNullReference, "Host function incorrectly returned null for a nonnullable reference type"_s) \
     macro(NullRefAsNonNull, "ref.as_non_null to a null reference"_s) \
     macro(CastFailure, "ref.cast failed to cast reference to target heap type"_s) \
     macro(OutOfBoundsDataSegmentAccess, "Offset + array length would exceed the size of a data segment"_s) \
@@ -141,6 +142,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::InvalidGCTypeUse:
     case ExceptionType::TypeErrorInvalidValueUse:
     case ExceptionType::TypeErrorV128TagAccessInJS:
+    case ExceptionType::TypeErrorUnexpectedNullReference:
         return true;
     }
     return false;

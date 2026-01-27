@@ -560,11 +560,16 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
         }
         default:  {
             if (Wasm::isRefType(returnType)) {
+                JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
+                if (value.isNull() && !returnType.isNullable()) [[unlikely]] {
+                    throwTypeError(globalObject, scope, "Host function incorrectly returned null for a nonnullable reference type"_s);
+                    OPERATION_RETURN(scope);
+                }
+
                 if (Wasm::isExternref(returnType)) {
                     // Do nothing.
                 } else if (Wasm::isFuncref(returnType)) {
                     // operationConvertToFuncref
-                    JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
                     WebAssemblyFunction* wasmFunction = nullptr;
                     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                     if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull()) [[unlikely]] {
@@ -583,7 +588,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     // Validation only: value not modified so write back not needed.
                 } else {
                     // operationConvertToAnyref
-                    JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
                     value = Wasm::internalizeExternref(value);
                     if (!Wasm::TypeInformation::isReferenceValueAssignable(value, returnType.isNullable(), returnType.index)) [[unlikely]] {
                         throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
@@ -646,6 +650,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
             break;
         default: {
             if (Wasm::isRefType(returnType)) {
+                if (value.isNull() && !returnType.isNullable()) [[unlikely]] {
+                    throwTypeError(globalObject, scope, "Host function incorrectly returned null for a nonnullable reference type"_s);
+                    OPERATION_RETURN(scope);
+                }
+
                 if (isExternref(returnType)) {
                     // Do nothing.
                 } else if (isFuncref(returnType)) {
@@ -1421,6 +1430,11 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance* 
             break;
         default: {
             if (Wasm::isRefType(returnType)) {
+                if (value.isNull() && !returnType.isNullable()) [[unlikely]] {
+                    throwTypeError(globalObject, scope, "Host function incorrectly returned null for a nonnullable reference type"_s);
+                    OPERATION_RETURN(scope);
+                }
+
                 if (isExternref(returnType)) {
                     // Do nothing.
                 } else if (isFuncref(returnType)) {
