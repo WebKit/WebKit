@@ -206,8 +206,9 @@ InlineContentConstrainer::EntryPretty InlineContentConstrainer::layoutSingleLine
     LineLayoutResult lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, lastValidEntry.previousLine, !lastValidEntry.previousLine);
     InlineItemPosition lineEnd = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, lastValidEntry.lineEnd, !lineLayoutResult.floatContent.hasIntrusiveFloat.isEmpty() || !lineLayoutResult.floatContent.placedFloats.isEmpty(), layoutRange.end);
     bool didLayoutAllItems = lineEnd.index == layoutRange.endIndex();
-    bool hasEnoughItemsForNextLine = lineEnd.index < layoutRange.endIndex() - lastLineBreakingPointOffset();
-    if (didLayoutAllItems || hasEnoughItemsForNextLine) {
+    bool hasEnoughItemsForCurrentLine = layoutRange.endIndex() - layoutRange.startIndex() > lastLineBreakingPointOffset();
+    bool hasEnoughItemsForNextLine = lineEnd.index + lastLineBreakingPointOffset() < layoutRange.endIndex();
+    if (!hasEnoughItemsForCurrentLine  || didLayoutAllItems || hasEnoughItemsForNextLine) {
         return { lastValidEntry.accumulatedCost,
             // This function is only called when there are no more viable break points for PrettifyRange.
             // Use the last valid entry's accumulated cost as we must use this breakpoint no matter what.
@@ -585,7 +586,7 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
             state[breakIndex].previousBreakIndex = 0;
             state[breakIndex].lineIndex = state[0].lineIndex + 1;
             state[breakIndex].lastLineWidth = firstLineCandidateWidth;
-            state[breakIndex].lineEnd = { .index = breakIndex, .offset = 0 };
+            state[breakIndex].lineEnd = { .index = breakOpportunities[breakIndex], .offset = 0 };
             auto lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, firstLineCandidateWidth, 0.f };
             auto lineBuilder = LineBuilder { m_inlineFormattingContext, m_horizontalConstraints, m_inlineItemList };
             auto lineLayoutResult = lineBuilder.layoutInlineContent({ { range.startIndex(), breakOpportunities[breakIndex] }, lineInitialRect }, state[0].previousLine, !state[0].previousLine);
@@ -636,8 +637,12 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
                 ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION();
                 return { };
             }
+            if (state[lastValidStateIndex.value()].lineEnd.index >= m_inlineItemList.size()) {
+                ASSERT_NOT_REACHED_WITH_SECURITY_IMPLICATION();
+                return { };
+            }
 
-            auto newEntry = layoutSingleLineForPretty({ breakOpportunities[state[lastValidStateIndex.value()].lineEnd.index], range.endIndex() }, idealLineWidth, state[lastValidStateIndex.value()], lastValidStateIndex.value());
+            auto newEntry = layoutSingleLineForPretty({ state[lastValidStateIndex.value()].lineEnd.index, range.endIndex() }, idealLineWidth, state[lastValidStateIndex.value()], lastValidStateIndex.value());
             auto it = std::ranges::find(breakOpportunities, newEntry.lineEnd.index);
             // If hyphenation does not create a valid solution, we should return early.
             if (it == breakOpportunities.end())
@@ -668,11 +673,11 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
                 ASSERT(breakIndex > startIndex);
                 state[breakIndex].previousBreakIndex = startIndex;
                 state[breakIndex].lastLineWidth = candidateLineWidth;
-                state[breakIndex].lineEnd = { .index = breakIndex, .offset = 0 };
+                state[breakIndex].lineEnd = { .index = breakOpportunities[breakIndex], .offset = 0 };
                 state[breakIndex].lineIndex = state[startIndex].lineIndex + 1;
                 auto lineInitialRect = InlineRect { 0.f, m_horizontalConstraints.logicalLeft, candidateLineWidth, 0.f };
                 auto lineBuilder = LineBuilder { m_inlineFormattingContext, m_horizontalConstraints, m_inlineItemList };
-                auto lineLayoutResult = lineBuilder.layoutInlineContent({ { startIndex, breakIndex }, lineInitialRect }, state[startIndex].previousLine, !state[startIndex].previousLine);
+                auto lineLayoutResult = lineBuilder.layoutInlineContent({ { breakOpportunities[startIndex], breakOpportunities[breakIndex] }, lineInitialRect }, state[startIndex].previousLine, !state[startIndex].previousLine);
                 state[breakIndex].previousLine = buildPreviousLine(state[breakIndex].lineIndex, lineLayoutResult);
             }
         }
