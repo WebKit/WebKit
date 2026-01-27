@@ -34,6 +34,7 @@
 
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -48,11 +49,14 @@ class ConsoleMessage;
 
 namespace WebCore {
 
+
+class LocalFrame;
+
 class WEBCORE_EXPORT AutomationInstrumentationClient : public AbstractRefCountedAndCanMakeWeakPtr<AutomationInstrumentationClient> {
 public:
     virtual ~AutomationInstrumentationClient() = default;
 
-    virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
+    virtual void addMessageToConsole(std::optional<FrameIdentifier>, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
 };
 
 
@@ -61,7 +65,8 @@ public:
     static void setClient(const AutomationInstrumentationClient&);
     static void clearClient();
 
-    static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
+    static void addMessageToConsole(LocalFrame&, const std::unique_ptr<Inspector::ConsoleMessage>&);
+    static void addMessageToConsole(std::optional<FrameIdentifier>, const std::unique_ptr<Inspector::ConsoleMessage>&);
 };
 
 } // namespace WebCore

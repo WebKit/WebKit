@@ -7,11 +7,46 @@
     "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/session",
     "types": [
         {
+            "id": "Subscription",
+            "description": "A unique identifier for a subscription.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-session-Subscription",
+            "type": "string"
+        },
+        {
             "id": "UserPromptHandlerType",
             "description": "A type that represents the behavior of the user prompt handler.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-Target",
             "type": "string",
             "enum": [ "accept", "dismiss", "ignore" ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "subscribe",
+            "description": "Subscribes to events from the remote end.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-session-subscribe",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/session/subscribe/",
+            "async": true,
+            "parameters": [
+                { "name": "events", "type": "array", "items": { "type": "string" }, "description": "The list of events to subscribe to." },
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "description": "Browsing contexts to subscribe to", "optional": true },
+                { "name": "userContexts", "type": "array", "items": { "$ref": "BidiBrowser.UserContext" }, "description": "User contexts to subscribe to", "optional": true }
+            ],
+            "returns": [
+                { "name": "subscription", "$ref": "Subscription", "description": "A unique identifier for the subscription.", "optional": true }
+            ]
+        },
+        {
+            "name": "unsubscribe",
+            "description": "Unsubscribes from events from the remote end.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/session/subscribe/",
+            "async": true,
+            "parameters": [
+                { "name": "subscriptions", "type": "array", "items": { "$ref": "Subscription" }, "description": "A unique identifier for the subscription.", "optional": true },
+                { "name": "events", "type": "array", "items": { "type": "string" }, "description": "The list of events to subscribe to.", "optional": true },
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "description": "Browsing contexts to subscribe to", "optional": true }
+            ]
         }
     ]
 }

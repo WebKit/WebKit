@@ -26,5 +26,5 @@
     ExceptionForEnabledBy
 ]
 messages -> WebAutomationSession {
-    LogEntryAdded(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
+    LogEntryAdded(std::optional<WebCore::FrameIdentifier> frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String messageText, enum:uint8_t JSC::MessageType messageType, WallTime timestamp)
 }
