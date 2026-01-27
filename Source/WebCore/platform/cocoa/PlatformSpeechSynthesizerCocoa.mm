@@ -38,9 +38,16 @@
 
 #import <pal/spi/cocoa/AXSpeechManagerSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
+
+typedef void (^AVSpeechSynthesisVoiceCallbackBlock)(NSArray<AVSpeechSynthesisVoice *> *);
+
+@interface AVSpeechSynthesisVoice (AsyncAddition)
++ (void)speechVoicesIncludingSuperCompactWithCompletionHandler:(nonnull AVSpeechSynthesisVoiceCallbackBlock)completion;
+@end
 
 static float getAVSpeechUtteranceDefaultSpeechRate()
 {
@@ -293,13 +300,31 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    // SpeechSynthesis replaces on-device compact with higher quality compact voices. These
-    // are not available to WebKit so we're losing these default voices for WebSpeech.
-    // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
-    for (AVSpeechSynthesisVoice *voice in [PAL::getAVSpeechSynthesisVoiceClassSingleton() speechVoicesIncludingSuperCompact]) {
-        if (voice.isSystemVoice)
-            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, true, true));
+
+    Class avSpeechSynthesisVoiceClass = PAL::getAVSpeechSynthesisVoiceClassSingleton();
+    auto appendVoices = [protectedThis = Ref { *this }](NSArray<AVSpeechSynthesisVoice *> *voices) {
+        for (AVSpeechSynthesisVoice *voice in voices) {
+            if (voice.isSystemVoice)
+                protectedThis->m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
+        }
+    };
+
+    // Support older OS versions that don't have the asynchronous version yet.
+    // Remove this once 26.3 is the minimum OS version supported by Safari.
+    if (![avSpeechSynthesisVoiceClass respondsToSelector:@selector(speechVoicesIncludingSuperCompactWithCompletionHandler:)]) {
+        appendVoices([avSpeechSynthesisVoiceClass speechVoicesIncludingSuperCompact]);
+        return;
     }
+
+    [avSpeechSynthesisVoiceClass speechVoicesIncludingSuperCompactWithCompletionHandler:^(NSArray<AVSpeechSynthesisVoice *> *voices) {
+        callOnMainThread([this, protectedThis = Ref { *this }, voices = RetainPtr { voices }, appendVoices]() {
+            BEGIN_BLOCK_OBJC_EXCEPTIONS
+            appendVoices(voices.get());
+            m_speechSynthesizerClient.voicesDidChange();
+            END_BLOCK_OBJC_EXCEPTIONS
+        });
+    }];
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

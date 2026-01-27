@@ -44,16 +44,18 @@ public:
     virtual void cancel();
 
     void setUtteranceDuration(Seconds duration) { m_utteranceDuration = duration; }
+    void setInitialVoiceListToEmpty(bool empty) { m_initialVoiceListShouldBeEmpty = empty; }
+    virtual void initializeVoiceList();
 
 private:
     explicit PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient&);
 
-    virtual void initializeVoiceList();
     void speakingFinished();
 
     Timer m_speakingFinishedTimer;
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
     Seconds m_utteranceDuration { 100_ms };
+    bool m_initialVoiceListShouldBeEmpty { false };
 };
 
 } // namespace WebCore

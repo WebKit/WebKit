@@ -8,24 +8,43 @@
 <script>
     description("This tests that we can get synthesizer voices.");
 
+    window.jsTestIsAsync = true;
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
     var speech = window.speechSynthesis;
-    var list = speech.getVoices();
+    var timeoutID;
 
-    var foundDefaultVoice = false;
-    var foundEnglishVoice = false;
-    var voiceCount = list.length;
+    function runTest() {
+        clearTimeout(timeoutID);
+        var list = speech.getVoices();
 
-    for (let k = 0; k < list.length; k++) {
-        let voice = list[k];
-        if (voice.lang == "en-US")
-            foundEnglishVoice = true;
-        if (voice.default)
-            foundDefaultVoice = true;
+        foundDefaultVoice = false;
+        foundEnglishVoice = false;
+        voiceCount = list.length;
+
+        for (let k = 0; k < list.length; k++) {
+            let voice = list[k];
+            if (voice.lang == "en-US")
+                foundEnglishVoice = true;
+            if (voice.default)
+                foundDefaultVoice = true;
+        }
+
+        shouldBeTrue(`voiceCount >= ${window.internals.minimumExpectedVoiceCount}`);
+        shouldBeTrue("foundEnglishVoice");
+        shouldBeTrue("foundDefaultVoice");
+
+        finishJSTest();
     }
 
-    shouldBeTrue(`voiceCount >= ${window.internals.minimumExpectedVoiceCount}`);
-    shouldBeTrue("foundEnglishVoice");
-    shouldBeTrue("foundDefaultVoice");
+    speech.onvoiceschanged = runTest;
+
+    var list = speech.getVoices();
+    if (list.length > 0)
+        runTest();
+    else
+        timeoutID = setTimeout(runTest, 1000);
 
 </script>
 

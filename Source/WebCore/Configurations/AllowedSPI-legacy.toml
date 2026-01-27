@@ -115,6 +115,13 @@ selectors = [
 requires = ["USE_APPLE_INTERNAL_SDK"]
 
 [[legacy]]
+# These are needed to only show built-in voices to reduce fingerprinting surface area.
+selectors = [
+    { name = "speechVoicesIncludingSuperCompact", class = "?" },
+    { name = "speechVoicesIncludingSuperCompactWithCompletionHandler:", class = "?" },
+]
+
+[[legacy]]
 classes = [
     "AVAssetCollection",
     "AVContentKeyReportGroup",
@@ -409,7 +416,6 @@ selectors = [
     { name = "sharedTextEffectsWindowForWindowScene:", class = "?" },
     { name = "signature", class = "RSABSSATokenReady" },
     { name = "sizeValue", class = "?" },
-    { name = "speechVoicesIncludingSuperCompact", class = "?" },
     { name = "startRoutingVideoToPictureInPicturePlayerLayerView", class = "?" },
     { name = "startingColumn", class = "?" },
     { name = "startingRow", class = "?" },
