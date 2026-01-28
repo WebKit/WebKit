@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+namespace Style {
+struct MatchedRule;
+}
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyleBase);
 class RenderStyleBase {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RenderStyleBase, RenderStyleBase);
@@ -174,6 +178,9 @@ public:
 
     bool hasCachedPseudoStyles() const { return m_computedStyle.hasCachedPseudoStyles(); }
     const Style::PseudoStyleCache& cachedPseudoStyles() const { return m_computedStyle.cachedPseudoStyles(); }
+
+    const Vector<Style::MatchedRule>* elementMatchedRules() const { return m_computedStyle.elementMatchedRules(); }
+    void setElementMatchedRules(std::unique_ptr<Vector<Style::MatchedRule>>&& rules) { m_computedStyle.setElementMatchedRules(WTF::move(rules)); }
 
     // MARK: - Custom properties
 

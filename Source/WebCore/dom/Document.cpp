@@ -3234,7 +3234,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
         if ((type == PseudoElementType::FirstLetter || type == PseudoElementType::FirstLine) && elementStyle.style && !Style::supportsFirstLineAndLetterPseudoElement(*elementStyle.style))
             return { };
 
-        auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle.get() });
+        auto style = resolver->styleForPseudoElement(element, { *pseudoElementIdentifier }, { parentStyle.get(), nullptr, nullptr, nullptr, nullptr, elementStyle.elementMatchedRules.get() });
         if (!style)
             return nullptr;
         return WTF::move(style->style);

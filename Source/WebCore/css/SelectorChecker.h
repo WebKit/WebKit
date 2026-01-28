@@ -78,6 +78,7 @@ class SelectorChecker {
 public:
     enum class Mode : unsigned char {
         ResolvingStyle = 0,
+        // This is used for the Web Inspector
         CollectingRules,
         StyleInvalidation,
         // This is used for querySelector() API

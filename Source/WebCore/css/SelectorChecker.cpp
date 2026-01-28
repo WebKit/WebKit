@@ -240,11 +240,16 @@ bool SelectorChecker::match(const CSSSelector& selector, const Element& element,
         return collectedPseudoElements.contains(requestedPseudoElement->type);
 
     if (collectedPseudoElements) {
-        if (checkingContext.resolvingMode == Mode::ResolvingStyle)
+        if (checkingContext.resolvingMode == Mode::ResolvingStyle) {
             checkingContext.publicPseudoElements = collectedPseudoElements & allPublicPseudoElementTypes;
-
+            // Allow the match to succeed so that pseudo-element rules can be collected during element matching.
+            // The selector has already been fully checked by this point (including the element part),
+            // so we return true to indicate that this rule applies to this element's pseudo-element.
+            return true;
+        }
         return checkingContext.resolvingMode == Mode::StyleInvalidation || result.matchType == MatchType::Element;
     }
+
     return true;
 }
 
@@ -492,10 +497,17 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             nextContext.hasSelectionPseudo = collectedPseudoElements.contains(PseudoElementType::Selection);
             nextContext.hasViewTransitionPseudo = hasViewTransitionPseudoElement(collectedPseudoElements);
 
+            // Skip this check when collecting pseudo-element rules during element matching (ResolvingStyle mode without a requested pseudo-element).
+            // We need to continue checking the element part of the selector to determine if it matches.
+            // FIXME: not sure
+            bool collectingPseudoElementRulesDuringElementMatching = checkingContext.resolvingMode == Mode::ResolvingStyle && !context.requestedPseudoElement;
+
             if ((context.isMatchElement || checkingContext.resolvingMode == Mode::CollectingRules) && collectedPseudoElements
                 && !nextContext.hasSelectionPseudo
-                && !((nextContext.hasScrollbarPseudo || nextContext.hasViewTransitionPseudo) && nextContext.selector->match() == CSSSelector::Match::PseudoClass))
+                && !((nextContext.hasScrollbarPseudo || nextContext.hasViewTransitionPseudo) && nextContext.selector->match() == CSSSelector::Match::PseudoClass)
+                && !collectingPseudoElementRulesDuringElementMatching) {
                 return MatchResult::fails(Match::SelectorFailsCompletely);
+            }
 
             MatchResult result = matchRecursively(checkingContext, nextContext, collectedPseudoElements);
 

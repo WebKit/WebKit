@@ -86,6 +86,8 @@ struct ResolutionContext {
     const RenderStyle* documentElementStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
+    // Matched rules from element matching, to be processed lazily for pseudo-elements on-demand.
+    const Vector<MatchedRule>* elementMatchedRules { nullptr };
 
     bool isSVGUseTreeRoot { false };
 };

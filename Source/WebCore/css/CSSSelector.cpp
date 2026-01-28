@@ -995,6 +995,23 @@ bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector& complex
     return result;
 }
 
+bool complexSelectorMatchesOnlyPseudoElement(const CSSSelector& complexSelector)
+{
+    // Check if selector is pseudo-element-only (e.g., "::before" or "::before:hover")
+    // Returns true if the selector has no element part that can match actual elements.
+    if (!complexSelector.matchesPseudoElement())
+        return false;
+
+    // Walk through the selector chain looking for any element-matching parts
+    for (auto* selector = complexSelector.precedingInComplexSelector(); selector; selector = selector->precedingInComplexSelector()) {
+        // Pseudo-elements and pseudo-classes don't match elements, everything else does
+        if (!selector->matchesPseudoElement() && selector->match() != CSSSelector::Match::PseudoClass)
+            return false; // Found an element-matching part
+    }
+
+    return true; // Only pseudo-elements and pseudo-classes, no element part
+}
+
 bool CSSSelector::simpleSelectorEqual(const CSSSelector& other) const
 {
     auto valuesEqual = [&] {

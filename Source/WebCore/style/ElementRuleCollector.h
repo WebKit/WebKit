@@ -45,6 +45,8 @@ struct MatchedRule {
     unsigned scopingRootDistance { 0 };
     ScopeOrdinal styleScopeOrdinal;
     CascadeLayerPriority cascadeLayerPriority;
+    EnumSet<PseudoElementType> pseudoIdSet; // Pseudo-elements this rule applies to (empty for element-only rules)
+    DeclarationOrigin declarationOrigin;
 };
 
 class ElementRuleCollector {
@@ -74,6 +76,8 @@ public:
 
     EnumSet<PseudoElementType> matchedPseudoElements() const { return m_matchedPseudoElements; }
     const Relations& styleRelations() const { return m_styleRelations; }
+    const auto& matchedRules() const { return m_matchedRules; }
+    const auto& pseudoElementMatchedRules() const { return m_pseudoElementMatchedRules; }
 
     void addAuthorKeyframeRules(const StyleRuleKeyframe&);
 
@@ -102,6 +106,7 @@ private:
         unsigned distance { std::numeric_limits<unsigned>::max() };
         bool matchesVisited { false };
     };
+    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, std::optional<ScopingRootWithDistance>, EnumSet<PseudoElementType>& pseudoIdSet);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, std::optional<ScopingRootWithDistance> scopingRoot = { });
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
     std::pair<bool, std::optional<Vector<ScopingRootWithDistance>>> scopeRulesMatch(const RuleData&, const MatchRequest&);
@@ -112,7 +117,7 @@ private:
     void sortAndTransferMatchedRules(DeclarationOrigin);
     void transferMatchedRules(DeclarationOrigin, std::optional<ScopeOrdinal> forScope = { });
 
-    void addMatchedRule(const RuleData&, unsigned specificity, unsigned scopingRootDistance, const MatchRequest&);
+    void addMatchedRule(const RuleData&, unsigned specificity, unsigned scopingRootDistance, const MatchRequest&, DeclarationOrigin, const EnumSet<PseudoElementType>& = { });
     void addMatchedProperties(MatchedProperties&&, DeclarationOrigin);
 
     const Element& element() const { return m_element.get(); }
@@ -137,6 +142,7 @@ private:
     Ref<MatchResult> m_result;
     Relations m_styleRelations;
     EnumSet<PseudoElementType> m_matchedPseudoElements;
+    Vector<MatchedRule> m_pseudoElementMatchedRules;
 };
 
 ALWAYS_INLINE void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)

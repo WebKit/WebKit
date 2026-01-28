@@ -31,6 +31,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -113,6 +114,11 @@ public:
     const RuleDataVector* focusVisiblePseudoClassRules() const { return &m_focusVisiblePseudoClassRules; }
     const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
+    const RuleDataVector* universalPseudoElementUARules(PseudoElementType type) const
+    {
+        auto it = m_universalPseudoElementUARules.find(enumToUnderlyingType(type));
+        return it != m_universalPseudoElementUARules.end() ? &it->value : nullptr;
+    }
 
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
@@ -240,6 +246,10 @@ private:
 
     // @position-try
     HashMap<AtomString, Ref<const StyleRulePositionTry>> m_positionTryRules;
+
+    // Pre-matched universal pseudo-element UA rules (rules that match only pseudo-elements without element constraints)
+    // Uses underlying integer type as key since PseudoElementType doesn't have HashTraits
+    HashMap<unsigned, RuleDataVector> m_universalPseudoElementUARules;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };

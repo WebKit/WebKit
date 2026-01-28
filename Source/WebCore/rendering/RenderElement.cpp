@@ -1834,7 +1834,10 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
     Ref element = *this->element();
     auto& styleResolver = element->styleResolver();
 
-    auto resolvedStyle = styleResolver.styleForPseudoElement(element, pseudoElementRequest, { parentStyle });
+    // Retrieve cached elementMatchedRules from the parent style to avoid re-matching
+    auto* matchedRules = parentStyle->elementMatchedRules();
+
+    auto resolvedStyle = styleResolver.styleForPseudoElement(element, pseudoElementRequest, { parentStyle, nullptr, nullptr, nullptr, nullptr, matchedRules });
     if (!resolvedStyle)
         return nullptr;
 

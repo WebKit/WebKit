@@ -4501,11 +4501,14 @@ void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::J
         auto pseudoElementSetDataAddress = pseudoElementSetAddress.withOffset(EnumSet<PseudoElementType>::storageMemoryOffset());
         EnumSet<PseudoElementType> value { pseudoElementType };
         m_assembler.store32(Assembler::TrustedImm32(value.toRaw()), pseudoElementSetDataAddress);
+
+        // Allow the match to succeed so that pseudo-element rules can be collected during element matching.
+        // This enables caching of pseudo-element match results.
+        successCases.append(m_assembler.jump());
     }
 
-    // We have a pseudoElementSelector, we are not in CollectingRulesIgnoringVirtualPseudoElements so
-    // we must match that pseudo element. Since the context does not have a requested pseudo element we fail matching
-    // after the marking.
+    // When not in ResolvingStyle mode, we have a pseudoElementSelector but no requested pseudo element,
+    // so we fail matching after the marking.
     failureCases.append(m_assembler.jump());
 
     successCases.link(&m_assembler);
