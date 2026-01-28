@@ -338,6 +338,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.scale = toScale->blend(from.scale.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetAnchor:
+        if (!canBlend(from.offsetAnchor, to.offsetAnchor)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetAnchor = blend(from.offsetAnchor, to.offsetAnchor, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetDistance:
@@ -348,6 +352,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.offsetPath = fromOffsetPath->blend(to.offsetPath.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetPosition:
+        if (!canBlend(from.offsetPosition, to.offsetPosition)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetPosition = blend(from.offsetPosition, to.offsetPosition, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetRotate:
