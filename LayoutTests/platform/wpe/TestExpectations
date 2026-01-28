@@ -1294,3 +1294,10 @@ webkit.org/b/305512 imported/w3c/web-platform-tests/focus/focus-large-element-in
 
 # AVFoundation-specific audio description functionality not available on GStreamer platforms
 http/tests/media/hls/hls-audio-description-track-kind.html [ Skip ]
+
+webkit.org/b/306384 fast/lists/overlapping-nested-list-markers.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/blink/compositing/overflow/selection-gaps.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-002.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002.html [ ImageOnlyFailure ]

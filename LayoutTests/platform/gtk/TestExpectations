@@ -1656,3 +1656,11 @@ webkit.org/b/305509 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 # AVFoundation-specific audio description functionality not available on GStreamer platforms
 http/tests/media/hls/hls-audio-description-track-kind.html [ Skip ]
+
+webkit.org/b/306384 css3/masking/mask-svg-no-fragmentId-tiled.html [ ImageOnlyFailure ]
+webkit.org/b/306384 editing/pasteboard/copy-crash.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/css/object-fit/object-fit-shrink.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/table/row-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html [ ImageOnlyFailure ]
+webkit.org/b/306384 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
