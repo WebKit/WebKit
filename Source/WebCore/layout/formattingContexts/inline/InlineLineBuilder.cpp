@@ -1422,7 +1422,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     auto commitPrecedingNonContentfulContent = [&] {
         LineCandidate precedingNonContentfulContent;
         auto& firstCandidateItem = lineCandidate.inlineContent.continuousContent().runs().first().inlineItem;
-        // FIXME: There should not be any previous-non-contentful inline items here but since we "break" before/after floats, content like <span><floatbox>content</span> may trigger this (where the <span> is disconnected from the inline content)
+        // We should not find any inline content here, only non-contentful items like <span> or </span> or trimmed whitespace or out-of-flow content.
         for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
             auto& inlineItem = m_inlineItemList[index];
             if (&inlineItem == &firstCandidateItem)
@@ -1434,7 +1434,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             }
         }
         if (!precedingNonContentfulContent.inlineContent.isEmpty())
-            applyLineBreakingOnCandidateInlineContent(layoutRange, precedingNonContentfulContent);
+            commitCandidateContent(precedingNonContentfulContent, { });
     };
     commitPrecedingNonContentfulContent();
     return applyLineBreakingOnCandidateInlineContent(layoutRange, lineCandidate);
