@@ -353,22 +353,16 @@ TEST(SmartLists, InsertingSpaceAfterLargeNumberDoesNotGenerateOrderedList)
     runTest(input, expectedHTML.createNSString().get(), @"//body/text()", input.length);
 }
 
-// FIXME: rdar://163664100 ([ iOS26 iPhone ] 2X TestWebKitAPI.SmartLists (API-Tests) are constant failures (301651))
-#if PLATFORM(IOS)
-TEST(SmartLists, DISABLED_InsertingListMergesWithPreviousListIfPossible)
-#else
 TEST(SmartLists, InsertingListMergesWithPreviousListIfPossible)
-#endif
 {
     static constexpr auto expectedHTML = R"""(
-    <body>
-        <ol start="1" style="list-style-type: decimal;">
+    <body contenteditable="">
+        <ol start="1" style="list-style-type: decimal;" class="Apple-decimal-list">
             <li>A</li>
             <li>B</li>
             <li>C</li>
         </ol>
-    </body>
-    )"""_s;
+    </body>)"""_s;
 
     RetainPtr input = @""
     "1. A\n"
@@ -380,21 +374,15 @@ TEST(SmartLists, InsertingListMergesWithPreviousListIfPossible)
     runTest(input.get(), expectedHTML.createNSString().get(), @"//body/ol/li[3]/text()", 1);
 }
 
-// FIXME: rdar://163664100 ([ iOS26 iPhone ] 2X TestWebKitAPI.SmartLists (API-Tests) are constant failures (301651))
-#if PLATFORM(IOS)
-TEST(SmartLists, DISABLED_InsertingSpaceInsideListElementDoesNotActivateSmartLists)
-#else
 TEST(SmartLists, InsertingSpaceInsideListElementDoesNotActivateSmartLists)
-#endif
 {
     static constexpr auto expectedHTML = R"""(
-    <body>
-        <ul>
+    <body contenteditable="">
+        <ul style="list-style-type: disc;" class="Apple-disc-list">
             <li>A</li>
             <li>1. Hi</li>
         </ul>
-    </body>
-    )"""_s;
+    </body>)"""_s;
 
     runTest(@"* A\n1. Hi", expectedHTML.createNSString().get(), @"//body/ul/li[2]/text()", @"1. Hi".length);
 }
