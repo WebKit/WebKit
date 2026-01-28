@@ -2142,6 +2142,15 @@ std::optional<MonotonicTime> Page::nextRenderingUpdateTimestamp() const
     return m_lastRenderingUpdateTimestamp + std::floor((now + interval - m_lastRenderingUpdateTimestamp) / interval) * interval;
 }
 
+std::optional<Seconds> Page::timeToNextRenderingUpdateForTesting() const
+{
+    auto nextUpdate = nextRenderingUpdateTimestamp();
+    if (!nextUpdate)
+        return std::nullopt;
+
+    return *nextUpdate - MonotonicTime::now();
+}
+
 void Page::didScheduleRenderingUpdate()
 {
 #if ENABLE(ASYNC_SCROLLING)

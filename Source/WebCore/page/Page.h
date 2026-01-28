@@ -1186,6 +1186,7 @@ public:
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
     std::optional<MonotonicTime> nextRenderingUpdateTimestamp() const;
+    WEBCORE_EXPORT std::optional<Seconds> timeToNextRenderingUpdateForTesting() const;
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 

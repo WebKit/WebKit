@@ -4371,6 +4371,18 @@ ExceptionOr<unsigned> Internals::renderingUpdateCount()
     return document->page()->renderingUpdateCount();
 }
 
+ExceptionOr<std::optional<double>> Internals::timeToNextRenderingUpdate()
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    if (auto timeToNextUpdate = document->page()->timeToNextRenderingUpdateForTesting())
+        return timeToNextUpdate->milliseconds();
+
+    return { std::nullopt };
+}
+
 ExceptionOr<void> Internals::setCompositingPolicyOverride(std::optional<CompositingPolicy> policyOverride)
 {
     Document* document = contextDocument();

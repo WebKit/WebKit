@@ -2531,7 +2531,7 @@ EventTimingInteractionID LocalDOMWindow::computeInteractionID(Event& event, Even
         auto interactionID = generateInteractionID();
         m_pointerMap = interactionID;
         m_pendingPointerDown->interactionID = interactionID;
-        m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+        queueEventTimingCandidateForDispatch(*m_pendingPointerDown);
         m_pendingPointerDown.reset();
         return interactionID;
     };
@@ -2552,10 +2552,10 @@ EventTimingInteractionID LocalDOMWindow::computeInteractionID(Event& event, Even
 
         auto interactionID = it->value.keyDown.interactionID.isUnassigned() ? generateInteractionID() : it->value.keyDown.interactionID;
         it->value.keyDown.interactionID = interactionID;
-        m_performanceEventTimingCandidates.append(it->value.keyDown);
+        queueEventTimingCandidateForDispatch(it->value.keyDown);
         if (it->value.keyPress) {
             it->value.keyPress->interactionID = interactionID;
-            m_performanceEventTimingCandidates.append(*it->value.keyPress);
+            queueEventTimingCandidateForDispatch(*it->value.keyPress);
         }
         m_pendingKeyDowns.remove(it);
         keyboardEvent->setInteractionID(interactionID);
@@ -2563,9 +2563,9 @@ EventTimingInteractionID LocalDOMWindow::computeInteractionID(Event& event, Even
     }
     case EventType::compositionstart: {
         for (auto& pendingEntry : m_pendingKeyDowns) {
-            m_performanceEventTimingCandidates.append(pendingEntry.value.keyDown);
+            queueEventTimingCandidateForDispatch(pendingEntry.value.keyDown);
             if (pendingEntry.value.keyPress)
-                m_performanceEventTimingCandidates.append(*pendingEntry.value.keyPress);
+                queueEventTimingCandidateForDispatch(*pendingEntry.value.keyPress);
         }
         m_pendingKeyDowns.clear();
         return { };
@@ -2612,7 +2612,7 @@ EventTimingInteractionID LocalDOMWindow::computeInteractionID(Event& event, Even
     case EventType::pointercancel: {
         if (m_pendingPointerDown) {
             // Cancelled pointerDowns are finalized without receiving an interactionID:
-            m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+            queueEventTimingCandidateForDispatch(*m_pendingPointerDown);
             m_pendingPointerDown.reset();
         }
         return { };
@@ -2656,6 +2656,21 @@ EventTimingInteractionID LocalDOMWindow::generateInteractionIDWithoutIncreasingI
     return ensureUserInteractionValue();
 }
 
+void LocalDOMWindow::queueEventTimingCandidateForDispatch(PerformanceEventTimingCandidate& candidate)
+{
+    m_performanceEventTimingCandidates.append(candidate);
+
+    RefPtr document { protectedDocument() };
+    if (!document)
+        return;
+
+    RefPtr page { document->protectedPage() };
+    if (!page)
+        return;
+
+    page->scheduleRenderingUpdate(RenderingUpdateStep::EventTiming);
+}
+
 PerformanceEventTimingCandidate LocalDOMWindow::initializeEventTimingEntry(Event& event, EventType type)
 {
     auto startTime = performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(event.timeStamp());
@@ -2693,7 +2708,7 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
     switch (type) {
     case EventType::pointerdown: {
         if (m_pendingPointerDown) {
-            m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+            queueEventTimingCandidateForDispatch(*m_pendingPointerDown);
             LOG_WITH_STREAM(PerformanceTimeline, stream << "Repeated pointerdown entries at t=" << processingEnd);
         }
 
@@ -2706,7 +2721,7 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
         RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(&event);
         // Simulated keyboard inputs such as dictation are not KeyboardEvent:
         if (!keyboardEvent) [[unlikely]] {
-            m_performanceEventTimingCandidates.append(entry);
+            queueEventTimingCandidateForDispatch(entry);
             return;
         }
         entry.interactionID = keyboardEvent->interactionID();
@@ -2716,16 +2731,16 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
         // which causes the last keypress of a composition to be issued after
         // compositionend, making .isComposing() not be true:
         if (keyCode == 229 || keyboardEvent->isComposing()) {
-            m_performanceEventTimingCandidates.append(entry);
+            queueEventTimingCandidateForDispatch(entry);
             return;
         }
         auto it = m_pendingKeyDowns.find(keyCode);
         if (it != m_pendingKeyDowns.end()) {
             it->value.keyDown.interactionID = generateInteractionIDWithoutIncreasingInteractionCount();
-            m_performanceEventTimingCandidates.append(it->value.keyDown);
+            queueEventTimingCandidateForDispatch(it->value.keyDown);
             if (it->value.keyPress) {
                 it->value.keyPress->interactionID = it->value.keyDown.interactionID;
-                m_performanceEventTimingCandidates.append(*it->value.keyPress);
+                queueEventTimingCandidateForDispatch(*it->value.keyPress);
             }
             it->value = { .keyDown = entry };
             return;
@@ -2736,20 +2751,20 @@ void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& e
     case EventType::keypress: {
         RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(&event);
         if (!keyboardEvent) [[unlikely]] {
-            m_performanceEventTimingCandidates.append(entry);
+            queueEventTimingCandidateForDispatch(entry);
             return;
         }
         auto keyCode = keyboardEvent->keyCodeForKeyDown();
         auto it = m_pendingKeyDowns.find(keyCode);
         if (it == m_pendingKeyDowns.end()) {
-            m_performanceEventTimingCandidates.append(entry);
+            queueEventTimingCandidateForDispatch(entry);
             return;
         }
         it->value.keyPress = entry;
         return;
     }
     default:
-        m_performanceEventTimingCandidates.append(entry);
+        queueEventTimingCandidateForDispatch(entry);
     }
 }
 

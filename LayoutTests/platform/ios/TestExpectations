@@ -355,6 +355,7 @@ http/tests/security/contentSecurityPolicy/object-redirect-blocked3.html
 imported/w3c/web-platform-tests/pointerlock [ Skip ]
 
 # webkit.org/b/285901 EventSender.mouse[Up|Down|MoveTo] do not work on iOS
+performance-api/event-timing-entry-schedules-update-rendering.html [ Skip ]
 pointer-lock/bug90391-move-then-window-open-crash.html [ Skip ]
 pointer-lock/mouse-event-delivery.html [ Skip ]
 pointer-lock/pointermove-movement-delta.html [ Skip ]
