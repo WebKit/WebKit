@@ -127,7 +127,7 @@ const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
     RefPtr speechSynthesisClient = m_speechSynthesisClient.get();
     auto& voiceList = speechSynthesisClient ? speechSynthesisClient->voiceList() : ensureProtectedPlatformSpeechSynthesizer()->voiceList();
     m_voiceList = voiceList.map([](auto& voice) {
-        return SpeechSynthesisVoice::create(Ref { *voice }.get());
+        return SpeechSynthesisVoice::create(Ref { voice });
     });
 
     return *m_voiceList;

@@ -955,7 +955,7 @@ struct AwaitingPromiseData : public RefCounted<AwaitingPromiseData> {
 };
 
 // https://webidl.spec.whatwg.org/#wait-for-all
-static void waitForAllPromises(Document& document, const Vector<RefPtr<DOMPromise>>& promises, Function<void()>&& fulfilledCallback, Function<void(JSC::JSValue)>&& rejectionCallback)
+static void waitForAllPromises(Document& document, const Vector<Ref<DOMPromise>>& promises, Function<void()>&& fulfilledCallback, Function<void(JSC::JSValue)>&& rejectionCallback)
 {
     if (promises.isEmpty()) {
         document.checkedEventLoop()->queueMicrotask(WTF::move(fulfilledCallback));
@@ -1166,12 +1166,12 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     }
 
     if (endResultIsSameDocument) {
-        Vector<RefPtr<DOMPromise>> promiseList;
+        Vector<Ref<DOMPromise>> promiseList;
 
         for (auto& handler : event->handlers()) {
             auto callbackResult = handler->invoke();
             if (callbackResult.type() != CallbackResultType::UnableToExecute) {
-                auto promise = callbackResult.releaseReturnValue();
+                Ref promise = callbackResult.releaseReturnValue().releaseNonNull();
                 // Because rejection is reported as `navigateerror` event, we can mark this as handled.
                 if (!promise->isSuspended())
                     promise->markAsHandled();

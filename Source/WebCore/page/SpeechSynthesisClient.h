@@ -42,7 +42,7 @@ public:
     virtual void setObserver(WeakPtr<SpeechSynthesisClientObserver>) = 0;
     virtual WeakPtr<SpeechSynthesisClientObserver> observer() const = 0;
     
-    virtual const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList() = 0;
+    virtual const Vector<Ref<PlatformSpeechSynthesisVoice>>& voiceList() = 0;
     virtual void speak(RefPtr<PlatformSpeechSynthesisUtterance>) = 0;
     virtual void cancel() = 0;
     virtual void pause() = 0;

@@ -44,7 +44,7 @@ WebSpeechSynthesisClient::WebSpeechSynthesisClient(WebPage& page)
 {
 }
 
-const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisClient::voiceList()
+const Vector<Ref<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisClient::voiceList()
 {
     RefPtr page = m_page.get();
     if (!page) {
@@ -58,7 +58,7 @@ const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisC
     auto sendResult = page->sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList());
     auto [voiceList] = sendResult.takeReplyOr(Vector<WebSpeechSynthesisVoice> { });
 
-    m_voices = voiceList.map([](auto& voice) -> RefPtr<WebCore::PlatformSpeechSynthesisVoice> {
+    m_voices = voiceList.map([](auto& voice) {
         return WebCore::PlatformSpeechSynthesisVoice::create(voice.voiceURI, voice.name, voice.lang, voice.localService, voice.defaultLang);
     });
     return m_voices;

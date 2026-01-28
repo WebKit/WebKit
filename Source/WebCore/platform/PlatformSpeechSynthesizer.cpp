@@ -33,7 +33,7 @@ namespace WebCore {
     
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformSpeechSynthesizer);
 
-const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::voiceList() const
+const Vector<Ref<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::voiceList() const
 {
     if (!m_voiceListIsInitialized) {
         ASSERT(m_voiceList.isEmpty());
