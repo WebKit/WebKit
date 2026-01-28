@@ -51,10 +51,8 @@
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
-#endif
 
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
 static const NSUInteger AXValueChangeTruncationLength = 1000;
@@ -243,9 +241,7 @@ static void exerciseIsIgnored(AccessibilityObject& object)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
@@ -378,9 +374,7 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 {
     ASSERT(isMainThread());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
         NSAccessibilityAnnouncementKey: message.createNSString().get(),
@@ -398,9 +392,7 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& obje
 {
     ASSERT(isMainThread());
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     NSDictionary *userInfo = @{
         NSAccessibilityARIAAnnouncementPriority: notifyPriorityToAXValueString(notificationData.priority).get(),
@@ -457,9 +449,11 @@ void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSo
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
 {
+    if (!isIsolatedTreeEnabled())
+        return;
+
     // The wrapper associated with a published notification may not have an isolated object yet.
     // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
     // This is generally correct, but not in this case, since AX clients will try to query this wrapper but the wrapper
@@ -473,7 +467,6 @@ void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
     if (object.isIgnored())
         deferAddUnconnectedNode(object);
 }
-#endif
 
 AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObject& object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
 {
@@ -526,9 +519,7 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto intent = inferDirectionFromIntent(*axObject, originalIntent, selection);
 
@@ -569,9 +560,7 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
 
     if (id wrapper = axObject->wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(*axObject);
-#endif
     }
 
     if (RefPtr root = rootWebArea()) {
@@ -636,9 +625,7 @@ void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, Acc
 
     if (id wrapper = object.wrapper()) {
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(object);
-#endif
     }
 
     AXPostNotificationWithUserInfo(rootWebArea.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
@@ -655,9 +642,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, deletionType, deletedText, position))
@@ -678,9 +663,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     if (!axObject)
         return;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
-#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeDelete, deletedText, { }))
@@ -752,7 +735,6 @@ bool AXObjectCache::clientIsInTestMode()
     return false;
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
@@ -782,7 +764,6 @@ bool AXObjectCache::isIsolatedTreeEnabled()
     return enabled;
 }
 
-
 static bool axThreadInitialized = false;
 
 void AXObjectCache::initializeAXThreadIfNeeded()
@@ -805,7 +786,6 @@ bool AXObjectCache::isAXThreadInitialized()
 {
     return axThreadInitialized;
 }
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 bool AXObjectCache::shouldSpellCheck()
 {
@@ -820,14 +800,10 @@ bool AXObjectCache::shouldSpellCheck()
     // The only AT that we know can handle deferred spellchecking is VoiceOver.
     if (client == kAXClientTypeVoiceOver)
         return false;
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isTestAXClientType(client)) [[unlikely]]
         return true;
     // ITM is currently only ever enabled for VoiceOver, so if it's enabled we can defer spell-checking.
     return !isIsolatedTreeEnabled();
-#else
-    return true;
-#endif
 }
 
 AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedLiveRegions()
@@ -960,12 +936,10 @@ void AXObjectCache::initializeSortedIDLists()
     }
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 Seconds AXObjectCache::platformSelectedTextRangeDebounceInterval() const
 {
     return 100_ms;
 }
-#endif
 
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
