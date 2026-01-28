@@ -51,7 +51,8 @@ public:
     void didConnectTag();
 
     void updateSlots(NSArray *slots);
-    void onValidCard(RetainPtr<TKSmartCard>&&);
+    void onValidCard(RetainPtr<TKSmartCard>&&, RetainPtr<TKSmartCardSlot>&&);
+    void onCardRemoved();
 
 protected:
     explicit CcidService(AuthenticatorTransportServiceObserver&);

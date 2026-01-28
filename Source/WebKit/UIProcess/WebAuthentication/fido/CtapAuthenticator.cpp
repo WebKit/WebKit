@@ -107,6 +107,18 @@ bool isPinError(const CtapDeviceResponseCode& error)
     }
 }
 
+bool isTerminalPinError(const CtapDeviceResponseCode& error)
+{
+    switch (error) {
+    case CtapDeviceResponseCode::kCtap2ErrPinAuthBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrPinBlocked:
+    case CtapDeviceResponseCode::kCtap2ErrUserPresenceRequired:
+        return true;
+    default:
+        return false;
+    }
+}
+
 // Hash PRF input according to spec: SHA-256("WebAuthn PRF" || 0x00 || input)
 static Vector<uint8_t> hashPRFInput(const BufferSource& input)
 {
@@ -173,7 +185,15 @@ void CtapAuthenticator::continueSilentlyCheckCredentials(Vector<uint8_t>&& data,
         m_currentBatch += 1;
         if (m_currentBatch >= m_batches.size())
             return continueMakeCredentialAfterCheckExcludedCredentials();
-    } if (isPinError(error)) {
+    }
+
+    if (isTerminalPinError(error)) {
+        CTAP_RELEASE_LOG("continueSilentlyCheckCredentials: Terminal error - notifying UI");
+        if (RefPtr observer = this->observer())
+            observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinAuthBlocked);
+        return completionHandler(false);
+    }
+    if (isPinError(error)) {
         if (!m_pinAuth.isEmpty()) {
             if (RefPtr observer = this->observer())
                 observer->authenticatorStatusUpdated(toStatus(error));
@@ -294,6 +314,13 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
                 m_isKeyStoreFull = true;
                 makeCredential();
             }
+            return;
+        }
+
+        if (isTerminalPinError(error)) {
+            CTAP_RELEASE_LOG("continueMakeCredentialAfterResponseReceived: Terminal PIN error - notifying UI");
+            if (RefPtr observer = this->observer())
+                observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinAuthBlocked);
             return;
         }
 
@@ -445,6 +472,13 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
 
         if (!isPinError(error) && tryDowngrade())
             return;
+
+        if (isTerminalPinError(error)) {
+            CTAP_RELEASE_LOG("continueGetAssertionAfterResponseReceived: Terminal PIN error - notifying UI");
+            if (RefPtr observer = this->observer())
+                observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinAuthBlocked);
+            return;
+        }
 
         if (isPinError(error)) {
             if (!m_pinAuth.isEmpty()) { // Skip the very first command that acts like wink.

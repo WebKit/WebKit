@@ -110,6 +110,7 @@ enum class CtapDeviceResponseCode : uint8_t {
     kCtap2ErrPinTokenExpired = 0x38,
     kCtap2ErrRequestTooLarge = 0x39,
     kCtap2ErrActionTimeout = 0x3A,
+    kCtap2ErrUserPresenceRequired = 0x3B,
     kCtap2ErrOther = 0x7F,
     kCtap2ErrSpecLast = 0xDF,
     kCtap2ErrExtensionFirst = 0xE0,
