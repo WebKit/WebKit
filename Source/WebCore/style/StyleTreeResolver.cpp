@@ -474,8 +474,15 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             return { };
     }
 
-    if (pseudoElementIdentifier.type == PseudoElementType::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
-        return { };
+    // Both overflow: scroll and overflow: auto can have custom scrollbars.
+    if (pseudoElementIdentifier.type == PseudoElementType::WebKitScrollbar) {
+        auto overflowX = elementUpdate.style->overflowX();
+        auto overflowY = elementUpdate.style->overflowY();
+        bool xCanHaveScrollbar = overflowX == Overflow::Scroll || overflowX == Overflow::Auto;
+        bool yCanHaveScrollbar = overflowY == Overflow::Scroll || overflowY == Overflow::Auto;
+        if (!xCanHaveScrollbar && !yCanHaveScrollbar)
+            return { };
+    }
 
     ASSERT_IMPLIES(pseudoElementIdentifier.type == PseudoElementType::ViewTransition
         || pseudoElementIdentifier.type == PseudoElementType::ViewTransitionGroup

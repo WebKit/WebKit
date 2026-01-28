@@ -390,10 +390,35 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         element.didAttachRenderers();
 }
 
+// Scrollbar sub-element styles depend on runtime state (hover, active, orientation, enabled, etc.),
+// unlike ViewTransition pseudo-elements which can be fully cached in StyleTreeResolver.
+// Caching all state combinations would be impractical (thousands of combinations), so we only
+// check the base style here. RenderScrollbar fetches the actual style with current state on demand.
+static bool scrollbarSubElementStyleIsInvalid(RenderElement* renderer, const RenderStyle& currentStyle, RenderStyle* newStyle)
+{
+    static const PseudoElementType scrollbarSubTypes[] = {
+        PseudoElementType::WebKitScrollbarThumb,
+        PseudoElementType::WebKitScrollbarTrack,
+        PseudoElementType::WebKitScrollbarTrackPiece,
+        PseudoElementType::WebKitScrollbarButton,
+        PseudoElementType::WebKitScrollbarCorner,
+    };
+    for (auto pseudoType : scrollbarSubTypes) {
+        auto* existingStyle = currentStyle.getCachedPseudoStyle({ pseudoType });
+        auto newPseudoStyle = renderer->getUncachedPseudoStyle({ pseudoType }, newStyle, newStyle);
+        if (newPseudoStyle && (!existingStyle || *existingStyle != *newPseudoStyle))
+            return true;
+    }
+    return false;
+}
+
 static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newStyle)
 {
     const auto& currentStyle = renderer->style();
+    bool hasScrollbarPseudoStyle = false;
     for (auto& [key, value] : currentStyle.cachedPseudoStyles()) {
+        if (key.type == PseudoElementType::WebKitScrollbar)
+            hasScrollbarPseudoStyle = true;
         auto newPseudoStyle = renderer->getUncachedPseudoStyle(*value->pseudoElementIdentifier(), newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
@@ -402,6 +427,11 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
             return true;
         }
     }
+
+    // If element has custom scrollbar, also check scrollbar sub-element pseudo styles.
+    if (hasScrollbarPseudoStyle && scrollbarSubElementStyleIsInvalid(renderer, currentStyle, newStyle))
+        return true;
+
     return false;
 }
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .scroll {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            overflow: auto;
+            border: 1px solid black;
+        }
+
+        .scroll::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .scroll::-webkit-scrollbar-track {
+            background-color: silver;
+        }
+
+        .scroll::-webkit-scrollbar-thumb {
+            background-color: gray;
+        }
+
+        /* Class that changes only the scrollbar-thumb style */
+        .scroll.highlight::-webkit-scrollbar-thumb {
+            background-color: blue;
+        }
+    </style>
+    <script>
+        window.onload = () => {
+            document.getElementById('test').classList.remove('highlight');
+        }
+    </script>
+</head>
+<body>
+    <p>Test: Removing a class should update ::-webkit-scrollbar-thumb style</p>
+    <div id="test" class="scroll highlight">
+        <div style="width: 400px; height: 400px;"></div>
+    </div>
+</body>
+</html>
