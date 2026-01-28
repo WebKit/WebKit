@@ -156,6 +156,8 @@ private:
     void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final; // Currently only Mac has a non empty implementation.
     void scrollMainFrameToRevealRect(const WebCore::IntRect&) const final;
 
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii() const final;
+
     bool shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
 

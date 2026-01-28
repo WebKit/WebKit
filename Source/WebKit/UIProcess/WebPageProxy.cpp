@@ -12411,6 +12411,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     if (m_viewWindowCoordinates)
         parameters.viewWindowCoordinates = *m_viewWindowCoordinates;
     parameters.overflowHeightForTopScrollEdgeEffect = m_overflowHeightForTopScrollEdgeEffect;
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    parameters.scrollbarAvoidanceCornerRadii = internals().scrollbarAvoidanceCornerRadii;
+#endif
 #endif
 
 #if ENABLE(META_VIEWPORT)

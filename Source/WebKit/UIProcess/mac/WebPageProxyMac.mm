@@ -57,6 +57,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/AttributedString.h>
+#import <WebCore/CornerRadii.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
@@ -1119,6 +1120,18 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     return WebContentMode::Recommended;
 }
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+void WebPageProxy::setScrollbarAvoidanceCornerRadii(CornerRadii&& cornerRadii)
+{
+    internals().scrollbarAvoidanceCornerRadii = WTF::move(cornerRadii);
+
+    if (!hasRunningProcess())
+        return;
+
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetScrollbarAvoidanceCornerRadii(cornerRadii), webPageIDInMainFrameProcess());
+}
+#endif
 
 #if ENABLE(POINTER_LOCK)
 

@@ -23,6 +23,7 @@
 
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ContactInfo.h>
+#include <WebCore/CornerRadii.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DisabledAdaptations.h>
@@ -325,6 +326,8 @@ public:
 
     virtual void scrollContainingScrollViewsToRevealRect(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
     virtual void scrollMainFrameToRevealRect(const IntRect&) const { };
+
+    virtual CornerRadii scrollbarAvoidanceCornerRadii() const { return { }; }
 
     virtual bool shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason) const { return false; }
     virtual void unavailablePluginButtonClicked(Element&, PluginUnavailabilityReason) const { }

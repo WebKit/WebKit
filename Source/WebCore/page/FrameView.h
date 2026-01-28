@@ -47,6 +47,7 @@ public:
     WEBCORE_EXPORT int footerHeight() const final;
 
     WEBCORE_EXPORT FloatBoxExtent obscuredContentInsets(InsetType = InsetType::WebCoreInset) const final;
+    CornerRadii scrollbarAvoidanceCornerRadii() const override;
 
     float visibleContentScaleFactor() const final;
 

@@ -27,6 +27,7 @@
 #include "ScrollView.h"
 
 #include "AccessibilityRegionContext.h"
+#include "CornerRadii.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -341,6 +342,11 @@ IntRect ScrollView::frameRectShrunkByInset() const
     FloatRect rect = frameRect();
     rect.contract(obscuredContentInsets());
     return roundedIntRect(rect);
+}
+
+CornerRadii ScrollView::scrollbarAvoidanceCornerRadii() const
+{
+    return { };
 }
 
 IntSize ScrollView::layoutSize() const
@@ -744,18 +750,34 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
 
     SetForScope inUpdateScrollbarsScope(m_inUpdateScrollbars, true, false);
 
+    auto needsLayersRepositioned = false;
     auto contentInsets = this->obscuredContentInsets();
+    auto cornerRadii = this->scrollbarAvoidanceCornerRadii();
+
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         IntRect oldRect(m_horizontalScrollbar->frameRect());
+
+        auto scrollerHalfHeight = m_horizontalScrollbar->height() / 2.f;
+        auto leftOffset = std::max(0.f, cornerRadii.bottomLeft().width() - scrollerHalfHeight);
+        auto rightOffset = std::max(0.f, cornerRadii.bottomRight().width() - scrollerHalfHeight);
+
+        leftOffset = std::max(leftOffset, contentInsets.left());
+        rightOffset = std::max(rightOffset, contentInsets.right());
+
+        auto horizontalOffset = leftOffset + (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f);
+        auto barWidth = width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f) - leftOffset - rightOffset;
+
         m_horizontalScrollbar->setFrameRect(roundedIntRect({
-            contentInsets.left() + (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f),
+            horizontalOffset,
             static_cast<float>(height() - m_horizontalScrollbar->height()),
-            width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0.f) - contentInsets.left() - contentInsets.right(),
+            barWidth,
             static_cast<float>(m_horizontalScrollbar->height())
         }));
-        if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_horizontalScrollbar->frameRect()) {
             m_horizontalScrollbar->invalidate();
+            needsLayersRepositioned = true;
+        }
 
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(true);
@@ -768,14 +790,31 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
         IntRect oldRect(m_verticalScrollbar->frameRect());
+
+        auto scrollerHalfWidth = m_verticalScrollbar->width() / 2.f;
+        bool isRTL = shouldPlaceVerticalScrollbarOnLeft();
+
+        auto upperCornerRadius = isRTL ? cornerRadii.topLeft().height() : cornerRadii.topRight().height();
+        auto lowerCornerRadius = isRTL ? cornerRadii.bottomLeft().height() : cornerRadii.bottomRight().height();
+
+        auto topOffset = std::max(0.f, upperCornerRadius - scrollerHalfWidth);
+        auto bottomOffset = std::max(0.f, lowerCornerRadius - scrollerHalfWidth);
+
+        topOffset = std::max(topOffset, contentInsets.top());
+        bottomOffset = std::max(bottomOffset, contentInsets.bottom());
+
+        auto barHeight = height() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0) - topOffset - bottomOffset;
+
         m_verticalScrollbar->setFrameRect(roundedIntRect({
             shouldPlaceVerticalScrollbarOnLeft() ? 0.f : width() - m_verticalScrollbar->width(),
-            contentInsets.top(),
+            topOffset,
             static_cast<float>(m_verticalScrollbar->width()),
-            height() - contentInsets.top() - contentInsets.bottom() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0)
+            barHeight
         }));
-        if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
+        if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect()) {
             m_verticalScrollbar->invalidate();
+            needsLayersRepositioned = true;
+        }
 
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(true);
@@ -786,6 +825,8 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     }
 
     updateScrollbarSteps();
+    if (needsLayersRepositioned)
+        positionScrollbarLayers();
 
     if (hasHorizontalScrollbar != newHasHorizontalScrollbar || hasVerticalScrollbar != newHasVerticalScrollbar) {
         // FIXME: Is frameRectsChanged really necessary here? Have any frame rects changed?

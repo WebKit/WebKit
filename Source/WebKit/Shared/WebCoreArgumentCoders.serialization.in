@@ -870,6 +870,15 @@ header: <WebCore/RenderStyleConstants.h>
     WebCore::FloatSize radii().bottomRight();
 }
 
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+class WebCore::CornerRadii {
+    WebCore::FloatSize topLeft();
+    WebCore::FloatSize topRight();
+    WebCore::FloatSize bottomLeft();
+    WebCore::FloatSize bottomRight();
+};
+#endif
+
 webkit_platform_headers: <WebCore/IntRect.h>
 
 [AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] class WebCore::IntRect {

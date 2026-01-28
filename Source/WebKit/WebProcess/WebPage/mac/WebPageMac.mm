@@ -1017,6 +1017,18 @@ void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
 
 #endif // HAVE(APP_ACCENT_COLORS)
 
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+void WebPage::setScrollbarAvoidanceCornerRadii(CornerRadii&& cornerRadii)
+{
+    m_scrollbarAvoidanceCornerRadii = WTF::move(cornerRadii);
+
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+        if (RefPtr frameView = localMainFrame->view())
+            frameView->updateScrollbars(frameView->scrollPosition());
+    }
+}
+#endif
+
 #if ENABLE(PDF_PLUGIN)
 
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)

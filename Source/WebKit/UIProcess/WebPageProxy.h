@@ -110,6 +110,7 @@ class CaptureDevice;
 class CertificateInfo;
 class Color;
 class ContentFilterUnblockHandler;
+class CornerRadii;
 class Cursor;
 class DataSegment;
 class DestinationColorSpace;
@@ -1009,6 +1010,10 @@ public:
 
     double overflowHeightForTopScrollEdgeEffect() const { return m_overflowHeightForTopScrollEdgeEffect; }
     void setOverflowHeightForTopScrollEdgeEffect(double);
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    void setScrollbarAvoidanceCornerRadii(WebCore::CornerRadii&&);
+#endif
+
 #endif // PLATFORM(MAC)
 
     // Corresponds to the web content's `<meta name="theme-color">` or application manifest's `"theme_color"`.

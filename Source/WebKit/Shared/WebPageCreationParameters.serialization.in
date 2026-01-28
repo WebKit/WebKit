@@ -240,6 +240,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
 #if PLATFORM(MAC)
     double overflowHeightForTopScrollEdgeEffect;
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
 #endif
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;

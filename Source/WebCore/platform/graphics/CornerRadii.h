@@ -48,6 +48,14 @@ public:
     {
     }
 
+    CornerRadii(float topLeft, float topRight, float bottomLeft, float bottomRight)
+        : m_topLeft(FloatSize { topLeft, topLeft })
+        , m_topRight(FloatSize { topRight, topRight })
+        , m_bottomLeft(FloatSize { bottomLeft, bottomLeft })
+        , m_bottomRight(FloatSize { bottomRight, bottomRight })
+    {
+    }
+
     CornerRadii(const LayoutRoundedRect::Radii& intRadii)
         : m_topLeft(intRadii.topLeft())
         , m_topRight(intRadii.topRight())

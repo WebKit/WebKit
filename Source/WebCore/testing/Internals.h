@@ -571,6 +571,8 @@ public:
 
     ExceptionOr<uint64_t> horizontalScrollbarLayerID(Node*) const;
     ExceptionOr<uint64_t> verticalScrollbarLayerID(Node*) const;
+    ExceptionOr<Ref<DOMRect>> horizontalScrollbarFrameRect(Node*) const;
+    ExceptionOr<Ref<DOMRect>> verticalScrollbarFrameRect(Node*) const;
 
     ExceptionOr<String> scrollbarsControllerTypeForNode(Node*) const;
 

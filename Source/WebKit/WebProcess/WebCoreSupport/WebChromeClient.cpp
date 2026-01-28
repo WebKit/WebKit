@@ -883,6 +883,15 @@ void WebChromeClient::scrollContainingScrollViewsToRevealRect(const IntRect&) co
     notImplemented();
 }
 
+CornerRadii WebChromeClient::scrollbarAvoidanceCornerRadii() const
+{
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    if (RefPtr page = m_page.get())
+        return page->scrollbarAvoidanceCornerRadii();
+#endif
+    return { };
+}
+
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     switch (pluginUnavailabilityReason) {

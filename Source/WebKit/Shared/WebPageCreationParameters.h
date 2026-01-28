@@ -43,6 +43,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
 #include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/CornerRadii.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
@@ -324,6 +325,9 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(MAC)
     double overflowHeightForTopScrollEdgeEffect { 0 };
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
 #endif
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
