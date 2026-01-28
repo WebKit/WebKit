@@ -362,7 +362,7 @@ private:
     JS_EXPORT_PRIVATE ArrayBuffer* slowDownAndWasteMemory();
     static void finalize(JSCell*);
     void detachFromArrayBuffer();
-
+    void refreshVector(void* newData);
 
 protected:
     friend class LLIntOffsetsExtractor;
