@@ -582,8 +582,6 @@ imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-d
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-sharedworker-failure.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-iframe-001.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-cross-origin-iframe-002.sub.html [ Failure ]
-imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Failure ]
-imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
 imported/w3c/web-platform-tests/intersection-observer/cross-origin-iframe.sub.html [ Failure ]
 imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub.html [ Failure ]
 imported/w3c/web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub.html [ Failure ]
