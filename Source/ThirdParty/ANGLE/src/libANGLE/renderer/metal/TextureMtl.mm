@@ -154,27 +154,6 @@ GLuint GetImageCubeFaceIndexOrZeroFrom(const gl::ImageIndex &index)
     return 0;
 }
 
-// Given texture type, get texture type of one image for a glTexImage call.
-// For example, for texture 2d, one image is also texture 2d.
-// for texture cube, one image is texture 2d.
-gl::TextureType GetTextureImageType(gl::TextureType texType)
-{
-    switch (texType)
-    {
-        case gl::TextureType::CubeMap:
-            return gl::TextureType::_2D;
-        case gl::TextureType::_2D:
-        case gl::TextureType::_2DArray:
-        case gl::TextureType::_2DMultisample:
-        case gl::TextureType::_3D:
-        case gl::TextureType::Rectangle:
-            return texType;
-        default:
-            UNREACHABLE();
-            return gl::TextureType::InvalidEnum;
-    }
-}
-
 // D24X8 by default writes depth data to high 24 bits of 32 bit integers. However, Metal separate
 // depth stencil blitting expects depth data to be in low 24 bits of the data.
 void WriteDepthStencilToDepth24(const uint8_t *srcPtr, uint8_t *dstPtr)
@@ -1007,7 +986,7 @@ angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context)
 
                 // Invalidate texture image definition at this index so that we can make it a
                 // view of the native texture at this index later.
-                imageToTransfer = nullptr;
+                mTexImageDefs[face][imageMipLevel] = {};
             }
         }
     }
@@ -1670,7 +1649,20 @@ angle::Result TextureMtl::generateMipmap(const gl::Context *context)
 {
     ANGLE_TRY(ensureNativeStorageCreated(context));
 
+    int numCubeFaces = static_cast<int>(mNativeTextureStorage->cubeFaces());
+    for (int face = 0; face < numCubeFaces; ++face)
+    {
+        const GLuint mips = mNativeTextureStorage->mipmapLevels();
+        for (mtl::MipmapNativeLevel mip = mtl::kZeroNativeMipLevel; mip.get() < mips; ++mip)
+        {
+            GLuint level = mNativeTextureStorage->getGLLevel(mip);
+            // Recreate views conservatively. All views should point to mNativeTextureStorage.
+            mTexImageDefs[face][level] = {};
+        }
+    }
+    
     ContextMtl *contextMtl = mtl::GetImpl(context);
+    contextMtl->invalidateCurrentTextures();
     if (!mViewFromBaseToMaxLevel)
     {
         return angle::Result::Continue;
@@ -2040,21 +2032,32 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
                                         const mtl::Format &mtlFormat,
                                         const gl::Extents &size)
 {
-    bool imageWithinNativeStorageLevels = false;
-    if (mNativeTextureStorage && mNativeTextureStorage->isGLLevelSupported(index.getLevelIndex()))
+    GLuint cubeFaceOrZero        = GetImageCubeFaceIndexOrZeroFrom(index);
+    GLuint glLevel               = index.getLevelIndex();
+    ImageDefinitionMtl &imageDef = mTexImageDefs[cubeFaceOrZero][glLevel];
+
+    if (mNativeTextureStorage && mNativeTextureStorage->isGLLevelSupported(glLevel))
     {
-        imageWithinNativeStorageLevels = true;
-        GLuint glLevel                 = index.getLevelIndex();
-        // Calculate the expected size for the index we are defining. If the size is different
-        // from the given size, or the format is different, we are redefining the image so we
-        // must release it.
+        // mNativeTextureStorage stores the complete mipmap chain when present.
         ASSERT(mNativeTextureStorage->textureType() == mtl::GetTextureType(index.getType()));
-        if (mFormat != mtlFormat || size != mNativeTextureStorage->size(glLevel))
+        if (mFormat == mtlFormat && size == mNativeTextureStorage->size(glLevel))
         {
-            // Keep other images
-            deallocateNativeStorage(/*keepImages=*/true);
+            return angle::Result::Continue;
         }
+        // The redefinition makes the mipmap chain incomplete. Move the mipmaps to
+        // detached views.
+        deallocateNativeStorage(/*keepImages=*/true);
     }
+
+    // The detached view might be not match format or size, currently we do not reuse these.
+    imageDef = {};
+
+    // Cache last defined image format:
+    mFormat = mtlFormat;
+
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    // Tell context to rebind textures
+    contextMtl->invalidateCurrentTextures();
 
     // Early-out on empty textures, don't create a zero-sized storage.
     if (size.empty())
@@ -2062,55 +2065,37 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    // Cache last defined image format:
-    mFormat                      = mtlFormat;
-    ImageDefinitionMtl &imageDef = getImageDefinition(index);
-
-    // If native texture still exists, it means the size hasn't been changed, no need to create new
-    // image
-    if (mNativeTextureStorage && imageDef.image && imageWithinNativeStorageLevels)
+    mtl::TextureRef image;
+    bool allowFormatView = mtlFormat.hasDepthAndStencilBits() ||
+                            needsFormatViewForPixelLocalStorage(
+                                contextMtl->getDisplay()->getNativePixelLocalStorageOptions());
+    // Create image to hold texture's data at this level & slice:
+    switch (index.getType())
     {
-        ASSERT(imageDef.image->textureType() ==
-                   mtl::GetTextureType(GetTextureImageType(index.getType())) &&
-               imageDef.formatID == mFormat.intendedFormatId && imageDef.image->sizeAt0() == size);
-    }
-    else
-    {
-        imageDef.formatID    = mtlFormat.intendedFormatId;
-        bool allowFormatView = mFormat.hasDepthAndStencilBits() ||
-                               needsFormatViewForPixelLocalStorage(
-                                   contextMtl->getDisplay()->getNativePixelLocalStorageOptions());
-        // Create image to hold texture's data at this level & slice:
-        switch (index.getType())
-        {
-            case gl::TextureType::_2D:
-            case gl::TextureType::CubeMap:
-                ANGLE_TRY(mtl::Texture::Make2DTexture(
-                    contextMtl, mtlFormat, size.width, size.height, 1,
-                    /** renderTargetOnly */ false, allowFormatView, &imageDef.image));
-                break;
-            case gl::TextureType::_3D:
-                ANGLE_TRY(mtl::Texture::Make3DTexture(
-                    contextMtl, mtlFormat, size.width, size.height, size.depth, 1,
-                    /** renderTargetOnly */ false, allowFormatView, &imageDef.image));
-                break;
-            case gl::TextureType::_2DArray:
-                ANGLE_TRY(mtl::Texture::Make2DArrayTexture(
-                    contextMtl, mtlFormat, size.width, size.height, 1, size.depth,
-                    /** renderTargetOnly */ false, allowFormatView, &imageDef.image));
-                break;
-            default:
-                UNREACHABLE();
-        }
-
-        // Make sure emulated channels are properly initialized in this newly allocated texture.
-        ANGLE_TRY(checkForEmulatedChannels(context, mtlFormat, imageDef.image));
+        case gl::TextureType::_2D:
+        case gl::TextureType::CubeMap:
+            ANGLE_TRY(mtl::Texture::Make2DTexture(
+                contextMtl, mtlFormat, size.width, size.height, 1,
+                /** renderTargetOnly */ false, allowFormatView, &image));
+            break;
+        case gl::TextureType::_3D:
+            ANGLE_TRY(mtl::Texture::Make3DTexture(
+                contextMtl, mtlFormat, size.width, size.height, size.depth, 1,
+                /** renderTargetOnly */ false, allowFormatView, &image));
+            break;
+        case gl::TextureType::_2DArray:
+            ANGLE_TRY(mtl::Texture::Make2DArrayTexture(
+                contextMtl, mtlFormat, size.width, size.height, 1, size.depth,
+                /** renderTargetOnly */ false, allowFormatView, &image));
+            break;
+        default:
+            UNREACHABLE();
     }
 
-    // Tell context to rebind textures
-    contextMtl->invalidateCurrentTextures();
+    // Make sure emulated channels are properly initialized in this newly allocated texture.
+    ANGLE_TRY(checkForEmulatedChannels(context, mtlFormat, image));
 
+    imageDef = {image, mtlFormat.intendedFormatId};
     return angle::Result::Continue;
 }
 
