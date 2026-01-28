@@ -521,7 +521,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
     }
 
     SVGLengthContext lengthContext(element.get());
-    context.setStrokeThickness(lengthContext.valueForLength(style.strokeWidth(), Style::ZoomNeeded { }));
+    context.setStrokeThickness(lengthContext.valueForLength(style.strokeWidth(), style.usedZoomForLength()));
     context.setLineCap(style.capStyle());
     context.setLineJoin(style.joinStyle());
     if (style.joinStyle() == LineJoin::Miter)

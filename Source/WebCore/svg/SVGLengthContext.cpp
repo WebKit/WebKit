@@ -195,9 +195,9 @@ float SVGLengthContext::valueForLength(const Style::SVGStrokeDashoffset& size, S
     return valueForSizeType(size, zoomNeeded, lengthMode);
 }
 
-float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomNeeded zoomNeeded, SVGLengthMode lengthMode)
+float SVGLengthContext::valueForLength(const Style::StrokeWidth& size, Style::ZoomFactor usedZoom, SVGLengthMode lengthMode)
 {
-    return valueForSizeType(size, zoomNeeded, lengthMode);
+    return valueForSizeType(size, usedZoom, lengthMode);
 }
 
 float SVGLengthContext::computeNonCalcLength(float inputValue, CSS::LengthUnit unit) const

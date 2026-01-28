@@ -313,7 +313,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
 
     return WTF::switchOn(strokeWidth(),
         [&](const Style::StrokeWidth::Fixed& fixedStrokeWidth) -> float {
-            return Style::evaluate<float>(fixedStrokeWidth, Style::ZoomNeeded { });
+            return Style::evaluate<float>(fixedStrokeWidth, usedZoomForLength());
         },
         [&](const Style::StrokeWidth::Percentage& percentageStrokeWidth) -> float {
             // According to the spec, https://drafts.fxtf.org/paint/#stroke-width, the percentage is relative to the scaled viewport size.
@@ -322,7 +322,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
         },
         [&](const Style::StrokeWidth::Calc& calcStrokeWidth) -> float {
             // FIXME: It is almost certainly wrong that calc and percentage are being handled differently - https://bugs.webkit.org/show_bug.cgi?id=296482
-            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), Style::ZoomNeeded { });
+            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), usedZoomForLength());
         }
     );
 }
