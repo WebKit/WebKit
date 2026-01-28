@@ -9,19 +9,19 @@ Tapping tracks button...
 Subtitles: [
   "Off",
   "Auto (Recommended)",
+  "label-en",
   "label-en Captions",
   "Descriptions",
-  "label-en",
-  "Spanish Captions",
   "Spanish",
+  "Spanish Captions",
   "Spanish Descriptions",
   "no-srclang",
   "Chinese (China mainland)",
-  "French Captions (label-fr)",
   "French (label-fr)",
+  "French Captions (label-fr)",
   "French Descriptions",
-  "German Captions",
   "German",
+  "German Captions",
   "German Descriptions"
 ]
 PASS successfullyParsed is true
