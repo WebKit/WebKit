@@ -133,8 +133,10 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         }
     }
 
-    filter = Style::toPlatform(style.filter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
-    backdropFilter = Style::toPlatform(style.backdropFilter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
+    if (!style.filter().hasReferenceFilter())
+        filter = Style::toPlatform(style.filter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
+    if (!style.backdropFilter().hasReferenceFilter())
+        backdropFilter = Style::toPlatform(style.backdropFilter(), style, Style::Filter::PlatformConversionAllowsCurrentColor::No);
 }
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const

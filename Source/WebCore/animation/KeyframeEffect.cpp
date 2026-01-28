@@ -3051,8 +3051,15 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const R
 void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle)
 {
 #if ENABLE(THREADED_ANIMATIONS)
+    auto wasRunningAccelerated = isRunningAccelerated();
+#endif
+
+    if (currentStyle)
+        computeHasReferenceFilter();
+
+#if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation()) {
-        if (!isRunningAccelerated())
+        if (!wasRunningAccelerated)
             return;
 
         if ((previousStyle && !currentStyle) || (!previousStyle && currentStyle)) {
