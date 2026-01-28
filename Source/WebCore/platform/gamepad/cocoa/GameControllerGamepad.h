@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,10 @@ OBJC_CLASS GCControllerButtonInput;
 OBJC_CLASS GCControllerElement;
 
 namespace WebCore {
+class GameControllerGamepad;
+}
+
+namespace WebCore {
 
 class GameControllerHapticEngines;
 
@@ -47,6 +51,7 @@ class GameControllerGamepad final : public PlatformGamepad {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GameControllerGamepad);
 public:
     GameControllerGamepad(GCController *, unsigned index);
+    ~GameControllerGamepad();
 
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
     const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
@@ -59,6 +64,7 @@ public:
 
 private:
     void setupElements();
+    void teardownElements();
 
 #if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
     GameControllerHapticEngines& ensureHapticEngines();

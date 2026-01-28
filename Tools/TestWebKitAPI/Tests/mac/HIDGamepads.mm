@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -719,6 +719,71 @@ TEST(Gamepad, FullInfoAfterConnection)
     done = false;
 }
 
+TEST(Gamepad, DisconnectDuringInput)
+{
+    // Tests that handler blocks don't crash when invoked after GameControllerGamepad destruction.
+    [WebCore::getGCControllerClassSingleton() setShouldMonitorBackgroundEvents:YES];
+
+    auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"gamepad"];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    keyWindowForTesting = [webView window];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
+
+    [[webView window] makeFirstResponder:webView.get()];
+
+    // Resigning/reinstating the key window state triggers the "key window did change" notification.
+    [[webView window] resignKeyWindow];
+    [[webView window] makeKeyWindow];
+
+    // Connect a gamepad.
+    auto gamepad = makeUnique<VirtualGamepad>(VirtualGamepad::steelSeriesNimbusMapping());
+    while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
+        Util::runFor(0.01_s);
+
+    // Make gamepad visible by pressing button.
+    gamepad->setButtonValue(0, 1.0);
+    gamepad->publishReport();
+    Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_EQ(messageHandler.get().messages.size(), 1u);
+
+    // Fire off rapid publishes. Handlers will be queued asynchronously.
+    for (int i = 0; i < 100; ++i) {
+        gamepad->setAxisValue(0, (float)i / 100.0);
+        gamepad->setAxisValue(1, (float)(100 - i) / 100.0);
+        gamepad->publishReport();
+    }
+
+    // This destroys VirtualGamepad, which triggers controllerDidDisconnect,
+    // which destroys GameControllerGamepad.
+    gamepad = nullptr;
+
+    // Wait for disconnect message.
+    Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_EQ(messageHandler.get().messages.size(), 2u);
+
+    NSString *expectedName = @"\"Virtual Nimbus Extended Gamepad\"";
+    NSString *expectedDisconnect = [NSString stringWithFormat:@"Disconnect: %@", expectedName];
+    EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:expectedDisconnect]);
+}
 
 } // namespace TestWebKitAPI
 
