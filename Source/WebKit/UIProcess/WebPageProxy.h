@@ -3547,6 +3547,7 @@ private:
 #endif
 
     void beginSiteHasStorageCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
+    void beginEnhancedLinkSecurityCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
 
     const UniqueRef<Internals> m_internals;
     Identifier m_identifier;

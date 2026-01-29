@@ -116,6 +116,7 @@ void Navigation::setCurrentRequest(ResourceRequest&& request, std::optional<Proc
     m_currentRequest = WTF::move(request);
     m_currentRequestProcessIdentifier = processIdentifier;
     m_hasStorageForCurrentSite = false;
+    m_isEnhancedLinkSecurityForCurrentSite = false;
 }
 
 void Navigation::appendRedirectionURL(const WTF::URL& url)

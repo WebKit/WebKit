@@ -180,6 +180,7 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm @nonARC
 Shared/Cocoa/CodeSigning.mm @nonARC
 Shared/Cocoa/CompletionHandlerCallChecker.mm @nonARC
 Shared/Cocoa/DefaultWebBrowserChecks.mm @nonARC
+Shared/Cocoa/EnhancedLinkSecurityUtilities.mm @nonARC
 Shared/Cocoa/LoadParametersCocoa.mm @nonARC
 Shared/Cocoa/PDFKitSoftLink.mm @nonARC
 Shared/Cocoa/RevealItem.mm @nonARC

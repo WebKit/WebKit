@@ -87,6 +87,9 @@ EnhancedSecurity EnhancedSecurityTracking::enhancedSecurityState() const
     case EnhancedSecurityReason::InsecureLoad:
         return EnhancedSecurity::EnabledInsecure;
 
+    case EnhancedSecurityReason::LinkSecurity:
+        return EnhancedSecurity::EnabledLinkSecurity;
+
     case EnhancedSecurityReason::Policy:
         return EnhancedSecurity::EnabledPolicy;
     }
@@ -122,6 +125,9 @@ static EnhancedSecurityReason reasonForEnhancedSecurity(EnhancedSecurity state)
 
     case EnhancedSecurity::EnabledPolicy:
         return EnhancedSecurityReason::Policy;
+
+    case EnhancedSecurity::EnabledLinkSecurity:
+        return EnhancedSecurityReason::LinkSecurity;
     }
 
     ASSERT_NOT_REACHED();
@@ -170,6 +176,11 @@ bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigatio
 
     if (currentRequestURL.protocolIs("http"_s) && !WebCore::isLocalIPAddressSpace(currentRequestURL)) {
         enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
+        return true;
+    }
+
+    if (navigation.isEnhancedLinkSecurityForCurrentSite()) {
+        enableFor(EnhancedSecurityReason::LinkSecurity, navigation);
         return true;
     }
 

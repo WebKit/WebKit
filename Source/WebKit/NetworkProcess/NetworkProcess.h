@@ -497,6 +497,10 @@ public:
     void allowEvaluatedURL(const WebCore::ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
 #endif
 
+#if HAVE(ENHANCEDLINKSECURITY)
+    void isEnhancedLinkSecurity(const URL&, CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

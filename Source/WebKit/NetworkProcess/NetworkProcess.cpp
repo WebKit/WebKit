@@ -35,6 +35,7 @@
 #include "DidFilterKnownLinkDecoration.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
+#include "EnhancedLinkSecurityUtilities.h"
 #include "FormDataReference.h"
 #include "ITPThirdPartyData.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -3394,6 +3395,13 @@ void NetworkProcess::setDefaultRequestTimeoutInterval(double timeoutInterval)
 void NetworkProcess::allowEvaluatedURL(const WebCore::ParentalControlsURLFilterParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebCore::ParentalControlsURLFilter::allowURL(parameters, WTF::move(completionHandler));
+}
+#endif
+
+#if HAVE(ENHANCEDLINKSECURITY)
+void NetworkProcess::isEnhancedLinkSecurity(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
+{
+    isEnhancedSecurityEnabledForURL(url, WTF::move(completionHandler));
 }
 #endif
 

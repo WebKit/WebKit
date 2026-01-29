@@ -10,5 +10,11 @@
 	<true/>
 	<key>com.apple.private.extensionkit.host-requirement-exemption</key>
 	<true/>
+        <key>com.apple.security.exception.shared-preference.read-only</key>
+        <array>
+            <string>com.apple.messages.EnhancedLinkSecurity</string>
+        </array>
+	<key>com.apple.private.messages.enhanced-link-security</key>
+	<true/>
 </dict>
 </plist>

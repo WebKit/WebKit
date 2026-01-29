@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,18 @@
 
 #pragma once
 
-#include <WebCore/RegistrableDomain.h>
+#include <wtf/Forward.h>
+
+#if HAVE(ENHANCEDLINKSECURITY)
+
+namespace WTF {
+class URL;
+}
 
 namespace WebKit {
 
-enum class EnhancedSecurity : uint8_t { Disabled, EnabledInsecure, EnabledLinkSecurity, EnabledPolicy };
-enum class EnhancedSecurityReason : uint8_t { None, InsecureProvisional, InsecureLoad, LinkSecurity, Policy };
+void isEnhancedSecurityEnabledForURL(const WTF::URL&, CompletionHandler<void(bool)>&&);
 
-ALWAYS_INLINE bool isEnhancedSecurityEnabledForState(EnhancedSecurity state)
-{
-    return state != EnhancedSecurity::Disabled;
-}
+} // namespace WebKit
 
-ALWAYS_INLINE bool enhancedSecurityStatesAreConsistent(EnhancedSecurity state, EnhancedSecurity other)
-{
-    return isEnhancedSecurityEnabledForState(state) == isEnhancedSecurityEnabledForState(other);
-}
-
-};
+#endif // HAVE(ENHANCEDLINKSECURITY)

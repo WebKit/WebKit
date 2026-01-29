@@ -6252,6 +6252,8 @@
 		5628440D2ED9E5250080DD29 /* EnhancedSecuritySitesPersistence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnhancedSecuritySitesPersistence.cpp; sourceTree = "<group>"; };
 		5628440E2ED9E5440080DD29 /* EnhancedSecuritySitesHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnhancedSecuritySitesHolder.h; sourceTree = "<group>"; };
 		5628440F2ED9E5580080DD29 /* EnhancedSecuritySitesHolder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnhancedSecuritySitesHolder.cpp; sourceTree = "<group>"; };
+		5630659E2F2A2E70000BF1BF /* EnhancedLinkSecurityUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnhancedLinkSecurityUtilities.mm; sourceTree = "<group>"; };
+		5630659F2F2A2E92000BF1BF /* EnhancedLinkSecurityUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnhancedLinkSecurityUtilities.h; sourceTree = "<group>"; };
 		564599932B71BBA000BC59E6 /* CoreIPCPresentationIntent.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCPresentationIntent.serialization.in; sourceTree = "<group>"; };
 		564599942B71BBB200BC59E6 /* CoreIPCPresentationIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCPresentationIntent.h; sourceTree = "<group>"; };
 		564599952B71BBC300BC59E6 /* CoreIPCPresentationIntent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCPresentationIntent.mm; sourceTree = "<group>"; };
@@ -13104,6 +13106,8 @@
 				86AA5252293674E30065399E /* DataDetectionResult.serialization.in */,
 				49DAA38D24CBA1BD00793D75 /* DefaultWebBrowserChecks.h */,
 				49DAA38B24CBA1A800793D75 /* DefaultWebBrowserChecks.mm */,
+				5630659F2F2A2E92000BF1BF /* EnhancedLinkSecurityUtilities.h */,
+				5630659E2F2A2E70000BF1BF /* EnhancedLinkSecurityUtilities.mm */,
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
 				86E0787C2ACE0AE400B8FADC /* InsertTextOptions.serialization.in */,
 				E385F3682E86D6DB00461B0C /* LaunchLogHook.h */,

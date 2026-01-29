@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "EnhancedLinkSecurityUtilities.h"
 
-#include <WebCore/RegistrableDomain.h>
+#if HAVE(ENHANCEDLINKSECURITY)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/EnhancedLinkSecurityAdditions.mm>
+#else
 namespace WebKit {
 
-enum class EnhancedSecurity : uint8_t { Disabled, EnabledInsecure, EnabledLinkSecurity, EnabledPolicy };
-enum class EnhancedSecurityReason : uint8_t { None, InsecureProvisional, InsecureLoad, LinkSecurity, Policy };
-
-ALWAYS_INLINE bool isEnhancedSecurityEnabledForState(EnhancedSecurity state)
+void isEnhancedSecurityEnabledForURL(const WTF::URL& url, CompletionHandler<void(bool)>&& completionHandler)
 {
-    return state != EnhancedSecurity::Disabled;
+    completionHandler(false);
 }
 
-ALWAYS_INLINE bool enhancedSecurityStatesAreConsistent(EnhancedSecurity state, EnhancedSecurity other)
-{
-    return isEnhancedSecurityEnabledForState(state) == isEnhancedSecurityEnabledForState(other);
 }
+#endif
 
-};
+#endif // HAVE(ENHANCEDLINKSECURITY)

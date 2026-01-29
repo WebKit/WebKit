@@ -177,3 +177,7 @@
     (require-all
         (extension-class "com.apple.app-sandbox.read" "com.apple.app-sandbox.read-write")
         (extension "com.apple.app-sandbox.read-write")))
+
+#if HAVE(ENHANCEDLINKSECURITY)
+#include <WebKitAdditions/EnhancedLinkSecurity-ios.sb>
+#endif

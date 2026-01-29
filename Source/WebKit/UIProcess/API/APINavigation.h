@@ -200,6 +200,9 @@ public:
     void setHasStorageForCurrentSite(bool);
     bool hasStorageForCurrentSite() const { return m_hasStorageForCurrentSite; }
 
+    void setIsEnhancedLinkSecurityForCurrentSite(bool isEnhancedLinkSecurity) { m_isEnhancedLinkSecurityForCurrentSite = isEnhancedLinkSecurity; }
+    bool isEnhancedLinkSecurityForCurrentSite() const { return m_isEnhancedLinkSecurityForCurrentSite; }
+
 private:
     Navigation(WebCore::ProcessIdentifier);
     Navigation(WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
@@ -231,6 +234,7 @@ private:
     bool m_isFromLoadData : 1 { false };
     bool m_safeBrowsingCheckTimedOut : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
+    bool m_isEnhancedLinkSecurityForCurrentSite : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };

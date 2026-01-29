@@ -295,4 +295,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #if HAVE(WEBCONTENTRESTRICTIONS)
     AllowEvaluatedURL(struct WebCore::ParentalControlsURLFilterParameters parameters) -> (bool allowed)
 #endif
+
+#if HAVE(ENHANCEDLINKSECURITY)
+    IsEnhancedLinkSecurity(URL url) -> (bool isEnhancedLinkSecurity)
+#endif
 }

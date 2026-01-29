@@ -886,3 +886,7 @@
 (allow mach-lookup
     (global-name "com.apple.familycontrols"))
 #endif
+
+#if HAVE(ENHANCEDLINKSECURITY)
+#include <WebKitAdditions/EnhancedLinkSecurity-macos.sb>
+#endif
