@@ -311,8 +311,11 @@ bool GraphicsContextGLANGLE::initialize()
             m_knownActiveExtensions.add(*extension);
     }
     for (auto& extensionString : m_allRequestableExtensions) {
-        if (auto extension = extensionEnum(extensionString))
+        if (auto extension = extensionEnum(extensionString)) {
+            if (*extension == GCGLExtension::ANGLE_base_vertex_base_instance && !attributes.supportWebGLDraftExtensions)
+                continue;
             m_requestableExtensions.add(*extension);
+        }
     }
     return true;
 }

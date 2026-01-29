@@ -145,6 +145,7 @@ struct WebCore::GraphicsContextGLAttributes {
     bool preserveDrawingBuffer;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
     bool isWebGL2;
+    bool supportWebGLDraftExtensions;
 #if PLATFORM(MAC)
     uint64_t windowGPUID;
 #endif
