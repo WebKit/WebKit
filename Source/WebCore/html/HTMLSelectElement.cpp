@@ -2114,8 +2114,7 @@ void HTMLSelectElement::didUpdateActiveOption(int optionIndex)
     if (listIndex < 0 || listIndex >= static_cast<int>(listItems().size()))
         return;
 
-    if (CheckedPtr renderer = this->renderer())
-        axCache->onSelectedOptionChanged(*renderer, optionIndex);
+    axCache->onSelectedOptionChanged(*this, optionIndex);
 }
 
 } // namespace WebCore

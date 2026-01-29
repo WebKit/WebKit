@@ -69,6 +69,7 @@ class AccessibilityRenderObject;
 class Document;
 class HTMLAreaElement;
 class HTMLDetailsElement;
+class HTMLSelectElement;
 class HTMLTableElement;
 class HTMLTextFormControlElement;
 class Node;
@@ -411,6 +412,7 @@ public:
     void onRadioGroupMembershipChanged(HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedOptionChanged(Element&);
+    void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedOptionChanged(RenderObject&, int);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
     void onSlottedContentChange(const HTMLSlotElement&);

@@ -30,11 +30,10 @@
 namespace WebCore {
 
 class AccessibilityMenuListPopup;
-class RenderMenuList;
 
 class AccessibilityMenuList final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityMenuList> create(AXID, RenderMenuList&, AXObjectCache&);
+    static Ref<AccessibilityMenuList> create(AXID, RenderObject&, AXObjectCache&);
 
     bool isCollapsed() const final;
     bool press() final;
@@ -42,7 +41,7 @@ public:
     void didUpdateActiveOption(int optionIndex);
 
 private:
-    explicit AccessibilityMenuList(AXID, RenderMenuList&, AXObjectCache&);
+    explicit AccessibilityMenuList(AXID, RenderObject&, AXObjectCache&);
 
     bool isMenuList() const final { return true; }
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::PopUpButton; }

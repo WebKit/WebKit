@@ -109,7 +109,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMathMLBlock.h"
-#include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGRoot.h"
@@ -806,10 +805,8 @@ String AccessibilityRenderObject::stringValue() const
         return text();
     }
 
-    if (CheckedPtr renderMenuList = dynamicDowncast<RenderMenuList>(m_renderer.get())) {
-        // RenderMenuList will go straight to the text() of its selected item.
-        // This has to be overridden in the case where the selected item has an ARIA label.
-        Ref selectElement = renderMenuList->selectElement();
+    // For menu list select elements, get the selected option's aria-label or label.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && selectElement->usesMenuList()) {
         int selectedIndex = selectElement->selectedIndex();
         const auto& listItems = selectElement->listItems();
         if (selectedIndex >= 0 && static_cast<size_t>(selectedIndex) < listItems.size()) {
@@ -1254,9 +1251,13 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     if (isExposableTable())
         return false;
 
-    // ignore popup menu items because AppKit does
-    if (m_renderer && ancestorsOfType<RenderMenuList>(*m_renderer).first())
-        return true;
+    // Ignore popup menu items because AppKit does.
+    if (RefPtr node = this->node()) {
+        for (auto& ancestor : ancestorsOfType<HTMLSelectElement>(*node)) {
+            if (ancestor.usesMenuList())
+                return true;
+        }
+    }
 
     // https://webkit.org/b/161276 Getting the controlObject might cause the m_renderer to be nullptr.
     if (!m_renderer)
@@ -2395,8 +2396,10 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
         return false;
 
     RefPtr element = dynamicDowncast<Element>(*node);
-    auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer);
-    if ((renderBox && renderBox->isRenderListBox()) || (element && hasRole(*element, "listbox"_s)))
+    if (element && hasRole(*element, "listbox"_s))
+        return true;
+    // Element-based check for HTMLSelectElement listbox.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node); selectElement && !selectElement->usesMenuList())
         return true;
 
     // Textboxes should send out notifications.
@@ -2504,17 +2507,12 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     }
     if (m_renderer->isRenderTextControlMultiLine())
         return AccessibilityRole::TextArea;
-    if (m_renderer->isRenderMenuList()) {
-#if !PLATFORM(IOS_FAMILY)
-        // On non-iOS platforms, <select multiple> may use RenderMenuList but should still
-        // have ListBox accessibility role, not PopUpButton. Check the multiple attribute.
-        if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node))
+    // Element-based check for HTMLSelectElement with any renderer.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node)) {
+        if (selectElement->usesMenuList())
             return selectElement->multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
-#endif
-        return AccessibilityRole::PopUpButton;
-    }
-    if (m_renderer->isRenderListBox())
         return AccessibilityRole::ListBox;
+    }
 
     if (m_renderer->isRenderOrLegacyRenderSVGRoot())
         return AccessibilityRole::SVGRoot;

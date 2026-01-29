@@ -927,6 +927,23 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
         return result;
     }
 
+    // Handle HTMLSelectElement listbox with arbitrary renderers.
+    // Use the size attribute to determine the number of visible children.
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->usesMenuList()) {
+        if (!childrenInitialized())
+            addChildren();
+
+        const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
+        AXCoreObject::AccessibilityChildrenVector result;
+        unsigned visibleCount = selectElement->size();
+        if (!visibleCount)
+            visibleCount = 4; // Default size for multiple select is 4
+        size_t count = std::min(static_cast<size_t>(visibleCount), children.size());
+        for (size_t i = 0; i < count; i++)
+            result.append(children[i]);
+        return result;
+    }
+
     return { };
 }
 
