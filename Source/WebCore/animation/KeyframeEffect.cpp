@@ -2290,6 +2290,11 @@ void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended
 {
 #if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation()) {
+        // Ensure we mark the target as dirty since suspension will affect the accelerated state
+        // and, as a result, the computed style, which may not have accounted for accelerated
+        // effects previously, may now need to.
+        invalidate();
+
         scheduleAssociatedAcceleratedEffectStackUpdate();
         return;
     }
