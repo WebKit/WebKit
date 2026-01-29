@@ -1253,6 +1253,100 @@ class Port(object):
     def path_to_api_test_binaries(self):
         return {binary: self.path_to_api_test(binary) for binary in self.API_TEST_BINARY_NAMES}
 
+    def api_test_expectations_dir(self):
+        """Return the path to the APITestExpectations directory."""
+        return self._filesystem.join(self.path_from_webkit_base(), 'APITestExpectations')
+
+    def _apple_api_test_expectations_path(self, platform):
+        """Return the path to internal API test expectations for a platform."""
+        if not port_config.apple_additions():
+            return None
+        internal_base = port_config.apple_additions().layout_tests_path()
+        parent = self._filesystem.dirname(internal_base)
+        return self._filesystem.join(parent, 'APITestExpectationsForUnreleasedSoftware', platform)
+
+    def api_test_expectations_files(self):
+        """Return list of API test expectations files in cascade order."""
+        files = []
+        base = self.api_test_expectations_dir()
+
+        generic_path = self._filesystem.join(base, 'TestExpectations')
+        files.append(generic_path)
+
+        for platform_entry in self._api_test_platform_cascade():
+            if isinstance(platform_entry, tuple):
+                public_name, internal_name = platform_entry
+            else:
+                public_name = platform_entry
+                internal_name = None
+
+            platform_path = self._filesystem.join(base, 'platform', public_name, 'TestExpectations')
+            files.append(platform_path)
+
+            if internal_name and port_config.apple_additions():
+                internal_path = self._apple_api_test_expectations_path(internal_name)
+                if internal_path:
+                    files.append(self._filesystem.join(internal_path, 'TestExpectations'))
+
+        return files
+
+    def api_test_version_tokens(self):
+        """Return dict mapping version token (lowercase) to version order index.
+
+        Used by API test expectations for parsing and ordering version specifiers.
+        Subclasses should override to provide platform-specific version tokens.
+
+        Returns:
+            Dict[str, int]: Mapping of version name to its position in version order
+                            (lower index = older version)
+        """
+        return {}
+
+    def api_test_version_order(self):
+        """Return list of version names in order from oldest to newest.
+
+        Used for matching version range specifiers like 'Sonoma+' or 'Ventura-Sequoia'.
+        Subclasses should override to provide platform-specific version ordering.
+
+        Returns:
+            List[str]: Version names in chronological order (oldest first)
+        """
+        return []
+
+    def api_test_current_configuration(self):
+        """Return the current runtime configuration for matching expectations.
+
+        Returns:
+            Dict[str, Any]: Configuration values for the current run
+        """
+        config = {}
+
+        # Platform
+        config['platform'] = self.port_name.split('-')[0] if self.port_name else None
+
+        # Style (build configuration)
+        configuration = self.get_option('configuration')
+        if configuration:
+            config['style'] = configuration.lower()
+
+        # Architecture
+        if hasattr(self, 'architecture'):
+            config['architecture'] = self.architecture()
+
+        return config
+
+    def _api_test_platform_cascade(self):
+        """Return platform directories from least to most specific."""
+        cascade = []
+        port_name = self.port_name
+        if 'mac' in port_name:
+            cascade.append('mac')
+        elif 'ios' in port_name:
+            cascade.append('ios')
+            if 'simulator' in port_name:
+                cascade.append('ios-simulator')
+        return cascade
+
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""

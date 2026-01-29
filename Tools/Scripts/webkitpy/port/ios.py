@@ -111,6 +111,82 @@ class IOSPort(EmbeddedPort):
 
         return expectations
 
+    def _api_test_platform_cascade(self):
+        """Return platform directories for API test expectations cascade."""
+        cascade = []
+        version_name_map = VersionNameMap.map(self.host.platform)
+
+        internal_version_name = None
+        if apple_additions():
+            internal_version_name = version_name_map.to_name(self._os_version, platform=IOSPort.port_name, table=INTERNAL_TABLE)
+            if internal_version_name:
+                internal_version_name = internal_version_name.lower().replace(' ', '')
+
+        internal_name = 'ios-{}'.format(internal_version_name) if internal_version_name else None
+        cascade.append(('ios', internal_name))
+
+        if self._os_version:
+            public_name = 'ios-{}'.format(self._os_version.major)
+            cascade.append((public_name, internal_name))
+
+        if 'simulator' in self.SDK:
+            internal_sim_name = 'ios-{}-simulator'.format(internal_version_name) if internal_version_name else None
+            cascade.append(('ios-simulator', internal_sim_name))
+            if self._os_version:
+                public_sim_version = 'ios-simulator-{}'.format(self._os_version.major)
+                cascade.append((public_sim_version, internal_sim_name))
+
+        return cascade
+
+    def api_test_version_tokens(self):
+        """Return dict mapping version token (lowercase) to version order index."""
+        tokens = {}
+        version_name_map = VersionNameMap.map(self.host.platform)
+        versions = self._allowed_versions()
+        for idx, version in enumerate(versions):
+            for table in [PUBLIC_TABLE, INTERNAL_TABLE]:
+                version_name = version_name_map.to_name(version, platform=IOSPort.port_name, table=table)
+                if version_name:
+                    tokens[version_name.lower().replace(' ', '')] = idx
+            # Also add numeric version like 'ios17', 'ios18'
+            tokens['ios{}'.format(version.major)] = idx
+        return tokens
+
+    def api_test_version_order(self):
+        """Return list of version names in order from oldest to newest."""
+        version_order = []
+        for version in self._allowed_versions():
+            # Use numeric naming for iOS (iOS 17, iOS 18, etc.)
+            version_order.append('ios{}'.format(version.major))
+        return version_order
+
+    def api_test_current_configuration(self):
+        """Return the current runtime configuration for matching expectations."""
+        config = super(IOSPort, self).api_test_current_configuration()
+        config['platform'] = 'ios'
+
+        # Add version
+        if self._os_version:
+            config['version'] = 'ios{}'.format(self._os_version.major)
+
+        # Hardware: simulator vs device, and iphone/ipad
+        if 'simulator' in self.SDK:
+            config['hardware'] = 'simulator'
+        else:
+            config['hardware'] = 'device'
+
+        # Device type: iphone/ipad
+        if self.DEVICE_TYPE:
+            hw_family = getattr(self.DEVICE_TYPE, 'hardware_family', None)
+            if hw_family:
+                hw_family_lower = hw_family.lower()
+                if hw_family_lower == 'iphone':
+                    config['hardware_type'] = 'iphone'
+                elif hw_family_lower == 'ipad':
+                    config['hardware_type'] = 'ipad'
+
+        return config
+
     def port_adjust_environment_for_test_driver(self, env):
         env = super(IOSPort, self).port_adjust_environment_for_test_driver(env)
         env['CA_DISABLE_GENERIC_SHADERS'] = '1'

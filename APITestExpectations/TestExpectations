@@ -1,0 +1,54 @@
+# API Test Expectations
+#
+# This file contains test expectations for API tests (TestWebKitAPI, TestWTF, etc.)
+# that apply to all platforms. Platform-specific expectations go in the
+# platform/<platform>/TestExpectations files.
+#
+# Format:
+#     [optional bug] [optional config] test_name_or_pattern [ expectations ]
+#
+# Examples:
+#     TestWebKitAPI.WTF.HashSet [ Fail ]
+#     webkit.org/b/12345 TestWebKitAPI.WTF.Test [ Pass Fail ]
+#     rdar://98765432 TestWebKitAPI.WebKit.Bug [ Crash ]
+#     [ debug ] TestWebKitAPI.WTF.DebugOnly [ Skip ]
+#     [ mac Sonoma+ ] TestWebKitAPI.WebKit.NewFeature [ Pass ]
+#     [ ios simulator arm64 ] TestWebKitAPI.WTF.Test [ Timeout ]
+#     TestWebKitAPI.WTF.* [ Skip ]
+#     TestWebKitAPI.WebKit.SlowTest [ Slow ]
+#     TestWebKitAPI.WebKit.VerySlowTest [ Slow:120s ]
+#     [ wk2 siteisolation ] TestWebKitAPI.WebKit.SiteIsolation [ Pass ]
+#
+# Supported expectations:
+#     Pass     - Test expected to pass
+#     Fail     - Test expected to fail
+#     Crash    - Test expected to crash
+#     Timeout  - Test expected to timeout
+#     Skip     - Don't run this test
+#
+# Supported modifiers:
+#     Slow       - Use 5x default timeout
+#     Slow:NNs   - Use NN seconds as timeout (e.g., Slow:120s)
+#
+# Configuration specifiers (order: less to more specific):
+#     Platform:     mac, ios, linux, win, gtk, wpe
+#     Version:      Sonoma, Ventura, iOS17, iOS18, etc.
+#                   Sonoma+       (Sonoma and later)
+#                   Sonoma-       (Sonoma and earlier)
+#                   Ventura-Sequoia (range, inclusive)
+#     Style:        debug, release, asan, guardmalloc
+#     Hardware:     simulator, device, iphone, ipad
+#     Architecture: arm64, x86_64, x86, arm64_32, armv7k
+#     Flavor:       wk1, wk2, siteisolation, etc. (freeform)
+#
+# Wildcards:
+#     TestWebKitAPI.WTF.*   - Matches all tests in WTF suite
+#     TestWTF.*             - Matches all tests in TestWTF binary
+#
+# Bug identifiers (optional):
+#     webkit.org/b/12345    - WebKit bug tracker
+#     rdar://12345          - Apple radar
+#     rdar://problem/12345  - Apple radar (alternate format)
+#     Bug(identifier)       - Other bug tracker
+#
+

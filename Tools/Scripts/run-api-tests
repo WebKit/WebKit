@@ -29,6 +29,7 @@ import sys
 import traceback
 
 from webkitpy.api_tests.manager import Manager
+from webkitpy.api_tests.test_expectations import APITestExpectations, EXPECTATION_NAMES
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.port import configuration_options, platform_options, base, win
@@ -57,6 +58,18 @@ def main(argv, stdout, stderr):
         print('{} cannot run API tests'.format(port.operating_system()), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
 
+    # Handle --lint-test-files option
+    if options.lint_test_files:
+        return lint_expectations(port, options, args, stderr)
+
+    # Handle --print-expectations option
+    if options.print_expectations:
+        return print_expectations(port, options, args, stderr)
+
+    # Handle --print-summary option
+    if options.print_summary:
+        return print_summary(port, options, args, stderr)
+
     # Add site-isolation results report flavor for API tests when ran
     if options.site_isolation:
         if options.result_report_flavor:
@@ -72,6 +85,151 @@ def main(argv, stdout, stderr):
             print('\n%s raised: %s' % (e.__class__.__name__, str(e)), file=stderr)
             traceback.print_exc(file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
+
+
+def lint_expectations(port, options, args, logging_stream):
+    """Validate test expectations files without running tests."""
+    print('Linting API test expectations...', file=logging_stream)
+
+    # Load expectations
+    expectations = APITestExpectations(port)
+    expectations.parse_all_expectations()
+
+    # Collect all tests for stale entry detection
+    from webkitpy.api_tests.manager import Manager
+    from webkitpy.common.system.executive import ScriptError
+
+    print('Collecting tests...', file=logging_stream)
+    all_tests = []
+    try:
+        tests_by_binary = Manager.collect_tests_by_binary(port)
+        for tests in tests_by_binary.values():
+            all_tests.extend(tests)
+    except ScriptError as e:
+        print(f'Warning: Could not collect tests for stale detection: {e}', file=logging_stream)
+
+    # Run lint
+    warnings = expectations.lint(all_tests)
+
+    if warnings:
+        print('\nWarnings:', file=logging_stream)
+        for warning in warnings:
+            print(f'  {warning}', file=logging_stream)
+        print(f'\n{len(warnings)} warning(s) found.', file=logging_stream)
+        return 1
+    else:
+        print('No issues found.', file=logging_stream)
+        return 0
+
+
+def print_expectations(port, options, args, logging_stream):
+    """Print test expectations without running tests."""
+    # Load expectations
+    expectations = APITestExpectations(port)
+    expectations.parse_all_expectations()
+    model = expectations.model()
+    config = expectations.get_current_configuration()
+
+    if args:
+        # Print expectations for specified tests
+        for test_pattern in args:
+            exp = model.get_expectation(test_pattern, config)
+            if exp:
+                exp_names = ', '.join(EXPECTATION_NAMES.get(e, str(e)) for e in exp.expectations)
+                print(f'{test_pattern}: [ {exp_names} ]', file=logging_stream)
+            else:
+                print(f'{test_pattern}: [ Pass ] (default)', file=logging_stream)
+    else:
+        # Print all expectations
+        for exp in model.all_expectations():
+            if exp.matches_configuration(config):
+                exp_names = ', '.join(EXPECTATION_NAMES.get(e, str(e)) for e in exp.expectations)
+                bug_str = ' '.join(exp.bug_ids) + ' ' if exp.bug_ids else ''
+                config_str = '[ {} ] '.format(' '.join(exp.configurations)) if exp.configurations else ''
+                print(f'{bug_str}{config_str}{exp.test_pattern} [ {exp_names} ]', file=logging_stream)
+
+    return 0
+
+
+def print_summary(port, options, args, logging_stream):
+    """Print a summary of test expectations grouped by binary/suite."""
+    from webkitpy.api_tests.manager import Manager
+    from webkitpy.api_tests.test_expectations import PASS, FAIL, CRASH, TIMEOUT, SKIP
+    from webkitpy.common.system.executive import ScriptError
+
+    # Load expectations
+    expectations = APITestExpectations(port)
+    expectations.parse_all_expectations()
+    model = expectations.model()
+    config = expectations.get_current_configuration()
+
+    # Collect all tests
+    print('Collecting tests...', file=logging_stream)
+    try:
+        tests_by_binary = Manager.collect_tests_by_binary(port)
+    except ScriptError as e:
+        print(f'Error collecting tests: {e}', file=logging_stream)
+        return 1
+
+    # Calculate stats for each binary and suite
+    print('\nTest Expectations Summary', file=logging_stream)
+    print('=' * 60, file=logging_stream)
+
+    total_stats = {'total': 0, 'pass': 0, 'skip': 0, 'fail': 0, 'flaky': 0}
+
+    for binary_name, tests in sorted(tests_by_binary.items()):
+        binary_stats = {'total': 0, 'pass': 0, 'skip': 0, 'fail': 0, 'flaky': 0}
+        suite_stats = {}
+
+        for test in tests:
+            # Extract suite name (binary.suite.test -> suite)
+            parts = test.split('.')
+            suite = parts[1] if len(parts) > 2 else 'Unknown'
+
+            if suite not in suite_stats:
+                suite_stats[suite] = {'total': 0, 'pass': 0, 'skip': 0, 'fail': 0, 'flaky': 0}
+
+            exp = model.get_expectation(test, config)
+            binary_stats['total'] += 1
+            suite_stats[suite]['total'] += 1
+
+            if exp is None or exp.expectations == {PASS}:
+                binary_stats['pass'] += 1
+                suite_stats[suite]['pass'] += 1
+            elif exp.is_skip():
+                binary_stats['skip'] += 1
+                suite_stats[suite]['skip'] += 1
+            elif exp.is_flaky():
+                binary_stats['flaky'] += 1
+                suite_stats[suite]['flaky'] += 1
+            else:
+                binary_stats['fail'] += 1
+                suite_stats[suite]['fail'] += 1
+
+        # Print binary summary
+        print(f'\n{binary_name}: {binary_stats["total"]} tests', file=logging_stream)
+        print(f'  Pass: {binary_stats["pass"]}, Skip: {binary_stats["skip"]}, '
+              f'Fail: {binary_stats["fail"]}, Flaky: {binary_stats["flaky"]}', file=logging_stream)
+
+        # Print suite breakdown if there are expectations
+        if binary_stats['skip'] or binary_stats['fail'] or binary_stats['flaky']:
+            for suite, stats in sorted(suite_stats.items()):
+                if stats['skip'] or stats['fail'] or stats['flaky']:
+                    print(f'    {suite}: {stats["total"]} tests '
+                          f'(skip={stats["skip"]}, fail={stats["fail"]}, flaky={stats["flaky"]})',
+                          file=logging_stream)
+
+        # Update totals
+        for key in total_stats:
+            total_stats[key] += binary_stats.get(key, 0)
+
+    # Print totals
+    print(f'\n{"=" * 60}', file=logging_stream)
+    print(f'Total: {total_stats["total"]} tests', file=logging_stream)
+    print(f'  Pass: {total_stats["pass"]}, Skip: {total_stats["skip"]}, '
+          f'Fail: {total_stats["fail"]}, Flaky: {total_stats["flaky"]}', file=logging_stream)
+
+    return 0
 
 
 def run(port, options, args, logging_stream):
@@ -164,6 +322,34 @@ def parse_args(args):
                              help='Enable GPU process DOM rendering'),
         optparse.make_option('--no-use-gpu-process', action='store_true', default=False,
                              help='Disable GPU process DOM rendering'),
+    ]))
+
+    option_group_definitions.append(('Expectation Options', [
+        optparse.make_option('--additional-expectations', action='append', default=[],
+                             help='Path to a test expectations file that will override previous expectations. '
+                                  'Specify multiple times for multiple sets of overrides.'),
+        optparse.make_option('--skip-failing-tests', action='store_true', default=False,
+                             help='Skip tests that are marked as failing or flaky. '
+                                  'Note: When using this option, you might miss new crashes in these tests.'),
+        optparse.make_option('--skip-flaky-tests', action='store_true', default=False,
+                             help='Skip tests that are marked as flaky. '
+                                  'Note: When using this option, you might miss new crashes in these tests.'),
+        optparse.make_option('--skipped', action='store', default='default',
+                             choices=['default', 'ignore', 'only', 'always'],
+                             help="control how tests marked SKIP are run. "
+                                  "'default' == Skip tests unless explicitly listed on the command line, "
+                                  "'ignore' == Run them anyway, "
+                                  "'only' == only run the SKIP tests, "
+                                  "'always' == always skip, even if listed on the command line."),
+        optparse.make_option('--lint-test-files', action='store_true', default=False,
+                             help='Makes sure the test expectations files parse correctly and have no stale entries. '
+                                  'Does not run any tests.'),
+        optparse.make_option('--print-expectations', action='store_true', default=False,
+                             help='Print the expected outcome for the given test, or all tests listed in TestExpectations. '
+                                  'Does not run any tests.'),
+        optparse.make_option('--print-summary', action='store_true', default=False,
+                             help='Print a summary of how tests are expected to run, grouped by binary/suite. '
+                                  'Does not run any tests.'),
     ]))
     option_group_definitions.append(('Upload Options', upload_options()))
 
