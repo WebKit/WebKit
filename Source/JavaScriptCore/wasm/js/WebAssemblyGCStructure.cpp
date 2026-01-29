@@ -65,7 +65,7 @@ void WebAssemblyGCStructureTypeDependencies::process(Wasm::FieldType fieldType, 
     if (fieldType.type.is<Wasm::Type>()) {
         Wasm::Type type = fieldType.type.as<Wasm::Type>();
         if (isRefWithTypeIndex(type)) {
-            SUPPRESS_UNCHECKED_LOCAL const auto& typeDef = Wasm::TypeInformation::get(type.index);
+            SUPPRESS_UNCHECKED_LOCAL const auto& typeDef = Wasm::TypeInformation::get(type.index).expand();
             work.append(typeDef);
         }
     }
