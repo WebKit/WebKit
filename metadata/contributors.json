@@ -2498,6 +2498,18 @@
    },
    {
       "emails" : [
+         "d_delatoba@apple.com"
+      ],
+      "expertise" : "Python, testing",
+      "github" : "diegodelatoba",
+      "name" : "Diego De La Toba",
+      "nicks" : [
+         "digsdelatoba"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "diegohcg@webkit.org",
          "diego.gonzalez@openbossa.org"
       ],
@@ -9003,17 +9015,5 @@
       "nicks" : [
          "zdobersek"
       ]
-   },
-   {
-      "emails" : [
-         "d_delatoba@apple.com"
-      ],
-      "expertise" : "Python, testing",
-      "github" : "diegodelatoba",
-      "name" : "Diego De La Toba",
-      "nicks" : [
-         "digsdelatoba"
-      ],
-      "status" : "committer"
    }
 ]
