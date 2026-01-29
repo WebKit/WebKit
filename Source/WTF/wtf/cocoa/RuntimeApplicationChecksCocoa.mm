@@ -30,6 +30,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/WTFString.h>
 
@@ -411,6 +412,10 @@ bool CocoaApplication::isDumpRenderTree()
 
 bool CocoaApplication::shouldOSFaultLogForAppleApplicationUsingWebKit1()
 {
+    static bool isInternalBuild = os_variant_allows_internal_security_policies("com.apple.WebKit");
+    if (!isInternalBuild)
+        return false;
+
     static bool bundleIdentifierShouldLog = [] {
         if (!isAppleApplication())
             return false;
