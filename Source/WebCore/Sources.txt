@@ -2925,6 +2925,7 @@ rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderScrollbarTheme.cpp
 rendering/RenderSearchField.cpp
+rendering/RenderSelectButtonText.cpp
 rendering/RenderSelection.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderSlider.cpp

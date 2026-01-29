@@ -26,10 +26,12 @@
 #pragma once
 
 #include "HTMLDivElement.h"
+#include "RenderPtr.h"
 
 namespace WebCore {
 
 class HTMLSelectElement;
+class RenderSelectButtonText;
 
 class SelectButtonTextElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_ALLOCATED(SelectButtonTextElement);
@@ -37,13 +39,16 @@ class SelectButtonTextElement final : public HTMLDivElement {
 public:
     static Ref<SelectButtonTextElement> create(Document&);
 
+    HTMLSelectElement& selectElement() const;
+    void updateText();
+
 private:
     explicit SelectButtonTextElement(Document&);
 
     bool isSelectButtonTextElement() const final { return true; }
 
-    HTMLSelectElement& selectElement() const;
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* hostStyle) final;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 };
 
 } // namespace WebCore

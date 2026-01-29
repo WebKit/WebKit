@@ -30,6 +30,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "RenderSelectButtonText.h"
 #include "RenderStyle+SettersInlines.h"
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
@@ -53,6 +54,13 @@ SelectButtonTextElement::SelectButtonTextElement(Document& document)
 HTMLSelectElement& SelectButtonTextElement::selectElement() const
 {
     return downcast<HTMLSelectElement>(*protect(containingShadowRoot())->host());
+}
+
+void SelectButtonTextElement::updateText()
+{
+    invalidateStyle();
+    if (CheckedPtr buttonTextRenderer = dynamicDowncast<RenderSelectButtonText>(renderer()))
+        buttonTextRenderer->updateFromElement();
 }
 
 std::optional<Style::UnadjustedStyle> SelectButtonTextElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
@@ -102,6 +110,11 @@ std::optional<Style::UnadjustedStyle> SelectButtonTextElement::resolveCustomStyl
     }
 
     return elementStyle;
+}
+
+RenderPtr<RenderElement> SelectButtonTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+{
+    return createRenderer<RenderSelectButtonText>(*this, WTF::move(style));
 }
 
 } // namespace WebCore

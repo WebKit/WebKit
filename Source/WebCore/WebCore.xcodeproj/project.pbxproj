@@ -11460,6 +11460,8 @@
 		45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoscrollController.h; sourceTree = "<group>"; };
 		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
 		458FE4081589DF0B005609E6 /* RenderSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSearchField.h; sourceTree = "<group>"; };
+		45A1B2C30001000100010001 /* RenderSelectButtonText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSelectButtonText.cpp; sourceTree = "<group>"; };
+		45A1B2C30001000100010002 /* RenderSelectButtonText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectButtonText.h; sourceTree = "<group>"; };
 		459CBAAA2C7647410003743B /* WebCodecsControlMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsControlMessage.h; sourceTree = "<group>"; };
 		45B5D85E2A968620004C85A0 /* LoaderMalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderMalloc.cpp; sourceTree = "<group>"; };
 		45B5D85F2A968620004C85A0 /* LoaderMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoaderMalloc.h; sourceTree = "<group>"; };
@@ -41020,6 +41022,8 @@
 				BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */,
 				458FE4071589DF0B005609E6 /* RenderSearchField.cpp */,
 				458FE4081589DF0B005609E6 /* RenderSearchField.h */,
+				45A1B2C30001000100010001 /* RenderSelectButtonText.cpp */,
+				45A1B2C30001000100010002 /* RenderSelectButtonText.h */,
 				44B38BF925369A8800A4458D /* RenderSelection.cpp */,
 				44B38BF42536901A00A4458D /* RenderSelection.h */,
 				58DEED8519873FF000888FF3 /* RenderSelectionGeometry.cpp */,

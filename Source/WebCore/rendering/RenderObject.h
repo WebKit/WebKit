@@ -159,6 +159,7 @@ public:
         Replica,
         ScrollbarPart,
         SearchField,
+        SelectButtonText,
         Slider,
         SliderContainer,
         Table,
@@ -478,6 +479,7 @@ public:
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
+    bool isRenderSelectButtonText() const { return type() == Type::SelectButtonText; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderTextControlInnerContainer() const { return type() == Type::TextControlInnerContainer; }
     bool isRenderVideo() const { return type() == Type::Video; }
