@@ -186,7 +186,7 @@
 #define AARCH64_VALIDATE_LINK_REGISTER
 #endif
 
-#if GNU_PROPERTY_AARCH64_POINTER_AUTH != 0 || GNU_PROPERTY_AARCH64_BTI != 0
+#if (GNU_PROPERTY_AARCH64_POINTER_AUTH != 0 || GNU_PROPERTY_AARCH64_BTI != 0) && defined(__ELF__)
 .pushsection .note.gnu.property, "a";
 .balign 8;
 .long 4;
