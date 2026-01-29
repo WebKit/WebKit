@@ -294,6 +294,14 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 {
 }
 
+void PlatformSpeechSynthesizer::appendVoices(NSArray *voices)
+{
+    for (AVSpeechSynthesisVoice *voice in voices) {
+        if (voice.isSystemVoice)
+            m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
+    }
+}
+
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
     if (!PAL::isAVFoundationFrameworkAvailable())
@@ -302,12 +310,6 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     Class avSpeechSynthesisVoiceClass = PAL::getAVSpeechSynthesisVoiceClassSingleton();
-    auto appendVoices = [protectedThis = Ref { *this }](NSArray<AVSpeechSynthesisVoice *> *voices) {
-        for (AVSpeechSynthesisVoice *voice in voices) {
-            if (voice.isSystemVoice)
-                protectedThis->m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
-        }
-    };
 
     // Support older OS versions that don't have the asynchronous version yet.
     // Remove this once 26.3 is the minimum OS version supported by Safari.
@@ -316,11 +318,16 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         return;
     }
 
+    WeakPtr weakThis { *this };
     [avSpeechSynthesisVoiceClass speechVoicesIncludingSuperCompactWithCompletionHandler:^(NSArray<AVSpeechSynthesisVoice *> *voices) {
-        callOnMainThread([this, protectedThis = Ref { *this }, voices = RetainPtr { voices }, appendVoices]() {
+        callOnMainThread([weakThis, voices = RetainPtr { voices }]() {
             BEGIN_BLOCK_OBJC_EXCEPTIONS
-            appendVoices(voices.get());
-            m_speechSynthesizerClient.voicesDidChange();
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            protectedThis->appendVoices(voices.get());
+            protectedThis->m_speechSynthesizerClient.voicesDidChange();
             END_BLOCK_OBJC_EXCEPTIONS
         });
     }];
