@@ -117,6 +117,12 @@
 #include <WebKit/WKPagePrivateMac.h>
 #endif
 
+#if PLATFORM(MAC)
+#import <ApplicationServices/ApplicationServices.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
+#endif
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include <WebKit/WKContextConfigurationGlib.h>
 #endif
@@ -3395,6 +3401,29 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         return setHTTPCookieAcceptPolicy(policy, WTF::move(completionHandler));
     }
 
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "AXGetRoot"))
+        return completionHandler(handleAXGetRoot().get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsString"))
+        return completionHandler(handleAXCopyAttributeValueAsString(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsElement"))
+        return completionHandler(handleAXCopyAttributeValueAsElement(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsElementArray"))
+        return completionHandler(handleAXCopyAttributeValueAsElementArray(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsNumber"))
+        return completionHandler(handleAXCopyAttributeValueAsNumber(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsBoolean"))
+        return completionHandler(handleAXCopyAttributeValueAsBoolean(dictionaryValue(messageBody)).get());
+
+    if (WKStringIsEqualToUTF8CString(messageName, "AXCopyAttributeValueAsInt"))
+        return completionHandler(handleAXCopyAttributeValueAsInt(dictionaryValue(messageBody)).get());
+#endif
+
     completionHandler(protectedCurrentInvocation()->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).get());
 }
 
@@ -5377,5 +5406,233 @@ void TestController::setHasMouseDeviceForTesting(bool)
 {
 }
 #endif
+
+#if PLATFORM(MAC)
+// Client accessibility IPC implementation
+
+// Private API for creating an AXUIElement from a remote token
+extern "C" AXUIElementRef _AXUIElementCreateWithRemoteToken(CFDataRef remoteToken);
+
+uint64_t TestController::storeAXElement(CFTypeRef element)
+{
+    if (!element)
+        return 0;
+
+    uint64_t token = m_nextAXElementToken++;
+    m_axElementTokens.set(token, element);
+    return token;
+}
+
+CFTypeRef TestController::getAXElement(uint64_t token)
+{
+    if (!token)
+        return nullptr;
+
+    auto it = m_axElementTokens.find(token);
+    if (it == m_axElementTokens.end())
+        return nullptr;
+
+    return it->value.get();
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXGetRoot()
+{
+    CFDataRef remoteToken = getRemoteAccessibilityToken();
+    if (!remoteToken)
+        return nullptr;
+
+    AXUIElementRef webContentElement = _AXUIElementCreateWithRemoteToken(remoteToken);
+    if (!webContentElement)
+        return nullptr;
+
+    // Try to get children
+    CFTypeRef childrenValue = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(webContentElement, kAXChildrenAttribute, &childrenValue);
+    auto adoptedChildren = adoptCF(childrenValue);
+
+    if (error != kAXErrorSuccess || !childrenValue)
+        return nullptr;
+
+    CFArrayRef children = static_cast<CFArrayRef>(childrenValue);
+    CFIndex childCount = CFArrayGetCount(children);
+    if (!childCount)
+        return nullptr;
+
+    AXUIElementRef child = static_cast<AXUIElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(children, 0)));
+
+    uint64_t token = storeAXElement(child);
+    return adoptWK(WKUInt64Create(token));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsString(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return nullptr;
+
+    if (CFGetTypeID(value) != CFStringGetTypeID())
+        return nullptr;
+
+    return toWK(String(static_cast<CFStringRef>(value)));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElement(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return adoptWK(WKUInt64Create(0));
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return adoptWK(WKUInt64Create(0));
+
+    if (CFGetTypeID(value) != AXUIElementGetTypeID())
+        return adoptWK(WKUInt64Create(0));
+
+    uint64_t token = storeAXElement(value);
+    return adoptWK(WKUInt64Create(token));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsElementArray(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return adoptWK(WKArrayCreate(nullptr, 0));
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return adoptWK(WKArrayCreate(nullptr, 0));
+
+    if (CFGetTypeID(value) != CFArrayGetTypeID())
+        return adoptWK(WKArrayCreate(nullptr, 0));
+
+    CFArrayRef elementArray = static_cast<CFArrayRef>(value);
+    CFIndex count = CFArrayGetCount(elementArray);
+
+    Vector<WKTypeRef> tokens;
+    tokens.reserveInitialCapacity(count);
+
+    for (CFIndex i = 0; i < count; i++) {
+        CFTypeRef childElement = CFArrayGetValueAtIndex(elementArray, i);
+        if (CFGetTypeID(childElement) == AXUIElementGetTypeID()) {
+            uint64_t token = storeAXElement(childElement);
+            tokens.append(WKUInt64Create(token));
+        }
+    }
+
+    // Build array from individual elements since Vector::data() is private
+    auto result = adoptWK(WKMutableArrayCreate());
+    for (auto token : tokens) {
+        WKArrayAppendItem(result.get(), token);
+        WKRelease(token);
+    }
+
+    return result;
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsNumber(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return nullptr;
+
+    if (CFGetTypeID(value) != CFNumberGetTypeID())
+        return nullptr;
+
+    double doubleValue;
+    CFNumberGetValue(static_cast<CFNumberRef>(value), kCFNumberDoubleType, &doubleValue);
+
+    return adoptWK(WKDoubleCreate(doubleValue));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsBoolean(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return nullptr;
+
+    if (CFGetTypeID(value) != CFBooleanGetTypeID())
+        return nullptr;
+
+    bool boolValue = CFBooleanGetValue(static_cast<CFBooleanRef>(value));
+
+    return adoptWK(WKBooleanCreate(boolValue));
+}
+
+WKRetainPtr<WKTypeRef> TestController::handleAXCopyAttributeValueAsInt(WKDictionaryRef messageBody)
+{
+    uint64_t elementToken = uint64Value(messageBody, "elementToken");
+    auto attributeName = stringValue(messageBody, "attributeName");
+
+    AXUIElementRef element = static_cast<AXUIElementRef>(getAXElement(elementToken));
+    if (!element)
+        return nullptr;
+
+    auto attributeNameCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, toSTD(attributeName).c_str(), kCFStringEncodingUTF8));
+    CFTypeRef value = nullptr;
+    AXError error = AXUIElementCopyAttributeValue(element, attributeNameCF.get(), &value);
+    auto adoptedValue = adoptCF(value);
+
+    if (error != kAXErrorSuccess || !value)
+        return nullptr;
+
+    if (CFGetTypeID(value) != CFNumberGetTypeID())
+        return nullptr;
+
+    int64_t intValue;
+    CFNumberGetValue(static_cast<CFNumberRef>(value), kCFNumberSInt64Type, &intValue);
+
+    // WKInt64 doesn't exist, use WKUInt64 for now
+    return adoptWK(WKUInt64Create(static_cast<uint64_t>(intValue)));
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace WTR

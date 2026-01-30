@@ -63,6 +63,10 @@ public:
     void setForceDeferredSpellChecking(bool);
     void setForceInitialFrameCaching(bool);
 
+    // Client accessibility mode - uses AXUIElement APIs instead of internal accessibility objects
+    void setClientAccessibilityMode(bool);
+    bool clientAccessibilityModeEnabled() const { return m_clientAccessibilityMode; }
+
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
@@ -100,6 +104,7 @@ public:
 private:
     AccessibilityController();
     void platformInitialize();
+    void platformInitializeClientAccessibility();
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_globalNotificationHandler;
@@ -118,6 +123,8 @@ private:
 
     bool m_accessibilityIsolatedTreeMode { false };
 #endif
+
+    bool m_clientAccessibilityMode { false };
 };
 
 #if PLATFORM(COCOA)

@@ -14,6 +14,14 @@
 	<true/>
 	<key>com.apple.networkd.persistent_interface</key>
 	<true/>
+	<key>com.apple.private.accessibility.accessProtectedContent</key>
+	<true/>
+	<key>com.apple.private.accessibility.inspection</key>
+	<true/>
+	<key>com.apple.private.tcc.allow</key>
+	<array>
+		<string>kTCCServiceAccessibility</string>
+	</array>
 	<key>com.apple.security.temporary-exception.sbpl</key>
 	<array>
 		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>

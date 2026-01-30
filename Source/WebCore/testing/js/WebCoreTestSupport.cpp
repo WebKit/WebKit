@@ -161,6 +161,13 @@ bool allowsAnySSLCertificate()
     return DeprecatedGlobalSettings::allowsAnySSLCertificate();
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void setAccessibilityIsolatedTreeEnabled(bool isEnabled)
+{
+    DeprecatedGlobalSettings::setIsAccessibilityIsolatedTreeEnabled(isEnabled);
+}
+#endif
+
 void setLinkedOnOrAfterEverythingForTesting()
 {
 #if PLATFORM(COCOA)

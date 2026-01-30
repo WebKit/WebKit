@@ -28,7 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "AccessibilityController.h"
 
 #import "AccessibilityCommonCocoa.h"
@@ -36,6 +35,7 @@
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 #import "JSBasics.h"
+#import "WebCoreTestSupport.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundleFramePrivate.h>
@@ -155,6 +155,7 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AccessibilityController::updateIsolatedTreeMode()
 {
+    WebCoreTestSupport::setAccessibilityIsolatedTreeEnabled(m_accessibilityIsolatedTreeMode);
     _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeSecondaryThread : AXSIsolatedTreeModeOff);
 }
 #endif
@@ -212,6 +213,28 @@ void AXThread::threadRunLoopSourceCallback()
     @autoreleasepool {
         dispatchFunctionsFromAXThread();
     }
+}
+
+void AccessibilityController::platformInitializeClientAccessibility()
+{
+    setIsolatedTreeMode(true);
+
+    // This triggers WebKit's normal accessibility initialization flow via IPC
+    WTR::postSynchronousMessage("InitializeWebProcessAccessibility");
+
+    // The above IPC triggers async initialization. Force the isolated tree to be built
+    // now by accessing the root object ON THE AX THREAD, so it's ready before the first
+    // axGetRoot() call from the test.
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    if (!mainFrame)
+        return;
+
+    // Access the root object on the AX thread to trigger isolated tree creation with proper thread setup
+    RetainPtr<PlatformUIElement> root;
+    executeOnAXThreadAndWait([&mainFrame, &root] () {
+        root = static_cast<PlatformUIElement>(_WKAccessibilityRootObjectForTesting(mainFrame));
+    });
 }
 
 } // namespace WTR

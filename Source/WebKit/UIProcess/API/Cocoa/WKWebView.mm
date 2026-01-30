@@ -6696,6 +6696,11 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     return _impl->hasRemoteAccessibilityChild();
 }
 
+- (NSData *)_remoteAccessibilityChildToken
+{
+    return _impl->remoteAccessibilityChildToken();
+}
+
 - (RetainPtr<NSPopUpButtonCell>)_activePopupButtonCell
 {
     RefPtr popupMenu = dynamicDowncast<WebKit::WebPopupMenuProxyMac>(_page->activePopupMenu());

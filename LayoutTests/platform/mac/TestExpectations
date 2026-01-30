@@ -115,6 +115,10 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# Skip accessibility tests that use the accessibility client API on most builders;
+# requires an extra permission for WKTR
+accessibility/mac/client [ Skip ]
+
 # Skip glib-only combobox accessibility tests.
 accessibility/combobox/gtk [ Skip ]
 

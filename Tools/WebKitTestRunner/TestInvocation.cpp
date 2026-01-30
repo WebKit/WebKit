@@ -614,6 +614,14 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+#if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "InitializeWebProcessAccessibility")) {
+        // Initialize accessibility in the web content process by sending the IPC message
+        TestController::singleton().initializeWebProcessAccessibility();
+        return nullptr;
+    }
+#endif
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetPrinting")) {
         setPrinting();
         return nullptr;

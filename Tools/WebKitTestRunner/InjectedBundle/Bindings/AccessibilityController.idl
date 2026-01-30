@@ -32,6 +32,10 @@ interface AccessibilityController {
     AccessibilityUIElement retainedElement();
     undefined setForceInitialFrameCaching(boolean shouldForce);
 
+    // Client accessibility mode
+    undefined setClientAccessibilityMode(boolean enable);
+    readonly attribute boolean clientAccessibilityModeEnabled;
+
     readonly attribute DOMString platformName;
     readonly attribute AccessibilityUIElement rootElement;
     readonly attribute AccessibilityUIElement focusedElement;
