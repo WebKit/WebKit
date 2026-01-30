@@ -79,7 +79,7 @@ inline TypeIndex TypeInformation::get(const TypeDefinition& type)
 {
     if (ASSERT_ENABLED) {
         TypeInformation& info = singleton();
-        Locker locker { info.m_lock };
+        Locker locker { info.m_lock.read() };
         ASSERT_UNUSED(info, info.m_typeSet.contains(TypeHash { const_cast<TypeDefinition&>(type) }));
     }
     return type.index();

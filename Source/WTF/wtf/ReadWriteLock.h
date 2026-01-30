@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,72 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include <wtf/Condition.h>
-#include <wtf/Lock.h>
+#include <wtf/Atomics.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 
-// This is a traditional read-write lock implementation that enables concurrency between readers so long as
-// the read critical section is long. Concurrent readers will experience contention on read().lock() and
-// read().unlock() if the work inside the critical section is short. The more cores participate in reading,
-// the longer the read critical section has to be for this locking scheme to be profitable.
+// This is a high-performance read-write lock implementation that uses ParkingLot directly,
+// following the same patterns as WTF::Lock. It enables concurrency between readers while
+// providing efficient fast paths for uncontended operations.
+//
+// Compared to the traditional Lock+Condition implementation:
+// - Fast paths use a single CAS operation (no internal lock acquisition)
+// - No thundering herd: uses selective wakeup via unparkOne/unparkAll
+// - Writer fairness: waiting writers block new readers to prevent starvation
+//
+// It's easiest to read lock like this:
+//     Locker locker { rwLock.read() };
+//
+// It's easiest to write lock like this:
+//     Locker locker { rwLock.write() };
 
 class ReadWriteLock {
     WTF_MAKE_NONCOPYABLE(ReadWriteLock);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ReadWriteLock);
 public:
-    ReadWriteLock() = default;
+    constexpr ReadWriteLock() = default;
 
-    // It's easiest to read lock like this:
-    // 
-    //     Locker locker { rwLock.read() };
-    //
-    // It's easiest to write lock like this:
-    // 
-    //     Locker locker { rwLock.write() };
-    //
-    WTF_EXPORT_PRIVATE void readLock();
-    WTF_EXPORT_PRIVATE void readUnlock();
-    WTF_EXPORT_PRIVATE void writeLock();
-    WTF_EXPORT_PRIVATE void writeUnlock();
-    
+    void readLock()
+    {
+        uint32_t state = m_state.load(std::memory_order_relaxed);
+        if (!(state & (WriterHeldBit | WriterWaitingBit))) [[likely]] {
+            if (m_state.compareExchangeWeak(state, state + ReaderCountUnit, std::memory_order_acquire)) [[likely]]
+                return;
+        }
+        readLockSlow();
+    }
+
+    void readUnlock()
+    {
+        uint32_t state = m_state.load(std::memory_order_relaxed);
+        uint32_t readerCount = state >> ReaderCountShift;
+        if (readerCount > 1 && !(state & HasParkedWritersBit)) [[likely]] {
+            if (m_state.compareExchangeWeak(state, state - ReaderCountUnit, std::memory_order_release)) [[likely]]
+                return;
+        }
+        readUnlockSlow();
+    }
+
+    void writeLock()
+    {
+        if (m_state.compareExchangeWeak(0u, WriterHeldBit, std::memory_order_acquire)) [[likely]]
+            return;
+        writeLockSlow();
+    }
+
+    void writeUnlock()
+    {
+        if (m_state.compareExchangeWeak(WriterHeldBit, 0u, std::memory_order_release)) [[likely]]
+            return;
+        writeUnlockSlow();
+    }
+
     class ReadLock;
     class WriteLock;
 
@@ -61,11 +93,39 @@ public:
     WriteLock& write();
 
 private:
-    Lock m_lock;
-    Condition m_cond;
-    bool m_isWriteLocked WTF_GUARDED_BY_LOCK(m_lock) { false };
-    unsigned m_numReaders WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    unsigned m_numWaitingWriters WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    // State encoding in a 32-bit word:
+    // Bits 31-16 (16 bits): Reader count (up to 65535 concurrent readers)
+    // Bit      3:           Writer waiting bit (blocks new readers for fairness)
+    // Bit      2:           Writer held bit
+    // Bit      1:           Has parked writers bit
+    // Bit      0:           Has parked readers bit
+    static constexpr uint32_t ReaderCountShift = 16;
+    static constexpr uint32_t ReaderCountUnit = 1u << ReaderCountShift;
+    static constexpr uint32_t ReaderCountMask = 0xFFFF0000;
+    static constexpr uint32_t WriterWaitingBit = 1u << 3;
+    static constexpr uint32_t WriterHeldBit = 1u << 2;
+    static constexpr uint32_t HasParkedWritersBit = 1u << 1;
+    static constexpr uint32_t HasParkedReadersBit = 1u << 0;
+
+    // Tokens for ParkingLot handoff (matching Lock pattern)
+    enum Token : intptr_t {
+        BargingOpportunity = 0,
+        DirectHandoff = 1
+    };
+
+    WTF_EXPORT_PRIVATE NEVER_INLINE void readLockSlow();
+    WTF_EXPORT_PRIVATE NEVER_INLINE void readUnlockSlow();
+    WTF_EXPORT_PRIVATE NEVER_INLINE void writeLockSlow();
+    WTF_EXPORT_PRIVATE NEVER_INLINE void writeUnlockSlow();
+
+    // Separate parking addresses for readers and writers to enable selective wakeup.
+    // ParkingLot uses the address as a key, so different addresses create separate queues.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    void* readerParkingAddress() { return std::bit_cast<void*>(std::bit_cast<uint8_t*>(this)); }
+    void* writerParkingAddress() { return std::bit_cast<void*>((std::bit_cast<uint8_t*>(this) + 1)); }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+    Atomic<uint32_t> m_state { 0 };
 };
 
 class ReadWriteLock::ReadLock : public ReadWriteLock {
@@ -81,7 +141,7 @@ public:
     void lock() { writeLock(); }
     void unlock() { writeUnlock(); }
 };
-    
+
 inline ReadWriteLock::ReadLock& ReadWriteLock::read() { return *static_cast<ReadLock*>(this); }
 inline ReadWriteLock::WriteLock& ReadWriteLock::write() { return *static_cast<WriteLock*>(this); }
 
