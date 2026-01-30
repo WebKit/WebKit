@@ -6979,6 +6979,67 @@ void main()
     EXPECT_PIXEL_NEAR(0, 0, 255, 127, 0, 255, 1);
 }
 
+// Verify that functions without return statements return zero-initialized vec4
+TEST_P(WebGL2GLSLTest, MissingReturnZeroInitVec4)
+{
+    constexpr char kFS[] = R"(precision highp float;
+uniform float u0;
+uniform float u1;
+vec4 foo(float u)
+{
+    if (u > 0.0) { return vec4(1.0); }
+}
+void main()
+{
+    if (foo(u0) == vec4(0.0) && foo(u1) == vec4(1.0))
+        gl_FragColor = vec4(0, 1, 0, 1);
+    else
+        gl_FragColor = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint loc = glGetUniformLocation(program, "u1");
+    ASSERT_NE(-1, loc);
+    glUniform1f(loc, 1.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Verify that functions without return statements return zero-initialized struct
+TEST_P(WebGL2GLSLTest, MissingReturnZeroInitStruct)
+{
+    constexpr char kFS[] = R"(precision highp float;
+struct S { float a; int b; };
+uniform float u0;
+uniform float u1;
+S foo(float u)
+{
+    if (u > 0.0) { return S(1.0, 1); }
+}
+void main()
+{
+    S r0 = foo(u0);
+    S r1 = foo(u1);
+    if (r0.a == 0.0 && r0.b == 0 && r1.a == 1.0 && r1.b == 1)
+        gl_FragColor = vec4(0, 1, 0, 1);
+    else
+        gl_FragColor = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint loc = glGetUniformLocation(program, "u1");
+    ASSERT_NE(-1, loc);
+    glUniform1f(loc, 1.0f);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Tests nameless struct uniforms.
 TEST_P(GLSLTest, EmbeddedStructUniform)
 {

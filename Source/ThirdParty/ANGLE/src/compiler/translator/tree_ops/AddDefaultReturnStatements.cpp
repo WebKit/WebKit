@@ -7,7 +7,7 @@
 //                                 return.
 //
 
-#include "compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"

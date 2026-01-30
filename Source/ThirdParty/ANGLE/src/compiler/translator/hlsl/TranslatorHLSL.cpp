@@ -11,7 +11,7 @@
 #include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
-#include "compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/hlsl/AggregateAssignArraysInSSBOs.h"
 #include "compiler/translator/tree_ops/hlsl/AggregateAssignStructsInSSBOs.h"
 #include "compiler/translator/tree_ops/hlsl/ArrayReturnValueToOutParameter.h"

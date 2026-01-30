@@ -18,6 +18,7 @@
 #include "compiler/translator/msl/SymbolEnv.h"
 #include "compiler/translator/msl/ToposortStructs.h"
 #include "compiler/translator/msl/UtilsMSL.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 #include "compiler/translator/tree_ops/PreTransformTextureCubeGradDerivatives.h"
@@ -879,6 +880,11 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
     IdGen idGen;
     ProgramPreludeConfig ppc(metalShaderTypeFromGLSL(getShaderType()));
     ppc.usesDerivatives = usesDerivatives();
+
+    if (!sh::AddDefaultReturnStatements(this, root))
+    {
+        return false;
+    }
 
     if (!WrapMain(*this, idGen, *root))
     {
