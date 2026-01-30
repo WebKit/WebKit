@@ -715,6 +715,7 @@ private:
     void updateIsolatedTree(AccessibilityObject&, AXProperty) const;
     void startUpdateTreeSnapshotTimer();
 #endif
+    void updateCachedTextOfAssociatedObjects(AccessibilityObject&);
 
 protected:
     void postPlatformNotification(AccessibilityObject&, AXNotification);

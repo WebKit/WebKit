@@ -3276,13 +3276,18 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_haspopupAttr)
         postNotification(element, AXNotification::HasPopupChanged);
     else if (attrName == aria_hiddenAttr) {
+        if (RefPtr axObject = getOrCreate(*element)) {
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-        if (RefPtr axObject = getOrCreate(*element))
             axObject->recomputeIsIgnoredForDescendants(/* includeSelf */ true);
-#else
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+            // aria-hidden can influence the text gathered as part of the accessibility-text algorithm.
+            updateCachedTextOfAssociatedObjects(*axObject);
+        }
+
+#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         if (RefPtr parent = get(element->parentNode()))
             childrenChanged(parent.get());
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
         if (RefPtr currentModalElement = m_currentModalElement.get(); currentModalElement && currentModalElement->isDescendantOf(element))
             deferModalChange(*currentModalElement);
@@ -3345,6 +3350,30 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == typeAttr)
         handleInputTypeChanged(*element);
+}
+
+void AXObjectCache::updateCachedTextOfAssociatedObjects(AccessibilityObject& object)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isIsolatedTreeEnabled())
+        return;
+
+    RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
+    if (!tree)
+        return;
+
+    // Update the cached text of ancestors who may have gathered |object|s text in a
+    // text-under-element traversal.
+    for (RefPtr current = object; current; current = current->parentObject()) {
+        tree->queueNodeUpdate(current->objectID(), { AXProperty::AccessibilityText });
+
+        // Also update any object who used |current| as a label.
+        for (Ref labelledByObject : current->labelForObjects())
+            tree->queueNodeUpdate(labelledByObject->objectID(), { AXProperty::AccessibilityText });
+    }
+#else
+    UNUSED_PARAM(object);
+#endif
 }
 
 static bool hasAnyARIALabelling(Element& element)
