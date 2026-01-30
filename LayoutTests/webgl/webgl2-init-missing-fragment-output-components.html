@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<body>
+<div id="console"></div>
+<script>
+globalThis.testRunner?.dumpAsText();
+
+let canvas = new OffscreenCanvas(8, 8);
+let gl = canvas.getContext('webgl2');
+
+let vs = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vs, `#version 300 es
+layout(location=0) in vec4 a_position;
+void main() { gl_Position = a_position; }
+`);
+gl.compileShader(vs);
+
+let fs = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fs, `#version 300 es
+precision highp float;
+layout(location=0) out float outColor;
+void main() { outColor = 1.0; }
+`);
+gl.compileShader(fs);
+
+let program = gl.createProgram();
+gl.attachShader(program, vs);
+gl.attachShader(program, fs);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(0);
+gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+let pixel = new Uint8Array(4);
+gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+
+shouldBe("[...pixel].join(',')", "'255,0,0,0'");
+</script>
+</body>

@@ -21785,6 +21785,22 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
 }
 
+// Verify that missing fragment output components are zero-initialized
+TEST_P(WebGL2GLSLTest, InitMissingFragmentOutputComponents)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout(location = 0) out float outColor;
+void main()
+{
+    outColor = 1.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255, 0, 0, 0));
+}
+
 // Test highp int scalar + vec
 TEST_P(GLSLTest_ES3, IntVecOperatorOverloadingAdd1)
 {
