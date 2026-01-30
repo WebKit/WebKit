@@ -222,6 +222,7 @@ public:
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
 
     HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
+    const HashSet<SecurityOriginData>& insecureNavigationRequestsToUpgrade() const { return m_insecureNavigationRequestsToUpgrade; }
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
     void setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&&);
 
@@ -231,6 +232,11 @@ public:
     void setDocumentURL(URL& documentURL) { m_documentURL = documentURL; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
+
+    const String& referrer() const { return m_referrer; }
+    void setReferrer(const String& referrer) { m_referrer = referrer; }
+    int httpStatusCode() const { return m_httpStatusCode; }
+    void setHttpStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
 
     bool isHeaderDelivered() const { return m_isHeaderDelivered; }
 

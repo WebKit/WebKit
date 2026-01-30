@@ -8496,11 +8496,8 @@ void Document::initSecurityContext()
     // If we do not obtain a meaningful origin from the URL, then we try to
     // find one via the frame hierarchy.
     RefPtr parentFrame = m_frame->tree().parent();
-    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
-
-    RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
-    if (!ownerFrame)
-        ownerFrame = openerFrame;
+    RefPtr openerFrame = m_frame->opener();
+    RefPtr ownerFrame = parentFrame ? parentFrame : openerFrame;
 
     if (!ownerFrame) {
         didFailToInitializeSecurityOrigin();
@@ -8508,61 +8505,87 @@ void Document::initSecurityContext()
     }
 
     CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
-    contentSecurityPolicy->copyStateFrom(protect(ownerFrame->document())->checkedContentSecurityPolicy().get());
-    contentSecurityPolicy->updateSourceSelf(protect(ownerFrame->document()->securityOrigin()));
-
-    setCrossOriginEmbedderPolicy(ownerFrame->document()->crossOriginEmbedderPolicy());
+    if (auto ownerSecurityPolicy = ownerFrame->frameDocumentSecurityPolicy()) {
+        contentSecurityPolicy->inheritHeadersFrom(ownerSecurityPolicy->contentSecurityPolicyResponseHeaders);
+        contentSecurityPolicy->setReferrer(ownerSecurityPolicy->cspReferrer);
+        contentSecurityPolicy->setHttpStatusCode(ownerSecurityPolicy->cspHttpStatusCode);
+        if (RefPtr ownerSecurityOrigin = ownerFrame->frameDocumentSecurityOrigin())
+            contentSecurityPolicy->updateSourceSelf(*ownerSecurityOrigin);
+        setCrossOriginEmbedderPolicy(ownerSecurityPolicy->crossOriginEmbedderPolicy);
+    }
 
     // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
     // If creator is non-null and creator's origin is same origin with creator's relevant settings object's top-level origin, then set coop
     // to creator's browsing context's top-level browsing context's active document's cross-origin opener policy.
-    if (m_frame->isMainFrame() && openerFrame && openerFrame->document() && openerFrame->document()->isSameOriginAsTopDocument())
-        setCrossOriginOpenerPolicy(openerFrame->document()->crossOriginOpenerPolicy());
+    if (m_frame->isMainFrame() && openerFrame) {
+        if (auto openerSecurityPolicy = openerFrame->frameDocumentSecurityPolicy()) {
+            if (openerSecurityPolicy->isSameOriginAsTopDocument)
+                setCrossOriginOpenerPolicy(openerSecurityPolicy->crossOriginOpenerPolicy);
+        }
+    }
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
-    if (RefPtr openerDocument = openerFrame ? openerFrame->document() : nullptr)
-        contentSecurityPolicy->inheritInsecureNavigationRequestsToUpgradeFromOpener(*openerDocument->checkedContentSecurityPolicy());
+    if (openerFrame) {
+        if (auto openerSecurityPolicy = openerFrame->frameDocumentSecurityPolicy())
+            contentSecurityPolicy->setInsecureNavigationRequestsToUpgrade(HashSet { openerSecurityPolicy->insecureNavigationRequestsToUpgrade });
+    }
 
     if (isSandboxed(SandboxFlag::Origin)) {
         // If we're supposed to inherit our security origin from our owner,
         // but we're also sandboxed, the only thing we inherit is the ability
         // to load local resources. This lets about:blank iframes in file://
         // URL documents load images and other resources from the file system.
-        if (ownerFrame->document()->securityOrigin().canLoadLocalResources())
-            securityOrigin().grantLoadLocalResources();
+        if (RefPtr ownerSecurityOrigin = ownerFrame->frameDocumentSecurityOrigin()) {
+            if (ownerSecurityOrigin->canLoadLocalResources())
+                securityOrigin().grantLoadLocalResources();
+        }
         return;
     }
 
-    setCookieURL(ownerFrame->document()->cookieURL());
+    if (auto ownerSecurityPolicy = ownerFrame->frameDocumentSecurityPolicy()) {
+        if (!ownerSecurityPolicy->cookieURL.isNull())
+            setCookieURL(ownerSecurityPolicy->cookieURL);
+    }
+
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
+    if (RefPtr ownerSecurityOrigin = ownerFrame->frameDocumentSecurityOrigin())
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(Ref { *ownerSecurityOrigin }));
 }
 
 void Document::initContentSecurityPolicy()
 {
     if (!m_frame)
         return;
-    RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
-    if (parentFrame)
-        checkedContentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*protect(parentFrame->document())->checkedContentSecurityPolicy());
+
+    RefPtr parentFrame = m_frame->tree().parent();
+    if (parentFrame) {
+        if (auto parentSecurityPolicy = parentFrame->frameDocumentSecurityPolicy()) {
+            checkedContentSecurityPolicy()->setUpgradeInsecureRequests(parentSecurityPolicy->upgradeInsecureRequests);
+            checkedContentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(HashSet { parentSecurityPolicy->insecureNavigationRequestsToUpgrade });
+        }
+    }
 
     // FIXME: Remove this special plugin document logic. We are stricter than the CSP 3 spec. with regards to plugins: we prefer to
     // inherit the full policy unless the plugin document is opened in a new window. The CSP 3 spec. implies that only plugin documents
     // delivered with a local scheme (e.g. blob, file, data) should inherit a policy.
     if (!isPluginDocument())
         return;
-    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
-    bool shouldInhert = parentFrame || (openerFrame && protect(openerFrame->document()->securityOrigin())->isSameOriginDomain(securityOrigin()));
-    if (!shouldInhert)
+
+    RefPtr openerFrame = m_frame->opener();
+    RefPtr<LocalFrame> localParentFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
+    RefPtr<LocalFrame> localOpenerFrame = dynamicDowncast<LocalFrame>(openerFrame.get());
+    bool shouldInherit = localParentFrame || (localOpenerFrame && protect(localOpenerFrame->document()->securityOrigin())->isSameOriginDomain(securityOrigin()));
+    if (!shouldInherit)
         return;
+
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
-    if (openerFrame)
-        checkedContentSecurityPolicy()->createPolicyForPluginDocumentFrom(*protect(openerFrame->document())->checkedContentSecurityPolicy());
-    else
-        checkedContentSecurityPolicy()->copyStateFrom(protect(parentFrame->document())->checkedContentSecurityPolicy().get());
+    if (localOpenerFrame)
+        checkedContentSecurityPolicy()->createPolicyForPluginDocumentFrom(*protect(localOpenerFrame->document())->checkedContentSecurityPolicy());
+    else if (localParentFrame)
+        checkedContentSecurityPolicy()->copyStateFrom(protect(localParentFrame->document())->checkedContentSecurityPolicy().get());
 }
 
 void Document::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)

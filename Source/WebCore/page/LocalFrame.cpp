@@ -1685,7 +1685,30 @@ std::optional<DocumentSecurityPolicy> LocalFrame::frameDocumentSecurityPolicy() 
     if (!document)
         return std::nullopt;
 
-    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy() };
+    ContentSecurityPolicyResponseHeaders cspHeaders;
+    HashSet<SecurityOriginData> insecureNavRequests;
+    String cspReferrer;
+    int cspHttpStatusCode = 0;
+    bool upgradeInsecureRequests = false;
+    if (CheckedPtr csp = document->contentSecurityPolicy()) {
+        cspHeaders = csp->responseHeaders();
+        insecureNavRequests = csp->insecureNavigationRequestsToUpgrade();
+        cspReferrer = csp->referrer();
+        cspHttpStatusCode = csp->httpStatusCode();
+        upgradeInsecureRequests = csp->upgradeInsecureRequests();
+    }
+
+    return DocumentSecurityPolicy {
+        document->crossOriginEmbedderPolicy(),
+        document->crossOriginOpenerPolicy(),
+        WTF::move(cspHeaders),
+        WTF::move(insecureNavRequests),
+        document->cookieURL(),
+        WTF::move(cspReferrer),
+        cspHttpStatusCode,
+        document->isSameOriginAsTopDocument(),
+        upgradeInsecureRequests
+    };
 }
 
 Ref<FrameInspectorController> LocalFrame::protectedInspectorController() const

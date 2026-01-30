@@ -1,0 +1,9 @@
+<script>
+    alert('should be empty:' + document.cookie);
+    document.cookie = 'key2=value2';
+    let w = window.open('about:blank');
+    alert('should also be empty:' + w.document.cookie);
+    if (window.testRunner) {
+        testRunner.notifyDone()
+    }
+</script>
