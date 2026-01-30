@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { height: 3000px; }
+        .content { margin-top: 2000px; }
+    </style>
+</head>
+<body>
+    <h1>Test Page</h1>
+    <div class="content">
+        <p>This is some text before the secret.</p>
+        <p>SecretText is located here in the middle of the page.</p>
+        <p>This is some text after the secret.</p>
+    </div>
+</body>
+<script defer>
+    function report() {
+        opener.postMessage({ scrollTop: document.documentElement.scrollTop }, "*");
+    }
+
+    window.addEventListener('message', report);
+    setTimeout(report, 10);
+</script>
+</html>
