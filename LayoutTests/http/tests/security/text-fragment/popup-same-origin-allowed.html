@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that text fragment works in same-origin window.open() popup.");
+        jsTestIsAsync = true;
+
+        async function waitNavigationComplete() {
+            return new Promise((resolve) => addEventListener('message', ({ data }) => resolve(data)));
+        }
+
+        async function runTest() {
+            // Open popup to same-origin page with text fragment.
+            var popup = window.open("/security/resources/page-with-text.html#:~:text=SecretText");
+            if (!popup) {
+                testFailed("Failed to open popup");
+                finishJSTest();
+                return;
+            }
+
+            const { scrollTop } = await waitNavigationComplete();
+
+            // Check if text fragment was activated by checking scroll position.
+            if (scrollTop > 0)
+                testPassed("Text fragment correctly activated in same-origin popup (scrollTop > 0)");
+            else
+                testFailed("Text fragment was blocked in same-origin popup (unexpected)");
+
+            popup.close();
+            finishJSTest();
+        }
+
+        runTest();
+    </script>
+</body>
+</html>

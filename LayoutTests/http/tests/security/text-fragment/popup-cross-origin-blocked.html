@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests that text fragment is blocked in cross-origin window.open() popup.");
+        jsTestIsAsync = true;
+
+        async function sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function getScrollTop() {
+            return new Promise((resolve) => addEventListener('message', ({ data }) => resolve(data.scrollTop)));
+        }
+
+        async function runTest() {
+            const BaseURL = "http://localhost:8000/security/resources/page-with-text.html";
+
+            const popup = window.open("");
+            if (!popup) {
+                testFailed("Failed to open popup");
+                finishJSTest();
+                return;
+            }
+
+            // Initially navigate to cross-origin url.
+            popup.location = BaseURL;
+            let scrollTop = await getScrollTop();
+
+            if (scrollTop !== 0) {
+                testFailed("Initial scroll position must be 0 - page scrolled to: " + scrollTop);
+                popup.close();
+                finishJSTest();
+                return;
+            }
+
+            // Navigate to same-document text fragment synchronously.
+            popup.location = BaseURL + "#:~:text=SecretText";
+            popup.postMessage('ping', '*');
+
+            scrollTop = await getScrollTop();
+            if (scrollTop === 0)
+                testPassed("Text fragment correctly blocked in cross-origin popup (no scroll)");
+            else
+                testFailed("Text fragment was NOT blocked - page scrolled to: " + scrollTop);
+
+            popup.close();
+            finishJSTest();
+        }
+
+        runTest();
+    </script>
+</body>
+</html>
