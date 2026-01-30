@@ -37,6 +37,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <WebCore/UndoManager.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -185,6 +186,11 @@ inline Ref<DocumentSyncData> Document::syncData()
 RefPtr<Document> FrameSelection::protectedDocument() const
 {
     return m_document.get();
+}
+
+inline AtomString dataURLCloneID(const String& dataURLKey, const AtomString& originalID)
+{
+    return makeAtomString("__datauri_"_s, String::number(StringHash::hash(dataURLKey)), "_"_s, originalID);
 }
 
 } // namespace WebCore

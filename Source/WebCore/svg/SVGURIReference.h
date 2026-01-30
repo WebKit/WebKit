@@ -62,7 +62,10 @@ public:
 
         // If the URI matches our documents URL, we're dealing with a local reference.
         URL url = document.completeURL(uri);
-        ASSERT(!url.protocolIsData());
+
+        if (url.protocolIsData())
+            return false;
+
         return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 

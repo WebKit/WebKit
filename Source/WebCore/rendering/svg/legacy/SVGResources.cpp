@@ -20,6 +20,8 @@
 #include "config.h"
 #include "SVGResources.h"
 
+#include "ContainerNodeInlines.h"
+#include "DocumentInlines.h"
 #include "FilterOperation.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
 #include "LegacyRenderSVGResourceFilterInlines.h"
@@ -190,7 +192,34 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
     if (!paintURL)
         return nullptr;
 
-    id = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, treeScope.protectedDocumentScope());
+    Ref document = treeScope.documentScope();
+
+    if (paintURL->resolved.protocolIsData()) {
+        auto result = SVGURIReference::targetElementFromIRIString(*paintURL, treeScope);
+
+        String dataURIKey = paintURL->resolved.stringWithoutFragmentIdentifier();
+        AtomString cloneID = dataURLCloneID(dataURIKey, result.identifier);
+
+        if (RefPtr existingClone = dynamicDowncast<SVGElement>(document->getElementById(cloneID))) {
+            if (auto* renderer = dynamicDowncast<LegacyRenderSVGResourceContainer>(existingClone->renderer())) {
+                RenderSVGResourceType resourceType = renderer->resourceType();
+                if (resourceType == PatternResourceType || resourceType == LinearGradientResourceType || resourceType == RadialGradientResourceType)
+                    return renderer;
+            }
+
+            hasPendingResource = true;
+            id = cloneID;
+            return nullptr;
+        }
+
+        if (!result.identifier.isEmpty()) {
+            hasPendingResource = true;
+            id = cloneID;
+        }
+        return nullptr;
+    }
+
+    id = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, document);
     CheckedPtr container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
         hasPendingResource = true;

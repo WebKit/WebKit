@@ -76,6 +76,7 @@
 #include "DOMCSSPaintWorklet.h"
 #include "DOMImplementation.h"
 #include "DOMTimer.h"
+#include "DataURLDecoder.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
@@ -219,6 +220,7 @@
 #include "PageSwapEvent.h"
 #include "PageTransitionEvent.h"
 #include "PaintWorkletGlobalScope.h"
+#include "ParserContentPolicy.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
 #include "PingLoader.h"
@@ -8250,6 +8252,90 @@ SVGDocumentExtensions& Document::svgExtensions()
 CheckedRef<SVGDocumentExtensions> Document::checkedSVGExtensions()
 {
     return svgExtensions();
+}
+
+RefPtr<SVGDocument> Document::svgDocumentFromDataURL(const URL& url)
+{
+    ASSERT(url.protocolIsData());
+
+    String dataURL = url.stringWithoutFragmentIdentifier();
+
+    auto it = m_dataURLSVGDocuments.find(dataURL);
+    if (it != m_dataURLSVGDocuments.end())
+        return it->value;
+
+    if (!ScriptDisallowedScope::InMainThread::isScriptAllowed()) {
+        eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, url = url.isolatedCopy()] {
+            if (RefPtr document = weakThis.get()) {
+                if (RefPtr svgDoc = document->svgDocumentFromDataURL(url))
+                    document->clonePaintServersFromDataURLDocument(*svgDoc, url);
+            }
+        });
+        return nullptr;
+    }
+
+    auto result = DataURLDecoder::decode(url);
+    if (!result)
+        return nullptr;
+
+    if (!result->mimeType.startsWith("image/svg+xml"_s))
+        return nullptr;
+
+    Ref svgDoc = SVGDocument::create(nullptr, m_settings.copyRef(), url);
+
+    Ref decoder = TextResourceDecoder::create("application/xml"_s);
+    if (!result->charset.isEmpty())
+        decoder->setEncoding(result->charset, TextResourceDecoder::EncodingFromHTTPHeader);
+    String content = decoder->decodeAndFlush(result->data.span());
+
+
+    svgDoc->setParserContentPolicy({ ParserContentPolicy::AllowDeclarativeShadowRoots });
+    Ref<DocumentParser> parser = XMLDocumentParser::create(svgDoc, XMLDocumentParser::IsInFrameView::No, svgDoc->parserContentPolicy());
+    parser->append(content.releaseImpl());
+    parser->finish();
+    parser->detach();
+
+    m_dataURLSVGDocuments.set(dataURL, svgDoc.ptr());
+    return svgDoc;
+}
+
+void Document::clonePaintServersFromDataURLDocument(SVGDocument& svgDoc, const URL& dataURL)
+{
+    RefPtr docElement = documentElement();
+    if (!docElement)
+        return;
+
+    RefPtr<ContainerNode> targetContainer = docElement;
+
+    String dataURLKey = dataURL.stringWithoutFragmentIdentifier();
+
+    RefPtr svgDocElement = svgDoc.documentElement();
+    if (!svgDocElement)
+        return;
+
+    auto clonePaintServer = [&](SVGElement& element) {
+        auto originalID = element.getIdAttribute();
+        if (originalID.isEmpty())
+            return;
+
+        AtomString cloneID = dataURLCloneID(dataURLKey, originalID);
+
+        if (getElementById(cloneID))
+            return;
+
+        Ref clone = downcast<SVGElement>(element.cloneElementWithChildren(*this, nullptr));
+        clone->setAttributeWithoutSynchronization(HTMLNames::idAttr, cloneID);
+
+        ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *targetContainer };
+        targetContainer->appendChild(clone);
+    };
+
+    for (auto& element : descendantsOfType<SVGElement>(*svgDocElement)) {
+        if (element.hasTagName(SVGNames::linearGradientTag)
+            || element.hasTagName(SVGNames::radialGradientTag)
+            || element.hasTagName(SVGNames::patternTag))
+            clonePaintServer(element);
+    }
 }
 
 bool Document::hasSVGRootNode() const

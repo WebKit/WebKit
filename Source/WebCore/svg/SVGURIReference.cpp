@@ -24,6 +24,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "SVGDocument.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGUseElement.h"
@@ -76,6 +77,10 @@ AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, c
 
     URL base = URL(document.baseURL(), url.left(start));
     String fragmentIdentifier = url.substring(start);
+
+    if (base.protocolIsData())
+        return StringView(fragmentIdentifier).substring(1).toAtomString();
+
     URL urlWithFragment(base, fragmentIdentifier);
     if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
         return StringView(fragmentIdentifier).substring(1).toAtomString();
@@ -117,9 +122,9 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
     }
 
     if (url.protocolIsData()) {
-        // FIXME: We need to load the data url in a Document to be able to get the target element.
-        if (!equalIgnoringFragmentIdentifier(url, document->url()))
-            return { nullptr, WTF::move(id) };
+        if (RefPtr svgDoc = document->svgDocumentFromDataURL(url))
+            return { svgDoc->getElementById(id), WTF::move(id) };
+        return { nullptr, WTF::move(id) };
     }
 
     // Exit early if the referenced url is external, and we have no externalDocument given.

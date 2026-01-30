@@ -231,6 +231,7 @@ class RequestAnimationFrameCallback;
 class ResizeObserver;
 class ResourceMonitor;
 class FrameMemoryMonitor;
+class SVGDocument;
 class SVGDocumentExtensions;
 class SVGElement;
 class SVGSVGElement;
@@ -1429,6 +1430,9 @@ public:
     WEBCORE_EXPORT SVGDocumentExtensions& svgExtensions();
     WEBCORE_EXPORT CheckedRef<SVGDocumentExtensions> checkedSVGExtensions();
 
+    RefPtr<SVGDocument> svgDocumentFromDataURL(const URL&);
+    void clonePaintServersFromDataURLDocument(SVGDocument&, const URL&);
+
     void initSecurityContext();
     void initContentSecurityPolicy();
 
@@ -2418,6 +2422,7 @@ private:
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
+    HashMap<String, RefPtr<SVGDocument>> m_dataURLSVGDocuments;
 
     // Collection of canvas contexts that need periodic work in "PrepareCanvasesForDisplayOrFlush" phase of
     // render update. Hold canvases via rendering context, since there is no common base class that
