@@ -2962,7 +2962,8 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpUntyped, JSObject*, (JSGlobalObject* 
     };
 
     JSGlobalObject* regExpGlobalObject = structure->globalObject();
-    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpGlobalObject->regExpConstructor()));
+    JSObject* regExpConstructor = regExpGlobalObject->regExpConstructor();
+    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpConstructor, regExpConstructor));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject* globalObject, Structure* structure, JSString* content, JSString* flags))
