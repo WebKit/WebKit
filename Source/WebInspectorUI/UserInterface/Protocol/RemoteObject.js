@@ -38,11 +38,6 @@ WI.RemoteObject = class RemoteObject
         console.assert(!target || target instanceof WI.Target);
 
         this._target = target || WI.mainTarget;
-        if (this._target.type === WI.TargetType.Frame) {
-            // FIXME: <https://webkit.org/b/298909> Add Debugger support for FrameTarget.
-            // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-            this._target = WI.assumingMainTarget();
-        }
         this._type = type;
         this._subtype = subtype;
 

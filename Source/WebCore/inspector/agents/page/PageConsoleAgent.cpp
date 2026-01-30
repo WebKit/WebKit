@@ -30,18 +30,15 @@
  */
 
 #include "config.h"
-#include "FrameConsoleAgent.h"
+#include "PageConsoleAgent.h"
 
 #include "CommandLineAPIHost.h"
-#include "Frame.h"
-#include "FrameInlines.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "Node.h"
-#include "WebConsoleAgent.h"
+#include "Page.h"
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -50,17 +47,17 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameConsoleAgent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageConsoleAgent);
 
-FrameConsoleAgent::FrameConsoleAgent(FrameAgentContext& context)
+PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
     : WebConsoleAgent(context)
-    , m_inspectedFrame(context.inspectedFrame)
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
-FrameConsoleAgent::~FrameConsoleAgent() = default;
+PageConsoleAgent::~PageConsoleAgent() = default;
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>> FrameConsoleAgent::getLoggingChannels()
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>> PageConsoleAgent::getLoggingChannels()
 {
     auto channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
 
@@ -112,24 +109,19 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Consol
     return channels;
 }
 
-Inspector::Protocol::ErrorStringOr<void> FrameConsoleAgent::setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource source, Inspector::Protocol::Console::ChannelLevel level)
+Inspector::Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource source, Inspector::Protocol::Console::ChannelLevel level)
 {
-    Ref frame = m_inspectedFrame.get();
-    RefPtr page = frame->page();
-    if (!page)
-        return makeUnexpected("No page found"_s);
-
     switch (level) {
     case Inspector::Protocol::Console::ChannelLevel::Off:
-        page->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
+        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
         return { };
 
     case Inspector::Protocol::Console::ChannelLevel::Basic:
-        page->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
+        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
         return { };
 
     case Inspector::Protocol::Console::ChannelLevel::Verbose:
-        page->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
+        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
         return { };
     }
 

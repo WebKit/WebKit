@@ -24,11 +24,10 @@ function triggerDeeplyNestedAsyncMicrotask() {
     return new Promise((resolve, reject) => {
         function recursiveMicrotask(iteration = 0) {
             queueMicrotask(() => {
-                const maxIterations = 100_000;
-                if (iteration === maxIterations) {
+                if (iteration !== 0 && (iteration % 1_000_000) == 0) {
                     try {
                         // Throwing will log the error to the console.
-                        throw `Reached maximum iterations`;
+                        throw "Reached 1 million iterations";
                     } catch (error) {
                         console.error(error);
                         resolve();
@@ -113,7 +112,7 @@ function test()
             // Clear the console to release ownership of the logged stack trace.
             InspectorTest.log("Clearing console.")
             let consoleClearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
-            WI.mainFrameTarget.ConsoleAgent.clearMessages();
+            ConsoleAgent.clearMessages();
             await consoleClearedEvent;
 
             InspectorTest.log("Running GC.")

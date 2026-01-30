@@ -30,7 +30,7 @@
                 ]);
                 let {message} = messageAddedEvent.data;
                 InspectorTest.expectEqual(message.messageText, "hello", "message text should be 'hello'");
-                InspectorTest.expectEqual(message.target, WI.mainFrameTarget, "message target should be the main frame");
+                InspectorTest.expectEqual(message.target, WI.mainTarget, "message target should be the main page");
             }
         });
 
@@ -44,7 +44,7 @@
                 ]);
                 let {message} = messageAddedEvent.data;
                 InspectorTest.expectEqual(message.messageText, "hello", "message text should be 'hello'");
-                InspectorTest.expectEqual(message.target, WI.mainFrameTarget, "message target should be the main frame");
+                InspectorTest.expectEqual(message.target, WI.mainTarget, "message target should be the main page");
             }
         });
 
