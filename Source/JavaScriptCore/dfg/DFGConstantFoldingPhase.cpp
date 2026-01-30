@@ -1073,9 +1073,9 @@ private:
                     if (structureSet.isFinite() && structureSet.size() == 1) {
                         RegisteredStructure structure = structureSet.onlyStructure();
                         if (auto* rareData = structure->rareDataConcurrently()) {
-                            if (auto* immutableButterfly = rareData->cachedPropertyNamesConcurrently(node->cachedPropertyNamesKind())) {
+                            if (auto* cellButterfly = rareData->cachedPropertyNamesConcurrently(node->cachedPropertyNamesKind())) {
                                 if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-                                    node->convertToNewArrayBuffer(m_graph.freeze(immutableButterfly));
+                                    node->convertToNewArrayBuffer(m_graph.freeze(cellButterfly));
                                     changed = true;
                                     break;
                                 }
@@ -1093,9 +1093,9 @@ private:
                         Edge use = m_graph.varArgChild(node, 0);
                         if (use->op() == PhantomSpread) {
                             if (use->child1()->op() == PhantomNewArrayBuffer) {
-                                auto* immutableButterfly = use->child1()->castOperand<JSCellButterfly*>();
-                                if (hasContiguous(immutableButterfly->indexingType())) {
-                                    node->convertToNewArrayBuffer(m_graph.freeze(immutableButterfly));
+                                auto* cellButterfly = use->child1()->castOperand<JSCellButterfly*>();
+                                if (hasContiguous(cellButterfly->indexingType())) {
+                                    node->convertToNewArrayBuffer(m_graph.freeze(cellButterfly));
                                     changed = true;
                                     break;
                                 }

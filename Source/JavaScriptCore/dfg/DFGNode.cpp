@@ -248,14 +248,14 @@ void Node::convertToLazyJSConstant(Graph& graph, LazyJSValue value)
     children.reset();
 }
 
-void Node::convertToNewArrayBuffer(FrozenValue* immutableButterfly)
+void Node::convertToNewArrayBuffer(FrozenValue* cellButterfly)
 {
     setOpAndDefaultFlags(NewArrayBuffer);
     NewArrayBufferData data { };
-    data.indexingMode = immutableButterfly->cast<JSCellButterfly*>()->indexingMode();
-    data.vectorLengthHint = immutableButterfly->cast<JSCellButterfly*>()->toButterfly()->vectorLength();
+    data.indexingMode = cellButterfly->cast<JSCellButterfly*>()->indexingMode();
+    data.vectorLengthHint = cellButterfly->cast<JSCellButterfly*>()->toButterfly()->vectorLength();
     children.reset();
-    m_opInfo = immutableButterfly;
+    m_opInfo = cellButterfly;
     m_opInfo2 = data.asQuadWord;
 }
 

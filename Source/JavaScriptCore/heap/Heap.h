@@ -601,7 +601,7 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    UncheckedKeyHashMap<JSCellButterfly*, JSString*> immutableButterflyToStringCache;
+    UncheckedKeyHashMap<JSCellButterfly*, JSString*> cellButterflyToStringCache;
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
@@ -1010,7 +1010,7 @@ private:
 public:
     // HeapCellTypes
     HeapCellType auxiliaryHeapCellType;
-    HeapCellType immutableButterflyHeapCellType;
+    HeapCellType cellButterflyHeapCellType;
     HeapCellType cellHeapCellType;
     HeapCellType destructibleCellHeapCellType;
     IsoHeapCellType apiGlobalObjectHeapCellType;
@@ -1078,7 +1078,7 @@ public:
     // Subspaces
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
     CompleteSubspace auxiliarySpace; // Butterflies, arrays of JSValues, etc go here.
-    CompleteSubspace immutableButterflyAuxiliarySpace; // JSCellButterfly goes here.
+    CompleteSubspace cellButterflyAuxiliarySpace; // JSCellButterfly goes here.
 
     // We make cross-cutting assumptions about typed arrays being in the primitive Gigacage and butterflies
     // being in the JSValue gigacage. For some types, it's super obvious where they should go, and so we

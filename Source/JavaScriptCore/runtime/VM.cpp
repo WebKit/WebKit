@@ -338,10 +338,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     symbolTableStructure.setWithoutWriteBarrier(SymbolTable::createStructure(*this, nullptr, jsNull()));
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
+    rawCellButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
     Structure* copyOnWriteArrayWithContiguousStructure = JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithContiguous).setWithoutWriteBarrier(copyOnWriteArrayWithContiguousStructure);
+    rawCellButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
+    rawCellButterflyStructure(CopyOnWriteArrayWithContiguous).setWithoutWriteBarrier(copyOnWriteArrayWithContiguousStructure);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // This is only for JSCellButterfly filled with atom strings.

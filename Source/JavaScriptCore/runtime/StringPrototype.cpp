@@ -766,9 +766,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     }
 
     if (limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime()) [[likely]] {
-        if (auto* immutableButterfly = vm.stringSplitCache.get(input, separator)) {
+        if (auto* cellButterfly = vm.stringSplitCache.get(input, separator)) {
             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
-            return JSValue::encode(JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly()));
+            return JSValue::encode(JSArray::createWithButterfly(vm, nullptr, arrayStructure, cellButterfly->toButterfly()));
         }
     }
 

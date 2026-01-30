@@ -687,15 +687,15 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
     }
 
     case PhantomNewArrayBuffer: {
-        JSCellButterfly* immutableButterfly = nullptr;
+        JSCellButterfly* cellButterfly = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == NewArrayBufferPLoc) {
-                immutableButterfly = jsCast<JSCellButterfly*>(JSValue::decode(values[i]));
+                cellButterfly = jsCast<JSCellButterfly*>(JSValue::decode(values[i]));
                 break;
             }
         }
-        RELEASE_ASSERT(immutableButterfly);
+        RELEASE_ASSERT(cellButterfly);
 
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
@@ -704,8 +704,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         if (!currentInstruction->is<OpNewArrayBuffer>()) {
             // This case can happen if Object.keys, an OpCall, and others is first converted into a NewArrayBuffer which is then converted into a PhantomNewArrayBuffer.
             // There is no need to update the array allocation profile in that case.
-            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(immutableButterfly->indexingMode());
-            return CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+            Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(cellButterfly->indexingMode());
+            return CommonSlowPaths::allocateNewArrayBuffer(vm, structure, cellButterfly);
         }
         auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
         ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).m_arrayAllocationProfile;
@@ -716,21 +716,21 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         ASSERT(isCopyOnWrite(indexingMode));
         ASSERT(!structure->outOfLineCapacity());
 
-        if (immutableButterfly->indexingMode() != indexingMode) [[unlikely]] {
-            auto* newButterfly = JSCellButterfly::create(vm, indexingMode, immutableButterfly->length());
-            for (unsigned i = 0; i < immutableButterfly->length(); ++i)
-                newButterfly->setIndex(vm, i, immutableButterfly->get(i));
-            immutableButterfly = newButterfly;
+        if (cellButterfly->indexingMode() != indexingMode) [[unlikely]] {
+            auto* newButterfly = JSCellButterfly::create(vm, indexingMode, cellButterfly->length());
+            for (unsigned i = 0; i < cellButterfly->length(); ++i)
+                newButterfly->setIndex(vm, i, cellButterfly->get(i));
+            cellButterfly = newButterfly;
 
             // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
             // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
             // a compilation thread.
             WTF::storeStoreFence();
-            codeBlock->constantRegister(newArrayBuffer.m_immutableButterfly).set(vm, codeBlock, immutableButterfly);
+            codeBlock->constantRegister(newArrayBuffer.m_cellButterfly).set(vm, codeBlock, cellButterfly);
             WTF::storeStoreFence();
         }
 
-        JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+        JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, cellButterfly);
         ArrayAllocationProfile::updateLastAllocationFor(profile, result);
         return result;
     }
@@ -748,8 +748,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value))
-                    checkedArraySize += immutableButterfly->publicLength();
+                if (JSCellButterfly* cellButterfly = jsDynamicCast<JSCellButterfly*>(value))
+                    checkedArraySize += cellButterfly->publicLength();
                 else
                     checkedArraySize += 1;
             }
@@ -790,10 +790,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value)) {
-                for (unsigned i = 0; i < immutableButterfly->publicLength(); i++) {
-                    ASSERT(immutableButterfly->get(i));
-                    result->putDirectIndex(globalObject, arrayIndex, immutableButterfly->get(i));
+            if (JSCellButterfly* cellButterfly = jsDynamicCast<JSCellButterfly*>(value)) {
+                for (unsigned i = 0; i < cellButterfly->publicLength(); i++) {
+                    ASSERT(cellButterfly->get(i));
+                    result->putDirectIndex(globalObject, arrayIndex, cellButterfly->get(i));
                     ++arrayIndex;
                 }
             } else {

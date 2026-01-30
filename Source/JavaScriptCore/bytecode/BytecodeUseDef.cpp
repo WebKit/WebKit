@@ -224,7 +224,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpCreateScopedArguments, scope)
     USES(OpCreateRest, arraySize)
     USES(OpGetFromArguments, arguments)
-    USES(OpNewArrayBuffer, immutableButterfly)
+    USES(OpNewArrayBuffer, cellButterfly)
 
     USES(OpGetByVal, base, property)
     USES(OpGetPrivateName, base, property)

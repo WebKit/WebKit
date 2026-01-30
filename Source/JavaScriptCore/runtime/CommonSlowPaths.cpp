@@ -1383,8 +1383,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
 {
     BEGIN();
     auto bytecode = pc->as<OpNewArrayBuffer>();
-    ASSERT(bytecode.m_immutableButterfly.isConstant());
-    JSCellButterfly* immutableButterfly = std::bit_cast<JSCellButterfly*>(GET_C(bytecode.m_immutableButterfly).jsValue().asCell());
+    ASSERT(bytecode.m_cellButterfly.isConstant());
+    JSCellButterfly* cellButterfly = std::bit_cast<JSCellButterfly*>(GET_C(bytecode.m_cellButterfly).jsValue().asCell());
     auto& profile = bytecode.metadata(codeBlock).m_arrayAllocationProfile;
 
     IndexingType indexingMode = profile.selectIndexingType();
@@ -1392,21 +1392,21 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
     ASSERT(isCopyOnWrite(indexingMode));
     ASSERT(!structure->outOfLineCapacity());
 
-    if (immutableButterfly->indexingMode() != indexingMode) [[unlikely]] {
-        auto* newButterfly = JSCellButterfly::create(vm, indexingMode, immutableButterfly->length());
-        for (unsigned i = 0; i < immutableButterfly->length(); ++i)
-            newButterfly->setIndex(vm, i, immutableButterfly->get(i));
-        immutableButterfly = newButterfly;
+    if (cellButterfly->indexingMode() != indexingMode) [[unlikely]] {
+        auto* newButterfly = JSCellButterfly::create(vm, indexingMode, cellButterfly->length());
+        for (unsigned i = 0; i < cellButterfly->length(); ++i)
+            newButterfly->setIndex(vm, i, cellButterfly->get(i));
+        cellButterfly = newButterfly;
 
         // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
         // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
         // a compilation thread.
         WTF::storeStoreFence();
-        codeBlock->constantRegister(bytecode.m_immutableButterfly).set(vm, codeBlock, immutableButterfly);
+        codeBlock->constantRegister(bytecode.m_cellButterfly).set(vm, codeBlock, cellButterfly);
         WTF::storeStoreFence();
     }
 
-    JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+    JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, cellButterfly);
     ASSERT(isCopyOnWrite(result->indexingMode()) || globalObject->isHavingABadTime());
     ArrayAllocationProfile::updateLastAllocationFor(&profile, result);
     RETURN(result);

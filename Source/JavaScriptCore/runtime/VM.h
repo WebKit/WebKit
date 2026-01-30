@@ -375,7 +375,7 @@ public:
     };
     JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
-    Structure* cellButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
+    Structure* cellButterflyStructure(IndexingType indexingType) { return rawCellButterflyStructure(indexingType).get(); }
 
     // Keep super frequently accessed fields top in VM.
     unsigned disallowVMEntryCount { 0 };
@@ -448,7 +448,7 @@ private:
         concurrentEntryScopeServices().remove(service);
     }
 
-    WriteBarrier<Structure>& rawImmutableButterflyStructure(IndexingType indexingType) { return cellButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes]; }
+    WriteBarrier<Structure>& rawCellButterflyStructure(IndexingType indexingType) { return cellButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes]; }
 
 public:
     Heap heap;
@@ -465,7 +465,7 @@ public:
     
     ALWAYS_INLINE CompleteSubspace& primitiveGigacageAuxiliarySpace() { return heap.primitiveGigacageAuxiliarySpace; }
     ALWAYS_INLINE CompleteSubspace& auxiliarySpace() { return heap.auxiliarySpace; }
-    ALWAYS_INLINE CompleteSubspace& immutableButterflyAuxiliarySpace() { return heap.immutableButterflyAuxiliarySpace; }
+    ALWAYS_INLINE CompleteSubspace& cellButterflyAuxiliarySpace() { return heap.cellButterflyAuxiliarySpace; }
     ALWAYS_INLINE CompleteSubspace& gigacageAuxiliarySpace(Gigacage::Kind kind) { return heap.gigacageAuxiliarySpace(kind); }
     ALWAYS_INLINE CompleteSubspace& cellSpace() { return heap.cellSpace; }
     ALWAYS_INLINE CompleteSubspace& destructibleObjectSpace() { return heap.destructibleObjectSpace; }
