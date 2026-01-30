@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<title>View transitions: content inset</title>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+.box {
+  color: red;
+  background: lightblue;
+  width: 100px;
+  height: 100px;
+  contain: paint;
+  position: absolute;
+}
+#e1 { top: 20px; left: 20px; view-transition-name: e1; }
+/* We're verifying what we capture, so just display the old capture for 5 minutes.  */
+html::view-transition-group(*) { animation-duration: 300s; }
+html::view-transition-new(*) { animation: unset; opacity: 1; }
+html::view-transition-old(*) { animation: unset; opacity: 0; }
+/* hide the root so we show transition background to ensure we're in a transition */
+html::view-transition-group(root) { animation: unset; opacity: 0; }
+html::view-transition { background: lightpink; }
+</style>
+<div id=e1 class=box></div>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+async function runTest() {
+
+  await UIHelper.setObscuredInsets(100, 0, 0, 0);
+  await UIHelper.renderingUpdate();
+
+  await document.startViewTransition(async () => { 
+      await UIHelper.setObscuredInsets(0, 0, 0, 0);
+  }).ready;
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+

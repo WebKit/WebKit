@@ -127,7 +127,7 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
     viewTransition->suspendIfNeeded();
 
     viewTransition->m_namedElements.swap(inboundViewTransitionParams->namedElements);
-    viewTransition->m_initialLargeViewportSize = inboundViewTransitionParams->initialLargeViewportSize;
+    viewTransition->m_initialSnapshotContainingBlockSize = inboundViewTransitionParams->initialSnapshotContainingBlockSize;
     viewTransition->m_initialPageZoom = inboundViewTransitionParams->initialPageZoom;
 
     document.setActiveViewTransition(RefPtr { viewTransition });
@@ -546,7 +546,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
 
     if (CheckedPtr view = document()->renderView()) {
         Ref frame = CheckedRef { view->frameView() }->frame();
-        m_initialLargeViewportSize = view->sizeForCSSLargeViewportUnits();
+        m_initialSnapshotContainingBlockSize = containingBlockRect().size();
         m_initialPageZoom = frame->pageZoomFactor() * frame->frameScaleFactor();
 
         auto result = forEachRendererInPaintOrder([&](RenderLayerModelObject& renderer) -> ExceptionOr<void> {
@@ -743,7 +743,7 @@ ExceptionOr<void> ViewTransition::checkForViewportSizeChange()
         return Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s };
 
     Ref frame = CheckedRef { view->frameView() }->frame();
-    if (view->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize || m_initialPageZoom != (frame->pageZoomFactor() * frame->frameScaleFactor()))
+    if (containingBlockRect().size() != m_initialSnapshotContainingBlockSize || m_initialPageZoom != (frame->pageZoomFactor() * frame->frameScaleFactor()))
         return Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s };
     return { };
 }
@@ -881,8 +881,20 @@ LayoutRect ViewTransition::containingBlockRect()
     RefPtr frameView = document->view();
     if (!frameView)
         return { };
-    // FIXME: Bug 285400 - Correctly account for insets.
-    return { LayoutPoint { }, frameView->visibleContentRectIncludingScrollbars().size() };
+
+    LayoutRect result = frameView->boundsRect();
+
+    FloatBoxExtent insets;
+    if (RefPtr page = document->page()) {
+#if PLATFORM(IOS_FAMILY)
+        insets = page->obscuredInsets();
+#else
+        insets = page->obscuredContentInsets();
+#endif
+    }
+
+    result.moveBy({ LayoutUnit::fromFloatRound(-insets.left()), LayoutUnit::fromFloatRound(-insets.top()) });
+    return LayoutRect(encloseRectToDevicePixels(result, document->deviceScaleFactor()));
 }
 
 
@@ -955,6 +967,9 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 
         auto mapped = transform.mapRect(output.overflowRect);
         output.intersectsViewport = mapped.intersects(frameView->boundsRect());
+
+        offset = -toFloatSize(containingBlockRect().location());
+        transform.translateRight(offset.width(), offset.height());
 
         // Apply the inverse of what will be added by the default value of 'transform-origin',
         // since the computed transform has already included it.
@@ -1120,7 +1135,7 @@ UniqueRef<ViewTransitionParams> ViewTransition::takeViewTransitionParams()
 {
     auto params = makeUniqueRef<ViewTransitionParams>();
     params->namedElements.swap(m_namedElements);
-    params->initialLargeViewportSize = m_initialLargeViewportSize;
+    params->initialSnapshotContainingBlockSize = m_initialSnapshotContainingBlockSize;
     params->initialPageZoom = m_initialPageZoom;
 
     return params;
