@@ -1276,7 +1276,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<FailureAction failureAction>
 bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::growImpl(size_t size)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(size >= m_size);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(size >= m_size);
     if (size > capacity()) {
         bool success = expandCapacity<failureAction>(size);
         if constexpr (failureAction == FailureAction::Report) {
