@@ -86,6 +86,9 @@ struct DDFloat4x4 {
             && m30 == a.m30 && m31 == a.m31 && m32 == a.m32 && m33 == a.m33;
     }
 };
+#if PLATFORM(COCOA)
+static_assert(sizeof(DDFloat4x4) == sizeof(simd_float4x4), "Wrapper type assumes it is the same size and alignment as the underlying matrix type");
+#endif
 
 #if PLATFORM(COCOA)
 struct DDFloat3x3 {
@@ -113,6 +116,7 @@ struct DDFloat3x3 {
     {
     }
 };
+static_assert(sizeof(DDFloat3x3) == sizeof(simd_float3x3), "Wrapper type assumes it is the same size and alignment as the underlying matrix type");
 #endif
 
 }

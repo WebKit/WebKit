@@ -57,6 +57,8 @@ struct DDFloat3 {
     {
     }
 };
-
+#if PLATFORM(COCOA)
+static_assert(sizeof(DDFloat3) == sizeof(simd_float3), "Wrapper type assumes it is the same size and alignment as the underlying vector type");
+#endif
 }
 
