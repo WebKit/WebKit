@@ -50,6 +50,10 @@ struct CoreIPCPKPaymentMerchantSessionData {
     RetainPtr<NSData> ampEnrollmentPinning;
     RetainPtr<NSString> operationalAnalyticsIdentifier;
     std::optional<Vector<RetainPtr<NSString>>> signedFields;
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    std::optional<bool> isDelegatedSession;
+    RetainPtr<NSString> delegateDisplayName;
+#endif
 };
 
 class CoreIPCPKPaymentMerchantSession {
