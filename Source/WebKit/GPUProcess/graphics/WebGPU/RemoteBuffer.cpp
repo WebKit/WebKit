@@ -62,15 +62,22 @@ void RemoteBuffer::stopListeningForIPC()
 
 void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
 {
-    m_isMapped = true;
-    m_mapModeFlags = mapModeFlags;
+    if (m_pendingMap) {
+        callback(false);
+        return;
+    }
 
-    protectedBacking()->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTF::move(callback)] (bool success) mutable {
+    m_pendingMap = true;
+
+    protectedBacking()->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTF::move(callback), mapModeFlags] (bool success) mutable {
+        protectedThis->m_pendingMap = false;
         if (!success) {
             callback(false);
             return;
         }
 
+        protectedThis->m_isMapped = true;
+        protectedThis->m_mapModeFlags = mapModeFlags;
         callback(true);
     });
 }
@@ -93,7 +100,7 @@ void RemoteBuffer::unmap()
 
 void RemoteBuffer::copyWithCopy(Vector<uint8_t>&& data, uint64_t offset)
 {
-    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         return;
 
     auto buffer = protectedBacking()->getBufferContents();
@@ -110,9 +117,14 @@ void RemoteBuffer::copyWithCopy(Vector<uint8_t>&& data, uint64_t offset)
 
 void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle, uint64_t offset, CompletionHandler<void(bool)>&& completionHandler)
 {
+    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write)) {
+        completionHandler(false);
+        return;
+    }
+
     auto sharedData = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto data = sharedData ? sharedData->span() : std::span<const uint8_t> { };
-    if (!m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write) || data.size() <= WebGPU::maxCrossProcessResourceCopySize) {
+    if (data.size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }

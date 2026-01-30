@@ -106,6 +106,7 @@ private:
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
     bool m_isMapped { false };
+    bool m_pendingMap { false };
     WebCore::WebGPU::MapModeFlags m_mapModeFlags;
 };
 
