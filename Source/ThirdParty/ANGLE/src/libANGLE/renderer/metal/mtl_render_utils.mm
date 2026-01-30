@@ -657,28 +657,28 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
 // Overloaded functions to be used with both compute and render command encoder.
 ANGLE_INLINE void SetComputeOrVertexBuffer(RenderCommandEncoder *encoder,
                                            const BufferRef &buffer,
-                                           uint32_t offset,
+                                           size_t offset,
                                            uint32_t index)
 {
     encoder->setBuffer(gl::ShaderType::Vertex, buffer, offset, index);
 }
 ANGLE_INLINE void SetComputeOrVertexBufferForWrite(RenderCommandEncoder *encoder,
                                                    const BufferRef &buffer,
-                                                   uint32_t offset,
+                                                   size_t offset,
                                                    uint32_t index)
 {
     encoder->setBufferForWrite(gl::ShaderType::Vertex, buffer, offset, index);
 }
 ANGLE_INLINE void SetComputeOrVertexBuffer(ComputeCommandEncoder *encoder,
                                            const BufferRef &buffer,
-                                           uint32_t offset,
+                                           size_t offset,
                                            uint32_t index)
 {
     encoder->setBuffer(buffer, offset, index);
 }
 ANGLE_INLINE void SetComputeOrVertexBufferForWrite(ComputeCommandEncoder *encoder,
                                                    const BufferRef &buffer,
-                                                   uint32_t offset,
+                                                   size_t offset,
                                                    uint32_t index)
 {
     encoder->setBufferForWrite(buffer, offset, index);

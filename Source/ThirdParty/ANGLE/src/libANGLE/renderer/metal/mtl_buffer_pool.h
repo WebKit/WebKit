@@ -92,18 +92,17 @@ class BufferPool
     angle::Result allocateNewBuffer(ContextMtl *contextMtl);
     void destroyBufferList(ContextMtl *contextMtl, std::deque<BufferRef> *buffers);
     angle::Result finalizePendingBuffer(ContextMtl *contextMtl);
-    size_t mInitialSize;
-    BufferRef mBuffer;
-    uint32_t mNextAllocationOffset;
-    uint32_t mLastFlushOffset;
-    size_t mSize;
-    size_t mAlignment;
 
+    BufferRef mBuffer;
     std::deque<BufferRef> mInFlightBuffers;
     std::deque<BufferRef> mBufferFreeList;
-
-    size_t mBuffersAllocated;
-    size_t mMaxBuffers;
+    size_t mInitialSize{0};
+    size_t mNextAllocationOffset{0};
+    size_t mLastFlushOffset{0};
+    size_t mSize{0};
+    size_t mAlignment{1};
+    size_t mBuffersAllocated{0};
+    size_t mMaxBuffers{0};
     bool mAlwaysAllocateNewBuffer;
 };
 
