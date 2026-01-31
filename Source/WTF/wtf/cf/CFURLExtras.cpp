@@ -35,7 +35,7 @@ namespace WTF {
 
 RetainPtr<CFDataRef> bytesAsCFData(std::span<const uint8_t> bytes)
 {
-    return adoptCF(CFDataCreate(nullptr, bytes.data(), bytes.size()));
+    return adopt(CFDataCreate(nullptr, bytes.data(), bytes.size()));
 }
 
 RetainPtr<CFDataRef> bytesAsCFData(CFURLRef url)

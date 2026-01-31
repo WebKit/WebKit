@@ -69,6 +69,15 @@ ALWAYS_INLINE CLANG_POINTER_CONVERSION OSObjectPtr<TypeName##_t> protect(TypeNam
 WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_DISPATCH_PROTECT)
 #undef WTF_DECLARE_DISPATCH_PROTECT
 
+// Dispatch adopt() functions.
+#define WTF_DECLARE_DISPATCH_ADOPT(TypeName) \
+[[nodiscard]] ALWAYS_INLINE OSObjectPtr<TypeName##_t> adopt(TypeName##_t ptr) \
+{ \
+    return adoptOSObject(ptr); \
+}
+WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_DISPATCH_ADOPT)
+#undef WTF_DECLARE_DISPATCH_ADOPT
+
 #if !__has_feature(objc_arc)
 // Template specializations for dispatch retain/release traits (non-ARC only).
 #define WTF_DECLARE_DISPATCH_OSOBJECT_RETAIN_TRAITS(TypeName) \
@@ -90,4 +99,5 @@ WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_DISPATCH_OSOBJECT_RETAIN_TRAITS)
 
 } // namespace WTF
 
+using WTF::adopt;
 using WTF::protect;

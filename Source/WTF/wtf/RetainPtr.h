@@ -147,6 +147,18 @@ public:
 
     template<typename U> friend constexpr RetainPtr<RetainPtrType<U>> adoptNS(U NS_RELEASES_ARGUMENT);
 
+#if USE(CF)
+    template<typename U>
+        requires IsCFType<U>
+    friend constexpr RetainPtr<RetainPtrType<U>> adopt(U CF_RELEASES_ARGUMENT);
+#endif
+
+#ifdef __OBJC__
+    template<typename U>
+        requires IsNSType<U>
+    friend constexpr RetainPtr<RetainPtrType<U>> adopt(U NS_RELEASES_ARGUMENT);
+#endif
+
 private:
     enum AdoptTag { Adopt };
     constexpr RetainPtr(PtrType ptr, AdoptTag) : m_ptr(ptr) { }
@@ -314,6 +326,24 @@ template<typename T> constexpr RetainPtr<RetainPtrType<T>> adoptNS(T NS_RELEASES
     return { ptr, RetainPtr<RetainPtrType<T>>::Adopt };
 }
 
+#if USE(CF)
+template<typename T>
+    requires IsCFType<T>
+constexpr RetainPtr<RetainPtrType<T>> adopt(T CF_RELEASES_ARGUMENT ptr)
+{
+    return { ptr, RetainPtr<RetainPtrType<T>>::Adopt };
+}
+#endif
+
+#ifdef __OBJC__
+template<typename T>
+    requires IsNSType<T>
+constexpr RetainPtr<RetainPtrType<T>> adopt(T NS_RELEASES_ARGUMENT ptr)
+{
+    return { ptr, RetainPtr<RetainPtrType<T>>::Adopt };
+}
+#endif
+
 template<typename T> inline RetainPtr<RetainPtrType<T>> retainPtr(T ptr)
 {
     return ptr;
@@ -402,6 +432,7 @@ ALWAYS_INLINE void lazyInitialize(const RetainPtr<T>& ptr, RetainPtr<U>&& obj)
 } // namespace WTF
 
 using WTF::RetainPtr;
+using WTF::adopt;
 using WTF::adoptCF;
 using WTF::lazyInitialize;
 using WTF::protect;

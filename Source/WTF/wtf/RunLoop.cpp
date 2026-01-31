@@ -44,7 +44,7 @@ class RunLoop::Holder {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RunLoop);
 public:
     Holder()
-        : m_runLoop(adoptRef(*new RunLoop))
+        : m_runLoop(adopt(*new RunLoop))
     {
     }
 
@@ -171,7 +171,7 @@ void RunLoop::dispatch(Function<void()>&& function)
 Ref<RunLoop::DispatchTimer> RunLoop::dispatchAfter(Seconds delay, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    Ref<DispatchTimer> timer = adoptRef(*new DispatchTimer(*this));
+    Ref<DispatchTimer> timer = adopt(*new DispatchTimer(*this));
     timer->setFunction([timer = timer.copyRef(), function = WTF::move(function)]() mutable {
         Ref<DispatchTimer> protectedTimer { WTF::move(timer) };
         function();

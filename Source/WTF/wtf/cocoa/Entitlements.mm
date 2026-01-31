@@ -32,6 +32,9 @@
 #import <wtf/darwin/XPCObjectPtr.h>
 #import <wtf/text/WTFString.h>
 
+// Declare CFTypeTrait for SecTaskRef so adopt() works with it.
+WTF_DECLARE_CF_TYPE_TRAIT(SecTask);
+
 namespace WTF {
 
 bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
@@ -40,54 +43,54 @@ bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
         return false;
     auto savedErrno = errno;
     auto string = entitlement.createCFString();
-    auto result = adoptCF(SecTaskCopyValueForEntitlement(task, string.get(), nullptr)) == kCFBooleanTrue;
+    auto result = adopt(SecTaskCopyValueForEntitlement(task, string.get(), nullptr)) == kCFBooleanTrue;
     errno = savedErrno;
     return result;
 }
 
 bool hasEntitlement(audit_token_t token, ASCIILiteral entitlement)
 {
-    return hasEntitlement(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token)).get(), entitlement);
+    return hasEntitlement(adopt(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token)).get(), entitlement);
 }
 
 bool hasEntitlement(xpc_connection_t connection, StringView entitlement)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement.utf8().data()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto value = adopt(xpc_connection_copy_entitlement_value(connection, entitlement.utf8().data()));
     return value && xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 
 bool hasEntitlement(xpc_connection_t connection, ASCIILiteral entitlement)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement.characters()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto value = adopt(xpc_connection_copy_entitlement_value(connection, entitlement.characters()));
     return value && xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 
 bool processHasEntitlement(ASCIILiteral entitlement)
 {
-    return hasEntitlement(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get(), entitlement);
+    return hasEntitlement(adopt(SecTaskCreateFromSelf(kCFAllocatorDefault)).get(), entitlement);
 }
 
 bool hasEntitlementValue(audit_token_t token, ASCIILiteral entitlement, ASCIILiteral value)
 {
-    auto secTaskForToken = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
+    auto secTaskForToken = adopt(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
     if (!secTaskForToken)
         return false;
 
     auto string = entitlement.createCFString();
-    String entitlementValue = dynamic_cf_cast<CFStringRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get());
+    String entitlementValue = dynamic_cf_cast<CFStringRef>(adopt(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get());
     return entitlementValue == value;
 }
 
 bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, ASCIILiteral value)
 {
-    auto secTaskForToken = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
+    auto secTaskForToken = adopt(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
     if (!secTaskForToken)
         return false;
 
     auto string = entitlement.createCFString();
-    RetainPtr array = adoptCF(dynamic_cf_cast<CFArrayRef>(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)));
+    RetainPtr array = adopt(dynamic_cf_cast<CFArrayRef>(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)));
     if (!array)
         return false;
 

@@ -48,7 +48,7 @@ public:
     static Ref<WorkerPool> create(ASCIILiteral name, unsigned numberOfWorkers  = WTF::numberOfProcessorCores(), Seconds timeout = Seconds::infinity())
     {
         ASSERT(numberOfWorkers >= 1);
-        return adoptRef(*new WorkerPool(name, numberOfWorkers, timeout));
+        return adopt(*new WorkerPool(name, numberOfWorkers, timeout));
     }
 
     ASCIILiteral name() const { return m_name; }

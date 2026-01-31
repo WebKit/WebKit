@@ -85,7 +85,7 @@ void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
     // FIXME: This is a false positive. rdar://160931336
-    SUPPRESS_RETAINPTR_CTOR_ADOPT lazyInitialize(m_dispatchQueue, adoptOSObject(dispatch_queue_create(name, attr)));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT lazyInitialize(m_dispatchQueue, adopt(dispatch_queue_create(name, attr)));
     dispatch_set_context(m_dispatchQueue.get(), this);
     // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
     // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.
