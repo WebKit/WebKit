@@ -37,7 +37,7 @@ namespace WebKit::PCM {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoader);
 
-void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
+void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, const ApplicationBundleIdentifierOrAuditToken&, Callback&& completionHandler)
 {
     notImplemented();
     completionHandler({ }, { });

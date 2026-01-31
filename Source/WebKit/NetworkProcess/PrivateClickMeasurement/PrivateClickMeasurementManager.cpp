@@ -58,14 +58,15 @@ constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
 
-Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
+Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier)
 {
-    return adoptRef(*new PrivateClickMeasurementManager(WTF::move(client), storageDirectory));
+    return adoptRef(*new PrivateClickMeasurementManager(WTF::move(client), storageDirectory, applicationBundleIdentifier));
 }
 
-PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
+PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier)
     : m_firePendingAttributionRequestsTimer(RunLoop::mainSingleton(), "PrivateClickMeasurementManager::FirePendingAttributionRequestsTimer"_s, this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
     , m_storageDirectory(storageDirectory)
+    , m_applicationBundleIdentifier(applicationBundleIdentifier)
     , m_client(WTF::move(client))
 {
     // We should send any pending attributions on session-start in case their
@@ -152,7 +153,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attribution = WTF::move(attribution), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, m_applicationBundleIdentifier, [weakThis = WeakPtr { *this }, attribution = WTF::move(attribution), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -201,7 +202,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(AttributionTriggerData&& 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = WeakPtr { *this }, attributionTriggerData = WTF::move(attributionTriggerData), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenPublicKeyURL), nullptr, pcmDataCarried, m_applicationBundleIdentifier, [weakThis = WeakPtr { *this }, attributionTriggerData = WTF::move(attributionTriggerData), callback = WTF::move(callback)] (auto& errorDescription, auto& jsonObject) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -271,7 +272,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click source.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request for the click source."_s);
 
-    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, measurement = WTF::move(measurement)] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, m_applicationBundleIdentifier, [weakThis = WeakPtr { *this }, measurement = WTF::move(measurement)] (auto& errorDescription, auto& jsonObject) mutable {
         WeakPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -318,7 +319,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click destination.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request for the click destination."_s);
 
-    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), attributionTriggerData.tokenSignatureJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }, sourceSite = WTF::move(sourceSite), destinationSite = WTF::move(destinationSite), attributionTriggerData = WTF::move(attributionTriggerData), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (auto& errorDescription, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTF::move(tokenSignatureURL), attributionTriggerData.tokenSignatureJSON(), pcmDataCarried, m_applicationBundleIdentifier, [weakThis = WeakPtr { *this }, sourceSite = WTF::move(sourceSite), destinationSite = WTF::move(destinationSite), attributionTriggerData = WTF::move(attributionTriggerData), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy()] (auto& errorDescription, auto& jsonObject) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -594,7 +595,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    PCM::NetworkLoader::start(WTF::move(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = WeakPtr { *this }](auto& errorDescription, auto&) {
+    PCM::NetworkLoader::start(WTF::move(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, m_applicationBundleIdentifier, [weakThis = WeakPtr { *this }](auto& errorDescription, auto&) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

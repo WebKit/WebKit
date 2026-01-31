@@ -127,6 +127,12 @@ static void connectionRemoved(xpc_connection_t connection)
 
 int PCMDaemonMain(int argc, const char** argv)
 {
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    constexpr auto safariApplicationBundleIdentifier { "com.apple.mobilesafari"_s };
+#else
+    constexpr auto safariApplicationBundleIdentifier { "com.apple.safari"_s };
+#endif
+
     auto arguments = unsafeMakeSpan(argv, argc);
     if (arguments.size() < 5 || !equalSpans(unsafeSpan(arguments[1]), "--machServiceName"_span) || !equalSpans(unsafeSpan(arguments[3]), "--storageLocation"_span)) {
         NSLog(@"Usage: %s --machServiceName <name> --storageLocation <location> [--startActivity]", arguments[0]);
@@ -146,7 +152,7 @@ int PCMDaemonMain(int argc, const char** argv)
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();
-        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation));
+        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation), safariApplicationBundleIdentifier);
     }
     CFRunLoopRun();
     return 0;
