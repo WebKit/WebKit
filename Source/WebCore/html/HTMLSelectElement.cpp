@@ -173,7 +173,7 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
 {
     // User interaction such as mousedown events can cause list box select elements to send change events.
     // This produces that same behavior for changes triggered by other code running on behalf of the user.
-    if (!usesMenuList()) {
+    if (!m_multiple) {
         updateSelectedState(optionToListIndex(optionIndex), allowMultipleSelection, false);
         updateValidity();
         if (CheckedPtr renderer = this->renderer())
@@ -244,7 +244,7 @@ bool HTMLSelectElement::usesMenuList() const
 #if !PLATFORM(IOS_FAMILY)
     return !m_multiple && m_size <= 1;
 #else
-    return !m_multiple;
+    return true;
 #endif
 }
 
@@ -386,13 +386,9 @@ bool HTMLSelectElement::canSelectAll() const
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if !PLATFORM(IOS_FAMILY)
     if (usesMenuList())
         return createRenderer<RenderMenuList>(*this, WTF::move(style));
     return createRenderer<RenderListBox>(*this, WTF::move(style));
-#else
-    return createRenderer<RenderMenuList>(*this, WTF::move(style));
-#endif
 }
 
 bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
@@ -692,7 +688,7 @@ void HTMLSelectElement::selectAll()
 
 void HTMLSelectElement::saveLastSelection()
 {
-    if (usesMenuList()) {
+    if (!m_multiple) {
         m_lastOnChangeIndex = selectedIndex();
         return;
     }
