@@ -4815,11 +4815,13 @@ class YarrGenerator final : public YarrJITInfo {
                     parenthesesBeginOpCode = YarrOpCode::ParenthesesSubpatternFixedCountBegin;
                     parenthesesEndOpCode = YarrOpCode::ParenthesesSubpatternFixedCountEnd;
 
-                    // If there is more than one alternative we cannot use the 'simple' nodes.
+                    // If there is more than one alternative, we cannot use FixedCount optimization
+                    // because backtracking across iterations requires state preservation that
+                    // ParenthesesSubpatternFixedCount does not support.
+                    // FIXME: Add JIT support for backtracking across iterations with multiple alternatives.
                     if (term->parentheses.disjunction->m_alternatives.size() != 1) {
-                        alternativeBeginOpCode = YarrOpCode::NestedAlternativeBegin;
-                        alternativeNextOpCode = YarrOpCode::NestedAlternativeNext;
-                        alternativeEndOpCode = YarrOpCode::NestedAlternativeEnd;
+                        m_failureReason = JITFailureReason::FixedCountParenthesizedSubpattern;
+                        return;
                     }
                 } else {
                     // FIXME: Add JIT support for capturing FixedCount parentheses.
