@@ -299,7 +299,16 @@ bool JSGenericTypedArrayView<Adaptor>::setFromTypedArray(JSGlobalObject* globalO
             return false;
 
         RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->type()));
-        memmove(typedVector() + offset, std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
+        auto* dst = typedVector() + offset;
+        auto* src = std::bit_cast<typename Adaptor::Type*>(other->vector()) + objectOffset;
+        auto* dstEnd = dst + length;
+        auto* srcEnd = src + length;
+        bool overlapped = (src < dstEnd) && (dst < srcEnd);
+        if (src < dst && overlapped && type == CopyType::LeftToRight) {
+            for (size_t i = 0; i < length; ++i)
+                dst[i] = src[i];
+        } else
+            memmove(dst, src, length * elementSize);
         return true;
     };
 
