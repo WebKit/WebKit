@@ -26,12 +26,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeysystemmediacapability
 [
     Conditional=ENCRYPTED_MEDIA,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] dictionary MediaKeySystemMediaCapability {
     DOMString contentType = "";
-    DOMString robustness = "";
+    // FIXME: `encryptionScheme` should have type `DOMString?`.
     MediaKeyEncryptionScheme? encryptionScheme = null;
+    DOMString robustness = "";
 };

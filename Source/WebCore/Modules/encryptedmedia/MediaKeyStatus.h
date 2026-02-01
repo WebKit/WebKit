@@ -34,7 +34,45 @@
 
 namespace WebCore {
 
-using MediaKeyStatus = CDMKeyStatus;
+enum class MediaKeyStatus : uint8_t {
+    Usable,
+    Expired,
+    Released,
+    OutputRestricted,
+    OutputDownscaled,
+    StatusPending,
+    InternalError,
+};
+
+inline CDMKeyStatus toPlatform(MediaKeyStatus value)
+{
+    switch (value) {
+    case MediaKeyStatus::Usable:           return CDMKeyStatus::Usable;
+    case MediaKeyStatus::Expired:          return CDMKeyStatus::Expired;
+    case MediaKeyStatus::Released:         return CDMKeyStatus::Released;
+    case MediaKeyStatus::OutputRestricted: return CDMKeyStatus::OutputRestricted;
+    case MediaKeyStatus::OutputDownscaled: return CDMKeyStatus::OutputDownscaled;
+    case MediaKeyStatus::StatusPending:    return CDMKeyStatus::StatusPending;
+    case MediaKeyStatus::InternalError:    return CDMKeyStatus::InternalError;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline MediaKeyStatus fromPlatform(CDMKeyStatus value)
+{
+    switch (value) {
+    case CDMKeyStatus::Usable:           return MediaKeyStatus::Usable;
+    case CDMKeyStatus::Expired:          return MediaKeyStatus::Expired;
+    case CDMKeyStatus::Released:         return MediaKeyStatus::Released;
+    case CDMKeyStatus::OutputRestricted: return MediaKeyStatus::OutputRestricted;
+    case CDMKeyStatus::OutputDownscaled: return MediaKeyStatus::OutputDownscaled;
+    case CDMKeyStatus::StatusPending:    return MediaKeyStatus::StatusPending;
+    case CDMKeyStatus::InternalError:    return MediaKeyStatus::InternalError;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 

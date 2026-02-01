@@ -32,13 +32,13 @@
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
 
 #include "CDMKeySystemConfiguration.h"
+#include "CDMMessageType.h"
 #include "CDMProxyThunder.h"
 #include "CDMRestrictions.h"
 #include "CDMSessionType.h"
 #include "CDMUtilities.h"
 #include "GStreamerEMEUtilities.h"
 #include "Logging.h"
-#include "MediaKeyMessageType.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
 #include "WebKitThunderDecryptorGStreamer.h"
@@ -333,7 +333,7 @@ public:
             auto data = buffer->read(0, 7);
             StringView dataString(byteCast<Latin1Character>(data.span()));
             if (dataString.endsWith(":Type:"_s)) {
-                m_type.emplace(static_cast<WebCore::MediaKeyMessageType>(dataString.characterAt(0) - '0'));
+                m_type.emplace(static_cast<WebCore::CDMMessageType>(dataString.characterAt(0) - '0'));
                 offset = 7;
             }
         }
@@ -347,15 +347,15 @@ public:
     const Ref<SharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
     Ref<SharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
     bool hasType() const { return m_type.has_value(); }
-    WebCore::MediaKeyMessageType type() const { ASSERT(m_type); return m_type.value(); }
-    WebCore::MediaKeyMessageType typeOr(WebCore::MediaKeyMessageType alternate) const { return m_type ? m_type.value() : alternate; }
+    WebCore::CDMMessageType type() const { ASSERT(m_type); return m_type.value(); }
+    WebCore::CDMMessageType typeOr(WebCore::CDMMessageType alternate) const { return m_type ? m_type.value() : alternate; }
     explicit operator bool() const { return m_isValid; }
     bool operator!() const { return !m_isValid; }
 
 private:
     bool m_isValid { false };
     std::optional<Ref<SharedBuffer>> m_payload;
-    std::optional<WebCore::MediaKeyMessageType> m_type;
+    std::optional<WebCore::CDMMessageType> m_type;
 };
 
 void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<SharedBuffer>&& buffer)
@@ -581,7 +581,7 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                     GST_MEMDUMP("message", data.span().data(), data.size());
 #endif
                     callback(false, std::nullopt, std::nullopt,
-                        std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
+                        std::make_pair(parsedResponseMessage.typeOr(CDMMessageType::LicenseRequest),
                             WTF::move(message)), SuccessValue::Succeeded);
                 } else {
                     GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
@@ -619,7 +619,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                     auto data = message->copyData();
                     GST_MEMDUMP("message", data.span().data(), data.size());
 #endif
-                    callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
+                    callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(CDMMessageType::LicenseRequest),
                         WTF::move(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {
                     GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
@@ -668,23 +668,23 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
         ASSERT(isMainThread());
         if (success) {
             if (!buffer)
-                callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), nullptr, SuccessValue::Succeeded);
+                callback(m_keyStore.allKeysAs(CDMKeyStatus::Released), nullptr, SuccessValue::Succeeded);
             else {
                 ParsedResponseMessage parsedResponseMessage(buffer);
                 ASSERT(parsedResponseMessage);
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTF::move(parsedResponseMessage.payload());
                     GST_DEBUG("session %s removed, message length %zu", m_sessionID.utf8().data(), message->size());
-                    callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), WTF::move(message), SuccessValue::Succeeded);
+                    callback(m_keyStore.allKeysAs(CDMKeyStatus::Released), WTF::move(message), SuccessValue::Succeeded);
                 } else {
                     GST_WARNING("message of size %zu incorrectly formatted as session %s removal answer", buffer ? buffer->size() : 0,
                         m_sessionID.utf8().data());
-                    callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), nullptr, SuccessValue::Failed);
+                    callback(m_keyStore.allKeysAs(CDMKeyStatus::InternalError), nullptr, SuccessValue::Failed);
                 }
             }
         } else {
             GST_WARNING("could not remove session %s", m_sessionID.utf8().data());
-            callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), nullptr, SuccessValue::Failed);
+            callback(m_keyStore.allKeysAs(CDMKeyStatus::InternalError), nullptr, SuccessValue::Failed);
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_remove(m_session->get()))

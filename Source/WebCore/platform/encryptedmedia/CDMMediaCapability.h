@@ -37,8 +37,8 @@ namespace WebCore {
 
 struct CDMMediaCapability {
     String contentType;
-    String robustness;
     std::optional<CDMEncryptionScheme> encryptionScheme;
+    String robustness;
 };
 
 } // namespace WebCore

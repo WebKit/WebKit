@@ -5910,7 +5910,6 @@
 		CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDE02E918B3DFC700CF7FF1 /* LegacyCDMSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF4B7151E00B7E500E235A2 /* CDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7131E00B7E500E235A2 /* CDM.cpp */; };
 		CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7141E00B7E500E235A2 /* CDM.h */; };
-		CDF4B7181E01CB9100E235A2 /* MediaKeysRestrictions.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */; };
 		CDF4B71A1E01D3D000E235A2 /* MediaKeySessionType.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */; };
 		CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */; };
 		CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */; };
@@ -11442,9 +11441,9 @@
 		45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoscrollController.h; sourceTree = "<group>"; };
 		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
 		458FE4081589DF0B005609E6 /* RenderSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSearchField.h; sourceTree = "<group>"; };
+		459CBAAA2C7647410003743B /* WebCodecsControlMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsControlMessage.h; sourceTree = "<group>"; };
 		45A1B2C30001000100010001 /* RenderSelectFallbackButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSelectFallbackButton.cpp; sourceTree = "<group>"; };
 		45A1B2C30001000100010002 /* RenderSelectFallbackButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSelectFallbackButton.h; sourceTree = "<group>"; };
-		459CBAAA2C7647410003743B /* WebCodecsControlMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsControlMessage.h; sourceTree = "<group>"; };
 		45B5D85E2A968620004C85A0 /* LoaderMalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderMalloc.cpp; sourceTree = "<group>"; };
 		45B5D85F2A968620004C85A0 /* LoaderMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoaderMalloc.h; sourceTree = "<group>"; };
 		45B6A3EA2C3C4FBE0062CB8A /* JSWebCodecsAudioDecoderCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCodecsAudioDecoderCustom.cpp; sourceTree = "<group>"; };
@@ -11635,9 +11634,9 @@
 		46BBE9BE2DE8AF78002B87D5 /* SQLiteExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteExtras.h; sourceTree = "<group>"; };
 		46BD05C025BB6E4D00225F30 /* EventListenerOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventListenerOptions.idl; sourceTree = "<group>"; };
 		46BD05C225BB6E4E00225F30 /* AddEventListenerOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddEventListenerOptions.h; sourceTree = "<group>"; };
-		46BD05C625BB6E4E00225F30 /* AddEventListenerOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddEventListenerOptions.cpp; sourceTree = "<group>"; };
 		46BD05C325BB6E4E00225F30 /* EventListenerOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EventListenerOptions.h; sourceTree = "<group>"; };
 		46BD05C425BB6E4F00225F30 /* AddEventListenerOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AddEventListenerOptions.idl; sourceTree = "<group>"; };
+		46BD05C625BB6E4E00225F30 /* AddEventListenerOptions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddEventListenerOptions.cpp; sourceTree = "<group>"; };
 		46BD15F6283E8C4D000989F3 /* HTMLArticleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLArticleElement.cpp; sourceTree = "<group>"; };
 		46BD15F7283E8C4E000989F3 /* HTMLArticleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLArticleElement.h; sourceTree = "<group>"; };
 		46C0962023D78DD600657C09 /* HTTPCookieAcceptPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPCookieAcceptPolicy.h; sourceTree = "<group>"; };
@@ -19789,8 +19788,6 @@
 		BCD8F9DE2F27D7FF00B42872 /* InspectorAuditAccessibilityObject.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = InspectorAuditAccessibilityObject.idl; sourceTree = "<group>"; };
 		BCD8F9DF2F27D80500B42872 /* InspectorAuditDOMObject.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = InspectorAuditDOMObject.idl; sourceTree = "<group>"; };
 		BCD8F9E02F27D80B00B42872 /* InspectorAuditResourcesObject.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = InspectorAuditResourcesObject.idl; sourceTree = "<group>"; };
-		BCD8FA4F2F2938AA00B42872 /* JSRTCPeerConnectionIceErrorEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRTCPeerConnectionIceErrorEvent.h; sourceTree = "<group>"; };
-		BCD8FA502F2938AA00B42872 /* JSRTCPeerConnectionIceErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCPeerConnectionIceErrorEvent.cpp; sourceTree = "<group>"; };
 		BCD8F9E82F27F03500B42872 /* AudioConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioConfiguration.h; sourceTree = "<group>"; };
 		BCD8F9E92F27F04C00B42872 /* ColorGamut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorGamut.h; sourceTree = "<group>"; };
 		BCD8F9EA2F27F04C00B42872 /* HdrMetadataType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdrMetadataType.h; sourceTree = "<group>"; };
@@ -19825,6 +19822,8 @@
 		BCD8FA422F28007100B42872 /* PlatformMediaEngineConfigurationFactoryMock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformMediaEngineConfigurationFactoryMock.cpp; sourceTree = "<group>"; };
 		BCD8FA432F28010600B42872 /* PlatformMediaEngineConfigurationFactoryCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformMediaEngineConfigurationFactoryCocoa.h; sourceTree = "<group>"; };
 		BCD8FA442F28010600B42872 /* PlatformMediaEngineConfigurationFactoryCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformMediaEngineConfigurationFactoryCocoa.cpp; sourceTree = "<group>"; };
+		BCD8FA4F2F2938AA00B42872 /* JSRTCPeerConnectionIceErrorEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRTCPeerConnectionIceErrorEvent.h; sourceTree = "<group>"; };
+		BCD8FA502F2938AA00B42872 /* JSRTCPeerConnectionIceErrorEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCPeerConnectionIceErrorEvent.cpp; sourceTree = "<group>"; };
 		BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowCustom.cpp; sourceTree = "<group>"; };
 		BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeCustom.cpp; sourceTree = "<group>"; };
 		BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeListCustom.cpp; sourceTree = "<group>"; };
@@ -20784,7 +20783,6 @@
 		CDF419991AB0DA14004E64E1 /* missingImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@3x.png"; sourceTree = "<group>"; };
 		CDF4B7131E00B7E500E235A2 /* CDM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDM.cpp; sourceTree = "<group>"; };
 		CDF4B7141E00B7E500E235A2 /* CDM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDM.h; sourceTree = "<group>"; };
-		CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysRestrictions.h; sourceTree = "<group>"; };
 		CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySessionType.idl; sourceTree = "<group>"; };
 		CDF4B71B1E01E11A00E235A2 /* JSMediaKeySessionType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySessionType.cpp; sourceTree = "<group>"; };
 		CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySessionType.h; sourceTree = "<group>"; };
@@ -38940,7 +38938,6 @@
 				CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */,
 				2D9BF7381DBFDC0F007A7D99 /* MediaKeysRequirement.h */,
 				CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */,
-				CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */,
 				2D9BF7391DBFDC0F007A7D99 /* MediaKeyStatus.h */,
 				2D9BF73A1DBFDC0F007A7D99 /* MediaKeyStatusMap.cpp */,
 				2D9BF73B1DBFDC0F007A7D99 /* MediaKeyStatusMap.h */,
@@ -45876,7 +45873,6 @@
 				BCB02B3F2E93FCF1008A0B68 /* MediaKeySessionType.h in Headers */,
 				CDF4B71A1E01D3D000E235A2 /* MediaKeySessionType.idl in Headers */,
 				CDF4B7281E03C57300E235A2 /* MediaKeysRequirement.idl in Headers */,
-				CDF4B7181E01CB9100E235A2 /* MediaKeysRestrictions.h in Headers */,
 				0753E0992E595C9A00A52914 /* MediaKeySystemAccess.h in Headers */,
 				9ACC07A825C8110D00DC6386 /* MediaKeySystemClient.h in Headers */,
 				9ACC07AF25C8141D00DC6386 /* MediaKeySystemController.h in Headers */,
@@ -46219,7 +46215,6 @@
 				95F45D27264DFBF100D0B8B8 /* PageColorSampler.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
 				A5B81CC21FAA44BC0037D1E6 /* PageConsoleAgent.h in Headers */,
-				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				A5F36D3B18F758720054C024 /* PageDebugger.h in Headers */,
 				A5B81CC31FAA44BC0037D1E6 /* PageDebuggerAgent.h in Headers */,
 				91E0DDC1230B41E50019E1E3 /* PageDOMDebuggerAgent.h in Headers */,

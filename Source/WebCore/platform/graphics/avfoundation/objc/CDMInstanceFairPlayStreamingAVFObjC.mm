@@ -363,13 +363,13 @@ void CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration(const CDMK
         if (configuration.distinctiveIdentifier == CDMRequirement::Required)
             return CDMInstanceSuccessValue::Failed;
 
-        if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes.contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)))
+        if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes && (configuration.sessionTypes->contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes->contains(CDMSessionType::PersistentLicense))))
             return CDMInstanceSuccessValue::Failed;
 
         if (configuration.persistentState == CDMRequirement::Required && !m_storageURL)
             return CDMInstanceSuccessValue::Failed;
 
-        if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
+        if (configuration.sessionTypes && configuration.sessionTypes->contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
             return CDMInstanceSuccessValue::Failed;
 
         if (!PAL::canLoad_AVFoundation_AVContentKeySystemFairPlayStreaming())

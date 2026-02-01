@@ -30,7 +30,6 @@
 #include "MediaKeySessionType.h"
 #include "MediaKeySystemConfiguration.h"
 #include "MediaKeySystemMediaCapability.h"
-#include "MediaKeysRestrictions.h"
 #include <WebCore/CDMPrivate.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <wtf/Function.h>

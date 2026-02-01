@@ -286,9 +286,9 @@ Vector<String> CDMPrivateClearKey::supportedInitDataTypes() const
     };
 }
 
-static bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
+static bool containsPersistentLicenseType(const std::optional<Vector<CDMSessionType>>& types)
 {
-    return std::ranges::find(types, CDMSessionType::PersistentLicense) != types.end();
+    return types && types->contains(CDMSessionType::PersistentLicense);
 }
 
 bool CDMPrivateClearKey::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const

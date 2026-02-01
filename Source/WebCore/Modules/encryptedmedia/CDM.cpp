@@ -105,7 +105,11 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
     bool isEphemeral = !page || page->sessionID().isEphemeral();
     if (isEphemeral || document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
         access = CDMPrivate::LocalStorageAccess::NotAllowed;
-    m_private->getSupportedConfiguration(WTF::move(candidateConfiguration), access, WTF::move(callback));
+
+    CDMPrivate::SupportedConfigurationCallback platformCallback = [callback = WTF::move(callback)](std::optional<CDMKeySystemConfiguration> supportedConfiguration) mutable {
+        callback(supportedConfiguration ? std::optional { fromPlatform(WTF::move(*supportedConfiguration)) } : std::nullopt);
+    };
+    m_private->getSupportedConfiguration(toPlatform(WTF::move(candidateConfiguration)), access, WTF::move(platformCallback));
 }
 
 void CDM::loadAndInitialize()

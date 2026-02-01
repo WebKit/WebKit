@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeysrequirement
 [
     Conditional=ENCRYPTED_MEDIA,
-    ImplementedAs=MediaKeysRequirement,
     ExportMacro=WEBCORE_EXPORT
 ] enum MediaKeysRequirement {
     "required",

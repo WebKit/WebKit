@@ -32,11 +32,11 @@
 
 #include "CDMFactory.h"
 #include "CDMInstanceSession.h"
+#include "CDMKeyStatus.h"
 #include "CDMOpenCDMTypes.h"
 #include "CDMPrivate.h"
 #include "CDMProxy.h"
 #include "GStreamerEMEUtilities.h"
-#include "MediaKeyStatus.h"
 #include "SharedBuffer.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>

@@ -58,9 +58,9 @@ class MediaKeys final
 public:
     using KeySessionType = MediaKeySessionType;
 
-    static Ref<MediaKeys> create(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+    static Ref<MediaKeys> create(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, Vector<MediaKeySessionType>&& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     {
-        return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTF::move(implementation), WTF::move(instance)));
+        return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, WTF::move(supportedSessionTypes), WTF::move(implementation), WTF::move(instance)));
     }
 
     WEBCORE_EXPORT ~MediaKeys();
@@ -86,7 +86,7 @@ public:
     unsigned internalInstanceObjectRefCount() const { return m_instance->refCount(); }
 
 protected:
-    MediaKeys(Document&, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, Ref<CDMInstance>&&);
+    MediaKeys(Document&, bool useDistinctiveIdentifier, bool persistentStateAllowed, Vector<MediaKeySessionType>&&, Ref<CDM>&&, Ref<CDMInstance>&&);
 
     // CDMInstanceClient
     void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) final;

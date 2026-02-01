@@ -34,7 +34,33 @@
 
 namespace WebCore {
 
-using MediaKeysRequirement = CDMRequirement;
+enum class MediaKeysRequirement : uint8_t {
+    Required,
+    Optional,
+    NotAllowed,
+};
+
+inline CDMRequirement toPlatform(MediaKeysRequirement value)
+{
+    switch (value) {
+    case MediaKeysRequirement::Required:   return CDMRequirement::Required;
+    case MediaKeysRequirement::Optional:   return CDMRequirement::Optional;
+    case MediaKeysRequirement::NotAllowed: return CDMRequirement::NotAllowed;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline MediaKeysRequirement fromPlatform(CDMRequirement value)
+{
+    switch (value) {
+    case CDMRequirement::Required:   return MediaKeysRequirement::Required;
+    case CDMRequirement::Optional:   return MediaKeysRequirement::Optional;
+    case CDMRequirement::NotAllowed: return MediaKeysRequirement::NotAllowed;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 

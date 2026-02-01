@@ -34,7 +34,36 @@
 
 namespace WebCore {
 
-using MediaKeyMessageType = CDMMessageType;
+enum class MediaKeyMessageType : uint8_t {
+    LicenseRequest,
+    LicenseRenewal,
+    LicenseRelease,
+    IndividualizationRequest,
+};
+
+inline CDMMessageType toPlatform(MediaKeyMessageType value)
+{
+    switch (value) {
+    case MediaKeyMessageType::LicenseRequest:           return CDMMessageType::LicenseRequest;
+    case MediaKeyMessageType::LicenseRenewal:           return CDMMessageType::LicenseRenewal;
+    case MediaKeyMessageType::LicenseRelease:           return CDMMessageType::LicenseRelease;
+    case MediaKeyMessageType::IndividualizationRequest: return CDMMessageType::IndividualizationRequest;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline MediaKeyMessageType fromPlatform(CDMMessageType value)
+{
+    switch (value) {
+    case CDMMessageType::LicenseRequest:           return MediaKeyMessageType::LicenseRequest;
+    case CDMMessageType::LicenseRenewal:           return MediaKeyMessageType::LicenseRenewal;
+    case CDMMessageType::LicenseRelease:           return MediaKeyMessageType::LicenseRelease;
+    case CDMMessageType::IndividualizationRequest: return MediaKeyMessageType::IndividualizationRequest;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 

@@ -47,7 +47,7 @@ struct CDMKeySystemConfiguration {
     Vector<CDMMediaCapability> videoCapabilities;
     CDMRequirement distinctiveIdentifier { CDMRequirement::Optional };
     CDMRequirement persistentState { CDMRequirement::Optional };
-    Vector<CDMSessionType> sessionTypes;
+    std::optional<Vector<CDMSessionType>> sessionTypes;
 };
 
 } // namespace WebCore

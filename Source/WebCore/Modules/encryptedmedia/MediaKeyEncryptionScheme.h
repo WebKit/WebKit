@@ -31,7 +31,30 @@
 
 namespace WebCore {
 
-using MediaKeyEncryptionScheme = CDMEncryptionScheme;
+enum class MediaKeyEncryptionScheme : bool {
+    cenc,
+    cbcs,
+};
+
+inline CDMEncryptionScheme toPlatform(MediaKeyEncryptionScheme value)
+{
+    switch (value) {
+    case MediaKeyEncryptionScheme::cenc: return CDMEncryptionScheme::cenc;
+    case MediaKeyEncryptionScheme::cbcs: return CDMEncryptionScheme::cbcs;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline MediaKeyEncryptionScheme fromPlatform(CDMEncryptionScheme value)
+{
+    switch (value) {
+    case CDMEncryptionScheme::cenc: return MediaKeyEncryptionScheme::cenc;
+    case CDMEncryptionScheme::cbcs: return MediaKeyEncryptionScheme::cbcs;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 

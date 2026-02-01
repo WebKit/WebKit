@@ -35,7 +35,29 @@
 
 namespace WebCore {
 
-using MediaKeySystemMediaCapability = CDMMediaCapability;
+struct MediaKeySystemMediaCapability {
+    String contentType;
+    std::optional<MediaKeyEncryptionScheme> encryptionScheme;
+    String robustness;
+};
+
+inline CDMMediaCapability toPlatform(MediaKeySystemMediaCapability&& value)
+{
+    return {
+        WTF::move(value.contentType),
+        value.encryptionScheme ? std::optional { toPlatform(*value.encryptionScheme) } : std::nullopt,
+        WTF::move(value.robustness),
+    };
+}
+
+inline MediaKeySystemMediaCapability fromPlatform(CDMMediaCapability&& value)
+{
+    return {
+        WTF::move(value.contentType),
+        value.encryptionScheme ? std::optional { fromPlatform(*value.encryptionScheme) } : std::nullopt,
+        WTF::move(value.robustness),
+    };
+}
 
 } // namespace WebCore
 

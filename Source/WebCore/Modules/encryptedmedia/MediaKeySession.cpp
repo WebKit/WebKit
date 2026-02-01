@@ -230,7 +230,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             session.m_latestDecryptTime = 0;
         }
 
-        session.m_instanceSession->requestLicense(session.m_sessionType, session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->requestLicense(toPlatform(session.m_sessionType), session.keyGroupingStrategy(), initDataType, sanitizedInitData.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -332,7 +332,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
         // 8.6. Let message type be null.
         // 8.7. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 8.8. Use the cdm to execute the following steps:
-        session.m_instanceSession->loadSession(session.m_sessionType, *sanitizedSessionId, origin, [weakThis = WeakPtr { session }, promise = WTF::move(promise), sanitizedSessionId = *sanitizedSessionId, identifier = WTF::move(identifier)] (std::optional<CDMInstanceSession::KeyStatusVector>&& knownKeys, std::optional<double>&& expiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
+        session.m_instanceSession->loadSession(toPlatform(session.m_sessionType), *sanitizedSessionId, origin, [weakThis = WeakPtr { session }, promise = WTF::move(promise), sanitizedSessionId = *sanitizedSessionId, identifier = WTF::move(identifier)] (std::optional<CDMInstanceSession::KeyStatusVector>&& knownKeys, std::optional<double>&& expiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 promise->reject(ExceptionCode::InvalidStateError);
@@ -395,7 +395,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
 
                 // 8.9.6. If message is not null, run the Queue a "message" Event algorithm on the session, providing message type and message.
                 if (message)
-                    session.enqueueMessage(message->first, WTF::move(message->second));
+                    session.enqueueMessage(fromPlatform(message->first), WTF::move(message->second));
 
                 // 8.9.7. Resolve promise with true.
                 ALWAYS_LOG_WITH_THIS(&session, identifier, "::task() Resolved");
@@ -450,7 +450,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
         // 6.5. Let session closed be false.
         // 6.6. Let cdm be the CDM instance represented by this object's cdm instance value.
         // 6.7. Use the cdm to execute the following steps:
-        session.m_instanceSession->updateLicense(session.m_sessionId, session.m_sessionType, sanitizedResponse.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (bool sessionWasClosed, std::optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->updateLicense(session.m_sessionId, toPlatform(session.m_sessionType), sanitizedResponse.releaseNonNull(), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (bool sessionWasClosed, std::optional<CDMInstanceSession::KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -616,7 +616,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
         // 4.3. Let message type be null.
 
         // 4.4. Use the cdm to execute the following steps:
-        session.m_instanceSession->removeSessionData(session.m_sessionId, session.m_sessionType, [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        session.m_instanceSession->removeSessionData(session.m_sessionId, toPlatform(session.m_sessionType), [weakThis = WeakPtr { session }, promise = WTF::move(promise), identifier = WTF::move(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -752,7 +752,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
 
 void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&& message)
 {
-    enqueueMessage(messageType, message);
+    enqueueMessage(fromPlatform(messageType), message);
 }
 
 void MediaKeySession::sessionIdChanged(const String& sessionId)

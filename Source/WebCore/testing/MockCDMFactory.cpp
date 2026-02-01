@@ -141,11 +141,11 @@ Vector<String> MockCDM::supportedRobustnesses() const
     return { };
 }
 
-bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration& configuration) const
+bool MockCDM::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
     auto capabilityHasSupportedEncryptionScheme = [this, checkedThis = CheckedRef { *this }] (auto& capability) {
         if (capability.encryptionScheme)
-            return m_factory->supportedEncryptionSchemes().contains(capability.encryptionScheme.value());
+            return m_factory->supportedEncryptionSchemes().contains(fromPlatform(capability.encryptionScheme.value()));
         return true;
     };
 
@@ -159,36 +159,36 @@ bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration& configura
 
 }
 
-bool MockCDM::supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const
+bool MockCDM::supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
 {
     // NOTE: Implement;
     return true;
 }
 
-bool MockCDM::supportsSessionTypeWithConfiguration(const MediaKeySessionType& sessionType, const MediaKeySystemConfiguration&) const
+bool MockCDM::supportsSessionTypeWithConfiguration(const CDMSessionType& sessionType, const CDMKeySystemConfiguration&) const
 {
-    if (!m_factory || !m_factory->supportedSessionTypes().contains(sessionType))
+    if (!m_factory || !m_factory->supportedSessionTypes().contains(fromPlatform(sessionType)))
         return false;
 
     // NOTE: Implement configuration checking;
     return true;
 }
 
-MediaKeysRequirement MockCDM::distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const
+CDMRequirement MockCDM::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
 {
     if (m_factory)
-        return m_factory->distinctiveIdentifiersRequirement();
-    return MediaKeysRequirement::Optional;
+        return toPlatform(m_factory->distinctiveIdentifiersRequirement());
+    return CDMRequirement::Optional;
 }
 
-MediaKeysRequirement MockCDM::persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const
+CDMRequirement MockCDM::persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const
 {
     if (m_factory)
-        return m_factory->persistentStateRequirement();
-    return MediaKeysRequirement::Optional;
+        return toPlatform(m_factory->persistentStateRequirement());
+    return CDMRequirement::Optional;
 }
 
-bool MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) const
+bool MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const
 {
     // NOTE: Implement;
     return true;
@@ -256,7 +256,7 @@ MockCDMInstance::MockCDMInstance(MockCDM& cdm)
 {
 }
 
-void MockCDMInstance::initializeWithConfiguration(const MediaKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
+void MockCDMInstance::initializeWithConfiguration(const CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
 {
     auto initialize = [&, this, protectedThis = Ref { *this }] {
         CheckedPtr cdm = m_cdm.get();
@@ -325,7 +325,7 @@ void MockCDMInstanceSession::requestLicense(LicenseType licenseType, KeyGrouping
         return;
     }
 
-    if (!factory->supportedSessionTypes().contains(licenseType) || !factory->supportedDataTypes().contains(initDataType)) {
+    if (!factory->supportedSessionTypes().contains(fromPlatform(licenseType)) || !factory->supportedDataTypes().contains(initDataType)) {
         callback(SharedBuffer::create(), emptyString(), false, SuccessValue::Failed);
         return;
     }

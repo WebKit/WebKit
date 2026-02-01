@@ -91,7 +91,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
         auto allowDistinctiveIdentifiers = useDistinctiveIdentifier ? CDMInstance::AllowDistinctiveIdentifiers::Yes : CDMInstance::AllowDistinctiveIdentifiers::No;
         auto allowPersistentState = persistentStateAllowed ? CDMInstance::AllowPersistentState::Yes : CDMInstance::AllowPersistentState::No;
 
-        instance->initializeWithConfiguration(*access.m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTF::move(weakDocument), sessionTypes = access.m_configuration->sessionTypes, implementation = access.m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTF::move(promise)] (auto successValue) mutable {
+        instance->initializeWithConfiguration(toPlatform(MediaKeySystemConfiguration { *access.m_configuration }), allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTF::move(weakDocument), sessionTypes = access.m_configuration->sessionTypes, implementation = access.m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTF::move(promise)] (auto successValue) mutable {
             if (successValue == CDMInstanceSuccessValue::Failed || !weakDocument) {
                 promise->reject(ExceptionCode::NotAllowedError);
                 return;
@@ -104,7 +104,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
             // 2.10.3. Let the supported session types value be be the value of configuration's sessionTypes member.
             // 2.10.4. Let the cdm implementation value be this object's cdm implementation value.
             // 2.10.5. Let the cdm instance value be instance.
-            auto mediaKeys = MediaKeys::create(*weakDocument, useDistinctiveIdentifier, persistentStateAllowed, sessionTypes, WTF::move(implementation), WTF::move(instance));
+            auto mediaKeys = MediaKeys::create(*weakDocument, useDistinctiveIdentifier, persistentStateAllowed, WTF::move(sessionTypes).value_or(Vector<MediaKeySessionType> { }), WTF::move(implementation), WTF::move(instance));
 
             // 2.11. Resolve promise with media keys.
             promise->resolveWithNewlyCreated<IDLInterface<MediaKeys>>(WTF::move(mediaKeys));

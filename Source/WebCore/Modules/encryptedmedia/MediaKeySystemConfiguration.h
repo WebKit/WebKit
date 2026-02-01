@@ -30,11 +30,48 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "MediaKeySessionType.h"
+#include "MediaKeySystemMediaCapability.h"
+#include "MediaKeysRequirement.h"
 #include <WebCore/CDMKeySystemConfiguration.h>
 
 namespace WebCore {
 
-using MediaKeySystemConfiguration = CDMKeySystemConfiguration;
+struct MediaKeySystemConfiguration {
+    String label;
+    Vector<AtomString> initDataTypes;
+    Vector<MediaKeySystemMediaCapability> audioCapabilities;
+    Vector<MediaKeySystemMediaCapability> videoCapabilities;
+    MediaKeysRequirement distinctiveIdentifier { MediaKeysRequirement::Optional };
+    MediaKeysRequirement persistentState { MediaKeysRequirement::Optional };
+    std::optional<Vector<MediaKeySessionType>> sessionTypes;
+};
+
+inline CDMKeySystemConfiguration toPlatform(MediaKeySystemConfiguration&& value)
+{
+    return {
+        WTF::move(value.label),
+        WTF::move(value.initDataTypes),
+        value.audioCapabilities.map([](auto capability) { return toPlatform(WTF::move(capability)); }),
+        value.videoCapabilities.map([](auto capability) { return toPlatform(WTF::move(capability)); }),
+        toPlatform(value.distinctiveIdentifier),
+        toPlatform(value.persistentState),
+        value.sessionTypes ? std::optional { value.sessionTypes->map([](auto type) { return toPlatform(type); }) } : std::nullopt,
+    };
+}
+
+inline MediaKeySystemConfiguration fromPlatform(CDMKeySystemConfiguration&& value)
+{
+    return {
+        WTF::move(value.label),
+        WTF::move(value.initDataTypes),
+        value.audioCapabilities.map([](auto capability) { return fromPlatform(WTF::move(capability)); }),
+        value.videoCapabilities.map([](auto capability) { return fromPlatform(WTF::move(capability)); }),
+        fromPlatform(value.distinctiveIdentifier),
+        fromPlatform(value.persistentState),
+        value.sessionTypes ? std::optional { value.sessionTypes->map([](auto type) { return fromPlatform(type); }) } : std::nullopt,
+    };
+}
 
 } // namespace WebCore
 

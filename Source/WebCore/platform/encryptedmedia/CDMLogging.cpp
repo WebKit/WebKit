@@ -28,20 +28,77 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMEncryptionScheme.h"
 #include "CDMKeyID.h"
+#include "CDMKeyStatus.h"
 #include "CDMKeySystemConfiguration.h"
 #include "CDMMediaCapability.h"
 #include "CDMMessageType.h"
+#include "CDMRequirement.h"
 #include "CDMRestrictions.h"
-#include "JSMediaKeyEncryptionScheme.h"
-#include "JSMediaKeyMessageEvent.h"
-#include "JSMediaKeyMessageType.h"
-#include "JSMediaKeySessionType.h"
-#include "JSMediaKeyStatusMap.h"
-#include "JSMediaKeysRequirement.h"
+#include "CDMSessionType.h"
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
+
+static ASCIILiteral convertEnumerationToString(CDMEncryptionScheme value)
+{
+    switch (value) {
+    case CDMEncryptionScheme::cenc: return "cenc"_s;
+    case CDMEncryptionScheme::cbcs: return "cbcs"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ASCIILiteral convertEnumerationToString(CDMKeyStatus value)
+{
+    switch (value) {
+    case CDMKeyStatus::Usable:           return "usable"_s;
+    case CDMKeyStatus::Expired:          return "expired"_s;
+    case CDMKeyStatus::Released:         return "released"_s;
+    case CDMKeyStatus::OutputRestricted: return "output-restricted"_s;
+    case CDMKeyStatus::OutputDownscaled: return "output-downscaled"_s;
+    case CDMKeyStatus::StatusPending:    return "status-pending"_s;
+    case CDMKeyStatus::InternalError:    return "internal-error"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ASCIILiteral convertEnumerationToString(CDMMessageType value)
+{
+    switch (value) {
+    case CDMMessageType::LicenseRequest:           return "license-request"_s;
+    case CDMMessageType::LicenseRenewal:           return "license-renewal"_s;
+    case CDMMessageType::LicenseRelease:           return "license-release"_s;
+    case CDMMessageType::IndividualizationRequest: return "individualization-request"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ASCIILiteral convertEnumerationToString(CDMRequirement value)
+{
+    switch (value) {
+    case CDMRequirement::Required:   return "required"_s;
+    case CDMRequirement::Optional:   return "optional"_s;
+    case CDMRequirement::NotAllowed: return "not-allowed"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ASCIILiteral convertEnumerationToString(CDMSessionType value)
+{
+    switch (value) {
+    case CDMSessionType::Temporary:             return "temporary"_s;
+    case CDMSessionType::PersistentUsageRecord: return "persistent-usage-record"_s;
+    case CDMSessionType::PersistentLicense:     return "persistent-license"_s;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 static Ref<JSON::Object> toJSONObject(const CDMMediaCapability& capability)
 {
@@ -88,10 +145,12 @@ static Ref<JSON::Object> toJSONObject(const CDMKeySystemConfiguration& configura
     object->setString("distinctiveIdentifier"_s, convertEnumerationToString(configuration.distinctiveIdentifier));
     object->setString("persistentState"_s, convertEnumerationToString(configuration.persistentState));
 
-    auto sessionTypes = JSON::Array::create();
-    for (auto type : configuration.sessionTypes)
-        sessionTypes->pushString(convertEnumerationToString(type));
-    object->setArray("sessionTypes"_s, WTF::move(sessionTypes));
+    if (configuration.sessionTypes) {
+        auto sessionTypes = JSON::Array::create();
+        for (auto type : *configuration.sessionTypes)
+            sessionTypes->pushString(convertEnumerationToString(type));
+        object->setArray("sessionTypes"_s, WTF::move(sessionTypes));
+    }
 
     return object;
 }

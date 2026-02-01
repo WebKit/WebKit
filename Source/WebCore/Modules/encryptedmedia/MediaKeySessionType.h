@@ -34,7 +34,33 @@
 
 namespace WebCore {
 
-using MediaKeySessionType = CDMSessionType;
+enum class MediaKeySessionType : uint8_t {
+    Temporary,
+    PersistentUsageRecord,
+    PersistentLicense,
+};
+
+inline CDMSessionType toPlatform(MediaKeySessionType value)
+{
+    switch (value) {
+    case MediaKeySessionType::Temporary:             return CDMSessionType::Temporary;
+    case MediaKeySessionType::PersistentUsageRecord: return CDMSessionType::PersistentUsageRecord;
+    case MediaKeySessionType::PersistentLicense:     return CDMSessionType::PersistentLicense;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline MediaKeySessionType fromPlatform(CDMSessionType value)
+{
+    switch (value) {
+    case CDMSessionType::Temporary:             return MediaKeySessionType::Temporary;
+    case CDMSessionType::PersistentUsageRecord: return MediaKeySessionType::PersistentUsageRecord;
+    case CDMSessionType::PersistentLicense:     return MediaKeySessionType::PersistentLicense;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 } // namespace WebCore
 

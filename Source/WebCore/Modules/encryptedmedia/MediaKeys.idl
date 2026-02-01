@@ -26,6 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeys
 [
     Conditional=ENCRYPTED_MEDIA,
     EnabledBySetting=EncryptedMediaAPIEnabled,
@@ -34,5 +35,7 @@
     Exposed=Window
 ] interface MediaKeys {
     [CallWith=CurrentDocument] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
+    // FIXME: Add support for `getStatusForPolicy`.
+    // Promise<MediaKeyStatus> getStatusForPolicy(optional MediaKeysPolicy policy = {});
     Promise<boolean> setServerCertificate(BufferSource serverCertificate);
 };

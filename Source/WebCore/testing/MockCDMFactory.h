@@ -33,6 +33,7 @@
 #include "CDMInstanceSession.h"
 #include "CDMPrivate.h"
 #include "MediaKeyEncryptionScheme.h"
+#include "MediaKeySessionType.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -117,12 +118,12 @@ private:
 
     Vector<String> supportedInitDataTypes() const final;
     Vector<String> supportedRobustnesses() const final;
-    bool supportsConfiguration(const MediaKeySystemConfiguration&) const final;
-    bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const final;
-    bool supportsSessionTypeWithConfiguration(const MediaKeySessionType&, const MediaKeySystemConfiguration&) const final;
-    MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const final;
-    MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const final;
-    bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) const final;
+    bool supportsConfiguration(const CDMKeySystemConfiguration&) const final;
+    bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const final;
+    CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const final;
     RefPtr<CDMInstance> createInstance() final;
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
@@ -147,7 +148,7 @@ private:
     explicit MockCDMInstance(MockCDM&);
 
     ImplementationType implementationType() const final { return ImplementationType::Mock; }
-    void initializeWithConfiguration(const MediaKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
+    void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
     void setStorageDirectory(const String&) final;
     const String& keySystem() const final;

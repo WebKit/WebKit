@@ -3403,7 +3403,7 @@ struct WebCore::CDMKeySystemConfiguration {
     Vector<WebCore::CDMMediaCapability> videoCapabilities;
     WebCore::CDMRequirement distinctiveIdentifier;
     WebCore::CDMRequirement persistentState;
-    Vector<WebCore::CDMSessionType> sessionTypes;
+    std::optional<Vector<WebCore::CDMSessionType>> sessionTypes;
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
@@ -4350,8 +4350,8 @@ enum class WebCore::CDMKeyGroupingStrategy : bool;
 
 struct WebCore::CDMMediaCapability {
     String contentType;
-    String robustness;
     std::optional<WebCore::CDMEncryptionScheme> encryptionScheme;
+    String robustness;
 };
 
 enum class WebCore::CDMSessionType : uint8_t {

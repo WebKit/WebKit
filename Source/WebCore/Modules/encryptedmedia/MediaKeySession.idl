@@ -26,6 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeysession
 [
     ActiveDOMObject,
     Conditional=ENCRYPTED_MEDIA,
@@ -36,6 +37,7 @@
 ] interface MediaKeySession : EventTarget {
     readonly attribute DOMString sessionId;
     readonly attribute unrestricted double expiration;
+    // FIXME: `closed` should have type `Promise<MediaKeySessionClosedReason>`.
     readonly attribute Promise<undefined> closed;
     readonly attribute MediaKeyStatusMap keyStatuses;
     attribute EventHandler onkeystatuseschange;

@@ -51,10 +51,10 @@ static WTFLogChannel& logChannel() { return LogEME; }
 static ASCIILiteral logClassName() { return "MediaKeys"_s; }
 #endif
 
-MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+MediaKeys::MediaKeys(Document& document, bool useDistinctiveIdentifier, bool persistentStateAllowed, Vector<MediaKeySessionType>&& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : m_useDistinctiveIdentifier(useDistinctiveIdentifier)
     , m_persistentStateAllowed(persistentStateAllowed)
-    , m_supportedSessionTypes(supportedSessionTypes)
+    , m_supportedSessionTypes(WTF::move(supportedSessionTypes))
     , m_implementation(WTF::move(implementation))
     , m_instance(WTF::move(instance))
 #if !RELEASE_LOG_DISABLED

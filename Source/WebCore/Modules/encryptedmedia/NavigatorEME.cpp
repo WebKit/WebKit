@@ -45,6 +45,14 @@ namespace WTF {
 template<typename>
 struct LogArgument;
 
+template <>
+struct LogArgument<WebCore::MediaKeySystemConfiguration> {
+    static String toString(const WebCore::MediaKeySystemConfiguration& value)
+    {
+        return LogArgument<WebCore::CDMKeySystemConfiguration>::toString(toPlatform(WebCore::MediaKeySystemConfiguration { value }));
+    }
+};
+
 template<typename T>
 struct LogArgument<Vector<T>> {
     static String toString(const Vector<T>& value)
@@ -58,7 +66,7 @@ struct LogArgument<Vector<T>> {
     }
 };
 
-}
+} // namespace WTF
 
 namespace WebCore {
 
