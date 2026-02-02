@@ -240,25 +240,28 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 #if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const WebTouchEvent& touchEvent, bool wasEventHandled)
 {
-    if (wasEventHandled) {
-#if ENABLE(WPE_PLATFORM)
-        // If the touch event was handled, we must interrupt any gesture detection sequence ongoing so that gestures
-        // are not detected by engine itself.
-        if (!m_view.wpeView())
-            return;
-        if (auto* gestureController = wpe_view_get_gesture_controller(m_view.wpeView()))
-            wpe_gesture_controller_cancel(gestureController);
-#endif
-        return;
-    }
-
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
-        if (touchEvent.isNativeWebTouchEvent())
-            static_cast<WKWPE::ViewPlatform&>(m_view).handleGesture(static_cast<const NativeWebTouchEvent&>(touchEvent).nativeEvent());
+        if (wasEventHandled) {
+            // If the touch event was handled, we must interrupt any gesture detection sequence ongoing so that gestures
+            // are not detected by engine itself.
+            if (auto* gestureController = wpe_view_get_gesture_controller(m_view.wpeView()))
+                wpe_gesture_controller_cancel(gestureController);
+        } else {
+            // First, let the gesture controller process the event and potentially recognize a TAP gesture.
+            if (touchEvent.isNativeWebTouchEvent())
+                static_cast<WKWPE::ViewPlatform&>(m_view).handleGesture(static_cast<const NativeWebTouchEvent&>(touchEvent).nativeEvent());
+        }
+
+        // Complete any pending TAP gesture. If the touch event was handled by the page
+        // (e.g., preventDefault was called), synthetic mouse events will not be generated.
+        static_cast<WKWPE::ViewPlatform&>(m_view).completePendingGesture(wasEventHandled);
         return;
     }
 #endif
+
+    if (wasEventHandled)
+        return;
 
 #if USE(LIBWPE)
     const struct wpe_input_touch_event_raw* touchPoint = touchEvent.isNativeWebTouchEvent() ? static_cast<const NativeWebTouchEvent&>(touchEvent).nativeFallbackTouchPoint() : nullptr;

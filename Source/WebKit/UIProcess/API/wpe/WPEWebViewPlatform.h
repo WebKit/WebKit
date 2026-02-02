@@ -69,6 +69,7 @@ public:
     WebKit::RendererBufferDescription renderBufferDescription() const;
 
     void handleGesture(WPEEvent*);
+    void completePendingGesture(bool wasEventHandled);
 
 private:
     ViewPlatform(WPEDisplay*, const API::PageConfiguration&);
@@ -96,6 +97,9 @@ private:
     gboolean handleEvent(WPEEvent*);
 
     GRefPtr<WPEView> m_wpeView;
+    bool m_hasPendingTapGesture { false };
+    double m_pendingTapX { 0 };
+    double m_pendingTapY { 0 };
     RefPtr<WebKit::AcceleratedBackingStore> m_backingStore;
     uint32_t m_displayID { 0 };
     unsigned long m_bufferRenderedID { 0 };

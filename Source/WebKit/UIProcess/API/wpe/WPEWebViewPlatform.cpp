@@ -441,32 +441,12 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     case WPE_GESTURE_TAP:
         if (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_MOVE)
             return;
+        // Store the pending TAP gesture; synthetic mouse events will be generated
+        // later in completePendingGesture() only if the touch was not handled by the page.
         if (double x, y; wpe_gesture_controller_get_gesture_position(gestureController, &x, &y)) {
-            // Mouse motion towards the point of the click.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
-                    WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
-            }
-
-            // Mouse down on the point of the click.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
-                    WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, WPE_MODIFIER_POINTER_BUTTON1, 1, x, y, 1
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
-            }
-
-            wpe_view_focus_in(m_wpeView.get());
-
-            // Mouse up on the same location.
-            {
-                GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
-                    WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y, 0
-                ));
-                page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
-            }
+            m_hasPendingTapGesture = true;
+            m_pendingTapX = x;
+            m_pendingTapY = y;
         }
         break;
     case WPE_GESTURE_DRAG:
@@ -479,6 +459,48 @@ void ViewPlatform::handleGesture(WPEEvent* event)
                 : (wpe_event_get_event_type(event) == WPE_EVENT_TOUCH_UP) ? WebWheelEvent::Phase::Ended : WebWheelEvent::Phase::Changed;
             page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(simulatedScrollEvent.get(), phase));
         }
+    }
+}
+
+void ViewPlatform::completePendingGesture(bool wasEventHandled)
+{
+    if (!m_hasPendingTapGesture)
+        return;
+
+    m_hasPendingTapGesture = false;
+
+    // If the touch event was handled by the page (e.g., preventDefault was called),
+    // don't generate synthetic mouse events.
+    if (wasEventHandled)
+        return;
+
+    double x = m_pendingTapX;
+    double y = m_pendingTapY;
+
+    // Mouse motion towards the point of the click.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_move_new(
+            WPE_EVENT_POINTER_MOVE, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), x, y, 0, 0
+        ));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+    }
+
+    // Mouse down on the point of the click.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+            WPE_EVENT_POINTER_DOWN, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, WPE_MODIFIER_POINTER_BUTTON1, 1, x, y, 1
+        ));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
+    }
+
+    wpe_view_focus_in(m_wpeView.get());
+
+    // Mouse up on the same location.
+    {
+        GRefPtr<WPEEvent> simulatedEvent = adoptGRef(wpe_event_pointer_button_new(
+            WPE_EVENT_POINTER_UP, m_wpeView.get(), WPE_INPUT_SOURCE_TOUCHSCREEN, 0, static_cast<WPEModifiers>(0), 1, x, y, 0
+        ));
+        page().handleMouseEvent(WebKit::NativeWebMouseEvent(simulatedEvent.get()));
     }
 }
 
