@@ -343,14 +343,6 @@ struct ArrayGetSetMetadata {
     uint8_t length;
 };
 
-struct ArrayFillMetadata {
-    uint8_t length;
-};
-
-struct ArrayCopyMetadata {
-    uint8_t length;
-};
-
 struct ArrayInitDataMetadata {
     uint32_t dataSegmentIndex;
     uint8_t length;

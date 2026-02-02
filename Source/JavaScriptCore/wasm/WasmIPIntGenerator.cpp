@@ -254,12 +254,12 @@ public:
     WARN_UNUSED_RETURN PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&);
     WARN_UNUSED_RETURN PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&);
 
-    ExpressionType addConstant(v128_t);
+    ExpressionType addSIMDConstant(v128_t);
 
     // SIMD generated
 
-    WARN_UNUSED_RETURN PartialResult addExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&);
-    WARN_UNUSED_RETURN PartialResult addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&);
+    WARN_UNUSED_RETURN PartialResult addSIMDExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&);
+    WARN_UNUSED_RETURN PartialResult addSIMDReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&);
     WARN_UNUSED_RETURN PartialResult addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&);
     WARN_UNUSED_RETURN PartialResult addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&);
     WARN_UNUSED_RETURN PartialResult addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
@@ -715,24 +715,28 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDStore(ExpressionType, Ex
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
@@ -765,36 +769,42 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDLoadPad(SIMDLaneOperatio
     return addSIMDLoad(pointer, offset, result);
 }
 
-IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
+IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 {
     changeStackSize(1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult IPIntGenerator::addExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&)
+WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDExtractLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult IPIntGenerator::addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&)
+WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-2); // 3 operands, 1 result
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
@@ -802,6 +812,7 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDBitwiseSelect(Expression
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 #endif
@@ -809,6 +820,7 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDRelOp(SIMDLaneOperation,
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1); // Pop two v128 values, push one v128 value
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
@@ -1175,16 +1187,19 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::atomicFence(ExtAtomicOpType, ui
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefI31(ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addI31GetS(ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addI31GetU(ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
@@ -1262,25 +1277,21 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addArraySet(uint32_t index, Exp
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addArrayLen(ExpressionType, ExpressionType&)
 {
-    // no metadata
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addArrayFill(uint32_t, ExpressionType, ExpressionType, ExpressionType, ExpressionType)
 {
     changeStackSize(-4);
-    m_metadata->appendMetadata<IPInt::ArrayFillMetadata>({
-        static_cast<uint8_t>(getCurrentInstructionLength())
-    });
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType)
 {
     changeStackSize(-5);
-    m_metadata->appendMetadata<IPInt::ArrayCopyMetadata>({
-        static_cast<uint8_t>(getCurrentInstructionLength())
-    });
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
@@ -1365,11 +1376,13 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefCast(ExpressionType, bool
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addAnyConvertExtern(ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
 WARN_UNUSED_RETURN PartialResult IPIntGenerator::addExternConvertAny(ExpressionType, ExpressionType&)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 

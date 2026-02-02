@@ -3826,7 +3826,7 @@ void BBQJIT::materializeVectorConstant(v128_t value, Location result)
         m_jit.materializeVector(value, result.asFPR());
 }
 
-WARN_UNUSED_RETURN ExpressionType BBQJIT::addConstant(v128_t value)
+WARN_UNUSED_RETURN ExpressionType BBQJIT::addSIMDConstant(v128_t value)
 {
     // We currently don't track constant Values for V128s, since folding them seems like a lot of work that might not be worth it.
     // Maybe we can look into this eventually?
@@ -3839,7 +3839,7 @@ WARN_UNUSED_RETURN ExpressionType BBQJIT::addConstant(v128_t value)
 
 // SIMD generated
 
-WARN_UNUSED_RETURN PartialResult BBQJIT::addExtractLane(SIMDInfo info, uint8_t lane, Value value, Value& result)
+WARN_UNUSED_RETURN PartialResult BBQJIT::addSIMDExtractLane(SIMDInfo info, uint8_t lane, Value value, Value& result)
 {
     Location valueLocation = loadIfNecessary(value);
     consume(value);
@@ -3855,7 +3855,7 @@ WARN_UNUSED_RETURN PartialResult BBQJIT::addExtractLane(SIMDInfo info, uint8_t l
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult BBQJIT::addReplaceLane(SIMDInfo info, uint8_t lane, ExpressionType vector, ExpressionType scalar, ExpressionType& result)
+WARN_UNUSED_RETURN PartialResult BBQJIT::addSIMDReplaceLane(SIMDInfo info, uint8_t lane, ExpressionType vector, ExpressionType scalar, ExpressionType& result)
 {
     Location vectorLocation = loadIfNecessary(vector);
     Location scalarLocation;
