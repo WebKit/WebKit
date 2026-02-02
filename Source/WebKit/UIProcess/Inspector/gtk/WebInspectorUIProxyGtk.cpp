@@ -529,12 +529,6 @@ void WebInspectorUIProxy::platformStartWindowDrag()
     notImplemented();
 }
 
-static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
-{
-    GFile* file = G_FILE(sourceObject);
-    g_file_replace_contents_finish(file, result, nullptr, nullptr);
-}
-
 void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
     ASSERT(saveDatas.size() == 1);
@@ -562,23 +556,8 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     if (gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog.get())) != GTK_RESPONSE_ACCEPT)
         return;
 
-    Vector<uint8_t> dataVector;
-    CString dataString;
-    if (saveDatas[0].base64Encoded) {
-        auto decodedData = base64Decode(saveDatas[0].content, { Base64DecodeOption::ValidatePadding });
-        if (!decodedData)
-            return;
-        decodedData->shrinkToFit();
-        dataVector = WTF::move(*decodedData);
-    } else
-        dataString = saveDatas[0].content.utf8();
-
-    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<const char*>(dataVector.span().data());
-    size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
-    GUniquePtr<char> path(g_file_get_path(file.get()));
-    g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
-        G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, protect(inspectorPage()).get());
+    platformSaveDataToFile(WTF::move(file), saveDatas[0].content, saveDatas[0].base64Encoded);
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

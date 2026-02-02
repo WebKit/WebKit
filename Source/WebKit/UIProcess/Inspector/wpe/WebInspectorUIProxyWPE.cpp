@@ -230,9 +230,25 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
+void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    notImplemented();
+    ASSERT(saveDatas.size() == 1);
+    UNUSED_PARAM(forceSaveAs);
+
+    // Some inspector views (Audits for instance) use a custom URI scheme, such
+    // as web-inspector. So we can't rely on the URL being a valid file:/// URL
+    // unfortunately.
+    URL url { saveDatas[0].url };
+    auto* filename = url.path().substring(1).utf8().data();
+
+    const gchar* downloadsDir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
+    if (!downloadsDir) {
+        // If we don't have XDG user dirs info, set just to HOME.
+        downloadsDir = g_get_home_dir();
+    }
+
+    GRefPtr<GFile> file = adoptGRef(g_file_new_build_filename(downloadsDir, filename, nullptr));
+    platformSaveDataToFile(WTF::move(file), saveDatas[0].content, saveDatas[0].base64Encoded);
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

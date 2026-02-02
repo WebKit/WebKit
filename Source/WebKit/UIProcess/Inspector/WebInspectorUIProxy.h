@@ -260,6 +260,9 @@ private:
     void platformStartWindowDrag();
     void platformRevealFileExternally(const String&);
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void platformSaveDataToFile(GRefPtr<GFile>&&, const String& content, bool base64Encoded);
+#endif
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
 

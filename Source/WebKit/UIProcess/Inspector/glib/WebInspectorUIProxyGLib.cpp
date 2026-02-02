@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +24,44 @@
  */
 
 #include "config.h"
-#include "WebInspectorUI.h"
-
-#if ENABLE(WPE_PLATFORM)
+#include "WebInspectorUIProxy.h"
 
 #include <gio/gio.h>
-#include <wtf/glib/GResources.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/Base64.h>
 
 namespace WebKit {
 
-void WebInspectorUI::didEstablishConnection()
+static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer)
 {
-    WTF::registerInspectorResourceIfNeeded();
+    GFile* file = G_FILE(sourceObject);
+    g_file_replace_contents_finish(file, result, nullptr, nullptr);
 }
 
-bool WebInspectorUI::canSave(InspectorFrontendClient::SaveMode saveMode)
+void WebInspectorUIProxy::platformSaveDataToFile(GRefPtr<GFile>&& file, const String& content, bool base64Encoded)
 {
-    switch (saveMode) {
-    case InspectorFrontendClient::SaveMode::SingleFile:
-        return true;
+    GUniqueOutPtr<GError> error;
 
-    case InspectorFrontendClient::SaveMode::FileVariants:
-        return false;
-    }
+    Vector<uint8_t> dataVector;
+    CString dataString;
+    if (base64Encoded) {
+        auto decodedData = base64Decode(content);
+        if (!decodedData)
+            return;
+        decodedData->shrinkToFit();
+        dataVector = WTF::move(*decodedData);
+    } else
+        dataString = content.utf8();
 
-    ASSERT_NOT_REACHED();
-    return false;
-}
+    const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<const char*>(dataVector.span().data());
+    size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
 
-bool WebInspectorUI::canLoad()
-{
-    return false;
-}
+    g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
+        G_FILE_CREATE_NONE, nullptr, fileReplaceContentsCallback, protect(inspectorPage()).get());
 
-bool WebInspectorUI::canPickColorFromScreen()
-{
-    return false;
-}
-
-String WebInspectorUI::localizedStringsURL() const
-{
-    return "resource:///org/webkit/inspector/Localizations/en.lproj/localizedStrings.js"_s;
+    if (error)
+        g_warning("Failed to save inspector data: %s", error->message);
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(WPE_PLATFORM)

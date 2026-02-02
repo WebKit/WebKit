@@ -256,6 +256,7 @@ UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp
 UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
+UIProcess/Inspector/glib/WebInspectorUIProxyGLib.cpp
 
 UIProcess/Inspector/wpe/WebInspectorUIProxyWPE.cpp
 
