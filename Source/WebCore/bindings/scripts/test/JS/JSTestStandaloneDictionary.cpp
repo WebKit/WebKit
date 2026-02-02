@@ -247,6 +247,20 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         if (permissiveEnumMemberParseResult)
             result.permissiveEnumMember = *permissiveEnumMemberParseResult;
     }
+    JSValue permissiveEnumMemberWithDefaultValue;
+    if (isNullOrUndefined)
+        permissiveEnumMemberWithDefaultValue = jsUndefined();
+    else {
+        permissiveEnumMemberWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s));
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    }
+    if (permissiveEnumMemberWithDefaultValue.isUndefined())
+        result.permissiveEnumMemberWithDefault = TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1;
+    else {
+        auto permissiveEnumMemberWithDefaultParseResult = parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(lexicalGlobalObject, permissiveEnumMemberWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+        result.permissiveEnumMemberWithDefault = permissiveEnumMemberWithDefaultParseResult.value_or(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1);
+    }
     JSValue stringMemberValue;
     if (isNullOrUndefined)
         stringMemberValue = jsUndefined();
@@ -360,6 +374,9 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMember"_s), permissiveEnumMemberValue);
     }
+    auto permissiveEnumMemberWithDefaultValue = toJS<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(lexicalGlobalObject, throwScope, dictionary.permissiveEnumMemberWithDefault);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s), permissiveEnumMemberWithDefaultValue);
     if (!IDLDOMString::isNullValue(dictionary.stringMember)) {
         auto stringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
         RETURN_IF_EXCEPTION(throwScope, { });

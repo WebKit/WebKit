@@ -2924,13 +2924,28 @@ sub GenerateDictionaryImplementationContent
                     $result .= "${indent}        return ConversionResultException { };\n";
                     $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
                 } elsif (defined $member->default) {
-                    my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
-                    my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, 1, $defaultValueFunctor);
+                    if ($member->extendedAttributes->{PermissiveInvalidValue} && $codeGenerator->IsEnumType($type)) {
+                        # For enum members with PermissiveInvalidValue and a default, use parseEnumeration
+                        # which returns std::optional, then fall back to default via value_or().
+                        my $className = GetEnumerationClassName($type, $typeScope);
+                        my $enumValue = GetEnumerationValueName(substr($member->default, 1, -1));
+                        my $defaultValue = "${className}::${enumValue}";
+                        $result .= "${indent}    if (${key}Value.isUndefined())\n";
+                        $result .= "${indent}        result.$implementedAsKey = ${defaultValue};\n";
+                        $result .= "${indent}    else {\n";
+                        $result .= "${indent}        auto ${implementedAsKey}ParseResult = parseEnumeration<${className}>(lexicalGlobalObject, ${key}Value);\n";
+                        $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });\n";
+                        $result .= "${indent}        result.$implementedAsKey = ${implementedAsKey}ParseResult.value_or(${defaultValue});\n";
+                        $result .= "${indent}    }\n";
+                    } else {
+                        my $defaultValueFunctor = GetDictionaryMemberDefaultValueFunctor($typeScope, $member);
+                        my $conversion = JSValueToNative($typeScope, $member, "${key}Value", $conditional, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)", undef, undef, 1, $defaultValueFunctor);
 
-                    $result .= "${indent}    auto ${implementedAsKey}ConversionResult = ${conversion};\n";
-                    $result .= "${indent}    if (${implementedAsKey}ConversionResult.hasException(throwScope)) [[unlikely]]\n";
-                    $result .= "${indent}        return ConversionResultException { };\n";
-                    $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
+                        $result .= "${indent}    auto ${implementedAsKey}ConversionResult = ${conversion};\n";
+                        $result .= "${indent}    if (${implementedAsKey}ConversionResult.hasException(throwScope)) [[unlikely]]\n";
+                        $result .= "${indent}        return ConversionResultException { };\n";
+                        $result .= "${indent}    result.$implementedAsKey = ${implementedAsKey}ConversionResult.releaseReturnValue();\n";
+                    }
                 } else {
                     if ($member->extendedAttributes->{PermissiveInvalidValue} && $codeGenerator->IsEnumType($type)) {
                         # For enum members with PermissiveInvalidValue, use parseEnumeration directly

@@ -31,5 +31,5 @@
     [PermissiveInvalidValue] AuthenticatorAttachment authenticatorAttachment;
     [PermissiveInvalidValue] ResidentKeyRequirement  residentKey;
     boolean                                          requireResidentKey = false;
-    UserVerificationRequirement                      userVerification = "preferred";
+    [PermissiveInvalidValue] UserVerificationRequirement                      userVerification = "preferred";
 };
