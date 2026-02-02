@@ -1671,8 +1671,34 @@ StyleMedia& LocalDOMWindow::styleMedia()
     return *m_media;
 }
 
+static bool isInComposedTree(const Element& element)
+{
+    if (!element.isConnected())
+        return false;
+
+    for (const Node* current = &element; current; current = current->parentInComposedTree()) {
+        if (auto* parent = current->parentNode()) {
+            if (auto* parentElement = dynamicDowncast<Element>(*parent)) {
+                if (parentElement->shadowRoot() && !current->assignedSlot())
+                    return false;
+            }
+        }
+        if (!current)
+            return false;
+        if (current->isDocumentNode())
+            return true;
+    }
+
+    return false;
+}
+
 Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
+    bool frameElementIsRendered = element.document().frame()->ownerElement() && element.document().frame()->ownerRenderer();
+
+    if (!frameElementIsRendered || !isInComposedTree(element))
+        return CSSComputedStyleDeclaration::createEmpty(element);
+
     if (!pseudoElt.startsWith(':'))
         return CSSComputedStyleDeclaration::create(element, std::nullopt);
 
