@@ -414,7 +414,7 @@ extension WebGPU.CommandEncoder {
                     destinationSlice: Int(mutableSlice),
                     destinationLevel: Int(mipLevel),
                     destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-                    options: options
+                    options: .stencilFromDepthStencil
                 )
         }
     }
@@ -1529,11 +1529,13 @@ extension WebGPU.CommandEncoder {
                     guard !didOverflow else {
                         return
                     }
-                    var yTimesDestinationBytesPerImage = y
-                    guard destinationBytesPerImage <= UInt32.max else {
+                    var yTimesDestinationBytesPerRow = y
+                    guard destinationBytesPerRow <= UInt32.max else {
                         return
                     }
-                    (yTimesDestinationBytesPerImage, didOverflow) = yTimesDestinationBytesPerImage.multipliedReportingOverflow(by: UInt32(destinationBytesPerImage))
+                    (yTimesDestinationBytesPerRow, didOverflow) = yTimesDestinationBytesPerRow.multipliedReportingOverflow(
+                        by: UInt32(destinationBytesPerRow)
+                    )
                     guard !didOverflow else {
                         return
                     }
@@ -1548,7 +1550,7 @@ extension WebGPU.CommandEncoder {
                     guard !didOverflow else {
                         return
                     }
-                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(yTimesDestinationBytesPerImage))
+                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(yTimesDestinationBytesPerRow))
                     guard !didOverflow else {
                         return
                     }
@@ -1631,7 +1633,11 @@ extension WebGPU.CommandEncoder {
                 guard !didOverflow else {
                     return
                 }
-                let sum = UInt(destinationOffset) + UInt(widthTimesBlockSize)
+                var sum = UInt(destinationOffset)
+                (sum, didOverflow) = sum.addingReportingOverflow(UInt(widthTimesBlockSize))
+                guard !didOverflow else {
+                    return
+                }
                 if sum > destinationBuffer.length {
                     continue
                 }
@@ -1828,21 +1834,24 @@ extension WebGPU.CommandEncoder {
                     return
                 }
                 var zTimesSourceBytesPerImage = z
-                guard let sourceBytesPerRowU32 = UInt32(exactly: sourceBytesPerRow) else {
+                guard let sourceBytesPerImageU32 = UInt32(exactly: sourceBytesPerImage) else {
                     return
                 }
-                (zTimesSourceBytesPerImage, didOverflow) = zTimesSourceBytesPerImage.multipliedReportingOverflow(by: sourceBytesPerRowU32)
+                (zTimesSourceBytesPerImage, didOverflow) = zTimesSourceBytesPerImage.multipliedReportingOverflow(by: sourceBytesPerImageU32)
                 guard !didOverflow else {
                     return
                 }
+                guard let sourceBytesPerRowU32 = UInt32(exactly: sourceBytesPerRow) else {
+                    return
+                }
                 for y in 0..<copySize.height {
-                    var yTimesSourceBytesPerImage = y
-                    (yTimesSourceBytesPerImage, didOverflow) = yTimesSourceBytesPerImage.multipliedReportingOverflow(by: sourceBytesPerRowU32)
+                    var yTimesSourceBytesPerRow = y
+                    (yTimesSourceBytesPerRow, didOverflow) = yTimesSourceBytesPerRow.multipliedReportingOverflow(by: sourceBytesPerRowU32)
                     guard !didOverflow else {
                         return
                     }
                     var tripleSum = UInt64(zTimesSourceBytesPerImage)
-                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(yTimesSourceBytesPerImage))
+                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(yTimesSourceBytesPerRow))
                     guard !didOverflow else {
                         return
                     }
@@ -1929,8 +1938,8 @@ extension WebGPU.CommandEncoder {
                 guard !didOverflow else {
                     return
                 }
-                guard sourceOffsetPlusSourceBytesPerRow <= sourceBuffer.length else {
-                    return
+                if sourceOffsetPlusSourceBytesPerRow > sourceBuffer.length {
+                    continue
                 }
 
                 // FIXME: Remove these unnecessary force unwraps.
