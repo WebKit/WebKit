@@ -527,8 +527,6 @@ public:
 
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 
-    virtual WebCore::DestinationColorSpace colorSpace() = 0;
-
     virtual bool useFormSemanticContext() const = 0;
     
     virtual NSView *viewForPresentingRevealPopover() const = 0;
@@ -557,6 +555,8 @@ public:
     virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
 
     virtual CocoaWindow *platformWindow() const = 0;
+
+    virtual WebCore::DestinationColorSpace colorSpace() = 0;
 #endif
 
     virtual void reconcileEnclosingScrollViewContentOffset(EditorState&) { };

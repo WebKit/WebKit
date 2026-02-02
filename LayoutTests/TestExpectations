@@ -293,6 +293,9 @@ http/tests/app-privacy-report/ [ Skip ]
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 
+# Requires caLayerTreeAsText
+compositing/background-color/background-color-clamping.html [ Skip ]
+
 # Support for COEP violation reporting is missing.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/

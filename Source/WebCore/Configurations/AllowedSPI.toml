@@ -75,6 +75,13 @@ symbols = [
 ]
 
 [[temporary-usage]]
+request = "rdar://168834967"
+cleanup = "rdar://168834815"
+symbols = [
+    "CGContextGetColorSpace",
+]
+
+[[temporary-usage]]
 request = "rdar://161402565"
 cleanup = "rdar://161402756"
 symbols = [

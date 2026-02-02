@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            will-change: transform;
+        }
+        
+        #layers {
+            will-change: transform;
+        }
+        
+        .unclampedrgb {
+            background-color: color(srgb 5 5 5);
+        }
+        
+        .displayp3 {
+            background-color: color(display-p3 0 0.537 0.815);
+        }
+
+        .displayp3hdr {
+            background-color: color(display-p3 0 1.537 0.815);
+        }
+
+        .xyz {
+            background-color: color(xyz-d50 0.2005 1.14089 0.4472);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', async () => {
+            const results = document.getElementById('results');
+            results.textContent = await UIHelper.getCALayerTreeForCompositedElement(document.getElementById('layers'));
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <section id="layers">
+        <div class="unclampedrgb box"></div>
+        <div class="displayp3 box"></div>
+        <div class="displayp3hdr box"></div>
+        <div class="xyz box"></div>
+    </section>
+<pre id="results"></pre>
+</body>
+</html>
