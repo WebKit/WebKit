@@ -182,7 +182,7 @@ void NavigatorUAData::getHighEntropyValues(const Vector<String>& hints, Navigato
 #elif PLATFORM(IOS_FAMILY)
             values->platformVersion = systemMarketingVersionForUserAgentString();
 #elif OS(MACOS)
-            values->platformVersion = "10.15.7"_s;
+            values->platformVersion = "10.15.8"_s;
 #else
             values->platformVersion = ""_s;
 #endif

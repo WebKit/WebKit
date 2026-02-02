@@ -1794,7 +1794,7 @@ bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
 #if PLATFORM(COCOA)
 
 #if !PLATFORM(IOS_FAMILY)
-static constexpr auto frozenVersion = "10_15_7"_s;
+static constexpr auto frozenVersion = "10_15_8"_s;
 #elif PLATFORM(WATCHOS)
 static constexpr auto frozenVersion = "11_6_1"_s;
 #elif PLATFORM(APPLETV)

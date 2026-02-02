@@ -36,7 +36,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 {
     String appNameSuffix = applicationName.isEmpty() ? emptyString() : makeString(' ', applicationName);
 
-    return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, appNameSuffix);
+    return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_8) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, appNameSuffix);
 }
 
 } // namespace WebCore

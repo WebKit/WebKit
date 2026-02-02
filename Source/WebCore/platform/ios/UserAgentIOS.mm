@@ -94,7 +94,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
     auto separator = applicationName.isEmpty() ? ""_s : " "_s;
 
     if (type == UserAgentType::Desktop)
-        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_8) AppleWebKit/605.1.15 (KHTML, like Gecko)"_s, separator, applicationName);
 
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault)) {
         if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"))))) {

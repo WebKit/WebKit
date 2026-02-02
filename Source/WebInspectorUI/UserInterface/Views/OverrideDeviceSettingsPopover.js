@@ -145,12 +145,12 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
                 {name: WI.UIString("Default"), value: WI.DeviceSettingsManager.DefaultValue},
             ],
             [
-                {name: "Safari 26", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26 Safari/605.1.15"},
+                {name: "Safari 26", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_8) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26 Safari/605.1.15"},
             ],
             [
                 {name: `Safari ${emDash} iOS 26 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"},
                 {name: `Safari ${emDash} iPadOS 26 ${emDash} iPad mini`, value: "Mozilla/5.0 (iPad; CPU OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"},
-                {name: `Safari ${emDash} iPadOS 26 ${emDash} iPad`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26 Safari/605.1.15"},
+                {name: `Safari ${emDash} iPadOS 26 ${emDash} iPad`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_8) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26 Safari/605.1.15"},
             ],
             [
                 {name: `Microsoft Edge ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0"},
