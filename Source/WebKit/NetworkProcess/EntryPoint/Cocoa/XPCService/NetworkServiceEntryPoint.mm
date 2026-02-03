@@ -54,6 +54,25 @@ extern "C" WK_EXPORT void NETWORK_SERVICE_INITIALIZER(xpc_connection_t connectio
 
 void NETWORK_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
+    g_jscConfig.vmEntryDisallowed = true;
+    g_wtfConfig.useSpecialAbortForExtraSecurityImplications = true;
+
     WTF::initializeMainThread();
+    {
+        JSC::Options::initialize();
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::ExecutableAllocator::disableJIT();
+        JSC::Options::useWasm() = false;
+        JSC::Options::notifyOptionsChanged();
+    }
+    WTF::compilerFence();
+
     XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(connection, initializerMessage);
+
+    {
+        RefPtr vm = JSC::VM::create(); // Create a dummy VM to initialize StructureMemoryManager.
+        JSC::JSLockHolder lock(vm.get());
+        vm = nullptr;
+    }
+    JSC::Config::finalize();
 }
