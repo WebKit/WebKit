@@ -1749,7 +1749,16 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     Ref loader = m_client->createDocumentLoader(request.takeResourceRequest(), request.takeSubstituteData(), request.takeOriginalResourceRequest());
     loader->setIsContentRuleListRedirect(request.isContentRuleListRedirect());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
-    loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
+
+    // For Enhanced Security process swaps: ContentRuleList redirects OR cross-domain redirects need continuing load flag
+    bool isCrossDomainRedirect = request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision
+        && RegistrableDomain(request.resourceRequest().url()) != RegistrableDomain(request.requesterSecurityOrigin().data());
+
+    loader->setIsContinuingLoadAfterProvisionalLoadStarted(
+        request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted
+        || request.isContentRuleListRedirect()
+        || isCrossDomainRedirect
+    );
     if (crossSiteRequester)
         loader->setCrossSiteRequester(WTF::move(*crossSiteRequester));
 

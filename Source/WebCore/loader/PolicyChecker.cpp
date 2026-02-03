@@ -214,7 +214,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     m_contentFilterUnblockHandler = { };
 #endif
 
-    frameLoader->clearProvisionalLoadForPolicyCheck();
+    if (!loader->isContentRuleListRedirect())
+        frameLoader->clearProvisionalLoadForPolicyCheck();
 
     RefPtr formState = formSubmission ? protect(formSubmission->state()): nullptr;
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *protect(frame->document()), policyDecisionMode);

@@ -2320,6 +2320,11 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
         DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, returning empty document");
 
+        if (mainResourceOrError.error().localizedDescription() == "Loading in a new process"_s) {
+            DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Skipping maybeLoadEmpty for ContentRuleList redirect");
+            return;
+        }
+
         setRequest(ResourceRequest());
         maybeLoadEmpty();
         return;
