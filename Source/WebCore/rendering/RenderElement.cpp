@@ -1704,6 +1704,13 @@ bool RenderElement::useSystemDarkAppearance() const
     return false;
 }
 
+float RenderElement::deviceScaleFactor() const
+{
+    if (RefPtr page = document().page())
+        return page->deviceScaleFactor();
+    return 1;
+}
+
 VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
 {
     bool isVisible = isVisibleInViewport();

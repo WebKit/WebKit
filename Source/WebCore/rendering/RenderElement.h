@@ -424,6 +424,7 @@ private:
 
     bool canDestroyDecodedData() const final { return !isVisibleInViewport(); }
     bool useSystemDarkAppearance() const final;
+    float deviceScaleFactor() const final;
     VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
     VisibleInViewportState imageVisibleInViewport(const Document&) const final;
     void didRemoveCachedImageClient(CachedImage&) final;

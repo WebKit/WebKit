@@ -753,6 +753,14 @@ bool CachedImage::useSystemDarkAppearance() const
     return false;
 }
 
+float CachedImage::deviceScaleFactor() const
+{
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
+    if (RefPtr client = walker.next())
+        return client->deviceScaleFactor();
+    return 1;
+}
+
 bool CachedImage::allowsAnimation(const Image& image) const
 {
     if (&image != m_image)
