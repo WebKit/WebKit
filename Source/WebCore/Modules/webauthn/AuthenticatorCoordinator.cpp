@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "AuthenticatorCoordinator.h"
+#include "bindings/IDLTypes.h"
 
 #if ENABLE(WEB_AUTHN)
 
@@ -244,7 +245,7 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
 
     auto callback = [promise = WTF::move(promise), abortSignal = WTF::move(abortSignal)](AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
-            promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
+            promise.rejectType<IDLAny>(abortSignal->reason().getValue());
             return;
         }
 
