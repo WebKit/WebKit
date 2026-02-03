@@ -85,8 +85,8 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF)
     if (contains(formatSpan, "%@"_span)) {
-        auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
-        auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
+        auto cfFormat = adopt(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
+        auto result = adopt(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
         va_end(argsCopy);
         return result.get();
     }
@@ -159,9 +159,9 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF)
     if (contains(formatSpan, "%@"_span)) {
-        auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(nullptr, format, kCFStringEncodingUTF8, kCFAllocatorNull));
+        auto cfFormat = adopt(CFStringCreateWithCStringNoCopy(nullptr, format, kCFStringEncodingUTF8, kCFAllocatorNull));
 
-        auto str = adoptCF(CFStringCreateWithFormatAndArguments(nullptr, nullptr, cfFormat.get(), args));
+        auto str = adopt(CFStringCreateWithFormatAndArguments(nullptr, nullptr, cfFormat.get(), args));
         CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str.get()), kCFStringEncodingUTF8);
         constexpr unsigned InitialBufferSize { 256 };
         Vector<char, InitialBufferSize> buffer(length + 1);

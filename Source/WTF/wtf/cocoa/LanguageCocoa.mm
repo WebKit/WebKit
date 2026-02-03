@@ -89,7 +89,7 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
 {
     LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
     NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-    auto newArguments = adoptNS([existingArguments mutableCopy]);
+    auto newArguments = adopt([existingArguments mutableCopy]);
     [newArguments setValue:createNSArray(override).get() forKey:@"AppleLanguages"];
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
     languageDidChange();

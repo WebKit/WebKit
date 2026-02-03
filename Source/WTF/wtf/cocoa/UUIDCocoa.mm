@@ -33,7 +33,7 @@ namespace WTF {
 
 RetainPtr<NSUUID> UUID::createNSUUID() const
 {
-    return adoptNS([[NSUUID alloc] initWithUUIDString:toString().createNSString().get()]);
+    return adopt([[NSUUID alloc] initWithUUIDString:toString().createNSString().get()]);
 }
 
 std::optional<UUID> UUID::fromNSUUID(NSUUID *nsUUID)

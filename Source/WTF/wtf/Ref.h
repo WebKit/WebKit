@@ -179,6 +179,9 @@ public:
 
 private:
     friend Ref adoptRef<T>(T&);
+    template<typename U, typename V, typename W>
+        requires HasRefPtrMemberFunctions<U>::value
+    friend Ref<U, V, W> adopt(U&);
     template<typename X, typename Y, typename Z> friend class Ref;
 
     template<typename X, typename Y, typename Z, typename U, typename V, typename W>
@@ -348,6 +351,14 @@ inline Ref<T, _PtrTraits, RefDerefTraits> adoptRef(T& reference)
 
 template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
     requires HasRefPtrMemberFunctions<T>::value
+inline Ref<T, PtrTraits, RefDerefTraits> adopt(T& reference)
+{
+    adopted(&reference);
+    return Ref<T, PtrTraits, RefDerefTraits>(reference, Ref<T, PtrTraits, RefDerefTraits>::Adopt);
+}
+
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires HasRefPtrMemberFunctions<T>::value
 ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits, RefDerefTraits> protect(T& reference)
 {
     return Ref<T, PtrTraits, RefDerefTraits>(reference);
@@ -402,6 +413,7 @@ inline bool arePointingToEqualData(const Ref<T, PtrTraits, RefDerefTraits>& a, c
 } // namespace WTF
 
 using WTF::Ref;
+using WTF::adopt;
 using WTF::adoptRef;
 using WTF::arePointingToEqualData;
 using WTF::protect;

@@ -65,6 +65,15 @@ ALWAYS_INLINE CLANG_POINTER_CONVERSION OSObjectPtr<TypeName##_t> protect(TypeNam
 WTF_OS_OBJECT_NETWORK_TYPES(WTF_DECLARE_NETWORK_PROTECT)
 #undef WTF_DECLARE_NETWORK_PROTECT
 
+// Network adopt() functions.
+#define WTF_DECLARE_NETWORK_ADOPT(TypeName) \
+[[nodiscard]] ALWAYS_INLINE OSObjectPtr<TypeName##_t> adopt(TypeName##_t ptr) \
+{ \
+    return adoptOSObject(ptr); \
+}
+WTF_OS_OBJECT_NETWORK_TYPES(WTF_DECLARE_NETWORK_ADOPT)
+#undef WTF_DECLARE_NETWORK_ADOPT
+
 #if !__has_feature(objc_arc)
 // Template specializations for network retain/release traits (non-ARC only).
 #define WTF_DECLARE_NETWORK_OSOBJECT_RETAIN_TRAITS(TypeName) \
@@ -86,4 +95,5 @@ WTF_OS_OBJECT_NETWORK_TYPES(WTF_DECLARE_NETWORK_OSOBJECT_RETAIN_TRAITS)
 
 } // namespace WTF
 
+using WTF::adopt;
 using WTF::protect;

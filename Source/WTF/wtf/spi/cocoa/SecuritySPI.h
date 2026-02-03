@@ -110,6 +110,7 @@ typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;
 
 WTF_EXTERN_C_BEGIN
 
+CFTypeID SecTaskGetTypeID(void);
 SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);

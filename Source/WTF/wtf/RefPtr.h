@@ -97,6 +97,9 @@ public:
 
 private:
     friend RefPtr adoptRef<T, PtrTraits, RefDerefTraits>(T*);
+    template<typename U, typename V, typename W>
+        requires HasRefPtrMemberFunctions<U>::value
+    friend RefPtr<U, V, W> adopt(U*);
     template<typename X, typename Y, typename Z> friend class RefPtr;
 
     template<typename T1, typename U, typename V, typename X, typename Y, typename Z>
@@ -224,6 +227,14 @@ inline RefPtr<T, U, V> adoptRef(T* p)
 
 template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
     requires HasRefPtrMemberFunctions<T>::value
+inline RefPtr<T, PtrTraits, RefDerefTraits> adopt(T* p)
+{
+    adopted(p);
+    return RefPtr<T, PtrTraits, RefDerefTraits>(p, RefPtr<T, PtrTraits, RefDerefTraits>::Adopt);
+}
+
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires HasRefPtrMemberFunctions<T>::value
 ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(T* ptr)
 {
     return RefPtr<T, PtrTraits, RefDerefTraits>(ptr);
@@ -318,6 +329,7 @@ ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
 } // namespace WTF
 
 using WTF::RefPtr;
+using WTF::adopt;
 using WTF::adoptRef;
 using WTF::protect;
 using WTF::upcast;

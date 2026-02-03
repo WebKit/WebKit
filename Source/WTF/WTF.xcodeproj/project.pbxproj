@@ -627,6 +627,7 @@
 		DDF306FD27C086CC006A526F /* TypeCastsCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070627C086CC006A526F /* WeakLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C7CC291EA40A73007BD956 /* WeakLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070C27C086CC006A526F /* TypeCastsCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE647195201C300C48FFA /* TypeCastsCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A0CF001302E77880086000B /* CFTypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A0CF001302E77880086000A /* CFTypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070E27C086CC006A526F /* NSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC0EE872162BC2200A1A842 /* NSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3071127C086CC006A526F /* CrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = CEA072A8236FFBF70018839C /* CrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3071327C086CC006A526F /* CFURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1F05922164356B0039302C /* CFURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1249,6 +1250,7 @@
 		1A944F461C3D8814005BD28C /* BlockPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockPtr.h; sourceTree = "<group>"; };
 		1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumTraits.h; sourceTree = "<group>"; };
 		1AFDE647195201C300C48FFA /* TypeCastsCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCF.h; sourceTree = "<group>"; };
+		2A0CF001302E77880086000A /* CFTypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFTypeTraits.h; sourceTree = "<group>"; };
 		1C08E3662985D7D300CAE594 /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
 		1C08E3672985D7D400CAE594 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
 		1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };

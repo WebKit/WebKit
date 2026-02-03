@@ -42,7 +42,7 @@ public:
 
     static Ref<ThreadGroup> create()
     {
-        return adoptRef(*new ThreadGroup());
+        return adopt(*new ThreadGroup());
     }
 
     WTF_EXPORT_PRIVATE ThreadGroupAddResult add(Thread&);

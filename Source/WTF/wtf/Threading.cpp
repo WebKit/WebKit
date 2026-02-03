@@ -231,7 +231,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
     Function<void()> function;
     {
         // Ref is already incremented by Thread::create.
-        Ref context = adoptRef(*newThreadContext);
+        Ref context = adopt(*newThreadContext);
         // Block until our creating thread has completed any extra setup work, including establishing ThreadIdentifier.
         MutexLocker locker(context->mutex);
 
@@ -262,9 +262,9 @@ Ref<Thread> Thread::create(ASCIILiteral name, Function<void()>&& entryPoint, Thr
 {
     WTF::initialize();
 
-    Ref thread = adoptRef(*new Thread(schedulingPolicy));
+    Ref thread = adopt(*new Thread(schedulingPolicy));
 
-    Ref context = adoptRef(*new NewThreadContext { name, WTF::move(entryPoint), thread.get() });
+    Ref context = adopt(*new NewThreadContext { name, WTF::move(entryPoint), thread.get() });
     {
         MutexLocker locker(context->mutex);
         context->ref(); // Adopted by Thread::entryPoint
