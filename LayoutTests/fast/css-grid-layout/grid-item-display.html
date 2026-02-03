@@ -14,7 +14,17 @@
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
-<body onload="checkLayout('.grid > *')">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest() {
+    checkLayout('.grid > *');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="runTest()">
 
 <p>This test checks that the grid items' 'display' computed value matches the specification. It also checks that the grid items are placed in the right grid area.</p>
 

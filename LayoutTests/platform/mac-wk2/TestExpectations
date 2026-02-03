@@ -2464,5 +2464,3 @@ webkit.org/b/306785 imported/w3c/web-platform-tests/storage-access-api/requestSt
 
 webkit.org/b/306808 http/tests/webgpu/webgpu/shader/validation/parse/blankspace.html [ Pass Failure ]
 
-webkit.org/b/306821 [ Tahoe ] fast/css-grid-layout/grid-item-display.html [ Pass Failure ]
-
