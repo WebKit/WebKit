@@ -107,6 +107,7 @@ public:
     static Ref<CSSValue> extractBorderRightWidth(ExtractorState&);
     static Ref<CSSValue> extractBorderBottomWidth(ExtractorState&);
     static Ref<CSSValue> extractBorderLeftWidth(ExtractorState&);
+    static Ref<CSSValue> extractOutlineWidth(ExtractorState&);
     static Ref<CSSValue> extractHeight(ExtractorState&);
     static Ref<CSSValue> extractWidth(ExtractorState&);
     static Ref<CSSValue> extractMaxHeight(ExtractorState&);
@@ -205,6 +206,7 @@ public:
     static void extractBorderRightWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractBorderBottomWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractBorderLeftWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractOutlineWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractWidthSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractMaxHeightSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -856,6 +858,13 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyBorderLeftWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         return functor(state.style.usedBorderLeftWidth());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyOutlineWidth> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        return functor(state.style.usedOutlineWidth());
     }
 };
 
@@ -2066,6 +2075,16 @@ inline Ref<CSSValue> ExtractorCustom::extractBorderLeftWidth(ExtractorState& sta
 inline void ExtractorCustom::extractBorderLeftWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractSerialization<CSSPropertyBorderLeftWidth>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractOutlineWidth(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyOutlineWidth>(state);
+}
+
+inline void ExtractorCustom::extractOutlineWidthSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyOutlineWidth>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractHeight(ExtractorState& state)
