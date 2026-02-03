@@ -382,6 +382,11 @@ void WebPageProxy::semanticContextDidChange()
     protectedLegacyMainFrameProcess()->send(Messages::WebPage::SemanticContextDidChange(useFormSemanticContext()), webPageIDInMainFrameProcess());
 }
 
+WebCore::DestinationColorSpace WebPageProxy::colorSpace()
+{
+    return protectedPageClient()->colorSpace();
+}
+
 void WebPageProxy::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken)
 {
     if (!hasRunningProcess())

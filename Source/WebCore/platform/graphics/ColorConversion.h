@@ -46,6 +46,7 @@ template<typename Output, typename Input> Output convertColorCarryingForwardMiss
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
 
+
 // All color types, other than XYZA or those inheriting from RGBType, must implement
 // the following conversions to and from their "Reference" color.
 //

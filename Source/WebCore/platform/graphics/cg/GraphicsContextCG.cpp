@@ -56,7 +56,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
 static void setCGFillColor(CGContextRef context, const Color& color, const DestinationColorSpace& colorSpace)
 {
-    CGContextSetFillColorWithColor(context, cachedCGColorInDestinationStandardRange(color, colorSpace).get());
+    CGContextSetFillColorWithColor(context, cachedSDRCGColorForColorspace(color, colorSpace).get());
 }
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -236,13 +236,12 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
     RetainPtr<CGColorSpaceRef> colorSpace;
 
     // FIXME: Need to handle kCGContextTypePDF.
-    auto contextType = CGContextGetType(context);
-    if (contextType == kCGContextTypeIOSurface)
+    if (CGContextGetType(context) == kCGContextTypeIOSurface)
         colorSpace = CGIOSurfaceContextGetColorSpace(context);
-    else if (contextType == kCGContextTypeBitmap)
+    else if (CGContextGetType(context) == kCGContextTypeBitmap)
         colorSpace = CGBitmapContextGetColorSpace(context);
     else
-        colorSpace = CGContextGetColorSpace(context);
+        colorSpace = adoptCF(CGContextCopyDeviceColorSpace(context));
 
     // FIXME: Need to ASSERT(colorSpace). For now fall back to sRGB if colorSpace is nil.
     m_colorSpace = colorSpace ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
@@ -1113,7 +1112,7 @@ void GraphicsContextCG::setCGDropShadow(const std::optional<GraphicsDropShadow>&
 
     CGContextSetAlpha(context, shadow->opacity);
 
-    auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedCGColorInDestinationStandardRange(shadow->color, colorSpace()).get()));
+    auto style = adoptCF(CGStyleCreateShadow2(offset, blurRadius, cachedSDRCGColorForColorspace(shadow->color, colorSpace()).get()));
     CGContextSetStyle(context, style.get());
 }
 
@@ -1199,7 +1198,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
+            CGContextSetStrokeColorWithColor(context, cachedSDRCGColorForColorspace(state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:

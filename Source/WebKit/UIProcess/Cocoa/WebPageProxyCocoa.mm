@@ -194,14 +194,6 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTre
     }
 }
 
-WebCore::DestinationColorSpace WebPageProxy::colorSpace() const
-{
-    if (RefPtr pageClient = this->pageClient())
-        return pageClient->colorSpace();
-
-    return WebCore::DestinationColorSpace::SRGB();
-}
-
 void WebPageProxy::didCommitMainFrameData(const MainFrameData& mainFrameData, const TransactionID& transactionID)
 {
     themeColorChanged(mainFrameData.themeColor);

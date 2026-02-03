@@ -85,7 +85,6 @@ typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
     deDrawGlyphs = 8,
     deBeginLayer = 17,
     deEndLayer = 18,
-    deGetColorSpace = 30,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -397,7 +396,7 @@ typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageR
 void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
 void CGContextDrawPathDirect(CGContextRef, CGPathDrawingMode, CGPathRef, const CGRect* boundingBox);
 
-CGColorSpaceRef CGContextGetColorSpace(CGContextRef);
+CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
 CFPropertyListRef CGColorSpaceCopyPropertyList(CGColorSpaceRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);

@@ -52,7 +52,6 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
 #import <WebCore/BoxSides.h>
-#import <WebCore/Color.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/ScrollingNodeID.h>
 #import <WebCore/ValidationBubble.h>
@@ -209,9 +208,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
     if (layer.opacity != 1.0)
         ts.dumpProperty("layer opacity"_s, makeString(layer.opacity));
-
-    if (layer.backgroundColor)
-        ts.dumpProperty("layer background color"_s, WebCore::Color::createAndPreserveColorSpace(RetainPtr { layer.backgroundColor }.get()));
 
     if (layer.cornerRadius != 0.0)
         ts.dumpProperty("layer cornerRadius"_s, makeString(layer.cornerRadius));
