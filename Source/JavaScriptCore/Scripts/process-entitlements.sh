@@ -162,7 +162,8 @@ then
           "${PRODUCT_NAME}" == testdfg ||
           "${PRODUCT_NAME}" == testmasm ||
           "${PRODUCT_NAME}" == testmem ||
-          "${PRODUCT_NAME}" == testRegExp ]]; then mac_process_jsc_entitlements
+          "${PRODUCT_NAME}" == testRegExp ||
+          "${PRODUCT_NAME}" == unittests ]]; then mac_process_jsc_entitlements
     elif [[ "${PRODUCT_NAME}" == testapi ]]; then mac_process_testapi_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
@@ -178,7 +179,8 @@ then
           "${PRODUCT_NAME}" == testdfg ||
           "${PRODUCT_NAME}" == testmasm ||
           "${PRODUCT_NAME}" == testmem ||
-          "${PRODUCT_NAME}" == testRegExp ]]; then maccatalyst_process_jsc_entitlements
+          "${PRODUCT_NAME}" == testRegExp ||
+          "${PRODUCT_NAME}" == unittests ]]; then maccatalyst_process_jsc_entitlements
     elif [[ "${PRODUCT_NAME}" == testapi ]]; then maccatalyst_process_testapi_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
@@ -196,7 +198,8 @@ then
           "${PRODUCT_NAME}" == testdfg ||
           "${PRODUCT_NAME}" == testmasm ||
           "${PRODUCT_NAME}" == testmem ||
-          "${PRODUCT_NAME}" == testRegExp ]]; then ios_family_process_jsc_entitlements
+          "${PRODUCT_NAME}" == testRegExp ||
+          "${PRODUCT_NAME}" == unittests ]]; then ios_family_process_jsc_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
 else

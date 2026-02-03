@@ -1480,6 +1480,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/js/JSWebAssemblyModule.h
     wasm/js/JSWebAssemblyTable.h
     wasm/js/WebAssemblyBuiltin.h
+    wasm/js/WebAssemblyBuiltinTrampoline.h
+    wasm/js/WebAssemblyCompileOptions.h
     wasm/js/WebAssemblyFunction.h
     wasm/js/WebAssemblyFunctionBase.h
     wasm/js/WebAssemblyGCStructure.h
