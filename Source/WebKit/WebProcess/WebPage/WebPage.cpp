@@ -4011,6 +4011,11 @@ void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
     m_page->pointerCaptureController().touchWithIdentifierWasRemoved(pointerId);
 }
 
+void WebPage::resetPointerCapture()
+{
+    m_page->pointerCaptureController().reset();
+}
+
 #if ENABLE(MAC_GESTURE_EVENTS)
 static HandleUserInputEventResult handleGestureEvent(FrameIdentifier frameID, const WebGestureEvent& event, Page* page)
 {

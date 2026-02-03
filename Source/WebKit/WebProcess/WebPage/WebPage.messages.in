@@ -177,6 +177,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
     TouchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
+    ResetPointerCapture()
 
     DidEndColorPicker()
     DidChooseColor(WebCore::Color color)

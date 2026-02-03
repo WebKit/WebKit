@@ -1021,6 +1021,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (BOOL)_shouldIgnoreTouchEvent:(UIEvent *)event;
 - (void)_touchEventsRecognized;
+- (void)_touchEventsGestureRecognizerReset;
 
 - (BOOL)_hasEnclosingScrollView:(UIView *)firstView matchingCriteria:(Function<BOOL(UIScrollView *)>&&)matchFunction;
 

@@ -124,6 +124,8 @@ static unsigned incrementingTouchIdentifier = 1;
     _lastTouchEvent.predictedEvents = { };
     _lastTouchesBeganTime = 0;
     _lastTouchesBeganLocation = std::nullopt;
+
+    [_contentView _touchEventsGestureRecognizerReset];
 }
 
 - (void)cancel

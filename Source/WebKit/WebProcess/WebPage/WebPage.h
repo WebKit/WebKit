@@ -2299,6 +2299,7 @@ private:
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
+    void resetPointerCapture();
 
 #if ENABLE(CONTEXT_MENUS)
     void didDismissContextMenu();
