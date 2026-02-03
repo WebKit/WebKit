@@ -317,6 +317,7 @@ public:
     static void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     static void didChangeCanvasSize(CanvasRenderingContext&);
     static void didChangeCanvasMemory(CanvasRenderingContext&);
+    static void didRemoveCanvasFromDocument(CanvasRenderingContext&);
     static void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtension(WebGLRenderingContextBase&, const String&);
@@ -522,6 +523,7 @@ private:
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
     static void didChangeCanvasSizeImpl(InstrumentingAgents&, CanvasRenderingContext&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents&, CanvasRenderingContext&);
+    static void didRemoveCanvasFromDocumentImpl(InstrumentingAgents&, CanvasRenderingContext&);
     static void didFinishRecordingCanvasFrameImpl(InstrumentingAgents&, CanvasRenderingContext&, bool forceDispatch = false);
 #if ENABLE(WEBGL)
     static void didEnableExtensionImpl(InstrumentingAgents&, WebGLRenderingContextBase&, const String&);
@@ -1449,6 +1451,13 @@ inline void InspectorInstrumentation::didChangeCanvasMemory(CanvasRenderingConte
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
         didChangeCanvasMemoryImpl(*agents, context);
+}
+
+inline void InspectorInstrumentation::didRemoveCanvasFromDocument(CanvasRenderingContext& context)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
+        didRemoveCanvasFromDocumentImpl(*agents, context);
 }
 
 inline void InspectorInstrumentation::didFinishRecordingCanvasFrame(CanvasRenderingContext& context, bool forceDispatch)

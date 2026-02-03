@@ -1124,6 +1124,12 @@ void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& in
         canvasAgent->didChangeCanvasMemory(context);
 }
 
+void InspectorInstrumentation::didRemoveCanvasFromDocumentImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
+{
+    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didRemoveCanvasFromDocument(context);
+}
+
 void InspectorInstrumentation::didFinishRecordingCanvasFrameImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context, bool forceDispatch)
 {
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())

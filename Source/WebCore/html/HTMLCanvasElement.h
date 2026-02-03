@@ -184,6 +184,7 @@ private:
     RefPtr<ScriptExecutionContext> protectedCanvasBaseScriptExecutionContext() const { return canvasBaseScriptExecutionContext(); }
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+    void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     std::optional<FloatRect> computeDirtyRectangleIfNeeded(const std::optional<FloatRect>&) const;
 

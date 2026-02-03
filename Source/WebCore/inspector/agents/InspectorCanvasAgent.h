@@ -98,6 +98,7 @@ public:
     void didCreateCanvasRenderingContext(CanvasRenderingContext&);
     void didChangeCanvasSize(CanvasRenderingContext&);
     void didChangeCanvasMemory(CanvasRenderingContext&);
+    void didRemoveCanvasFromDocument(CanvasRenderingContext&);
     void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
     void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     void consoleStopRecordingCanvas(CanvasRenderingContext&);
