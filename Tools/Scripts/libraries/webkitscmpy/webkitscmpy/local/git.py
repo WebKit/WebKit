@@ -131,15 +131,28 @@ class Git(Scm):
             log = None
             try:
                 self._last_populated[branch] = time.time()
+                ref_to_use = '{}/{}'.format(remote, branch) if remote else branch
                 log = subprocess.Popen(
-                    [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
+                    [self.repo.executable(), 'log', ref_to_use, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     encoding='utf-8',
                 )
                 if log.poll():
-                    raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
+                    # If the local ref doesn't exist and no remote was specified, try to find the branch in canonical remotes
+                    if not remote:
+                        candidate_remotes = []
+                        for candidate_remote in self.repo.source_remotes(personal=False):
+                            if branch in self.repo.branches_for(remote=candidate_remote):
+                                candidate_remotes.append(candidate_remote)
+
+                        for candidate_remote in candidate_remotes:
+                            try:
+                                return self.populate(branch=branch, remote=candidate_remote)
+                            except self.repo.Exception:
+                                continue
+                    raise self.repo.Exception("Failed to construct branch history for '{}'".format(ref_to_use))
 
                 hash = None
                 revision = None
@@ -247,7 +260,19 @@ class Git(Scm):
                 return self._ordered_commits[branch][b_count]
             if populate:
                 self.populate(branch=branch)
-                return self.to_hash(identifier=identifier, populate=False)
+                if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
+                    return self._ordered_commits[branch][b_count]
+
+                # If we still don't have enough commits, try other remotes
+                for remote in self.repo.source_remotes(personal=False):
+                    if branch in self.repo.branches_for(remote=remote):
+                        try:
+                            self.populate(branch=branch, remote=remote)
+                            if branch in self._ordered_commits and len(self._ordered_commits[branch]) > b_count:
+                                return self._ordered_commits[branch][b_count]
+                        except self.repo.Exception:
+                            continue
+                return None
             return None
 
         def to_revision(self, hash=None, identifier=None, populate=True, branch=None):
@@ -268,7 +293,19 @@ class Git(Scm):
                 return self._ordered_revisions[branch][b_count]
             if populate:
                 self.populate(branch=branch)
-                return self.to_revision(identifier=identifier, populate=False)
+                if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
+                    return self._ordered_revisions[branch][b_count]
+
+                # If we still don't have enough commits, try other remotes
+                for remote in self.repo.source_remotes(personal=False):
+                    if branch in self.repo.branches_for(remote=remote):
+                        try:
+                            self.populate(branch=branch, remote=remote)
+                            if branch in self._ordered_revisions and len(self._ordered_revisions[branch]) > b_count:
+                                return self._ordered_revisions[branch][b_count]
+                        except self.repo.Exception:
+                            continue
+                return None
             return None
 
         def to_identifier(self, hash=None, revision=None, populate=True, branch=None):
@@ -282,7 +319,18 @@ class Git(Scm):
                     return self._revisions_to_identifiers[revision]
                 if populate:
                     self.populate(branch=branch)
-                    return self.to_identifier(revision=revision, populate=False)
+                    if revision in self._revisions_to_identifiers:
+                        return self._revisions_to_identifiers[revision]
+
+                    # If we still don't have the revision, try other remotes
+                    for remote in self.repo.source_remotes(personal=False):
+                        if branch and branch in self.repo.branches_for(remote=remote):
+                            try:
+                                self.populate(branch=branch, remote=remote)
+                                if revision in self._revisions_to_identifiers:
+                                    return self._revisions_to_identifiers[revision]
+                            except self.repo.Exception:
+                                continue
                 return None
 
             hash = Commit._parse_hash(hash, do_assert=False)
@@ -300,7 +348,26 @@ class Git(Scm):
                     return candidate
                 if populate:
                     self.populate(branch=branch)
-                    return self.to_identifier(hash=hash, populate=False)
+                    try:
+                        candidate = self._hash_to_identifiers.get(hash)
+                    except KeyError:
+                        return None
+                    if candidate:
+                        return candidate
+
+                    # If we still don't have the hash, try other remotes
+                    for remote in self.repo.source_remotes(personal=False):
+                        if branch and branch in self.repo.branches_for(remote=remote):
+                            try:
+                                self.populate(branch=branch, remote=remote)
+                                try:
+                                    candidate = self._hash_to_identifiers.get(hash)
+                                except KeyError:
+                                    continue
+                                if candidate:
+                                    return candidate
+                            except self.repo.Exception:
+                                continue
             return None
 
 
@@ -857,21 +924,51 @@ class Git(Scm):
                 if is_default:
                     base_count = self._commit_count(baseline)
                 else:
-                    base_count = min(
-                        self._commit_count('{}..{}'.format(default_branch, baseline)),
-                        self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, baseline)),
-                    )
+                    # Try to compute the commit count, first trying the local ref, then remote refs if that fails
+                    base_count = None
+                    try:
+                        base_count = min(
+                            self._commit_count('{}..{}'.format(default_branch, baseline)),
+                            self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, baseline)),
+                        )
+                    except self.Exception:
+                        pass
+
+                    # If local ref failed or doesn't have enough commits, try remote refs
+                    if base_count is None or identifier > base_count:
+                        best_remote_ref = None
+                        best_base_count = base_count
+                        for remote in self.source_remotes(personal=False):
+                            if branch in self.branches_for(remote=remote):
+                                try:
+                                    remote_ref = '{}/{}'.format(remote, branch)
+                                    remote_base_count = min(
+                                        self._commit_count('{}..{}'.format(default_branch, remote_ref)),
+                                        self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, remote_ref)),
+                                    )
+                                    if best_base_count is None or remote_base_count > best_base_count:
+                                        best_base_count = remote_base_count
+                                        best_remote_ref = remote_ref
+                                except self.Exception:
+                                    continue
+
+                        if best_remote_ref is not None:
+                            baseline = best_remote_ref
+                            base_count = best_base_count
+
+                    if base_count is None:
+                        raise self.Exception("Failed to compute identifier count for branch '{}'".format(branch))
 
                 if identifier > base_count:
                     raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout. Latest identifier on this branch is {}'.format(identifier, base_count))
                 log = run(
-                    [self.executable(), 'log', '{}~{}'.format(branch or 'HEAD', base_count - identifier)] + log_format + ['--'],
+                    [self.executable(), 'log', '{}~{}'.format(baseline, base_count - identifier)] + log_format + ['--'],
                     cwd=self.root_path,
                     capture_output=True,
                     encoding='utf-8',
                 )
                 if log.returncode:
-                    raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, branch or 'HEAD'))
+                    raise self.Exception("Failed to retrieve commit information for 'i{}@{}'".format(identifier, baseline))
 
                 # Negative identifiers are actually commits on the default branch, we will need to re-compute the identifier
                 if identifier < 0 and is_default:
