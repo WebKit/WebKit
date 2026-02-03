@@ -132,6 +132,7 @@ using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<C
     v(operationMatchesModalPseudoClass) \
     v(operationMatchesHtmlDocumentPseudoClass) \
     v(operationMatchesActiveViewTransitionPseudoClass) \
+    v(operationMatchesActiveViewTransitionTypePseudoClass) \
     v(operationIsUserInvalid) \
     v(operationIsUserValid) \
     v(operationAddStyleRelationFunction) \
@@ -288,6 +289,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesO
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesActiveViewTransitionPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesActiveViewTransitionTypePseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
 
@@ -438,6 +440,7 @@ struct SelectorFragment {
     const AtomString* id = nullptr;
     Vector<TextDirection> dirList;
     Vector<const FixedVector<PossiblyQuotedIdentifier>*> languageArgumentsList;
+    const FixedVector<PossiblyQuotedIdentifier>* activeViewTransitionTypeList;
     Vector<const AtomStringImpl*, 8> classNames;
     PseudoClassesSet pseudoClasses;
     Vector<CodePtr<JSC::OperationPtrTag>, 4> unoptimizedPseudoClasses;
@@ -566,6 +569,7 @@ private:
     void generateElementIsScopeRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
     void generateElementAndDocumentIsHTML(Assembler::JumpList& failureCases);
+    void generateElementHasActiveViewTransitionType(Assembler::JumpList& failureCases, const FixedVector<PossiblyQuotedIdentifier>& typeArgument);
 
     // Helpers.
     void generateAddStyleRelationIfResolvingStyle(Assembler::RegisterID element, Style::Relation::Type, std::optional<Assembler::RegisterID> value = { });
@@ -1049,6 +1053,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesActiveViewTransitionPseudoClas
     return matchesActiveViewTransitionPseudoClass(element);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesActiveViewTransitionTypePseudoClass, bool, (const Element& element, const FixedVector<PossiblyQuotedIdentifier>& typesInSelector))
+{
+    COUNT_SELECTOR_OPERATION(operationMatchesActiveViewTransitionTypePseudoClass);
+    return matchesActiveViewTransitionTypePseudoClass(element, typesInSelector);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsUserInvalid, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationIsUserInvalid);
@@ -1251,8 +1261,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Has:
     case CSSSelector::PseudoClass::Heading:
     case CSSSelector::PseudoClass::State:
-    // FIXME: <webkit.org/b/278189> CSS JIT: add support for :active-view-transition-type pseudo class
-    case CSSSelector::PseudoClass::ActiveViewTransitionType:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -1351,6 +1359,11 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Lang:
         ASSERT(selector.langList() && !selector.langList()->isEmpty());
         fragment.languageArgumentsList.append(selector.langList());
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClass::ActiveViewTransitionType:
+        ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
+        fragment.activeViewTransitionTypeList = selector.argumentList();
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClass::Is:
@@ -3184,6 +3197,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementMatchesDir(matchingPostTagNameFailureCases, fragment);
     if (!fragment.languageArgumentsList.isEmpty())
         generateElementIsInLanguage(matchingPostTagNameFailureCases, fragment);
+    if (fragment.activeViewTransitionTypeList)
+        generateElementHasActiveViewTransitionType(matchingPostTagNameFailureCases, *fragment.activeViewTransitionTypeList);
     if (!fragment.nthChildOfFilters.isEmpty())
         generateElementIsNthChildOf(matchingPostTagNameFailureCases, fragment);
     if (!fragment.nthLastChildOfFilters.isEmpty())
@@ -3866,6 +3881,18 @@ void SelectorCodeGenerator::generateElementIsInLanguage(Assembler::JumpList& fai
     FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
     functionCall.setFunctionAddress(operationMatchesLangPseudoClass);
     functionCall.setTwoArguments(elementAddress, langRangeRegister);
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
+}
+
+void SelectorCodeGenerator::generateElementHasActiveViewTransitionType(Assembler::JumpList& failureCases, const FixedVector<PossiblyQuotedIdentifier>& typeArgument)
+{
+    LocalRegisterWithPreference typeArgumentRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
+    m_assembler.move(Assembler::TrustedImmPtr(&typeArgument), typeArgumentRegister);
+
+    Assembler::RegisterID elementAddress = elementAddressRegister;
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(operationMatchesActiveViewTransitionTypePseudoClass);
+    functionCall.setTwoArguments(elementAddress, typeArgumentRegister);
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
