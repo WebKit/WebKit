@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AuthenticatorCoordinator.h"
 
+#include "IDLTypes.h"
+
 #if ENABLE(WEB_AUTHN)
 
 #include "AbortSignal.h"
@@ -242,9 +244,17 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         });
     }
 
-    auto callback = [promise = WTF::move(promise), abortSignal = WTF::move(abortSignal)](AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    JSC::Strong<JSC::JSObject> abortSignalStrong;
+    if (abortSignal) {
+        auto& vm = abortSignal->wrapper()->vm();
+        abortSignalStrong.set(vm, abortSignal->wrapper());
+    }
+
+    auto callback = [promise = WTF::move(promise), abortSignal = WTF::move(abortSignal), abortSignalStrong = WTF::move(abortSignalStrong)](AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+        if (abortSignalStrong.get())
+            abortSignalStrong.clear();
         if (abortSignal && abortSignal->aborted()) {
-            promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
+            promise.rejectType<IDLAny>(abortSignal->reason().getValue());
             return;
         }
 
