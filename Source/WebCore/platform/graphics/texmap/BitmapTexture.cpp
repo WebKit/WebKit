@@ -456,6 +456,16 @@ void BitmapTexture::bindAsSurface()
 
 BitmapTexture::~BitmapTexture()
 {
+#if USE(GBM)
+    // When backed by dma-buf, Mesa and GBM share the same DRM fd and thus
+    // the same GEM handle. glDeleteTextures will cause Mesa to close the
+    // GEM handle via DRM_IOCTL_GEM_CLOSE. If gbm_bo_destroy also tries to
+    // close the same handle, the double-close corrupts V3D driver state...
+    // Detach the gbm_bo so ~MemoryMappedGPUBuffer skips gbm_bo_destroy.
+    if (m_memoryMappedGPUBuffer)
+        m_memoryMappedGPUBuffer->detachBufferObject();
+#endif
+
     glDeleteTextures(1, &m_id);
 
     if (m_fbo)

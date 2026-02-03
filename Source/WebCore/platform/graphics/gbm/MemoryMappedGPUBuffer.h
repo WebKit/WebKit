@@ -101,6 +101,10 @@ public:
         Mode m_mode { Mode::Read };
     };
 
+    // Detach the gbm_bo so that ~MemoryMappedGPUBuffer skips gbm_bo_destroy.
+    // Used when Mesa's glDeleteTextures will close the shared GEM handle.
+    void detachBufferObject() { m_bo = nullptr; }
+
     bool isMapped() const { return !!m_mappedData; }
     bool isLinear() const;
     bool isVivanteSuperTiled() const;
