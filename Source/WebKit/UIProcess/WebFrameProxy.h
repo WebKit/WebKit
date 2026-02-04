@@ -42,6 +42,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RetainReleaseSwift.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -348,7 +349,7 @@ private:
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
-} SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy);
+} SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebKit
 

@@ -66,6 +66,7 @@
 #include <wtf/RetainReleaseSwift.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/Seconds.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashMap.h>
@@ -950,7 +951,7 @@ private:
 
     bool m_didReceiveLogsDuringLaunchForTesting { false };
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-} SWIFT_SHARED_REFERENCE(refWebProcessProxy, derefWebProcessProxy);
+} SWIFT_SHARED_REFERENCE(refWebProcessProxy, derefWebProcessProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
 
