@@ -50,7 +50,7 @@ class Encoder;
 namespace WebKit {
 
 struct NetworkResourceLoadParameters {
-    void createSandboxExtensionHandlesIfNecessary();
+    bool createSandboxExtensionHandlesIfNecessary();
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
     NetworkLoadParameters networkLoadParameters() const;

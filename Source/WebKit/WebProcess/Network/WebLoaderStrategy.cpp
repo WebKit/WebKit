@@ -460,7 +460,12 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         trackingParameters.frameID,
         request
     };
-    loadParameters.createSandboxExtensionHandlesIfNecessary();
+    if (!loadParameters.createSandboxExtensionHandlesIfNecessary()) {
+        RunLoop::mainSingleton().dispatch([resourceLoader = Ref { resourceLoader }, error = blockedError(request)] {
+            resourceLoader->didFail(error);
+        });
+        return;
+    }
 
     loadParameters.identifier = identifier;
     loadParameters.parentPID = legacyPresentingApplicationPID();
