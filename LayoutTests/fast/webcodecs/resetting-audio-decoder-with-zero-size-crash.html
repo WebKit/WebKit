@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<p>PASS if no crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+window.addEventListener("load", async _ => {
+  if (!"AudioDecoder" in window) {
+    window.testRunner?.notifyDone();
+    return;
+  }
+  const decoder = new AudioDecoder({output: _ => {}, error: _ => {}});
+  decoder.configure({ codec: "opus", sampleRate: 48000, numberOfChannels: 2 });
+
+  const chunk = new EncodedAudioChunk({
+    type: 'key',
+    timestamp: 0,
+    duration: 1000000,  // 1 second
+    data: new Uint8Array(0)
+  });
+  decoder.decode(chunk);
+  await decoder.flush();
+  window.testRunner?.notifyDone();
+});
+</script>

@@ -128,6 +128,7 @@ private:
     const Options m_options;
     std::atomic<unsigned> m_defaultBitRate { 0 };
     std::atomic<unsigned> m_preSkip { 0 };
+    bool m_skipEmptyBlock { false };
 };
 
 }
