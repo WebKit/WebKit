@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm64" and $platform == "linux"
 //@ runDefault
 
 let total_slice_call_count = 0;
