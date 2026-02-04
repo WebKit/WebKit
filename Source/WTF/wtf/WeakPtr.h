@@ -124,7 +124,7 @@ public:
 
     RefPtr<WeakPtrImpl, PtrTraits> releaseImpl() { return WTF::move(m_impl); }
 
-    T* get() const
+    T* get() const SWIFT_RETURNS_UNRETAINED
     {
         static_assert(
             HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
