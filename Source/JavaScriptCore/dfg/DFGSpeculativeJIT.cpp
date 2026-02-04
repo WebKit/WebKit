@@ -9141,13 +9141,113 @@ void SpeculativeJIT::compileSpread(Node* node)
         cellResult(resultGPR, node);
 #endif // USE(JSVALUE64)
     } else if (node->child1().useKind() == MapIteratorObjectUse) {
-        // MapIterator spread does not use inline fast path; call the C++ operation directly.
+#if USE(JSVALUE64)
+        GPRTemporary result(this);
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        GPRTemporary length(this);
+        GPRTemporary kind(this);
+
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
+        GPRReg lengthGPR = length.gpr();
+        GPRReg kindGPR = kind.gpr();
+
+        JumpList slowPath;
+        JumpList done;
+
+        using Helper = JSMap::Helper;
+
+        // 1. Load entry from iterator, check entry == 0 (fast path only for fresh iterators).
+        load64(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::Entry))), scratch1GPR);
+        slowPath.append(branchIfNotInt32(JSValueRegs(scratch1GPR)));
+        slowPath.append(branchTest32(NonZero, scratch1GPR));
+
+        // 2. Load storage from iterator.
+        loadPtr(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::Storage))), scratch1GPR);
+        auto hasStorage = branchTestPtr(NonZero, scratch1GPR);
+
+        // 3. If storage is null, load from iteratedObject->storage.
+        loadPtr(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::IteratedObject))), scratch2GPR);
+        loadPtr(Address(scratch2GPR, JSMap::offsetOfStorage()), scratch1GPR);
+        slowPath.append(branchTestPtr(Zero, scratch1GPR));
+
+        hasStorage.link(this);
+
+        // 4. Get the data area of the storage JSCellButterfly.
+        addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+
+        // 5. Load aliveEntryCount and check storage is not obsolete (slot 0 must be Int32).
+        load64(Address(scratch1GPR, Helper::aliveEntryCountIndex() * sizeof(EncodedJSValue)), lengthGPR);
+        slowPath.append(branchIfNotInt32(JSValueRegs(lengthGPR)));
+        zeroExtend32ToWord(lengthGPR, lengthGPR);
+
+        // 6. Check deletedEntryCount == 0.
+        load32(Address(scratch1GPR, Helper::deletedEntryCountIndex() * sizeof(EncodedJSValue)), scratch2GPR);
+        slowPath.append(branchTest32(NonZero, scratch2GPR));
+
+        // 7. Guard aliveEntryCount <= MAX_STORAGE_VECTOR_LENGTH.
+        slowPath.append(branch32(Above, lengthGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
+
+        // 8. Load kind (must be Keys or Values, not Entries).
+        load32(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::Kind))), kindGPR);
+        slowPath.append(branch32(Above, kindGPR, TrustedImm32(static_cast<uint32_t>(IterationKind::Values))));
+
+        // 9. Compute allocation size and allocate JSCellButterfly.
+        static_assert(sizeof(EncodedJSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
+        lshift32(lengthGPR, TrustedImm32(3), scratch1GPR);
+        add32(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+        emitAllocateVariableSizedCell<JSCellButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().cellButterflyStructure(CopyOnWriteArrayWithContiguous))), scratch1GPR, scratch1GPR, scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
+
+        // 10. Store publicLength and vectorLength.
+        static_assert(JSCellButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSCellButterfly::offsetOfVectorLength());
+        storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSCellButterfly::offsetOfPublicLength()));
+
+        // 11. Reload storage and compute source base pointer.
+        loadPtr(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::Storage))), scratch1GPR);
+        auto reloadHasStorage = branchTestPtr(NonZero, scratch1GPR);
+        loadPtr(Address(argument, JSMapIterator::offsetOfInternalField(static_cast<unsigned>(JSMapIterator::Field::IteratedObject))), scratch2GPR);
+        loadPtr(Address(scratch2GPR, JSMap::offsetOfStorage()), scratch1GPR);
+        reloadHasStorage.link(this);
+        addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+
+        load32(Address(scratch1GPR, Helper::capacityIndex() * sizeof(EncodedJSValue)), scratch2GPR);
+        add32(TrustedImm32(Helper::hashTableStartIndex()), scratch2GPR);
+        lshiftPtr(TrustedImm32(3), scratch2GPR);
+        addPtr(scratch2GPR, scratch1GPR);
+
+        // 12. Copy loop: for i = length-1 down to 0.
+        static_assert(Helper::EntrySize == 3, "Map entries have stride 3 (key + value + chain).");
+        done.append(branchTest32(Zero, lengthGPR));
+        auto loopStart = label();
+        sub32(TrustedImm32(1), lengthGPR);
+
+        // Compute source index: lengthGPR * 3 + kindGPR (0 for Keys, 1 for Values).
+        lshift32(lengthGPR, TrustedImm32(1), scratch2GPR);
+        add32(lengthGPR, scratch2GPR);
+        add32(kindGPR, scratch2GPR);
+        load64(BaseIndex(scratch1GPR, scratch2GPR, TimesEight), scratch2GPR);
+        store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSCellButterfly::offsetOfData()));
+        branchTest32(NonZero, lengthGPR).linkTo(loopStart, this);
+
+        // Note: We use operationSpreadGeneric instead of operationSpreadMapIterator because the slow path
+        // may be reached when kind == Entries, which operationSpreadMapIterator doesn't support.
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationSpreadGeneric, resultGPR, LinkableConstant::globalObject(*this, node), argument));
+
+        done.link(this);
+        mutatorFence(vm());
+        cellResult(resultGPR, node);
+#else
         flushRegisters();
 
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
-        callOperation(operationSpreadMapIterator, resultGPR, LinkableConstant::globalObject(*this, node), argument);
+        // Note: We use operationSpreadGeneric instead of operationSpreadMapIterator because the slow path
+        // may be reached when kind == Entries, which operationSpreadMapIterator doesn't support.
+        callOperation(operationSpreadGeneric, resultGPR, LinkableConstant::globalObject(*this, node), argument);
         cellResult(resultGPR, node);
+#endif // USE(JSVALUE64)
     } else {
         flushRegisters();
 

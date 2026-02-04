@@ -10355,8 +10355,117 @@ IGNORE_CLANG_WARNINGS_END
             result = m_out.phi(pointerType(), fastResult, slowResult);
             mutatorFence();
         } else if (m_node->child1().useKind() == MapIteratorObjectUse) {
-            // MapIterator spread does not use inline fast path; call the C++ operation directly.
-            result = vmCall(pointerType(), operationSpreadMapIterator, weakPointer(globalObject), argument);
+            using Helper = JSMap::Helper;
+
+            LBasicBlock entryCheck = m_out.newBlock();
+            LBasicBlock loadStorage = m_out.newBlock();
+            LBasicBlock loadFromMap = m_out.newBlock();
+            LBasicBlock hasStorageBlock = m_out.newBlock();
+            LBasicBlock obsoleteCheck = m_out.newBlock();
+            LBasicBlock deletedCheck = m_out.newBlock();
+            LBasicBlock sizeCheck = m_out.newBlock();
+            LBasicBlock kindCheck = m_out.newBlock();
+            LBasicBlock allocBlock = m_out.newBlock();
+            LBasicBlock loopStart = m_out.newBlock();
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            // 1. Load entry from iterator, check entry == 0.
+            LValue entryValue = m_out.load64(argument,
+                m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSMapIterator::Field::Entry)]);
+            m_out.branch(isNotInt32(entryValue), rarely(slowPath), usually(entryCheck));
+
+            LBasicBlock lastNext = m_out.appendTo(entryCheck, loadStorage);
+            LValue entry = unboxInt32(entryValue);
+            m_out.branch(m_out.isZero32(entry), usually(loadStorage), rarely(slowPath));
+
+            // 2. Load storage from iterator.
+            m_out.appendTo(loadStorage, loadFromMap);
+            LValue storage = m_out.loadPtr(argument,
+                m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSMapIterator::Field::Storage)]);
+            m_out.branch(m_out.isNull(storage), usually(loadFromMap), usually(hasStorageBlock));
+
+            // 3. If storage is null, load from iteratedObject->storage.
+            m_out.appendTo(loadFromMap, hasStorageBlock);
+            LValue iteratedObject = m_out.loadPtr(argument,
+                m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSMapIterator::Field::IteratedObject)]);
+            LValue mapStorage = m_out.loadPtr(iteratedObject, m_heaps.JSMap_storage);
+            ValueFromBlock mapStorageResult = m_out.anchor(mapStorage);
+            m_out.branch(m_out.isNull(mapStorage), rarely(slowPath), usually(obsoleteCheck));
+
+            // 4. Merge storage sources.
+            m_out.appendTo(hasStorageBlock, obsoleteCheck);
+            ValueFromBlock iteratorStorageResult = m_out.anchor(storage);
+            m_out.jump(obsoleteCheck);
+
+            // 5. Check storage is not obsolete.
+            m_out.appendTo(obsoleteCheck, deletedCheck);
+            LValue finalStorage = m_out.phi(pointerType(), mapStorageResult, iteratorStorageResult);
+            LValue storageButterfly = toButterfly(finalStorage);
+            LValue aliveEntryCountValue = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, storageButterfly, m_out.constIntPtr(Helper::aliveEntryCountIndex())));
+            m_out.branch(isNotInt32(aliveEntryCountValue), rarely(slowPath), usually(deletedCheck));
+
+            // 6. Check deletedEntryCount == 0.
+            m_out.appendTo(deletedCheck, sizeCheck);
+            LValue length = unboxInt32(aliveEntryCountValue);
+            LValue deletedCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, storageButterfly, m_out.constIntPtr(Helper::deletedEntryCountIndex())));
+            m_out.branch(m_out.isZero32(deletedCount), usually(sizeCheck), rarely(slowPath));
+
+            // 7. Check length <= MAX_STORAGE_VECTOR_LENGTH.
+            m_out.appendTo(sizeCheck, kindCheck);
+            m_out.branch(m_out.above(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), rarely(slowPath), usually(kindCheck));
+
+            // 8. Check kind is Keys or Values.
+            m_out.appendTo(kindCheck, allocBlock);
+            LValue kind = m_out.load32(argument,
+                m_heaps.JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSMapIterator::Field::Kind)]);
+            m_out.branch(m_out.above(kind, m_out.constInt32(static_cast<uint32_t>(IterationKind::Values))), rarely(slowPath), usually(allocBlock));
+
+            // 9. Allocate JSCellButterfly.
+            m_out.appendTo(allocBlock, loopStart);
+            static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
+            LValue size = m_out.add(
+                m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
+                m_out.constIntPtr(JSCellButterfly::offsetOfData()));
+            LValue fastAllocation = allocateVariableSizedCell<JSCellButterfly>(size, m_graph.m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), slowPath);
+            LValue fastStorage = toButterfly(fastAllocation);
+            m_out.store32(length, fastStorage, m_heaps.Butterfly_vectorLength);
+            m_out.store32(length, fastStorage, m_heaps.Butterfly_publicLength);
+            ValueFromBlock fastResult = m_out.anchor(fastAllocation);
+
+            // 10. Compute dataTableStartIndex.
+            LValue capacity = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, storageButterfly, m_out.constIntPtr(Helper::capacityIndex())));
+            LValue dataTableStart = m_out.add(m_out.constInt32(Helper::hashTableStartIndex()), capacity);
+
+            ValueFromBlock startIndex = m_out.anchor(m_out.constIntPtr(0));
+            m_out.branch(m_out.isZero32(length), unsure(continuation), unsure(loopStart));
+
+            // 11. Copy loop: for i = 0..<length, dest[i] = storage[dataTableStart + i * 3 + kind].
+            m_out.appendTo(loopStart, slowPath);
+            static_assert(Helper::EntrySize == 3, "Map entries have stride 3 (key + value + chain).");
+            LValue index = m_out.phi(pointerType(), startIndex);
+            // srcIndex = dataTableStart + index * 3 + kind
+            LValue srcIndex = m_out.add(
+                m_out.add(m_out.zeroExtPtr(dataTableStart), m_out.mul(index, m_out.constIntPtr(3))),
+                m_out.zeroExtPtr(kind));
+            LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, storageButterfly, srcIndex));
+            m_out.store64(value, m_out.baseIndex(m_heaps.indexedContiguousProperties, fastStorage, index));
+
+            LValue nextIndex = m_out.add(index, m_out.constIntPtr(1));
+            m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
+            m_out.branch(m_out.below(nextIndex, m_out.zeroExtPtr(length)), unsure(loopStart), unsure(continuation));
+
+            // 12. Slow path.
+            // Note: We use operationSpreadGeneric instead of operationSpreadMapIterator because the slow path
+            // may be reached when kind == Entries, which operationSpreadMapIterator doesn't support.
+            m_out.appendTo(slowPath, continuation);
+            ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationSpreadGeneric, weakPointer(globalObject), argument));
+            m_out.jump(continuation);
+
+            // 13. Continuation.
+            m_out.appendTo(continuation, lastNext);
+            result = m_out.phi(pointerType(), fastResult, slowResult);
+            mutatorFence();
         } else
             result = vmCall(pointerType(), operationSpreadGeneric, weakPointer(globalObject), argument);
 
