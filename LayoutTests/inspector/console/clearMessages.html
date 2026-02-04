@@ -11,7 +11,7 @@ function test()
         name: "CallClearMessages",
         description: "Calling the Console.clearMessages command should trigger Console.messagesCleared.",
         test(resolve, reject) {
-            WI.mainFrameTarget.ConsoleAgent.clearMessages();
+            ConsoleAgent.clearMessages();
 
             WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded)
             .then((event) => {

@@ -128,8 +128,11 @@ http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page
 http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html [ Skip ]
 http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html [ Skip ]
 http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html [ Skip ]
+<<<<<<< HEAD
 http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html [ Skip ]
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Skip ]
+=======
+>>>>>>> 02819ffe3a62 (Web Inspector: Temporarily revert frame-target console work)
 http/tests/site-isolation/inspector/target/target.html [ Skip ]
 http/tests/storage/storage-map-leaking.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/queue/copyToTexture/CopyExternalImageToTexture.html [ Skip ]
@@ -306,6 +309,11 @@ webrtc/datachannel/datachannel-page-cache-send.html [ Skip ]
 webrtc/datachannel/datachannel-page-cache.html [ Skip ]
 webrtc/peerconnection-page-cache-long.html [ Skip ]
 webrtc/peerconnection-page-cache.html [ Skip ]
+inspector/console/command-line-api-getEventListeners.html [ Skip ]
+inspector/console/console-count.html [ Skip ]
+inspector/console/console-screenshot.html [ Skip ]
+inspector/console/messageRepeatCountUpdated.html [ Skip ]
+inspector/console/timestamp.html [ Skip ]
 
 ###################
 # Tests that Text fail #

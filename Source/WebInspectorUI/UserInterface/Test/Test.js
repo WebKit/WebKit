@@ -174,14 +174,6 @@ WI.updateDockingAvailability = () => {};
 WI.updateVisibilityState = () => {};
 WI.updateFindString = () => {};
 
-// Assists in the transition of moving agent implementations from page to frame.
-Object.defineProperty(WI, "mainFrameTarget",
-{
-    get() {
-        return WI.targets.find((x) => x.type === WI.TargetType.Frame && x.parentTarget === WI.backendTarget);
-    }
-});
-
 // FIXME: <https://webkit.org/b/201149> Web Inspector: replace all uses of `window.*Agent` with a target-specific call
 (function() {
     function makeAgentGetter(domainName) {
@@ -195,6 +187,7 @@ Object.defineProperty(WI, "mainFrameTarget",
     makeAgentGetter("CPUProfiler");
     makeAgentGetter("CSS");
     makeAgentGetter("Canvas");
+    makeAgentGetter("Console");
     makeAgentGetter("DOM");
     makeAgentGetter("DOMDebugger");
     makeAgentGetter("DOMStorage");
