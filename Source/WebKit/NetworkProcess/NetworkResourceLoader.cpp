@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -297,7 +297,7 @@ void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, Com
     }
     NetworkProcess::setSharedParentalControlsURLFilterIfNecessary();
     m_contentFilter = ContentFilter::create(*this);
-    CheckedPtr contentFilter = m_contentFilter.get();
+    RefPtr contentFilter = m_contentFilter;
 #if HAVE(AUDIT_TOKEN)
     contentFilter->setHostProcessAuditToken(protectedConnectionToWebProcess()->networkProcess().sourceApplicationAuditToken());
 #endif
@@ -305,8 +305,8 @@ void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, Com
 
     CompletionHandler<void(ResourceRequest)> completion = [contentFilter, completionHandler = WTF::move(completionHandler)](ResourceRequest&& request) mutable {
         ASSERT(isMainRunLoop());
-        if (CheckedPtr filter = std::exchange(contentFilter, nullptr); request.isNull())
-            filter->stopFilteringMainResource();
+        if (contentFilter && request.isNull())
+            contentFilter->stopFilteringMainResource();
         completionHandler(WTF::move(request));
     };
     contentFilter->continueAfterWillSendRequest(WTF::move(request), ResourceResponse(), WTF::move(completion));
@@ -912,7 +912,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !checkedContentFilter()->continueAfterResponseReceived(receivedResponse))
+    if (m_contentFilter && !RefPtr { m_contentFilter }->continueAfterResponseReceived(receivedResponse))
         return completionHandler(PolicyAction::Ignore);
 #endif
 
@@ -1169,7 +1169,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
             sendBuffer(*m_bufferedData.protectedBuffer());
         }
 #if ENABLE(CONTENT_FILTERING)
-        if (CheckedPtr contentFilter = m_contentFilter.get()) {
+        if (RefPtr contentFilter = m_contentFilter) {
             if (!contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
                 return;
             contentFilter->stopFilteringMainResource();
@@ -1280,7 +1280,7 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !checkedContentFilter()->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
+    if (m_contentFilter && !RefPtr { m_contentFilter }->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
         if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
             networkLoad->clearClient();
         return completionHandler({ });
@@ -1601,7 +1601,7 @@ void NetworkResourceLoader::bufferingTimerFired()
 
 #if ENABLE(CONTENT_FILTERING)
     auto sharedBuffer = m_bufferedData.takeBufferAsContiguous();
-    bool shouldFilter = m_contentFilter && !checkedContentFilter()->continueAfterDataReceived(sharedBuffer);
+    bool shouldFilter = m_contentFilter && !RefPtr { m_contentFilter }->continueAfterDataReceived(sharedBuffer);
     if (!shouldFilter)
         sendDidReceiveDataMessage(sharedBuffer);
 #else
@@ -1615,7 +1615,7 @@ void NetworkResourceLoader::sendBuffer(const FragmentedSharedBuffer& buffer)
     ASSERT(!isSynchronous());
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !checkedContentFilter()->continueAfterDataReceived(buffer.makeContiguous()))
+    if (m_contentFilter && !RefPtr { m_contentFilter }->continueAfterDataReceived(buffer.makeContiguous()))
         return;
 #endif
 
@@ -1671,8 +1671,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     auto response = entry->response();
 
 #if ENABLE(CONTENT_FILTERING)
-    CheckedPtr contentFilter = m_contentFilter.get();
-    if (contentFilter && !contentFilter->responseReceived() && !contentFilter->continueAfterResponseReceived(response))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->responseReceived() && !contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
 
@@ -1747,7 +1746,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     LOADER_RELEASE_LOG("sendResultForCacheEntry:");
 
 #if ENABLE(CONTENT_FILTERING)
-    CheckedPtr contentFilter = m_contentFilter.get();
+    RefPtr contentFilter = m_contentFilter;
 #endif
 
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -2166,21 +2165,23 @@ void NetworkResourceLoader::sendReportToEndpoints(const URL& baseURL, std::span<
 #if ENABLE(CONTENT_FILTERING)
 bool NetworkResourceLoader::continueAfterServiceWorkerReceivedData(const WebCore::SharedBuffer& buffer)
 {
-    if (!m_contentFilter)
+    RefPtr contentFilter = m_contentFilter;
+    if (!contentFilter)
         return true;
-    return checkedContentFilter()->continueAfterDataReceived(buffer);
+    return contentFilter->continueAfterDataReceived(buffer);
 }
 
 bool NetworkResourceLoader::continueAfterServiceWorkerReceivedResponse(const ResourceResponse& response)
 {
-    if (!m_contentFilter)
+    RefPtr contentFilter = m_contentFilter;
+    if (!contentFilter)
         return true;
-    return checkedContentFilter()->continueAfterResponseReceived(response);
+    return contentFilter->continueAfterResponseReceived(response);
 }
 
 void NetworkResourceLoader::serviceWorkerDidFinish()
 {
-    CheckedPtr contentFilter = m_contentFilter.get();
+    RefPtr contentFilter = m_contentFilter;
     if (!contentFilter)
         return;
     contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
@@ -2195,16 +2196,18 @@ void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer&
 WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&& unblockHandler, String&& unblockRequestDeniedScript)
 {
     auto error = WebKit::blockedByContentFilterError(m_parameters.request);
-    CheckedPtr contentFilter = m_contentFilter.get();
 
     m_unblockHandler = WTF::move(unblockHandler);
     m_unblockRequestDeniedScript = unblockRequestDeniedScript;
-    
+
+    RefPtr contentFilter = m_contentFilter;
     if (m_unblockHandler.needsUIProcess()) {
-        contentFilter->setBlockedError(error);
-        contentFilter->handleProvisionalLoadFailure(error);
+        if (contentFilter) {
+            contentFilter->setBlockedError(error);
+            contentFilter->handleProvisionalLoadFailure(error);
+        }
     } else {
-        m_unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }, contentFilter](bool unblocked) mutable {
+        m_unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }, contentFilter = WTF::move(contentFilter)](bool unblocked) mutable {
             m_unblockHandler.setUnblockedAfterRequest(unblocked);
 
             ResourceRequest request;
@@ -2213,8 +2216,10 @@ WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::Con
             else
                 request = ResourceRequest(URL { aboutBlankURL() });
             auto error = WebKit::blockedByContentFilterError(request);
-            contentFilter->setBlockedError(error);
-            contentFilter->handleProvisionalLoadFailure(error);
+            if (contentFilter) {
+                contentFilter->setBlockedError(error);
+                contentFilter->handleProvisionalLoadFailure(error);
+            }
         });
     }
     return error;
@@ -2229,11 +2234,6 @@ void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const 
 {
     protectedConnectionToWebProcess()->networkProcess().addAllowedFirstPartyForCookies(m_connection->webProcessIdentifier(), RegistrableDomain { WebCore::ContentFilter::blockedPageURL() }, LoadedWebArchive::No, [] { });
     send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(m_unblockHandler, m_unblockRequestDeniedScript, m_contentFilter->blockedError(), blockedPageURL, substituteData));
-}
-
-CheckedPtr<WebCore::ContentFilter> NetworkResourceLoader::checkedContentFilter()
-{
-    return m_contentFilter.get();
 }
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)

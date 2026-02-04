@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -440,7 +440,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
 {
     ASSERT(isMainThread());
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterNotifyFinished(resource))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
 
@@ -760,7 +760,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     }
 
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
         return completionHandler(WTF::move(newRequest));
 #endif
 
@@ -944,7 +944,7 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
     CompletionHandlerCallingScope completionHandlerCaller(WTF::move(completionHandler));
 
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterResponseReceived(response))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
 
@@ -1400,7 +1400,7 @@ void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& 
 void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && !contentFilter->continueAfterDataReceived(buffer, ContentFilter::FromDocumentLoader::Yes))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && !contentFilter->continueAfterDataReceived(buffer, ContentFilter::FromDocumentLoader::Yes))
         return;
 #endif
 
@@ -1541,7 +1541,7 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get())
+    if (RefPtr contentFilter = m_contentFilter)
         contentFilter->stopFilteringMainResource();
 #endif
 
@@ -2397,7 +2397,7 @@ void DocumentLoader::clearMainResource()
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get())
+    if (RefPtr contentFilter = m_contentFilter)
         contentFilter->stopFilteringMainResource();
 #endif
 
@@ -2548,7 +2548,7 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
 void DocumentLoader::becomeMainResourceClient()
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (CheckedPtr contentFilter = m_contentFilter.get())
+    if (RefPtr contentFilter = m_contentFilter)
         contentFilter->startFilteringMainResource(*m_mainResource);
 #endif
     m_mainResource->addClient(*this);
@@ -2651,7 +2651,7 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
 
 bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const ResourceError& error)
 {
-    if (CheckedPtr contentFilter = m_contentFilter.get(); contentFilter && contentFilter->willHandleProvisionalLoadFailure(error))
+    if (RefPtr contentFilter = m_contentFilter; contentFilter && contentFilter->willHandleProvisionalLoadFailure(error))
         return true;
     if (contentFilterInDocumentLoader())
         return false;
@@ -2660,7 +2660,7 @@ bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const Resourc
 
 void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceError& error)
 {
-    if (CheckedPtr contentFilter = m_contentFilter.get())
+    if (RefPtr contentFilter = m_contentFilter)
         contentFilter->handleProvisionalLoadFailure(error);
     if (contentFilterInDocumentLoader())
         return;

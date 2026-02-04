@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 #include <functional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WorkQueue.h>
 
@@ -47,14 +47,13 @@ class ResourceRequest;
 class ResourceResponse;
 class SubstituteData;
 
-class ContentFilter : public CanMakeWeakPtr<ContentFilter>, public CanMakeCheckedPtr<ContentFilter> {
+class ContentFilter : public RefCounted<ContentFilter> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContentFilter, Loader);
     WTF_MAKE_NONCOPYABLE(ContentFilter);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContentFilter);
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
 
-    WEBCORE_EXPORT static std::unique_ptr<ContentFilter> create(ContentFilterClient&);
+    WEBCORE_EXPORT static RefPtr<ContentFilter> create(ContentFilterClient&);
     WEBCORE_EXPORT ~ContentFilter();
 
     static constexpr ASCIILiteral urlScheme() { return "x-apple-content-filter"_s; }
@@ -104,7 +103,7 @@ private:
     private:
         ContentFilterCallbackAggregator(ContentFilter&, const ResourceRequest&, CompletionHandler<void(ResourceRequest&&)>&&);
 
-        CheckedPtr<ContentFilter> m_contentFilter;
+        RefPtr<ContentFilter> m_contentFilter;
         ResourceRequest m_request;
         CompletionHandler<void(ResourceRequest&&)> m_callback;
         unsigned m_numberOfFiltersAllowed { 0 };
@@ -118,7 +117,6 @@ private:
     WEBCORE_EXPORT static Vector<Type>& types();
 
     using Container = Vector<Ref<PlatformContentFilter>>;
-    friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, ContentFilterClient&);
     ContentFilter(Container&&, ContentFilterClient&);
 
     template <typename Function> void forEachContentFilterUntilBlocked(Function&&);
@@ -126,12 +124,10 @@ private:
     void deliverResourceData(const SharedBuffer&);
     void deliverStoredResourceData();
 
-    Ref<ContentFilterClient> protectedClient() const;
-    
     URL url();
 
     Container m_contentFilters;
-    WeakRef<ContentFilterClient> m_client;
+    WeakPtr<ContentFilterClient> m_client;
     URL m_mainResourceURL;
     struct ResourceDataItem {
         RefPtr<const SharedBuffer> buffer;
