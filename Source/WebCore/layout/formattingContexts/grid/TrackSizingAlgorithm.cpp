@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrackSizingAlgorithm.h"
 
+#include "GridLayoutUtils.h"
 #include "LayoutIntegrationUtils.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
@@ -290,7 +291,7 @@ static void resolveIntrinsicTrackSizes(UnsizedTracks& unsizedTracks, const Place
     UNUSED_VARIABLE(setInfiniteGrowthLimitsToBaseSize);
 }
 
-TrackSizes TrackSizingAlgorithm::sizeTracks(const PlacedGridItems& gridItems, const PlacedGridItemSpanList& gridItemSpanList, const TrackSizingFunctionsList& trackSizingFunctions, std::optional<LayoutUnit> availableSpace, const GridItemSizingFunctions& gridItemSizingFunctions, FreeSpaceScenario freeSpaceScenario, const IntegrationUtils& integrationUtils)
+TrackSizes TrackSizingAlgorithm::sizeTracks(const PlacedGridItems& gridItems, const PlacedGridItemSpanList& gridItemSpanList, const TrackSizingFunctionsList& trackSizingFunctions, std::optional<LayoutUnit> availableSpace, const GridItemSizingFunctions& gridItemSizingFunctions, FreeSpaceScenario freeSpaceScenario, LayoutUnit gapSize, const IntegrationUtils& integrationUtils)
 {
     ASSERT(gridItems.size() == gridItemSpanList.size());
 
@@ -340,11 +341,22 @@ TrackSizes TrackSizingAlgorithm::sizeTracks(const PlacedGridItems& gridItems, co
         if (availableSpace.value() == 0_lu)
             return;
 
+        // Compute total gutters/gaps between tracks.
+        // https://www.w3.org/TR/css-grid-1/#algo-terms
+        // Per §11.2: "free space" = available grid space - sum of base sizes - gutters.
+        // We must subtract gutters before calling findSizeOfFr.
+        LayoutUnit totalGutters = GridLayoutUtils::computeTotalGuttersSize(unsizedTracks.size(), gapSize);
+        LayoutUnit spaceToFill = *availableSpace - totalGutters;
+
+        // If available space minus gutters is zero or negative, flex tracks get no space
+        if (spaceToFill <= 0_lu)
+            return;
+
         // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
         // Otherwise, if the free space is a definite length:
         // The used flex fraction is the result of finding the size of an fr using all of the
-        // grid tracks and a space to fill of the available grid space.
-        auto frSize = findSizeOfFr(unsizedTracks, *availableSpace);
+        // grid tracks and a space to fill of the available grid space (minus gutters).
+        auto frSize = findSizeOfFr(unsizedTracks, spaceToFill);
 
         // For each flexible track, if the product of the used flex fraction and the track's flex factor is greater than the track's base size, set its base size to that product.
         for (auto& flexTrack : flexTracks) {

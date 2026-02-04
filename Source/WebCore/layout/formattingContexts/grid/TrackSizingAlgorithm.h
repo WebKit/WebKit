@@ -48,7 +48,7 @@ struct GridItemSizingFunctions {
 
 class TrackSizingAlgorithm {
 public:
-    static TrackSizes sizeTracks(const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingFunctionsList&, std::optional<LayoutUnit> availableSpace, const GridItemSizingFunctions&, FreeSpaceScenario, const IntegrationUtils&);
+    static TrackSizes sizeTracks(const PlacedGridItems&, const PlacedGridItemSpanList&, const TrackSizingFunctionsList&, std::optional<LayoutUnit> availableSpace, const GridItemSizingFunctions&, FreeSpaceScenario, LayoutUnit gapSize, const IntegrationUtils&);
 
 private:
 

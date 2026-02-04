@@ -333,19 +333,25 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const PlacedGridItems& pla
 {
     auto& integrationUtils = formattingContext().integrationUtils();
 
+    // Compute gap values for columns and rows.
+    // These are needed by the track sizing algorithm to correctly compute free space.
+    CheckedRef formattingContextRootStyle = formattingContext().root().style();
+    auto columnsGap = GridLayoutUtils::computeGapValue(formattingContextRootStyle->columnGap());
+    auto rowsGap = GridLayoutUtils::computeGapValue(formattingContextRootStyle->rowGap());
+
     // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
     auto columnSpanList = placedGridItems.map([](const PlacedGridItem& gridItem) {
         return WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
     });
     auto columnSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, columnSpanList, columnTrackSizingFunctionsList, layoutConstraints.inlineAxisAvailableSpace,
-        GridLayoutUtils::inlineAxisGridItemSizingFunctions(), columnFreeSpaceScenario, integrationUtils);
+        GridLayoutUtils::inlineAxisGridItemSizingFunctions(), columnFreeSpaceScenario, columnsGap, integrationUtils);
 
     auto rowSpanList = placedGridItems.map([](const PlacedGridItem& gridItem) {
         return WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
     });
     // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
     auto rowSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, rowSpanList, rowTrackSizingFunctionsList, layoutConstraints.blockAxisAvailableSpace,
-        GridLayoutUtils::blockAxisGridItemSizingFunctions(), rowFreeSpaceScenario, integrationUtils);
+        GridLayoutUtils::blockAxisGridItemSizingFunctions(), rowFreeSpaceScenario, rowsGap, integrationUtils);
 
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid
