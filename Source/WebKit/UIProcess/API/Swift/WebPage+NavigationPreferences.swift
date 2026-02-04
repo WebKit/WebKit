@@ -109,6 +109,18 @@ extension WebPage {
             set { backingIsLockdownModeEnabled = newValue }
         }
 
+        /// A Boolean value that indicates whether rich web APIs are enabled.
+        ///
+        /// When set to `false`, this disables rich web platform APIs marked with the
+        /// `richJavaScript` annotation in WebKit's unified preferences. This reduces the
+        /// WebKit attack surface for applications that only need basic web content rendering.
+        ///
+        /// The default value is `true`.
+        @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+        @available(watchOS, unavailable)
+        @available(tvOS, unavailable)
+        public var richWebAPIsEnabled: Bool = true
+
         var backingSecurityRestrictionMode: SecurityRestrictionMode? = nil
 
         /// Security restriction mode for this navigation.
@@ -196,6 +208,7 @@ extension WebPage.NavigationPreferences {
 
         self.allowsContentJavaScript = wrapped.allowsContentJavaScript
         self.isLockdownModeEnabled = wrapped.isLockdownModeEnabled
+        self.richWebAPIsEnabled = wrapped.richWebAPIsEnabled
         self.securityRestrictionMode = .init(wrapped.securityRestrictionMode)
 
         self.alternateRequest = wrapped.alternateRequest

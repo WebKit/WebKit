@@ -498,6 +498,7 @@ public:
     bool shouldAllowScriptAccess(const URL&, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory) const;
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
+    bool isRichWebAPIsEnabled() const { return m_isRichWebAPIsEnabled.value(); }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool prefersNonBlinkingCursor() const { return m_prefersNonBlinkingCursor; }
@@ -903,6 +904,7 @@ private:
     bool m_allowExitOnMemoryPressure { true };
     std::optional<bool> m_isLockdownModeEnabled;
     std::optional<bool> m_isEnhancedSecurityEnabled;
+    std::optional<bool> m_isRichWebAPIsEnabled;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, Ref<SandboxExtension>> m_mediaCaptureSandboxExtensions;

@@ -879,6 +879,148 @@ TEST(IPCTestingAPI, SpeechSynthesisWithLockdownMode)
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:NO];
 }
 
+static RetainPtr<TestWKWebView> createWebViewWithIPCTestingAPIAndRichWebAPIs(bool richWebAPIsEnabled)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr<WKWebpagePreferences> webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [webpagePreferences setRichWebAPIsEnabled:richWebAPIsEnabled];
+    [configuration setDefaultWebpagePreferences:webpagePreferences.get()];
+
+    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+}
+
+TEST(IPCTestingAPI, RichWebAPIsEnabledIPCBlocking)
+{
+    // Test 1: richWebAPIsEnabled = YES - message should succeed
+    {
+        alertMessage = nil;
+        auto webView = createWebViewWithIPCTestingAPIAndRichWebAPIs(true);
+
+        auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+        [webView setUIDelegate:delegate.get()];
+
+        done = false;
+        [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+            "try {"
+            "  var reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_RichWebAPIsTestPing.name, 1000, [{type: 'uint32_t', value: 42}]);"
+            "  if (reply && reply.arguments && reply.arguments[0]) {"
+            "    alert('rich_web_apis_enabled_success:' + reply.arguments[0].value);"
+            "  } else {"
+            "    alert('rich_web_apis_enabled_unexpected_result');"
+            "  }"
+            "} catch(e) {"
+            "  alert('rich_web_apis_enabled_error:' + e.message);"
+            "}"
+            "})();</script>"];
+        TestWebKitAPI::Util::runFor(&done, 10_s);
+
+        NSLog(@"RichWebAPIs enabled test result: %@", alertMessage.get());
+
+        EXPECT_TRUE(alertMessage.get() != nil);
+        EXPECT_TRUE([alertMessage containsString:@"rich_web_apis_enabled_success:43"]);
+    }
+
+    // Test 2: richWebAPIsEnabled = NO - message should be blocked by EnabledBy check
+    {
+        alertMessage = nil;
+        auto webView = createWebViewWithIPCTestingAPIAndRichWebAPIs(false);
+
+        auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+        [webView setUIDelegate:delegate.get()];
+
+        done = false;
+        [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+            "try {"
+            "  var reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_RichWebAPIsTestPing.name, 1000, [{type: 'uint32_t', value: 42}]);"
+            "  if (reply && reply.arguments && reply.arguments[0]) {"
+            "    alert('rich_web_apis_disabled_unexpected_success:' + reply.arguments[0].value);"
+            "  } else {"
+            "    alert('rich_web_apis_disabled_unexpected_result');"
+            "  }"
+            "} catch(e) {"
+            "  alert('rich_web_apis_disabled_blocked:' + e.message);"
+            "}"
+            "})();</script>"];
+        TestWebKitAPI::Util::runFor(&done, 10_s);
+
+        NSLog(@"RichWebAPIs disabled test result: %@", alertMessage.get());
+
+        EXPECT_TRUE(alertMessage.get() != nil);
+        EXPECT_TRUE([alertMessage containsString:@"rich_web_apis_disabled_blocked"]
+            && [alertMessage containsString:@"Receiver cancelled the reply due to invalid destination or deserialization error"]);
+    }
+}
+
+TEST(IPCTestingAPI, RichWebAPIsDisabledThenEnabledIPCBlockingSync)
+{
+    // Test 1: richWebAPIsEnabled = NO first - sync message should be blocked
+    {
+        alertMessage = nil;
+        auto webView = createWebViewWithIPCTestingAPIAndRichWebAPIs(false);
+
+        auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+        [webView setUIDelegate:delegate.get()];
+
+        done = false;
+        [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+            "try {"
+            "  var reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_RichWebAPIsTestPing.name, 1000, [{type: 'uint32_t', value: 42}]);"
+            "  if (reply && reply.arguments && reply.arguments[0]) {"
+            "    alert('sync_disabled_first_unexpected_success:' + reply.arguments[0].value);"
+            "  } else {"
+            "    alert('sync_disabled_first_unexpected_result');"
+            "  }"
+            "} catch(e) {"
+            "  alert('sync_disabled_first_blocked:' + e.message);"
+            "}"
+            "})();</script>"];
+        TestWebKitAPI::Util::runFor(&done, 10_s);
+
+        NSLog(@"RichWebAPIs sync disabled first test result: %@", alertMessage.get());
+
+        EXPECT_TRUE(alertMessage.get() != nil);
+        EXPECT_TRUE([alertMessage containsString:@"sync_disabled_first_blocked"]
+            && [alertMessage containsString:@"Receiver cancelled the reply due to invalid destination or deserialization error"]);
+    }
+
+    // Test 2: richWebAPIsEnabled = YES second - sync message should succeed
+    {
+        alertMessage = nil;
+        auto webView = createWebViewWithIPCTestingAPIAndRichWebAPIs(true);
+
+        auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+        [webView setUIDelegate:delegate.get()];
+
+        done = false;
+        [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(function test() {"
+            "try {"
+            "  var reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_RichWebAPIsTestPing.name, 1000, [{type: 'uint32_t', value: 42}]);"
+            "  if (reply && reply.arguments && reply.arguments[0]) {"
+            "    alert('sync_enabled_second_success:' + reply.arguments[0].value);"
+            "  } else {"
+            "    alert('sync_enabled_second_unexpected_result');"
+            "  }"
+            "} catch(e) {"
+            "  alert('sync_enabled_second_error:' + e.message);"
+            "}"
+            "})();</script>"];
+        TestWebKitAPI::Util::runFor(&done, 10_s);
+
+        NSLog(@"RichWebAPIs sync enabled second test result: %@", alertMessage.get());
+
+        EXPECT_TRUE(alertMessage.get() != nil);
+        EXPECT_TRUE([alertMessage containsString:@"sync_enabled_second_success:43"]);
+    }
+}
+
 #endif
 
 #if !HAVE(WK_SECURE_CODING_NSURLREQUEST)

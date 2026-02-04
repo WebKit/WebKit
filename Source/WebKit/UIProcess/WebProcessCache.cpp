@@ -222,7 +222,7 @@ void WebProcessCache::evictAtRandomIfNeeded()
     }
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebProcessProxy::IsolatedProcessType isolatedProcessType, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebProcessProxy::IsolatedProcessType isolatedProcessType, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::RichWebAPIs richWebAPIs, const API::PageConfiguration& pageConfiguration)
 {
     auto it = m_processesPerSite.find({ site, isolatedProcessType });
     if (it == m_processesPerSite.end()) {
@@ -237,6 +237,11 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
 
     if (it->value->process().lockdownMode() != lockdownMode) {
         WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, lockdown mode not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    if (it->value->process().richWebAPIs() != richWebAPIs) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeProcess: cannot take process, rich web APIs mode not identical", it->value->process().processID());
         return nullptr;
     }
 
@@ -265,7 +270,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
     return process;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::RichWebAPIs richWebAPIs, const API::PageConfiguration& pageConfiguration)
 {
     auto it = m_sharedProcessesPerSite.find(mainFrameSite);
     if (it == m_sharedProcessesPerSite.end()) {
@@ -280,6 +285,11 @@ RefPtr<WebProcessProxy> WebProcessCache::takeSharedProcess(const WebCore::Site& 
 
     if (it->value->process().lockdownMode() != lockdownMode) {
         WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: cannot take process, lockdown mode not identical", it->value->process().processID());
+        return nullptr;
+    }
+
+    if (it->value->process().richWebAPIs() != richWebAPIs) {
+        WEBPROCESSCACHE_RELEASE_LOG("takeSharedProcess: cannot take process, rich web APIs mode not identical", it->value->process().processID());
         return nullptr;
     }
 

@@ -120,6 +120,10 @@ public:
     void setLockdownModeEnabled(std::optional<bool> enabled) { m_lockdownModeEnabled = enabled; }
     bool isLockdownModeExplicitlySet() const { return !!m_lockdownModeEnabled; }
 
+    bool richWebAPIsEnabled() const;
+    void setRichWebAPIsEnabled(std::optional<bool> enabled) { m_richWebAPIsEnabled = enabled; }
+    bool isRichWebAPIsExplicitlySet() const { return !!m_richWebAPIsEnabled; }
+
     WebCore::ColorSchemePreference colorSchemePreference() const { return m_data.colorSchemePreference; }
     void setColorSchemePreference(WebCore::ColorSchemePreference colorSchemePreference) { m_data.colorSchemePreference = colorSchemePreference; }
 
@@ -174,6 +178,7 @@ private:
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     std::optional<bool> m_lockdownModeEnabled;
     std::optional<bool> m_isEnhancedSecurityEnabled;
+    std::optional<bool> m_richWebAPIsEnabled;
 #if PLATFORM(COCOA)
     const std::unique_ptr<WebKit::LockdownModeObserver> m_lockdownModeObserver;
 #endif

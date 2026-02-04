@@ -46,7 +46,7 @@ struct SharedPreferencesForWebProcess {
     bool operator==(const SharedPreferencesForWebProcess&) const = default;
 };
 
-SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled);
-bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&, const WebPreferencesStore&, bool isLockdownModeEnabled);
+SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore&, bool isLockdownModeEnabled, bool isRichWebAPIsEnabled);
+bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&, const WebPreferencesStore&, bool isLockdownModeEnabled, bool isRichWebAPIsEnabled);
 
 } // namespace WebKit

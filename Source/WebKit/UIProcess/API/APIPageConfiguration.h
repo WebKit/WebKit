@@ -442,9 +442,9 @@ public:
 
     bool isLockdownModeExplicitlySet() const;
     bool lockdownModeEnabled() const;
-    
     bool isEnhancedSecurityEnabled() const;
 
+    bool richWebAPIsEnabled() const;
     void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
 

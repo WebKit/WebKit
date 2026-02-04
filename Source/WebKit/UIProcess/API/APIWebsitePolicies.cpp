@@ -51,6 +51,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setLockdownModeEnabled(m_lockdownModeEnabled);
+    policies->setRichWebAPIsEnabled(m_richWebAPIsEnabled);
     policies->setIsEnhancedSecurityEnabled(m_isEnhancedSecurityEnabled);
     return policies;
 }
@@ -78,6 +79,11 @@ WebKit::WebsitePoliciesData WebsitePolicies::dataForProcess(WebKit::WebProcessPr
 bool WebsitePolicies::lockdownModeEnabled() const
 {
     return m_lockdownModeEnabled ? *m_lockdownModeEnabled : WebKit::lockdownModeEnabledBySystem();
+}
+
+bool WebsitePolicies::richWebAPIsEnabled() const
+{
+    return m_richWebAPIsEnabled.value_or(true);
 }
 
 const WebCore::ResourceRequest& WebsitePolicies::alternateRequest() const

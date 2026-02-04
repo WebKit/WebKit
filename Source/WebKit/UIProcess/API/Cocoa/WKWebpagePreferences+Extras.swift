@@ -55,6 +55,7 @@ extension WKWebpagePreferences {
         self.preferredContentMode = .init(wrapped.preferredContentMode)
         self.preferredHTTPSNavigationPolicy = .init(wrapped.preferredHTTPSNavigationPolicy)
         self.allowsContentJavaScript = wrapped.allowsContentJavaScript
+        self.richWebAPIsEnabled = wrapped.richWebAPIsEnabled
 
         if let isLockdownModeEnabled = wrapped.backingIsLockdownModeEnabled, self.isLockdownModeEnabled != isLockdownModeEnabled {
             self.isLockdownModeEnabled = isLockdownModeEnabled

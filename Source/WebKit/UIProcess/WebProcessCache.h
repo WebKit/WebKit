@@ -50,8 +50,8 @@ public:
     explicit WebProcessCache(WebProcessPool&);
 
     bool addProcessIfPossible(Ref<WebProcessProxy>&&);
-    RefPtr<WebProcessProxy> takeProcess(const WebCore::Site&, WebProcessProxy::IsolatedProcessType, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
-    RefPtr<WebProcessProxy> takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, const API::PageConfiguration&);
+    RefPtr<WebProcessProxy> takeProcess(const WebCore::Site&, WebProcessProxy::IsolatedProcessType, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::RichWebAPIs, const API::PageConfiguration&);
+    RefPtr<WebProcessProxy> takeSharedProcess(const WebCore::Site& mainFrameSite, WebsiteDataStore&, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::RichWebAPIs, const API::PageConfiguration&);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }

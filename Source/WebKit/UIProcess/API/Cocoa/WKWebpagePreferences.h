@@ -107,6 +107,14 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  */
 @property (nonatomic, getter=isLockdownModeEnabled) BOOL lockdownModeEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+/*! @abstract A Boolean value that indicates whether rich web APIs are enabled.
+ @discussion When set to NO, this disables rich web platform APIs marked with the
+ richJavaScript annotation in WebKit's unified preferences. This reduces the WebKit
+ attack surface for applications that only need basic web content rendering.
+ The default value is YES.
+ */
+@property (nonatomic) BOOL richWebAPIsEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! @abstract A WKWebpagePreferencesUpgradeToHTTPSPolicy indicating the desired mode
  used when performing a top-level navigation to a webpage.
  @discussion The default value is WKWebpagePreferencesUpgradeToHTTPSPolicyKeepAsRequested.

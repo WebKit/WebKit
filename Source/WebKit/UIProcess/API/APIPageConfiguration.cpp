@@ -335,6 +335,13 @@ bool PageConfiguration::lockdownModeEnabled() const
     return lockdownModeEnabledBySystem();
 }
 
+bool PageConfiguration::richWebAPIsEnabled() const
+{
+    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+        return policies->richWebAPIsEnabled();
+    return true;
+}
+
 bool PageConfiguration::isEnhancedSecurityEnabled() const
 {
     if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
