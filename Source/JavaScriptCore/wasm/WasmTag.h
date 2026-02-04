@@ -61,11 +61,13 @@ public:
 
 private:
     Tag(Ref<const TypeDefinition>&& type)
-        : m_type(WTF::move(type))
+        : m_typeDependencies(type)
+        , m_type(WTF::move(type))
     {
         ASSERT(m_type->is<FunctionSignature>());
     }
 
+    WebAssemblyGCTypeDependencies m_typeDependencies;
     Ref<const TypeDefinition> m_type;
 };
 
