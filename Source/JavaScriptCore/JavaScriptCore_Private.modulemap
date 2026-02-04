@@ -107,6 +107,7 @@ framework module JavaScriptCore_Private [system] {
         exclude header "JSBasePrivate.h"
         exclude header "JSContextPrivate.h"
         exclude header "JSContextRefPrivate.h"
+        exclude header "JSFastIterable.h"
         exclude header "JSHeapFinalizerPrivate.h"
         exclude header "JSLockRefPrivate.h"
         exclude header "JSMarkingConstraintPrivate.h"

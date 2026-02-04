@@ -7233,6 +7233,7 @@
 		FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9E89FA16E2DC0400A908F8 /* OriginLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
+		FF3BFDDB2F33F22800F9CD39 /* JSRadioNodeListCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = FF3BFDD82F33F22800F9CD39 /* JSRadioNodeListCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFAC30FE184FB145008C4F1E /* TrailingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = FFAC30FC184FB145008C4F1E /* TrailingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC047183D27B700407109 /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = FFDBC045183D27B700407109 /* LineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23151,6 +23152,8 @@
 		FED13D500CEA949700D89466 /* RenderThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeIOS.h; sourceTree = "<group>"; };
 		FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransactionBackend.cpp; sourceTree = "<group>"; };
 		FEE1811216C319E800084849 /* SQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionBackend.h; sourceTree = "<group>"; };
+		FF3BFDD82F33F22800F9CD39 /* JSRadioNodeListCustom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSRadioNodeListCustom.h; sourceTree = "<group>"; };
+		FF3BFDD92F33F22800F9CD39 /* JSRadioNodeListCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRadioNodeListCustom.cpp; sourceTree = "<group>"; };
 		FF945EC9161F7F3600971BC8 /* PseudoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PseudoElement.cpp; sourceTree = "<group>"; };
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
 		FFAC30FC184FB145008C4F1E /* TrailingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingObjects.h; sourceTree = "<group>"; };
@@ -31446,6 +31449,8 @@
 				4B1E13EE217941320042CF98 /* JSPaintRenderingContext2DCustom.cpp */,
 				833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */,
 				A4A69B8BB91B49D0A804C31D /* JSPromiseRejectionEventCustom.cpp */,
+				FF3BFDD92F33F22800F9CD39 /* JSRadioNodeListCustom.cpp */,
+				FF3BFDD82F33F22800F9CD39 /* JSRadioNodeListCustom.h */,
 				4469587A276B3A9000449C2D /* JSRangeCustom.cpp */,
 				45245AF12C322ADE0003D1FF /* JSReportingObserverCustom.cpp */,
 				5868C7C42539DA3300BF9DF3 /* JSResizeObserverCustom.cpp */,
@@ -45369,6 +45374,7 @@
 				57303C1120099CB100355965 /* JSPublicKeyCredentialRequestOptions.h in Headers */,
 				57303C002009951C00355965 /* JSPublicKeyCredentialType.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
+				FF3BFDDB2F33F22800F9CD39 /* JSRadioNodeListCustom.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
 				7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */,
 				7C4C96DF1AD4483500363572 /* JSReadableStreamBYOBReader.h in Headers */,

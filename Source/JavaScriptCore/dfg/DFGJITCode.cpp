@@ -47,7 +47,10 @@ JITData::JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode& jitCod
         case LinkerIR::Type::HavingABadTimeWatchpointSet:
         case LinkerIR::Type::MasqueradesAsUndefinedWatchpointSet:
         case LinkerIR::Type::ArrayBufferDetachWatchpointSet:
-        case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet:
+        case LinkerIR::Type::ArrayIteratorNextWatchpointSet:
+        case LinkerIR::Type::ArrayIteratorWatchpointSet:
+        case LinkerIR::Type::NodeListIteratorNextWatchpointSet:
+        case LinkerIR::Type::NodeListIteratorWatchpointSet:
         case LinkerIR::Type::SetIteratorProtocolWatchpointSet:
         case LinkerIR::Type::MapIteratorProtocolWatchpointSet:
         case LinkerIR::Type::NumberToStringWatchpointSet:
@@ -144,9 +147,24 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
             success &= attemptToWatch(codeBlock, m_globalObject->arrayBufferDetachWatchpointSet(), watchpoint);
             break;
         }
-        case LinkerIR::Type::ArrayIteratorProtocolWatchpointSet: {
+        case LinkerIR::Type::ArrayIteratorNextWatchpointSet: {
             auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
-            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorProtocolWatchpointSet(), watchpoint);
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorNextWatchpointSet(), watchpoint);
+            break;
+        }
+        case LinkerIR::Type::ArrayIteratorWatchpointSet: {
+            auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
+            success &= attemptToWatch(codeBlock, m_globalObject->arrayIteratorWatchpointSet(), watchpoint);
+            break;
+        }
+        case LinkerIR::Type::NodeListIteratorNextWatchpointSet: {
+            auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
+            success &= attemptToWatch(codeBlock, m_globalObject->nodeListIteratorNextWatchpointSet(), watchpoint);
+            break;
+        }
+        case LinkerIR::Type::NodeListIteratorWatchpointSet: {
+            auto& watchpoint = m_watchpoints[indexOfWatchpoints++];
+            success &= attemptToWatch(codeBlock, m_globalObject->nodeListIteratorWatchpointSet(), watchpoint);
             break;
         }
         case LinkerIR::Type::SetIteratorProtocolWatchpointSet: {

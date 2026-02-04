@@ -3469,6 +3469,11 @@ sub GenerateHeader
 
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
+    if ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList") {
+        $headerIncludes{"<JavaScriptCore/JSFastIterable.h>"} = 1;
+        $parentClassName = "JSC::JSWrapper<$interfaceName>";
+    }
+
     my $implType = GetImplClassName($interface);
 
     my $numConstants = @{$interface->constants};
@@ -3641,6 +3646,13 @@ sub GenerateHeader
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
     }
 
+    if ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList") {
+        push(@headerContent, "    static unsigned getFastIterableLength(JSC::JSObject* object);\n");
+        push(@headerContent, "    static JSC::JSValue getFastIterableIndexedElement(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSObject* object, unsigned index);\n");
+        push(@headerContent, "    JSDOMGlobalObject* globalObject() const;\n");
+        push(@headerContent, "    ScriptExecutionContext* scriptExecutionContext() const;\n");
+    }
+
     # Class info
     if ($interfaceName eq "Node") {
         push(@headerContent, "\n");
@@ -3664,6 +3676,8 @@ sub GenerateHeader
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } elsif ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList") {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::FastIterableType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     }
@@ -4919,6 +4933,9 @@ sub GenerateImplementation
 
     my $hasParent = $interface->parentType || $interface->extendedAttributes->{JSLegacyParent};
     my $parentClassName = GetParentClassName($interface);
+    if ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList") {
+        $parentClassName = "JSC::JSWrapper<$interfaceName>";
+    }
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
     my $needsVisitChildren = InstanceNeedsVisitChildren($interface);
 
@@ -5393,7 +5410,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (NeedsImplementationClass($interface) && $hasParent) {
+    if (NeedsImplementationClass($interface) && $hasParent && $interfaceName ne "NodeList" && $interfaceName ne "RadioNodeList") {
         push(@implContent, "Ref<$interfaceName> ${className}::protectedWrapped() const\n");
         push(@implContent, "{\n");
         push(@implContent, "    return wrapped();\n");
@@ -5636,12 +5653,14 @@ sub GenerateImplementation
     push(@implContent, "{\n");
 
     my $isGlobal = IsDOMGlobalObject($interface);
-    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($isGlobal ? "Yes" : "No") . ">(vm, \"${className}\"_s,\n");
+    my $isNodeList = ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList");
+    my $useCustomHeapCellType = ($isGlobal || $isNodeList);
+    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($useCustomHeapCellType ? "Yes" : "No") . ">(vm, \"${className}\"_s,\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_clientSubspaceFor${interfaceName}.get(); },\n");
     push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceFor${interfaceName} = std::forward<decltype(space)>(space); },\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_subspaceFor${interfaceName}.get(); },\n");
-    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($isGlobal ? "," : "") . "\n");
-    push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }\n") if $isGlobal;
+    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($useCustomHeapCellType ? "," : "") . "\n");
+    push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }\n") if $useCustomHeapCellType;
     push(@implContent, "    );\n");
     push(@implContent, "}\n\n");
 
@@ -5851,7 +5870,13 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    SUPPRESS_MEMORY_UNSAFE_CAST auto* js${interfaceName} = static_cast<JS${interfaceName}*>(handle.slot()->asCell());\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
-        push(@implContent, "    uncacheWrapper(world, js${interfaceName}->protectedWrapped().ptr(), js${interfaceName});\n");
+        my $isNodeList = ($interfaceName eq "NodeList" || $interfaceName eq "RadioNodeList");
+        if ($isNodeList) {
+            # JSWrapper doesn't have protectedWrapped(), use &wrapped() instead
+            push(@implContent, "    uncacheWrapper(world, &js${interfaceName}->wrapped(), js${interfaceName});\n");
+        } else {
+            push(@implContent, "    uncacheWrapper(world, js${interfaceName}->protectedWrapped().ptr(), js${interfaceName});\n");
+        }
         push(@implContent, "}\n\n");
     }
 

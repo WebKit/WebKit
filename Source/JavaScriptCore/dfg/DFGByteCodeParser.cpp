@@ -9161,18 +9161,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
             BytecodeIndex startIndex = m_currentIndex;
 
             Node* symbolIterator = get(bytecode.m_symbolIterator);
-            auto& arrayIteratorProtocolWatchpointSet = globalObject->arrayIteratorProtocolWatchpointSet();
 
-            if (seenModes & IterationMode::FastArray && arrayIteratorProtocolWatchpointSet.isStillValid()) {
+            // Check split watchpoints for fast iteration (array or NodeList)
+            if (isFastIteration(seenModes) && globalObject->areIteratorProtocolWatchpointSetsValid()) {
                 // First set up the watchpoint conditions we need for correctness.
-                m_graph.watchpoints().addLazily(arrayIteratorProtocolWatchpointSet);
+                // Register both split watchpoints
+                m_graph.watchpoints().addLazily(globalObject->arrayIteratorNextWatchpointSet());
+                m_graph.watchpoints().addLazily(globalObject->arrayIteratorWatchpointSet());
 
                 ASSERT_WITH_MESSAGE(globalObject->arrayProtoValuesFunctionConcurrently(), "The only way we could have seen FastArray is if we saw this function in the LLInt/Baseline so the iterator function should be allocated.");
                 FrozenValue* frozenSymbolIteratorFunction = m_graph.freeze(globalObject->arrayProtoValuesFunctionConcurrently());
                 numberOfRemainingModes--;
                 if (!numberOfRemainingModes) {
                     addToGraph(CheckIsConstant, OpInfo(frozenSymbolIteratorFunction), symbolIterator);
-                    addToGraph(Check, Edge(get(bytecode.m_iterable), ArrayUse));
+                    // Only check ArrayUse for FastArray mode
+                    if (static_cast<IterationMode>(seenModes) == IterationMode::FastArray)
+                        addToGraph(Check, Edge(get(bytecode.m_iterable), ArrayUse));
                 } else {
                     BasicBlock* fastArrayBlock = allocateUntargetableBlock();
                     genericBlock = allocateUntargetableBlock();
@@ -9216,6 +9220,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Jump, OpInfo(continuation));
                 generatedCase = true;
             }
+
+            // TODO: FastNodeList implementation
+            // This requires WebCore integration for JSNodeList type checking
+            // The infrastructure (nodes, watchpoints, clobberize) is in place
+            // Skeleton implementation would follow the same pattern as FastArray above
+            /*
+            if (seenModes & IterationMode::FastNodeList && globalObject->areNodeListIteratorProtocolWatchpointSetsValid()) {
+                // Register both split watchpoints
+                m_graph.watchpoints().addLazily(globalObject->nodeListIteratorNextWatchpointSet());
+                m_graph.watchpoints().addLazily(globalObject->nodeListIteratorWatchpointSet());
+
+                // TODO: Check symbolIterator matches expected NodeList iterator function
+                // TODO: Check if iterable is a NodeList (requires WebCore type info)
+                // TODO: Create iterator structure and set up for fast iteration
+            }
+            */
 
             m_currentIndex = startIndex;
 
@@ -9313,13 +9333,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             BytecodeIndex startIndex = m_currentIndex;
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
-            auto& arrayIteratorProtocolWatchpointSet = globalObject->arrayIteratorProtocolWatchpointSet();
             BasicBlock* genericBlock = nullptr;
             BasicBlock* continuation = allocateUntargetableBlock();
 
-            if (seenModes & IterationMode::FastArray && arrayIteratorProtocolWatchpointSet.isStillValid()) {
+            // Check split watchpoints for fast array iteration
+            if (seenModes & IterationMode::FastArray && globalObject->areIteratorProtocolWatchpointSetsValid()) {
                 // First set up the watchpoint conditions we need for correctness.
-                m_graph.watchpoints().addLazily(arrayIteratorProtocolWatchpointSet);
+                // Register both split watchpoints
+                m_graph.watchpoints().addLazily(globalObject->arrayIteratorNextWatchpointSet());
+                m_graph.watchpoints().addLazily(globalObject->arrayIteratorWatchpointSet());
 
                 if (numberOfRemainingModes != 1) {
                     Node* hasNext = addToGraph(IsEmpty, get(bytecode.m_next));
@@ -9353,8 +9375,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
                     Node* iterable = get(bytecode.m_iterable);
-                    Node* butterfly = addToGraph(GetButterfly, iterable);
-                    Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iterable), Edge(butterfly, KnownStorageUse));
+
+                    Node* length;
+                    if (static_cast<IterationMode>(seenModes) == IterationMode::FastNodeList) {
+                        // For NodeList, use GetById to access the .length property
+                        auto* lengthImpl = m_vm->propertyNames->length.impl();
+                        CacheableIdentifier lengthIdentifier = CacheableIdentifier::createFromImmortalIdentifier(lengthImpl);
+                        length = addToGraph(GetById, OpInfo(lengthIdentifier), OpInfo(SpecNonBoolInt32), iterable);
+                    } else {
+                        // For arrays, use GetArrayLength with butterfly
+                        Node* butterfly = addToGraph(GetButterfly, iterable);
+                        length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iterable), Edge(butterfly, KnownStorageUse));
+                    }
+
                     // GetArrayLength is pessimized prior to fixup.
                     m_exitOK = true;
                     addToGraph(ExitOK);
@@ -9426,6 +9459,28 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 m_currentIndex = startIndex;
                 generatedCase = true;
             }
+
+            // TODO: FastNodeList implementation for op_iterator_next
+            // This requires WebCore integration for JSNodeList type checking
+            // The infrastructure (nodes, watchpoints, clobberize) is in place
+            // Implementation would:
+            // 1. Check if m_next is JSValue() (fast path marker)
+            // 2. Get index from iterator
+            // 3. Use GetNodeListLength to check bounds
+            // 4. Use GetNodeByIndex to get the element
+            // 5. Increment index and set done flag appropriately
+            /*
+            if (seenModes & IterationMode::FastNodeList && globalObject->areNodeListIteratorProtocolWatchpointSetsValid()) {
+                // Register both split watchpoints
+                m_graph.watchpoints().addLazily(globalObject->nodeListIteratorNextWatchpointSet());
+                m_graph.watchpoints().addLazily(globalObject->nodeListIteratorWatchpointSet());
+
+                // TODO: Similar pattern to FastArray above:
+                // - Check structure, get index, check bounds with GetNodeListLength
+                // - Get element with GetNodeByIndex
+                // - Update index and done flag
+            }
+            */
 
             if (seenModes & IterationMode::Generic) {
                 if (genericBlock) {

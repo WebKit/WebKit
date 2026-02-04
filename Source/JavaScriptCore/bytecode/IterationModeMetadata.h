@@ -34,9 +34,10 @@ namespace JSC {
 enum class IterationMode : uint8_t {
     Generic = 1 << 0,
     FastArray = 1 << 1,
+    FastNodeList = 1 << 2,
 };
 
-constexpr uint8_t numberOfIterationModes = 2;
+constexpr uint8_t numberOfIterationModes = 3;
 
 OVERLOAD_BITWISE_OPERATORS_FOR_ENUM_CLASS_WITH_INTERGRALS(IterationMode);
 
@@ -45,5 +46,15 @@ struct IterationModeMetadata {
     static constexpr ptrdiff_t offsetOfSeenModes() { return OBJECT_OFFSETOF(IterationModeMetadata, seenModes); }
     static_assert(sizeof(decltype(seenModes)) == sizeof(IterationMode));
 };
+
+inline bool isFastIteration(IterationMode mode)
+{
+    return (static_cast<uint8_t>(mode) & IterationMode::FastArray) || (static_cast<uint8_t>(mode) & IterationMode::FastNodeList);
+}
+
+inline bool isFastIteration(uint32_t mode)
+{
+    return isFastIteration(static_cast<IterationMode>(mode));
+}
 
 } // namespace JSC

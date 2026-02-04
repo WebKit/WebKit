@@ -31,6 +31,7 @@
 #include "InterpreterInlines.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSCInlines.h"
+#include "JSFastIterable.h"
 #include "ObjectConstructor.h"
 #include "VMEntryScopeInlines.h"
 
@@ -424,12 +425,19 @@ ASCIILiteral getIteratorErrorMessage(IterableValidationResult result, JSValue it
     return ""_s;
 }
 
+IterationMode getFastIterationMode(JSValue v)
+{
+    ASSERT(canIterateFast(v));
+    return isJSArray(v) ? IterationMode::FastArray : IterationMode::FastNodeList;
+}
+
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator)
 {
-    if (!isJSArray(iterable))
+    if (!canIterateFast(iterable))
         return IterationMode::Generic;
 
-    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+    // Check both split watchpoints - works for both arrays and node lists
+    if (!globalObject->areIteratorProtocolWatchpointSetsValid())
         return IterationMode::Generic;
 
     // This is correct because we just checked the watchpoint is still valid.
@@ -442,11 +450,13 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
     if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
         return IterationMode::Generic;
 
-    return IterationMode::FastArray;
+    return getFastIterationMode(iterable);
 }
 
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable)
 {
+    // FIXME: Since we introduced JSFastIterable to fast iteration protocol,
+    // we should also support this with JSFastIterable.
     if (!isJSArray(iterable))
         return IterationMode::Generic;
 
@@ -456,10 +466,11 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
     if (!globalObject->isOriginalArrayStructure(structure))
         return IterationMode::Generic;
 
-    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+    // Check both split watchpoints for array iteration
+    if (!globalObject->areIteratorProtocolWatchpointSetsValid())
         return IterationMode::Generic;
 
-    // Now, Array has original Array Structures and arrayIteratorProtocolWatchpointSet is not fired.
+    // Now, Array has original Array Structures and array iterator protocol watch point sets are not fired.
     // This means,
     // 1. Array.prototype is [[Prototype]].
     // 2. array[@@iterator] is not overridden.

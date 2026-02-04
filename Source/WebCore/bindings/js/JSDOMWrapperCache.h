@@ -25,11 +25,13 @@
 
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/JSFastIterable.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMWrapper.h>
+#include <WebCore/NodeList.h>
 #include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/WebCoreTypedArrayController.h>
 
@@ -48,14 +50,17 @@ void* wrapperKey(JSC::ArrayBuffer*);
 std::optional<JSDOMObject*> getInlineCachedWrapper(DOMWrapperWorld&, void*);
 std::optional<JSDOMObject*> getInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*);
 std::optional<JSC::JSArrayBuffer*> getInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*);
+std::optional<JSC::JSFastIterable*> getInlineCachedWrapper(DOMWrapperWorld&, NodeList*);
 
 bool setInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*, JSC::WeakHandleOwner*);
 bool setInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*, JSDOMObject* wrapper, JSC::WeakHandleOwner* wrapperOwner);
 bool setInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuffer* wrapper, JSC::WeakHandleOwner* wrapperOwner);
+bool setInlineCachedWrapper(DOMWrapperWorld&, NodeList*, JSC::JSFastIterable* wrapper, JSC::WeakHandleOwner* wrapperOwner);
 
 bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMObject*);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, ScriptWrappable*, JSDOMObject* wrapper);
 bool clearInlineCachedWrapper(DOMWrapperWorld&, JSC::ArrayBuffer*, JSC::JSArrayBuffer* wrapper);
+bool clearInlineCachedWrapper(DOMWrapperWorld&, NodeList*, JSC::JSFastIterable* wrapper);
 
 template<typename DOMClass> JSC::JSObject* getOrCreateWrapper(DOMWrapperWorld&, DOMClass&);
 
@@ -150,6 +155,29 @@ inline bool clearInlineCachedWrapper(DOMWrapperWorld& world, ScriptWrappable* do
 }
 
 inline bool clearInlineCachedWrapper(DOMWrapperWorld& world, JSC::ArrayBuffer* domObject, JSC::JSArrayBuffer* wrapper)
+{
+    if (!world.isNormal())
+        return false;
+    weakClear(domObject->m_wrapper, wrapper);
+    return true;
+}
+
+inline std::optional<JSC::JSFastIterable*> getInlineCachedWrapper(DOMWrapperWorld& world, NodeList* nodeList)
+{
+    if (!world.isNormal())
+        return std::nullopt;
+    return nodeList->m_wrapper.get();
+}
+
+inline bool setInlineCachedWrapper(DOMWrapperWorld& world, NodeList* domObject, JSC::JSFastIterable* wrapper, JSC::WeakHandleOwner* wrapperOwner)
+{
+    if (!world.isNormal())
+        return false;
+    domObject->m_wrapper = JSC::Weak<JSC::JSFastIterable>(wrapper, wrapperOwner, &world);
+    return true;
+}
+
+inline bool clearInlineCachedWrapper(DOMWrapperWorld& world, NodeList* domObject, JSC::JSFastIterable* wrapper)
 {
     if (!world.isNormal())
         return false;

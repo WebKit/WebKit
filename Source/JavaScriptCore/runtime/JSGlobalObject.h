@@ -489,9 +489,16 @@ public:
     WeakRandom m_weakRandom;
     RegExpGlobalData m_regExpGlobalData;
 
-    // If this hasn't been invalidated, it means the array iterator protocol
+    // Split watchpoints for array iterator protocol (following original patch pattern)
+    // If these haven't been invalidated, it means the array iterator protocol
     // is not observable to user code yet.
-    InlineWatchpointSet m_arrayIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_arrayIteratorNextWatchpointSet { IsWatched };  // Watches ArrayIterator.prototype.next
+    InlineWatchpointSet m_arrayIteratorWatchpointSet { IsWatched };      // Watches Array.prototype[@@iterator]
+
+    // NodeList fast iteration watchpoints
+    InlineWatchpointSet m_nodeListIteratorNextWatchpointSet { IsWatched };
+    InlineWatchpointSet m_nodeListIteratorWatchpointSet { IsWatched };
+
     InlineWatchpointSet m_mapIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_setIteratorProtocolWatchpointSet { IsWatched };
     InlineWatchpointSet m_stringIteratorProtocolWatchpointSet { IsWatched };
@@ -562,7 +569,24 @@ public:
 public:
     JSCallee* zombieFrameCallee() const { return m_zombieFrameCallee.get(); }
 
-    InlineWatchpointSet& arrayIteratorProtocolWatchpointSet() { return m_arrayIteratorProtocolWatchpointSet; }
+    // Split watchpoint accessors for arrays
+    InlineWatchpointSet& arrayIteratorNextWatchpointSet() { return m_arrayIteratorNextWatchpointSet; }
+    InlineWatchpointSet& arrayIteratorWatchpointSet() { return m_arrayIteratorWatchpointSet; }
+
+    // NodeList watchpoint accessors
+    InlineWatchpointSet& nodeListIteratorNextWatchpointSet() { return m_nodeListIteratorNextWatchpointSet; }
+    InlineWatchpointSet& nodeListIteratorWatchpointSet() { return m_nodeListIteratorWatchpointSet; }
+
+    // Helper methods to check both watchpoints (convenience for fast path validation)
+    bool areIteratorProtocolWatchpointSetsValid() const {
+        return m_arrayIteratorNextWatchpointSet.isStillValid()
+            && m_arrayIteratorWatchpointSet.isStillValid();
+    }
+    bool areNodeListIteratorProtocolWatchpointSetsValid() const {
+        return m_nodeListIteratorNextWatchpointSet.isStillValid()
+            && m_nodeListIteratorWatchpointSet.isStillValid();
+    }
+
     InlineWatchpointSet& mapIteratorProtocolWatchpointSet() { return m_mapIteratorProtocolWatchpointSet; }
     InlineWatchpointSet& setIteratorProtocolWatchpointSet() { return m_setIteratorProtocolWatchpointSet; }
     InlineWatchpointSet& stringIteratorProtocolWatchpointSet() { return m_stringIteratorProtocolWatchpointSet; }

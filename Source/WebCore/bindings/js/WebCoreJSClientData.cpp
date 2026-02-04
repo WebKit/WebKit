@@ -37,8 +37,10 @@
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
+#include "JSNodeList.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
+#include "JSRadioNodeList.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "JSSharedWorkerGlobalScope.h"
@@ -81,6 +83,8 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
     , m_heapCellTypeForJSSharedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSSharedWorkerGlobalScope>())
     , m_heapCellTypeForJSShadowRealmGlobalScope(JSC::IsoHeapCellType::Args<JSShadowRealmGlobalScope>())
+    , m_heapCellTypeForJSNodeList(JSC::IsoHeapCellType::Args<JSNodeList>())
+    , m_heapCellTypeForJSRadioNodeList(JSC::IsoHeapCellType::Args<JSRadioNodeList>())
     , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSServiceWorkerGlobalScope>())
     , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSWorkletGlobalScope>())
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSPaintWorkletGlobalScope>())

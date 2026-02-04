@@ -84,6 +84,7 @@ enum class IterableValidationResult : uint8_t {
 JS_EXPORT_PRIVATE IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator);
 JS_EXPORT_PRIVATE ASCIILiteral getIteratorErrorMessage(IterableValidationResult, JSValue iterable);
 
+JS_EXPORT_PRIVATE IterationMode getFastIterationMode(JSValue iterable);
 JS_EXPORT_PRIVATE IterationMode getIterationMode(VM&, JSGlobalObject*, JSValue iterable);
 JS_EXPORT_PRIVATE IterationMode getIterationMode(VM&, JSGlobalObject*, JSValue iterable, JSValue symbolIterator);
 

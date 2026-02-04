@@ -1176,6 +1176,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSHeapDouble.h
     runtime/JSHeapInt32.h
     runtime/JSExportMacros.h
+    runtime/JSFastIterable.h
     runtime/JSFloat16Array.h
     runtime/JSFloat32Array.h
     runtime/JSFloat64Array.h

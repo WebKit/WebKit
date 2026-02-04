@@ -94,7 +94,12 @@ public:
         HavingABadTimeWatchpointSet,
         MasqueradesAsUndefinedWatchpointSet,
         ArrayBufferDetachWatchpointSet,
-        ArrayIteratorProtocolWatchpointSet,
+        // Split array iterator watchpoints (following original patch)
+        ArrayIteratorNextWatchpointSet,
+        ArrayIteratorWatchpointSet,
+        // NodeList iterator watchpoints
+        NodeListIteratorNextWatchpointSet,
+        NodeListIteratorWatchpointSet,
         SetIteratorProtocolWatchpointSet,
         MapIteratorProtocolWatchpointSet,
         NumberToStringWatchpointSet,

@@ -914,6 +914,7 @@ runtime/JSDataViewPrototype.cpp
 runtime/JSDateMath.cpp @no-unify // Confine U_SHOW_CPLUSPLUS_API's effect to this file.
 runtime/JSDestructibleObjectHeapCellType.cpp
 runtime/JSDisposableStack.cpp
+runtime/JSFastIterable.cpp
 runtime/JSFinalizationRegistry.cpp
 runtime/JSFunction.cpp
 runtime/JSFunctionWithFields.cpp

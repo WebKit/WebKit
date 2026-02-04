@@ -1766,7 +1766,7 @@ private:
         case PhantomLocal:
         case Flush:
             break;
-            
+
         case LastNodeType:
             RELEASE_ASSERT_NOT_REACHED();
             break;

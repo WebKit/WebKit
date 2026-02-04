@@ -2175,8 +2175,18 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 #endif // ENABLE(WEBASSEMBLY)
 
     // Detect property change.
-    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next), m_arrayIteratorProtocolWatchpointSet);
-    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->iteratorSymbol), m_arrayIteratorProtocolWatchpointSet);
+    // Split array iterator watchpoints (following original patch pattern)
+    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next), m_arrayIteratorNextWatchpointSet);
+    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->iteratorSymbol), m_arrayIteratorWatchpointSet);
+
+    // NodeList watchpoints: NodeLists use ArrayIterator.prototype, so we share the next watchpoint
+    // The NodeList @@iterator watchpoint uses Array.prototype[@@iterator] since NodeList.prototype
+    // inherits from Array.prototype for iteration purposes
+    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next), m_nodeListIteratorNextWatchpointSet);
+    // Note: m_nodeListIteratorWatchpointSet watches Array.prototype[@@iterator] since NodeList uses it
+    // This is correct because NodeList.prototype[@@iterator] delegates to Array.prototype[@@iterator]
+    installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->iteratorSymbol), m_nodeListIteratorWatchpointSet);
+
     installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->join), m_arrayJoinWatchpointSet);
     installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, this->arrayPrototype(), vm.propertyNames->toString), m_arrayToStringWatchpointSet);
     installObjectPropertyChangeAdaptiveWatchpoint(setupAdaptiveWatchpoint(this, mapIteratorPrototype, vm.propertyNames->next), m_mapIteratorProtocolWatchpointSet);

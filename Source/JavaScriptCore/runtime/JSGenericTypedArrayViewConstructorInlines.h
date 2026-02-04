@@ -212,7 +212,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                 && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType())
-                    || !object->globalObject()->arrayIteratorProtocolWatchpointSet().isStillValid())) {
+                    || !object->globalObject()->areIteratorProtocolWatchpointSetsValid())) {
                     RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewFromIterator<ViewClass>(globalObject, structure, object, iteratorFunc));
             }
 

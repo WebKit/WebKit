@@ -898,8 +898,19 @@ public:
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
-        InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::ArrayIteratorProtocolWatchpointSet);
+        // Check both split watchpoints for array iteration
+        bool watchingNext = isWatchingGlobalObjectWatchpoint(globalObject, globalObject->arrayIteratorNextWatchpointSet(), LinkerIR::Type::ArrayIteratorNextWatchpointSet);
+        bool watchingIterator = isWatchingGlobalObjectWatchpoint(globalObject, globalObject->arrayIteratorWatchpointSet(), LinkerIR::Type::ArrayIteratorWatchpointSet);
+        return watchingNext && watchingIterator;
+    }
+
+    bool isWatchingNodeListIteratorProtocolWatchpoint(Node* node)
+    {
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        // Check both split watchpoints for NodeList iteration
+        bool watchingNext = isWatchingGlobalObjectWatchpoint(globalObject, globalObject->nodeListIteratorNextWatchpointSet(), LinkerIR::Type::NodeListIteratorNextWatchpointSet);
+        bool watchingIterator = isWatchingGlobalObjectWatchpoint(globalObject, globalObject->nodeListIteratorWatchpointSet(), LinkerIR::Type::NodeListIteratorWatchpointSet);
+        return watchingNext && watchingIterator;
     }
 
     bool isWatchingSetIteratorProtocolWatchpoint(Node* node)

@@ -77,6 +77,8 @@ public:
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSSharedWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSShadowRealmGlobalScope;
+    JSC::IsoHeapCellType m_heapCellTypeForJSNodeList;
+    JSC::IsoHeapCellType m_heapCellTypeForJSRadioNodeList;
     JSC::IsoHeapCellType m_heapCellTypeForJSServiceWorkerGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSWorkletGlobalScope;
     JSC::IsoHeapCellType m_heapCellTypeForJSPaintWorkletGlobalScope;

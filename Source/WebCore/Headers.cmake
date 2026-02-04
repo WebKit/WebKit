@@ -1007,6 +1007,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSNodeCustomInlines.h
     bindings/js/JSNodeListCustom.h
     bindings/js/JSPluginElementFunctions.h
+    bindings/js/JSRadioNodeListCustom.h
     bindings/js/JSShadowRealmGlobalScopeBase.h
     bindings/js/JSStyleSheetCustom.h
     bindings/js/JSValueInWrappedObject.h

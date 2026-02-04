@@ -2279,6 +2279,7 @@
 		FF31EC8E2D947F0500D9CB81 /* DFGCloneHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FF31EC8B2D947F0500D9CB81 /* DFGCloneHelper.h */; };
 		FF3394AA2CB4944E004AFF6A /* RegExpSubstringGlobalAtomCache.h in Headers */ = {isa = PBXBuildFile; fileRef = FF3394A92CB4941B004AFF6A /* RegExpSubstringGlobalAtomCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF64E0642F32664F00CD4174 /* JSFastIterable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF64E0612F32664F00CD4174 /* JSFastIterable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF6A4D7E2E663147001FB92C /* WasmModuleDebugInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFA2E02A2EA16F37006661A3 /* ControlFlowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */; };
 		FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */; };
@@ -6358,6 +6359,8 @@
 		FF3394A92CB4941B004AFF6A /* RegExpSubstringGlobalAtomCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegExpSubstringGlobalAtomCache.h; sourceTree = "<group>"; };
 		FF3394AB2CB4948E004AFF6A /* RegExpSubstringGlobalAtomCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpSubstringGlobalAtomCache.cpp; sourceTree = "<group>"; };
 		FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaiterListManager.h; sourceTree = "<group>"; };
+		FF64E0612F32664F00CD4174 /* JSFastIterable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSFastIterable.h; sourceTree = "<group>"; };
+		FF64E0622F32664F00CD4174 /* JSFastIterable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSFastIterable.cpp; sourceTree = "<group>"; };
 		FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmModuleDebugInfo.h; sourceTree = "<group>"; };
 		FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryTests.cpp; sourceTree = "<group>"; };
 		FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowTests.cpp; sourceTree = "<group>"; };
@@ -8787,6 +8790,8 @@
 				8C9F78F52DD0ED9E00868239 /* JSDisposableStack.h */,
 				8C9F78F72DD0EDA400868239 /* JSDisposableStackInlines.h */,
 				A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */,
+				FF64E0622F32664F00CD4174 /* JSFastIterable.cpp */,
+				FF64E0612F32664F00CD4174 /* JSFastIterable.h */,
 				5300740C22DD6F6600B9ACB3 /* JSFinalizationRegistry.cpp */,
 				533D074622C2D9D1004D2FE2 /* JSFinalizationRegistry.h */,
 				E3B876282C40CC0C0004DF71 /* JSFloat16Array.h */,
@@ -11755,6 +11760,7 @@
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
+				FF64E0642F32664F00CD4174 /* JSFastIterable.h in Headers */,
 				533D074722C2D9D2004D2FE2 /* JSFinalizationRegistry.h in Headers */,
 				E3B876292C40CC170004DF71 /* JSFloat16Array.h in Headers */,
 				0F2B66EF17B6B5AB00A7AE3F /* JSFloat32Array.h in Headers */,
