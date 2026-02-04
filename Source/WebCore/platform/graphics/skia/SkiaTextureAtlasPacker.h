@@ -62,7 +62,7 @@ enum class Algorithm {
 
 // Pack rectangles into a fixed-size atlas.
 // Returns packed rectangles with positions, or empty vector if images don't fit.
-Vector<PackedRect> pack(std::span<const IntSize> sizes, const IntSize& atlasSize, Algorithm = Algorithm::MaxRects);
+WEBCORE_EXPORT Vector<PackedRect> pack(std::span<const IntSize> sizes, const IntSize& atlasSize, Algorithm = Algorithm::MaxRects);
 
 }; // namespace SkiaTextureAtlasPacker
 
