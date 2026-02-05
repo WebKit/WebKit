@@ -739,7 +739,6 @@ $(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.mac.sb.in
 $(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.relocatable.mac.sb.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ActivityState.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/CodeGenerator.pm
-$(WEBCORE_PRIVATE_HEADERS_DIR)/WebModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/DocumentSyncData.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/DragActions.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/FrameTreeSyncData.serialization.in
@@ -760,4 +759,5 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/PlaybackSessionModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProtectionSpaceBase.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ScrollTypes.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/WebGPU.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/generate-bindings.pl
