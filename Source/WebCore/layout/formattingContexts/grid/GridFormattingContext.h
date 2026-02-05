@@ -77,6 +77,13 @@ public:
 
     void layout(GridLayoutConstraints);
 
+    struct IntrinsicWidths {
+        LayoutUnit minimum;
+        LayoutUnit maximum;
+    };
+
+    IntrinsicWidths computeIntrinsicWidths();
+
     PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
 
     const ElementBox& root() const { return m_gridBox; }
@@ -89,6 +96,7 @@ public:
 
 private:
     UnplacedGridItems constructUnplacedGridItems() const;
+    GridDefinition resolveGridDefinition(bool treatPercentagesAsAuto) const;
 
     const LayoutState& layoutState() const { return m_globalLayoutState; }
     BoxGeometry& geometryForGridItem(const ElementBox&);

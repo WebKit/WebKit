@@ -101,6 +101,15 @@ void GridLayout::updateFormattingContextRootRenderer()
         orderIteratorPopulator.collectChild(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) });
 }
 
+void GridLayout::computeIntrinsicWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth)
+{
+    auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), layoutState() };
+    auto intrinsicWidths = gridFormattingContext.computeIntrinsicWidths();
+
+    minLogicalWidth = intrinsicWidths.minimum;
+    maxLogicalWidth = intrinsicWidths.maximum;
+}
+
 void GridLayout::layout()
 {
     Layout::GridFormattingContext { gridBox(), layoutState() }.layout(constraintsForGridContent(gridBox()));

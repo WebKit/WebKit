@@ -400,6 +400,55 @@ TrackSizes TrackSizingAlgorithm::sizeTracks(const PlacedGridItems& gridItems, co
     });
 }
 
+// https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
+IntrinsicTrackSizes TrackSizingAlgorithm::sizeTracksForIntrinsicSizing(const PlacedGridItems& gridItems,
+    const ComputedSizesList& gridItemComputedSizesList, const PlacedGridItemSpanList& gridItemSpanList,
+    const TrackSizingFunctionsList& trackSizingFunctions, const GridItemSizingFunctions& gridItemSizingFunctions,
+    const IntegrationUtils& integrationUtils, const LayoutUnit& gapSize)
+{
+    ASSERT(gridItems.size() == gridItemSpanList.size());
+    // FIXME: handle spanning items.
+    for (const auto& span : gridItemSpanList)
+        ASSERT(span.distance() == 1, "Multi-span items not yet supported in intrinsic sizing");
+    UNUSED_PARAM(gapSize);
+
+    // 1. Initialize Track Sizes
+    auto unsizedTracks = initializeTrackSizes(trackSizingFunctions);
+
+    // 2. Resolve Intrinsic Track Sizes
+    // This computes both baseSize (min-content) and growthLimit (max-content) for each track
+    resolveIntrinsicTrackSizes(unsizedTracks, gridItems, gridItemComputedSizesList, gridItemSpanList,
+        integrationUtils, gridItemSizingFunctions);
+
+    // 3. For intrinsic sizing, we skip "Maximize Tracks" and "Expand Flexible Tracks" steps.
+    // Flex tracks resolve to their base size for min-content and their max-content contribution
+    // for max-content sizing.
+
+    // 4. Extract both min-content and max-content sizes from the computed tracks.
+    // Similar to RenderGrid's GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes()
+    // Note: Spec Step 5 (setting infinite growth limits to base size) is performed during
+    // extraction below rather than in resolveIntrinsicTrackSizes() to avoid modifying
+    // the unsizedTracks in place.
+    TrackSizes minContentSizes;
+    TrackSizes maxContentSizes;
+    minContentSizes.reserveInitialCapacity(unsizedTracks.size());
+    maxContentSizes.reserveInitialCapacity(unsizedTracks.size());
+
+    for (const auto& track : unsizedTracks) {
+        // Min-content size = base size
+        minContentSizes.append(track.baseSize);
+
+        // Max-content size = growth limit (or base size if growth limit is infinite)
+        // If the growth limit is still infinite, use the base size as per spec.
+        auto maxContentSize = (track.growthLimit == LayoutUnit::max())
+            ? track.baseSize
+            : track.growthLimit;
+        maxContentSizes.append(maxContentSize);
+    }
+
+    return { minContentSizes, maxContentSizes };
+}
+
 // https://www.w3.org/TR/css-grid-1/#algo-init
 UnsizedTracks TrackSizingAlgorithm::initializeTrackSizes(const TrackSizingFunctionsList& trackSizingFunctionsList)
 {

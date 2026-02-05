@@ -810,6 +810,21 @@ LayoutUnit RenderGrid::guttersSize(Style::GridTrackSizingDirection direction, un
 
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    if (LayoutIntegration::canUseForGridLayout(*this)) {
+        // const_cast is safe here: computeIntrinsicWidths() only reads grid properties
+        // and does not mutate RenderGrid state, matching the legacy path pattern below.
+        auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
+        gridLayout.updateFormattingContextGeometries();
+        gridLayout.computeIntrinsicWidths(minLogicalWidth, maxLogicalWidth);
+
+        // Add scrollbar width
+        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
+        minLogicalWidth += scrollbarWidth;
+        maxLogicalWidth += scrollbarWidth;
+        return;
+    }
+
+    // Fall back to legacy grid layout
     GridLayoutState gridLayoutState;
 
     LayoutUnit gridItemMinWidth;

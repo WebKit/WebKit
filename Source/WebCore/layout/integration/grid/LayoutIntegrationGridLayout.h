@@ -50,6 +50,8 @@ public:
 
     void layout();
 
+    void computeIntrinsicWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
+
     friend WTF::TextStream& operator<<(WTF::TextStream&, const GridLayout&);
 
 private:

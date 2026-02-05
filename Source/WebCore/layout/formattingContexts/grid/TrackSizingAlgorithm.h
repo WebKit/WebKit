@@ -46,11 +46,23 @@ struct GridItemSizingFunctions {
     Function<LayoutUnit(const ElementBox& gridItem, const IntegrationUtils&)> maxContentContribution;
 };
 
+struct IntrinsicTrackSizes {
+    TrackSizes minContentSizes;
+    TrackSizes maxContentSizes;
+};
+
 class TrackSizingAlgorithm {
 public:
     static TrackSizes sizeTracks(const PlacedGridItems&, const ComputedSizesList&, const PlacedGridItemSpanList&,
     const TrackSizingFunctionsList&, std::optional<LayoutUnit> availableSpace,
     const GridItemSizingFunctions&, const IntegrationUtils&, const FreeSpaceScenario&, const LayoutUnit& gapSize);
+
+    // https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
+    // Computes both min-content and max-content track sizes in a single pass.
+    // This is more efficient than calling sizeTracks() twice with different FreeSpaceScenarios.
+    static IntrinsicTrackSizes sizeTracksForIntrinsicSizing(const PlacedGridItems&, const ComputedSizesList&,
+        const PlacedGridItemSpanList&, const TrackSizingFunctionsList&, const GridItemSizingFunctions&,
+        const IntegrationUtils&, const LayoutUnit& gapSize);
 
 private:
 

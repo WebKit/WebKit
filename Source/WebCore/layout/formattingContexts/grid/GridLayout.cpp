@@ -493,5 +493,59 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
     return { usedInlineSizes, usedBlockSizes };
 }
 
+// https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
+GridFormattingContext::IntrinsicWidths GridLayout::computeIntrinsicWidths(UnplacedGridItems& unplacedGridItems, const GridDefinition& gridDefinition)
+{
+    auto& formattingContext = this->formattingContext();
+    auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
+    auto& gridTemplateRowsTrackSizes = gridDefinition.gridTemplateRows.sizes;
+
+    // Place grid items on the grid
+    auto [ gridAreas, columnsCount, rowsCount ] = placeGridItems(unplacedGridItems, gridTemplateColumnsTrackSizes, gridTemplateRowsTrackSizes, gridDefinition.autoFlowOptions);
+    auto placedGridItems = formattingContext.constructPlacedGridItems(gridAreas);
+    // Not needed for intrinsic widths calculation.
+    UNUSED_VARIABLE(rowsCount);
+
+    auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, gridTemplateColumnsTrackSizes);
+
+    auto& integrationUtils = formattingContext.integrationUtils();
+    CheckedRef formattingContextRootStyle = formattingContext.root().style();
+    auto columnsGap = GridLayoutUtils::computeGapValue(formattingContextRootStyle->columnGap());
+
+    auto columnSpanList = placedGridItems.map([](const PlacedGridItem& gridItem) {
+        return WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
+    });
+
+    ComputedSizesList inlineAxisComputedSizesList;
+    inlineAxisComputedSizesList.reserveInitialCapacity(placedGridItems.size());
+    for (auto& gridItem : placedGridItems)
+        inlineAxisComputedSizesList.append(gridItem.inlineAxisSizes());
+
+    // Compute both min-content and max-content sizes in a single pass.
+    auto intrinsicTrackSizes = TrackSizingAlgorithm::sizeTracksForIntrinsicSizing(
+        placedGridItems,
+        inlineAxisComputedSizesList,
+        columnSpanList,
+        columnTrackSizingFunctionsList,
+        GridLayoutUtils::inlineAxisGridItemSizingFunctions(),
+        integrationUtils,
+        columnsGap
+    );
+
+    // Sum track sizes and add gaps
+    auto computeIntrinsicWidth = [&](const TrackSizes& trackSizes) -> LayoutUnit {
+        auto sumOfTrackSizes = 0_lu;
+        for (auto trackSize : trackSizes)
+            sumOfTrackSizes += trackSize;
+        auto totalGutters = trackSizes.size() > 1 ? columnsGap * LayoutUnit(trackSizes.size() - 1) : 0_lu;
+        return sumOfTrackSizes + totalGutters;
+    };
+
+    return GridFormattingContext::IntrinsicWidths {
+        .minimum = computeIntrinsicWidth(intrinsicTrackSizes.minContentSizes),
+        .maximum = computeIntrinsicWidth(intrinsicTrackSizes.maxContentSizes)
+    };
+}
+
 } // namespace Layout
 } // namespace WebCore

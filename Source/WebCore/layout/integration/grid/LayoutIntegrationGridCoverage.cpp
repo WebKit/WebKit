@@ -103,8 +103,6 @@ enum class GridAvoidanceReason : uint8_t {
 
 static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
 {
-    UNUSED_PARAM(explicitColumnStart);
-
     return WTF::switchOn(columnEnd,
         [&](const CSS::Keyword::Auto&) {
             return false;
@@ -112,6 +110,16 @@ static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnS
         [&](const Style::GridPositionExplicit&) {
             if (!columnEnd.namedGridLine().isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
                 return false;
+
+            // FIXME: Multi-span items are not yet supported in intrinsic sizing
+            // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
+            // Only accept items that span a single column.
+            auto startPosition = explicitColumnStart.position.value;
+            auto endPosition = columnEnd.explicitPosition();
+            auto spanDistance = endPosition - startPosition;
+            if (spanDistance != 1)
+                return false;
+
             return true;
         },
         [&](const Style::GridPositionSpan&) {
@@ -143,7 +151,7 @@ static bool hasValidColumnEnd(const CSS::Keyword::Auto& autoColumnStart, const S
     );
 }
 
-static bool hasValidRowEnd(const Style::GridPositionExplicit&, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
+static bool hasValidRowEnd(const Style::GridPositionExplicit& explicitRowStart, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
 {
     return WTF::switchOn(rowEnd,
         [&](const CSS::Keyword::Auto&) {
@@ -152,6 +160,16 @@ static bool hasValidRowEnd(const Style::GridPositionExplicit&, const Style::Grid
         [&](const Style::GridPositionExplicit&) {
             if (!rowEnd.namedGridLine().isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
                 return false;
+
+            // FIXME: Multi-span items are not yet supported in intrinsic sizing
+            // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
+            // Only accept items that span a single row.
+            auto startPosition = explicitRowStart.position.value;
+            auto endPosition = rowEnd.explicitPosition();
+            auto spanDistance = endPosition - startPosition;
+            if (spanDistance != 1)
+                return false;
+
             return true;
         },
         [&](const Style::GridPositionSpan&) {

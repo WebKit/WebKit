@@ -59,6 +59,8 @@ public:
 
     std::pair<UsedTrackSizes, GridItemRects> layout(const GridFormattingContext::GridLayoutConstraints&, UnplacedGridItems&, const GridDefinition&);
 
+    GridFormattingContext::IntrinsicWidths computeIntrinsicWidths(UnplacedGridItems&, const GridDefinition&);
+
 private:
 
     auto placeGridItems(UnplacedGridItems&, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,

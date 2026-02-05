@@ -165,10 +165,8 @@ static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(co
     return Style::GridTemplateList { WTF::move(transformedList) };
 }
 
-void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
+GridDefinition GridFormattingContext::resolveGridDefinition(bool treatPercentagesAsAuto) const
 {
-    auto unplacedGridItems = constructUnplacedGridItems();
-
     CheckedRef gridStyle = root().style();
 
     GridAutoFlowOptions autoFlowOptions {
@@ -177,18 +175,32 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
     };
 
     // https://drafts.csswg.org/css-grid-1/#track-sizes
+    // For intrinsic sizing, percentages in track sizes must be treated as auto
+    auto gridTemplateColumns = treatPercentagesAsAuto
+        ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns())
+        : gridStyle->gridTemplateColumns();
+    auto gridTemplateRows = treatPercentagesAsAuto
+        ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows())
+        : gridStyle->gridTemplateRows();
+
+    return GridDefinition { gridTemplateColumns, gridTemplateRows, autoFlowOptions };
+}
+
+void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
+{
+    auto unplacedGridItems = constructUnplacedGridItems();
+
+    // https://drafts.csswg.org/css-grid-1/#track-sizes
     // If the size of the grid container depends on the size of its tracks, then the
     // <percentage> must be treated as auto, for the purpose of calculating the intrinsic
     // sizes of the grid container and then resolve against that resulting grid container
     // size for the purpose of laying out the grid and its items.
-    auto gridContainerSizeDependsOnSizeOfTracks = [] {
+    auto shouldTreatPercentagesAsAuto = [] {
         notImplemented();
         return false;
     }();
-    auto gridTemplateColumns = gridContainerSizeDependsOnSizeOfTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
-    auto gridTemplateRows = gridContainerSizeDependsOnSizeOfTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
 
-    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, autoFlowOptions };
+    auto gridDefinition = resolveGridDefinition(shouldTreatPercentagesAsAuto);
 
     auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(layoutConstraints, unplacedGridItems, gridDefinition);
 
@@ -198,7 +210,7 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 
         // Compute gap values for columns and rows.
         // For now, we handle fixed gaps only (not percentages or calc).
-
+        CheckedRef gridStyle = root().style();
         auto columnGap = GridLayoutUtils::computeGapValue(gridStyle->columnGap());
         auto rowGap = GridLayoutUtils::computeGapValue(gridStyle->rowGap());
 
@@ -210,6 +222,7 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
             gridItemRect.borderBoxRect.moveBy({ columnPosition, rowPosition });
         }
     };
+
     mapGridItemLocationsToGrid();
     setGridItemGeometries(gridItemRects);
 }
@@ -283,6 +296,24 @@ void GridFormattingContext::setGridItemGeometries(const GridItemRects& gridItemR
 
         boxGeometry.setContentBoxSize({ contentBoxInlineSize, contentBoxBlockSize });
     }
+}
+
+// https://drafts.csswg.org/css-grid-1/#intrinsic-sizes
+// The max-content size (min-content size) of a grid container is the sum of
+// the grid container's track sizes (including gutters) in the appropriate axis,
+// when the grid is sized under a max-content constraint (min-content constraint).
+GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWidths()
+{
+    auto unplacedGridItems = constructUnplacedGridItems();
+
+    auto gridDefinition = resolveGridDefinition(/* treatPercentagesAsAuto */ true);
+
+    auto gridLayoutIntrinsicWidths = GridLayout { *this }.computeIntrinsicWidths(unplacedGridItems, gridDefinition);
+
+    return IntrinsicWidths {
+        .minimum = gridLayoutIntrinsicWidths.minimum,
+        .maximum = gridLayoutIntrinsicWidths.maximum
+    };
 }
 
 } // namespace Layout
